@@ -57,7 +57,7 @@ public class DirectRelationValueColumnMetadata implements RelationValueColumnMet
         }
         Object newEntity = entity;
         for (Property<Object, ?> objectProperty : valueFunctionList) {
-            newEntity = objectProperty.apply(entity);
+            newEntity = objectProperty.apply(newEntity);
             if (newEntity == null) {
                 return relationValueFactory.createCollectionRelationValue(null);
             }

@@ -618,7 +618,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             ExpressionContext expressionContext = entityQueryExpressionBuilder.getExpressionContext();
             if (expressionContext.hasIncludes()) {
                 ColumnAsSelector<T1, ?> sqlColumnSelector = getSQLExpressionProvider1().getAutoColumnAsSelector(entityQueryExpressionBuilder.getProjects(), resultClass);
-                EasySQLExpressionUtil.appendSelfExtraTargetProperty(entityQueryExpressionBuilder, sqlColumnSelector.getSQLNative(), sqlColumnSelector.getTable(), true);
+                EasySQLExpressionUtil.appendSelfExtraTargetProperty(entityQueryExpressionBuilder, sqlColumnSelector.getSQLNative(), sqlColumnSelector.getTable());
             }
         }
         return false;
@@ -823,7 +823,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
      * @param table
      */
     private void processorIncludeRelationProperty(SQLNative<?> sqlNative, TableAvailable table) {
-        EasySQLExpressionUtil.appendSelfExtraTargetProperty(getSQLEntityExpressionBuilder(), sqlNative, table, true);
+        EasySQLExpressionUtil.appendSelfExtraTargetProperty(getSQLEntityExpressionBuilder(), sqlNative, table);
     }
 
     @Override
@@ -1070,15 +1070,15 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                                     for (MappingPathTreeNode navigateFlatBasicProp : navigateFlatBasicProps) {
                                         z.column(navigateFlatBasicProp.getName());
                                     }
-                                    EasySQLExpressionUtil.appendTargetExtraTargetProperty(entityNavigateMetadata, sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable(), true);
+                                    EasySQLExpressionUtil.appendTargetExtraTargetProperty(entityNavigateMetadata, sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable());
                                 });
                             } else {
                                 if (mappingPathTreeChild.hasChildren()) {
                                     EntityQueryExpressionBuilder sqlEntityExpressionBuilder = with.getSQLEntityExpressionBuilder();
                                     with = with.select(z -> {
 //                                        z.column(entityNavigateMetadata.getSelfPropertyOrPrimary());
-                                        EasySQLExpressionUtil.appendSelfExtraTargetProperty(sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable(), true);
-                                        EasySQLExpressionUtil.appendTargetExtraTargetProperty(entityNavigateMetadata, sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable(), true);
+                                        EasySQLExpressionUtil.appendSelfExtraTargetProperty(sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable());
+                                        EasySQLExpressionUtil.appendTargetExtraTargetProperty(entityNavigateMetadata, sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable());
                                     });
                                 }
                             }
@@ -1094,7 +1094,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         selectExpression.apply(sqlColumnSelector);
         //如果存在include那么需要对当前结果进行查询
         //todo include
-        EasySQLExpressionUtil.appendSelfExtraTargetProperty(entityQueryExpressionBuilder, sqlColumnSelector.getSQLNative(), sqlColumnSelector.getTable(), true);
+        EasySQLExpressionUtil.appendSelfExtraTargetProperty(entityQueryExpressionBuilder, sqlColumnSelector.getSQLNative(), sqlColumnSelector.getTable());
     }
 
     @Override

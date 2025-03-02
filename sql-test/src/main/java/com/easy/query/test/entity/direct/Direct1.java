@@ -33,4 +33,7 @@ public class Direct1 implements ProxyEntityAvailable<Direct1 , Direct1Proxy> {
 
     @Navigate(value = RelationTypeEnum.ManyToOne,directMapping = {"direct2","direct3","direct4"})
     private Direct4 direct4;
+
+    @Navigate(value = RelationTypeEnum.ManyToOne,directMapping = {"direct2","direct3","direct4","direct5"})
+    private Direct5 direct5;
 }

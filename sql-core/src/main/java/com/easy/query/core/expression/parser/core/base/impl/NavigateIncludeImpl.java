@@ -7,16 +7,24 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
+import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
+import com.easy.query.core.metadata.RelationExtraColumn;
+import com.easy.query.core.metadata.RelationExtraMetadata;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyOptionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
+
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 
 /**
  * create time 2023/6/18 10:48
@@ -50,8 +58,9 @@ public class NavigateIncludeImpl implements NavigateInclude {
 
                     ClientQueryable<?> query = navigateInclude.with(prop, groupSize);
                     NavigateMetadata navigateMetadata = navigateInclude.getIncludeNavigateParams().getNavigateMetadata();
+                    String nextProp = directMappingIterator.tryGetNextIgnoreBeforeStep();
                     getDirectMappingQueryable(printSQL, query, directMappingIterator, groupSize, navigateMetadata);
-                    return getDirectMappingQueryable(printSQL, query, navigateMetadata);
+                    return getDirectMappingQueryable(printSQL, query, navigateMetadata, nextProp);
                 });
             }
         }
@@ -66,13 +75,13 @@ public class NavigateIncludeImpl implements NavigateInclude {
 //        }
     }
 
-    private ClientQueryable<?> getDirectMappingQueryable(Boolean printSQL, ClientQueryable<?> query, NavigateMetadata navigateMetadata) {
-        QueryRuntimeContext runtimeContext = query.getRuntimeContext();
-        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = query.getSQLEntityExpressionBuilder();
+    private ClientQueryable<?> getDirectMappingQueryable(Boolean printSQL, ClientQueryable<?> query, NavigateMetadata navigateMetadata, String nextProp) {
         return query
                 .configure(s -> {
                     s.setPrintSQL(printSQL);
                     s.setPrintNavSQL(printSQL);
+                }).select(z -> {
+                    directIncludeSelector(z, navigateMetadata, nextProp);
                 });
 //        .select(z -> {
 //                    String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
@@ -91,6 +100,28 @@ public class NavigateIncludeImpl implements NavigateInclude {
 //                        o.column(targetMappingProperty);
 //                    }
 //                });
+    }
+
+
+    private void directIncludeSelector(ColumnSelector<?> columnSelector, NavigateMetadata navigateMetadata, String nextProp) {
+        String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
+        RelationExtraMetadata relationExtraMetadata = columnSelector.getEntityQueryExpressionBuilder().getExpressionContext().getRelationExtraMetadata();
+        LinkedHashSet<String> relationColumns = new LinkedHashSet<>(Arrays.asList(targetPropertiesOrPrimary));
+        if (nextProp != null) {
+            EntityMetadata nextEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType());
+            NavigateMetadata nextNavigateMetadata = nextEntityMetadata.getNavigateNotNull(nextProp);
+            String[] selfPropertiesOrPrimary = nextNavigateMetadata.getSelfPropertiesOrPrimary();
+            relationColumns.addAll(Arrays.asList(selfPropertiesOrPrimary));
+
+        }
+        for (String relationColumn : relationColumns) {
+            columnSelector.column(relationColumn);
+
+            ColumnMetadata columnMetadata = columnSelector.getEntityMetadata().getColumnNotNull(relationColumn);
+            String alias = "__relation__" + relationColumn;
+            RelationExtraColumn relationExtraColumn = relationExtraMetadata.getRelationExtraColumnMap().putIfAbsent(alias, new RelationExtraColumn(relationColumn, alias, columnMetadata, false));
+
+        }
     }
 
 
@@ -121,9 +152,9 @@ public class NavigateIncludeImpl implements NavigateInclude {
 
                 ClientQueryable<?> mappingQuery = runtimeContext.getSQLClientApiFactory().createQueryable(propNavigateMetadata.getNavigatePropertyType(), runtimeContext);
                 Boolean printSQL = EasyOptionUtil.isPrintNavSQL(expressionContext);
+                String nextProp = directMappingIterator.tryGetNextIgnoreBeforeStep();
                 getDirectMappingQueryable(printSQL, mappingQuery, directMappingIterator, groupSize, propNavigateMetadata);
-
-                EntityQueryExpressionBuilder sqlEntityExpressionBuilder = mappingQuery.getSQLEntityExpressionBuilder();
+//                EntityQueryExpressionBuilder sqlEntityExpressionBuilder = mappingQuery.getSQLEntityExpressionBuilder();
                 return mappingQuery
                         .configure(s -> {
                             s.setPrintSQL(printSQL);
@@ -131,12 +162,10 @@ public class NavigateIncludeImpl implements NavigateInclude {
                         }).where(t -> {
                             t.relationIn(navigateMetadata.getDirectMappingSelfPropertiesOrPrimary(runtimeContext), includeNavigateParams.getRelationIds());
                             propNavigateMetadata.predicateFilterApply(t);
+                        })
+                        .select(z -> {
+                            directIncludeSelector(z, propNavigateMetadata, nextProp);
                         });
-//                .select(z -> {
-////                                        z.column(entityNavigateMetadata.getSelfPropertyOrPrimary());
-//                            EasySQLExpressionUtil.appendSelfExtraTargetProperty(sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable(), false);
-//                            EasySQLExpressionUtil.appendTargetExtraTargetProperty(propNavigateMetadata, sqlEntityExpressionBuilder, z.getSQLNative(), z.getTable(), false);
-//                        });
             };
             includeNavigateParams.setMappingQueryableFunction(mappingQueryableFunction);
         } else if (RelationTypeEnum.ManyToMany == relationType && navigateMetadata.getMappingClass() != null) {//添加多对多中间表

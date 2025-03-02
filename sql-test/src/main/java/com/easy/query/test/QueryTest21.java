@@ -2,10 +2,25 @@ package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.configuration.dialect.AbstractSQLKeyword;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
+import com.easy.query.core.expression.builder.Filter;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.core.FilterContext;
+import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
+import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.expression.segment.impl.SQLColumnAsSegmentImpl;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.impl.AnonymousDefaultTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.impl.QueryExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
@@ -15,6 +30,8 @@ import com.easy.query.test.common.PageResult;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp14;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.navf.User;
+import com.easy.query.test.entity.navf.proxy.UserProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
@@ -27,6 +44,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * create time 2025/2/12 15:15
@@ -40,6 +58,54 @@ public class QueryTest21 extends BaseTest {
 
         EntityMetadata entityMetadata = easyEntityQuery.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(TestColumnUpper.class);
         System.out.println(entityMetadata);
+
+
+        List<User> list = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t_topic, t_blog) -> {
+                    t_topic.id().eq(t_topic.id());
+                })
+                .select((t_topic, t_blog) -> {
+                    return new UserProxy()
+                            .mobile().set(t_topic.id()) // 手机号码().set()
+                            .email().set(t_blog.title()); // 电子邮件
+                }).where(tUser -> {
+                    EntitySQLContext entitySQLContext = tUser.getEntitySQLContext();
+                    QueryExpressionBuilder entityExpressionBuilder = (QueryExpressionBuilder)entitySQLContext.getEntityExpressionBuilder();
+                    //这张表就是select生成的匿名table
+                    EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(0);
+                    AnonymousDefaultTableExpressionBuilder anonymousDefaultTableExpressionBuilder = (AnonymousDefaultTableExpressionBuilder) table;
+
+                    EntityQueryExpressionBuilder entityQueryExpressionBuilder = anonymousDefaultTableExpressionBuilder.getEntityQueryExpressionBuilder();
+                    //这个就是你的select字段
+                    SQLBuilderSegment projects = entityQueryExpressionBuilder.getProjects();
+                    //这个就是where
+                    PredicateSegment where = entityQueryExpressionBuilder.getWhere();
+                    SQLExpressionProvider<Object> sqlExpressionProvider = entityQueryExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory().createSQLExpressionProvider(0, entityQueryExpressionBuilder);
+                    FilterContext whereFilterContext = sqlExpressionProvider.getWhereFilterContext();
+
+                    Filter filter = whereFilterContext.getFilter();
+
+                    for (SQLSegment sqlSegment : projects.getSQLSegments()) {
+
+                        if(sqlSegment instanceof SQLEntityAliasSegment){
+                            SQLEntityAliasSegment sqlSegment1 = (SQLEntityAliasSegment) sqlSegment;
+                            if(Objects.equals("mobile",sqlSegment1.getAlias())){
+                                String propertyName = sqlSegment1.getPropertyName();
+                                TableAvailable table1 = sqlSegment1.getTable();
+                                filter.eq(table1,propertyName,"topic的mobile");
+                            }
+                            if(Objects.equals("email",sqlSegment1.getAlias())){
+                                String propertyName = sqlSegment1.getPropertyName();
+                                TableAvailable table1 = sqlSegment1.getTable();
+                                filter.eq(table1,propertyName,"blog的email");
+                            }
+                        }
+                    }
+
+
+                    System.out.println(entityExpressionBuilder);
+
+                }).toList();
     }
 
     @Test

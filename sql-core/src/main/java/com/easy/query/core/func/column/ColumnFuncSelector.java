@@ -18,6 +18,14 @@ import java.util.function.Function;
  */
 public interface ColumnFuncSelector {
     ColumnFuncSelector column(String property);
+
+    /**
+     * 使用{@link ColumnFuncSelector#column(TableAvailable, String)}
+     * @param tableOwner
+     * @param property
+     * @return
+     */
+    @Deprecated
     ColumnFuncSelector column(SQLTableOwner tableOwner, String property);
     ColumnFuncSelector column(TableAvailable table, String property);
     ColumnFuncSelector value(Object val);
