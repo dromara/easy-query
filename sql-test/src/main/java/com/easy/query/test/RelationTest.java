@@ -56,6 +56,7 @@ import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
 import com.easy.query.test.listener.ListenerContext;
 import lombok.var;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -71,7 +72,12 @@ import java.util.Objects;
  */
 public class RelationTest extends BaseTest {
 
-    public void relationInit(List<String> ids) {
+    @Before
+    public void relationInit() {
+
+        List<String> ids = Arrays.asList("1", "2", "3");
+
+        relationRemove(ids);
 
         easyQuery.deletable(SchoolStudent.class)
                 .whereByIds(ids).executeRows();
@@ -183,1540 +189,1455 @@ public class RelationTest extends BaseTest {
     }
 
     @Test
-    public void testOneToOne() {
-        List<String> ids = Arrays.asList("1", "2", "3");
+    public void testOneToOne1(){
+
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        System.out.println("------------------");
+//                easyQueryClient.queryable(SchoolClass.class)
+//                        .where(s -> s.sqlNativeSegment())
+
+        List<SchoolStudentAddress> list = easyEntityQuery.queryable(SchoolClass.class)
+                .toList(x -> x.schoolStudents().flatElement().schoolStudentAddress().schoolStudent().schoolStudentAddress());
+        for (SchoolStudentAddress schoolStudentAddress : list) {
+
+        }
+        System.out.println("------------------");
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `id`,`student_id` AS `__relation__studentId` FROM `school_student_address` WHERE `student_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_student` WHERE `id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT `id`,`student_id`,`address` FROM `school_student_address` WHERE `student_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+
+
+    @Test
+    public void testOneToOne2(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
+                .includes(s -> s.schoolStudents(), s -> {
+                    s.select(o -> o.FETCHER.name());
+                }).toList();
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT `id`,`name` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`name`,t.`class_id` AS `__relation__classId` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        System.out.println(list);
+    }
+    @Test
+    public void testOneToOne3(){
+
+        Exception e=null;
         try {
-            relationInit(ids);
 
+            List<SchoolStudentDTOAO222> list = easyEntityQuery.queryable(SchoolStudent2.class)
+                    .selectAutoInclude(SchoolStudentDTOAO222.class)
+                    .toList();
+        }catch (Exception ex){
+            e=ex;
+        }
+        Assert.assertNotNull(e);
+        Assert.assertEquals("The relationship value ‘SingleRelationValue{value=class1}’ appears to have duplicates: [SchoolStudentDTOAO222]. Please confirm whether the data represents a One or Many relationship.",e.getMessage());
 
-            {
+    }
+    @Test
+    public void testOneToOne4(){
 
-
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                System.out.println("------------------");
-//                easyQueryClient.queryable(SchoolClass.class)
-//                        .where(s -> s.sqlNativeSegment())
-
-                List<SchoolStudentAddress> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .toList(x -> x.schoolStudents().flatElement().schoolStudentAddress().schoolStudent().schoolStudentAddress());
-                for (SchoolStudentAddress schoolStudentAddress : list) {
-
-                }
-                System.out.println("------------------");
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
-
-                {
-
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `id`,`student_id` AS `__relation__studentId` FROM `school_student_address` WHERE `student_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_student` WHERE `id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT `id`,`student_id`,`address` FROM `school_student_address` WHERE `student_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        int i = 0;
+        List<SchoolClassAOProp15> list = easyEntityQuery.queryable(SchoolClass.class)
+                .configure(s->s.setPrintNavSQL(false))
+                .selectAutoInclude(SchoolClassAOProp15.class)
+                .toList();
+        for (SchoolClassAOProp15 schoolClassAOProp5 : list) {
+            for (SchoolClassAOProp15.SchoolStudentAO schoolStudentAO : schoolClassAOProp5.getSchoolTeachersClassList()) {
+                i++;
             }
-            {
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(s -> s.schoolStudents(), s -> {
-                            s.select(o -> o.FETCHER.name());
-                        }).toList();
+        }
+        Assert.assertTrue(i > 0);
 
-                {
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT `id`,`name` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT t.`name`,t.`class_id` AS `__relation__classId` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                System.out.println(list);
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT t.`id` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+
+    }
+    @Test
+    public void testOneToOne5(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        int i = 0;
+        List<SchoolClassAOProp14> list = easyEntityQuery.queryable(SchoolClass.class)
+                .configure(s->s.setPrintNavSQL(false))
+                .selectAutoInclude(SchoolClassAOProp14.class)
+                .toList();
+        for (SchoolClassAOProp14 schoolClassAOProp5 : list) {
+            for (SchoolClassAOProp14.SchoolStudentAO schoolStudentAO : schoolClassAOProp5.getSchoolTeachersClassList()) {
+                i++;
             }
+        }
+        Assert.assertTrue(i > 0);
 
-            {
-                Exception e=null;
-                try {
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
 
-                    List<SchoolStudentDTOAO222> list = easyEntityQuery.queryable(SchoolStudent2.class)
-                            .selectAutoInclude(SchoolStudentDTOAO222.class)
-                            .toList();
-                }catch (Exception ex){
-                    e=ex;
-                }
-                Assert.assertNotNull(e);
-                Assert.assertEquals("The relationship value ‘SingleRelationValue{value=class1}’ appears to have duplicates: [SchoolStudentDTOAO222]. Please confirm whether the data represents a One or Many relationship.",e.getMessage());
-            }
-            {
-                System.out.println("92");
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                int i = 0;
-                List<SchoolClassAOProp15> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .configure(s->s.setPrintNavSQL(false))
-                        .selectAutoInclude(SchoolClassAOProp15.class)
-                        .toList();
-                for (SchoolClassAOProp15 schoolClassAOProp5 : list) {
-                    for (SchoolClassAOProp15.SchoolStudentAO schoolStudentAO : schoolClassAOProp5.getSchoolTeachersClassList()) {
-                        i++;
-                    }
-                }
-                Assert.assertTrue(i > 0);
+        {
 
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
-
-                {
-
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT t.`id` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT t.`id` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
 
-                System.out.println("11");
+    }
+    @Test
+    public void testOneToOne6(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        int i = 0;
+        List<SchoolClassAOProp14> list = easyEntityQuery.queryable(SchoolClass.class)
+                .selectAutoInclude(SchoolClassAOProp14.class)
+                .toList();
+        for (SchoolClassAOProp14 schoolClassAOProp5 : list) {
+            for (SchoolClassAOProp14.SchoolStudentAO schoolStudentAO : schoolClassAOProp5.getSchoolTeachersClassList()) {
+                i++;
             }
+        }
+        Assert.assertTrue(i > 0);
 
-            {
-                System.out.println("91");
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                int i = 0;
-                List<SchoolClassAOProp14> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .configure(s->s.setPrintNavSQL(false))
-                        .selectAutoInclude(SchoolClassAOProp14.class)
-                        .toList();
-                for (SchoolClassAOProp14 schoolClassAOProp5 : list) {
-                    for (SchoolClassAOProp14.SchoolStudentAO schoolStudentAO : schoolClassAOProp5.getSchoolTeachersClassList()) {
-                        i++;
-                    }
-                }
-                Assert.assertTrue(i > 0);
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
 
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
 
-                {
-
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT t.`id` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT t.`id` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testOneToOne7(){
 
-                System.out.println("11");
-            }
-            {
-                System.out.println("9");
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                int i = 0;
-                List<SchoolClassAOProp14> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .selectAutoInclude(SchoolClassAOProp14.class)
-                        .toList();
-                for (SchoolClassAOProp14 schoolClassAOProp5 : list) {
-                    for (SchoolClassAOProp14.SchoolStudentAO schoolStudentAO : schoolClassAOProp5.getSchoolTeachersClassList()) {
-                        i++;
-                    }
-                }
-                Assert.assertTrue(i > 0);
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolStudentDTOAO111> list = easyEntityQuery.queryable(SchoolStudent.class)
+                .selectAutoInclude(SchoolStudentDTOAO111.class)
+                .toList();
 
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
 
-                {
+        {
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT t.`id` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-
-                System.out.println("1");
-            }
-            {
-                System.out.println("4");
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                List<SchoolStudentDTOAO111> list = easyEntityQuery.queryable(SchoolStudent.class)
-                        .selectAutoInclude(SchoolStudentDTOAO111.class)
-                        .toList();
-
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
-
-                {
-
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
 //                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `address`,`student_id` AS `__relation__studentId` FROM `school_student_address` WHERE `student_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `address`,`student_id` AS `__relation__studentId` FROM `school_student_address` WHERE `student_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
 
+    }
+    @Test
+    public void testOneToOne8(){
+
+        List<String> list = easyEntityQuery.queryable(SchoolClass.class)
+                .toList(x -> x.schoolTeachers().flatElement().name());
+
+
+        for (String s : list) {
+            System.out.println(s);
+        }
+        Assert.assertEquals("老师1",list.get(0));
+        Assert.assertEquals("老师2",list.get(1));
+    }
+    @Test
+    public void testOneToOne9(){
+
+        boolean exception = true;
+        try {
+            List<SchoolClassAOProp12> list = easyEntityQuery.queryable(SchoolClass.class)
+                    .selectAutoInclude(SchoolClassAOProp12.class)
+                    .toList();
+            exception = false;
+
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
+            Assert.assertEquals("@NavigateFlat cannot simultaneously include non-database related objects: [SchoolStudentAO] and its object properties.", ex.getMessage());
+        }
+        Assert.assertTrue(exception);
+    }
+    @Test
+    public void testOneToOne10(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        int i = 0;
+        List<SchoolClassAOProp5> list = easyEntityQuery.queryable(SchoolClass.class)
+                .selectAutoInclude(SchoolClassAOProp5.class)
+                .toList();
+        for (SchoolClassAOProp5 schoolClassAOProp5 : list) {
+            for (SchoolClassAOProp5.SchoolStudentAO schoolStudentAO : schoolClassAOProp5.getSchoolTeachersClassList()) {
+                i++;
             }
+        }
+        Assert.assertTrue(i > 0);
 
-            {
-                List<String> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .toList(x -> x.schoolTeachers().flatElement().name());
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
 
+        {
 
-                for (String s : list) {
-                    System.out.println(s);
-                }
-                Assert.assertEquals("老师1",list.get(0));
-                Assert.assertEquals("老师2",list.get(1));
-            }
-            {
-                System.out.println("4");
-                boolean exception = true;
-                try {
-                    List<SchoolClassAOProp12> list = easyEntityQuery.queryable(SchoolClass.class)
-                            .selectAutoInclude(SchoolClassAOProp12.class)
-                            .toList();
-                    exception = false;
-
-                } catch (Exception ex) {
-                    Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
-                    Assert.assertEquals("@NavigateFlat cannot simultaneously include non-database related objects: [SchoolStudentAO] and its object properties.", ex.getMessage());
-                }
-                Assert.assertTrue(exception);
-                System.out.println("1");
-
-            }
-
-            {
-                System.out.println("4");
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                int i = 0;
-                List<SchoolClassAOProp5> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .selectAutoInclude(SchoolClassAOProp5.class)
-                        .toList();
-                for (SchoolClassAOProp5 schoolClassAOProp5 : list) {
-                    for (SchoolClassAOProp5.SchoolStudentAO schoolStudentAO : schoolClassAOProp5.getSchoolTeachersClassList()) {
-                        i++;
-                    }
-                }
-                Assert.assertTrue(i > 0);
-
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
-
-                {
-
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT t.`id` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT t.`id` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testOneToOne11(){
 
-                System.out.println("1");
+        boolean exception = true;
+        try {
+            List<SchoolStudentDTOxxx> list = easyEntityQuery.queryable(SchoolStudent.class)
+                    .selectAutoInclude(SchoolStudentDTOxxx.class)
+                    .toList();
+            exception = false;
+
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
+            Assert.assertEquals("In the selectAutoInclude query, the relational property [schoolClass] of the class [SchoolStudentDTOxxx] should appear in both @Navigate and @NavigateFlat.", ex.getMessage());
+        }
+        Assert.assertTrue(exception);
+    }
+    @Test
+    public void testOneToOne12(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolClassAOProp9> list = easyEntityQuery.queryable(SchoolClass.class)
+                .selectAutoInclude(SchoolClassAOProp9.class)
+                .toList();
+        for (SchoolClassAOProp9 schoolClassAOProp2 : list) {
+            List<String> schoolStudentsIds = schoolClassAOProp2.getSchoolStudentsIds();
+            List<String> schoolTeachersClassId1s = schoolClassAOProp2.getSchoolTeachersClassId1s();
+            List<SchoolClass> schoolTeachersClassList = schoolClassAOProp2.getSchoolTeachersClassList();
+            Assert.assertNull(schoolClassAOProp2.getName1());
+            if (schoolClassAOProp2.getName().equals("班级1")) {
+                Assert.assertTrue(schoolStudentsIds.contains("1"));
+                Assert.assertTrue(schoolStudentsIds.contains("3"));
+                Assert.assertEquals(2, schoolStudentsIds.size());
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
+                Assert.assertEquals(2, schoolTeachersClassId1s.size());
+                Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
+                Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
+                Assert.assertEquals(2, schoolTeachersClassList.size());
+            } else if (schoolClassAOProp2.getName().equals("班级2")) {
+                Assert.assertTrue(schoolStudentsIds.contains("2"));
+                Assert.assertEquals(1, schoolStudentsIds.size());
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
+                Assert.assertEquals(2, schoolTeachersClassId1s.size());
+                Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
+                Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
+                Assert.assertEquals(2, schoolTeachersClassList.size());
+            } else {
+                Assert.assertTrue(schoolStudentsIds.isEmpty());
             }
-            {
-                System.out.println("4");
-                boolean exception = true;
-                try {
-                    List<SchoolStudentDTOxxx> list = easyEntityQuery.queryable(SchoolStudent.class)
-                            .selectAutoInclude(SchoolStudentDTOxxx.class)
-                            .toList();
-                    exception = false;
 
-                } catch (Exception ex) {
-                    Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
-                    Assert.assertEquals("In the selectAutoInclude query, the relational property [schoolClass] of the class [SchoolStudentDTOxxx] should appear in both @Navigate and @NavigateFlat.", ex.getMessage());
-                }
-                Assert.assertTrue(exception);
-                System.out.println("1");
+        }
 
-            }
-            {
-                System.out.println("6");
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                List<SchoolClassAOProp9> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .selectAutoInclude(SchoolClassAOProp9.class)
-                        .toList();
-                for (SchoolClassAOProp9 schoolClassAOProp2 : list) {
-                    List<String> schoolStudentsIds = schoolClassAOProp2.getSchoolStudentsIds();
-                    List<String> schoolTeachersClassId1s = schoolClassAOProp2.getSchoolTeachersClassId1s();
-                    List<SchoolClass> schoolTeachersClassList = schoolClassAOProp2.getSchoolTeachersClassList();
-                    Assert.assertNull(schoolClassAOProp2.getName1());
-                    if (schoolClassAOProp2.getName().equals("班级1")) {
-                        Assert.assertTrue(schoolStudentsIds.contains("1"));
-                        Assert.assertTrue(schoolStudentsIds.contains("3"));
-                        Assert.assertEquals(2, schoolStudentsIds.size());
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
-                        Assert.assertEquals(2, schoolTeachersClassId1s.size());
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
-                        Assert.assertEquals(2, schoolTeachersClassList.size());
-                    } else if (schoolClassAOProp2.getName().equals("班级2")) {
-                        Assert.assertTrue(schoolStudentsIds.contains("2"));
-                        Assert.assertEquals(1, schoolStudentsIds.size());
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
-                        Assert.assertEquals(2, schoolTeachersClassId1s.size());
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
-                        Assert.assertEquals(2, schoolTeachersClassList.size());
-                    } else {
-                        Assert.assertTrue(schoolStudentsIds.isEmpty());
-                    }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
 
-                }
+        {
 
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
-
-                {
-
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t1.`stars` AS `name1`,t.`name`,t.`id` AS `__relation__id` FROM `school_class` t LEFT JOIN `t_topic` t1 ON t1.`id` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t1.`stars` AS `name1`,t.`name`,t.`id` AS `__relation__id` FROM `school_class` t LEFT JOIN `t_topic` t1 ON t1.`id` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
-                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                System.out.println("1");
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testOneToOne13(){
 
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolClassAOProp9> list = easyEntityQuery.queryable(SchoolClass.class)
+                .where(s -> {
+                    s.or(()->{
+                        s.topic().title().ne("123xxxxx123");
+                        s.topic().id().isNull();
+                    });
+                })
+                .selectAutoInclude(SchoolClassAOProp9.class)
+                .toList();
+        for (SchoolClassAOProp9 schoolClassAOProp2 : list) {
+            List<String> schoolStudentsIds = schoolClassAOProp2.getSchoolStudentsIds();
+            List<String> schoolTeachersClassId1s = schoolClassAOProp2.getSchoolTeachersClassId1s();
+            List<SchoolClass> schoolTeachersClassList = schoolClassAOProp2.getSchoolTeachersClassList();
+            Assert.assertNull(schoolClassAOProp2.getName1());
+            if (schoolClassAOProp2.getName().equals("班级1")) {
+                Assert.assertTrue(schoolStudentsIds.contains("1"));
+                Assert.assertTrue(schoolStudentsIds.contains("3"));
+                Assert.assertEquals(2, schoolStudentsIds.size());
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
+                Assert.assertEquals(2, schoolTeachersClassId1s.size());
+                Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
+                Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
+                Assert.assertEquals(2, schoolTeachersClassList.size());
+            } else if (schoolClassAOProp2.getName().equals("班级2")) {
+                Assert.assertTrue(schoolStudentsIds.contains("2"));
+                Assert.assertEquals(1, schoolStudentsIds.size());
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
+                Assert.assertEquals(2, schoolTeachersClassId1s.size());
+                Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
+                Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
+                Assert.assertEquals(2, schoolTeachersClassList.size());
+            } else {
+                Assert.assertTrue(schoolStudentsIds.isEmpty());
             }
 
-            {
-                System.out.println("6");
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                List<SchoolClassAOProp9> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .where(s -> {
-                            s.or(()->{
-                                s.topic().title().ne("123xxxxx123");
-                                s.topic().id().isNull();
-                            });
-                        })
-                        .selectAutoInclude(SchoolClassAOProp9.class)
-                        .toList();
-                for (SchoolClassAOProp9 schoolClassAOProp2 : list) {
-                    List<String> schoolStudentsIds = schoolClassAOProp2.getSchoolStudentsIds();
-                    List<String> schoolTeachersClassId1s = schoolClassAOProp2.getSchoolTeachersClassId1s();
-                    List<SchoolClass> schoolTeachersClassList = schoolClassAOProp2.getSchoolTeachersClassList();
-                    Assert.assertNull(schoolClassAOProp2.getName1());
-                    if (schoolClassAOProp2.getName().equals("班级1")) {
-                        Assert.assertTrue(schoolStudentsIds.contains("1"));
-                        Assert.assertTrue(schoolStudentsIds.contains("3"));
-                        Assert.assertEquals(2, schoolStudentsIds.size());
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
-                        Assert.assertEquals(2, schoolTeachersClassId1s.size());
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
-                        Assert.assertEquals(2, schoolTeachersClassList.size());
-                    } else if (schoolClassAOProp2.getName().equals("班级2")) {
-                        Assert.assertTrue(schoolStudentsIds.contains("2"));
-                        Assert.assertEquals(1, schoolStudentsIds.size());
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
-                        Assert.assertEquals(2, schoolTeachersClassId1s.size());
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
-                        Assert.assertEquals(2, schoolTeachersClassList.size());
-                    } else {
-                        Assert.assertTrue(schoolStudentsIds.isEmpty());
-                    }
+        }
 
-                }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
 
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
 
-                {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t1.`stars` AS `name1`,t.`name`,t.`id` AS `__relation__id` FROM `school_class` t LEFT JOIN `t_topic` t1 ON t1.`id` = t.`id` WHERE (t1.`title` <> ? OR t1.`id` IS NULL)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("123xxxxx123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testOneToOne14(){
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t1.`stars` AS `name1`,t.`name`,t.`id` AS `__relation__id` FROM `school_class` t LEFT JOIN `t_topic` t1 ON t1.`id` = t.`id` WHERE (t1.`title` <> ? OR t1.`id` IS NULL)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("123xxxxx123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
-                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                System.out.println("1");
-
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolClassAOProp11> list = easyEntityQuery.queryable(SchoolClass.class)
+                .selectAutoInclude(SchoolClassAOProp11.class)
+                .toList();
+        for (SchoolClassAOProp11 schoolClassAOProp2 : list) {
+            List<String> schoolStudentsIds = schoolClassAOProp2.getSchoolStudentsIds();
+            List<String> schoolTeachersClassIds = schoolClassAOProp2.getSchoolTeachersClassIds();
+            List<String> schoolTeachersClassId1s = schoolClassAOProp2.getSchoolTeachersClassId1s();
+            if (schoolClassAOProp2.getName().equals("班级1")) {
+                Assert.assertTrue(schoolStudentsIds.contains("1"));
+                Assert.assertTrue(schoolStudentsIds.contains("3"));
+                Assert.assertEquals(2, schoolStudentsIds.size());
+                Assert.assertTrue(schoolTeachersClassIds.contains("class1"));
+                Assert.assertTrue(schoolTeachersClassIds.contains("class2"));
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
+                Assert.assertEquals(2, schoolTeachersClassIds.size());
+            } else if (schoolClassAOProp2.getName().equals("班级2")) {
+                Assert.assertTrue(schoolStudentsIds.contains("2"));
+                Assert.assertEquals(1, schoolStudentsIds.size());
+                Assert.assertTrue(schoolTeachersClassIds.contains("class1"));
+                Assert.assertTrue(schoolTeachersClassIds.contains("class2"));
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
+                Assert.assertEquals(2, schoolTeachersClassIds.size());
+            } else {
+                Assert.assertTrue(schoolStudentsIds.isEmpty());
             }
-            {
-                System.out.println("2");
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                List<SchoolClassAOProp11> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .selectAutoInclude(SchoolClassAOProp11.class)
-                        .toList();
-                for (SchoolClassAOProp11 schoolClassAOProp2 : list) {
-                    List<String> schoolStudentsIds = schoolClassAOProp2.getSchoolStudentsIds();
-                    List<String> schoolTeachersClassIds = schoolClassAOProp2.getSchoolTeachersClassIds();
-                    List<String> schoolTeachersClassId1s = schoolClassAOProp2.getSchoolTeachersClassId1s();
-                    if (schoolClassAOProp2.getName().equals("班级1")) {
-                        Assert.assertTrue(schoolStudentsIds.contains("1"));
-                        Assert.assertTrue(schoolStudentsIds.contains("3"));
-                        Assert.assertEquals(2, schoolStudentsIds.size());
-                        Assert.assertTrue(schoolTeachersClassIds.contains("class1"));
-                        Assert.assertTrue(schoolTeachersClassIds.contains("class2"));
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
-                        Assert.assertEquals(2, schoolTeachersClassIds.size());
-                    } else if (schoolClassAOProp2.getName().equals("班级2")) {
-                        Assert.assertTrue(schoolStudentsIds.contains("2"));
-                        Assert.assertEquals(1, schoolStudentsIds.size());
-                        Assert.assertTrue(schoolTeachersClassIds.contains("class1"));
-                        Assert.assertTrue(schoolTeachersClassIds.contains("class2"));
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
-                        Assert.assertEquals(2, schoolTeachersClassIds.size());
-                    } else {
-                        Assert.assertTrue(schoolStudentsIds.isEmpty());
-                    }
 
-                }
+        }
 
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
 
-                {
+        {
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
-                    Assert.assertEquals("SELECT `id`,`name` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                System.out.println("1");
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
+            Assert.assertEquals("SELECT `id`,`name` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testOneToOne15(){
 
-            }
-            {
-                System.out.println("4");
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                List<SchoolClassAOProp10> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .selectAutoInclude(SchoolClassAOProp10.class)
-                        .toList();
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolClassAOProp10> list = easyEntityQuery.queryable(SchoolClass.class)
+                .selectAutoInclude(SchoolClassAOProp10.class)
+                .toList();
 
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
 
-                {
+        {
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT t.`id`,t.`name`,t1.`address` AS `stu_address`,t.`class_id` AS `__relation__classId` FROM `school_student` t LEFT JOIN `school_student_address` t1 ON t1.`student_id` = t.`id` WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `name`,`id` AS `__relation__id` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t1.`address` AS `stu_address`,t.`class_id` AS `__relation__classId` FROM `school_student` t LEFT JOIN `school_student_address` t1 ON t1.`student_id` = t.`id` WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `name`,`id` AS `__relation__id` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testOneToOne16(){
 
-            }
-            {
-                System.out.println("4");
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                List<SchoolClassAOProp16> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .selectAutoInclude(SchoolClassAOProp16.class)
-                        .toList();
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolClassAOProp16> list = easyEntityQuery.queryable(SchoolClass.class)
+                .selectAutoInclude(SchoolClassAOProp16.class)
+                .toList();
 
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
 
-                {
+        {
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT t.`id`,t.`name`,t1.`address` AS `stu_address`,t.`class_id` AS `__relation__classId` FROM `school_student` t LEFT JOIN `school_student_address` t1 ON t1.`student_id` = t.`id` WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `name`,`id` AS `__relation__id` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t1.`address` AS `stu_address`,t.`class_id` AS `__relation__classId` FROM `school_student` t LEFT JOIN `school_student_address` t1 ON t1.`student_id` = t.`id` WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `name`,`id` AS `__relation__id` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
 
-            }
+    }
+    @Test
+    public void testOneToOne17(){
 
-            {
-                List<SchoolClassVO> list = easyEntityQuery.queryable(SchoolStudent.class)
-                        .where(s -> s.name().like("123"))
-                        .select(SchoolClassVO.class, x -> x.schoolStudentAddress().FETCHER.allFields())
-                        .toList();
-            }
-            {
-                System.out.println("4");
-                boolean exception = true;
-                try {
-                    List<SchoolClassAOProp8> list = easyEntityQuery.queryable(SchoolClass.class)
-                            .selectAutoInclude(SchoolClassAOProp8.class)
-                            .toList();
-                    boolean anyMatch1 = list.stream().anyMatch(o -> o.getSchoolStudents().size() > 0);
-                    Assert.assertTrue(anyMatch1);
-                    for (SchoolClassAOProp8 schoolClassAOProp8 : list) {
-                        if (!schoolClassAOProp8.getSchoolStudents().isEmpty()) {
-                            boolean anyMatch = schoolClassAOProp8.getSchoolStudents().stream().anyMatch(o -> o.getClassNames().size() > 0);
-                            Assert.assertTrue(anyMatch);
-                        }
-                        for (SchoolClassAOProp8.SchoolStudentAO schoolStudentAO : schoolClassAOProp8.getSchoolStudents()) {
-                            for (String className : schoolStudentAO.getClassNames()) {
+        List<SchoolClassVO> list = easyEntityQuery.queryable(SchoolStudent.class)
+                .where(s -> s.name().like("123"))
+                .select(SchoolClassVO.class, x -> x.schoolStudentAddress().FETCHER.allFields())
+                .toList();
+    }
+    @Test
+    public void testOneToOne18(){
 
-                            }
-                        }
-                    }
-                    exception = false;
+        boolean exception = true;
+        try {
+            List<SchoolClassAOProp8> list = easyEntityQuery.queryable(SchoolClass.class)
+                    .selectAutoInclude(SchoolClassAOProp8.class)
+                    .toList();
+            boolean anyMatch1 = list.stream().anyMatch(o -> o.getSchoolStudents().size() > 0);
+            Assert.assertTrue(anyMatch1);
+            for (SchoolClassAOProp8 schoolClassAOProp8 : list) {
+                if (!schoolClassAOProp8.getSchoolStudents().isEmpty()) {
+                    boolean anyMatch = schoolClassAOProp8.getSchoolStudents().stream().anyMatch(o -> o.getClassNames().size() > 0);
+                    Assert.assertTrue(anyMatch);
+                }
+                for (SchoolClassAOProp8.SchoolStudentAO schoolStudentAO : schoolClassAOProp8.getSchoolStudents()) {
+                    for (String className : schoolStudentAO.getClassNames()) {
 
-                } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
-                    exception = true;
-                }
-                Assert.assertFalse(exception);
-                System.out.println("1");
-
-            }
-            {
-                boolean exception = true;
-                try {
-
-                    List<String> list = easyEntityQuery.queryable(SchoolStudent.class)
-                            .toList(x -> x.schoolStudentAddress().address());
-                    exception = false;
-                } catch (Exception ex) {
-                    Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
-                    Assert.assertEquals(ex.getMessage(), "flatElement result only allowed use in toList");
-                }
-                Assert.assertTrue(exception);
-                System.out.println(1);
-            }
-            {
-                System.out.println("6");
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                List<SchoolClassAOProp6> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .leftJoin(Topic.class, (s, t2) -> s.id().eq(t2.id()))
-                        .selectAutoInclude(SchoolClassAOProp6.class, (s, t2) -> Select.of(
-                                t2.stars().nullOrDefault(1).as(SchoolClassAOProp6::getName1)
-                        ))
-                        .toList();
-                for (SchoolClassAOProp6 schoolClassAOProp2 : list) {
-                    List<String> schoolStudentsIds = schoolClassAOProp2.getSchoolStudentsIds();
-                    List<String> schoolTeachersClassId1s = schoolClassAOProp2.getSchoolTeachersClassId1s();
-                    List<SchoolClass> schoolTeachersClassList = schoolClassAOProp2.getSchoolTeachersClassList();
-                    Assert.assertEquals("1", schoolClassAOProp2.getName1());
-                    if (schoolClassAOProp2.getName().equals("班级1")) {
-                        Assert.assertTrue(schoolStudentsIds.contains("1"));
-                        Assert.assertTrue(schoolStudentsIds.contains("3"));
-                        Assert.assertEquals(2, schoolStudentsIds.size());
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
-                        Assert.assertEquals(2, schoolTeachersClassId1s.size());
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
-                        Assert.assertEquals(2, schoolTeachersClassList.size());
-                    } else if (schoolClassAOProp2.getName().equals("班级2")) {
-                        Assert.assertTrue(schoolStudentsIds.contains("2"));
-                        Assert.assertEquals(1, schoolStudentsIds.size());
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
-                        Assert.assertEquals(2, schoolTeachersClassId1s.size());
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
-                        Assert.assertEquals(2, schoolTeachersClassList.size());
-                    } else {
-                        Assert.assertTrue(schoolStudentsIds.isEmpty());
-                    }
-
-                }
-
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
-
-                {
-
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT IFNULL(t1.`stars`,?) AS `name1`,t.`name`,t.`id` AS `__relation__id` FROM `school_class` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
-                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                System.out.println("1");
-
-            }
-            {
-                System.out.println("3");
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                List<SchoolClassAOProp4> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .selectAutoInclude(SchoolClassAOProp4.class)
-                        .toList();
-                for (SchoolClassAOProp4 schoolClassAOProp2 : list) {
-                    List<String> schoolStudentsIds = schoolClassAOProp2.getSchoolStudentsIds();
-                    List<String> schoolTeachersClassIds = schoolClassAOProp2.getSchoolTeachersClassIds();
-                    List<String> schoolTeachersClassId1s = schoolClassAOProp2.getSchoolTeachersClassId1s();
-                    List<SchoolClass> schoolTeachersClassList = schoolClassAOProp2.getSchoolTeachersClassList();
-                    if (schoolClassAOProp2.getName().equals("班级1")) {
-                        Assert.assertTrue(schoolStudentsIds.contains("1"));
-                        Assert.assertTrue(schoolStudentsIds.contains("3"));
-                        Assert.assertEquals(2, schoolStudentsIds.size());
-                        Assert.assertTrue(schoolTeachersClassIds.contains("class1"));
-                        Assert.assertTrue(schoolTeachersClassIds.contains("class2"));
-                        Assert.assertEquals(2, schoolTeachersClassIds.size());
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
-                        Assert.assertEquals(2, schoolTeachersClassId1s.size());
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
-                        Assert.assertEquals(2, schoolTeachersClassList.size());
-                    } else if (schoolClassAOProp2.getName().equals("班级2")) {
-                        Assert.assertTrue(schoolStudentsIds.contains("2"));
-                        Assert.assertEquals(1, schoolStudentsIds.size());
-                        Assert.assertTrue(schoolTeachersClassIds.contains("class1"));
-                        Assert.assertTrue(schoolTeachersClassIds.contains("class2"));
-                        Assert.assertEquals(2, schoolTeachersClassIds.size());
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
-                        Assert.assertEquals(2, schoolTeachersClassId1s.size());
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
-                        Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
-                        Assert.assertEquals(2, schoolTeachersClassList.size());
-                    } else {
-                        Assert.assertTrue(schoolStudentsIds.isEmpty());
-                    }
-
-                }
-
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
-
-                {
-
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
-                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                System.out.println("1");
-
-            }
-            {
-                System.out.println("2");
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                List<SchoolClassAOProp3> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .selectAutoInclude(SchoolClassAOProp3.class)
-                        .toList();
-                for (SchoolClassAOProp3 schoolClassAOProp2 : list) {
-                    List<String> schoolStudentsIds = schoolClassAOProp2.getSchoolStudentsIds();
-                    List<String> schoolTeachersClassIds = schoolClassAOProp2.getSchoolTeachersClassIds();
-                    List<String> schoolTeachersClassId1s = schoolClassAOProp2.getSchoolTeachersClassId1s();
-                    if (schoolClassAOProp2.getName().equals("班级1")) {
-                        Assert.assertTrue(schoolStudentsIds.contains("1"));
-                        Assert.assertTrue(schoolStudentsIds.contains("3"));
-                        Assert.assertEquals(2, schoolStudentsIds.size());
-                        Assert.assertTrue(schoolTeachersClassIds.contains("class1"));
-                        Assert.assertTrue(schoolTeachersClassIds.contains("class2"));
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
-                        Assert.assertEquals(2, schoolTeachersClassIds.size());
-                    } else if (schoolClassAOProp2.getName().equals("班级2")) {
-                        Assert.assertTrue(schoolStudentsIds.contains("2"));
-                        Assert.assertEquals(1, schoolStudentsIds.size());
-                        Assert.assertTrue(schoolTeachersClassIds.contains("class1"));
-                        Assert.assertTrue(schoolTeachersClassIds.contains("class2"));
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
-                        Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
-                        Assert.assertEquals(2, schoolTeachersClassIds.size());
-                    } else {
-                        Assert.assertTrue(schoolStudentsIds.isEmpty());
-                    }
-
-                }
-
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
-
-                {
-
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
-                    Assert.assertEquals("SELECT `id`,`name` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                System.out.println("1");
-
-            }
-            {
-                System.out.println("1");
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                List<SchoolClassAOProp2> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .selectAutoInclude(SchoolClassAOProp2.class)
-                        .toList();
-                for (SchoolClassAOProp2 schoolClassAOProp2 : list) {
-                    List<String> schoolStudentsIds = schoolClassAOProp2.getSchoolStudentsIds();
-                    List<String> schoolTeachersClassIds = schoolClassAOProp2.getSchoolTeachersClassIds();
-                    if (schoolClassAOProp2.getName().equals("班级1")) {
-                        Assert.assertTrue(schoolStudentsIds.contains("1"));
-                        Assert.assertTrue(schoolStudentsIds.contains("3"));
-                        Assert.assertEquals(2, schoolStudentsIds.size());
-                        Assert.assertTrue(schoolTeachersClassIds.contains("class1"));
-                        Assert.assertTrue(schoolTeachersClassIds.contains("class2"));
-                        Assert.assertEquals(2, schoolTeachersClassIds.size());
-                    } else if (schoolClassAOProp2.getName().equals("班级2")) {
-                        Assert.assertTrue(schoolStudentsIds.contains("2"));
-                        Assert.assertEquals(1, schoolStudentsIds.size());
-                        Assert.assertTrue(schoolTeachersClassIds.contains("class1"));
-                        Assert.assertTrue(schoolTeachersClassIds.contains("class2"));
-                        Assert.assertEquals(2, schoolTeachersClassIds.size());
-                    } else {
-                        Assert.assertTrue(schoolStudentsIds.isEmpty());
-                    }
-
-                }
-
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
-
-                {
-
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
-                    Assert.assertEquals("SELECT `id` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                System.out.println("1");
-
-            }
-            {
-                System.out.println("1");
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                List<SchoolClassAOProp> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .selectAutoInclude(SchoolClassAOProp.class)
-                        .toList();
-                for (SchoolClassAOProp schoolClassAOProp : list) {
-                    List<String> schoolStudentsIds = schoolClassAOProp.getSchoolStudentsIds();
-                    if (schoolClassAOProp.getName().equals("班级1")) {
-                        Assert.assertTrue(schoolStudentsIds.contains("1"));
-                        Assert.assertTrue(schoolStudentsIds.contains("3"));
-                        Assert.assertEquals(2, schoolStudentsIds.size());
-                    } else if (schoolClassAOProp.getName().equals("班级2")) {
-                        Assert.assertTrue(schoolStudentsIds.contains("2"));
-                        Assert.assertEquals(1, schoolStudentsIds.size());
-                    } else {
-                        Assert.assertTrue(schoolStudentsIds.isEmpty());
                     }
                 }
-
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
-
-                {
-
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                System.out.println("1");
-
             }
-            {
+            exception = false;
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            exception = true;
+        }
+        Assert.assertFalse(exception);
+    }
+    @Test
+    public void testOneToOne19(){
+
+        boolean exception = true;
+        try {
+
+            List<String> list = easyEntityQuery.queryable(SchoolStudent.class)
+                    .toList(x -> x.schoolStudentAddress().address());
+            exception = false;
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
+            Assert.assertEquals(ex.getMessage(), "flatElement result only allowed use in toList");
+        }
+        Assert.assertTrue(exception);
+    }
+    @Test
+    public void testOneToOne20(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolClassAOProp6> list = easyEntityQuery.queryable(SchoolClass.class)
+                .leftJoin(Topic.class, (s, t2) -> s.id().eq(t2.id()))
+                .selectAutoInclude(SchoolClassAOProp6.class, (s, t2) -> Select.of(
+                        t2.stars().nullOrDefault(1).as(SchoolClassAOProp6::getName1)
+                ))
+                .toList();
+        for (SchoolClassAOProp6 schoolClassAOProp2 : list) {
+            List<String> schoolStudentsIds = schoolClassAOProp2.getSchoolStudentsIds();
+            List<String> schoolTeachersClassId1s = schoolClassAOProp2.getSchoolTeachersClassId1s();
+            List<SchoolClass> schoolTeachersClassList = schoolClassAOProp2.getSchoolTeachersClassList();
+            Assert.assertEquals("1", schoolClassAOProp2.getName1());
+            if (schoolClassAOProp2.getName().equals("班级1")) {
+                Assert.assertTrue(schoolStudentsIds.contains("1"));
+                Assert.assertTrue(schoolStudentsIds.contains("3"));
+                Assert.assertEquals(2, schoolStudentsIds.size());
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
+                Assert.assertEquals(2, schoolTeachersClassId1s.size());
+                Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
+                Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
+                Assert.assertEquals(2, schoolTeachersClassList.size());
+            } else if (schoolClassAOProp2.getName().equals("班级2")) {
+                Assert.assertTrue(schoolStudentsIds.contains("2"));
+                Assert.assertEquals(1, schoolStudentsIds.size());
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
+                Assert.assertEquals(2, schoolTeachersClassId1s.size());
+                Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
+                Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
+                Assert.assertEquals(2, schoolTeachersClassList.size());
+            } else {
+                Assert.assertTrue(schoolStudentsIds.isEmpty());
+            }
+
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT IFNULL(t1.`stars`,?) AS `name1`,t.`name`,t.`id` AS `__relation__id` FROM `school_class` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testOneToOne21(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolClassAOProp4> list = easyEntityQuery.queryable(SchoolClass.class)
+                .selectAutoInclude(SchoolClassAOProp4.class)
+                .toList();
+        for (SchoolClassAOProp4 schoolClassAOProp2 : list) {
+            List<String> schoolStudentsIds = schoolClassAOProp2.getSchoolStudentsIds();
+            List<String> schoolTeachersClassIds = schoolClassAOProp2.getSchoolTeachersClassIds();
+            List<String> schoolTeachersClassId1s = schoolClassAOProp2.getSchoolTeachersClassId1s();
+            List<SchoolClass> schoolTeachersClassList = schoolClassAOProp2.getSchoolTeachersClassList();
+            if (schoolClassAOProp2.getName().equals("班级1")) {
+                Assert.assertTrue(schoolStudentsIds.contains("1"));
+                Assert.assertTrue(schoolStudentsIds.contains("3"));
+                Assert.assertEquals(2, schoolStudentsIds.size());
+                Assert.assertTrue(schoolTeachersClassIds.contains("class1"));
+                Assert.assertTrue(schoolTeachersClassIds.contains("class2"));
+                Assert.assertEquals(2, schoolTeachersClassIds.size());
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
+                Assert.assertEquals(2, schoolTeachersClassId1s.size());
+                Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
+                Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
+                Assert.assertEquals(2, schoolTeachersClassList.size());
+            } else if (schoolClassAOProp2.getName().equals("班级2")) {
+                Assert.assertTrue(schoolStudentsIds.contains("2"));
+                Assert.assertEquals(1, schoolStudentsIds.size());
+                Assert.assertTrue(schoolTeachersClassIds.contains("class1"));
+                Assert.assertTrue(schoolTeachersClassIds.contains("class2"));
+                Assert.assertEquals(2, schoolTeachersClassIds.size());
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
+                Assert.assertEquals(2, schoolTeachersClassId1s.size());
+                Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class1", o.getId()) && Objects.equals("班级1", o.getName())));
+                Assert.assertTrue(schoolTeachersClassList.stream().anyMatch(o -> Objects.equals("class2", o.getId()) && Objects.equals("班级2", o.getName())));
+                Assert.assertEquals(2, schoolTeachersClassList.size());
+            } else {
+                Assert.assertTrue(schoolStudentsIds.isEmpty());
+            }
+
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testOneToOne22(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolClassAOProp3> list = easyEntityQuery.queryable(SchoolClass.class)
+                .selectAutoInclude(SchoolClassAOProp3.class)
+                .toList();
+        for (SchoolClassAOProp3 schoolClassAOProp2 : list) {
+            List<String> schoolStudentsIds = schoolClassAOProp2.getSchoolStudentsIds();
+            List<String> schoolTeachersClassIds = schoolClassAOProp2.getSchoolTeachersClassIds();
+            List<String> schoolTeachersClassId1s = schoolClassAOProp2.getSchoolTeachersClassId1s();
+            if (schoolClassAOProp2.getName().equals("班级1")) {
+                Assert.assertTrue(schoolStudentsIds.contains("1"));
+                Assert.assertTrue(schoolStudentsIds.contains("3"));
+                Assert.assertEquals(2, schoolStudentsIds.size());
+                Assert.assertTrue(schoolTeachersClassIds.contains("class1"));
+                Assert.assertTrue(schoolTeachersClassIds.contains("class2"));
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
+                Assert.assertEquals(2, schoolTeachersClassIds.size());
+            } else if (schoolClassAOProp2.getName().equals("班级2")) {
+                Assert.assertTrue(schoolStudentsIds.contains("2"));
+                Assert.assertEquals(1, schoolStudentsIds.size());
+                Assert.assertTrue(schoolTeachersClassIds.contains("class1"));
+                Assert.assertTrue(schoolTeachersClassIds.contains("class2"));
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级1"));
+                Assert.assertTrue(schoolTeachersClassId1s.contains("班级2"));
+                Assert.assertEquals(2, schoolTeachersClassIds.size());
+            } else {
+                Assert.assertTrue(schoolStudentsIds.isEmpty());
+            }
+
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
+            Assert.assertEquals("SELECT `id`,`name` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testOneToOne23(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolClassAOProp2> list = easyEntityQuery.queryable(SchoolClass.class)
+                .selectAutoInclude(SchoolClassAOProp2.class)
+                .toList();
+        for (SchoolClassAOProp2 schoolClassAOProp2 : list) {
+            List<String> schoolStudentsIds = schoolClassAOProp2.getSchoolStudentsIds();
+            List<String> schoolTeachersClassIds = schoolClassAOProp2.getSchoolTeachersClassIds();
+            if (schoolClassAOProp2.getName().equals("班级1")) {
+                Assert.assertTrue(schoolStudentsIds.contains("1"));
+                Assert.assertTrue(schoolStudentsIds.contains("3"));
+                Assert.assertEquals(2, schoolStudentsIds.size());
+                Assert.assertTrue(schoolTeachersClassIds.contains("class1"));
+                Assert.assertTrue(schoolTeachersClassIds.contains("class2"));
+                Assert.assertEquals(2, schoolTeachersClassIds.size());
+            } else if (schoolClassAOProp2.getName().equals("班级2")) {
+                Assert.assertTrue(schoolStudentsIds.contains("2"));
+                Assert.assertEquals(1, schoolStudentsIds.size());
+                Assert.assertTrue(schoolTeachersClassIds.contains("class1"));
+                Assert.assertTrue(schoolTeachersClassIds.contains("class2"));
+                Assert.assertEquals(2, schoolTeachersClassIds.size());
+            } else {
+                Assert.assertTrue(schoolStudentsIds.isEmpty());
+            }
+
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT `id` AS `__relation__id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
+            Assert.assertEquals("SELECT `id` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testOneToOne24(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolClassAOProp> list = easyEntityQuery.queryable(SchoolClass.class)
+                .selectAutoInclude(SchoolClassAOProp.class)
+                .toList();
+        for (SchoolClassAOProp schoolClassAOProp : list) {
+            List<String> schoolStudentsIds = schoolClassAOProp.getSchoolStudentsIds();
+            if (schoolClassAOProp.getName().equals("班级1")) {
+                Assert.assertTrue(schoolStudentsIds.contains("1"));
+                Assert.assertTrue(schoolStudentsIds.contains("3"));
+                Assert.assertEquals(2, schoolStudentsIds.size());
+            } else if (schoolClassAOProp.getName().equals("班级2")) {
+                Assert.assertTrue(schoolStudentsIds.contains("2"));
+                Assert.assertEquals(1, schoolStudentsIds.size());
+            } else {
+                Assert.assertTrue(schoolStudentsIds.isEmpty());
+            }
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testOneToOne25(){
 
 
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                System.out.println("------------------");
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        System.out.println("------------------");
 //                easyQueryClient.queryable(SchoolClass.class)
 //                        .where(s -> s.sqlNativeSegment())
 
-                List<SchoolStudentAddress> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .toList(x -> x.schoolStudents().flatElement().schoolStudentAddress());
-                for (SchoolStudentAddress schoolStudentAddress : list) {
+        List<SchoolStudentAddress> list = easyEntityQuery.queryable(SchoolClass.class)
+                .toList(x -> x.schoolStudents().flatElement().schoolStudentAddress());
+        for (SchoolStudentAddress schoolStudentAddress : list) {
 
-                }
-                System.out.println("------------------");
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
+        }
+        System.out.println("------------------");
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
 
-                {
+        {
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `id`,`student_id`,`address` FROM `school_student_address` WHERE `student_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-            }
-//            {
-//
-//
-//                ListenerContext listenerContext = new ListenerContext(true);
-//                listenerContextManager.startListen(listenerContext);
-//                System.out.println("------------------");
-////                easyQueryClient.queryable(SchoolClass.class)
-////                        .where(s -> s.sqlNativeSegment())
-//
-//                List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
-//                        .toList(x -> x.schoolTeachers().flatElement().schoolClasses().flatElement(c->c.FETCHER.name()));
-//                System.out.println("------------------");
-//                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-//                Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
-//
-//                {
-//
-//                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-//                    Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//                }
-//                {
-//                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-//                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-//                }
-//                {
-//                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-//                    Assert.assertEquals("SELECT `id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-//                }
-//                {
-//                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-//                    Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-//                }
-//                {
-//                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-//                    Assert.assertEquals("SELECT `id`,`name` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-//                }
-//            }
-            System.out.println("||||||||||||||||||||||||||");
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `id`,`class_id` AS `__relation__classId` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `id`,`student_id`,`address` FROM `school_student_address` WHERE `student_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testOneToOne26(){
 
-            {
-
-
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                System.out.println("------------------");
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        System.out.println("------------------");
 //                easyQueryClient.queryable(SchoolClass.class)
 //                        .where(s -> s.sqlNativeSegment())
 
-                List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
-                        .toList(x -> x.schoolTeachers().flatElement().schoolClasses().flatElement(z -> z.FETCHER.name().id().name()));
-                for (SchoolClass s : list1) {
-                    System.out.println(s);
-                }
-                System.out.println("------------------");
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
+        List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
+                .toList(x -> x.schoolTeachers().flatElement().schoolClasses().flatElement(z -> z.FETCHER.name().id().name()));
+        for (SchoolClass s : list1) {
+            System.out.println(s);
+        }
+        System.out.println("------------------");
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
 
-                {
+        {
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT `name`,`id`,`name` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-            }
-            {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT `name`,`id`,`name` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testOneToOne27(){
 
 
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                System.out.println("------------------");
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        System.out.println("------------------");
 //                easyQueryClient.queryable(SchoolClass.class)
 //                        .where(s -> s.sqlNativeSegment())
 
-                List<String> list1 = easyEntityQuery.queryable(SchoolClass.class)
-                        .toList(x -> x.schoolTeachers().flatElement().schoolClasses().flatElement().name());
-                for (String s : list1) {
-                    System.out.println(s);
-                }
-                System.out.println("------------------");
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
+        List<String> list1 = easyEntityQuery.queryable(SchoolClass.class)
+                .toList(x -> x.schoolTeachers().flatElement().schoolClasses().flatElement().name());
+        for (String s : list1) {
+            System.out.println(s);
+        }
+        System.out.println("------------------");
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
 
-                {
+        {
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT `name`,`id` AS `__relation__id` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-            }
-            {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT `name`,`id` AS `__relation__id` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testOneToOne28(){
 
 
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                System.out.println("------------------");
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        System.out.println("------------------");
 //                easyQueryClient.queryable(SchoolClass.class)
 //                        .where(s -> s.sqlNativeSegment())
 
-                List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
-                        .toList(x -> x.schoolTeachers().flatElement().schoolClasses().flatElement());
-                System.out.println("------------------");
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
+        List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
+                .toList(x -> x.schoolTeachers().flatElement().schoolClasses().flatElement());
+        System.out.println("------------------");
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
 
-                {
+        {
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT `id`,`name` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-            }
-            {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `id` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT `teacher_id`,`class_id` FROM `school_class_teacher` WHERE `teacher_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT `id`,`name` FROM `school_class` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testOneToOne29(){
 
-
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                System.out.println("------------------");
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        System.out.println("------------------");
 //                easyQueryClient.queryable(SchoolClass.class)
 //                        .where(s -> s.sqlNativeSegment())
 
-                List<SchoolTeacher> list = easyEntityQuery.queryable(SchoolClass.class).toList(x -> x.schoolTeachers().flatElement());
-                System.out.println("------------------");
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
+        List<SchoolTeacher> list = easyEntityQuery.queryable(SchoolClass.class).toList(x -> x.schoolTeachers().flatElement());
+        System.out.println("------------------");
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
 
-                {
+        {
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT `id`,`name` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-//                System.out.println("123");
-//                List<String> list1 = easyEntityQuery.queryable(SchoolClass.class).toList(x -> x.schoolTeachers().flatElement().id());
-//                System.out.println("123");
-            }
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `id`,`name` FROM `school_teacher` WHERE `id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testOneToOne30(){
 
-            {
 
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
 
-                List<Draft1<Long>> list5 = easyEntityQuery.queryable(SchoolClass.class)
-                        .where(s -> s.name().like("123"))
-                        .select(s -> Select.DRAFT.of(
-                                s.schoolStudents().where(st -> st.name().like("456")).count()
-                        )).toList();
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(1, listenerContext.getJdbcExecuteAfterArgs().size());
+        List<Draft1<Long>> list5 = easyEntityQuery.queryable(SchoolClass.class)
+                .where(s -> s.name().like("123"))
+                .select(s -> Select.DRAFT.of(
+                        s.schoolStudents().where(st -> st.name().like("456")).count()
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(1, listenerContext.getJdbcExecuteAfterArgs().size());
 
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                Assert.assertEquals("SELECT (SELECT COUNT(*) FROM `school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ?) AS `value1` FROM `school_class` t WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                Assert.assertEquals("%456%(String),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT (SELECT COUNT(*) FROM `school_student` t1 WHERE t1.`class_id` = t.`id` AND t1.`name` LIKE ?) AS `value1` FROM `school_class` t WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%456%(String),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
-            }
+    }
+    @Test
+    public void testOneToOne31(){
 
-            List<SchoolStudent> list4 = easyEntityQuery.queryable(SchoolStudent.class).toList();
-            easyEntityQuery.loadInclude(list4, x -> x.schoolClass());
-            for (SchoolStudent schoolStudent : list4) {
-                Assert.assertNotNull(schoolStudent.getSchoolClass());
-            }
-//            {
-//
-//                List<String> list1 = easyEntityQuery.queryable(SchoolStudent.class)
-//                        .select(s -> s.name2()).toList();
-//
-//                ListenerContext listenerContext = new ListenerContext(true);
-//                listenerContextManager.startListen(listenerContext);
-//
-//                List<SchoolTeacher> list = easyEntityQuery.queryable(SchoolStudent.class)
-//                        .select(s ->  s.schoolClass().schoolTeachers().toList())
-//                        .firstNotNull();
-//
-////                List<SchoolTeacher> list1 = easyEntityQuery.queryable(SchoolStudent.class)
-////                        .select(s -> s.schoolClass().schoolTeachers().toList2()).toList();
-//                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-//                Assert.assertEquals(3,listenerContext.getJdbcExecuteAfterArgs().size());
-//            }
-            {
-//                easyQueryClient.queryable(SchoolClass.class)
-//                        .include(o-> o.with("schoolStudents"))
+        List<SchoolStudent> list4 = easyEntityQuery.queryable(SchoolStudent.class).toList();
+        easyEntityQuery.loadInclude(list4, x -> x.schoolClass());
+        for (SchoolStudent schoolStudent : list4) {
+            Assert.assertNotNull(schoolStudent.getSchoolClass());
+        }
+    }
+    @Test
+    public void testOneToOne32(){
 
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                System.out.println("------------------");
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        System.out.println("------------------");
 //                easyQueryClient.queryable(SchoolClass.class)
 //                        .where(s -> s.sqlNativeSegment())
-                List<SchoolClass> schoolStudents = easyEntityQuery.queryable(SchoolClass.class).toList();
+        List<SchoolClass> schoolStudents = easyEntityQuery.queryable(SchoolClass.class).toList();
 
-                easyEntityQuery.loadInclude(schoolStudents, x -> x.schoolStudents());
-                System.out.println("------------------");
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
-                {
+        easyEntityQuery.loadInclude(schoolStudents, x -> x.schoolStudents());
+        System.out.println("------------------");
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT `id`,`name` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT `id`,`name` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
 
 
-                }
-                {
+        }
+        {
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `id`,`class_id`,`name` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `id`,`class_id`,`name` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
-                }
-                for (SchoolClass schoolStudent : schoolStudents) {
-                    if (Objects.equals(schoolStudent.getId(), "class1")) {
-                        Assert.assertEquals(2, schoolStudent.getSchoolStudents().size());
-                    }
-                    if (Objects.equals(schoolStudent.getId(), "class2")) {
-                        Assert.assertEquals(1, schoolStudent.getSchoolStudents().size());
-                    }
-                    if (Objects.equals(schoolStudent.getId(), "class3")) {
-                        Assert.assertEquals(0, schoolStudent.getSchoolStudents().size());
-                    }
-                }
+        }
+        for (SchoolClass schoolStudent : schoolStudents) {
+            if (Objects.equals(schoolStudent.getId(), "class1")) {
+                Assert.assertEquals(2, schoolStudent.getSchoolStudents().size());
+            }
+            if (Objects.equals(schoolStudent.getId(), "class2")) {
+                Assert.assertEquals(1, schoolStudent.getSchoolStudents().size());
+            }
+            if (Objects.equals(schoolStudent.getId(), "class3")) {
+                Assert.assertEquals(0, schoolStudent.getSchoolStudents().size());
+            }
+        }
 
 
 //                Assert.assertEquals("1","2");
-                List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents())
-                        .toList();
-                List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
-                        .toList();
-                for (SchoolClass schoolClass : list1) {
-                    Assert.assertNotNull(schoolClass.getSchoolStudents());
-                    Assert.assertTrue(schoolClass.getSchoolStudents().size() >= 0);
-                }
-            }
-            {
-//                easyQueryClient.queryable(SchoolClass.class)
-//                        .include(o-> o.with("schoolStudents"))
+        List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
+                .includes(o -> o.schoolStudents())
+                .toList();
+        List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
+                .includes(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
+                .toList();
+        for (SchoolClass schoolClass : list1) {
+            Assert.assertNotNull(schoolClass.getSchoolStudents());
+            Assert.assertTrue(schoolClass.getSchoolStudents().size() >= 0);
+        }
+    }
+    @Test
+    public void testOneToOne33(){
 
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                System.out.println("------------------");
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        System.out.println("------------------");
 //                easyQueryClient.queryable(SchoolClass.class)
 //                        .where(s -> s.sqlNativeSegment())
 
-                List<SchoolClass> schoolStudents = easyQueryClient.queryable(SchoolClass.class)
-                        .toList();
-                easyQueryClient.loadInclude(schoolStudents, "schoolStudents");
-                System.out.println("------------------");
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
-                {
+        List<SchoolClass> schoolStudents = easyQueryClient.queryable(SchoolClass.class)
+                .toList();
+        easyQueryClient.loadInclude(schoolStudents, "schoolStudents");
+        System.out.println("------------------");
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT `id`,`name` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT `id`,`name` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
 
 
-                }
-                {
+        }
+        {
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT `id`,`class_id`,`name` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `id`,`class_id`,`name` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
-                }
+        }
 
 
 //                Assert.assertEquals("1","2");
-                List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents())
-                        .toList();
-                List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
-                        .toList();
-                for (SchoolClass schoolClass : list1) {
-                    Assert.assertNotNull(schoolClass.getSchoolStudents());
-                    Assert.assertTrue(schoolClass.getSchoolStudents().size() >= 0);
-                }
-            }
+        List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
+                .includes(o -> o.schoolStudents())
+                .toList();
+        List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
+                .includes(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
+                .toList();
+        for (SchoolClass schoolClass : list1) {
+            Assert.assertNotNull(schoolClass.getSchoolStudents());
+            Assert.assertTrue(schoolClass.getSchoolStudents().size() >= 0);
+        }
+    }
+    @Test
+    public void testOneToOne34(){
 
-            {
-//                easyQueryClient.queryable(SchoolClass.class)
-//                        .include(o-> o.with("schoolStudents"))
-
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                System.out.println("------------------");
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        System.out.println("------------------");
 //                easyQueryClient.queryable(SchoolClass.class)
 //                        .where(s -> s.sqlNativeSegment())
 
-                List<SchoolClassAO> list = easyQueryClient.queryable(SchoolClass.class)
-                        .include(s -> s.with("schoolStudents"))
-                        .selectAutoInclude(SchoolClassAO.class)
-                        .toList();
-                System.out.println("------------------");
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
-                {
+        List<SchoolClassAO> list = easyQueryClient.queryable(SchoolClass.class)
+                .include(s -> s.with("schoolStudents"))
+                .selectAutoInclude(SchoolClassAO.class)
+                .toList();
+        System.out.println("------------------");
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 
 
-                }
-                {
+        }
+        {
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT t.`id`,t.`name`,t.`class_id` AS `__relation__classId` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`class_id` AS `__relation__classId` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
-                }
+        }
 
 
 //                Assert.assertEquals("1","2");
-                List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents())
-                        .toList();
-                List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
-                        .toList();
-                for (SchoolClass schoolClass : list1) {
-                    Assert.assertNotNull(schoolClass.getSchoolStudents());
-                    Assert.assertTrue(schoolClass.getSchoolStudents().size() >= 0);
-                }
-            }
+        List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
+                .includes(o -> o.schoolStudents())
+                .toList();
+        List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
+                .includes(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
+                .toList();
+        for (SchoolClass schoolClass : list1) {
+            Assert.assertNotNull(schoolClass.getSchoolStudents());
+            Assert.assertTrue(schoolClass.getSchoolStudents().size() >= 0);
+        }
+    }
+    @Test
+    public void testOneToOne35(){
 
-            {
-//                easyQueryClient.queryable(SchoolClass.class)
-//                        .include(o-> o.with("schoolStudents"))
-
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                System.out.println("------------------");
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        System.out.println("------------------");
 //                easyQueryClient.queryable(SchoolClass.class)
 //                        .where(s -> s.sqlNativeSegment())
 
-                List<SchoolClassAO> list = easyQueryClient.queryable(SchoolClass.class)
-                        .include(s -> s.with("schoolStudents"))
-                        .selectAutoInclude(SchoolClassAO.class)
-                        .toList();
-                System.out.println("------------------");
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
-                {
+        List<SchoolClassAO> list = easyQueryClient.queryable(SchoolClass.class)
+                .include(s -> s.with("schoolStudents"))
+                .selectAutoInclude(SchoolClassAO.class)
+                .toList();
+        System.out.println("------------------");
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 
 
-                }
-                {
+        }
+        {
 
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT t.`id`,t.`name`,t.`class_id` AS `__relation__classId` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`class_id` AS `__relation__classId` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
-                }
+        }
 
 
 //                Assert.assertEquals("1","2");
-                List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents())
-                        .toList();
-                List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
-                        .toList();
-                for (SchoolClass schoolClass : list1) {
-                    Assert.assertNotNull(schoolClass.getSchoolStudents());
-                    Assert.assertTrue(schoolClass.getSchoolStudents().size() >= 0);
-                }
-            }
-//            {
-//
-//                ListenerContext listenerContext = new ListenerContext(true);
-//                listenerContextManager.startListen(listenerContext);
-//                System.out.println("------------------");
-////                easyQueryClient.queryable(SchoolClass.class)
-////                        .where(s -> s.sqlNativeSegment())
-//                List<SchoolClassAggregate> list = easyEntityQuery.queryable(SchoolClassAggregate.class)
-//                        .where(s -> s.studentSize().gt(0L))
-//                        .orderBy(s -> s.studentSize().asc())
-//                        .toList();
-//                System.out.println("------------------");
-//                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-//                Assert.assertEquals("SELECT `id`,`name`,(SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = `id`) AS `student_size` FROM `school_class` WHERE (SELECT COUNT(t3.`id`) AS `id` FROM `school_student` t3 WHERE t3.`class_id` = `id`) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//            }
-            {
+        List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
+                .includes(o -> o.schoolStudents())
+                .toList();
+        List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
+                .includes(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
+                .toList();
+        for (SchoolClass schoolClass : list1) {
+            Assert.assertNotNull(schoolClass.getSchoolStudents());
+            Assert.assertTrue(schoolClass.getSchoolStudents().size() >= 0);
+        }
+    }
+    @Test
+    public void testOneToOne36(){
 
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                System.out.println("------------------");
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        System.out.println("------------------");
 //                easyQueryClient.queryable(SchoolClass.class)
 //                        .where(s -> s.sqlNativeSegment())
-                List<SchoolClassAggregate> list = easyEntityQuery.queryable(SchoolClassAggregate.class)
-                        .where(s -> s.studentSize().gt(0L))
-                        .toList();
-                System.out.println("------------------");
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                Assert.assertEquals("SELECT t.`id`,t.`name`,(SELECT COUNT(t3.`id`) AS `id` FROM `school_student` t3 WHERE t3.`class_id` = t.`id`) AS `student_size` FROM `school_class` t WHERE (SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = t.`id`) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            }
-            {
+        List<SchoolClassAggregate> list = easyEntityQuery.queryable(SchoolClassAggregate.class)
+                .where(s -> s.studentSize().gt(0L))
+                .toList();
+        System.out.println("------------------");
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT t.`id`,t.`name`,(SELECT COUNT(t3.`id`) AS `id` FROM `school_student` t3 WHERE t3.`class_id` = t.`id`) AS `student_size` FROM `school_class` t WHERE (SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = t.`id`) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
 
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                System.out.println("------------------");
-                List<SchoolClassAggregate> list = easyEntityQuery.queryable(SchoolClassAggregate.class)
-                        .toList();
-                System.out.println("------------------");
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                Assert.assertEquals("SELECT t.`id`,t.`name`,(SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = t.`id`) AS `student_size` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            }
-            {
+    }
+    @Test
+    public void testOneToOne37(){
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        System.out.println("------------------");
+        List<SchoolClassAggregate> list = easyEntityQuery.queryable(SchoolClassAggregate.class)
+                .toList();
+        System.out.println("------------------");
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT t.`id`,t.`name`,(SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = t.`id`) AS `student_size` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                System.out.println("------------------");
+    }
+    @Test
+    public void testOneToOne38(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        System.out.println("------------------");
 //                List<SchoolClass1VO> listx= easyEntityQuery.queryable(SchoolClass.class)
 //                        .includes(s -> s.schoolStudents(),schoolStudentQuery->{
 //                            schoolStudentQuery.where(st->{
@@ -1725,487 +1646,480 @@ public class RelationTest extends BaseTest {
 //                        })
 //                        .selectAutoInclude(SchoolClass1VO.class,false)
 //                        .toList();
-                List<SchoolClass1VO> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(s -> s.schoolStudents(), schoolStudentQuery -> {
-                            schoolStudentQuery.where(st -> st.name().like("123")).limit(2);
-                        })
-                        .selectAutoInclude(SchoolClass1VO.class)
-                        .toList();
-                System.out.println("------------------");
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(), 2);
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        List<SchoolClass1VO> listx = easyEntityQuery.queryable(SchoolClass.class)
+                .includes(s -> s.schoolStudents(), schoolStudentQuery -> {
+                    schoolStudentQuery.where(st -> st.name().like("123")).limit(2);
+                })
+                .selectAutoInclude(SchoolClass1VO.class)
+                .toList();
+        System.out.println("------------------");
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(), 2);
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT t1.`id`,t1.`class_id`,t1.`name` FROM ( (SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`name` LIKE ? AND t.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`name` LIKE ? AND t.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`name` LIKE ? AND t.`class_id` = ? LIMIT 2) ) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("%123%(String),class1(String),%123%(String),class2(String),%123%(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t1.`id`,t1.`class_id`,t1.`name` FROM ( (SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`name` LIKE ? AND t.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`name` LIKE ? AND t.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`name` LIKE ? AND t.`class_id` = ? LIMIT 2) ) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%123%(String),class1(String),%123%(String),class2(String),%123%(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
 
-                for (SchoolClass1VO schoolClassVO : listx) {
-                    Assert.assertNotNull(schoolClassVO.getSchoolStudents());
-                    for (SchoolStudentVO schoolStudent : schoolClassVO.getSchoolStudents()) {
-                        Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
-                    }
-                }
+        for (SchoolClass1VO schoolClassVO : listx) {
+            Assert.assertNotNull(schoolClassVO.getSchoolStudents());
+            for (SchoolStudentVO schoolStudent : schoolClassVO.getSchoolStudents()) {
+                Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
             }
-            {
+        }
+    }
+    @Test
+    public void testOneToOne39(){
 
-//                ListenerContext listenerContext = new ListenerContext(true);
-//                listenerContextManager.startListen(listenerContext);
-//
-//                List<SchoolClassTeachIdsVO> list = easyEntityQuery.queryable(SchoolClass.class)
-////                        .includes(s -> s.schoolTeachers(),x->x.selectColumn(y->y.id()))
-//                        .selectAutoInclude(SchoolClassTeachIdsVO.class)
-//                        .toList();
-//                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-//                Assert.assertEquals(3,listenerContext.getJdbcExecuteAfterArgs().size());
-            }
-            {
-
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                System.out.println("------------------");
-                List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .selectAutoInclude(SchoolClassVO.class)
-                        .toList();
-                System.out.println("------------------");
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(), 9);
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        System.out.println("------------------");
+        List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
+                .selectAutoInclude(SchoolClassVO.class)
+                .toList();
+        System.out.println("------------------");
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(), 9);
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_teacher` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_teacher` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
 
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
-                    Assert.assertEquals("SELECT t.`id`,t.`student_id`,t.`address` FROM `school_student_address` t WHERE t.`student_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(6);
-                    Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(7);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(8);
-                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_teacher` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
+            Assert.assertEquals("SELECT t.`id`,t.`student_id`,t.`address` FROM `school_student_address` t WHERE t.`student_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(6);
+            Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(7);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(8);
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_teacher` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
 
-                for (SchoolClassVO schoolClassVO : listx) {
-                    Assert.assertNotNull(schoolClassVO.getSchoolStudents());
-                    Assert.assertNotNull(schoolClassVO.getSchoolTeachers());
-                    for (SchoolStudentVO schoolStudent : schoolClassVO.getSchoolStudents()) {
-                        Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
-                    }
-                }
+        for (SchoolClassVO schoolClassVO : listx) {
+            Assert.assertNotNull(schoolClassVO.getSchoolStudents());
+            Assert.assertNotNull(schoolClassVO.getSchoolTeachers());
+            for (SchoolStudentVO schoolStudent : schoolClassVO.getSchoolStudents()) {
+                Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
             }
-            {
+        }
+    }
+    @Test
+    public void testOneToOne40(){
 
-                ListenerContext listenerContext = new ListenerContext();
-                listenerContextManager.startListen(listenerContext);
-                List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(s -> s.schoolStudents())
-                        .select(s -> new SchoolClassVOProxy().adapter(r -> {
-                            r.schoolStudents().set(s.schoolStudents()
-                                    , x -> {
-                                        SchoolStudentVOProxy schoolStudentVOProxy = new SchoolStudentVOProxy();
-                                        schoolStudentVOProxy.selectAll(x);
-                                        return schoolStudentVOProxy;
-                                    }
-                            );
-                        }))
-                        .toList();
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-                Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                listenerContextManager.clear();
-            }
-            {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
+                .includes(s -> s.schoolStudents())
+                .select(s -> new SchoolClassVOProxy().adapter(r -> {
+                    r.schoolStudents().set(s.schoolStudents()
+                            , x -> {
+                                SchoolStudentVOProxy schoolStudentVOProxy = new SchoolStudentVOProxy();
+                                schoolStudentVOProxy.selectAll(x);
+                                return schoolStudentVOProxy;
+                            }
+                    );
+                }))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testOneToOne41(){
 
-                ListenerContext listenerContext = new ListenerContext();
-                listenerContextManager.startListen(listenerContext);
-                List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(s -> s.schoolStudents())
-                        .select(SchoolClassVO.class)
-                        .toList();
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-                Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                listenerContextManager.clear();
-                for (SchoolClassVO schoolClassVO : listx) {
-                    Assert.assertNotNull(schoolClassVO.getSchoolStudents());
-                }
-            }
-            {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
+                .includes(s -> s.schoolStudents())
+                .select(SchoolClassVO.class)
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        for (SchoolClassVO schoolClassVO : listx) {
+            Assert.assertNotNull(schoolClassVO.getSchoolStudents());
+        }
+    }
+    @Test
+    public void testOneToOne42(){
 
-                ListenerContext listenerContext = new ListenerContext();
-                listenerContextManager.startListen(listenerContext);
-                List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(s -> s.schoolStudents())
-                        .select(SchoolClassVO.class)
-                        .toList();
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-                Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                listenerContextManager.clear();
-                for (SchoolClassVO schoolClassVO : listx) {
-                    Assert.assertNotNull(schoolClassVO.getSchoolStudents());
-                }
-            }
-            {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
+                .includes(s -> s.schoolStudents())
+                .select(SchoolClassVO.class)
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        for (SchoolClassVO schoolClassVO : listx) {
+            Assert.assertNotNull(schoolClassVO.getSchoolStudents());
+        }
+    }
+    @Test
+    public void testOneToOne43(){
 
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                System.out.println("------------------");
-                List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        //返回班级下的所有学生 班级和学生是一对多
-                        .includes(s -> s.schoolStudents(), x -> {
-                            //返回学生下的所有学生地址 学生和学生地址是一对一
-                            x.include(y -> y.schoolStudentAddress());
-                        })
-                        //返回班级下面的所有老师 老师和班级多对多
-                        .includes(s -> s.schoolTeachers())
-                        .select(SchoolClassVO.class)
-                        .toList();
-                System.out.println("------------------");
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        System.out.println("------------------");
+        List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
+                //返回班级下的所有学生 班级和学生是一对多
+                .includes(s -> s.schoolStudents(), x -> {
+                    //返回学生下的所有学生地址 学生和学生地址是一对一
+                    x.include(y -> y.schoolStudentAddress());
+                })
+                //返回班级下面的所有老师 老师和班级多对多
+                .includes(s -> s.schoolTeachers())
+                .select(SchoolClassVO.class)
+                .toList();
+        System.out.println("------------------");
 
 
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(), 5);
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(), 5);
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT t.`id`,t.`student_id`,t.`address` FROM `school_student_address` t WHERE t.`student_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_teacher` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT t.`id`,t.`student_id`,t.`address` FROM `school_student_address` t WHERE t.`student_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_teacher` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
 
-                Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
+        Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
 
-
-//==> Preparing: SELECT t.`id`,t.`name` FROM `school_class` t
-//                    <== Time Elapsed: 4(ms)
-//                    <== Total: 3
-//                    ==> Preparing: SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t LEFT JOIN `school_student_address` t1 ON t.`id` = t1.`student_id` WHERE t.`class_id` IN (?,?,?)
-//==> Parameters: class1(String),class2(String),class3(String)
-//                    <== Time Elapsed: 7(ms)
-//                    <== Total: 3
-//                    ==> Preparing: SELECT t.`id`,t.`student_id`,t.`address` FROM `school_student_address` t WHERE t.`student_id` IN (?,?,?)
-//==> Parameters: 1(String),2(String),3(String)
-//                    <== Time Elapsed: 5(ms)
-//                    <== Total: 3
-//                    ==> Preparing: SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)
-//==> Parameters: class1(String),class2(String),class3(String)
-//                    <== Time Elapsed: 6(ms)
-//                    <== Total: 3
-//                    ==> Preparing: SELECT t.`id`,t.`name` FROM `school_teacher` t WHERE t.`id` IN (?,?)
-//==> Parameters: teacher1(String),teacher2(String)
-//                    <== Time Elapsed: 14(ms)
-//                    <== Total: 2
-                listenerContextManager.clear();
-                for (SchoolClassVO schoolClassVO : listx) {
-                    Assert.assertNotNull(schoolClassVO.getSchoolStudents());
-                    Assert.assertNotNull(schoolClassVO.getSchoolTeachers());
-                    for (SchoolStudentVO schoolStudent : schoolClassVO.getSchoolStudents()) {
-                        Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
-                    }
-                }
+        listenerContextManager.clear();
+        for (SchoolClassVO schoolClassVO : listx) {
+            Assert.assertNotNull(schoolClassVO.getSchoolStudents());
+            Assert.assertNotNull(schoolClassVO.getSchoolTeachers());
+            for (SchoolStudentVO schoolStudent : schoolClassVO.getSchoolStudents()) {
+                Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
             }
-            {
+        }
+    }
+    @Test
+    public void testOneToOne44(){
 
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                System.out.println("------------------");
-                List<SchoolClassOnlyVO> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .selectAutoInclude(SchoolClassOnlyVO.class)
-                        .toList();
-                System.out.println("------------------");
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        System.out.println("------------------");
+        List<SchoolClassOnlyVO> listx = easyEntityQuery.queryable(SchoolClass.class)
+                .selectAutoInclude(SchoolClassOnlyVO.class)
+                .toList();
+        System.out.println("------------------");
 
 
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(), 6);
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(), 6);
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT t.`id`,t.`student_id`,t.`address` FROM `school_student_address` t WHERE t.`student_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
-                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_teacher` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT t.`id`,t.`student_id`,t.`address` FROM `school_student_address` t WHERE t.`student_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_teacher` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
 
-                Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
+        Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
 
-                listenerContextManager.clear();
-                for (SchoolClassOnlyVO schoolClassVO : listx) {
-                    Assert.assertNotNull(schoolClassVO.getSchoolStudents());
-                    Assert.assertNotNull(schoolClassVO.getSchoolTeachers());
-                    for (SchoolStudentOnlyVO schoolStudent : schoolClassVO.getSchoolStudents()) {
-                        Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
-                    }
-                }
+        listenerContextManager.clear();
+        for (SchoolClassOnlyVO schoolClassVO : listx) {
+            Assert.assertNotNull(schoolClassVO.getSchoolStudents());
+            Assert.assertNotNull(schoolClassVO.getSchoolTeachers());
+            for (SchoolStudentOnlyVO schoolStudent : schoolClassVO.getSchoolStudents()) {
+                Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
             }
+        }
+    }
+    @Test
+    public void testOneToOne45(){
 
-            {
-
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                System.out.println("------------------");
-                List<SchoolClassOnlyVO> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        //返回班级下的所有学生 班级和学生是一对多
-                        .includes(s -> s.schoolStudents(), x -> {
-                            //返回学生下的所有学生地址 学生和学生地址是一对一
-                            x.include(y -> y.schoolStudentAddress());
-                        })
-                        //返回班级下面的所有老师 老师和班级多对多
-                        .includes(s -> s.schoolTeachers())
-                        .select(SchoolClassOnlyVO.class)
-                        .toList();
-                System.out.println("------------------");
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        System.out.println("------------------");
+        List<SchoolClassOnlyVO> listx = easyEntityQuery.queryable(SchoolClass.class)
+                //返回班级下的所有学生 班级和学生是一对多
+                .includes(s -> s.schoolStudents(), x -> {
+                    //返回学生下的所有学生地址 学生和学生地址是一对一
+                    x.include(y -> y.schoolStudentAddress());
+                })
+                //返回班级下面的所有老师 老师和班级多对多
+                .includes(s -> s.schoolTeachers())
+                .select(SchoolClassOnlyVO.class)
+                .toList();
+        System.out.println("------------------");
 
 
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(), 5);
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(listenerContext.getJdbcExecuteAfterArgs().size(), 5);
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("SELECT t.`id`,t.`student_id`,t.`address` FROM `school_student_address` t WHERE t.`student_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_teacher` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT t.`id`,t.`student_id`,t.`address` FROM `school_student_address` t WHERE t.`student_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_teacher` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
 
-                Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
-                listenerContextManager.clear();
-                for (SchoolClassOnlyVO schoolClassVO : listx) {
-                    Assert.assertNotNull(schoolClassVO.getSchoolStudents());
-                    Assert.assertNotNull(schoolClassVO.getSchoolTeachers());
-                    for (SchoolStudentOnlyVO schoolStudent : schoolClassVO.getSchoolStudents()) {
-                        Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
-                    }
-                }
+        Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
+        listenerContextManager.clear();
+        for (SchoolClassOnlyVO schoolClassVO : listx) {
+            Assert.assertNotNull(schoolClassVO.getSchoolStudents());
+            Assert.assertNotNull(schoolClassVO.getSchoolTeachers());
+            for (SchoolStudentOnlyVO schoolStudent : schoolClassVO.getSchoolStudents()) {
+                Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
             }
-            {
+        }
+    }
+    @Test
+    public void testOneToOne46(){
 
-                ListenerContext listenerContext = new ListenerContext();
-                listenerContextManager.startListen(listenerContext);
-                List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class).includes(s -> s.schoolStudents())
-                        .select(s -> new SchoolClassVOProxy().adapter(r -> {
-                            r.schoolStudents().set(s.schoolStudents()
 
-                                    , x -> {
-                                        SchoolStudentVOProxy schoolStudentVOProxy = new SchoolStudentVOProxy();
-                                        schoolStudentVOProxy.selectAll(x).selectIgnores(x.name());
-                                        return schoolStudentVOProxy;
-                                    }
-                            );
-                        }))
-                        .toList();
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-                Assert.assertEquals("SELECT t.`id`,t.`class_id` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                listenerContextManager.clear();
-            }
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class).includes(s -> s.schoolStudents())
+                .select(s -> new SchoolClassVOProxy().adapter(r -> {
+                    r.schoolStudents().set(s.schoolStudents()
 
-            {
+                            , x -> {
+                                SchoolStudentVOProxy schoolStudentVOProxy = new SchoolStudentVOProxy();
+                                schoolStudentVOProxy.selectAll(x).selectIgnores(x.name());
+                                return schoolStudentVOProxy;
+                            }
+                    );
+                }))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`class_id` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testOneToOne47(){
 
-                ListenerContext listenerContext = new ListenerContext();
-                listenerContextManager.startListen(listenerContext);
-                List<SchoolClass> listx = easyEntityQuery.queryable(SchoolStudent.class)
-                        .select(s -> s.schoolClass())
-                        .toList();
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-                Assert.assertEquals("SELECT t1.`id`,t1.`name` FROM `school_student` t LEFT JOIN `school_class` t1 ON t1.`id` = t.`class_id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolClass> listx = easyEntityQuery.queryable(SchoolStudent.class)
+                .select(s -> s.schoolClass())
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`id`,t1.`name` FROM `school_student` t LEFT JOIN `school_class` t1 ON t1.`id` = t.`class_id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                listenerContextManager.clear();
-            }
-            {
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testOneToOne48(){
 
-                ListenerContext listenerContext = new ListenerContext();
-                listenerContextManager.startListen(listenerContext);
-                List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(s -> s.schoolStudents())
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
+                .includes(s -> s.schoolStudents())
 //                        .fetchBy(s -> s.FETCHER.name())
-                        .toList();
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-                Assert.assertEquals("SELECT `id`,`class_id`,`name` FROM `school_student` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                listenerContextManager.clear();
-                String sql1 = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(s -> s.schoolStudents())
-                        .select(s -> s.FETCHER.name()).toSQL();
-                Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", sql1);
-            }
-            {
-
-                ListenerContext listenerContext = new ListenerContext();
-                listenerContextManager.startListen(listenerContext);
-
-                List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(), x -> x.limit(2))
-                        .toList();
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-                Assert.assertEquals("SELECT t1.`id`,t1.`class_id`,t1.`name` FROM ( (SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` = ? LIMIT 2) ) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                listenerContextManager.clear();
-            }
-            {
-
-                ListenerContext listenerContext = new ListenerContext();
-                listenerContextManager.startListen(listenerContext);
-
-                List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(), x -> x.where(y -> y.name().like("123")))
-                        .toList();
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-                Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`name` LIKE ? AND t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                Assert.assertEquals("%123%(String),class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                listenerContextManager.clear();
-            }
-            {
-
-                ListenerContext listenerContext = new ListenerContext();
-                listenerContextManager.startListen(listenerContext);
-
-                List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(), x -> x.limit(2), 1)
-                        .toList();
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-                Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?) LIMIT 2", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                Assert.assertEquals("class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                listenerContextManager.clear();
-            }
-            {
-                List<SchoolStudent> list = easyQuery.queryable(SchoolStudent.class).toList();
-                Assert.assertEquals(3, list.size());
-                for (SchoolStudent schoolStudent : list) {
-                    Assert.assertNull(schoolStudent.getSchoolStudentAddress());
-                }
-            }
-            {
-                List<SchoolStudent> list = easyEntityQuery.queryable(SchoolStudent.class).toList();
-                Assert.assertEquals(3, list.size());
-                for (SchoolStudent schoolStudent : list) {
-                    Assert.assertNull(schoolStudent.getSchoolStudentAddress());
-                }
-            }
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        String sql1 = easyEntityQuery.queryable(SchoolClass.class)
+                .includes(s -> s.schoolStudents())
+                .select(s -> s.FETCHER.name()).toSQL();
+        Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", sql1);
+    }
+    @Test
+    public void testOneToOne49(){
 
 
-            {
-                List<SchoolStudent> list1 = easyQuery.queryable(SchoolStudent.class)
-                        .include(o -> o.one(SchoolStudent::getSchoolClass, 1))
-                        .toList();
-                for (SchoolStudent schoolStudent : list1) {
-                    Assert.assertNotNull(schoolStudent.getSchoolClass());
-                    Assert.assertEquals(schoolStudent.getClassId(), schoolStudent.getSchoolClass().getId());
-                }
-            }
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
+                .includes(o -> o.schoolStudents(), x -> x.limit(2))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`id`,t1.`class_id`,t1.`name` FROM ( (SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` = ? LIMIT 2)  UNION ALL  (SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` = ? LIMIT 2) ) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testOneToOne50(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
+                .includes(o -> o.schoolStudents(), x -> x.where(y -> y.name().like("123")))
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`name` LIKE ? AND t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String),class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testOneToOne51(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
+                .includes(o -> o.schoolStudents(), x -> x.limit(2), 1)
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?) LIMIT 2", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testOneToOne52(){
+
+        List<SchoolStudent> list = easyQuery.queryable(SchoolStudent.class).toList();
+        Assert.assertEquals(3, list.size());
+        for (SchoolStudent schoolStudent : list) {
+            Assert.assertNull(schoolStudent.getSchoolStudentAddress());
+        }
+    }
+    @Test
+    public void testOneToOne53(){
+
+        List<SchoolStudent> list = easyEntityQuery.queryable(SchoolStudent.class).toList();
+        Assert.assertEquals(3, list.size());
+        for (SchoolStudent schoolStudent : list) {
+            Assert.assertNull(schoolStudent.getSchoolStudentAddress());
+        }
+    }
+    @Test
+    public void testOneToOne54(){
+
+        List<SchoolStudent> list1 = easyQuery.queryable(SchoolStudent.class)
+                .include(o -> o.one(SchoolStudent::getSchoolClass, 1))
+                .toList();
+        for (SchoolStudent schoolStudent : list1) {
+            Assert.assertNotNull(schoolStudent.getSchoolClass());
+            Assert.assertEquals(schoolStudent.getClassId(), schoolStudent.getSchoolClass().getId());
+        }
+    }
+//    @Test
+//    public void testOneToOne30(){
+//    }
+    @Test
+    public void testOneToOne() {
             {
                 List<SchoolStudent> list1 = easyEntityQuery.queryable(SchoolStudent.class).noInterceptor()
                         .include(t -> t.schoolClass())
@@ -2512,10 +2426,8 @@ public class RelationTest extends BaseTest {
                 }
             }
 
-        } finally {
-            relationRemove(ids);
-        }
     }
+
 
     @Test
     public void provinceTest() {
