@@ -80,6 +80,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.RelationExtraColumn;
+import com.easy.query.core.metadata.RelationExtraColumnAddResult;
 import com.easy.query.core.metadata.RelationExtraMetadata;
 
 import java.util.ArrayList;
@@ -602,14 +603,13 @@ public class EasySQLExpressionUtil {
 //        if (!anonymousSelect) {
         for (RelationColumnResult relationColumnResult : relationColumnResults) {
             ColumnMetadata columnMetadata = navigateMetadata.getEntityMetadata().getColumnNotNull(relationColumnResult.getProperty());
+            RelationExtraColumnAddResult relationExtraColumnResult = addRelationExtraColumn(columnMetadata, relationColumnResult.getProperty(), relationExtraMetadata, !relationColumnResult.isExists());
 
-            String alias = "__relation__" + relationColumnResult.getProperty();
-            RelationExtraColumn relationExtraColumn = relationExtraMetadata.getRelationExtraColumnMap().putIfAbsent(alias, new RelationExtraColumn(relationColumnResult.getProperty(), alias, columnMetadata, !relationColumnResult.isExists()));
             if (!relationColumnResult.isExists()) {
-                if (relationExtraColumn == null) {
+                if (relationExtraColumnResult.relationExtraColumn == null) {
                     sqlNative.sqlNativeSegment("{0}", c -> {
                         c.expression(table, relationColumnResult.getProperty());
-                        c.setAlias(alias);
+                        c.setAlias(relationExtraColumnResult.alias);
                     });
                 }
             }
@@ -645,20 +645,32 @@ public class EasySQLExpressionUtil {
 //        if (!anonymousSelect) {
         for (RelationColumnResult relationColumnResult : relationColumnResults) {
             ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(relationColumnResult.getProperty());
-            String alias = "__relation__" + relationColumnResult.getProperty();
-            RelationExtraColumn relationExtraColumn = relationExtraMetadata.getRelationExtraColumnMap().putIfAbsent(alias, new RelationExtraColumn(relationColumnResult.getProperty(), alias, columnMetadata, !relationColumnResult.isExists()));
-
+            RelationExtraColumnAddResult relationExtraColumnResult = addRelationExtraColumn(columnMetadata, relationColumnResult.getProperty(), relationExtraMetadata, !relationColumnResult.isExists());
             if (!relationColumnResult.isExists()) {
-                if (relationExtraColumn == null) {
+                if (relationExtraColumnResult.relationExtraColumn == null) {
                     sqlNative.sqlNativeSegment("{0}", c -> {
                         c.expression(table, relationColumnResult.getProperty());
-                        c.setAlias(alias);
+                        c.setAlias(relationExtraColumnResult.alias);
                     });
                 }
             }
         }
 //        }
 
+    }
+
+    /**
+     * 添加关联关系并且返回旧的关系
+     *
+     * @param columnMetadata
+     * @param relationColumn
+     * @param relationExtraMetadata
+     * @return
+     */
+    public static RelationExtraColumnAddResult addRelationExtraColumn(ColumnMetadata columnMetadata, String relationColumn, RelationExtraMetadata relationExtraMetadata, boolean notInProjects) {
+        String alias = "__relation__" + relationColumn;
+        RelationExtraColumn relationExtraColumn = relationExtraMetadata.getRelationExtraColumnMap().putIfAbsent(alias, new RelationExtraColumn(relationColumn, alias, columnMetadata, notInProjects));
+        return new RelationExtraColumnAddResult(relationExtraColumn, alias);
     }
 
 

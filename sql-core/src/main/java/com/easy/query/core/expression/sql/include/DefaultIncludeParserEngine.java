@@ -71,11 +71,12 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 //            Map<String, Object> extraColumns = relationExtraMetadata.getRelationExtraColumnList().get(i);
 //            RelationExtraEntity relationExtraEntity = new RelationExtraEntityImpl(entity, extraColumns, extraColumnMetadata, expressionContext.getRuntimeContext().getRelationValueFactory());
 //            relationExtraEntities.add(relationExtraEntity);
+            //普通include走这边
             if(EasyCollectionUtil.isNotEmpty(relationExtraMetadata.getRelationExtraColumnList())){
                 Map<String, Object> extraColumns = relationExtraMetadata.getRelationExtraColumnList().get(i);
                 RelationExtraEntity relationExtraEntity = new RelationExtraEntityImpl(entity, extraColumns, extraColumnMetadata, expressionContext.getRuntimeContext().getRelationValueFactory());
                 relationExtraEntities.add(relationExtraEntity);
-            }else{
+            }else{//eq.loadInclude走这边
                 RelationEntityImpl relationEntity = new RelationEntityImpl(entity, entityMetadata, expressionContext.getRuntimeContext().getRelationValueFactory());
                 relationExtraEntities.add(relationEntity);
             }

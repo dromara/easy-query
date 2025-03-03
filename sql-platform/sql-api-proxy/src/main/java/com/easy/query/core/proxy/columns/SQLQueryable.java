@@ -26,6 +26,7 @@ import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctio
 import com.easy.query.core.proxy.impl.SQLColumnIncludeColumn2Impl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
+import com.easy.query.core.proxy.sql.include.IncludeManyAvailable;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 

@@ -49,6 +49,7 @@ import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyIncludeUtil;
 import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -254,10 +255,15 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         Class<?> firstClass = first.getClass();
         EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(firstClass);
+        NavigateMetadata navigateMetadata = entityMetadata.getNavigateNotNull(navigateProperty);
 
         IncludeProvider includeProvider = runtimeContext.getIncludeProvider();
         ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();
         ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
+//        for (String selfProperty : navigateMetadata.getSelfPropertiesOrPrimary()) {
+//            ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(selfProperty);
+//            EasySQLExpressionUtil.addRelationExtraColumn(columnMetadata,selfProperty,expressionContext.getRelationExtraMetadata(),false);
+//        }
         includeProvider.include(null,entityMetadata,expressionContext,ic->ic.with(navigateProperty));
 
         IncludeProcessorFactory includeProcessorFactory = runtimeContext.getIncludeProcessorFactory();
