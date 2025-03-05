@@ -83,7 +83,7 @@ public class QueryTest11 extends BaseTest {
                 .groupBy((t1, t2) -> GroupKeys.of(t2.id()))
                 .select(g -> new BlogEntityProxy().adapter(r -> {
                     r.id().set(g.key1());
-                    r.score().set(g.sum(g.groupTable().t2.score()));
+                    r.score().set(g.groupTable().t2.score().sum());
                 }))
                 .toPageResult(1, 20);
 
@@ -489,11 +489,11 @@ public class QueryTest11 extends BaseTest {
         List<TopicTypeTest1> list = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
             o.id().subString(1, 2).eq("1");
             o.id().subString(1, 2).isNotNull();
-            o.id().subString(1, 2).isBank();
-            o.id().subString(1, 2).isNotBank();
+            o.id().subString(1, 2).isBlank();
+            o.id().subString(1, 2).isNotBlank();
             o.id().subString(1, 2).isEmpty();
             o.id().subString(1, 2).isNotEmpty();
-            o.id().isBank();
+            o.id().isBlank();
         }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -671,7 +671,7 @@ public class QueryTest11 extends BaseTest {
                 }).select(o -> Select.DRAFT.of(
                         o.key1(),
                         o.key2(),
-                        o.sum(o.groupTable().star())
+                        o.groupTable().star().sum().asAnyType(Integer.class)
                 )).toList();
 
 

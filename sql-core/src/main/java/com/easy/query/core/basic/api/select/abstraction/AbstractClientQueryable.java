@@ -929,6 +929,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             MappingPathTreeBuilder.insertPath(root, mappingPath, navigateFlatMetadata, path -> {
                 NavigateMetadata navigateOrNull = navigateEntityMetadata.getNavigateOrNull(path);
                 if (navigateOrNull != null) {
+                    //当查询结果vo、dto里面的导航对象和导航对象的属性在同一级那么是不被允许的
                     throw new EasyQueryInvalidOperationException(String.format("In the selectAutoInclude query, the relational property [%s] of the class [%s] should appear in both @Navigate and @NavigateFlat.", path, EasyClassUtil.getSimpleName(navigateEntityMetadata.getEntityClass())));
                 }
             });

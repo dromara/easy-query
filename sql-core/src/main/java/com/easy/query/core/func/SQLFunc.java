@@ -16,7 +16,7 @@ import com.easy.query.core.func.def.impl.NativeSegmentSQLFunction;
  *
  * @author xuejiaming
  */
-public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFunc, SQLMathFunc, SQLNumberFunc, SQLPartitionByFunc {
+public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFunc, SQLMathFunc, SQLNumberFunc, SQLPartitionByFunc, SQLJsonFunc {
     /**
      * 如果property对应的值为null则返回def值
      * o.nullOrDefault("title","123")
@@ -58,7 +58,7 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
 
     SQLFunction equalsWith(SQLExpression1<ColumnFuncSelector> sqlExpression);
 
-    default SQLFunction orderByNullsMode(String property, boolean asc,@NotNull OrderByModeEnum orderByModeEnum) {
+    default SQLFunction orderByNullsMode(String property, boolean asc, @NotNull OrderByModeEnum orderByModeEnum) {
         return orderByNullsMode(o -> o.column(property), asc, orderByModeEnum);
     }
 
@@ -66,7 +66,7 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
         return orderByNullsMode(o -> o.sqlFunc(sqlFunction), asc, orderByModeEnum);
     }
 
-    SQLFunction orderByNullsMode(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean asc,@NotNull OrderByModeEnum orderByModeEnum);
+    SQLFunction orderByNullsMode(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean asc, @NotNull OrderByModeEnum orderByModeEnum);
 
     /**
      * 请使用nullOrDefault函数

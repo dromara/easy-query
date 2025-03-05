@@ -39,6 +39,7 @@ import com.easy.query.core.func.def.impl.DateTimeSQLFormatSQLFunction;
 import com.easy.query.core.func.def.impl.EmptySQLFunction;
 import com.easy.query.core.func.def.impl.EqualsWithSQLFunction;
 import com.easy.query.core.func.def.impl.JoinSQLFunction;
+import com.easy.query.core.func.def.impl.JsonFieldSQLFunction;
 import com.easy.query.core.func.def.impl.LeftPadSQLFunction;
 import com.easy.query.core.func.def.impl.LengthSQLFunction;
 import com.easy.query.core.func.def.impl.LikeSQLFunction;
@@ -378,5 +379,15 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public PartitionBySQLFunction minOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new MinOverSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonField(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new JsonFieldSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction containsField(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        throw new UnsupportedOperationException();
     }
 }

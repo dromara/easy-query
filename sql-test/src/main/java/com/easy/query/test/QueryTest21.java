@@ -3,9 +3,19 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
+import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.basic.extension.track.EntityState;
+import com.easy.query.core.basic.extension.track.EntityTrackProperty;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.configuration.dialect.AbstractSQLKeyword;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
+import com.easy.query.core.configuration.nameconversion.NameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.LowerCamelCaseNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.UpperUnderlinedNameConversion;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
@@ -21,11 +31,14 @@ import com.easy.query.core.expression.sql.builder.impl.AnonymousDefaultTableExpr
 import com.easy.query.core.expression.sql.builder.impl.QueryExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.core.util.EasyTrackUtil;
 import com.easy.query.test.common.PageResult;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp14;
 import com.easy.query.test.entity.BlogEntity;
@@ -310,7 +323,51 @@ public class QueryTest21 extends BaseTest {
             }
         }
         listenerContextManager.clear();
+//        Topic topic1 = new Topic();
+//        topic1.setId("1");
+//        topic1.setTitle("123");
+//        topic1.setStars(456);
+//        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
+//        try {
+//
+//            trackManager.begin();
+//            boolean b = easyEntityQuery.addTracking(topic1);
+//
+//            topic1.setTitle("321");
+//            topic1.setStars(654);
+//            EntityState trackEntityStateNotNull = easyEntityQuery.getTrackEntityStateNotNull(topic1);
+//            EntityTrackProperty trackDiffProperty = EasyTrackUtil.getTrackDiffProperty(easyEntityQuery.getRuntimeContext().getEntityMetadataManager(), trackEntityStateNotNull);
+//            System.out.println();
+//
+//
+//
+//            ClientExpressionUpdatable<? extends Topic> updatable = easyEntityQuery.getEasyQueryClient().updatable(topic1.getClass());
+//            trackDiffProperty.getDiffProperties().forEach(a->{
+//
+//                updatable.set("name","4565");
+//            });
+//
+//            updatable.executeRows();
+//
+//        }finally {
+//
+//            trackManager.release();
+//        }
 
+
+        ArrayList<Topic> topics = new ArrayList<>();
+        easyEntityQuery.updatable(topics).executeRows();
+
+        for (Topic topic : topics) {
+            easyEntityQuery.updatable(Topic.class)
+                    .setColumns(t_topic -> {
+
+                    })
+                    .where(t_topic -> {
+
+                    })
+                    .executeRows();
+        }
 
 //        easyEntityQuery.deletable(Topic.class)
 //                .allowDeleteStatement(true)
@@ -324,6 +381,137 @@ public class QueryTest21 extends BaseTest {
 //        SQLKeyword sqlKeyword = easyEntityQuery.getRuntimeContext().getService(SQLKeyword.class);
 //        String quoteName = sqlKeyword.getQuoteName(entityMetadata.getTableName());
 //        easyEntityQuery.sqlExecute("truncate table "+quoteName);
+    }
+
+    @Test
+    public void testWhereGroup(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+       easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.title().like("123");
+
+                }).groupBy(t_blog -> GroupKeys.of(t_blog.title()))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.groupTable().id().count().filter(() -> {
+                            group.groupTable().star().ge(123);
+                        })
+                )).toList();
+        listenerContextManager.clear();
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT t.`title` AS `value1`,COUNT((CASE WHEN t.`star` >= ? THEN t.`id` ELSE ? END)) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`title` LIKE ? GROUP BY t.`title`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(Integer),null(null),false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
+
+        UpperUnderlinedNameConversion upperUnderlinedNameConversion = new UpperUnderlinedNameConversion();
+        UpperCamelCaseNameConversion upperCamelCaseNameConversion = new UpperCamelCaseNameConversion();
+        UnderlinedNameConversion underlinedNameConversion = new UnderlinedNameConversion();
+        LowerCamelCaseNameConversion lowerCamelCaseNameConversion = new LowerCamelCaseNameConversion();
+        DefaultNameConversion defaultNameConversion = new DefaultNameConversion();
+
+        testNameConversion(defaultNameConversion,"userAge");
+        testNameConversion(defaultNameConversion,"user_age");
+        testNameConversion(underlinedNameConversion,"userAge");
+        testNameConversion(underlinedNameConversion,"user_age");
+        testNameConversion(upperUnderlinedNameConversion,"userAge");
+        testNameConversion(upperUnderlinedNameConversion,"user_age");
+        testNameConversion(lowerCamelCaseNameConversion,"userAge");
+        testNameConversion(lowerCamelCaseNameConversion,"user_age");
+        testNameConversion(upperCamelCaseNameConversion,"userAge");
+        testNameConversion(upperCamelCaseNameConversion,"user_age");
+    }
+    @Test
+    public void testWhereGroup1(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+       easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.title().like("123");
+
+                }).groupBy(t_blog -> GroupKeys.of(t_blog.title()))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.where(t->t.star().ge(123)).count()
+                )).toList();
+        listenerContextManager.clear();
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT t.`title` AS `value1`,COUNT((CASE WHEN t.`star` >= ? THEN ? ELSE ? END)) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`title` LIKE ? GROUP BY t.`title`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(Integer),1(Integer),null(null),false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testWhereGroup2(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+       easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.title().like("123");
+
+                }).groupBy(t_blog -> GroupKeys.of(t_blog.title()))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.where(s->s.star().ge(123)).distinct().count()
+                )).toList();
+        listenerContextManager.clear();
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT t.`title` AS `value1`,COUNT(DISTINCT (CASE WHEN t.`star` >= ? THEN ? ELSE ? END)) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`title` LIKE ? GROUP BY t.`title`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(Integer),1(Integer),null(null),false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testWhereGroup3(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+       easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.title().like("123");
+
+                }).groupBy(t_blog -> GroupKeys.of(t_blog.title()))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.where(s->{}).distinct().count()
+                )).toList();
+        listenerContextManager.clear();
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT t.`title` AS `value1`,COUNT(DISTINCT (CASE WHEN 1 = 1 THEN ? ELSE ? END)) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`title` LIKE ? GROUP BY t.`title`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),null(null),false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testWhereGroup4(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+       easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.title().like("123");
+
+                }).groupBy(t_blog -> GroupKeys.of(t_blog.title()))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.where(s->s.star().ge(123)).distinct().count()
+                )).toList();
+        listenerContextManager.clear();
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT t.`title` AS `value1`,COUNT(DISTINCT (CASE WHEN t.`star` >= ? THEN ? ELSE ? END)) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`title` LIKE ? GROUP BY t.`title`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(Integer),1(Integer),null(null),false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    public static void testNameConversion(NameConversion nameConversion,String uag){
+
+        System.out.printf("%s-->%s-->%s%n",uag, EasyClassUtil.getSimpleName(nameConversion.getClass()),nameConversion.convert(uag));
     }
 
 }

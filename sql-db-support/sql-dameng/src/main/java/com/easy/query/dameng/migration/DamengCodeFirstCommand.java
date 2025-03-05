@@ -4,6 +4,8 @@ import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.CodeFirstCommandArg;
 import com.easy.query.core.basic.api.database.CodeFirstCommandTxArg;
+import com.easy.query.core.basic.api.database.DefaultCodeFirstCommandArg;
+import com.easy.query.core.basic.api.database.DefaultCodeFirstCommandTxArg;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -47,7 +49,7 @@ public class DamengCodeFirstCommand implements CodeFirstCommand {
             log.info("execute sql is empty.");
             return;
         }
-        consumer.accept(new CodeFirstCommandArg(executeSQL));
+        consumer.accept(new DefaultCodeFirstCommandArg(executeSQL));
         SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
         long l = sqlClientApiFactory.createJdbcExecutor(runtimeContext).sqlExecute(executeSQL, Collections.emptyList());
     }
@@ -71,7 +73,7 @@ public class DamengCodeFirstCommand implements CodeFirstCommand {
         ConnectionManager connectionManager = runtimeContext.getConnectionManager();
         SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
         try(Transaction transaction = connectionManager.beginTransaction()){
-            CodeFirstCommandTxArg codeFirstCommandTxArg = new CodeFirstCommandTxArg(transaction, executeSQL);
+            DefaultCodeFirstCommandTxArg codeFirstCommandTxArg = new DefaultCodeFirstCommandTxArg(executeSQL);
             consumer.accept(codeFirstCommandTxArg);
 
             long l = sqlClientApiFactory.createJdbcExecutor(runtimeContext).sqlExecute(executeSQL, Collections.emptyList());

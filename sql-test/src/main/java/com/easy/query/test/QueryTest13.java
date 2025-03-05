@@ -174,8 +174,8 @@ public class QueryTest13 extends BaseTest {
                     b.createTime().format("yyyy-MM-dd").eq("2023-01-01");
                     b.title().nullOrDefault("我的title").eq("title");
                     b.title().subString(1, 2).like("你好");
-                    b.title().isBank();
-                    b.title().isNotBank();
+                    b.title().isBlank();
+                    b.title().isNotBlank();
                     b.title().isEmpty();
                     b.title().isNotEmpty();
                 }).toList();

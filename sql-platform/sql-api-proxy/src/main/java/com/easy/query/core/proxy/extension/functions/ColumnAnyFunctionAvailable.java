@@ -42,7 +42,8 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         ColumnFunctionCastStringAvailable<TProperty>,
         ColumnFunctionCastNumberAvailable<TProperty>,
         ColumnFunctionCastDateTimeAvailable<TProperty>,
-        ColumnFunctionCastBooleanAvailable<TProperty> {
+        ColumnFunctionCastBooleanAvailable<TProperty>,
+        ColumnJsonMapFunctionAvailable<TProperty> {
 
     @Override
     default ColumnFunctionCompareComparableAnyChainExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {

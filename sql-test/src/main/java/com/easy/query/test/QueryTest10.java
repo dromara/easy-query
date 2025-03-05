@@ -453,7 +453,7 @@ public class QueryTest10 extends BaseTest{
                 .groupBy((t, t1) -> GroupKeys.of(t1.id()))
                 .select((g) -> new BlogEntityProxy().adapter(r->{
                     r.selectExpression(g.key1());
-                    r.score().set(g.sum(g.groupTable().t2.score()));
+                    r.score().set(g.groupTable().t2.score().sum());
                 }))
                 .toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -535,7 +535,7 @@ public class QueryTest10 extends BaseTest{
             List<Draft3<String, Long, Integer>> list = easyEntityQuery
                     .queryable(Topic.class)
                     .groupBy(t -> GroupKeys.of(t.id()))
-                    .select(g -> Select.DRAFT.of(g.key1(), g.count(), g.sum(g.groupTable().stars())))
+                    .select(g -> Select.DRAFT.of(g.key1(), g.count(), g.sum(s->s.stars())))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -989,14 +989,13 @@ public class QueryTest10 extends BaseTest{
                 .groupBy(o-> GroupKeys.of(o.content().subString(0,8)))
                 .select(o -> Select.DRAFT.of(
                         o.key1(),
-                        o.join(o.groupTable().id(),",")
+                        o.join(x->x.id(),",")
                 )).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT SUBSTR(t.`content`,1,8) AS `value1`,GROUP_CONCAT(t.`id` SEPARATOR ?) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY SUBSTR(t.`content`,1,8)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals(",(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
-
     }
 
 //    @Test

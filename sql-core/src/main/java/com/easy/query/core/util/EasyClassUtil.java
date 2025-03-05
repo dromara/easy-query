@@ -147,6 +147,12 @@ public class EasyClassUtil {
         }
         return false;
     }
+    public static boolean isBooleanType(Class<?> clazz) {
+        if (clazz.isPrimitive()) {
+            return Objects.equals(clazz, boolean.class);
+        }
+        return Objects.equals(clazz, Boolean.class);
+    }
 
     public static boolean isBasicTypeOrEnum(Class<?> clazz) {
         return isBasicType(clazz) || isEnumType(clazz);

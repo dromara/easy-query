@@ -53,7 +53,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
     private static final BigDecimalTypeHandler bigDecimalHandler = new BigDecimalTypeHandler();
     private static final BlobTypeHandler blobTypeHandler = new BlobTypeHandler();
-    private static final BooleanTypeHandler booleanDecimalHandler = new BooleanTypeHandler();
+    private static final BooleanTypeHandler booleanTypeHandler = new BooleanTypeHandler();
     private static final ByteArrayTypeHandler byteArrayTypeHandler = new ByteArrayTypeHandler();
     private static final ByteTypeHandler byteTypeHandler = new ByteTypeHandler();
     private static final CharArrayTypeHandler charArrayTypeHandler = new CharArrayTypeHandler();
@@ -78,8 +78,8 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
     private static final Map<Class<?>, JdbcTypeHandler> handlers=new ConcurrentHashMap<>();
     static{
         handlers.put(BigDecimal.class, bigDecimalHandler);
-        handlers.put(Boolean.class, booleanDecimalHandler);
-        handlers.put(boolean.class, booleanDecimalHandler);
+        handlers.put(Boolean.class, booleanTypeHandler);
+        handlers.put(boolean.class, booleanTypeHandler);
         handlers.put(byte[].class, byteArrayTypeHandler);
         handlers.put(byte.class, byteTypeHandler);
         handlers.put(Byte.class, byteTypeHandler);

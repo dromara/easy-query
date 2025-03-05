@@ -794,7 +794,7 @@ public class QueryTest14 extends BaseTest {
                 }
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-                Assert.assertEquals("SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS \"__rownum__\" FROM (SELECT t.\"title\" AS \"title\",COUNT(t.\"id\") AS \"star\", ROWNUM AS \"__rownum__\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? GROUP BY t.\"title\") rt WHERE ROWNUM < 31) rt1 WHERE rt1.\"__rownum__\" > 20", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS \"__rownum__\" FROM (SELECT t.\"title\" AS \"title\",COUNT(t.\"id\") AS \"star\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? GROUP BY t.\"title\") rt WHERE ROWNUM < 31) rt1 WHERE rt1.\"__rownum__\" > 20", jdbcExecuteAfterArg.getBeforeArg().getSql());
                 Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
                 listenerContextManager.clear();
             }
@@ -1825,7 +1825,7 @@ public class QueryTest14 extends BaseTest {
                 }
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-                Assert.assertEquals("SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS \"__rownum__\" FROM (SELECT t.\"title\" AS \"title\",COUNT(t.\"id\") AS \"star\", ROWNUM AS \"__rownum__\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? GROUP BY t.\"title\") rt WHERE ROWNUM < 31) rt1 WHERE rt1.\"__rownum__\" > 20", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS \"__rownum__\" FROM (SELECT t.\"title\" AS \"title\",COUNT(t.\"id\") AS \"star\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? GROUP BY t.\"title\") rt WHERE ROWNUM < 31) rt1 WHERE rt1.\"__rownum__\" > 20", jdbcExecuteAfterArg.getBeforeArg().getSql());
                 Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
                 listenerContextManager.clear();
             }

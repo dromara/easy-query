@@ -55,8 +55,8 @@ public interface SQLKtAssertPredicate<T1, TChain> extends EntitySQLTableOwner<T1
     /**
      * column is null or empty
      */
-    default TChain isBank(KProperty1<? super T1, String> column) {
-        return isBank(true, column);
+    default TChain isBlank(KProperty1<? super T1, String> column) {
+        return isBlank(true, column);
     }
 
     /**
@@ -66,13 +66,13 @@ public interface SQLKtAssertPredicate<T1, TChain> extends EntitySQLTableOwner<T1
      * @param column  字段
      * @return children
      */
-    TChain isBank(boolean condition, KProperty1<? super T1, String> column);
+    TChain isBlank(boolean condition, KProperty1<? super T1, String> column);
 
     /**
      * column is not null and not empty
      */
-    default TChain isNotBank(KProperty1<? super T1, String> column) {
-        return isNotBank(true, column);
+    default TChain isNotBlank(KProperty1<? super T1, String> column) {
+        return isNotBlank(true, column);
     }
 
     /**
@@ -82,7 +82,7 @@ public interface SQLKtAssertPredicate<T1, TChain> extends EntitySQLTableOwner<T1
      * @param column  字段
      * @return children
      */
-    TChain isNotBank(boolean condition, KProperty1<? super T1, String> column);
+    TChain isNotBlank(boolean condition, KProperty1<? super T1, String> column);
     /**
      * column is null or empty
      */

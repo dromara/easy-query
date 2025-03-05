@@ -102,7 +102,7 @@ public class MigrationTest extends BaseTest {
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(MyMigrationBlog0.class));
             codeFirstCommand.executeWithTransaction(arg -> {
                 System.out.println("执行删除");
-                System.out.println(arg.sql);
+                System.out.println(arg.getSQL());
             });
         } else {
             System.out.println("不存在表:MyMigrationBlog0");
@@ -110,8 +110,8 @@ public class MigrationTest extends BaseTest {
 
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MyMigrationBlog0.class));
         codeFirstCommand.executeWithTransaction(arg -> {
-            System.out.println(arg.sql);
-            String md5 = MD5Util.getMD5Hash(arg.sql);
+            System.out.println(arg.getSQL());
+            String md5 = MD5Util.getMD5Hash(arg.getSQL());
             System.out.println("sql-hash:" + md5);
             Assert.assertEquals("2a927e4ae0dbf7d6f6d687a50888df93", md5);
             arg.commit();
@@ -122,7 +122,7 @@ public class MigrationTest extends BaseTest {
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.dropTableCommand(Arrays.asList(MyMigrationBlog0.class));
         codeFirstCommand1.executeWithEnvTransaction(arg -> {
             System.out.println("执行删除");
-            System.out.println(arg.sql);
+            System.out.println(arg.getSQL());
         });
         Exception ex = null;
         try {
@@ -178,7 +178,7 @@ public class MigrationTest extends BaseTest {
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(Topic.class, BlogEntity.class));
         //执行命令
         codeFirstCommand.executeWithTransaction(arg->{
-            System.out.println(arg.sql);
+            System.out.println(arg.getSQL());
             arg.commit();
         });
     }

@@ -18,4 +18,5 @@ public interface ColumnFunctionCompareComparableAnyChainExpression<T> extends Co
         return EasyObjectUtil.typeCastNullable(this);
     }
    void executeSQL();
+
 }

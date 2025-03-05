@@ -4,7 +4,6 @@ import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.builder.Selector;
-import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.func.SQLFunc;
@@ -12,13 +11,10 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.SQLFunctionExpressionUtil;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableJsonMapChainExpression;
 import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
-import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
-import com.easy.query.core.util.EasyClassUtil;
 
-import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -27,18 +23,13 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public class ColumnFunctionCompareComparableAnyChainExpressionImpl<TProperty> implements ColumnFunctionCompareComparableAnyChainExpression<TProperty> {
+public class ColumnFunctionCompareComparableJsonMapChainExpressionImpl<TProperty> implements ColumnFunctionCompareComparableJsonMapChainExpression<TProperty> {
     private final EntitySQLContext entitySQLContext;
     private final TableAvailable table;
     private final String property;
     private final Function<SQLFunc, SQLFunction> func;
     private Class<?> propType;
-
-    public ColumnFunctionCompareComparableAnyChainExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func) {
-        this(entitySQLContext, table, property, func, Object.class);
-    }
-
-    public ColumnFunctionCompareComparableAnyChainExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
+    public ColumnFunctionCompareComparableJsonMapChainExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
         this.entitySQLContext = entitySQLContext;
 
         this.table = table;
@@ -150,15 +141,6 @@ public class ColumnFunctionCompareComparableAnyChainExpressionImpl<TProperty> im
         this.propType = clazz;
     }
 
-    @Override
-    public void executeSQL() {
-        SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
-        SQLFunction sqlFunction = func.apply(fx);
-        String sqlSegment = sqlFunction.sqlSegment(getTable());
-        getEntitySQLContext()._executeNativeSql(sqlSegment,c->{
-            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(getTable(), c.getSQLNativeExpressionContext()));
-        });
-    }
 
 //    @Override
 //    public void eq(boolean condition,TProperty val) {

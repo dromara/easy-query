@@ -650,11 +650,13 @@ public class QueryTest12 extends BaseTest {
                 .groupBy(b -> GroupKeys.of(b.id()))
                 .select(b -> {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
-                    PropTypeColumn<Integer> integerPropTypeColumn = b.expression().sqlType("case {0} when {1} then 1 else 0 end",
+                    ColumnFunctionCompareComparableAnyChainExpression<Integer> anyType = b.expression().sqlSegment("case {0} when {1} then 1 else 0 end",
                             c -> {
                                 c.expression(b.groupTable().score()).value(1);
                             }).asAnyType(Integer.class);
-                    blogEntityProxy.star().set(b.sum(integerPropTypeColumn));
+                    blogEntityProxy.star().set(
+                            anyType.sum()
+                    );
                     return blogEntityProxy;
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -673,10 +675,12 @@ public class QueryTest12 extends BaseTest {
                 .groupBy(b -> GroupKeys.of(b.id()))
                 .select(b -> {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
-                    blogEntityProxy.score().set(b.min(b.expression().sqlType("case {0} when {1} then 1 else 0 end",
-                            c -> {
-                                c.expression(b.groupTable().score()).value(1);
-                            }).asAnyType(BigDecimal.class)));
+                    blogEntityProxy.score().set(
+                            b.expression().sqlSegment("case {0} when {1} then 1 else 0 end",
+                                    c -> {
+                                        c.expression(b.groupTable().score()).value(1);
+                                    }).asAnyType(BigDecimal.class).min()
+                    );
                     return blogEntityProxy;
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -908,10 +912,10 @@ public class QueryTest12 extends BaseTest {
                                     .then(1).elseEnd(0)
                                     .sum()
                     );
-                    blogEntityProxy.score().set(b.min(b.expression().sqlType("case {0} when {1} then 1 else 0 end",
+                    blogEntityProxy.score().set(b.expression().sqlSegment("case {0} when {1} then 1 else 0 end",
                             c -> {
                                 c.expression(b.groupTable().score()).value(1);
-                            }).asAnyType(BigDecimal.class)));
+                            }).asAnyType(BigDecimal.class).min());
                     return blogEntityProxy;
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());

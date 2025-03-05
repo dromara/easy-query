@@ -8,10 +8,6 @@ import com.easy.query.core.basic.jdbc.tx.Transaction;
  *
  * @author xuejiaming
  */
-public class CodeFirstCommandArg {
-    public final String sql;
-
-    public CodeFirstCommandArg(String sql){
-        this.sql = sql;
-    }
+public interface CodeFirstCommandArg {
+    String getSQL();
 }

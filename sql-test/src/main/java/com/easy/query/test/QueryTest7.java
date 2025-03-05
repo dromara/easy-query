@@ -651,7 +651,7 @@ public class QueryTest7 extends BaseTest {
     public void testBank1() {
         String sql = easyQuery
                 .queryable(Topic.class)
-                .where(o -> o.isNotBank(Topic::getId))
+                .where(o -> o.isNotBlank(Topic::getId))
                 .toSQL();
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (`id` IS NOT NULL AND `id` <> '' AND LTRIM(`id`) <> '')", sql);
     }
@@ -660,7 +660,7 @@ public class QueryTest7 extends BaseTest {
     public void testBank2() {
         String sql = easyQuery
                 .queryable(Topic.class)
-                .where(o -> o.isBank(Topic::getId))
+                .where(o -> o.isBlank(Topic::getId))
                 .toSQL();
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (`id` IS NULL OR `id` = '' OR LTRIM(`id`) = '')", sql);
     }
@@ -668,7 +668,7 @@ public class QueryTest7 extends BaseTest {
     public void testBank3() {
         String sql = easyProxyQuery
                 .queryable(TopicProxy.createTable())
-                .where(o -> o.id().isNotBank())
+                .where(o -> o.id().isNotBlank())
                 .toSQL();
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (`id` IS NOT NULL AND `id` <> '' AND LTRIM(`id`) <> '')", sql);
     }
@@ -677,7 +677,7 @@ public class QueryTest7 extends BaseTest {
     public void testBank4() {
         String sql = easyProxyQuery
                 .queryable(TopicProxy.createTable())
-                .where(o -> o.id().isBank())
+                .where(o -> o.id().isBlank())
                 .toSQL();
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (`id` IS NULL OR `id` = '' OR LTRIM(`id`) = '')", sql);
     }
@@ -718,7 +718,7 @@ public class QueryTest7 extends BaseTest {
         List<String> searchValues = Arrays.asList("1", "小明", "小红");
         String sql = easyQuery
                 .queryable(Topic.class)
-                .where(o -> o.isBank(Topic::getId))
+                .where(o -> o.isBlank(Topic::getId))
                 .where(o -> {
                     for (String searchValue : searchValues) {
                         o.and(x -> {

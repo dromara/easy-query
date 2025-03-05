@@ -8,6 +8,7 @@ import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
+import com.easy.query.core.expression.segment.impl.CaseWhenSQLSegment;
 import com.easy.query.core.expression.segment.impl.DefaultSQLSegment;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -51,7 +52,7 @@ public class CaseWhenSQLFunction extends AbstractExpressionSQLFunction {
             SQLExpression1<Filter> filterExpression = when.t();
             ParamExpression paramExpression = when.t1();
             AndPredicateSegment resolve = resolve(runtimeContext, expressionContext, filterExpression);
-            ColumSQLExpressionImpl columSQLExpressionPredicate = new ColumSQLExpressionImpl(new DefaultSQLSegment(toSQLContext -> resolve.toSQL(toSQLContext), visitor -> EasySQLSegmentUtil.tableVisit(resolve, visitor)));
+            ColumSQLExpressionImpl columSQLExpressionPredicate = new ColumSQLExpressionImpl(new CaseWhenSQLSegment(toSQLContext -> resolve.toSQL(toSQLContext), visitor -> EasySQLSegmentUtil.tableVisit(resolve, visitor)));
             columnExpressions.add(columSQLExpressionPredicate);
             sql.append("WHEN ");
             sql.append("{").append(i++).append("}");

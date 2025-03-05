@@ -1,6 +1,8 @@
 package com.easy.query.core.proxy.grouping.proxy;
 
 import com.easy.query.core.expression.builder.GroupSelector;
+import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.AbstractProxyEntity;
@@ -11,11 +13,16 @@ import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.ColumnObjectFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.ColumnStringFunctionAvailable;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberFilterChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableAnyChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberFilterChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableStringChainExpressionImpl;
+import com.easy.query.core.proxy.grouping.DefaultSQLGroupQueryable;
+import com.easy.query.core.proxy.grouping.SQLGroupQueryable;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.math.BigDecimal;
@@ -38,98 +45,30 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
     /**
      * 当仅单表是group就是当前表
      * 如果是多表下比如join下那么groups就是MergeTuple2-10最多10个如有需要可以提交issue或者自行扩展
+     *
      * @return
      */
     public TSourceProxy groupTable() {
         return tSourceProxy;
     }
-
-    /**
-     * 请使用{@link #expression()}或者{@link Expression#count()}
-     * COUNT(*)
-     *
-     * @return 返回类型为Long
-     */
     public ColumnFunctionCompareComparableNumberChainExpression<Long> count() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(getEntitySQLContext(), null, null, f -> {
-            return f.count(c -> {
-            });
-        }, Long.class);
+        return where(null).count();
     }
 
-//    public <TProperty> ColumnFunctionComparableNumberChainExpression<Long> count(ColumnObjectFunctionAvailable<TProperty, ?> column) {
-//        return column.count();
-//    }
-    public <TProperty> ColumnFunctionCompareComparableNumberChainExpression<Long> count(PropTypeColumn<TProperty> column) {
-        if (column instanceof ColumnNumberFunctionAvailable) {
-            ColumnNumberFunctionAvailable<TProperty> funcColumn = (ColumnNumberFunctionAvailable<TProperty>) column;
-            return funcColumn.count();
-        }
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(column.getEntitySQLContext(), column.getTable(), column.getValue(), fx -> {
-            return fx.count(x -> {
-                PropTypeColumn.columnFuncSelector(x, column);
-            });
-        }, Long.class);
-    }
-    public <TProperty> ColumnFunctionCompareComparableNumberChainExpression<Long> count(PropTypeColumn<TProperty> column, boolean distinct) {
-        if (column instanceof ColumnNumberFunctionAvailable) {
-            ColumnNumberFunctionAvailable<TProperty> funcColumn = (ColumnNumberFunctionAvailable<TProperty>) column;
-            return funcColumn.count(distinct);
-        }
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(column.getEntitySQLContext(), column.getTable(), column.getValue(), fx -> {
-            if(distinct){
-                return fx.count(x -> {
-                    PropTypeColumn.columnFuncSelector(x, column);
-                }).distinct(true);
-            }
-            return fx.count(x -> {
-                PropTypeColumn.columnFuncSelector(x, column);
-            });
-        }, Long.class);
+    public ColumnFunctionCompareComparableNumberChainExpression<Long> count(boolean distinct) {
+        return where(null).distinct(distinct).count();
     }
 
-    /**
-     * 请使用{@link #expression()}或者{@link Expression#intCount()}
-     * COUNT(*)
-     *
-     * @return 返回类型为Integer
-     */
-    public ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(getEntitySQLContext(), null, null, f -> {
-            return f.count(c -> {
-            });
-        }, Integer.class);
-    }
 
-//    public <TProperty> ColumnFunctionComparableNumberChainExpression<Integer> intCount(ColumnObjectFunctionAvailable<TProperty, ?> column) {
+    //    public <TProperty> ColumnFunctionComparableNumberChainExpression<Integer> intCount(ColumnObjectFunctionAvailable<TProperty, ?> column) {
 //        return column.intCount();
 //    }
-    public <TProperty> ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount(PropTypeColumn<TProperty> column) {
-        if (column instanceof ColumnNumberFunctionAvailable) {
-            ColumnNumberFunctionAvailable<TProperty> funcColumn = (ColumnNumberFunctionAvailable<TProperty>) column;
-            return funcColumn.intCount();
-        }
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(column.getEntitySQLContext(), column.getTable(), column.getValue(), fx -> {
-            return fx.count(x -> {
-                PropTypeColumn.columnFuncSelector(x, column);
-            });
-        }, Integer.class);
+    public ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount() {
+        return where(null).intCount();
     }
-    public <TProperty> ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount(PropTypeColumn<TProperty> column, boolean distinct) {
-        if (column instanceof ColumnNumberFunctionAvailable) {
-            ColumnNumberFunctionAvailable<TProperty> funcColumn = (ColumnNumberFunctionAvailable<TProperty>) column;
-            return funcColumn.intCount(distinct);
-        }
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(column.getEntitySQLContext(), column.getTable(), column.getValue(), fx -> {
-            if(distinct){
-                return fx.count(x -> {
-                    PropTypeColumn.columnFuncSelector(x, column);
-                }).distinct(true);
-            }
-            return fx.count(x -> {
-                PropTypeColumn.columnFuncSelector(x, column);
-            });
-        }, Integer.class);
+
+    public ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount(boolean distinct) {
+        return where(null).distinct(distinct).intCount();
     }
 
     protected <TKey extends PropTypeColumn<TKey1>, TKey1> void acceptGroupSelector(TKey key, GroupSelector s) {
@@ -153,132 +92,33 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
         throw new UnsupportedOperationException();
     }
 
-
-    /**
-     * 请使用 id().max()
-     * @param column
-     * @return
-     * @param <TProperty>
-     * @param <TChain>
-     */
-    public <TProperty, TChain extends PropTypeColumn<TProperty>> PropTypeColumn<TProperty> max(PropTypeColumn<TProperty> column) {
-        if (column instanceof ColumnObjectFunctionAvailable) {
-            ColumnObjectFunctionAvailable<TProperty, TChain> column1 = (ColumnObjectFunctionAvailable<TProperty, TChain>) column;
-            return column1.max();
-        }
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), column.getTable(), column.getValue(), fx -> {
-            return fx.max(x -> {
-                PropTypeColumn.columnFuncSelector(x, column);
-            });
-        }, column.getPropertyType());
+    public <TProperty> ColumnFunctionCompareComparableAnyChainExpression<TProperty> max(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TProperty>> columnSelector) {
+        return where(null).max(columnSelector);
     }
 
-    /**
-     * 请使用 id().min()
-     * @param column
-     * @return
-     * @param <TProperty>
-     * @param <TChain>
-     */
-    public <TProperty, TChain extends PropTypeColumn<TProperty>> PropTypeColumn<TProperty> min(PropTypeColumn<TProperty> column) {
-        if (column instanceof ColumnObjectFunctionAvailable) {
-            ColumnObjectFunctionAvailable<TProperty, TChain> column1 = (ColumnObjectFunctionAvailable<TProperty, TChain>) column;
-            return column1.min();
-        }
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), column.getTable(), column.getValue(), fx -> {
-            return fx.min(x -> {
-                PropTypeColumn.columnFuncSelector(x, column);
-            });
-        }, column.getPropertyType());
+    public <TProperty> ColumnFunctionCompareComparableAnyChainExpression<TProperty> min(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TProperty>> columnSelector) {
+        return where(null).min(columnSelector);
     }
 
-    /**
-     * 请使用 age().sum()
-     * @param column
-     * @return
-     * @param <TProperty>
-     */
-    public <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<TProperty> sum(PropTypeColumn<TProperty> column) {
-        if (column instanceof ColumnNumberFunctionAvailable) {
-            ColumnNumberFunctionAvailable<TProperty> funcColumn = (ColumnNumberFunctionAvailable<TProperty>) column;
-            return funcColumn.sum();
-        }
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(column.getEntitySQLContext(), column.getTable(), column.getValue(), fx -> {
-            return fx.sum(x -> {
-                PropTypeColumn.columnFuncSelector(x, column);
-            });
-        }, column.getPropertyType());
+    public <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<TProperty> sum(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TProperty>> columnSelector) {
+        return where(null).sum(columnSelector);
+    }
+
+    public <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TProperty>> columnSelector) {
+        return where(null).sumBigDecimal(columnSelector);
+    }
+
+    public <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TProperty>> columnSelector) {
+        return where(null).avg(columnSelector);
+    }
+
+    public <TProperty> ColumnFunctionCompareComparableStringChainExpression<String> join(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TProperty>> columnSelector, String delimiter) {
+        return where(null).join(columnSelector, delimiter);
     }
 
 
-    /**
-     * 请使用 age().sumBigDecimal()
-     * @param column
-     * @return
-     * @param <TProperty>
-     */
-    public <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sumBigDecimal(PropTypeColumn<TProperty> column) {
-        if (column instanceof ColumnNumberFunctionAvailable) {
-            ColumnNumberFunctionAvailable<TProperty> funcColumn = (ColumnNumberFunctionAvailable<TProperty>) column;
-            return funcColumn.sumBigDecimal();
-        }
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(column.getEntitySQLContext(), column.getTable(), column.getValue(), fx -> {
-            return fx.sum(x -> {
-                PropTypeColumn.columnFuncSelector(x, column);
-            });
-        }, BigDecimal.class);
+    public SQLGroupQueryable<TSourceProxy> where(SQLExpression1<TSourceProxy> where) {
+        return new DefaultSQLGroupQueryable<>(tSourceProxy, this.entitySQLContext, where);
     }
 
-    /**
-     * 请使用 age().avg()
-     * @param column
-     * @return
-     * @param <TProperty>
-     */
-    public <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg(PropTypeColumn<TProperty> column) {
-        if (column instanceof ColumnNumberFunctionAvailable) {
-            ColumnNumberFunctionAvailable<TProperty> funcColumn = (ColumnNumberFunctionAvailable<TProperty>) column;
-            return funcColumn.avg();
-        }
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(column.getEntitySQLContext(), column.getTable(), column.getValue(), fx -> {
-            return fx.avg(x -> {
-                PropTypeColumn.columnFuncSelector(x, column);
-            });
-        }, BigDecimal.class);
-    }
-
-    /**
-     * 请使用 age().join(",")
-     * @param column
-     * @param delimiter
-     * @return
-     * @param <TProperty>
-     */
-    public <TProperty> ColumnFunctionCompareComparableStringChainExpression<String> join(ColumnStringFunctionAvailable<TProperty> column, String delimiter) {
-        return column.join(delimiter);
-    }
-
-    /**
-     * 请使用 age().join(",")
-     * @param column
-     * @param delimiter
-     * @param distinct
-     * @return
-     * @param <TProperty>
-     */
-    public <TProperty> ColumnFunctionCompareComparableStringChainExpression<String> join(PropTypeColumn<TProperty> column, String delimiter, boolean distinct) {
-        if (column instanceof ColumnStringFunctionAvailable) {
-            ColumnStringFunctionAvailable<TProperty> funcColumn = (ColumnStringFunctionAvailable<TProperty>) column;
-            return funcColumn.join(delimiter);
-        }
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(column.getEntitySQLContext(), column.getTable(), column.getValue(), fx -> {
-            return fx.join(x -> {
-                x.value(delimiter);
-                PropTypeColumn.columnFuncSelector(x, column);
-            },distinct);
-        }, String.class);
-    }
-    public <TProperty> ColumnFunctionCompareComparableStringChainExpression<String> join(PropTypeColumn<TProperty> column, String delimiter) {
-        return join(column,delimiter,false);
-    }
 }

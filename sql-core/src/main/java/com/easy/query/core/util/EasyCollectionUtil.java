@@ -83,7 +83,7 @@ public class EasyCollectionUtil {
             TR next = iterator.next();
             list.add(next);
             if (list.size() > limit) {
-                throw new EasyQueryResultSizeLimitException(limit, "query result more,size > " + limit);
+                throw new EasyQueryResultSizeLimitException(limit, "Too many query results ,limit:" + limit);
             }
 
         } while (iterator.hasNext());

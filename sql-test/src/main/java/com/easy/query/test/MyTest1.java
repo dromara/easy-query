@@ -910,7 +910,7 @@ public class MyTest1 extends BaseTest {
                 .select(g -> new BlogEntityProxy().adapter(r -> {
 
                     r.id().set(g.key1());
-                    r.star().set(g.intCount(g.groupTable().title().subString(1, 2)));
+                    r.star().set(g.groupTable().title().subString(1, 2).intCount());
                 })).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -940,7 +940,7 @@ public class MyTest1 extends BaseTest {
                 })
                 .select(g -> new BlogEntityProxy().adapter(r -> {
                     r.id().set(g.key1());
-                    r.star().set(g.intCount(g.groupTable().value2()));
+                    r.star().set(g.groupTable().value2().intCount());
                 })).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -971,7 +971,7 @@ public class MyTest1 extends BaseTest {
                 .orderBy(o -> o.key1().asc())
                 .select(g -> new BlogEntityProxy().adapter(r -> {
                     r.id().set(g.key1());
-                    r.star().set(g.intCount(g.groupTable().value2()));
+                    r.star().set(g.groupTable().value2().intCount());
                 })).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1002,7 +1002,7 @@ public class MyTest1 extends BaseTest {
                 .select(g -> new BlogEntityProxy().adapter(r -> {
                     r.selectExpression();
                     r.id().set(g.key1());
-                    r.star().set(g.intCount(g.groupTable().value2()));
+                    r.star().set(g.groupTable().value2().intCount());
                 }))
                 .orderBy(o -> o.star().asc()).toList();
 
@@ -1200,7 +1200,7 @@ public class MyTest1 extends BaseTest {
                 ))
                 .select(o -> Select.DRAFT.of(
                         o.key1(),
-                        o.count(o.groupTable().t1.title())
+                        o.groupTable().t1.title().count()
                 )).toList();
 
 
@@ -1236,7 +1236,7 @@ public class MyTest1 extends BaseTest {
                 ))
                 .select(o -> Select.DRAFT.of(
                         o.key1(),
-                        o.count(o.groupTable().t1.title())
+                        o.groupTable().t1.title().count()
                 )).toList();
 
 

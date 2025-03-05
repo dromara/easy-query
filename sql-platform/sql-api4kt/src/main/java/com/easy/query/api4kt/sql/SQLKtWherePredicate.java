@@ -402,14 +402,14 @@ public interface SQLKtWherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLKtL
     }
 
     @Override
-    default SQLKtWherePredicate<T1> isBank(boolean condition, KProperty1<? super T1, String> column) {
-        getWherePredicate().isBank(condition, EasyKtLambdaUtil.getPropertyName(column));
+    default SQLKtWherePredicate<T1> isBlank(boolean condition, KProperty1<? super T1, String> column) {
+        getWherePredicate().isBlank(condition, EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
 
     @Override
-    default SQLKtWherePredicate<T1> isNotBank(boolean condition, KProperty1<? super T1, String> column) {
-        getWherePredicate().isNotBank(condition, EasyKtLambdaUtil.getPropertyName(column));
+    default SQLKtWherePredicate<T1> isNotBlank(boolean condition, KProperty1<? super T1, String> column) {
+        getWherePredicate().isNotBlank(condition, EasyKtLambdaUtil.getPropertyName(column));
         return this;
     }
     @Override

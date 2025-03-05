@@ -1,13 +1,11 @@
 package com.easy.query.test.doc;
 
-import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.proxy.PropTypeColumn;
-import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -18,8 +16,6 @@ import com.easy.query.test.doc.entity.SysUser;
 import com.easy.query.test.doc.entity.proxy.SysUserProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
-import com.easy.query.test.entity.blogtest.Company;
-import com.easy.query.test.entity.blogtest.proxy.CompanyProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
@@ -190,7 +186,7 @@ public class DocTest extends BaseTest {
                                 o.id().eq(o.createTime().format("yyyy-MM-dd" ));
                                 o.createTime().format("yyyy-MM-dd" ).eq("2023-01-02" );
                                 o.name().nullOrDefault("unknown" ).like("123" );
-                                o.phone().isNotBank();
+                                o.phone().isNotBlank();
                             })
                             .fetchBy(o -> o.FETCHER.id().name().phone().departName())
                             .toList();
@@ -575,7 +571,7 @@ public class DocTest extends BaseTest {
                     ))
                     .select(o -> new TopicProxy().adapter(r->{
                         r.id().set(o.key1());
-                        r.stars().set(o.count(o.groupTable().id()).asAnyType(Integer.class));//count(id) as stars
+                        r.stars().set(o.groupTable().id().count().asAnyType(Integer.class));//count(id) as stars
                     }))
 //                    .selectAs(Topic.class,(o, tr)->Select.of(
 //                            o.id(),

@@ -9,21 +9,12 @@ import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.entity.EntityMappingRule;
-import com.easy.query.core.basic.entity.PropertyEntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
-import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
-import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.ShardingDataSource;
-import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
-import com.easy.query.core.configuration.bean.entity.EntityPropertyDescriptorMatcher;
-import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
-import com.easy.query.core.configuration.column2mapkey.UpperColumn2MapKeyConversion;
-import com.easy.query.core.configuration.dialect.DefaultSQLKeyword;
-import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.router.manager.DataSourceRouteManager;
@@ -67,7 +58,6 @@ import com.easy.query.test.keytest.MyTestPrimaryKeyGenerator;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
-import com.easy.query.test.mypage.MyEasyPageResultProvider;
 import com.easy.query.test.parser.MyLambdaParser;
 import com.easy.query.test.sharding.DataSourceAndTableShardingInitializer;
 import com.easy.query.test.sharding.DataSourceShardingInitializer;
@@ -81,7 +71,6 @@ import com.easy.query.test.sharding.TopicShardingTimeTableRoute;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -241,7 +230,7 @@ public abstract class BaseTest {
     }
 
     public static void initData() {
-        easyQuery.deletable(BlogEntity.class).where(o -> o.isNotBank(BlogEntity::getId)).disableLogicDelete().allowDeleteStatement(true).executeRows();
+        easyQuery.deletable(BlogEntity.class).where(o -> o.isNotBlank(BlogEntity::getId)).disableLogicDelete().allowDeleteStatement(true).executeRows();
         boolean any = easyQuery.queryable(BlogEntity.class).any();
         if (!any) {
 

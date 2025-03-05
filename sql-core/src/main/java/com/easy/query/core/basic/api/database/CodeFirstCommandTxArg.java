@@ -11,30 +11,10 @@ import java.util.function.Consumer;
  *
  * @author xuejiaming
  */
-public class CodeFirstCommandTxArg {
-    private final Transaction transaction;
-    public final String sql;
-    private Consumer<Transaction> transactionConsumer;
+public interface CodeFirstCommandTxArg {
 
+    String getSQL();
+    void commit();
 
-    public CodeFirstCommandTxArg(Transaction transaction, String sql) {
-        this.transaction = transaction;
-        this.sql = sql;
-    }
-
-    public void commit() {
-        transactionConsumer = Transaction::commit;
-    }
-
-    public void rollback() {
-        transactionConsumer = Transaction::rollback;
-    }
-
-    public Consumer<Transaction> getTransactionConsumer() {
-        if (transactionConsumer == null) {
-            return tx -> {
-            };
-        }
-        return transactionConsumer;
-    }
+    void rollback();
 }

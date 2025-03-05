@@ -41,7 +41,7 @@ public class DefaultCodeFirstCommand implements CodeFirstCommand {
             log.info("execute sql is empty.");
             return;
         }
-        consumer.accept(new CodeFirstCommandArg(executeSQL));
+        consumer.accept(new DefaultCodeFirstCommandArg(executeSQL));
         SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
         long l = sqlClientApiFactory.createJdbcExecutor(runtimeContext).sqlExecute(executeSQL, Collections.emptyList());
     }
@@ -62,7 +62,7 @@ public class DefaultCodeFirstCommand implements CodeFirstCommand {
         ConnectionManager connectionManager = runtimeContext.getConnectionManager();
         SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
         try(Transaction transaction = connectionManager.beginTransaction()){
-            CodeFirstCommandTxArg codeFirstCommandTxArg = new CodeFirstCommandTxArg(transaction, executeSQL);
+            DefaultCodeFirstCommandTxArg codeFirstCommandTxArg = new DefaultCodeFirstCommandTxArg(executeSQL);
             consumer.accept(codeFirstCommandTxArg);
 
             long l = sqlClientApiFactory.createJdbcExecutor(runtimeContext).sqlExecute(executeSQL, Collections.emptyList());

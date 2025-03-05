@@ -2,6 +2,7 @@ package com.easy.query.test.dameng;
 
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.core.draft.Draft1;
@@ -9,7 +10,11 @@ import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.dameng.entity.DamengMyTopic;
+import com.easy.query.test.dameng.entity.DamengMyTopicDTO;
+import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.listener.ListenerContext;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 import org.junit.Assert;
@@ -91,12 +96,13 @@ public class DamengQueryTest extends DamengBaseTest {
     @Test
     public void query5() {
 
-        EasyPageResult<DamengMyTopic> topicPageResult = easyQuery
+        EasyPageResult<DamengMyTopicDTO> topicPageResult = easyQuery
                 .queryable(DamengMyTopic.class)
-                .where(o -> o.isNotNull(DamengMyTopic::getId))
+                .where(o -> o.isNotNull(DamengMyTopic::getId).ne(DamengMyTopic::getId,"xxasdasda"))
                 .orderByAsc(o -> o.column(DamengMyTopic::getId))
+                .select(DamengMyTopicDTO.class,s->s.columnAs(DamengMyTopic::getId, DamengMyTopicDTO::getTitle))
                 .toPageResult(2, 20);
-        List<DamengMyTopic> data = topicPageResult.getData();
+        List<DamengMyTopicDTO> data = topicPageResult.getData();
         Assert.assertEquals(20, data.size());
     }
 
@@ -309,6 +315,42 @@ public class DamengQueryTest extends DamengBaseTest {
         }
     }
 
+    @Test
+    public void query16() {
+
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        EasyPageResult<DamengMyTopic> list = entityQuery.queryable(DamengMyTopic.class)
+                .leftJoin(DamengMyTopic.class, (d, d2) -> d.id().eq(d2.id()))
+                .groupBy((d1, d2) -> GroupKeys.of(d2.title()))
+                .having(d -> d.groupTable().t1.id().count().ne(-1L))
+                .select(DamengMyTopic.class, group -> Select.of(
+                        group.count().as(DamengMyTopic::getStars)
+                )).toPageResult(2,1);
+
+        listenerContextManager.clear();
+
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT COUNT(*) FROM (SELECT COUNT(*) AS \"STARS\" FROM \"MY_TOPIC\" t LEFT JOIN \"MY_TOPIC\" t1 ON t.\"ID\" = t1.\"ID\" GROUP BY t1.\"TITLE\" HAVING COUNT(t.\"ID\") <> ?) t2", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("-1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS \"__rownum__\" FROM (SELECT COUNT(*) AS \"STARS\" FROM \"MY_TOPIC\" t LEFT JOIN \"MY_TOPIC\" t1 ON t.\"ID\" = t1.\"ID\" GROUP BY t1.\"TITLE\" HAVING COUNT(t.\"ID\") <> ?) rt WHERE ROWNUM < 3) rt1 WHERE rt1.\"__rownum__\" > 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("-1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+
+    }
+    @Test
+    public void query17() {
+        List<DamengMyTopic> list = entityQuery.queryable(DamengMyTopic.class)
+                .where(d -> d.title().like("123"))
+                .limit(2, 10).toList();
+    }
 
 //    @Data
 //    @FieldNameConstants

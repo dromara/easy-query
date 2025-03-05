@@ -2802,14 +2802,29 @@ public class RelationTest extends BaseTest {
             Assert.assertEquals("%小明%(String),%13%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
-//        SQLFunc fx = easyQueryClient.getRuntimeContext().fx();
-//        SQLFunction subString = fx.subString("title", 1, 10);
-//        SQLFunction concat = fx.concat(x -> x.sqlFunc(subString).value("123"));
-//        easyQueryClient.updatable(Topic.class)
-//                .setSQLFunction("title",concat)
-//                .asTable("a123123")
-//                .whereById("123zzzxxx")
-//                .executeRows();
+
+    }
+    @Test
+    public void schoolTest8_1() {
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<SchoolClass> hasXiaoMingClass = easyEntityQuery.queryable(SchoolClass.class)
+                    .where(s -> {
+                        s.schoolStudents().any();
+                        s.schoolStudents().none(x -> {
+                            x.name().ne("小明");
+                        });
+                    })
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE EXISTS (SELECT 1 FROM `school_student` t1 WHERE t1.`class_id` = t.`id` LIMIT 1) AND NOT ( EXISTS (SELECT 1 FROM `school_student` t2 WHERE t2.`class_id` = t.`id` AND t2.`name` <> ? LIMIT 1))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("小明(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
 
     }
 
