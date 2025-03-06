@@ -26,7 +26,7 @@ import java.util.function.Function;
  */
 public class AbstractAggregateFilterExpression<TProperty> {
     private final EntitySQLContext entitySQLContext;
-    private PropTypeColumn<?> self;
+    protected PropTypeColumn<?> self;
     private final TableAvailable table;
     private final String property;
     private final SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func;
@@ -128,7 +128,7 @@ public class AbstractAggregateFilterExpression<TProperty> {
         this.propType = clazz;
     }
 
-    private PropTypeColumn<?> getSelf(){
+    protected PropTypeColumn<?> getSelf(){
         return this.self;
     }
 

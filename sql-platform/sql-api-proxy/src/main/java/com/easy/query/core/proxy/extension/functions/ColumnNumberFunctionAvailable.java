@@ -15,6 +15,7 @@ import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastNumb
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastStringAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.filter.ColumnFunctionCompareComparableNumberFilterChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.filter.impl.ColumnFunctionCompareComparableNumberSumFilterChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.filter.impl.ColumnFunctionCompareComparableNumberFilterChainExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
@@ -142,7 +143,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return 计算去重求和 SUM(DISTINCT age)
      */
     default <T extends Number> ColumnFunctionCompareComparableNumberFilterChainExpression<T> sum(boolean distinct) {
-        return new ColumnFunctionCompareComparableNumberFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return new ColumnFunctionCompareComparableNumberSumFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
             return fx.sum(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             }).distinct(distinct);
@@ -157,7 +158,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return 计算去重求和 SUM(DISTINCT age)
      */
     default <T extends Number> ColumnFunctionCompareComparableNumberFilterChainExpression<T> sum(boolean distinct, Class<T> resultClass) {
-        return new ColumnFunctionCompareComparableNumberFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return new ColumnFunctionCompareComparableNumberSumFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
             return fx.sum(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             }).distinct(distinct);
@@ -169,13 +170,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     default ColumnFunctionCompareComparableNumberFilterChainExpression<BigDecimal> sumBigDecimal(boolean distinct) {
-        return new ColumnFunctionCompareComparableNumberFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
-//            if (this instanceof DSLSQLFunctionAvailable) {
-//                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-//                return fx.sum(sqlFunction).distinct(distinct);
-//            } else {
-//                return fx.sum(this.getValue()).distinct(distinct);
-//            }
+        return new ColumnFunctionCompareComparableNumberSumFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
             return fx.sum(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             }).distinct(distinct);
