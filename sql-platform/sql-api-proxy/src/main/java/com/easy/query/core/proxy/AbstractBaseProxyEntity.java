@@ -415,4 +415,36 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
     protected TProxy castChain() {
         return (TProxy) this;
     }
+
+
+    public SQLAnyTypeColumn<TProxy, Object> anyColumn(String property) {
+        return anyColumn(property, Object.class);
+    }
+    public <TProperty> SQLAnyTypeColumn<TProxy, TProperty> anyColumn(String property, @Nullable Class<TProperty> propType) {
+
+        if(property.contains(".")){
+            String[] properties = property.split("\\.");
+            TableAvailable relationTable = table;
+            boolean skip = false;
+            StringBuilder fullName = new StringBuilder();
+            for (int i = 0; i < properties.length - 1 && !skip; i++) {
+                String navigateEntityProperty = properties[i];
+                fullName.append(navigateEntityProperty).append(".");
+                relationTable = EasyRelationalUtil.getRelationTable(this.getEntitySQLContext().getEntityExpressionBuilder(), relationTable, navigateEntityProperty, fullName.substring(0, fullName.length() - 1), true);
+                if (relationTable == null) {
+                    skip = true;
+                }
+            }
+
+            SQLAnyTypeColumn<TProxy, TProperty> column = new SQLAnyTypeColumnImpl<>(this.getEntitySQLContext(), relationTable, properties[properties.length-1], propType);
+            column._setProxy(castChain());
+            column.setNavValue(getFullNavValue(property));
+            return column;
+        }else{
+            SQLAnyTypeColumn<TProxy, TProperty> column = new SQLAnyTypeColumnImpl<>(this.getEntitySQLContext(), table, property, propType);
+            column._setProxy(castChain());
+            column.setNavValue(getFullNavValue(property));
+            return column;
+        }
+    }
 }

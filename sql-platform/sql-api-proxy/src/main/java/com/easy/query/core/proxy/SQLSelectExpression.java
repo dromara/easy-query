@@ -23,44 +23,65 @@ import com.easy.query.core.util.EasyObjectUtil;
  *
  * @author xuejiaming
  */
-public interface SQLSelectExpression extends TablePropColumn{
+public interface SQLSelectExpression extends TablePropColumn {
+
+    default void orderBy(boolean asc) {
+        orderBy(asc, null);
+    }
+
+    default void orderBy(boolean asc, @Nullable OrderByModeEnum nullsModeEnum) {
+        orderBy(true, asc, nullsModeEnum);
+    }
+
+    default void orderBy(boolean condition, boolean asc, @Nullable OrderByModeEnum nullsModeEnum) {
+        if (condition) {
+            if (asc) {
+                asc(nullsModeEnum);
+            } else {
+                desc(nullsModeEnum);
+            }
+        }
+    }
 
     /**
      * 使用正序 order by column asc
      */
     default void asc() {
-         asc(true);
+        asc(true);
     }
 
     /**
      * 使用正序 order by column asc ,{@param condition} 为false那么order by将不会生效也可以用if来进行包裹
+     *
      * @param condition 是否生效asc
      */
     default void asc(boolean condition) {
-        asc(condition,null);
+        asc(condition, null);
     }
+
     default void asc(@Nullable OrderByModeEnum nullsModeEnum) {
-         asc(true,nullsModeEnum);
+        asc(true, nullsModeEnum);
     }
 
     /**
      * 采用正序排序生成 order by column asc并且可以设置nulls模式比如null排在最前还是最后
+     *
      * @param condition
      * @param nullsModeEnum
      */
-    default void asc(boolean condition,@Nullable OrderByModeEnum nullsModeEnum) {
+    default void asc(boolean condition, @Nullable OrderByModeEnum nullsModeEnum) {
         if (condition) {
-           getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
-               s.setAsc(true);
+            getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
+                s.setAsc(true);
 
-               if(nullsModeEnum!=null){
-                   SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
-                   SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(this.getTable(),this.getValue(), true, nullsModeEnum);
-                   s.func(this.getTable(), orderByNullsModeFunction,false);
-               }else{
-                   s.column(this.getTable(), this.getValue());
-               }
-           }));
+                if (nullsModeEnum != null) {
+                    SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
+                    SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(this.getTable(), this.getValue(), true, nullsModeEnum);
+                    s.func(this.getTable(), orderByNullsModeFunction, false);
+                } else {
+                    s.column(this.getTable(), this.getValue());
+                }
+            }));
         }
     }
 //
@@ -83,14 +104,16 @@ public interface SQLSelectExpression extends TablePropColumn{
     }
 
     default void desc(boolean condition) {
-        desc(condition,null);
+        desc(condition, null);
     }
+
     default void desc(OrderByModeEnum nullsModeEnum) {
-        desc(true,nullsModeEnum);
+        desc(true, nullsModeEnum);
     }
 
     /**
      * 采用正序排序生成 order by column desc并且可以设置nulls模式比如null排在最前还是最后
+     *
      * @param condition
      * @param nullsModeEnum
      */
@@ -99,11 +122,11 @@ public interface SQLSelectExpression extends TablePropColumn{
             getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
                 s.setAsc(false);
 
-                if(nullsModeEnum!=null){
+                if (nullsModeEnum != null) {
                     SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
-                    SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(this.getTable(),this.getValue(), false, nullsModeEnum);
-                    s.func(this.getTable(), orderByNullsModeFunction,false);
-                }else{
+                    SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(this.getTable(), this.getValue(), false, nullsModeEnum);
+                    s.func(this.getTable(), orderByNullsModeFunction, false);
+                } else {
                     s.column(this.getTable(), this.getValue());
                 }
             }));
@@ -129,7 +152,8 @@ public interface SQLSelectExpression extends TablePropColumn{
             throw new UnsupportedOperationException();
         });
     }
-    default <TEntity,TR> SQLSelectAsExpression as(Property<TEntity,TR> propertyAlias) {
+
+    default <TEntity, TR> SQLSelectAsExpression as(Property<TEntity, TR> propertyAlias) {
         return as(EasyPropertyLambdaUtil.getPropertyName(propertyAlias));
     }
 
@@ -155,6 +179,7 @@ public interface SQLSelectExpression extends TablePropColumn{
             s.column(table, value);
         }
     }
+
     default void accept(AsSelector s) {
         TableAvailable table = this.getTable();
         String value = this.getValue();
@@ -170,12 +195,12 @@ public interface SQLSelectExpression extends TablePropColumn{
     SQLSelectExpression empty = new SQLSelectImpl(x -> {
     });
 
-    default <TProperty> PropTypeColumn<TProperty> toDraft(Class<TProperty> propType){
-        if(PropTypeColumn.class.isAssignableFrom(this.getClass())){
+    default <TProperty> PropTypeColumn<TProperty> toDraft(Class<TProperty> propType) {
+        if (PropTypeColumn.class.isAssignableFrom(this.getClass())) {
             PropTypeColumn<? extends TProperty> propTypeColumn = ((PropTypeColumn<?>) this).asAnyType(propType);
             return EasyObjectUtil.typeCastNullable(propTypeColumn);
         }
-        return new SelectToDraftColumn<>(this,propType);
+        return new SelectToDraftColumn<>(this, propType);
     }
 
 }

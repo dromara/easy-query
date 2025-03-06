@@ -140,8 +140,6 @@ public class EasySQLUtil {
             }
         } else {
             String[] properties = multiProperty.split("\\.");
-            String firstProperty = properties[0];
-
 
             TableAvailable relationTable = table;
             boolean skip = false;
