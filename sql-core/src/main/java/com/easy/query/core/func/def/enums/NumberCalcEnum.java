@@ -10,5 +10,5 @@ public enum NumberCalcEnum {
     NUMBER_ADD,
     NUMBER_SUBTRACT,
     NUMBER_MULTIPLY,
-    NUMBER_DEVIDE
+    NUMBER_DIVIDE
 }

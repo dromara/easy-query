@@ -46,11 +46,12 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
 
     @Override
     public <T extends Long> ColumnFunctionCompareComparableNumberChainExpression<T> count() {
-        if(predicate==null){
+        if (predicate == null) {
             return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null, fx -> {
-                return fx.count(o->{}).distinct(distinct);
+                return fx.count(o -> {
+                }).distinct(distinct);
             }, Long.class);
-        }else{
+        } else {
             ColumnFunctionCompareComparableAnyChainExpression<Long> preColumn = new CaseWhenEntityBuilder(this.getEntitySQLContext()).caseWhen(() -> predicate.apply(groupTable)).then(1).elseEnd(null, Long.class);
             return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
                 SQLFunction sqlFunction = preColumn.func().apply(fx);
@@ -69,7 +70,7 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     @Override
     public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<TMember> sum(SQLFuncExpression1<TProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
         ColumnNumberFunctionAvailable<TMember> column = columnSelector.apply(groupTable);
-        PropTypeColumn<?> preColumn = predicate == null ? column : new CaseWhenEntityBuilder(this.getEntitySQLContext()).caseWhen(() -> predicate.apply(groupTable)).then(column).elseEnd(null, column.getPropertyType());
+        PropTypeColumn<?> preColumn = predicate == null ? column : new CaseWhenEntityBuilder(this.getEntitySQLContext()).caseWhen(() -> predicate.apply(groupTable)).then(column).elseEnd(0, column.getPropertyType());
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
             return fx.sum(x -> {
                 PropTypeColumn.columnFuncSelector(x, preColumn);
@@ -81,6 +82,20 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<TProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
         ColumnFunctionCompareComparableNumberChainExpression<TMember> sum = sum(columnSelector);
         sum._setPropertyType(BigDecimal.class);
+        return EasyObjectUtil.typeCastNullable(sum);
+    }
+
+    @Override
+    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<Integer> sumInt(SQLFuncExpression1<TProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
+        ColumnFunctionCompareComparableNumberChainExpression<TMember> sum = sum(columnSelector);
+        sum._setPropertyType(Integer.class);
+        return EasyObjectUtil.typeCastNullable(sum);
+    }
+
+    @Override
+    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<Long> sumLong(SQLFuncExpression1<TProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
+        ColumnFunctionCompareComparableNumberChainExpression<TMember> sum = sum(columnSelector);
+        sum._setPropertyType(Long.class);
         return EasyObjectUtil.typeCastNullable(sum);
     }
 

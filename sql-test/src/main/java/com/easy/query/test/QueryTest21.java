@@ -509,6 +509,53 @@ public class QueryTest21 extends BaseTest {
 
     }
 
+    @Test
+    public void testWhereGroup5(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.title().like("123");
+
+                }).groupBy(t_blog -> GroupKeys.of(t_blog.title()))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.groupTable().score().sumBigDecimal().filter(() -> {
+                            group.groupTable().star().ge(123);
+                        })
+                )).toList();
+        listenerContextManager.clear();
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT t.`title` AS `value1`,SUM((CASE WHEN t.`star` >= ? THEN t.`score` ELSE ? END)) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`title` LIKE ? GROUP BY t.`title`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(Integer),null(null),false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testWhereGroup6(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.title().like("123");
+
+                }).groupBy(t_blog -> GroupKeys.of(t_blog.title()))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.groupTable().score().sumBigDecimal(true).filter(() -> {
+                            group.groupTable().star().ge(123);
+                        })
+                )).toList();
+        listenerContextManager.clear();
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT t.`title` AS `value1`,SUM(DISTINCT (CASE WHEN t.`star` >= ? THEN t.`score` ELSE ? END)) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`title` LIKE ? GROUP BY t.`title`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(Integer),null(null),false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
     public static void testNameConversion(NameConversion nameConversion,String uag){
 
         System.out.printf("%s-->%s-->%s%n",uag, EasyClassUtil.getSimpleName(nameConversion.getClass()),nameConversion.convert(uag));

@@ -36,6 +36,8 @@ public interface SQLGroupQueryable<TSourceProxy> extends EntitySQLContextAvailab
 
 
     <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector);
+    <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<Integer> sumInt(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector);
+    <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<Long> sumLong(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector);
 
 
     <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector);

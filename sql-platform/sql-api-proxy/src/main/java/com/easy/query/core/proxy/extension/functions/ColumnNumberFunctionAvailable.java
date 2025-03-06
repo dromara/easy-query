@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.extension.functions;
 
+import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
@@ -13,7 +14,9 @@ import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastBool
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastNumberAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastStringAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.filter.ColumnFunctionCompareComparableNumberFilterChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.filter.impl.ColumnFunctionCompareComparableNumberFilterChainExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.math.BigDecimal;
@@ -26,15 +29,36 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFunctionAvailable<TProperty, ColumnFunctionCompareComparableNumberChainExpression<TProperty>>,
+        ColumnAggregateFilterFunctionAvailable<TProperty, ColumnFunctionCompareComparableNumberFilterChainExpression<TProperty>>,
         ColumnFunctionCastStringAvailable<TProperty>,
         ColumnFunctionCastNumberAvailable<TProperty>,
         ColumnFunctionCastBooleanAvailable<TProperty> {
+
+    @Override
+    default ColumnFunctionCompareComparableNumberFilterChainExpression<TProperty> max() {
+        return createFilterChainExpression(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+            return fx.max(x -> {
+                PropTypeColumn.columnFuncSelector(x, self);
+            });
+        }, getPropertyType());
+    }
+
+    @Override
+    default ColumnFunctionCompareComparableNumberFilterChainExpression<TProperty> min() {
+        return createFilterChainExpression(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+            return fx.min(x -> {
+                PropTypeColumn.columnFuncSelector(x, self);
+            });
+        }, getPropertyType());
+    }
+
+
     /**
      * 计算平均值返回 BigDecimal
      *
      * @return 计算平均值返回 AVG(age)
      */
-    default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg() {
+    default ColumnFunctionCompareComparableNumberFilterChainExpression<BigDecimal> avg() {
         return avg(false);
     }
 
@@ -44,14 +68,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @param distinct 是否去重
      * @return 计算平均值返回 AVG(DISTINCT age)
      */
-    default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg(boolean distinct) {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.avg(sqlFunction).distinct(distinct);
-            } else {
-                return fx.avg(this.getValue()).distinct(distinct);
-            }
+    default ColumnFunctionCompareComparableNumberFilterChainExpression<BigDecimal> avg(boolean distinct) {
+        return new ColumnFunctionCompareComparableNumberFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+            return fx.avg(x -> {
+                PropTypeColumn.columnFuncSelector(x, self);
+            }).distinct(distinct);
         }, BigDecimal.class);
     }
 
@@ -61,7 +82,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @param <T> 任意数字类型
      * @return 计算求和 SUM(age)
      */
-    default <T extends Number> ColumnFunctionCompareComparableNumberChainExpression<T> sum() {
+    default <T extends Number> ColumnFunctionCompareComparableNumberFilterChainExpression<T> sum() {
         return sum(false);
     }
 
@@ -71,41 +92,45 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @param <T> 任意数字类型
      * @return 计算求和 SUM(age)
      */
-    default <T extends Number> ColumnFunctionCompareComparableNumberChainExpression<T> sum(Class<T> resultClass) {
+    default <T extends Number> ColumnFunctionCompareComparableNumberFilterChainExpression<T> sum(Class<T> resultClass) {
         return sum(false).asAnyType(resultClass);
     }
+
     /**
      * 计算求和 SUM(age)
      *
      * @return 计算求和 SUM(age)
      */
-    default ColumnFunctionCompareComparableNumberChainExpression<Integer> sumInt() {
+    default ColumnFunctionCompareComparableNumberFilterChainExpression<Integer> sumInt() {
         return sum(false).asAnyType(Integer.class);
     }
+
     /**
      * 计算求和 SUM(age)
      *
      * @param distinct 是否去重
      * @return 计算求和 SUM(age)
      */
-    default ColumnFunctionCompareComparableNumberChainExpression<Integer> sumInt(boolean distinct) {
+    default ColumnFunctionCompareComparableNumberFilterChainExpression<Integer> sumInt(boolean distinct) {
         return sum(distinct).asAnyType(Integer.class);
     }
+
     /**
      * 计算求和 SUM(age)
      *
      * @return 计算求和 SUM(age)
      */
-    default ColumnFunctionCompareComparableNumberChainExpression<Long> sumLong() {
+    default ColumnFunctionCompareComparableNumberFilterChainExpression<Long> sumLong() {
         return sum(false).asAnyType(Long.class);
     }
+
     /**
      * 计算求和 SUM(age)
      *
      * @param distinct 是否去重
      * @return 计算求和 SUM(age)
      */
-    default ColumnFunctionCompareComparableNumberChainExpression<Long> sumLong(boolean distinct) {
+    default ColumnFunctionCompareComparableNumberFilterChainExpression<Long> sumLong(boolean distinct) {
         return sum(distinct).asAnyType(Long.class);
     }
 
@@ -116,10 +141,10 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @param <T>      任意数字类型
      * @return 计算去重求和 SUM(DISTINCT age)
      */
-    default <T extends Number> ColumnFunctionCompareComparableNumberChainExpression<T> sum(boolean distinct) {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+    default <T extends Number> ColumnFunctionCompareComparableNumberFilterChainExpression<T> sum(boolean distinct) {
+        return new ColumnFunctionCompareComparableNumberFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
             return fx.sum(x -> {
-                PropTypeColumn.columnFuncSelector(x, this);
+                PropTypeColumn.columnFuncSelector(x, self);
             }).distinct(distinct);
         }, getPropertyType());
     }
@@ -131,20 +156,20 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @param <T>      任意数字类型
      * @return 计算去重求和 SUM(DISTINCT age)
      */
-    default <T extends Number> ColumnFunctionCompareComparableNumberChainExpression<T> sum(boolean distinct, Class<T> resultClass) {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+    default <T extends Number> ColumnFunctionCompareComparableNumberFilterChainExpression<T> sum(boolean distinct, Class<T> resultClass) {
+        return new ColumnFunctionCompareComparableNumberFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
             return fx.sum(x -> {
-                PropTypeColumn.columnFuncSelector(x, this);
+                PropTypeColumn.columnFuncSelector(x, self);
             }).distinct(distinct);
         }, getPropertyType()).asAnyType(resultClass);
     }
 
-    default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sumBigDecimal() {
+    default ColumnFunctionCompareComparableNumberFilterChainExpression<BigDecimal> sumBigDecimal() {
         return sum(false);
     }
 
-    default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sumBigDecimal(boolean distinct) {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+    default ColumnFunctionCompareComparableNumberFilterChainExpression<BigDecimal> sumBigDecimal(boolean distinct) {
+        return new ColumnFunctionCompareComparableNumberFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
 //            if (this instanceof DSLSQLFunctionAvailable) {
 //                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
 //                return fx.sum(sqlFunction).distinct(distinct);
@@ -152,7 +177,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 //                return fx.sum(this.getValue()).distinct(distinct);
 //            }
             return fx.sum(x -> {
-                PropTypeColumn.columnFuncSelector(x, this);
+                PropTypeColumn.columnFuncSelector(x, self);
             }).distinct(distinct);
         }, BigDecimal.class);
     }
@@ -629,21 +654,26 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @param <TOtherProperty>
      * @return
      */
-    default <TOtherProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> devide(PropTypeColumn<TOtherProperty> other) {
+    default <TOtherProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> divide(PropTypeColumn<TOtherProperty> other) {
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.numberCalc(o -> {
                 PropTypeColumn.columnFuncSelector(o, this);
                 PropTypeColumn.columnFuncSelector(o, other);
-            }, NumberCalcEnum.NUMBER_DEVIDE);
+            }, NumberCalcEnum.NUMBER_DIVIDE);
         }, getPropertyType());
     }
 
-    default <TOtherProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> devide(TOtherProperty constant) {
-        return devide(Expression.of(getEntitySQLContext()).constant().valueOf(constant));
+    default <TOtherProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> divide(TOtherProperty constant) {
+        return divide(Expression.of(getEntitySQLContext()).constant().valueOf(constant));
     }
 
     @Override
     default ColumnFunctionCompareComparableNumberChainExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
+    }
+
+    @Override
+    default ColumnFunctionCompareComparableNumberFilterChainExpression<TProperty> createFilterChainExpression(EntitySQLContext entitySQLContext, PropTypeColumn<?> self, TableAvailable table, String property, SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
+        return new ColumnFunctionCompareComparableNumberFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), func, getPropertyType());
     }
 }
