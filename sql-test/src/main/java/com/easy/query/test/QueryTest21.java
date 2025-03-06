@@ -749,8 +749,6 @@ public class QueryTest21 extends BaseTest {
     }
 
 
-
-
     @Test
     public void testOrderBy3() {
 
@@ -768,12 +766,16 @@ public class QueryTest21 extends BaseTest {
 //        Assert.assertEquals("1(Long),2(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void joinManyGroup() {
         ArrayList<Tuple3<String, Boolean, OrderByModeEnum>> sorts = new ArrayList<>();
-        sorts.add(new Tuple3<>("user.age",false,OrderByModeEnum.NULLS_LAST));
-        sorts.add(new Tuple3<>("type",true,OrderByModeEnum.NULLS_LAST));
+        sorts.add(new Tuple3<>("user.age", false, OrderByModeEnum.NULLS_LAST));
+        sorts.add(new Tuple3<>("type", true, OrderByModeEnum.NULLS_LAST));
 
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
 
         List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
                 .where(bank_card -> {
@@ -783,9 +785,15 @@ public class QueryTest21 extends BaseTest {
                 })
                 .orderBy(bank_card -> {
                     for (Tuple3<String, Boolean, OrderByModeEnum> sort : sorts) {
-                        bank_card.anyColumn(sort.t()).orderBy(sort.t1(),sort.t2());
+                        bank_card.anyColumn(sort.t()).orderBy(sort.t1(), sort.t2());
                     }
                 }).toList();
+        listenerContextManager.clear();
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id` FROM `doc_bank_card` t LEFT JOIN `doc_user` t1 ON t1.`id` = t.`uid` WHERE IFNULL(t.`code`,?) = ? AND IFNULL(t.`code`,?) = ? AND IFNULL(t.`code`,?) = ? ORDER BY CASE WHEN t1.`age` IS NULL THEN 1 ELSE 0 END ASC,t1.`age` DESC,CASE WHEN t.`type` IS NULL THEN 1 ELSE 0 END ASC,t.`type` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),456(String),789(String),987(String),654(String),321(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
 //        List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
 //                .where(user -> {
 //                    user.bankCards().count().rangeOpenClosed(1L, 2L);
