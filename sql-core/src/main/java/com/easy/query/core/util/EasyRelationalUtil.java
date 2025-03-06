@@ -55,9 +55,16 @@ public class EasyRelationalUtil {
 //        return entityTableExpressionBuilder.getEntityTable();
 //    }
     public static TableAvailable getRelationTable(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property, String fullName) {
+        return getRelationTable(entityExpressionBuilder, leftTable, property, fullName, true);
+    }
+
+    public static TableAvailable getRelationTable(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property, String fullName, boolean strictMode) {
         QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
 
-        NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
+        NavigateMetadata navigateMetadata = strictMode ? leftTable.getEntityMetadata().getNavigateNotNull(property) : leftTable.getEntityMetadata().getNavigateOrNull(property);
+        if (navigateMetadata == null) {
+            return null;
+        }
         if (navigateMetadata.getRelationType() != RelationTypeEnum.OneToOne && navigateMetadata.getRelationType() != RelationTypeEnum.ManyToOne) {
             throw new EasyQueryInvalidOperationException("navigate relation table should [OneToOne or ManyToOne],now is " + navigateMetadata.getRelationType());
         }
@@ -65,7 +72,7 @@ public class EasyRelationalUtil {
         if (EasyArrayUtil.isNotEmpty(directMapping)) {
             TableAvailable myLeftTable = leftTable;
             DirectMappingIterator directMappingIterator = new DirectMappingIterator(directMapping);
-            while(directMappingIterator.hasNext()){
+            while (directMappingIterator.hasNext()) {
                 String prop = directMappingIterator.next();
                 myLeftTable = getRelationTable(entityExpressionBuilder, myLeftTable, prop, directMappingIterator.getFullName());
             }

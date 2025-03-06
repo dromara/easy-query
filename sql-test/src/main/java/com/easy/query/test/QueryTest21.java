@@ -1,6 +1,8 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.MapProxy;
+import com.easy.query.core.api.dynamic.sort.ObjectSort;
+import com.easy.query.core.api.dynamic.sort.ObjectSortBuilder;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
@@ -52,12 +54,18 @@ import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.page.mp.SearchCountPager;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -86,7 +94,7 @@ public class QueryTest21 extends BaseTest {
                             .email().set(t_blog.title()); // 电子邮件
                 }).where(tUser -> {
                     EntitySQLContext entitySQLContext = tUser.getEntitySQLContext();
-                    QueryExpressionBuilder entityExpressionBuilder = (QueryExpressionBuilder)entitySQLContext.getEntityExpressionBuilder();
+                    QueryExpressionBuilder entityExpressionBuilder = (QueryExpressionBuilder) entitySQLContext.getEntityExpressionBuilder();
                     //这张表就是select生成的匿名table
                     EntityTableExpressionBuilder table = entityExpressionBuilder.getTable(0);
                     AnonymousDefaultTableExpressionBuilder anonymousDefaultTableExpressionBuilder = (AnonymousDefaultTableExpressionBuilder) table;
@@ -103,17 +111,17 @@ public class QueryTest21 extends BaseTest {
 
                     for (SQLSegment sqlSegment : projects.getSQLSegments()) {
 
-                        if(sqlSegment instanceof SQLEntityAliasSegment){
+                        if (sqlSegment instanceof SQLEntityAliasSegment) {
                             SQLEntityAliasSegment sqlSegment1 = (SQLEntityAliasSegment) sqlSegment;
-                            if(Objects.equals("mobile",sqlSegment1.getAlias())){
+                            if (Objects.equals("mobile", sqlSegment1.getAlias())) {
                                 String propertyName = sqlSegment1.getPropertyName();
                                 TableAvailable table1 = sqlSegment1.getTable();
-                                filter.eq(table1,propertyName,"topic的mobile");
+                                filter.eq(table1, propertyName, "topic的mobile");
                             }
-                            if(Objects.equals("email",sqlSegment1.getAlias())){
+                            if (Objects.equals("email", sqlSegment1.getAlias())) {
                                 String propertyName = sqlSegment1.getPropertyName();
                                 TableAvailable table1 = sqlSegment1.getTable();
-                                filter.eq(table1,propertyName,"blog的email");
+                                filter.eq(table1, propertyName, "blog的email");
                             }
                         }
                     }
@@ -171,7 +179,7 @@ public class QueryTest21 extends BaseTest {
         Assert.assertEquals("123(String),1(String),2(String),someTitle(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
         ArrayList<Topic> topics = new ArrayList<>();
-        int partitionSize=10;
+        int partitionSize = 10;
         List<List<Topic>> partition = EasyCollectionUtil.partition(topics, partitionSize);
         for (List<Topic> topicList : partition) {
             easyEntityQuery.insertable(topicList).batch().executeRows();
@@ -295,14 +303,14 @@ public class QueryTest21 extends BaseTest {
     }
 
     @Test
-    public void TestReverse(){
+    public void TestReverse() {
 
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
 
         EasyPageResult<Topic> pageResult2 = easyEntityQuery.queryable(Topic.class)
-                .configure(op->{
+                .configure(op -> {
                     op.setReverseOrder(false);
                 })
                 .where(t_topic -> {
@@ -387,11 +395,11 @@ public class QueryTest21 extends BaseTest {
     }
 
     @Test
-    public void testWhereGroup(){
+    public void testWhereGroup() {
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
-       easyEntityQuery.queryable(BlogEntity.class)
+        easyEntityQuery.queryable(BlogEntity.class)
                 .where(t_blog -> {
                     t_blog.title().like("123");
 
@@ -409,37 +417,37 @@ public class QueryTest21 extends BaseTest {
         Assert.assertEquals("123(Integer),null(null),false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
 
-
         UpperUnderlinedNameConversion upperUnderlinedNameConversion = new UpperUnderlinedNameConversion();
         UpperCamelCaseNameConversion upperCamelCaseNameConversion = new UpperCamelCaseNameConversion();
         UnderlinedNameConversion underlinedNameConversion = new UnderlinedNameConversion();
         LowerCamelCaseNameConversion lowerCamelCaseNameConversion = new LowerCamelCaseNameConversion();
         DefaultNameConversion defaultNameConversion = new DefaultNameConversion();
 
-        testNameConversion(defaultNameConversion,"userAge");
-        testNameConversion(defaultNameConversion,"user_age");
-        testNameConversion(underlinedNameConversion,"userAge");
-        testNameConversion(underlinedNameConversion,"user_age");
-        testNameConversion(upperUnderlinedNameConversion,"userAge");
-        testNameConversion(upperUnderlinedNameConversion,"user_age");
-        testNameConversion(lowerCamelCaseNameConversion,"userAge");
-        testNameConversion(lowerCamelCaseNameConversion,"user_age");
-        testNameConversion(upperCamelCaseNameConversion,"userAge");
-        testNameConversion(upperCamelCaseNameConversion,"user_age");
+        testNameConversion(defaultNameConversion, "userAge");
+        testNameConversion(defaultNameConversion, "user_age");
+        testNameConversion(underlinedNameConversion, "userAge");
+        testNameConversion(underlinedNameConversion, "user_age");
+        testNameConversion(upperUnderlinedNameConversion, "userAge");
+        testNameConversion(upperUnderlinedNameConversion, "user_age");
+        testNameConversion(lowerCamelCaseNameConversion, "userAge");
+        testNameConversion(lowerCamelCaseNameConversion, "user_age");
+        testNameConversion(upperCamelCaseNameConversion, "userAge");
+        testNameConversion(upperCamelCaseNameConversion, "user_age");
     }
+
     @Test
-    public void testWhereGroup1(){
+    public void testWhereGroup1() {
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
-       easyEntityQuery.queryable(BlogEntity.class)
+        easyEntityQuery.queryable(BlogEntity.class)
                 .where(t_blog -> {
                     t_blog.title().like("123");
 
                 }).groupBy(t_blog -> GroupKeys.of(t_blog.title()))
                 .select(group -> Select.DRAFT.of(
                         group.key1(),
-                        group.where(t->t.star().ge(123)).count()
+                        group.where(t -> t.star().ge(123)).count()
                 )).toList();
         listenerContextManager.clear();
 
@@ -448,19 +456,20 @@ public class QueryTest21 extends BaseTest {
         Assert.assertEquals("123(Integer),1(Integer),null(null),false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testWhereGroup2(){
+    public void testWhereGroup2() {
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
-       easyEntityQuery.queryable(BlogEntity.class)
+        easyEntityQuery.queryable(BlogEntity.class)
                 .where(t_blog -> {
                     t_blog.title().like("123");
 
                 }).groupBy(t_blog -> GroupKeys.of(t_blog.title()))
                 .select(group -> Select.DRAFT.of(
                         group.key1(),
-                        group.where(s->s.star().ge(123)).distinct().count()
+                        group.where(s -> s.star().ge(123)).distinct().count()
                 )).toList();
         listenerContextManager.clear();
 
@@ -469,19 +478,21 @@ public class QueryTest21 extends BaseTest {
         Assert.assertEquals("123(Integer),1(Integer),null(null),false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testWhereGroup3(){
+    public void testWhereGroup3() {
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
-       easyEntityQuery.queryable(BlogEntity.class)
+        easyEntityQuery.queryable(BlogEntity.class)
                 .where(t_blog -> {
                     t_blog.title().like("123");
 
                 }).groupBy(t_blog -> GroupKeys.of(t_blog.title()))
                 .select(group -> Select.DRAFT.of(
                         group.key1(),
-                        group.where(s->{}).distinct().count()
+                        group.where(s -> {
+                        }).distinct().count()
                 )).toList();
         listenerContextManager.clear();
 
@@ -490,19 +501,20 @@ public class QueryTest21 extends BaseTest {
         Assert.assertEquals("1(Integer),null(null),false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testWhereGroup4(){
+    public void testWhereGroup4() {
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
-       easyEntityQuery.queryable(BlogEntity.class)
+        easyEntityQuery.queryable(BlogEntity.class)
                 .where(t_blog -> {
                     t_blog.title().like("123");
 
                 }).groupBy(t_blog -> GroupKeys.of(t_blog.title()))
                 .select(group -> Select.DRAFT.of(
                         group.key1(),
-                        group.where(s->s.star().ge(123)).distinct().count()
+                        group.where(s -> s.star().ge(123)).distinct().count()
                 )).toList();
         listenerContextManager.clear();
 
@@ -513,7 +525,7 @@ public class QueryTest21 extends BaseTest {
     }
 
     @Test
-    public void testWhereGroup5(){
+    public void testWhereGroup5() {
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
@@ -535,8 +547,9 @@ public class QueryTest21 extends BaseTest {
         Assert.assertEquals("123(Integer),0(Long),false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testWhereGroup6(){
+    public void testWhereGroup6() {
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
@@ -559,14 +572,14 @@ public class QueryTest21 extends BaseTest {
 
     }
 
-    public static void testNameConversion(NameConversion nameConversion,String uag){
+    public static void testNameConversion(NameConversion nameConversion, String uag) {
 
-        System.out.printf("%s-->%s-->%s%n",uag, EasyClassUtil.getSimpleName(nameConversion.getClass()),nameConversion.convert(uag));
+        System.out.printf("%s-->%s-->%s%n", uag, EasyClassUtil.getSimpleName(nameConversion.getClass()), nameConversion.convert(uag));
     }
 
 
     @Test
-    public void joinOrderTest(){
+    public void joinOrderTest() {
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
@@ -582,8 +595,9 @@ public class QueryTest21 extends BaseTest {
 //        Assert.assertEquals("123(Integer),0(Long),false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void joinOrderTest2(){
+    public void joinOrderTest2() {
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
@@ -599,8 +613,9 @@ public class QueryTest21 extends BaseTest {
         Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void joinOrderTest3(){
+    public void joinOrderTest3() {
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
@@ -616,8 +631,9 @@ public class QueryTest21 extends BaseTest {
         Assert.assertEquals("1(Integer),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void subNumberRangeClosed(){
+    public void subNumberRangeClosed() {
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
@@ -634,8 +650,9 @@ public class QueryTest21 extends BaseTest {
         Assert.assertEquals("1(Long),2(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void subNumberRangeClosed1(){
+    public void subNumberRangeClosed1() {
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
@@ -652,8 +669,86 @@ public class QueryTest21 extends BaseTest {
         Assert.assertEquals("1(Long),2(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void joinManyGroup(){
+    public void testOrderBy() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+                .orderBy(bank_card -> {
+                    EasySQLUtil.dynamicOrderBy(bank_card.getEntitySQLContext().getOrderSelector(), bank_card.getTable(), "user.age", true, OrderByModeEnum.NULLS_LAST, true);
+                }).toList();
+        listenerContextManager.clear();
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id` FROM `doc_bank_card` t LEFT JOIN `doc_user` t1 ON t1.`id` = t.`uid` ORDER BY CASE WHEN t1.`age` IS NULL THEN 1 ELSE 0 END ASC,t1.`age` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("1(Long),2(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void testOrderBy2() {
+        LinkedHashMap<String, OrderConfig> map = new LinkedHashMap<>();
+        map.put("type", OrderConfig.builder().asc(false).build());
+        map.put("user.age", OrderConfig.builder().nullsModeEnum(OrderByModeEnum.NULLS_LAST).asc(false).build());
+        UISort uiSort = new UISort(map);
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+                .orderByObject(uiSort)
+                .toList();
+        listenerContextManager.clear();
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id` FROM `doc_bank_card` t LEFT JOIN `doc_user` t1 ON t1.`id` = t.`uid` ORDER BY t.`type` DESC,CASE WHEN t1.`age` IS NULL THEN 1 ELSE 0 END ASC,t1.`age` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("1(Long),2(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+
+    public static class UISort implements ObjectSort {
+
+        private final Map<String, OrderConfig> sort;
+        private boolean strictMode;
+
+        public UISort(Map<String, OrderConfig> sort) {
+            this(sort, false);
+        }
+
+        public UISort(Map<String, OrderConfig> sort, boolean strictMode) {
+
+            this.sort = sort;
+            this.strictMode = strictMode;
+        }
+
+        @Override
+        public void configure(ObjectSortBuilder builder) {
+            for (Map.Entry<String, OrderConfig> s : sort.entrySet()) {
+                OrderConfig value = s.getValue();
+                builder.orderBy(s.getKey(), value.isAsc(), value.getNullsModeEnum());
+            }
+        }
+
+        @Override
+        public boolean useStrictMode() {
+            return strictMode;
+        }
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Data
+    public static class OrderConfig {
+        private boolean asc;
+        private OrderByModeEnum nullsModeEnum;
+    }
+
+    @Test
+    public void joinManyGroup() {
         List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
                 .orderBy(bank_card -> {
                     bank_card.user().age().asc(OrderByModeEnum.NULLS_LAST);

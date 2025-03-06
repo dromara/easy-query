@@ -6,6 +6,15 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLRawParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLLikeEnum;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
+import com.easy.query.core.expression.builder.OrderSelector;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.func.SQLFunc;
+import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.def.enums.OrderByModeEnum;
+import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.NavigateMetadata;
 
 import java.util.List;
 
@@ -34,8 +43,9 @@ public class EasySQLUtil {
                 return "%" + val + "%";
         }
     }
+
     public static Object getLikeRawParameter(Object val, SQLLikeEnum sqlLike) {
-        return new SQLRawParameter(val,sqlLike);
+        return new SQLRawParameter(val, sqlLike);
     }
 
     public static String sqlParameterToString(List<SQLParameter> sqlParameters) {
@@ -56,7 +66,7 @@ public class EasySQLUtil {
                 builder.append(")");
             } else if (sqlParameter instanceof PropertySQLParameter) {
                 String propertyName = sqlParameter.getPropertyNameOrNull();
-                String param ="[unknown](propertyName:" + propertyName+")";
+                String param = "[unknown](propertyName:" + propertyName + ")";
                 if (i++ != 0) {
                     builder.append(",");
                 }
@@ -65,6 +75,7 @@ public class EasySQLUtil {
         }
         return builder.toString();
     }
+
     public static String sqlParameterToMyBatisString(List<SQLParameter> sqlParameters) {
         if (sqlParameters == null) {
             return EasyStringUtil.EMPTY;
@@ -83,7 +94,7 @@ public class EasySQLUtil {
                 builder.append(")");
             } else if (sqlParameter instanceof PropertySQLParameter) {
                 String propertyName = sqlParameter.getPropertyNameOrNull();
-                String param ="[unknown](propertyName:" + propertyName+")";
+                String param = "[unknown](propertyName:" + propertyName + ")";
                 if (i++ != 0) {
                     builder.append(", ");
                 }
@@ -101,4 +112,74 @@ public class EasySQLUtil {
     }
 
 
+    /**
+     *
+     * <blockquote><pre>
+     * {@code
+     * List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+     *                 .orderBy(bank_card -> {
+     *                     EasySQLUtil.dynamicOrderBy(bank_card.getEntitySQLContext().getOrderSelector(), bank_card.getTable(), "user.age", true, OrderByModeEnum.NULLS_LAST, true);
+     *                 }).toList();
+     * }
+     * </pre></blockquote>
+     *
+     * @param orderSelector 排序选择器
+     * @param table 主表
+     * @param multiProperty 支持user.address.age相对于主表
+     * @param asc 是否正序
+     * @param nullsModeEnum null怎么排序
+     * @param strictMode 是否严格模式,严格模式下属性不在表中将会报错
+     * @throws EasyQueryOrderByInvalidOperationException strictMode为true,column不在表中
+     * @throws EasyQueryInvalidOperationException strictMode为true,navigate不在表中
+     */
+    public static void dynamicOrderBy(OrderSelector orderSelector, TableAvailable table, String multiProperty, boolean asc, OrderByModeEnum nullsModeEnum, boolean strictMode) {
+        if (!multiProperty.contains(".")) {
+            ColumnMetadata columnMetadata = checkColumn(table, multiProperty, strictMode);
+            if (columnMetadata != null) {
+                dynamicColumn0(orderSelector, table, multiProperty, asc, nullsModeEnum);
+            }
+        } else {
+            String[] properties = multiProperty.split("\\.");
+            String firstProperty = properties[0];
+
+
+            TableAvailable relationTable = table;
+            boolean skip = false;
+            StringBuilder fullName = new StringBuilder();
+            for (int i = 0; i < properties.length - 1 && !skip; i++) {
+                String navigateEntityProperty = properties[i];
+                fullName.append(navigateEntityProperty).append(".");
+                relationTable = EasyRelationalUtil.getRelationTable(orderSelector.getEntityQueryExpressionBuilder(), relationTable, navigateEntityProperty, fullName.substring(0, fullName.length() - 1), strictMode);
+                if (relationTable == null) {
+                    skip = true;
+                }
+            }
+            if (!skip) {
+                dynamicColumn0(orderSelector, relationTable, properties[properties.length - 1], asc, nullsModeEnum);
+            }
+        }
+    }
+
+    private static void dynamicColumn0(OrderSelector orderSelector, TableAvailable entityTable, String property, boolean asc, OrderByModeEnum nullsModeEnum) {
+
+        orderSelector.setAsc(asc);
+        if (nullsModeEnum != null) {
+            SQLFunc fx = orderSelector.getRuntimeContext().fx();
+            SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(entityTable, property, asc, nullsModeEnum);
+            orderSelector.func(entityTable, orderByNullsModeFunction, false);
+        } else {
+            orderSelector.column(entityTable, property);
+        }
+    }
+
+
+    private static ColumnMetadata checkColumn(TableAvailable entityTable, String property, boolean strictMode) {
+        ColumnMetadata columnMetadata = entityTable.getEntityMetadata().getColumnOrNull(property);
+        if (columnMetadata == null) {
+            if (strictMode) {
+                throw new EasyQueryOrderByInvalidOperationException(property, EasyClassUtil.getSimpleName(entityTable.getEntityClass()) + " not found [" + property + "] in entity class");
+            }
+        }
+        return columnMetadata;
+    }
 }

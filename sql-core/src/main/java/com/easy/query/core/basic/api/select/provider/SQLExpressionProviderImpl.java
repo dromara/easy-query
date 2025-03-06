@@ -57,7 +57,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
 
     @Override
     public ColumnOrderSelectorImpl<TEntity> getOrderColumnSelector(boolean asc) {
-        ColumnOrderSelectorImpl<TEntity> order = new ColumnOrderSelectorImpl<>(table, new OrderSelectorImpl(entityQueryExpressionBuilder.getRuntimeContext(),entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getOrder()));
+        ColumnOrderSelectorImpl<TEntity> order = new ColumnOrderSelectorImpl<>(table, new OrderSelectorImpl(entityQueryExpressionBuilder,entityQueryExpressionBuilder.getRuntimeContext(),entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getOrder()));
         order.setAsc(asc);
         return order;
     }
