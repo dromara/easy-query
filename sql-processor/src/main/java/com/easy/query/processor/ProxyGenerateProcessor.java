@@ -144,7 +144,6 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 //            //待忽略对象后缀
 //            String[] entityIgnoreSuffixes = props.getProperties().getProperty("processor.entity.ignoreSuffixes", "").split(",");
 
-            AtomicReference<String> entityClassNameReference = new AtomicReference<>();
 
 //            StringBuilder tablesContent = new StringBuilder();
             roundEnv.getElementsAnnotatedWith(EntityProxy.class).forEach((Consumer<Element>) entityClassElement -> {
@@ -165,11 +164,10 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
                 Table tableAnnotation = entityClassElement.getAnnotation(Table.class);
 
-                entityClassNameReference.set(entityClassElement.toString());
 
                 //每一个 entity 生成一个独立的文件
 
-                String entityFullName = entityClassNameReference.get();
+                String entityFullName = entityClassElement.toString();
                 String realGenPackage = guessTablesPackage(entityFullName);
                 String entityClassName = entityClassElement.getSimpleName().toString();
                 String proxyInstanceName = EasyStringUtil.isBlank(entityProxy.value()) ? entityClassName + "Proxy" : entityProxy.value();

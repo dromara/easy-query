@@ -29,6 +29,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousDefaultTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.QueryExpressionBuilder;
+import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.core.draft.Draft2;
@@ -40,6 +41,8 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyTrackUtil;
 import com.easy.query.test.common.PageResult;
+import com.easy.query.test.doc.entity.DocBankCard;
+import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.dto.autodto.SchoolClassAOProp14;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
@@ -559,6 +562,107 @@ public class QueryTest21 extends BaseTest {
     public static void testNameConversion(NameConversion nameConversion,String uag){
 
         System.out.printf("%s-->%s-->%s%n",uag, EasyClassUtil.getSimpleName(nameConversion.getClass()),nameConversion.convert(uag));
+    }
+
+
+    @Test
+    public void joinOrderTest(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+                .orderBy(bank_card -> {
+                    bank_card.user().age().asc(OrderByModeEnum.NULLS_LAST);
+                }).toList();
+        listenerContextManager.clear();
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id` FROM `doc_bank_card` t LEFT JOIN `doc_user` t1 ON t1.`id` = t.`uid` ORDER BY CASE WHEN t1.`age` IS NULL THEN 1 ELSE 0 END ASC,t1.`age` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("123(Integer),0(Long),false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void joinOrderTest2(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+                .orderBy(bank_card -> {
+                    bank_card.user().age().nullOrDefault(1).asc();
+                }).toList();
+        listenerContextManager.clear();
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id` FROM `doc_bank_card` t LEFT JOIN `doc_user` t1 ON t1.`id` = t.`uid` ORDER BY IFNULL(t1.`age`,?) ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void joinOrderTest3(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+                .orderBy(bank_card -> {
+                    bank_card.user().age().nullOrDefault(1).asc(OrderByModeEnum.NULLS_LAST);
+                }).toList();
+        listenerContextManager.clear();
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id` FROM `doc_bank_card` t LEFT JOIN `doc_user` t1 ON t1.`id` = t.`uid` ORDER BY CASE WHEN IFNULL(t1.`age`,?) IS NULL THEN 1 ELSE 0 END ASC,IFNULL(t1.`age`,?) ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void subNumberRangeClosed(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
+                .where(user -> {
+                    user.bankCards().count().rangeOpenClosed(1L, 2L);
+
+                }).toList();
+        listenerContextManager.clear();
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t WHERE ((SELECT COUNT(*) FROM `doc_bank_card` t1 WHERE t1.`uid` = t.`id`) > ? AND (SELECT COUNT(*) FROM `doc_bank_card` t1 WHERE t1.`uid` = t.`id`) <= ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Long),2(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void subNumberRangeClosed1(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
+                .where(user -> {
+                    user.bankCards().count().rangeClosed(1L, 2L);
+
+                }).toList();
+        listenerContextManager.clear();
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t WHERE (SELECT COUNT(*) FROM `doc_bank_card` t1 WHERE t1.`uid` = t.`id`) BETWEEN ? AND ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Long),2(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void joinManyGroup(){
+        List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+                .orderBy(bank_card -> {
+                    bank_card.user().age().asc(OrderByModeEnum.NULLS_LAST);
+                }).toList();
+//        List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
+//                .where(user -> {
+//                    user.bankCards().count().rangeOpenClosed(1L, 2L);
+//
+//                }).toList();
     }
 
 }

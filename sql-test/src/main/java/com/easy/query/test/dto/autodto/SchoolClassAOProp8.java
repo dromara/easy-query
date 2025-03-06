@@ -4,7 +4,10 @@ import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.NavigateFlat;
 import com.easy.query.core.enums.RelationMappingTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.test.entity.school.SchoolClass;
+import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
+import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
 import lombok.Data;
 
 import java.util.List;
@@ -27,6 +30,9 @@ public class SchoolClassAOProp8 {
 //    @Navigate(value = RelationTypeEnum.OneToMany,selfProperty = "id",targetProperty = "classId")
     private List<SchoolStudentAO> schoolStudents;
 
+    /**
+     * {@link com.easy.query.test.entity.school.SchoolStudent}
+     */
     @Data
     public static class  SchoolStudentAO{
         private String id;
@@ -38,9 +44,8 @@ public class SchoolClassAOProp8 {
 //        private List<String> stuNames;
 
 
-        @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {
-                "schoolClass","name"
-        })
+        private static final MappingPath CLASS_NAMES_PATH = SchoolStudentProxy.TABLE.schoolClass().name();
+        @NavigateFlat(pathAlias = "CLASS_NAMES_PATH")
         private List<String> classNames;
     }
 }

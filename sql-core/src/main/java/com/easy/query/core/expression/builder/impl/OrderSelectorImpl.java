@@ -6,6 +6,7 @@ import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
@@ -52,13 +53,14 @@ public class OrderSelectorImpl implements OrderSelector {
     public OrderSelector func(TableAvailable table, SQLFunction sqlFunction,boolean appendASC) {
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
 //        sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
-//        String sqlSegment = sqlFunction.sqlSegment(table)+(appendASC?(asc?" ASC":" DESC"):"");
+        String sqlSegment = sqlFunction.sqlSegment(table);
 
-        SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
-                .toSQLSegment(expressionContext, table, runtimeContext, null);
+//        SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
+//                .toSQLSegment(expressionContext, table, runtimeContext, null);
 
+        sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
         String appendAsc = appendASC ? (asc ? " ASC" : " DESC") : "";
-        OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderBySQLNativeSegment2(expressionContext,sqlSegment,s->s+appendAsc,sqlNativeExpressionContext, asc);
+        OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderBySQLNativeSegment(expressionContext,sqlSegment+appendAsc,sqlNativeExpressionContext, asc);
         order.append(orderByColumnSegment);
         return this;
     }

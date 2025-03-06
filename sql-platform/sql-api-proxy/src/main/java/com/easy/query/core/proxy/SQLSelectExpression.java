@@ -55,7 +55,7 @@ public interface SQLSelectExpression extends TablePropColumn{
 
                if(nullsModeEnum!=null){
                    SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
-                   SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(this.getValue(), true, nullsModeEnum);
+                   SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(this.getTable(),this.getValue(), true, nullsModeEnum);
                    s.func(this.getTable(), orderByNullsModeFunction,false);
                }else{
                    s.column(this.getTable(), this.getValue());
@@ -101,7 +101,7 @@ public interface SQLSelectExpression extends TablePropColumn{
 
                 if(nullsModeEnum!=null){
                     SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
-                    SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(this.getValue(), false, nullsModeEnum);
+                    SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(this.getTable(),this.getValue(), false, nullsModeEnum);
                     s.func(this.getTable(), orderByNullsModeFunction,false);
                 }else{
                     s.column(this.getTable(), this.getValue());

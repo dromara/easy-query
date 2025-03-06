@@ -355,17 +355,23 @@ public class FilterImpl implements Filter {
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
         SQLPredicateCompare predicateCompare = getReallyPredicateCompare(sqlPredicateCompare);
 
-
-//        SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
-//                .toSQLSegment(sqlNativeExpressionContext, table, null,()->sqlNativeExpressionContext.value(val));
-//
-//        SQLNativePredicate2Impl sqlNativePredicate2 = new SQLNativePredicate2Impl(expressionContext, sqlSegment, s -> s + " " + predicateCompare.getSQL() + " {" + sqlFunction.paramMarks() + "}", sqlNativeExpressionContext);
-//        nextPredicateSegment.setPredicate(sqlNativePredicate2);
 //
         String sqlSegment = sqlFunction.sqlSegment(table);
         sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
         sqlNativeExpressionContext.value(val);
         nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment + " " + predicateCompare.getSQL() + " {" + sqlFunction.paramMarks() + "}", sqlNativeExpressionContext));
+        next();
+    }
+
+    private void funcValueBetweenFilter0(TableAvailable table, SQLFunction sqlFunction, Object left, Object right) {
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
+
+//
+        String sqlSegment = sqlFunction.sqlSegment(table);
+        sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
+        sqlNativeExpressionContext.value(left);
+        sqlNativeExpressionContext.value(right);
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment + " BETWEEN {" + sqlFunction.paramMarks() + "} AND {" + (sqlFunction.paramMarks()+1) + "}", sqlNativeExpressionContext));
         next();
     }
 
@@ -687,6 +693,14 @@ public class FilterImpl implements Filter {
     public Filter funcValueFilter(TableAvailable table, SQLFunction sqlFunction, Object val, SQLPredicateCompare sqlPredicateCompare) {
         if (conditionAppend(table, null, val)) {
             funcValueFilter0(table, sqlFunction, val, sqlPredicateCompare);
+        }
+        return this;
+    }
+
+    @Override
+    public Filter funcValueBetweenFilter(TableAvailable table, SQLFunction sqlFunction, Object left, Object right) {
+        if (conditionAppend(table, null, Arrays.asList(left, right))) {
+            funcValueBetweenFilter0(table, sqlFunction, left, right);
         }
         return this;
     }

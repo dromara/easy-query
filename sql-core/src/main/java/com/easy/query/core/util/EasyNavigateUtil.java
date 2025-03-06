@@ -60,7 +60,7 @@ public class EasyNavigateUtil {
                 OrderByModeEnum nullsModeEnum = orderProp.getMode();
                 if (nullsModeEnum != null) {
                     SQLFunc fx = runtimeContext.fx();
-                    SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(orderProp.getProperty(), orderProp.isAsc(), nullsModeEnum);
+                    SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(table,orderProp.getProperty(), orderProp.isAsc(), nullsModeEnum);
                     orderSelector.func(table, orderByNullsModeFunction, false);
                 } else {
                     orderSelector.column(table, orderProp.getProperty());

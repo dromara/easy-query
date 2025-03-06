@@ -5,6 +5,7 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
@@ -58,8 +59,8 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
 
     SQLFunction equalsWith(SQLExpression1<ColumnFuncSelector> sqlExpression);
 
-    default SQLFunction orderByNullsMode(String property, boolean asc, @NotNull OrderByModeEnum orderByModeEnum) {
-        return orderByNullsMode(o -> o.column(property), asc, orderByModeEnum);
+    default SQLFunction orderByNullsMode(TableAvailable table, String property, boolean asc, @NotNull OrderByModeEnum orderByModeEnum) {
+        return orderByNullsMode(o -> o.column(table,property), asc, orderByModeEnum);
     }
 
     default SQLFunction orderByNullsMode(SQLFunction sqlFunction, boolean asc, OrderByModeEnum orderByModeEnum) {

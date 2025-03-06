@@ -5,7 +5,9 @@ import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.scec.context.core.SQLNativeExpression;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.visitor.TableVisitor;
 import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.function.Function;
 
@@ -45,5 +47,9 @@ public class OrderBySQLNativeSegment2Impl extends AbstractSQLNativeSegment2Impl 
 
     @Override
     public void setAlias(String alias) {
+    }
+    @Override
+    public void accept(TableVisitor visitor) {
+        EasySQLSegmentUtil.paramExpressionTableVisit(sqlNativeExpression.getExpressions(), visitor);
     }
 }

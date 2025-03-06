@@ -356,6 +356,7 @@ public interface Filter extends SQLNative<Filter> {
     }
 
     Filter funcValueFilter(TableAvailable table, SQLFunction sqlFunction, Object val, SQLPredicateCompare sqlPredicateCompare);
+    Filter funcValueBetweenFilter(TableAvailable table, SQLFunction sqlFunction, Object left,Object right);
 
     //endregion
 

@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * create time 2024/4/12 22:55
- * @see SchoolClass
+ * {@link SchoolClass}
  *
  * @author xuejiaming
  */
@@ -20,15 +20,16 @@ public class SchoolClassAOProp6 {
 //    private String id;
     private String name;
     private String name1;
+
     //一对多 一个班级多个学生
 //    @Navigate(value = RelationTypeEnum.OneToMany)
     //完整配置,property忽略表示对应的主键
 //    @Navigate(value = RelationTypeEnum.OneToMany,selfProperty = "id",targetProperty = "classId")
-    @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolStudents","id"})
+    @NavigateFlat(mappingPath = {"schoolStudents","id"})
     private List<String> schoolStudentsIds;
-    @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolTeachers","schoolClasses","name"})
+    @NavigateFlat(mappingPath = {"schoolTeachers","schoolClasses","name"})
     private List<String> schoolTeachersClassId1s;
-    @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolTeachers","schoolClasses"})
+    @NavigateFlat(mappingPath = {"schoolTeachers","schoolClasses"})
     private List<SchoolClass> schoolTeachersClassList;
 
 //    @Data
