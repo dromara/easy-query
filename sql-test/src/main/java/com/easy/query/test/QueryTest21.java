@@ -826,7 +826,7 @@ public class QueryTest21 extends BaseTest {
 //                }).toList();
     }
     @Test
-    public void joinManyGroup() {
+    public void anyColumnOrderByTest1() {
         ArrayList<Tuple3<String, Boolean, OrderByModeEnum>> sorts = new ArrayList<>();
         sorts.add(new Tuple3<>("user.age", false, OrderByModeEnum.NULLS_LAST));
         sorts.add(new Tuple3<>("type", true, OrderByModeEnum.NULLS_LAST));
