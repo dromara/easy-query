@@ -54,6 +54,51 @@ public class EasyRelationalUtil {
 //        });
 //        return entityTableExpressionBuilder.getEntityTable();
 //    }
+
+    /**
+     * 用来处理动态属性的多级属性问题
+     * 根据属性和主表获取关联对象属性表,比如user表有name属性和address关联表然后address又有city属性
+     * property为[name]等于表达式[o.name()]
+     * property为[address.city]等于表达式[o.address().city()]
+     * 返回表对象和最终一级的属性比如city
+     * @param entityExpressionBuilder
+     * @param leftTable
+     * @param property
+     * @return
+     */
+    public static TableOrRelationTable getTableOrRelationalTable(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property) {
+        return getTableOrRelationalTable(entityExpressionBuilder,leftTable,property,true);
+    }
+    public static TableOrRelationTable getTableOrRelationalTable(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property, boolean strictMode) {
+        if(property.contains(".")){
+            String[] properties = property.split("\\.");
+            return getTableOrRelationalTable(entityExpressionBuilder,leftTable,properties,strictMode);
+        }else{
+            return new TableOrRelationTable(leftTable,property);
+        }
+    }
+    public static TableOrRelationTable getTableOrRelationalTable(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String[] properties, boolean strictMode) {
+        if(EasyArrayUtil.isEmpty(properties)){
+            throw new IllegalArgumentException("properties is empty");
+        }
+        if(properties.length>1){
+            TableAvailable relationTable = leftTable;
+            boolean skip = false;
+            StringBuilder fullName = new StringBuilder();
+            for (int i = 0; i < properties.length - 1 && !skip; i++) {
+                String navigateEntityProperty = properties[i];
+                fullName.append(navigateEntityProperty).append(".");
+                relationTable = EasyRelationalUtil.getRelationTable(entityExpressionBuilder, relationTable, navigateEntityProperty, fullName.substring(0, fullName.length() - 1), strictMode);
+                if (relationTable == null) {
+                    skip = true;
+                }
+            }
+
+            return new TableOrRelationTable(relationTable,properties[properties.length-1]);
+        }else{
+            return new TableOrRelationTable(leftTable,properties[0]);
+        }
+    }
     public static TableAvailable getRelationTable(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property, String fullName) {
         return getRelationTable(entityExpressionBuilder, leftTable, property, fullName, true);
     }
@@ -102,5 +147,15 @@ public class EasyRelationalUtil {
             return entityTableExpressionBuilder.getEntityTable();
         }
 
+    }
+
+    public static class TableOrRelationTable{
+        public final TableAvailable table;
+        public final String property;
+
+        public TableOrRelationTable(TableAvailable table,String property){
+            this.table = table;
+            this.property = property;
+        }
     }
 }

@@ -71,6 +71,7 @@ import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.impl.SQLColumnImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
+import com.easy.query.core.util.EasySQLUtil;
 
 import java.util.Objects;
 
@@ -421,30 +422,10 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         return anyColumn(property, Object.class);
     }
     public <TProperty> SQLAnyTypeColumn<TProxy, TProperty> anyColumn(String property, @Nullable Class<TProperty> propType) {
-
-        if(property.contains(".")){
-            String[] properties = property.split("\\.");
-            TableAvailable relationTable = table;
-            boolean skip = false;
-            StringBuilder fullName = new StringBuilder();
-            for (int i = 0; i < properties.length - 1 && !skip; i++) {
-                String navigateEntityProperty = properties[i];
-                fullName.append(navigateEntityProperty).append(".");
-                relationTable = EasyRelationalUtil.getRelationTable(this.getEntitySQLContext().getEntityExpressionBuilder(), relationTable, navigateEntityProperty, fullName.substring(0, fullName.length() - 1), true);
-                if (relationTable == null) {
-                    skip = true;
-                }
-            }
-
-            SQLAnyTypeColumn<TProxy, TProperty> column = new SQLAnyTypeColumnImpl<>(this.getEntitySQLContext(), relationTable, properties[properties.length-1], propType);
-            column._setProxy(castChain());
-            column.setNavValue(getFullNavValue(property));
-            return column;
-        }else{
-            SQLAnyTypeColumn<TProxy, TProperty> column = new SQLAnyTypeColumnImpl<>(this.getEntitySQLContext(), table, property, propType);
-            column._setProxy(castChain());
-            column.setNavValue(getFullNavValue(property));
-            return column;
-        }
+        EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(this.getEntitySQLContext().getEntityExpressionBuilder(), this.getTable(), property);
+        SQLAnyTypeColumn<TProxy, TProperty> column = new SQLAnyTypeColumnImpl<>(this.getEntitySQLContext(), tableOrRelationalTable.table, tableOrRelationalTable.property, propType);
+        column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
+        return column;
     }
 }

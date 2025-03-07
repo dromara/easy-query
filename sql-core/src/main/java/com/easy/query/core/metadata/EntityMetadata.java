@@ -72,6 +72,7 @@ import com.easy.query.core.enums.RelationMappingTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.exception.EasyQueryPropertyNotFoundException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -1064,7 +1065,7 @@ public class EntityMetadata {
     public ColumnMetadata getColumnNotNull(String propertyName) {
         ColumnMetadata columnMetadata = getColumnOrNull(propertyName);
         if (columnMetadata == null) {
-            throw new EasyQueryException(String.format("%s not found property:[%s] mapping column name, please confirm that the field exists in the Java bean. if you want to use a non-standard Java bean, please set [propertyMode] to [same_as_entity]", EasyClassUtil.getSimpleName(entityClass), propertyName));
+            throw new EasyQueryPropertyNotFoundException(entityClass, propertyName, String.format("%s not found property:[%s] mapping column name, please confirm that the field exists in the Java bean. if you want to use a non-standard Java bean, please set [propertyMode] to [same_as_entity]", EasyClassUtil.getSimpleName(entityClass), propertyName));
         }
         return columnMetadata;
     }

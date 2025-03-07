@@ -909,15 +909,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 if (mappingPath.length < 2) {
                     throw new EasyQueryInvalidOperationException("navigate join mapping length < 2");
                 }
-
-                StringBuilder fullName = new StringBuilder();
-                for (int i = 0; i < mappingPath.length - 1; i++) {
-                    String navigateEntityProperty = mappingPath[i];
-                    fullName.append(navigateEntityProperty).append(".");
-                    relationTable = EasyRelationalUtil.getRelationTable(sqlEntityExpressionBuilder, relationTable, navigateEntityProperty, fullName.substring(0, fullName.length() - 1));
-                }
-                String navigateBasicTypeProperty = mappingPath[mappingPath.length - 1];
-                asSelector.columnAs(relationTable, navigateBasicTypeProperty, navigateJoinMetadata.getProperty());
+                EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(sqlEntityExpressionBuilder, relationTable, mappingPath, true);
+                asSelector.columnAs(tableOrRelationalTable.table, tableOrRelationalTable.property, navigateJoinMetadata.getProperty());
             }
         }
     }

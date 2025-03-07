@@ -28,6 +28,7 @@ public class EasySQLUtil {
     private EasySQLUtil() {
     }
 
+
     public static String getLikeParameter(Object val, SQLLikeEnum sqlLike) {
 //        if(val instanceof SQLRawParameter){
 //            SQLRawParameter sqlRawParameter = (SQLRawParameter) val;
@@ -113,7 +114,6 @@ public class EasySQLUtil {
 
 
     /**
-     *
      * <blockquote><pre>
      * {@code
      * List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
@@ -124,37 +124,18 @@ public class EasySQLUtil {
      * </pre></blockquote>
      *
      * @param orderSelector 排序选择器
-     * @param table 主表
+     * @param table         主表
      * @param multiProperty 支持user.address.age相对于主表
-     * @param asc 是否正序
+     * @param asc           是否正序
      * @param nullsModeEnum null怎么排序
-     * @param strictMode 是否严格模式,严格模式下属性不在表中将会报错
+     * @param strictMode    是否严格模式,严格模式下属性不在表中将会报错
      * @throws EasyQueryOrderByInvalidOperationException strictMode为true,column不在表中
-     * @throws EasyQueryInvalidOperationException strictMode为true,navigate不在表中
+     * @throws EasyQueryInvalidOperationException        strictMode为true,navigate不在表中
      */
     public static void dynamicOrderBy(OrderSelector orderSelector, TableAvailable table, String multiProperty, boolean asc, OrderByModeEnum nullsModeEnum, boolean strictMode) {
-        if (!multiProperty.contains(".")) {
-            ColumnMetadata columnMetadata = checkColumn(table, multiProperty, strictMode);
-            if (columnMetadata != null) {
-                dynamicColumn0(orderSelector, table, multiProperty, asc, nullsModeEnum);
-            }
-        } else {
-            String[] properties = multiProperty.split("\\.");
-
-            TableAvailable relationTable = table;
-            boolean skip = false;
-            StringBuilder fullName = new StringBuilder();
-            for (int i = 0; i < properties.length - 1 && !skip; i++) {
-                String navigateEntityProperty = properties[i];
-                fullName.append(navigateEntityProperty).append(".");
-                relationTable = EasyRelationalUtil.getRelationTable(orderSelector.getEntityQueryExpressionBuilder(), relationTable, navigateEntityProperty, fullName.substring(0, fullName.length() - 1), strictMode);
-                if (relationTable == null) {
-                    skip = true;
-                }
-            }
-            if (!skip) {
-                dynamicColumn0(orderSelector, relationTable, properties[properties.length - 1], asc, nullsModeEnum);
-            }
+        EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(orderSelector.getEntityQueryExpressionBuilder(), table, multiProperty, strictMode);
+        if (tableOrRelationalTable.table != null) {
+            dynamicColumn0(orderSelector, tableOrRelationalTable.table, tableOrRelationalTable.property, asc, nullsModeEnum);
         }
     }
 

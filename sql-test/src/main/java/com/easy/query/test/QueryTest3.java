@@ -14,6 +14,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.reader.PropertyDataReade
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
+import com.easy.query.core.exception.EasyQueryPropertyNotFoundException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.exception.EasyQueryTableNotInSQLContextException;
@@ -1820,9 +1821,10 @@ public class QueryTest3 extends BaseTest {
             String sql = easyQuery.queryable(BlogEntity.class)
                     .orderByObject(new UISort(id))
                     .toSQL();
-        } catch (EasyQueryOrderByInvalidOperationException exception) {
+        } catch (EasyQueryPropertyNotFoundException exception) {
+            Assert.assertEquals(BlogEntity.class , exception.getEntityClass());
             Assert.assertEquals("id1" , exception.getPropertyName());
-            Assert.assertEquals("BlogEntity not found [id1] in entity class" , exception.getMessage());
+            Assert.assertEquals("BlogEntity not found property:[id1] mapping column name, please confirm that the field exists in the Java bean. if you want to use a non-standard Java bean, please set [propertyMode] to [same_as_entity]" , exception.getMessage());
         }
     }
 
