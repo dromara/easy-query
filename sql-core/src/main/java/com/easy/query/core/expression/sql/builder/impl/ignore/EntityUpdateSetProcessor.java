@@ -2,6 +2,7 @@ package com.easy.query.core.expression.sql.builder.impl.ignore;
 
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.EntityTrackProperty;
+import com.easy.query.core.basic.extension.track.EntityValueState;
 import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.basic.extension.track.TrackDiffEntry;
 import com.easy.query.core.basic.extension.track.TrackManager;
@@ -77,7 +78,7 @@ public class EntityUpdateSetProcessor {
         return entity != null && entityPropertiesIgnore.contains(property);
     }
 
-    public TrackDiffEntry trackValue(String property) {
+    public EntityValueState trackValue(String property) {
         if (entityTrackProperty != null) {
             return entityTrackProperty.getDiffProperties().get(property);
         }

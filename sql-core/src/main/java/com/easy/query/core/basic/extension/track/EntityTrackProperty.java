@@ -12,10 +12,10 @@ import java.util.Set;
  * @author xuejiaming
  */
 public class EntityTrackProperty {
-    private final Map<String, TrackDiffEntry> diffProperties = new HashMap<>();
+    private final Map<String, EntityValueState> diffProperties = new HashMap<>();
     private final Set<String> sameProperties = new HashSet<>();
 
-    public Map<String, TrackDiffEntry> getDiffProperties() {
+    public Map<String, EntityValueState> getDiffProperties() {
         return diffProperties;
     }
 

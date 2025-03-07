@@ -93,7 +93,7 @@ public class DefaultTrackContext implements TrackContext {
             return originalEntityState;
         } else {
             Object original = createAndCopyValue(entity, entityMetadata);
-            EntityState entityState = new EntityState(entityClass, trackKey, original, entity);
+            EntityState entityState = new EntityState(entityMetadata, trackKey, original, entity);
             entityStateMap.putIfAbsent(trackKey, entityState);
             return entityState;
         }
