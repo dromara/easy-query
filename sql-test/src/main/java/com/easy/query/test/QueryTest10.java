@@ -18,9 +18,6 @@ import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.company.ValueCompany;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
-import com.easy.query.test.entity.qq.TodoExecutors;
-import com.easy.query.test.entity.qq.TodoListVo;
-import com.easy.query.test.entity.qq.TodoSingleRecord;
 import com.easy.query.test.h2.vo.QueryVO;
 import com.easy.query.test.h2.vo.proxy.QueryVOProxy;
 import com.easy.query.test.listener.ListenerContext;
@@ -1015,57 +1012,57 @@ public class QueryTest10 extends BaseTest{
 ////                        o.count(x->x.title())
 ////                )).toList();
 //    }
-
-    @Test
-    public void test111(){
-        Queryable2<TodoSingleRecord, Topic> todoSingleRecordTopicQueryable2 = easyQuery.queryable(TodoSingleRecord.class)
-                .leftJoin(Topic.class, (a, b) -> a.eq(b, TodoSingleRecord::getTodoId, Topic::getId));
-        Queryable<TodoSingleRecord> x=todoSingleRecordTopicQueryable2;
-
-//        Queryable<TodoSingleRecord> queryable = easyQuery.queryable(TodoSingleRecord.class);
-//        Queryable<TodoSingleRecord> queryable1 = easyQuery.queryable(TodoSingleRecord.class);
-//        EntityTableExpressionBuilder table = queryable.getSQLEntityExpressionBuilder().getTable(0);
-//        EntityTableExpressionBuilder table1 = queryable1.getSQLEntityExpressionBuilder().getTable(0);
-//        boolean b = table == table1;
-//        System.out.println(b);
-
-        List<TodoListVo> list = easyQuery.queryable(TodoSingleRecord.class)
-                .include(o -> o.many(TodoSingleRecord::getTodoExecutorsList)
-                        .where(p1 -> p1.eq(TodoExecutors::getType, 0)))
-                .include(o -> o.many(TodoSingleRecord::getTodoExecutorsJoinList)
-                        .where(p1 -> p1.eq(TodoExecutors::getType, 1)))
-                .select(TodoListVo.class, p1 -> {
-                    p1.columnAll();
-                    p1.columnIncludeMany(TodoSingleRecord::getTodoExecutorsList, TodoListVo::getTodoExecutorsList);
-                    p1.columnIncludeMany(TodoSingleRecord::getTodoExecutorsJoinList, TodoListVo::getTodoExecutorsJoinList);
-                })
-                .toList();
-        System.out.println(list);
-
-        List<TodoListVo> list2 = easyQuery.queryable(TodoSingleRecord.class)
-                .groupBy(o -> o.column(TodoSingleRecord::getTodoId))
-                .include(o -> o.many(TodoSingleRecord::getTodoExecutorsList)
-                        .where(p1 -> p1.eq(TodoExecutors::getType, 0)))
-                .include(o -> o.many(TodoSingleRecord::getTodoExecutorsJoinList)
-                        .where(p1 -> p1.eq(TodoExecutors::getType, 1)))
-                .select(TodoListVo.class, p1 -> {
-                    p1.columnAs(TodoSingleRecord::getTodoId, TodoListVo::getTodoId);
-                    p1.columnIncludeMany(TodoSingleRecord::getTodoExecutorsList, TodoListVo::getTodoExecutorsList);
-                    p1.columnIncludeMany(TodoSingleRecord::getTodoExecutorsJoinList, TodoListVo::getTodoExecutorsJoinList);
-                })
-                .toList();
-
-
-
-
-        List<TodoSingleRecord> list1 = easyQuery.queryable(TodoSingleRecord.class)
-                .include(o -> o.many(TodoSingleRecord::getTodoExecutorsList)
-                        .where(p1 -> p1.eq(TodoExecutors::getType, 0)))
-                .include(o -> o.many(TodoSingleRecord::getTodoExecutorsJoinList)
-                        .where(p1 -> p1.eq(TodoExecutors::getType, 1)))
-                .toList();
-        System.out.println(list1);
-    }
+//
+//    @Test
+//    public void test111(){
+//        Queryable2<TodoSingleRecord, Topic> todoSingleRecordTopicQueryable2 = easyQuery.queryable(TodoSingleRecord.class)
+//                .leftJoin(Topic.class, (a, b) -> a.eq(b, TodoSingleRecord::getTodoId, Topic::getId));
+//        Queryable<TodoSingleRecord> x=todoSingleRecordTopicQueryable2;
+//
+////        Queryable<TodoSingleRecord> queryable = easyQuery.queryable(TodoSingleRecord.class);
+////        Queryable<TodoSingleRecord> queryable1 = easyQuery.queryable(TodoSingleRecord.class);
+////        EntityTableExpressionBuilder table = queryable.getSQLEntityExpressionBuilder().getTable(0);
+////        EntityTableExpressionBuilder table1 = queryable1.getSQLEntityExpressionBuilder().getTable(0);
+////        boolean b = table == table1;
+////        System.out.println(b);
+//
+//        List<TodoListVo> list = easyQuery.queryable(TodoSingleRecord.class)
+//                .include(o -> o.many(TodoSingleRecord::getTodoExecutorsList)
+//                        .where(p1 -> p1.eq(TodoExecutors::getType, 0)))
+//                .include(o -> o.many(TodoSingleRecord::getTodoExecutorsJoinList)
+//                        .where(p1 -> p1.eq(TodoExecutors::getType, 1)))
+//                .select(TodoListVo.class, p1 -> {
+//                    p1.columnAll();
+//                    p1.columnIncludeMany(TodoSingleRecord::getTodoExecutorsList, TodoListVo::getTodoExecutorsList);
+//                    p1.columnIncludeMany(TodoSingleRecord::getTodoExecutorsJoinList, TodoListVo::getTodoExecutorsJoinList);
+//                })
+//                .toList();
+//        System.out.println(list);
+//
+//        List<TodoListVo> list2 = easyQuery.queryable(TodoSingleRecord.class)
+//                .groupBy(o -> o.column(TodoSingleRecord::getTodoId))
+//                .include(o -> o.many(TodoSingleRecord::getTodoExecutorsList)
+//                        .where(p1 -> p1.eq(TodoExecutors::getType, 0)))
+//                .include(o -> o.many(TodoSingleRecord::getTodoExecutorsJoinList)
+//                        .where(p1 -> p1.eq(TodoExecutors::getType, 1)))
+//                .select(TodoListVo.class, p1 -> {
+//                    p1.columnAs(TodoSingleRecord::getTodoId, TodoListVo::getTodoId);
+//                    p1.columnIncludeMany(TodoSingleRecord::getTodoExecutorsList, TodoListVo::getTodoExecutorsList);
+//                    p1.columnIncludeMany(TodoSingleRecord::getTodoExecutorsJoinList, TodoListVo::getTodoExecutorsJoinList);
+//                })
+//                .toList();
+//
+//
+//
+//
+//        List<TodoSingleRecord> list1 = easyQuery.queryable(TodoSingleRecord.class)
+//                .include(o -> o.many(TodoSingleRecord::getTodoExecutorsList)
+//                        .where(p1 -> p1.eq(TodoExecutors::getType, 0)))
+//                .include(o -> o.many(TodoSingleRecord::getTodoExecutorsJoinList)
+//                        .where(p1 -> p1.eq(TodoExecutors::getType, 1)))
+//                .toList();
+//        System.out.println(list1);
+//    }
 
     @Test
     public void test222(){

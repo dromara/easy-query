@@ -140,7 +140,7 @@ public class SubJoinTest extends BaseTest {
                 .where(s -> {
                     s.id().eq("123");
                 }).select(s -> Select.DRAFT.of(
-                        s.books().sum(b -> b.author().age(), true)
+                        s.books().distinct().sum(b -> b.author().age())
                 ))
                 .toList();
 
@@ -160,7 +160,7 @@ public class SubJoinTest extends BaseTest {
         easyEntityQuery.queryable(SubJoinUser.class)
                 .where(s -> {
                     s.id().eq("123");
-                }).selectColumn(s -> s.books().sum(b -> b.author().age(), true))
+                }).selectColumn(s -> s.books().distinct().sum(b -> b.author().age()))
                 .toList();
 
 
@@ -224,7 +224,7 @@ public class SubJoinTest extends BaseTest {
                 .where(s -> {
                     s.id().eq("123");
                 }).select(s -> Select.DRAFT.of(
-                        s.books().sumBigDecimal(b -> b.author().age(), true)
+                        s.books().distinct().sumBigDecimal(b -> b.author().age())
                 ))
                 .toList();
 
@@ -244,7 +244,7 @@ public class SubJoinTest extends BaseTest {
         easyEntityQuery.queryable(SubJoinUser.class)
                 .where(s -> {
                     s.id().eq("123");
-                }).selectColumn(s -> s.books().sumBigDecimal(b -> b.author().age(), true))
+                }).selectColumn(s -> s.books().distinct().sumBigDecimal(b -> b.author().age()))
                 .toList();
 
 
@@ -308,7 +308,7 @@ public class SubJoinTest extends BaseTest {
                 .where(s -> {
                     s.id().eq("123");
                 }).select(s -> Select.DRAFT.of(
-                        s.books().avg(b -> b.author().age(), true)
+                        s.books().distinct().avg(b -> b.author().age())
                 ))
                 .toList();
 
@@ -328,7 +328,7 @@ public class SubJoinTest extends BaseTest {
         easyEntityQuery.queryable(SubJoinUser.class)
                 .where(s -> {
                     s.id().eq("123");
-                }).selectColumn(s -> s.books().avg(b -> b.author().age(), true))
+                }).selectColumn(s -> s.books().distinct().avg(b -> b.author().age()))
                 .toList();
 
 

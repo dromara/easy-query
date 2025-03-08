@@ -28,15 +28,21 @@ public interface SQLGroupQueryable<TSourceProxy> extends EntitySQLContextAvailab
 
     SQLGroupQueryable<TSourceProxy> distinct(boolean useDistinct);
 
-    <T extends Long> ColumnFunctionCompareComparableNumberChainExpression<T> count();
+    ColumnFunctionCompareComparableNumberChainExpression<Long> count();
 
-    <T extends Integer> ColumnFunctionCompareComparableNumberChainExpression<T> intCount();
+    <TMember> ColumnFunctionCompareComparableNumberChainExpression<Long> count(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TMember>> columnSelector);
+
+    ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount();
+
+    <TMember> ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TMember>> columnSelector);
 
     <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<TMember> sum(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector);
 
 
     <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector);
+
     <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<Integer> sumInt(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector);
+
     <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<Long> sumLong(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector);
 
 

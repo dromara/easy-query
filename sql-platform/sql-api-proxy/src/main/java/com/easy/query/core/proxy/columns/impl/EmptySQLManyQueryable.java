@@ -15,6 +15,7 @@ import com.easy.query.core.proxy.core.EmptyFlatEntitySQLContext;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableBooleanChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
 
 import java.math.BigDecimal;
@@ -61,6 +62,11 @@ public class EmptySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, 
     }
 
     @Override
+    public SQLQueryable<T1Proxy, T1> distinct(boolean useDistinct) {
+        return this;
+    }
+
+    @Override
     public SQLPredicateQueryable<T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression) {
         throw new UnsupportedOperationException();
     }
@@ -70,32 +76,63 @@ public class EmptySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, 
     }
 
     @Override
+    public void any() {
+
+    }
+
+    @Override
     public void none(SQLExpression1<T1Proxy> whereExpression) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public ColumnFunctionCompareComparableNumberChainExpression<Long> count(SQLExpression1<T1Proxy> whereExpression) {
+    public void none() {
+
+    }
+
+    @Override
+    public ColumnFunctionCompareComparableBooleanChainExpression<Boolean> anyValue() {
+        return null;
+    }
+
+    @Override
+    public ColumnFunctionCompareComparableBooleanChainExpression<Boolean> noneValue() {
+        return null;
+    }
+
+    @Override
+    public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Long> count(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
+        return null;
+    }
+
+    @Override
+    public ColumnFunctionCompareComparableNumberChainExpression<Long> count() {
+        return null;
+    }
+
+    @Override
+    public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
+        return null;
+    }
+
+    @Override
+    public ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount() {
+        return null;
+    }
+
+
+    @Override
+    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<TMember> sum(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount(SQLExpression1<T1Proxy> whereExpression) {
+    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<TMember> sum(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector, boolean distinct) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector, boolean distinct) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector, boolean distinct) {
+    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
         throw new UnsupportedOperationException();
     }
 
@@ -108,7 +145,6 @@ public class EmptySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, 
     public <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> min(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
         throw new UnsupportedOperationException();
     }
-
     @Override
     public SQLQueryable<T1Proxy, T1> useLogicDelete(boolean enable) {
         return this;

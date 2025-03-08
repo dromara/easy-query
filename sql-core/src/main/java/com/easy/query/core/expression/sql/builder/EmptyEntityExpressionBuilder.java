@@ -44,6 +44,11 @@ public class EmptyEntityExpressionBuilder implements EntityExpressionBuilder{
     }
 
     @Override
+    public boolean hasManyGroupJoinTable(RelationTableKey relationTableKey) {
+        return false;
+    }
+
+    @Override
     public Map<RelationTableKey, EntityTableExpressionBuilder> getRelationTables() {
         return Collections.emptyMap();
     }

@@ -3,6 +3,7 @@ package com.easy.query.core.expression.sql.builder.factory;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.sql.builder.AnonymousManyGroupJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EasyExpressionContext;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
@@ -12,6 +13,7 @@ import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.MapUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousDefaultTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.impl.AnonymousManyGroupJoinDefaultTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.DeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.InsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.InsertMapExpressionBuilder;
@@ -40,6 +42,11 @@ public class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFac
     @Override
     public EntityTableExpressionBuilder createAnonymousEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         return new AnonymousDefaultTableExpressionBuilder(tableAvailable, multiTableType, entityQueryExpressionBuilder);
+    }
+
+    @Override
+    public AnonymousManyGroupJoinEntityTableExpressionBuilder createAnonymousManyGroupEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder, String[] defaultKeys) {
+        return new AnonymousManyGroupJoinDefaultTableExpressionBuilder(tableAvailable,multiTableType,entityQueryExpressionBuilder,defaultKeys);
     }
 
     @Override

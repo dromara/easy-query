@@ -7,8 +7,10 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableBooleanChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableAnyChainExpressionImpl;
@@ -45,26 +47,34 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     }
 
     @Override
-    public <T extends Long> ColumnFunctionCompareComparableNumberChainExpression<T> count() {
-        if (predicate == null) {
-            return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null, fx -> {
-                return fx.count(o -> {
-                }).distinct(distinct);
-            }, Long.class);
-        } else {
-            ColumnFunctionCompareComparableAnyChainExpression<Long> preColumn = new CaseWhenEntityBuilder(this.getEntitySQLContext()).caseWhen(() -> predicate.apply(groupTable)).then(1).elseEnd(null, Long.class);
-            return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
-                SQLFunction sqlFunction = preColumn.func().apply(fx);
-                return fx.count(sqlFunction).distinct(distinct);
-            }, Long.class);
-        }
+    public ColumnFunctionCompareComparableNumberChainExpression<Long> count() {
+        PropTypeColumn<?> preColumn = predicate == null ? Expression.of(this.entitySQLContext).constant().valueOf(1L) : new CaseWhenEntityBuilder(this.getEntitySQLContext()).caseWhen(() -> predicate.apply(groupTable)).then(1).elseEnd(null, Long.class);
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
+            return fx.count(x -> {
+                PropTypeColumn.columnFuncSelector(x, preColumn);
+            }).distinct(distinct);
+        }, Long.class);
     }
 
     @Override
-    public <T extends Integer> ColumnFunctionCompareComparableNumberChainExpression<T> intCount() {
-        ColumnFunctionCompareComparableNumberChainExpression<Long> count = count();
-        count._setPropertyType(Integer.class);
-        return EasyObjectUtil.typeCastNullable(count);
+    public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Long> count(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector) {
+        PropTypeColumn<TMember> column = columnSelector.apply(groupTable);
+        PropTypeColumn<?> preColumn = predicate == null ? column : new CaseWhenEntityBuilder(this.getEntitySQLContext()).caseWhen(() -> predicate.apply(groupTable)).then(column).elseEnd(null, Long.class);
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
+            return fx.count(x -> {
+                PropTypeColumn.columnFuncSelector(x, preColumn);
+            }).distinct(distinct);
+        }, Long.class);
+    }
+
+    @Override
+    public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector) {
+        return count(columnSelector).asAnyType(Integer.class);
+    }
+
+    @Override
+    public ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount() {
+        return count().asAnyType(Integer.class);
     }
 
     @Override

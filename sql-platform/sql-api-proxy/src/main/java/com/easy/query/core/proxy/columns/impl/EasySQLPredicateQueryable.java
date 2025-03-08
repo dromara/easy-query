@@ -22,15 +22,23 @@ import java.math.BigDecimal;
  */
 public class EasySQLPredicateQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> implements SQLPredicateQueryable<T1Proxy, T1> {
     private final SQLQueryable<T1Proxy, T1> sqlQueryable;
+    private boolean distinct;
 
-    public EasySQLPredicateQueryable(SQLQueryable<T1Proxy, T1> sqlQueryable) {
+    public EasySQLPredicateQueryable(SQLQueryable<T1Proxy, T1> sqlQueryable, boolean distinct) {
 
         this.sqlQueryable = sqlQueryable;
+        this.distinct = distinct;
     }
 
     @Override
     public EntitySQLContext getEntitySQLContext() {
         return sqlQueryable.getEntitySQLContext();
+    }
+
+    @Override
+    public SQLPredicateQueryable<T1Proxy, T1> distinct(boolean useDistinct) {
+        this.distinct = useDistinct;
+        return this;
     }
 
     @Override
@@ -72,9 +80,8 @@ public class EasySQLPredicateQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>,
     }
 
     @Override
-    public ColumnFunctionCompareComparableNumberChainExpression<Long> count(SQLExpression1<T1Proxy> whereExpression) {
-        sqlQueryable.getQueryable().where(whereExpression);
-        return sqlQueryable.count();
+    public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Long> count(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
+        return sqlQueryable.count(columnSelector);
     }
 
     @Override
@@ -83,9 +90,8 @@ public class EasySQLPredicateQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>,
     }
 
     @Override
-    public ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount(SQLExpression1<T1Proxy> whereExpression) {
-        sqlQueryable.getQueryable().where(whereExpression);
-        return sqlQueryable.intCount();
+    public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
+        return sqlQueryable.intCount(columnSelector);
     }
 
     @Override
@@ -94,18 +100,18 @@ public class EasySQLPredicateQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>,
     }
 
     @Override
-    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<TMember> sum(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector, boolean distinct) {
-        return sqlQueryable.sum(columnSelector, distinct);
+    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<TMember> sum(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
+        return sqlQueryable.distinct(distinct).sum(columnSelector);
     }
 
     @Override
-    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector, boolean distinct) {
-        return sqlQueryable.sumBigDecimal(columnSelector, distinct);
+    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
+        return sqlQueryable.distinct(distinct).sumBigDecimal(columnSelector);
     }
 
     @Override
-    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector, boolean distinct) {
-        return sqlQueryable.avg(columnSelector, distinct);
+    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
+        return sqlQueryable.distinct(distinct).avg(columnSelector);
     }
 
     @Override
@@ -118,10 +124,6 @@ public class EasySQLPredicateQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>,
         return sqlQueryable.min(columnSelector);
     }
 
-    @Override
-    public <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> select(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
-        return sqlQueryable.select(columnSelector);
-    }
 //    @Override
 //    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<TMember> sum(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
 //        return sqlQueryable.sum(columnSelector);

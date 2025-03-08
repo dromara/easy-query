@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 /**
@@ -67,7 +68,10 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
     @Override
     public EntityTableExpressionBuilder addRelationEntityTableExpression(RelationTableKey relationTableKey, Function<RelationTableKey, EntityTableExpressionBuilder> tableExpressionSupplier) {
         if (relationTables == null) {
-            relationTables = new LinkedHashMap<>();
+//            relationTables = new LinkedHashMap<>();
+            relationTables = new TreeMap<>((a,b)->{
+                return Integer.compare(a.getBaseSort(), b.getBaseSort());
+            });
         }
         EntityTableExpressionBuilder entityTableExpressionBuilder = relationTables.get(relationTableKey);
         if (entityTableExpressionBuilder != null) {
@@ -87,7 +91,15 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
             throw new UnsupportedOperationException();
         }
     }
-//
+
+    @Override
+    public boolean hasManyGroupJoinTable(RelationTableKey relationTableKey) {
+        if (relationTables == null) {
+            return false;
+        }
+        return relationTables.containsKey(relationTableKey);
+    }
+    //
 //    @Override
 //    public EntityTableExpressionBuilder removeRelationEntityTableExpression(RelationTableKey relationTableKey) {
 //        if (relationTables == null) {

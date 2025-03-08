@@ -22,7 +22,7 @@ import java.util.function.Supplier;
  * @Date: 2023/3/3 23:31
  */
 public class AnonymousDefaultTableExpressionBuilder extends DefaultTableExpressionBuilder implements AnonymousEntityTableExpressionBuilder {
-    private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
+    protected final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
 
     public AnonymousDefaultTableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         super(entityTable, multiTableType, entityQueryExpressionBuilder.getRuntimeContext());

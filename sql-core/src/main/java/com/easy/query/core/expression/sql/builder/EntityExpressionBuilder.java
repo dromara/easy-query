@@ -11,44 +11,58 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
+ * @author xuejiaming
  * @Description: 文件说明
  * @Date: 2023/3/4 16:29
- * @author xuejiaming
  */
-public interface EntityExpressionBuilder extends ExpressionBuilder , RuntimeContextAvailable {
-    default boolean isQuery(){
+public interface EntityExpressionBuilder extends ExpressionBuilder, RuntimeContextAvailable {
+    default boolean isQuery() {
         return false;
     }
+
     Class<?> getQueryClass();
+
     ExpressionContext getExpressionContext();
 
     /**
      * 添加表
+     *
      * @param tableExpression
      */
     void addSQLEntityTableExpression(EntityTableExpressionBuilder tableExpression);
-    EntityTableExpressionBuilder addRelationEntityTableExpression(RelationTableKey relationTableKey, Function<RelationTableKey,EntityTableExpressionBuilder> tableExpressionSupplier);
-//    EntityTableExpressionBuilder removeRelationEntityTableExpression(RelationTableKey relationTableKey);
-    Map<RelationTableKey,EntityTableExpressionBuilder> getRelationTables();
+
+    EntityTableExpressionBuilder addRelationEntityTableExpression(RelationTableKey relationTableKey, Function<RelationTableKey, EntityTableExpressionBuilder> tableExpressionSupplier);
+
+    boolean hasManyGroupJoinTable(RelationTableKey relationTableKey);
+
+    //    EntityTableExpressionBuilder removeRelationEntityTableExpression(RelationTableKey relationTableKey);
+    Map<RelationTableKey, EntityTableExpressionBuilder> getRelationTables();
+
     boolean hasRelationTables();
+
     List<EntityTableExpressionBuilder> getTables();
-    default EntityTableExpressionBuilder getTable(int index){
+
+    default EntityTableExpressionBuilder getTable(int index) {
         return getTables().get(index);
     }
-    default EntityTableExpressionBuilder getRecentlyTable(){
+
+    default EntityTableExpressionBuilder getRecentlyTable() {
         int size = getTables().size();
-        if(size==0){
+        if (size == 0) {
             throw new EasyQueryInvalidOperationException("cant get recently table");
         }
-        return getTable(size-1);
+        return getTable(size - 1);
     }
+
     void setLogicDelete(boolean logicDelete);
 
     @Override
     EntitySQLExpression toExpression();
 
     EntityExpressionBuilder cloneEntityExpressionBuilder();
-    default void accept(TableVisitor visitor){
+
+    default void accept(TableVisitor visitor) {
 
     }
+
 }

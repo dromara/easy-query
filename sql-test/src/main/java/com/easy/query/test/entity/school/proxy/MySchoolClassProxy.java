@@ -9,7 +9,7 @@ import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.test.entity.school.MySchoolClass;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.columns.SQLNavigateColumn;
-import com.easy.query.core.proxy.columns.SQLQueryable;
+import com.easy.query.core.proxy.columns.SQLManyQueryable;
 import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
 
 /**
@@ -22,6 +22,8 @@ import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
 public class MySchoolClassProxy extends AbstractProxyEntity<MySchoolClassProxy, MySchoolClass> {
 
     private static final Class<MySchoolClass> entityClass = MySchoolClass.class;
+
+    public static final MySchoolClassProxy TABLE = createTable().createEmpty();
 
     public static MySchoolClassProxy createTable() {
         return new MySchoolClassProxy();
@@ -48,8 +50,8 @@ public class MySchoolClassProxy extends AbstractProxyEntity<MySchoolClassProxy, 
      * 一对多 一个班级多个学生
      * {@link MySchoolClass#getSchoolStudents}
      */
-    public SQLQueryable<com.easy.query.test.entity.school.proxy.MySchoolStudentProxy, com.easy.query.test.entity.school.MySchoolStudent> schoolStudents() {
-        return getNavigates("schoolStudents", new com.easy.query.test.entity.school.proxy.MySchoolStudentProxy());
+    public SQLManyQueryable<MySchoolClassProxy, com.easy.query.test.entity.school.proxy.MySchoolStudentProxy, com.easy.query.test.entity.school.MySchoolStudent> schoolStudents() {
+        return getNavigateMany("schoolStudents", new com.easy.query.test.entity.school.proxy.MySchoolStudentProxy());
     }
 
 
