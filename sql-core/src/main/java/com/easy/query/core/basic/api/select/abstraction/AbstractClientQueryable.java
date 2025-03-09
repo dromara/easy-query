@@ -1410,13 +1410,13 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public ClientQueryable<T1> manyGroupJoin(boolean condition,SQLFuncExpression<String> manyPropColumnExpression) {
+    public ClientQueryable<T1> manyGroupJoin(boolean condition,SQLFuncExpression<String> manyPropColumnExpression, SQLFuncExpression1<ClientQueryable<?>,ClientQueryable<?>> adapterExpression) {
         if(condition){
             String manyProp = manyPropColumnExpression.apply();
             EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
             TableAvailable leftTable = table.getEntityTable();
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(manyProp);
-            EasyRelationalUtil.getManyJoinRelationTable(entityQueryExpressionBuilder, leftTable, navigateMetadata, manyProp);
+            EasyRelationalUtil.getManyJoinRelationTable(entityQueryExpressionBuilder, leftTable, navigateMetadata, manyProp,adapterExpression);
         }
         return this;
     }

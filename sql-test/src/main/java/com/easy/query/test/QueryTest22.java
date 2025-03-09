@@ -370,6 +370,7 @@ public class QueryTest22 extends BaseTest {
 
         }
     }
+
     @Test
     public void testManyGroup13() {
 
@@ -379,10 +380,10 @@ public class QueryTest22 extends BaseTest {
         Long c = 1L;
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
                 .manyJoin(o -> o.bankCards())
-                .leftJoin(BlogEntity.class,(user, t_blog) -> {
+                .leftJoin(BlogEntity.class, (user, t_blog) -> {
                     user.bankCards().where(bc -> {
                         bc.user().phone().eq("12345");
-                    }).max(x->x.type()).eq(t_blog.title());
+                    }).max(x -> x.type()).eq(t_blog.title());
                 })
                 .where((user, t_blog) -> {
                     t_blog.score().gt(BigDecimal.ZERO);
@@ -394,6 +395,29 @@ public class QueryTest22 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,MAX((CASE WHEN t4.`phone` = ? THEN t1.`type` ELSE ? END)) AS `__max2__` FROM `doc_bank_card` t1 LEFT JOIN `doc_user` t4 ON t4.`id` = t1.`uid` GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` LEFT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t2.`__max2__` = t3.`title` WHERE t3.`score` > ? AND t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("12345(String),null(null),false(Boolean),0(BigDecimal),%abc%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+
+
+    @Test
+    public void testManyGroup14() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        Long c = 1L;
+        List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
+                .manyJoin(o -> o.bankCards(), bcq -> bcq.where(o -> o.code().likeMatchRight("coder")))
+                .where(user -> {
+                    user.bankCards().where(bc -> {
+                        bc.user().phone().eq("12345");
+                    }).count().eq(c);
+                })
+                .toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,COUNT((CASE WHEN t3.`phone` = ? THEN ? ELSE ? END)) AS `__count2__` FROM `doc_bank_card` t1 LEFT JOIN `doc_user` t3 ON t3.`id` = t1.`uid` WHERE t1.`code` LIKE ? GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__count2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("12345(String),1(Integer),null(null),%coder(String),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 
 

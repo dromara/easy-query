@@ -47,24 +47,26 @@ public class TableSortWithRelationProcessor implements TableSortProcessor {
 
     @Override
     public List<EntityTableSQLExpression> getTables() {
-       return tables.stream().sorted((a, b) -> {
-            if (a.tableSQLExpression == firstTableSQLExpression) {
-                return -1;
-            }
-            if (b.tableSQLExpression == firstTableSQLExpression) {
-                return 1;
-            }
-            TableAvailable prevTable = a.tableSQLExpression.getEntityTable();
-            TableAvailable nextTable = b.tableSQLExpression.getEntityTable();
-            if (a.tableVisitor.containsTable(nextTable)) {
-                return 1;
-            }
-            if (b.tableVisitor.containsTable(prevTable)) {
-                return -1;
-            }
-            return 0;
-        }).map(o->o.tableSQLExpression).collect(Collectors.toList());
+        return tables.stream().sorted((a, b) -> getTableExpressionCompare(a, b)).map(o -> o.tableSQLExpression).collect(Collectors.toList());
 //        return EasyCollectionUtil.select(tables, (o, i) -> o.tableSQLExpression);
+    }
+
+    private int getTableExpressionCompare(TableExpressionAndVisitor a, TableExpressionAndVisitor b) {
+        if (a.tableSQLExpression == firstTableSQLExpression) {
+            return -1;
+        }
+        if (b.tableSQLExpression == firstTableSQLExpression) {
+            return 1;
+        }
+        TableAvailable prevTable = a.tableSQLExpression.getEntityTable();
+        TableAvailable nextTable = b.tableSQLExpression.getEntityTable();
+        if (a.tableVisitor.containsTable(nextTable)) {
+            return 1;
+        }
+        if (b.tableVisitor.containsTable(prevTable)) {
+            return -1;
+        }
+        return 0;
     }
 
     public static class TableExpressionAndVisitor {

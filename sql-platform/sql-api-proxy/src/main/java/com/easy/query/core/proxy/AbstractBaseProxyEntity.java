@@ -333,9 +333,9 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
             String fullName = getFullNavValue(property);
             if (entityExpressionBuilder.hasManyGroupJoinTable(new RelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName))) {
-                AnonymousManyGroupJoinEntityTableExpressionBuilder manyJoinRelationTable = EasyRelationalUtil.getManyJoinRelationTable(entityExpressionBuilder, leftTable, navigateMetadata, fullName);
+                AnonymousManyGroupJoinEntityTableExpressionBuilder manyJoinRelationTable = EasyRelationalUtil.getManyJoinRelationTable(entityExpressionBuilder, leftTable, navigateMetadata, fullName, null);
                 EntityTableExpressionBuilder manyGroupTable = manyJoinRelationTable.getEntityQueryExpressionBuilder().getTable(0);
-                TPropertyProxy tPropertyProxy = propertyProxy.create(manyGroupTable.getEntityTable(), manyJoinRelationTable.getEntityQueryExpressionBuilder(),runtimeContext);
+                TPropertyProxy tPropertyProxy = propertyProxy.create(manyGroupTable.getEntityTable(), manyJoinRelationTable.getEntityQueryExpressionBuilder(), runtimeContext);
                 tPropertyProxy.setNavValue(fullName);
                 EasyGroupSQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EasyGroupSQLManyQueryable<>(this.getEntitySQLContext(), manyJoinRelationTable, entityExpressionBuilder, leftTable, fullName, tPropertyProxy);
                 query._setProxy(castChain());

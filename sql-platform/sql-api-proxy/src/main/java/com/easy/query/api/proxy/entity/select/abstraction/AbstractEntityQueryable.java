@@ -34,6 +34,7 @@ import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.NavigateOrderProp;
+import com.easy.query.core.proxy.ManyPropColumn;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
@@ -424,6 +425,32 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         });
 
         return getQueryable();
+    }
+
+    @Override
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable<T1Proxy, T1> manyJoin(boolean condition, SQLFuncExpression1<T1Proxy, ManyPropColumn<T2Proxy, T2>> manyPropColumnExpression, SQLFuncExpression1<EntityQueryable<T2Proxy, T2>, EntityQueryable<T2Proxy, T2>> adapterExpression) {
+        if (condition) {
+
+            T1Proxy proxy = getQueryable().get1Proxy();
+            ValueHolder<ManyPropColumn<T2Proxy,T2>> valueHolder = new ValueHolder<>();
+            proxy.getEntitySQLContext()._include(() -> {
+                ManyPropColumn<T2Proxy,T2> value = manyPropColumnExpression.apply(proxy);
+                valueHolder.setValue(value);
+            });
+            if(adapterExpression==null){
+
+                getClientQueryable().manyGroupJoin(() -> valueHolder.getValue().getValue(),null);
+            }else{
+                getClientQueryable().manyGroupJoin(() -> valueHolder.getValue().getValue(),cq->{
+                    ClientQueryable<T2> innerClientQueryable =  EasyObjectUtil.typeCastNullable(cq);
+                    T2Proxy tPropertyProxy = EntityQueryProxyManager.create(innerClientQueryable.queryClass());
+                    EasyEntityQueryable<T2Proxy, T2> entityQueryable = new EasyEntityQueryable<>(tPropertyProxy, innerClientQueryable);
+                    adapterExpression.apply(entityQueryable);
+                    return entityQueryable.getClientQueryable();
+                });
+            }
+        }
+        return  getQueryable();
     }
 
     //    @Override

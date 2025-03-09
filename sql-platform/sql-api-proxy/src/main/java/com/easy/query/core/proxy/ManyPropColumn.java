@@ -6,5 +6,5 @@ package com.easy.query.core.proxy;
  *
  * @author xuejiaming
  */
-public interface ManyPropColumn extends PropColumn{
+public interface ManyPropColumn<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends PropColumn{
 }

@@ -40,7 +40,7 @@ import java.math.BigDecimal;
  *
  * @author xuejiaming
  */
-public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends EntitySQLContextAvailable, ManyPropColumn, LogicDeletable<SQLQueryable<T1Proxy, T1>> {//,ProxyEntity<T1Proxy,T1>
+public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends EntitySQLContextAvailable, ManyPropColumn<T1Proxy,T1>, LogicDeletable<SQLQueryable<T1Proxy, T1>> {//,ProxyEntity<T1Proxy,T1>
 
     EntityQueryable<T1Proxy, T1> getQueryable();
 
