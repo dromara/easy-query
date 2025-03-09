@@ -70,6 +70,9 @@ import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
+import com.easy.query.core.expression.parser.core.base.many.ManyColumn;
+import com.easy.query.core.expression.parser.core.base.many.ManyJoinSelector;
+import com.easy.query.core.expression.parser.core.base.many.ManyJoinSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurerImpl;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEOption;
@@ -1410,13 +1413,14 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public ClientQueryable<T1> manyGroupJoin(boolean condition,SQLFuncExpression<String> manyPropColumnExpression, SQLFuncExpression1<ClientQueryable<?>,ClientQueryable<?>> adapterExpression) {
+    public ClientQueryable<T1> manyJoin(boolean condition, SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression, SQLFuncExpression1<ClientQueryable<?>,ClientQueryable<?>> adapterExpression) {
         if(condition){
-            String manyProp = manyPropColumnExpression.apply();
             EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
-            TableAvailable leftTable = table.getEntityTable();
-            NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(manyProp);
-            EasyRelationalUtil.getManyJoinRelationTable(entityQueryExpressionBuilder, leftTable, navigateMetadata, manyProp,adapterExpression);
+            ManyColumn manyColumn = manyPropColumnExpression.apply(new ManyJoinSelectorImpl<>(table.getEntityTable()));
+            EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
+            TableAvailable leftTable = tableOrRelationalTable.table;
+            NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(tableOrRelationalTable.property);
+            EasyRelationalUtil.getManyJoinRelationTable(entityQueryExpressionBuilder, leftTable, navigateMetadata, manyColumn.getNavValue(),adapterExpression);
         }
         return this;
     }

@@ -33,4 +33,7 @@ public class DocUser implements ProxyEntityAvailable<DocUser , DocUserProxy> {
 
     @Navigate(value = RelationTypeEnum.OneToMany,targetProperty = DocBankCard.Fields.uid)
     private List<DocBankCard> bankCards;
+
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {DocUser.Fields.id}, targetProperty = {DocUserBook.Fields.uid})
+    private List<DocUserBook> userBooks;
 }

@@ -6,7 +6,7 @@ import com.easy.query.api.proxy.entity.select.extension.queryable.ClientEntityQu
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityAggregatable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityCountable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityFilterable1;
-import com.easy.query.api.proxy.entity.select.extension.queryable.EntityManyGroupJoinable1;
+import com.easy.query.api.proxy.entity.select.extension.queryable.EntityManyJoinable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityPageAble1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.IEntityGroup1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityHavingable1;
@@ -22,7 +22,6 @@ import com.easy.query.core.basic.api.internal.QueryStrategy;
 import com.easy.query.core.basic.api.select.ClientQueryableAvailable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.basic.api.cte.CteTableAvailable;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
@@ -50,7 +49,7 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
         IEntityUnion1<T1Proxy, T1>,
         IEntityGroup1<T1Proxy, T1>,
         EntityJoinable1<T1Proxy, T1>,
-        EntityManyGroupJoinable1<T1Proxy, T1>,
+        EntityManyJoinable1<T1Proxy, T1>,
 //        EntityFillable1<T1Proxy,T1>,
 //        EntityMultiable1<T1Proxy,T1>,
         IEntityTree1<T1Proxy, T1>,

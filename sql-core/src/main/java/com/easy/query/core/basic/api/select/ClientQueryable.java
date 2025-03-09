@@ -1,7 +1,6 @@
 package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.api.client.EasyQueryClient;
-import com.easy.query.core.basic.api.cte.CteTableAvailable;
 import com.easy.query.core.basic.api.internal.ContextConfigure;
 import com.easy.query.core.basic.api.internal.FilterConfigurable;
 import com.easy.query.core.basic.api.internal.Interceptable;
@@ -17,7 +16,7 @@ import com.easy.query.core.basic.api.select.extension.queryable.Groupable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Havingable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Includeable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Joinable1;
-import com.easy.query.core.basic.api.select.extension.queryable.ManyGroupJoinable1;
+import com.easy.query.core.basic.api.select.extension.queryable.ManyJoinable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Multiable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Orderable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Selectable1;
@@ -44,7 +43,7 @@ public interface ClientQueryable<T1> extends Query<T1>,
         ContextConfigure<ClientQueryable<T1>>,
         Aggregatable1<T1>,
         Joinable1<T1>,
-        ManyGroupJoinable1<T1>,
+        ManyJoinable1<T1>,
         Multiable1<T1>,
         Filterable1<T1>,
         Selectable1<T1>,

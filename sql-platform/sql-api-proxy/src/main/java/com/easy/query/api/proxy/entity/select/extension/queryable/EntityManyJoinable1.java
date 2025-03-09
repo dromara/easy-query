@@ -12,7 +12,7 @@ import com.easy.query.core.proxy.ProxyEntityAvailable;
  *
  * @author xuejiaming
  */
-public interface EntityManyGroupJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
+public interface EntityManyJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
     default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable<T1Proxy, T1> manyJoin(SQLFuncExpression1<T1Proxy, ManyPropColumn<T2Proxy,T2>> manyPropColumnExpression) {
         return manyJoin(true, manyPropColumnExpression,null);
     }

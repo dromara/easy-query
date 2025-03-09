@@ -46,10 +46,6 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
 
     TableAvailable getOriginalTable();
 
-    String getNavValue();
-
-    T1Proxy getProxy();
-
     @Override
     default String getValue() {
         return getNavValue();
