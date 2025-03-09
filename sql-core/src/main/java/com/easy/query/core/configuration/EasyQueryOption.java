@@ -1,6 +1,5 @@
 package com.easy.query.core.configuration;
 
-import com.easy.query.core.enums.RelationTableAppendEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -135,14 +134,13 @@ public class EasyQueryOption {
      */
     private final long resultSizeLimit;
     private final ShardingQueryInTransactionEnum shardingQueryInTransaction;
-    private final RelationTableAppendEnum relationTableAppend;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy, SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode, int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis,
                            EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption, String defaultDataSourceName, int defaultDataSourceMergePoolSize, boolean queryLargeColumn, int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
                            boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold, boolean printSql, boolean startTimeJob, boolean defaultTrack,
                            int relationGroupSize, boolean keepNativeStyle, long reverseOffsetThreshold, boolean warningColumnMiss, int shardingFetchSize, boolean mapToBeanStrict, String defaultSchema, long resultSizeLimit, boolean printNavSql,
-                           ShardingQueryInTransactionEnum shardingQueryInTransaction, RelationTableAppendEnum relationTableAppend) {
+                           ShardingQueryInTransactionEnum shardingQueryInTransaction) {
 
 
         if (executorMaximumPoolSize > 0) {
@@ -213,7 +211,6 @@ public class EasyQueryOption {
         this.defaultSchema = defaultSchema;
         this.resultSizeLimit = resultSizeLimit;
         this.shardingQueryInTransaction = shardingQueryInTransaction;
-        this.relationTableAppend = relationTableAppend;
     }
 
     public int getMaxShardingRouteCount() {
@@ -353,9 +350,5 @@ public class EasyQueryOption {
 
     public ShardingQueryInTransactionEnum getShardingQueryInTransaction() {
         return shardingQueryInTransaction;
-    }
-
-    public RelationTableAppendEnum getRelationTableAppend() {
-        return relationTableAppend;
     }
 }

@@ -1184,15 +1184,6 @@ public class QueryTest17 extends BaseTest {
 
     @Test
     public void testSubFrom1() {
-        try {
-            //保证能编译通过
-            List<SysUser> list3 = easyEntityQuery.queryable(Province.class)
-                    .select(p -> new SysUserProxy()
-                            .blogs().set(p.cities(), c -> new BlogEntityProxy())
-                            .id().set("1")).toList();
-        } catch (Exception ex) {
-
-        }
         List<ProvinceVO> list = easyEntityQuery.queryable(Province.class)
                 .where(p -> {
                     p.code().eq("123");

@@ -332,7 +332,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
             }
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
             String fullName = getFullNavValue(property);
-            if (entityExpressionBuilder.hasManyGroupJoinTable(new RelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName, RelationTableKey.MANY_JOIN_SORT))) {
+            if (entityExpressionBuilder.hasManyGroupJoinTable(new RelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName))) {
                 AnonymousManyGroupJoinEntityTableExpressionBuilder manyJoinRelationTable = EasyRelationalUtil.getManyJoinRelationTable(entityExpressionBuilder, leftTable, navigateMetadata, fullName);
                 EntityTableExpressionBuilder manyGroupTable = manyJoinRelationTable.getEntityQueryExpressionBuilder().getTable(0);
                 TPropertyProxy tPropertyProxy = propertyProxy.create(manyGroupTable.getEntityTable(), manyJoinRelationTable.getEntityQueryExpressionBuilder(),runtimeContext);

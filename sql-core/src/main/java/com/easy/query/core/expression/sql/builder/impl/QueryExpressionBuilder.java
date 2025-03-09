@@ -5,7 +5,6 @@ import com.easy.query.core.common.reverse.DefaultReverseEach;
 import com.easy.query.core.common.reverse.EmptyReverseEach;
 import com.easy.query.core.common.reverse.ReverseEach;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.enums.RelationTableAppendEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -22,9 +21,13 @@ import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpression
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
-import com.easy.query.core.expression.sql.builder.ExpressionTableVisitor;
+import com.easy.query.core.expression.visitor.EmptyTableVisitor;
+import com.easy.query.core.expression.visitor.ExpressionTableVisitor;
 import com.easy.query.core.expression.sql.builder.SQLEntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.AbstractPredicateEntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.sort.DefaultTableSortProcessor;
+import com.easy.query.core.expression.sql.builder.sort.TableSortProcessor;
+import com.easy.query.core.expression.sql.builder.sort.TableSortWithRelationProcessor;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.SQLExpression;
@@ -37,6 +40,7 @@ import com.easy.query.core.util.EasySQLSegmentUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeSet;
 
 /**
  * @author xuejiaming
@@ -203,15 +207,21 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         } else {
             easyQuerySQLExpression.setProjects(getProjects().cloneSQLBuilder());
         }
-        easyQuerySQLExpression.getTables().add((EntityTableSQLExpression) toTableExpressionSQL(firstTable, false));
+        boolean hasRelationTables = hasRelationTables();
+        TableVisitor expressionTableVisitor = hasRelationTables ? new ExpressionTableVisitor() : EmptyTableVisitor.DEFAULT;
+        EntityTableSQLExpression firstTableExpression = (EntityTableSQLExpression) toTableExpressionSQL(firstTable, false);
+        TableSortProcessor tableSortProcessor = hasRelationTables ? new TableSortWithRelationProcessor(firstTableExpression, expressionTableVisitor) : new DefaultTableSortProcessor();
+
+        tableSortProcessor.appendTable(firstTableExpression);
         while (iterator.hasNext()) {
             EntityTableExpressionBuilder table = iterator.next();
             EntityTableSQLExpression tableExpression = (EntityTableSQLExpression) toTableExpressionSQL(table, false);
-            easyQuerySQLExpression.getTables().add(tableExpression);
+
             PredicateSegment on = getTableOnWithQueryFilter(table);
             if (on != null && on.isNotEmpty()) {
                 tableExpression.setOn(on);
             }
+            tableSortProcessor.appendTable(tableExpression);
         }
 //
 //        if (hasRelationTables()) {
@@ -237,11 +247,10 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         easyQuerySQLExpression.setOrder(getOrder().cloneSQLBuilder());
         easyQuerySQLExpression.setOffset(getOffset());
         easyQuerySQLExpression.setRows(getRows());
-        RelationTableAppendEnum relationTableAppend = this.easyQueryOption.getRelationTableAppend();
 
         if (hasRelationTables()) {
-            ExpressionTableVisitor expressionTableVisitor = new ExpressionTableVisitor();
             accept(expressionTableVisitor);
+
 
             ArrayList<EntityTableSQLExpression> tableSQLExpressions = new ArrayList<>();
             ReverseEach reverseEach = EmptyReverseEach.EMPTY;
@@ -251,7 +260,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
                 TableAvailable entityTable = value.getEntityTable();
                 //判断where order group having select是否使用了relationTable
                 reverseEach = new ChainReverseEach(reverseEach, new DefaultReverseEach(() -> {
-                    if (relationTableAppend == RelationTableAppendEnum.DEFAULT || expressionTableVisitor.containsTable(entityTable)) {
+                    if (expressionTableVisitor.containsTable(entityTable)) {
                         EntityTableSQLExpression tableExpression = (EntityTableSQLExpression) toTableExpressionSQL(value, false);
                         PredicateSegment on = getTableOnWithQueryFilter(value);
                         if (on != null && on.isNotEmpty()) {
@@ -267,10 +276,12 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
             if (EasyCollectionUtil.isNotEmpty(tableSQLExpressions)) {
                 for (int i = tableSQLExpressions.size()-1; i >=0; i--) {
                     EntityTableSQLExpression tableExpression = tableSQLExpressions.get(i);
-                    easyQuerySQLExpression.getTables().add(tableExpression);
+                    tableSortProcessor.appendTable(tableExpression);
                 }
             }
+
         }
+        easyQuerySQLExpression.getTables().addAll(tableSortProcessor.getTables());
 
 //        if(hasIncludes()){
 //            List<EntityQueryExpressionBuilder> includeList = getIncludes();
@@ -342,7 +353,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
             if (table instanceof AnonymousEntityTableExpressionBuilder) {
                 EntityQueryExpressionBuilder entityQueryExpressionBuilder = ((AnonymousEntityTableExpressionBuilder) table).getEntityQueryExpressionBuilder();
                 entityQueryExpressionBuilder.accept(visitor);
-            }else{
+            } else {
                 EasySQLSegmentUtil.tableVisit(table.getOn(), visitor);
             }
         }
@@ -351,5 +362,11 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         EasySQLSegmentUtil.tableVisit(order, visitor);
         EasySQLSegmentUtil.tableVisit(group, visitor);
         EasySQLSegmentUtil.tableVisit(having, visitor);
+    }
+
+    public static class TableRelationSort {
+        public TableRelationSort(EntityTableSQLExpression expression) {
+
+        }
     }
 }

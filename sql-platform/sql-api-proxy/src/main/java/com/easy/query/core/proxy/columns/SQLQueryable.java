@@ -121,29 +121,6 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
     <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> min(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector);
 
     /**
-     * 请升级到2.0.24+
-     *
-     * @param columnProxy
-     * @param <TPropertyProxy>
-     * @param <TProperty>
-     * @return
-     */
-    @Deprecated
-    <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> Object set(SQLQueryable<TPropertyProxy, TProperty> columnProxy);
-
-    /**
-     * 请升级到2.0.24+
-     *
-     * @param columnProxy
-     * @param navigateSelectExpression
-     * @param <TPropertyProxy>
-     * @param <TProperty>
-     * @return
-     */
-    @Deprecated
-    <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> Object set(SQLQueryable<TPropertyProxy, TProperty> columnProxy, SQLFuncExpression1<TPropertyProxy, ProxyEntity<T1Proxy, T1>> navigateSelectExpression);
-
-    /**
      * 暂开集合元素
      * 用户返回集合元素
      *

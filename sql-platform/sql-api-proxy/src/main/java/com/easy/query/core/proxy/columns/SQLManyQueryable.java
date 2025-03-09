@@ -12,18 +12,11 @@ import com.easy.query.core.proxy.ProxyEntity;
  *
  * @author xuejiaming
  */
-public interface SQLManyQueryable<TProxy,T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>  extends SQLQueryable<T1Proxy,T1>{
+public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends SQLQueryable<T1Proxy, T1> {
 
     void _setProxy(TProxy tProxy);
 
-    @Override
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> TProxy set(SQLQueryable<TPropertyProxy, TProperty> columnProxy){
-        return set(columnProxy,null);
-    }
-
-    @Override
-    <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> TProxy set(SQLQueryable<TPropertyProxy, TProperty> columnProxy, SQLFuncExpression1<TPropertyProxy, ProxyEntity<T1Proxy, T1>> navigateSelectExpression);
-    default SQLManyQueryable<TProxy,T1Proxy,T1> configure(SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configure){
+    default SQLManyQueryable<TProxy, T1Proxy, T1> configure(SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configure) {
         configure.apply(getQueryable());
         return this;
     }

@@ -48,12 +48,19 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
 
     @Override
     public ColumnFunctionCompareComparableNumberChainExpression<Long> count() {
-        PropTypeColumn<?> preColumn = predicate == null ? Expression.of(this.entitySQLContext).constant().valueOf(1L) : new CaseWhenEntityBuilder(this.getEntitySQLContext()).caseWhen(() -> predicate.apply(groupTable)).then(1).elseEnd(null, Long.class);
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
-            return fx.count(x -> {
-                PropTypeColumn.columnFuncSelector(x, preColumn);
-            }).distinct(distinct);
-        }, Long.class);
+        if(predicate == null){
+            return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null, fx -> {
+                return fx.count(x -> {
+                }).distinct(distinct);
+            }, Long.class);
+        }else{
+            PropTypeColumn<?> preColumn = new CaseWhenEntityBuilder(this.getEntitySQLContext()).caseWhen(() -> predicate.apply(groupTable)).then(1).elseEnd(null, Long.class);
+            return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
+                return fx.count(x -> {
+                    PropTypeColumn.columnFuncSelector(x, preColumn);
+                }).distinct(distinct);
+            }, Long.class);
+        }
     }
 
     @Override

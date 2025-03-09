@@ -68,10 +68,7 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
     @Override
     public EntityTableExpressionBuilder addRelationEntityTableExpression(RelationTableKey relationTableKey, Function<RelationTableKey, EntityTableExpressionBuilder> tableExpressionSupplier) {
         if (relationTables == null) {
-//            relationTables = new LinkedHashMap<>();
-            relationTables = new TreeMap<>((a,b)->{
-                return Integer.compare(a.getBaseSort(), b.getBaseSort());
-            });
+            relationTables = new LinkedHashMap<>();
         }
         EntityTableExpressionBuilder entityTableExpressionBuilder = relationTables.get(relationTableKey);
         if (entityTableExpressionBuilder != null) {

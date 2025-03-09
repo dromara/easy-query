@@ -98,4 +98,8 @@ public interface SQLConstantExpression extends EntitySQLContextAvailable {
     default <TProperty> ColumnFunctionCompareComparableAnyChainExpression<TProperty> valueOf(TProperty val, Class<TProperty> clazz) {
         return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.constValue(val), clazz);
     }
+
+    default <TProperty> ColumnFunctionCompareComparableAnyChainExpression<TProperty> valueOfNull() {
+        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.constValue(0), Object.class);
+    }
 }
