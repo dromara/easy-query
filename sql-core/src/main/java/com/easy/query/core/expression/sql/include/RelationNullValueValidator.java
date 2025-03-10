@@ -8,4 +8,11 @@ package com.easy.query.core.expression.sql.include;
  */
 public interface RelationNullValueValidator {
     boolean isNullValue(Object value);
+
+    default <TValue> TValue getRelationValueOrNull(TValue value) {
+        if (isNullValue(value)) {
+            return null;
+        }
+        return value;
+    }
 }

@@ -426,10 +426,12 @@ public class EasyCollectionUtil {
         Map<K, R> map = new HashMap<>();
         for (V element : list) {
             K key = keyExtractor.apply(element);
-            R value = valueExtractor.apply(element);
-            R old = map.put(key, value);
-            if (oldValueConsumer != null) {
-                oldValueConsumer.accept(key, old);
+            if (key != null) {
+                R value = valueExtractor.apply(element);
+                R old = map.put(key, value);
+                if (oldValueConsumer != null) {
+                    oldValueConsumer.accept(key, old);
+                }
             }
         }
         return map;
