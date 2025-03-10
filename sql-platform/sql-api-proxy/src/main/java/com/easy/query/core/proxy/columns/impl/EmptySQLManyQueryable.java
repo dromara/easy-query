@@ -29,12 +29,14 @@ import java.math.BigDecimal;
 public class EmptySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> implements SQLManyQueryable<TProxy, T1Proxy, T1> {
     private final EntitySQLContext entitySQLContext;
     private final T1Proxy t1Proxy;
+    private final TableAvailable originalTable;
     private TProxy tProxy;
 
-    public EmptySQLManyQueryable(EntitySQLContext entitySQLContext, T1Proxy t1Proxy){
+    public EmptySQLManyQueryable(EntitySQLContext entitySQLContext, T1Proxy t1Proxy,TableAvailable originalTable){
 
         this.entitySQLContext = entitySQLContext;
         this.t1Proxy = t1Proxy;
+        this.originalTable = originalTable;
     }
     @Override
     public EntitySQLContext getEntitySQLContext() {
@@ -48,7 +50,7 @@ public class EmptySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, 
 
     @Override
     public TableAvailable getOriginalTable() {
-        return null;
+        return originalTable;
     }
 
     @Override

@@ -27,6 +27,7 @@ import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -435,12 +436,13 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
                 ManyPropColumn<T2Proxy, T2> value = manyPropColumnExpression.apply(proxy);
                 valueHolder.setValue(value);
             });
+            TableAvailable table = valueHolder.getValue().getOriginalTable();
             String value = valueHolder.getValue().getValue();
             if (adapterExpression == null) {
 
-                getClientQueryable().manyJoin(manyJoinSelector -> manyJoinSelector.manyColumn(value), null);
+                getClientQueryable().manyJoin(manyJoinSelector -> manyJoinSelector.manyColumn(table,value), null);
             } else {
-                getClientQueryable().manyJoin(manyJoinSelector -> manyJoinSelector.manyColumn(value), cq -> {
+                getClientQueryable().manyJoin(manyJoinSelector -> manyJoinSelector.manyColumn(table,value), cq -> {
                     ClientQueryable<T2> innerClientQueryable = EasyObjectUtil.typeCastNullable(cq);
                     T2Proxy tPropertyProxy = EntityQueryProxyManager.create(innerClientQueryable.queryClass());
                     EasyEntityQueryable<T2Proxy, T2> entityQueryable = new EasyEntityQueryable<>(tPropertyProxy, innerClientQueryable);

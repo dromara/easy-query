@@ -322,7 +322,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
         if (entityExpressionBuilder == null || entitySQLContext.methodIsInclude() || runtimeContext instanceof EmptyQueryRuntimeContext) {
             propertyProxy.setNavValue(getFullNavValue(property));
-            SQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EmptySQLManyQueryable<>(this.getEntitySQLContext(), propertyProxy);
+            SQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EmptySQLManyQueryable<>(this.getEntitySQLContext(), propertyProxy, getTable());
             query._setProxy(castChain());
             return query;
         } else {

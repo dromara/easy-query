@@ -447,6 +447,25 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id` FROM `doc_bank_card` t LEFT JOIN `doc_user` t1 ON t1.`id` = t.`uid` LEFT JOIN (SELECT t2.`uid`,COUNT((CASE WHEN t2.`name` = ? THEN ? ELSE ? END)) AS `__count2__` FROM `doc_user_book` t2 GROUP BY t2.`uid`) t3 ON t3.`uid` = t1.`id` WHERE t3.`__count2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("12345(String),1(Integer),null(null),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+    @Test
+    public void testManyGroup16() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        Long c = 1L;
+        List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                .leftJoin(DocUser.class, (t_blog, user) -> t_blog.id().eq(user.id()))
+                .manyJoin((t_blog, user) -> user.userBooks())
+                .where((t_blog, user) -> {
+                    user.userBooks().where(x -> x.name().like("123")).max(x -> x.name()).eq("你好");
+                }).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN `doc_user` t1 ON t.`id` = t1.`id` LEFT JOIN (SELECT t2.`uid`,MAX((CASE WHEN t2.`name` LIKE ? THEN t2.`name` ELSE ? END)) AS `__max2__` FROM `doc_user_book` t2 GROUP BY t2.`uid`) t3 ON t3.`uid` = t1.`id` WHERE t.`deleted` = ? AND t3.`__max2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String),null(null),false(Boolean),你好(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
 
 
     @Test
