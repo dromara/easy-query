@@ -1741,29 +1741,6 @@ public class RelationTest extends BaseTest {
         }
     }
     @Test
-    public void testOneToOne40(){
-
-        ListenerContext listenerContext = new ListenerContext();
-        listenerContextManager.startListen(listenerContext);
-        List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
-                .includes(s -> s.schoolStudents())
-                .select(s -> new SchoolClassVOProxy().adapter(r -> {
-                    r.schoolStudents().set(s.schoolStudents()
-                            , x -> {
-                                SchoolStudentVOProxy schoolStudentVOProxy = new SchoolStudentVOProxy();
-                                schoolStudentVOProxy.selectAll(x);
-                                return schoolStudentVOProxy;
-                            }
-                    );
-                }))
-                .toList();
-        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-        listenerContextManager.clear();
-    }
-    @Test
     public void testOneToOne41(){
 
         ListenerContext listenerContext = new ListenerContext();
@@ -1979,30 +1956,6 @@ public class RelationTest extends BaseTest {
                 Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
             }
         }
-    }
-    @Test
-    public void testOneToOne46(){
-
-
-        ListenerContext listenerContext = new ListenerContext();
-        listenerContextManager.startListen(listenerContext);
-        List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class).includes(s -> s.schoolStudents())
-                .select(s -> new SchoolClassVOProxy().adapter(r -> {
-                    r.schoolStudents().set(s.schoolStudents()
-
-                            , x -> {
-                                SchoolStudentVOProxy schoolStudentVOProxy = new SchoolStudentVOProxy();
-                                schoolStudentVOProxy.selectAll(x).selectIgnores(x.name());
-                                return schoolStudentVOProxy;
-                            }
-                    );
-                }))
-                .toList();
-        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`class_id` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-        listenerContextManager.clear();
     }
     @Test
     public void testOneToOne47(){
@@ -2923,6 +2876,30 @@ public class RelationTest extends BaseTest {
                 }
             }
         }
+    }
+
+    @Test
+    public void schoolTest8_1() {
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<SchoolClass> hasXiaoMingClass = easyEntityQuery.queryable(SchoolClass.class)
+                    .where(s -> {
+                        s.schoolStudents().any();
+                        s.schoolStudents().none(x -> {
+                            x.name().ne("小明");
+                        });
+                    })
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t WHERE EXISTS (SELECT 1 FROM `school_student` t1 WHERE t1.`class_id` = t.`id` LIMIT 1) AND NOT ( EXISTS (SELECT 1 FROM `school_student` t2 WHERE t2.`class_id` = t.`id` AND t2.`name` <> ? LIMIT 1))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("小明(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+
     }
 //    @Test
 //    public void provinceTest3() {
