@@ -151,4 +151,9 @@ public class OracleSQLFuncImpl extends SQLFuncImpl {
         }
         return likeSQLFunction;
     }
+
+    @Override
+    public SQLFunction booleanConstantSQLFunction(boolean trueOrFalse) {
+        return new OracleBooleanConstantSQLFunction(trueOrFalse);
+    }
 }

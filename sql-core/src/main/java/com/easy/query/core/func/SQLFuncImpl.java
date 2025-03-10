@@ -21,6 +21,7 @@ import com.easy.query.core.func.def.impl.AbsSQLFunction;
 import com.easy.query.core.func.def.impl.AvgOverSQLFunction;
 import com.easy.query.core.func.def.impl.AvgSQLFunction;
 import com.easy.query.core.func.def.impl.BankSQLFunction;
+import com.easy.query.core.func.def.impl.BooleanConstantSQLFunction;
 import com.easy.query.core.func.def.impl.CastSQLFunction;
 import com.easy.query.core.func.def.impl.ConcatSQLFunction;
 import com.easy.query.core.func.def.impl.ConstSQLFunction;
@@ -389,5 +390,10 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction containsField(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public SQLFunction booleanConstantSQLFunction(boolean trueOrFalse) {
+        return new BooleanConstantSQLFunction(trueOrFalse);
     }
 }
