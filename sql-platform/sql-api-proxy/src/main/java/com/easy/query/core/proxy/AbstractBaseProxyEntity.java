@@ -10,7 +10,6 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner;
-import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.AnonymousManyGroupJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -20,18 +19,14 @@ import com.easy.query.core.proxy.columns.SQLAnyColumn;
 import com.easy.query.core.proxy.columns.SQLBooleanColumn;
 import com.easy.query.core.proxy.columns.SQLDateTimeColumn;
 import com.easy.query.core.proxy.columns.SQLManyQueryable;
-import com.easy.query.core.proxy.columns.SQLNavigateColumn;
 import com.easy.query.core.proxy.columns.SQLNumberColumn;
-import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.columns.SQLStringColumn;
-import com.easy.query.core.proxy.columns.impl.EasyGroupSQLManyQueryable;
+import com.easy.query.core.proxy.columns.impl.EasyManyJoinSQLManyQueryable;
 import com.easy.query.core.proxy.columns.impl.EasySQLManyQueryable;
 import com.easy.query.core.proxy.columns.impl.EmptySQLManyQueryable;
-import com.easy.query.core.proxy.columns.impl.EmptySQLQueryable;
 import com.easy.query.core.proxy.columns.impl.SQLAnyColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLBooleanColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLDateTimeColumnImpl;
-import com.easy.query.core.proxy.columns.impl.SQLNavigateColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLNumberColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLStringColumnImpl;
 import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
@@ -75,7 +70,6 @@ import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.impl.SQLColumnImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
-import com.easy.query.core.util.EasySQLUtil;
 
 import java.util.Objects;
 
@@ -337,7 +331,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                 EntityTableExpressionBuilder manyGroupTable = manyJoinRelationTable.getEntityQueryExpressionBuilder().getTable(0);
                 TPropertyProxy tPropertyProxy = propertyProxy.create(manyGroupTable.getEntityTable(), manyJoinRelationTable.getEntityQueryExpressionBuilder(), runtimeContext);
                 tPropertyProxy.setNavValue(fullName);
-                EasyGroupSQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EasyGroupSQLManyQueryable<>(this.getEntitySQLContext(), manyJoinRelationTable, entityExpressionBuilder, leftTable, fullName, tPropertyProxy);
+                EasyManyJoinSQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EasyManyJoinSQLManyQueryable<>(this.getEntitySQLContext(), manyJoinRelationTable, entityExpressionBuilder, leftTable, fullName, tPropertyProxy);
                 query._setProxy(castChain());
                 return query;
             } else {

@@ -9,10 +9,12 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyArrayUtil;
+import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * create time 2024/10/17 08:44
@@ -48,6 +50,11 @@ public class DirectRelationValueColumnMetadata implements RelationValueColumnMet
             columnMetadataList.add(columnMetadata);
         }
         this.columnMetadataList = columnMetadataList;
+    }
+
+    @Override
+    public String getPropertyNames() {
+        return columnMetadataList.stream().map(o -> EasyClassUtil.getSimpleName(o.getEntityMetadata().getEntityClass()) + "." + o.getPropertyName()).collect(Collectors.joining(","));
     }
 
     @Override

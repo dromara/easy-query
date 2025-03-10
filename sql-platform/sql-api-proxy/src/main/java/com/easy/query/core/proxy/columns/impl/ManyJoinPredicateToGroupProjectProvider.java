@@ -14,12 +14,14 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableBooleanChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableBooleanChainExpressionImpl;
 import com.easy.query.core.proxy.grouping.DefaultSQLGroupQueryable;
+import com.easy.query.core.proxy.grouping.FlatElementSQLAnyQueryable;
 import com.easy.query.core.util.EasySQLUtil;
 
 /**
@@ -28,7 +30,7 @@ import com.easy.query.core.util.EasySQLUtil;
  *
  * @author xuejiaming
  */
-public class ManyGroupJoinContext<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
+public class ManyJoinPredicateToGroupProjectProvider<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
     private final EntitySQLContext entitySQLContext;
     private final AnonymousManyGroupJoinEntityTableExpressionBuilder manyGroupJoinEntityTableExpressionBuilder;
     private final EntityExpressionBuilder entityExpressionBuilder;
@@ -39,7 +41,7 @@ public class ManyGroupJoinContext<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
 
     private SQLExpression1<T1Proxy> manyGroupJoinWhereExpression;
 
-    public ManyGroupJoinContext(EntitySQLContext entitySQLContext, AnonymousManyGroupJoinEntityTableExpressionBuilder manyGroupJoinEntityTableExpressionBuilder, EntityExpressionBuilder entityExpressionBuilder, TableAvailable originalTable, String navValue, T1Proxy t1Proxy) {
+    public ManyJoinPredicateToGroupProjectProvider(EntitySQLContext entitySQLContext, AnonymousManyGroupJoinEntityTableExpressionBuilder manyGroupJoinEntityTableExpressionBuilder, EntityExpressionBuilder entityExpressionBuilder, TableAvailable originalTable, String navValue, T1Proxy t1Proxy) {
         this.entitySQLContext = entitySQLContext;
         this.manyGroupJoinEntityTableExpressionBuilder = manyGroupJoinEntityTableExpressionBuilder;
         this.entityExpressionBuilder = entityExpressionBuilder;
@@ -139,6 +141,16 @@ public class ManyGroupJoinContext<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
             PropTypeColumn.columnFuncSelector(c, count);
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(none, "none");
+        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> f.anySQLFunction("{0}", c -> c.column(alias)), Boolean.class);
+    }
+
+
+    public ColumnFunctionCompareComparableBooleanChainExpression<Boolean> flatElementFilterValue(SQLPredicateExpression sqlPredicateExpression) {
+        ColumnFunctionCompareComparableNumberChainExpression<Long> count = new FlatElementSQLAnyQueryable(getT1Proxy().getEntitySQLContext(), sqlPredicateExpression).count();
+        ColumnFunctionCompareComparableBooleanChainExpressionImpl<Boolean> any = new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("(CASE WHEN {0} > 0 THEN TRUE ELSE FALSE END)", c -> {
+            PropTypeColumn.columnFuncSelector(c, count);
+        }), Boolean.class);
+        String alias = getOrAppendGroupProjects(any, "any");
         return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> f.anySQLFunction("{0}", c -> c.column(alias)), Boolean.class);
     }
 }

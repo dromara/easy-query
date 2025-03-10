@@ -11,6 +11,7 @@ import java.util.Map;
  * @author xuejiaming
  */
 public interface RelationValueColumnMetadata {
+    String getPropertyNames();
     RelationValue getRelationValue(Object entity);
 
 //    RelationValue getRelationValue(Map<String, Object> mappingRow);
