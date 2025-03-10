@@ -33,12 +33,21 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
         //获取关联关系列的元信息
         String[] selfRelationColumn = getSelfRelationColumn();
         //因为是一对一所以获取关联数据key为主键的map
-        Map<RelationValue, ?> entityMap = EasyCollectionUtil.collectionToMap(entities, x -> relationNullValueValidator.getRelationValueOrNull(x.getRelationExtraColumns(selfRelationColumn)), o -> o.getEntity(), (key, old) -> {
+        Map<RelationValue, ?> entityMap = EasyCollectionUtil.collectionToMap(entities, x -> {
+            RelationValue relationExtraColumns = x.getRelationExtraColumns(selfRelationColumn);
+            if(relationExtraColumns.isNull()){
+                return null;
+            }
+            return relationExtraColumns;
+        }, o -> o.getEntity(), (key, old) -> {
             if (old != null) {
                 //应该使用ManyToOne而不是OneToOne所以请用户自行确认数据表示的是One-To-One还是Many-To-One
                 throw new EasyQueryInvalidOperationException("The relationship value ‘" + key + "’ appears to have duplicates: [" + EasyClassUtil.getInstanceSimpleName(old) + "]. Please confirm whether the data represents a One or Many relationship.");
             }
         });
+        if(entityMap.isEmpty()){
+            return;
+        }
         HashSet<RelationValue> checkToOne = new HashSet<>();
         for (RelationExtraEntity includeEntity : includes) {
             RelationValue subRelationKey = includeEntity.getRelationExtraColumns(targetColumnMetadataPropertyNames);
@@ -59,6 +68,9 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
     protected void DirectToOneProcess(List<RelationExtraEntity> includes) {
 
         Map<RelationValue, Object> targetToManyMap = getTargetDirectMap(includes, includeParserResult.getMappingRows());
+        if(targetToManyMap.isEmpty()){
+            return;
+        }
         String[] directSelfPropertiesOrPrimary = includeParserResult.getNavigateMetadata().getDirectSelfPropertiesOrPrimary(runtimeContext);
         for (RelationExtraEntity entity : entities) {
             RelationValue selfRelationId = entity.getRelationExtraColumns(directSelfPropertiesOrPrimary);
@@ -77,12 +89,21 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
         String[] selfRelationColumn = getSelfRelationColumn();
 
         //因为是多对一所以获取关联数据key为主键的map
-        Map<RelationValue, ?> includeMap = EasyCollectionUtil.collectionToMap(includes, x -> relationNullValueValidator.getRelationValueOrNull(x.getRelationExtraColumns(targetColumnMetadataPropertyNames)), o -> o.getEntity(), (key, old) -> {
+        Map<RelationValue, ?> includeMap = EasyCollectionUtil.collectionToMap(includes, x -> {
+            RelationValue relationExtraColumns = x.getRelationExtraColumns(targetColumnMetadataPropertyNames);
+            if(relationExtraColumns.isNull()){
+                return null;
+            }
+            return relationExtraColumns;
+        }, o -> o.getEntity(), (key, old) -> {
             if (old != null) {
                 //应该使用ManyToOne而不是OneToOne所以请用户自行确认数据表示的是One-To-One还是Many-To-One
                 throw new EasyQueryInvalidOperationException("The relationship value ‘" + key + "’ appears to have duplicates: [" + EasyClassUtil.getInstanceSimpleName(old) + "]. Please confirm whether the data represents a One or Many relationship.");
             }
         });
+        if(includeMap.isEmpty()){
+            return;
+        }
         for (RelationExtraEntity entity : entities) {
             RelationValue relationId = entity.getRelationExtraColumns(selfRelationColumn);
             if(relationId.isNull()){

@@ -34,7 +34,6 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
     protected final RelationValueColumnMetadataFactory relationValueColumnMetadataFactory;
     protected final EntityMetadata targetEntityMetadata;
     protected final String[] targetColumnMetadataPropertyNames;
-    protected final RelationNullValueValidator relationNullValueValidator;
 
     protected Class<?> collectionType;
 
@@ -46,7 +45,6 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
         this.relationValueColumnMetadataFactory = runtimeContext.getRelationValueColumnMetadataFactory();
         this.targetEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(includeParserResult.getNavigatePropertyType());
         this.targetColumnMetadataPropertyNames = getTargetRelationColumn();
-        this.relationNullValueValidator = runtimeContext.getRelationNullValueValidator();
     }
 
 
