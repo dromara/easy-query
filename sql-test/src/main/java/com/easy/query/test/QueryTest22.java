@@ -48,9 +48,6 @@ public class QueryTest22 extends BaseTest {
         easyEntityQuery.queryable(DocUser.class)
                 .manyJoin(o -> o.bankCards())
                 .where(user -> {
-//                    user.bankCards().count().eq(1L);
-//                    user.bankCards().count(o->o.type()).ge(2L);
-//                    user.bankCards().count(o->o.type()).ge(3L);
                     user.bankCards().where(x -> x.type().eq("123")).
                             sum(o -> o.code().toNumber(Integer.class))
                             .eq(123);
@@ -60,12 +57,6 @@ public class QueryTest22 extends BaseTest {
                     user.bankCards().where(x -> x.type().eq("456")).
                             sum(o -> o.code().toNumber(Integer.class))
                             .eq(789);
-//                    user.bankCards().where(x->x.type().eq("456")).sum(o->o.code().toNumber(Integer.class)).eq(123);
-
-//                    user.or(()->{
-//                        user.bankCards().count().eq(1L);
-//                        user.bankCards().count().ge(2L);
-//                    });
                 })
                 .toList();
         listenerContextManager.clear();
@@ -73,6 +64,113 @@ public class QueryTest22 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum2__`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum3__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__sum2__` = ? AND t2.`__sum2__` = ? AND t2.`__sum3__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),0(Integer),456(String),0(Integer),123(Integer),456(Integer),789(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void testManyGroupJoin() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        easyEntityQuery.queryable(DocUser.class)
+                .manyJoin(o -> o.bankCards(), bcq -> bcq.where(x -> {
+                    //支持隐式join和普通属性筛选
+                    x.bank().name().eq("银行");
+                    x.type().like("45678");
+                }))
+                .where(user -> {
+                    user.bankCards().where(x -> x.type().eq("123")).
+                            sum(o -> o.code().toNumber(Integer.class))
+                            .eq(123);
+                    user.bankCards().where(x -> x.type().eq("123")).
+                            sum(o -> o.code().toNumber(Integer.class))
+                            .eq(456);
+                    user.bankCards().where(x -> x.type().eq("456")).
+                            sum(o -> o.code().toNumber(Integer.class))
+                            .eq(789);
+                })
+                .toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum2__`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum3__` FROM `doc_bank_card` t1 LEFT JOIN `doc_bank` t2 ON t2.`id` = t1.`bank_id` WHERE t2.`name` = ? AND t1.`type` LIKE ? GROUP BY t1.`uid`) t3 ON t3.`uid` = t.`id` WHERE t3.`__sum2__` = ? AND t3.`__sum2__` = ? AND t3.`__sum3__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),0(Integer),456(String),0(Integer),银行(String),%45678%(String),123(Integer),456(Integer),789(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testManyGroupJoin2() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft3<String, Integer, String>> 银行 = easyEntityQuery.queryable(DocUser.class)
+                .manyJoin(o -> o.bankCards(), bcq -> bcq.where(x -> {
+                    //支持隐式join和普通属性筛选
+                    x.bank().name().eq("银行");
+                    x.type().like("45678");
+                }))
+                .where(user -> {
+                    user.bankCards().where(x -> x.type().eq("123")).
+                            sum(o -> o.code().toNumber(Integer.class))
+                            .eq(123);
+                    user.bankCards().where(x -> x.type().eq("123")).
+                            sum(o -> o.code().toNumber(Integer.class))
+                            .eq(456);
+                    user.bankCards().where(x -> x.type().eq("456")).
+                            sum(o -> o.code().toNumber(Integer.class))
+                            .eq(789);
+                })
+                .orderBy(user -> {
+                    user.bankCards().where(x -> x.type().eq("123")).
+                            sum(o -> o.code().toNumber(Integer.class)).asc();
+                    user.bankCards().where(x -> x.type().eq("123")).
+                            max(o -> o.code()).desc();
+                })
+                .select(user -> Select.DRAFT.of(
+                        user.id(),
+                        user.bankCards().where(x -> x.type().eq("123")).
+                                sum(o -> o.code().toNumber(Integer.class)),
+                        user.bankCards().where(x -> x.type().eq("123")).
+                                min(o -> o.code())
+                ))
+                .toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `value1`,t3.`__sum2__` AS `value2`,t3.`__min5__` AS `value3` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum2__`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum3__`,MAX((CASE WHEN t1.`type` = ? THEN t1.`code` ELSE ? END)) AS `__max4__`,MIN((CASE WHEN t1.`type` = ? THEN t1.`code` ELSE ? END)) AS `__min5__` FROM `doc_bank_card` t1 LEFT JOIN `doc_bank` t2 ON t2.`id` = t1.`bank_id` WHERE t2.`name` = ? AND t1.`type` LIKE ? GROUP BY t1.`uid`) t3 ON t3.`uid` = t.`id` WHERE t3.`__sum2__` = ? AND t3.`__sum2__` = ? AND t3.`__sum3__` = ? ORDER BY t3.`__sum2__` ASC,t3.`__max4__` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),0(Integer),456(String),0(Integer),123(String),null(null),123(String),null(null),银行(String),%45678%(String),123(Integer),456(Integer),789(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+
+
+    @Test
+    public void testManyGroupJoin3() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        easyEntityQuery.queryable(DocUser.class)
+                .manyJoin(o -> o.bankCards())
+                .where(user -> {
+                    user.bankCards().where(x -> x.code().likeMatchLeft("400")).any();
+                })
+                .select(user -> Select.DRAFT.of(
+                        user.id(),
+                        user.bankCards().where(x->x.type().eq("工商")).count(),
+                        user.bankCards().where(x->x.type().eq("建设")).count(),
+                        user.bankCards().where(x->x.type().eq("农业")).count()
+                ))
+                .toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `value1`,t3.`__sum2__` AS `value2`,t3.`__min5__` AS `value3` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum2__`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum3__`,MAX((CASE WHEN t1.`type` = ? THEN t1.`code` ELSE ? END)) AS `__max4__`,MIN((CASE WHEN t1.`type` = ? THEN t1.`code` ELSE ? END)) AS `__min5__` FROM `doc_bank_card` t1 LEFT JOIN `doc_bank` t2 ON t2.`id` = t1.`bank_id` WHERE t2.`name` = ? AND t1.`type` LIKE ? GROUP BY t1.`uid`) t3 ON t3.`uid` = t.`id` WHERE t3.`__sum2__` = ? AND t3.`__sum2__` = ? AND t3.`__sum3__` = ? ORDER BY t3.`__sum2__` ASC,t3.`__max4__` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),0(Integer),456(String),0(Integer),123(String),null(null),123(String),null(null),银行(String),%45678%(String),123(Integer),456(Integer),789(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 
@@ -426,6 +524,7 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,COUNT((CASE WHEN t3.`phone` = ? THEN ? ELSE ? END)) AS `__count2__` FROM `doc_bank_card` t1 LEFT JOIN `doc_user` t3 ON t3.`id` = t1.`uid` WHERE t1.`code` LIKE ? GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__count2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("12345(String),1(Integer),null(null),%coder(String),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
     public void testManyGroup15() {
 
@@ -447,6 +546,7 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id` FROM `doc_bank_card` t LEFT JOIN `doc_user` t1 ON t1.`id` = t.`uid` LEFT JOIN (SELECT t2.`uid`,COUNT((CASE WHEN t2.`name` = ? THEN ? ELSE ? END)) AS `__count2__` FROM `doc_user_book` t2 GROUP BY t2.`uid`) t3 ON t3.`uid` = t1.`id` WHERE t3.`__count2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("12345(String),1(Integer),null(null),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
     public void testManyGroup16() {
 
@@ -466,6 +566,7 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN `doc_user` t1 ON t.`id` = t1.`id` LEFT JOIN (SELECT t2.`uid`,MAX((CASE WHEN t2.`name` LIKE ? THEN t2.`name` ELSE ? END)) AS `__max2__` FROM `doc_user_book` t2 GROUP BY t2.`uid`) t3 ON t3.`uid` = t1.`id` WHERE t.`deleted` = ? AND t3.`__max2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%123%(String),null(null),false(Boolean),你好(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
     public void testManyGroup17() {
 
@@ -485,6 +586,7 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,(CASE WHEN COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE ? END)) > 0 THEN TRUE ELSE FALSE END) AS `__any2__` FROM `doc_user_book` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__any2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%123%(String),1(Integer),null(null),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
     public void testManyGroup18() {
 
@@ -496,7 +598,7 @@ public class QueryTest22 extends BaseTest {
                 .manyJoin(user -> user.userBooks())
                 .where(user -> {
                     user.userBooks().flatElement().name().like("123");
-                    user.userBooks().where(x->x.name().like("123")).any();
+                    user.userBooks().where(x -> x.name().like("123")).any();
                 }).toList();
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
