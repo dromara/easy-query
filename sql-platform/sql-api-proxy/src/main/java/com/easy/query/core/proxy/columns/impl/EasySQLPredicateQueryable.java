@@ -81,7 +81,7 @@ public class EasySQLPredicateQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>,
 
     @Override
     public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Long> count(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
-        return sqlQueryable.count(columnSelector);
+        return sqlQueryable.distinct(distinct).count(columnSelector);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class EasySQLPredicateQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>,
 
     @Override
     public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
-        return sqlQueryable.intCount(columnSelector);
+        return sqlQueryable.distinct(distinct).intCount(columnSelector);
     }
 
     @Override

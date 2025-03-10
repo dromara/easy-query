@@ -16,6 +16,7 @@ import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.doc.MyComUser;
 import com.easy.query.test.doc.entity.DocBank;
 import com.easy.query.test.doc.entity.DocBankCard;
+import com.easy.query.test.doc.entity.DocPart;
 import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.doc.entity.DocUserBook;
 import com.easy.query.test.doc.entity.proxy.DocUserProxy;
@@ -648,4 +649,187 @@ public class QueryTest22 extends BaseTest {
                         l2.value4()
                 )).toList();
     }
+
+    @Test
+    public void testManyOrder(){
+
+        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocPart.class));
+        codeFirstCommand.executeWithTransaction(s->s.commit());
+
+
+//
+//        List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
+////                .manyJoin(x->x.bankCards())
+//                .orderBy(user -> {
+//                    user.bankCards().where(bk -> bk.type().eq("建设"))
+//                            .sum(x -> x.parts().count()).asc();
+//
+//                }).toList();
+
+
+        List<DocUser> list2 = easyEntityQuery.queryable(DocUser.class)
+//                .manyJoin(x->x.bankCards())
+                .orderBy(user -> {
+                    user.bankCards().where(bk -> bk.type().eq("建设"))
+                            .count(x -> x.bank().id()).asc();
+
+                }).toList();
+    }
+
+    @Test
+    public void testOrderCountDistinct1(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
+//                .manyJoin(x->x.bankCards())
+                .orderBy(user -> {
+                    user.bankCards().where(bk -> bk.type().eq("建设"))
+                            .sum(x -> x.parts().distinct().count(p->p.id())).asc();
+
+                }).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t ORDER BY IFNULL((SELECT SUM((SELECT COUNT(DISTINCT t2.`id`) FROM `doc_part` t2 WHERE t2.`card_id` = t1.`id`)) FROM `doc_bank_card` t1 WHERE t1.`uid` = t.`id` AND t1.`type` = ?),0) ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("建设(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testOrderCountDistinct2(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
+                .manyJoin(x->x.bankCards())
+                .orderBy(user -> {
+                    user.bankCards().where(bk -> bk.type().eq("建设"))
+                            .sum(x -> x.parts().distinct().count(p->p.id())).asc();
+
+                }).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,SUM((CASE WHEN t1.`type` = ? THEN (SELECT COUNT(DISTINCT t3.`id`) FROM `doc_part` t3 WHERE t3.`card_id` = t1.`id`) ELSE ? END)) AS `__sum2__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` ORDER BY t2.`__sum2__` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("建设(String),0(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testOrderCountDistinct3(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<DocUser> list2 = easyEntityQuery.queryable(DocUser.class)
+//                .manyJoin(x->x.bankCards())
+                .orderBy(user -> {
+                    user.bankCards().where(bk -> bk.type().eq("建设"))
+                            .distinct()
+                            .count(x -> x.bank().id()).asc();
+
+                }).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t ORDER BY (SELECT COUNT(DISTINCT t2.`id`) FROM `doc_bank_card` t1 LEFT JOIN `doc_bank` t2 ON t2.`id` = t1.`bank_id` WHERE t1.`uid` = t.`id` AND t1.`type` = ?) ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("建设(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testOrderCountDistinct4(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<DocUser> list2 = easyEntityQuery.queryable(DocUser.class)
+                .manyJoin(x->x.bankCards())
+                .orderBy(user -> {
+                    user.bankCards().where(bk -> bk.type().eq("建设"))
+                            .distinct()
+                            .count(x -> x.bank().id()).asc();
+
+                }).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,COUNT(DISTINCT (CASE WHEN t1.`type` = ? THEN t3.`id` ELSE ? END)) AS `__count2__` FROM `doc_bank_card` t1 LEFT JOIN `doc_bank` t3 ON t3.`id` = t1.`bank_id` GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` ORDER BY t2.`__count2__` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("建设(String),null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testOrderCountDistinct5(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
+//                .manyJoin(x->x.bankCards())
+                .orderBy(user -> {
+                    user.bankCards().where(bk -> bk.type().eq("建设")).distinct()
+                            .sum(x -> x.parts().distinct().count(p->p.id())).asc();
+
+                }).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t ORDER BY IFNULL((SELECT SUM(DISTINCT (SELECT COUNT(DISTINCT t2.`id`) FROM `doc_part` t2 WHERE t2.`card_id` = t1.`id`)) FROM `doc_bank_card` t1 WHERE t1.`uid` = t.`id` AND t1.`type` = ?),0) ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("建设(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testOrderCountDistinct6(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
+                .manyJoin(x->x.bankCards())
+                .orderBy(user -> {
+                    user.bankCards().where(bk -> bk.type().eq("建设")).distinct()
+                            .sum(x -> x.parts().distinct().count(p->p.id())).asc();
+
+                }).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,SUM(DISTINCT (CASE WHEN t1.`type` = ? THEN (SELECT COUNT(DISTINCT t3.`id`) FROM `doc_part` t3 WHERE t3.`card_id` = t1.`id`) ELSE ? END)) AS `__sum2__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` ORDER BY t2.`__sum2__` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("建设(String),0(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testOrderCountDistinct7(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
+                .manyJoin(x->x.bankCards())
+                .orderBy(user -> {
+                    user.bankCards().where(bk -> bk.type().eq("建设")).distinct()
+                            .sum(x -> x.parts().distinct().count(p->p.id().nullOrDefault("x"))).asc();
+
+                }).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,SUM(DISTINCT (CASE WHEN t1.`type` = ? THEN (SELECT COUNT(DISTINCT IFNULL(t3.`id`,?)) FROM `doc_part` t3 WHERE t3.`card_id` = t1.`id`) ELSE ? END)) AS `__sum2__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` ORDER BY t2.`__sum2__` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("建设(String),x(String),0(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
 }

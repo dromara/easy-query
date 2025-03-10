@@ -119,7 +119,7 @@ public class EasySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
 
     @Override
     public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Long> count(SQLFuncExpression1<T1Proxy,PropTypeColumn<TMember>> columnSelector) {
-        Query<TMember> longQuery = getQueryable().selectColumn(columnSelector);
+        Query<TMember> longQuery = getQueryable().selectCount(columnSelector,distinct);
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.subQueryValue(longQuery), Long.class);
     }
 

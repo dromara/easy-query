@@ -32,6 +32,7 @@ import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
+import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.ManyPropColumn;
@@ -223,6 +224,18 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <TNumber extends Number> Query<TNumber> selectCount(Class<TNumber> numberClass) {
         return getClientQueryable().selectCount(numberClass);
+    }
+
+    @Override
+    public <TMember> Query<TMember> selectCount(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> selectExpression,boolean distinct) {
+        PropTypeColumn<TMember> column = selectExpression.apply(get1Proxy());
+        Class<TMember> propertyType = EasyObjectUtil.typeCastNullable(column.getPropertyType());
+        return getClientQueryable().select(propertyType,s->{
+            DistinctDefaultSQLFunction count = s.fx().count(x -> {
+                PropTypeColumn.columnFuncSelector(x, column);
+            }).distinct(distinct);
+            s.sqlFunc(count);
+        });
     }
 
     @Override
