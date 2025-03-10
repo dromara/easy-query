@@ -137,7 +137,7 @@ public class ManyJoinPredicateToGroupProjectProvider<T1Proxy extends ProxyEntity
     public ColumnFunctionCompareComparableBooleanChainExpression<Boolean> noneValue(SQLExpression1<T1Proxy> whereExpression) {
         appendWhere(whereExpression);
         ColumnFunctionCompareComparableNumberChainExpression<Long> count = new DefaultSQLGroupQueryable<>(getT1Proxy(), getT1Proxy().getEntitySQLContext(), manyGroupJoinWhereExpression).count();
-        ColumnFunctionCompareComparableBooleanChainExpressionImpl<Boolean> none = new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("(CASE WHEN {0} > 0 THEN TRUE ELSE TRUE END)", c -> {
+        ColumnFunctionCompareComparableBooleanChainExpressionImpl<Boolean> none = new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("(CASE WHEN {0} > 0 THEN FALSE ELSE TRUE END)", c -> {
             PropTypeColumn.columnFuncSelector(c, count);
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(none, "none");
