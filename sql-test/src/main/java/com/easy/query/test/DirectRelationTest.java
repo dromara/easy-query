@@ -5,8 +5,6 @@ import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.doc.MySignUp;
-import com.easy.query.test.doc.dto.MySignUpDTO3;
 import com.easy.query.test.entity.direct.Direct1;
 import com.easy.query.test.entity.direct.Direct2;
 import com.easy.query.test.entity.direct.Direct3;
@@ -26,23 +24,23 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class DirectRelationTest extends BaseTest{
+public class DirectRelationTest extends BaseTest {
 
     @Before
-    public void before(){
+    public void before() {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
         {
 
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(Direct1.class, Direct2.class, Direct3.class, Direct4.class, Direct5.class));
-            codeFirstCommand.executeWithTransaction(s->s.commit());
+            codeFirstCommand.executeWithTransaction(s -> s.commit());
         }
         easyEntityQuery.deletable(Direct1.class).allowDeleteStatement(true).where(d -> d.isNotNull()).executeRows();
         easyEntityQuery.deletable(Direct2.class).allowDeleteStatement(true).where(d -> d.isNotNull()).executeRows();
         easyEntityQuery.deletable(Direct3.class).allowDeleteStatement(true).where(d -> d.isNotNull()).executeRows();
         easyEntityQuery.deletable(Direct4.class).allowDeleteStatement(true).where(d -> d.isNotNull()).executeRows();
         easyEntityQuery.deletable(Direct5.class).allowDeleteStatement(true).where(d -> d.isNotNull()).executeRows();
-        try(Transaction transaction = easyEntityQuery.beginTransaction()){
+        try (Transaction transaction = easyEntityQuery.beginTransaction()) {
 
             {
                 Direct1 direct1 = new Direct1();
@@ -143,7 +141,7 @@ public class DirectRelationTest extends BaseTest{
     }
 
     @Test
-    public void test(){
+    public void test() {
 
 
         {
@@ -157,9 +155,9 @@ public class DirectRelationTest extends BaseTest{
                     .toList();
 
             for (Direct1 direct1 : list) {
-                if("2".equals(direct1.getC1())){
+                if ("2".equals(direct1.getC1())) {
                     Assert.assertNull(direct1.getDirect4());
-                }else if("1".equals(direct1.getC1())){
+                } else if ("1".equals(direct1.getC1())) {
                     Assert.assertNotNull(direct1.getDirect4());
                 }
             }
@@ -188,8 +186,9 @@ public class DirectRelationTest extends BaseTest{
             System.out.println("33");
         }
     }
+
     @Test
-    public void test2(){
+    public void test2() {
 
 
         {
@@ -203,9 +202,9 @@ public class DirectRelationTest extends BaseTest{
                     .toList();
 
             for (Direct1 direct1 : list) {
-                if("2".equals(direct1.getC1())){
+                if ("2".equals(direct1.getC1())) {
                     Assert.assertNull(direct1.getDirect4());
-                }else if("1".equals(direct1.getC1())){
+                } else if ("1".equals(direct1.getC1())) {
                     Assert.assertNotNull(direct1.getDirect5());
                 }
             }
@@ -239,4 +238,56 @@ public class DirectRelationTest extends BaseTest{
             System.out.println("33");
         }
     }
+
+    @Test
+    public void test3() {
+
+//        easyEntityQuery.queryable(Direct5.class)
+//                .where(d -> {
+//                    d.depIds().asAny().like("123");
+//                    d.depIds().asAnyType(String.class).like("123");
+//                    d.depIds().asAnyType(String.class).like(123);
+//                    d.depIds().likeRaw("123");
+//                })
+
+        {
+            ListenerContext listenerContext = new ListenerContext(true);
+            listenerContextManager.startListen(listenerContext);
+
+
+            List<Direct1> list = easyEntityQuery.queryable(Direct1.class)
+                    .where(d -> {
+                        d.direct4().c16().eq("123");
+                        d.direct5().c21().eq("1234");
+                    })
+                    .toList();
+
+            {
+
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                Assert.assertEquals("SELECT t.`c1`,t.`c2`,t.`c3`,t.`c4`,t.`c5` FROM `direct1` t LEFT JOIN `direct2` t1 ON t1.`c7` = t.`c1` LEFT JOIN `direct3` t2 ON (t2.`c13` = t1.`c8` AND t2.`c14` = t1.`c9`) LEFT JOIN `direct4` t3 ON t3.`c20` = t2.`c15` LEFT JOIN `direct5` t4 ON (t4.`c22` = t3.`c16` AND t4.`c21` = t3.`c18`) WHERE t3.`c16` = ? AND t4.`c21` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("123(String),1234(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+
+        }
+    }
+
+
+//    @Test
+//    public void test4() {
+//
+//        easyEntityQuery.queryable(SchoolStudent.class)
+//                .includeMany(d -> {
+//                    d.schoolClass().include();
+//                    d.schoolClass().schoolStudents().include();
+//                    d.schoolClass().schoolStudents().includeFilter(s->s.);
+//                })
+//        easyEntityQuery.queryable(Direct1.class)
+//                .includeMany(d -> IncludeMany.of(
+//                        d.direct2(),
+//                        d.direct5(),
+//                        d.direct4().direct5()
+//                ))
+//                .where(d -> d.direct5().c21().eq("1234"))
+//    }
 }

@@ -1,6 +1,7 @@
 package com.easy.query.core.proxy.extension.functions;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
@@ -15,6 +16,10 @@ import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelec
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelectorImpl;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.filter.ColumnFunctionCompareComparableNumberFilterChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.filter.ColumnFunctionCompareComparableStringFilterChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.filter.impl.ColumnFunctionCompareComparableNumberFilterChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.filter.impl.ColumnFunctionCompareComparableStringFilterChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableStringChainExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLColumnFunctionCompareComparableExpressionImpl;
@@ -30,10 +35,28 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFunctionAvailable<TProperty, ColumnFunctionCompareComparableStringChainExpression<TProperty>>,
+        ColumnAggregateFilterFunctionAvailable<TProperty, ColumnFunctionCompareComparableStringFilterChainExpression<TProperty>>,
         ColumnFunctionCastNumberAvailable<TProperty>,
         ColumnFunctionCastDateTimeAvailable<TProperty>,
         ColumnFunctionCastBooleanAvailable<TProperty> {
 
+    @Override
+    default ColumnFunctionCompareComparableStringFilterChainExpression<TProperty> max() {
+        return createFilterChainExpression(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+            return fx.max(x -> {
+                PropTypeColumn.columnFuncSelector(x, self);
+            });
+        }, getPropertyType());
+    }
+
+    @Override
+    default ColumnFunctionCompareComparableStringFilterChainExpression<TProperty> min() {
+        return createFilterChainExpression(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+            return fx.min(x -> {
+                PropTypeColumn.columnFuncSelector(x, self);
+            });
+        }, getPropertyType());
+    }
     /**
      * 链接表列
      * 调整顺序可以使用{@link com.easy.query.core.proxy.core.Expression#concat(PropTypeColumn[])}
@@ -356,5 +379,10 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
                 }
             }
         }, Integer.class);
+    }
+
+    @Override
+    default ColumnFunctionCompareComparableStringFilterChainExpression<TProperty> createFilterChainExpression(EntitySQLContext entitySQLContext, PropTypeColumn<?> self, TableAvailable table, String property, SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
+        return new ColumnFunctionCompareComparableStringFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), func, getPropertyType());
     }
 }

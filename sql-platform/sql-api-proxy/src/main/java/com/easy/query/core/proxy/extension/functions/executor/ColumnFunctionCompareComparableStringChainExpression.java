@@ -27,7 +27,7 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
     }
 
     @Override
-    default void isBank(boolean condition) {
+    default void isBlank(boolean condition) {
         if(condition){
             getEntitySQLContext().accept(new SQLAggregateNativeSQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
@@ -40,7 +40,7 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
     }
 
     @Override
-    default void isNotBank(boolean condition) {
+    default void isNotBlank(boolean condition) {
         if(condition){
             getEntitySQLContext().accept(new SQLAggregateNativeSQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();

@@ -4,6 +4,7 @@ import com.easy.query.core.basic.api.select.extension.queryable3.Aggregatable3;
 import com.easy.query.core.basic.api.select.extension.queryable3.Groupable3;
 import com.easy.query.core.basic.api.select.extension.queryable3.Havingable3;
 import com.easy.query.core.basic.api.select.extension.queryable3.Joinable3;
+import com.easy.query.core.basic.api.select.extension.queryable3.ManyJoinable3;
 import com.easy.query.core.basic.api.select.extension.queryable3.Orderable3;
 import com.easy.query.core.basic.api.select.extension.queryable3.Selectable3;
 import com.easy.query.core.basic.api.select.extension.queryable3.Filterable3;
@@ -20,6 +21,7 @@ import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 public interface ClientQueryable3<T1, T2, T3> extends ClientOverrideQueryable3<T1,T2,T3> ,
         Aggregatable3<T1, T2, T3>,
         Joinable3<T1, T2, T3>,
+        ManyJoinable3<T1, T2, T3>,
         Filterable3<T1, T2, T3>,
         Selectable3<T1, T2, T3>,
         Groupable3<T1, T2, T3>,

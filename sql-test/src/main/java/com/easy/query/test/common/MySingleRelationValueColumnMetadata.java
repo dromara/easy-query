@@ -5,8 +5,10 @@ import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadata;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * create time 2024/10/17 08:44
@@ -19,6 +21,12 @@ public class MySingleRelationValueColumnMetadata implements RelationValueColumnM
 
     public MySingleRelationValueColumnMetadata(EntityMetadata entityMetadata, String property) {
         this.columnMetadata = entityMetadata.getColumnNotNull(property);
+    }
+
+    @Override
+    public String getPropertyNames() {
+
+        return EasyClassUtil.getSimpleName(columnMetadata.getEntityMetadata().getEntityClass()) + "." + columnMetadata.getPropertyName();
     }
 
     @Override

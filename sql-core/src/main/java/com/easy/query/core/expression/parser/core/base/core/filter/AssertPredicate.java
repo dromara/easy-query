@@ -85,8 +85,8 @@ public interface AssertPredicate<T1, TChain> extends EntitySQLTableOwner<T1>, Fi
     /**
      * column is null or empty
      */
-    default TChain isBank(String property) {
-        return isBank(true, property);
+    default TChain isBlank(String property) {
+        return isBlank(true, property);
     }
 
     /**
@@ -96,13 +96,13 @@ public interface AssertPredicate<T1, TChain> extends EntitySQLTableOwner<T1>, Fi
      * @param property  字段
      * @return children
      */
-    TChain isBank(boolean condition, String property);
+    TChain isBlank(boolean condition, String property);
 
     /**
      * column is not null and not empty
      */
-    default TChain isNotBank(String property) {
-        return isNotBank(true, property);
+    default TChain isNotBlank(String property) {
+        return isNotBlank(true, property);
     }
 
     /**
@@ -112,5 +112,5 @@ public interface AssertPredicate<T1, TChain> extends EntitySQLTableOwner<T1>, Fi
      * @param property  字段
      * @return children
      */
-    TChain isNotBank(boolean condition, String property);
+    TChain isNotBlank(boolean condition, String property);
 }

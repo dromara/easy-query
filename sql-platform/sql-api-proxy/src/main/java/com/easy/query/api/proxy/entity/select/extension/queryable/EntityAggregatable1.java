@@ -66,7 +66,7 @@ public interface EntityAggregatable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
                 return fx.sum(x -> {
                     PropTypeColumn.columnFuncSelector(x, propTypeColumn);
                 });
-            }, propTypeColumn.getPropertyType());
+            },def!=null?def.getClass(): propTypeColumn.getPropertyType());
         }).toList();
         TMember resultMember = EasyCollectionUtil.firstOrNull(list);
         if (resultMember == null) {
@@ -103,7 +103,7 @@ public interface EntityAggregatable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
                 return fx.max(x -> {
                     PropTypeColumn.columnFuncSelector(x, propTypeColumn);
                 });
-            }, objectValueHolder.getValue().getPropertyType());
+            }, def != null ? def.getClass() : objectValueHolder.getValue().getPropertyType());
         }).toList();
         TMember resultMember = EasyCollectionUtil.firstOrNull(list);
         if (resultMember == null) {
@@ -138,7 +138,7 @@ public interface EntityAggregatable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
                 return fx.min(x -> {
                     PropTypeColumn.columnFuncSelector(x, propTypeColumn);
                 });
-            }, objectValueHolder.getValue().getPropertyType());
+            },def!=null?def.getClass(): objectValueHolder.getValue().getPropertyType());
         }).toList();
         TMember resultMember = EasyCollectionUtil.firstOrNull(list);
         if (resultMember == null) {
@@ -275,7 +275,7 @@ public interface EntityAggregatable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
         return resultMember;
     }
 
-    default <TMember extends Number, TResult extends Number> TResult avgOrDefault(SQLFuncExpression1<T1Proxy, PropTypeColumn<TResult>> columnSelector, TResult def, Class<TResult> resultClass) {
+    default <TResult extends Number> TResult avgOrDefault(SQLFuncExpression1<T1Proxy, PropTypeColumn<TResult>> columnSelector, TResult def, Class<TResult> resultClass) {
         List<TResult> list = getQueryable().selectColumn(s -> {
             PropTypeColumn<TResult> propTypeColumn = columnSelector.apply(s);
             return new ColumnFunctionCompareComparableAnyChainExpressionImpl<TResult>(s.getEntitySQLContext(), s.getTable(), propTypeColumn.getValue(), fx -> {

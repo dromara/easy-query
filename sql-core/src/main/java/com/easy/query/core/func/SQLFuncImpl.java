@@ -21,6 +21,7 @@ import com.easy.query.core.func.def.impl.AbsSQLFunction;
 import com.easy.query.core.func.def.impl.AvgOverSQLFunction;
 import com.easy.query.core.func.def.impl.AvgSQLFunction;
 import com.easy.query.core.func.def.impl.BankSQLFunction;
+import com.easy.query.core.func.def.impl.BooleanConstantSQLFunction;
 import com.easy.query.core.func.def.impl.CastSQLFunction;
 import com.easy.query.core.func.def.impl.ConcatSQLFunction;
 import com.easy.query.core.func.def.impl.ConstSQLFunction;
@@ -39,6 +40,7 @@ import com.easy.query.core.func.def.impl.DateTimeSQLFormatSQLFunction;
 import com.easy.query.core.func.def.impl.EmptySQLFunction;
 import com.easy.query.core.func.def.impl.EqualsWithSQLFunction;
 import com.easy.query.core.func.def.impl.JoinSQLFunction;
+import com.easy.query.core.func.def.impl.JsonFieldSQLFunction;
 import com.easy.query.core.func.def.impl.LeftPadSQLFunction;
 import com.easy.query.core.func.def.impl.LengthSQLFunction;
 import com.easy.query.core.func.def.impl.LikeSQLFunction;
@@ -378,5 +380,20 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public PartitionBySQLFunction minOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new MinOverSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonField(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new JsonFieldSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction containsField(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public SQLFunction booleanConstantSQLFunction(boolean trueOrFalse) {
+        return new BooleanConstantSQLFunction(trueOrFalse);
     }
 }

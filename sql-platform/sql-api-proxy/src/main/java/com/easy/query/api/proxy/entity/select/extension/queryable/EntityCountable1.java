@@ -2,6 +2,7 @@ package com.easy.query.api.proxy.entity.select.extension.queryable;
 
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 
@@ -32,6 +33,7 @@ public interface EntityCountable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
      * @return 返回当前queryable链式
      */
     <TNumber extends Number> Query<TNumber> selectCount(Class<TNumber> numberClass);
+    <TMember> Query<TMember> selectCount(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> selectExpression,boolean distinct);
 
     /**
      * 建议使用.selectColumn(x->x.age().sum())

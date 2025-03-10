@@ -4,6 +4,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.expression.sql.include.RelationExtraEntity;
+import com.easy.query.core.expression.sql.include.RelationNullValueValidator;
 import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadata;
 import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadataFactory;
@@ -73,6 +74,9 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
 
         for (RelationExtraEntity target : includes) {
             RelationValue targetRelationId = target.getRelationExtraColumns(targetColumnMetadataPropertyNames);
+            if(targetRelationId.isNull()){
+                continue;
+            }
             Collection<TNavigateEntity> objects = resultMap.computeIfAbsent(targetRelationId, k -> (Collection<TNavigateEntity>) EasyClassUtil.newInstance(collectionType));
             objects.add((TNavigateEntity) target.getEntity());
         }
@@ -84,6 +88,9 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
         String[] directTargetPropertiesOrPrimary = includeParserResult.getNavigateMetadata().getDirectTargetPropertiesOrPrimary(runtimeContext);
         for (RelationExtraEntity target : includes) {
             RelationValue targetRelationId = target.getRelationExtraColumns(directTargetPropertiesOrPrimary);
+            if(targetRelationId.isNull()){
+                continue;
+            }
             resultMap.putIfAbsent(targetRelationId, target.getEntity());
         }
         return resultMap;
@@ -114,17 +121,20 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
         Map<RelationValue, Object> targetDirectMap = getTargetDirectMap(includes);
         for (Object mappingRow : mappingRows) {
             RelationValue selfRelationId = selfRelationColumn.getRelationValue(mappingRow);
+            if(selfRelationId.isNull()){
+                continue;
+            }
             RelationValue targetRelationId = targetRelationColumn.getRelationValue(mappingRow);
+            if(targetRelationId.isNull()){
+                continue;
+            }
             Object value = targetDirectMap.get(targetRelationId);
             Object oldVal = resultMap.put(selfRelationId, value);
-            if(oldVal!=null){
-                throw new EasyQueryInvalidOperationException("The relationship value ‘" + selfRelationId + "’ appears to have duplicates: [" + EasyClassUtil.getInstanceSimpleName(oldVal) + "]. Please confirm whether the data represents a One or Many relationship.");
+            if (oldVal != null) {
+                //如果你存在NotNull的列这一列的数据可能存在空值,空值之间会互相关联也会导致当前错误,还有一种就是ToOne或者ToMany配置错误
+                throw new EasyQueryInvalidOperationException("The relationship property '{" + targetRelationColumn.getPropertyNames() + "}' value ‘" + selfRelationId + "’ appears to have duplicates: [" + EasyClassUtil.getInstanceSimpleName(oldVal) + "]. Please confirm whether the data represents a One or Many relationship.");
             }
-//            Collection<TNavigateEntity> targetEntities = resultMap.computeIfAbsent(selfRelationId, k -> createManyCollection());
-//            Collection<TNavigateEntity> targets = targetToManyMap.get(targetRelationId);
-//            if (EasyCollectionUtil.isNotEmpty(targets)) {
-//                targetEntities.addAll(targets);
-//            }
+
         }
         return resultMap;
     }
@@ -142,7 +152,13 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
         Map<RelationValue, Collection<TNavigateEntity>> targetToManyMap = getTargetToManyMap(includes);
         for (Object mappingRow : mappingRows) {
             RelationValue selfRelationId = selfRelationColumn.getRelationValue(mappingRow);
+            if(selfRelationId.isNull()){
+                continue;
+            }
             RelationValue targetRelationId = targetRelationColumn.getRelationValue(mappingRow);
+            if(targetRelationId.isNull()){
+                continue;
+            }
             Collection<TNavigateEntity> targetEntities = resultMap.computeIfAbsent(selfRelationId, k -> createManyCollection());
             Collection<TNavigateEntity> targets = targetToManyMap.get(targetRelationId);
             if (EasyCollectionUtil.isNotEmpty(targets)) {

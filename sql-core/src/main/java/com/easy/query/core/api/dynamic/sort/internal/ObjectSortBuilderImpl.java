@@ -1,6 +1,7 @@
 package com.easy.query.core.api.dynamic.sort.internal;
 
 import com.easy.query.core.api.dynamic.sort.ObjectSortBuilder;
+import com.easy.query.core.func.def.enums.OrderByModeEnum;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -20,7 +21,13 @@ public class ObjectSortBuilderImpl implements ObjectSortBuilder {
 
     @Override
     public ObjectSortBuilder orderBy(String propertyName, boolean asc,int tableIndex) {
-        orderPropertyMap.put(propertyName, new ObjectSortEntry(asc,tableIndex));
+        orderPropertyMap.put(propertyName, new ObjectSortEntry(asc,tableIndex,null));
+        return this;
+    }
+
+    @Override
+    public ObjectSortBuilder orderBy(String propertyName, boolean asc,OrderByModeEnum orderByMode,  int tableIndex) {
+        orderPropertyMap.put(propertyName, new ObjectSortEntry(asc,tableIndex,orderByMode));
         return this;
     }
 

@@ -4,10 +4,12 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * create time 2024/10/17 08:44
@@ -19,7 +21,7 @@ public class DefaultRelationValueColumnMetadata implements RelationValueColumnMe
     private final List<ColumnMetadata> columnMetadataList;
     private final RelationValueFactory relationValueFactory;
 
-    public DefaultRelationValueColumnMetadata(EntityMetadata entityMetadata, String[] properties,RelationValueFactory relationValueFactory) {
+    public DefaultRelationValueColumnMetadata(EntityMetadata entityMetadata, String[] properties, RelationValueFactory relationValueFactory) {
         this.relationValueFactory = relationValueFactory;
         ArrayList<ColumnMetadata> columnMetadataList = new ArrayList<>(properties.length);
         for (String property : properties) {
@@ -27,6 +29,11 @@ public class DefaultRelationValueColumnMetadata implements RelationValueColumnMe
             columnMetadataList.add(columnMetadata);
         }
         this.columnMetadataList = columnMetadataList;
+    }
+
+    @Override
+    public String getPropertyNames() {
+        return columnMetadataList.stream().map(o -> o.getPropertyName()).collect(Collectors.joining(","));
     }
 
     @Override

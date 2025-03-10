@@ -55,9 +55,13 @@ public interface DSLRangeAggregatePredicate<TProperty> extends DSLRangePredicate
             entitySQLContext._whereAnd(() -> {
                 entitySQLContext.accept(new SQLAggregatePredicateImpl(filter -> {
                     boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
-                    rangeCompareFilter(filter, dslSQLFunction, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE, valLeft);
                     boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
-                    rangeCompareFilter(filter, dslSQLFunction, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE, valRight);
+                    if (!openFirst && !openEnd) {
+                        rangeBetweenCompareFilter(filter, dslSQLFunction, valLeft, valRight);
+                    } else {
+                        rangeCompareFilter(filter, dslSQLFunction, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE, valLeft);
+                        rangeCompareFilter(filter, dslSQLFunction, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE, valRight);
+                    }
                 }, aggregateFilter -> {
                     boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
                     rangeCompareAggregateFilter(aggregateFilter, dslSQLFunction, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE, valLeft);
@@ -85,6 +89,12 @@ public interface DSLRangeAggregatePredicate<TProperty> extends DSLRangePredicate
                 }));
             }
         }
+    }
+
+    static <TProp> void rangeBetweenCompareFilter(Filter filter, DSLSQLFunctionAvailable dslSQLFunction, TProp leftInclude, TProp rightInclude) {
+        SQLFunc fx = filter.getRuntimeContext().fx();
+        SQLFunction sqlFunction = dslSQLFunction.func().apply(fx);
+        filter.funcValueBetweenFilter(dslSQLFunction.getTable(), sqlFunction, leftInclude, rightInclude);
     }
 
     static <TProp> void rangeCompareFilter(Filter filter, DSLSQLFunctionAvailable dslSQLFunction, SQLPredicateCompareEnum sqlPredicateCompare, TProp val) {

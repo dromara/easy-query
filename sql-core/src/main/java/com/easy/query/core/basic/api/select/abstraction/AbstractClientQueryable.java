@@ -70,6 +70,9 @@ import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
+import com.easy.query.core.expression.parser.core.base.many.ManyColumn;
+import com.easy.query.core.expression.parser.core.base.many.ManyJoinSelector;
+import com.easy.query.core.expression.parser.core.base.many.ManyJoinSelectorImpl;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurerImpl;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEOption;
@@ -909,15 +912,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 if (mappingPath.length < 2) {
                     throw new EasyQueryInvalidOperationException("navigate join mapping length < 2");
                 }
-
-                StringBuilder fullName = new StringBuilder();
-                for (int i = 0; i < mappingPath.length - 1; i++) {
-                    String navigateEntityProperty = mappingPath[i];
-                    fullName.append(navigateEntityProperty).append(".");
-                    relationTable = EasyRelationalUtil.getRelationTable(sqlEntityExpressionBuilder, relationTable, navigateEntityProperty, fullName.substring(0, fullName.length() - 1));
-                }
-                String navigateBasicTypeProperty = mappingPath[mappingPath.length - 1];
-                asSelector.columnAs(relationTable, navigateBasicTypeProperty, navigateJoinMetadata.getProperty());
+                EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(sqlEntityExpressionBuilder, relationTable, mappingPath, true);
+                asSelector.columnAs(tableOrRelationalTable.table, tableOrRelationalTable.property, navigateJoinMetadata.getProperty());
             }
         }
     }
@@ -929,6 +925,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             MappingPathTreeBuilder.insertPath(root, mappingPath, navigateFlatMetadata, path -> {
                 NavigateMetadata navigateOrNull = navigateEntityMetadata.getNavigateOrNull(path);
                 if (navigateOrNull != null) {
+                    //当查询结果vo、dto里面的导航对象和导航对象的属性在同一级那么是不被允许的
                     throw new EasyQueryInvalidOperationException(String.format("In the selectAutoInclude query, the relational property [%s] of the class [%s] should appear in both @Navigate and @NavigateFlat.", path, EasyClassUtil.getSimpleName(navigateEntityMetadata.getEntityClass())));
                 }
             });
@@ -1413,6 +1410,19 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         entityQueryExpressionBuilder.getExpressionContext().extract(selectAllTQueryable.getSQLEntityExpressionBuilder().getExpressionContext());
         ClientQueryable2<T1, T2> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable2(t1Class, selectAllTQueryable, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
         return EasySQLExpressionUtil.executeJoinOn(queryable, on);
+    }
+
+    @Override
+    public ClientQueryable<T1> manyJoin(boolean condition, SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression, SQLFuncExpression1<ClientQueryable<?>,ClientQueryable<?>> adapterExpression) {
+        if(condition){
+            EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
+            ManyColumn manyColumn = manyPropColumnExpression.apply(new ManyJoinSelectorImpl<>(table.getEntityTable()));
+            EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
+            TableAvailable leftTable = tableOrRelationalTable.table;
+            NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(tableOrRelationalTable.property);
+            EasyRelationalUtil.getManyJoinRelationTable(entityQueryExpressionBuilder, leftTable, navigateMetadata, manyColumn.getNavValue(),adapterExpression);
+        }
+        return this;
     }
 
     @Override

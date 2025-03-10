@@ -5,11 +5,13 @@ import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadata;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * create time 2024/10/17 08:44
@@ -27,6 +29,11 @@ public class MyMultiRelationValueColumnMetadata implements RelationValueColumnMe
             columnMetadataList.add(columnMetadata);
         }
         this.columnMetadataList = columnMetadataList;
+    }
+
+    @Override
+    public String getPropertyNames() {
+        return columnMetadataList.stream().map(o -> EasyClassUtil.getSimpleName(o.getEntityMetadata().getEntityClass()) + "." + o.getPropertyName()).collect(Collectors.joining(","));
     }
 
     @Override

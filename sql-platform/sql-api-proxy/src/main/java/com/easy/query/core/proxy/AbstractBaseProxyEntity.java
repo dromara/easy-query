@@ -7,27 +7,26 @@ import com.easy.query.core.context.EmptyQueryRuntimeContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner;
+import com.easy.query.core.expression.sql.builder.AnonymousManyGroupJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.columns.SQLAnyColumn;
 import com.easy.query.core.proxy.columns.SQLBooleanColumn;
 import com.easy.query.core.proxy.columns.SQLDateTimeColumn;
 import com.easy.query.core.proxy.columns.SQLManyQueryable;
-import com.easy.query.core.proxy.columns.SQLNavigateColumn;
 import com.easy.query.core.proxy.columns.SQLNumberColumn;
-import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.columns.SQLStringColumn;
+import com.easy.query.core.proxy.columns.impl.EasyManyJoinSQLManyQueryable;
 import com.easy.query.core.proxy.columns.impl.EasySQLManyQueryable;
-import com.easy.query.core.proxy.columns.impl.EasySQLQueryable;
 import com.easy.query.core.proxy.columns.impl.EmptySQLManyQueryable;
-import com.easy.query.core.proxy.columns.impl.EmptySQLQueryable;
 import com.easy.query.core.proxy.columns.impl.SQLAnyColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLBooleanColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLDateTimeColumnImpl;
-import com.easy.query.core.proxy.columns.impl.SQLNavigateColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLNumberColumnImpl;
 import com.easy.query.core.proxy.columns.impl.SQLStringColumnImpl;
 import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
@@ -290,13 +289,6 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
     }
 
 
-    @Deprecated
-    protected <TProperty> SQLNavigateColumn<TProxy, TProperty> getNavigate(String property, Class<TProperty> propType) {
-        SQLNavigateColumnImpl<TProxy, TProperty> column = new SQLNavigateColumnImpl<>(this.getEntitySQLContext(), table, property, propType);
-        column._setProxy(castChain());
-        return column;
-    }
-
     protected <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> TPropertyProxy getNavigate(String property, TPropertyProxy propertyProxy) {
         Objects.requireNonNull(this.entitySQLContext, "entitySQLContext is null");
         EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
@@ -311,51 +303,10 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                 throw new EasyQueryInvalidOperationException(String.format("getNavigate %s cant not found table", property));
             }
             String fullName = getFullNavValue(property);
-            TableAvailable relationTable = EasyRelationalUtil.getRelationTable(entityExpressionBuilder, leftTable, property,fullName);
+            TableAvailable relationTable = EasyRelationalUtil.getRelationTable(entityExpressionBuilder, leftTable, property, fullName);
             TPropertyProxy tPropertyProxy = propertyProxy.create(relationTable, this.getEntitySQLContext());
             tPropertyProxy.setNavValue(fullName);
             return tPropertyProxy;
-        }
-    }
-
-    protected <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> SQLQueryable<TPropertyProxy, TProperty> getNavigates(String property, TPropertyProxy propertyProxy) {
-        Objects.requireNonNull(this.entitySQLContext, "entitySQLContext is null");
-        QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
-        EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
-        if (entityExpressionBuilder == null || runtimeContext instanceof EmptyQueryRuntimeContext) {
-            propertyProxy.setNavValue(getFullNavValue(property));
-            return new EmptySQLQueryable<>(this.getEntitySQLContext(), propertyProxy);
-        } else {
-            TableAvailable leftTable = getTable();
-            if (leftTable == null) {
-                throw new EasyQueryInvalidOperationException(String.format("getNavigate %s cant not found table", property));
-            }
-            NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
-            ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext);
-            if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
-                ClientQueryable<?> mappingQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
-                clientQueryable.where(x -> {
-                    x.and(() -> {
-                        ClientQueryable<?> subMappingQueryable = mappingQueryable.where(m -> {
-                            m.multiEq(true, x, navigateMetadata.getTargetMappingProperties(), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
-                            m.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getSelfMappingProperties(), navigateMetadata.getSelfPropertiesOrPrimary());
-                            navigateMetadata.predicateMappingClassFilterApply(m);
-                        }).limit(1);
-                        x.exists(subMappingQueryable);
-                        navigateMetadata.predicateFilterApply(x);
-                    });
-                });
-            } else {
-                clientQueryable.where(t -> {
-                    t.and(() -> {
-                        t.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), navigateMetadata.getSelfPropertiesOrPrimary());
-                        navigateMetadata.predicateFilterApply(t);
-                    });
-                });
-            }
-            EasyEntityQueryable<TPropertyProxy, TProperty> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
-            queryable.get1Proxy().setNavValue(getFullNavValue(property));
-            return new EasySQLQueryable<>(this.getEntitySQLContext(), queryable, leftTable);
         }
     }
 
@@ -363,9 +314,9 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         Objects.requireNonNull(this.entitySQLContext, "entitySQLContext is null");
         EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
         QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
-        if (entityExpressionBuilder == null || runtimeContext instanceof EmptyQueryRuntimeContext) {
+        if (entityExpressionBuilder == null || entitySQLContext.methodIsInclude() || runtimeContext instanceof EmptyQueryRuntimeContext) {
             propertyProxy.setNavValue(getFullNavValue(property));
-            SQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EmptySQLManyQueryable<>(this.getEntitySQLContext(), propertyProxy);
+            SQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EmptySQLManyQueryable<>(this.getEntitySQLContext(), propertyProxy, getTable());
             query._setProxy(castChain());
             return query;
         } else {
@@ -374,33 +325,45 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                 throw new EasyQueryInvalidOperationException(String.format("getNavigate %s cant not found table", property));
             }
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
-            ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext);
-            if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
-                ClientQueryable<?> mappingQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
-                clientQueryable.where(x -> {
-                    x.and(() -> {
-                        ClientQueryable<?> subMappingQueryable = mappingQueryable.where(m -> {
-                            m.multiEq(true,x, navigateMetadata.getTargetMappingProperties(), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
-                            m.multiEq(true,new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getSelfMappingProperties(), navigateMetadata.getSelfPropertiesOrPrimary());
-                            navigateMetadata.predicateMappingClassFilterApply(m);
-                        }).limit(1);
-                        x.exists(subMappingQueryable);
-                        navigateMetadata.predicateFilterApply(x);
-                    });
-                });
+            String fullName = getFullNavValue(property);
+            if (entityExpressionBuilder.hasManyGroupJoinTable(new RelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName))) {
+                AnonymousManyGroupJoinEntityTableExpressionBuilder manyJoinRelationTable = EasyRelationalUtil.getManyJoinRelationTable(entityExpressionBuilder, leftTable, navigateMetadata, fullName, null);
+                EntityTableExpressionBuilder manyGroupTable = manyJoinRelationTable.getEntityQueryExpressionBuilder().getTable(0);
+                TPropertyProxy tPropertyProxy = propertyProxy.create(manyGroupTable.getEntityTable(), manyJoinRelationTable.getEntityQueryExpressionBuilder(), runtimeContext);
+                tPropertyProxy.setNavValue(fullName);
+                EasyManyJoinSQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EasyManyJoinSQLManyQueryable<>(this.getEntitySQLContext(), manyJoinRelationTable, entityExpressionBuilder, leftTable, fullName, tPropertyProxy);
+                query._setProxy(castChain());
+                return query;
             } else {
-                clientQueryable.where(t -> {
-                    t.and(() -> {
-                        t.multiEq(true,new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), navigateMetadata.getSelfPropertiesOrPrimary());
-                        navigateMetadata.predicateFilterApply(t);
+                ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext);
+                if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
+                    ClientQueryable<?> mappingQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
+                    clientQueryable.where(x -> {
+                        x.and(() -> {
+                            ClientQueryable<?> subMappingQueryable = mappingQueryable.where(m -> {
+                                m.multiEq(true, x, navigateMetadata.getTargetMappingProperties(), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
+                                m.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getSelfMappingProperties(), navigateMetadata.getSelfPropertiesOrPrimary());
+                                navigateMetadata.predicateMappingClassFilterApply(m);
+                            }).limit(1);
+                            x.exists(subMappingQueryable);
+                            navigateMetadata.predicateFilterApply(x);
+                        });
                     });
-                });
+                } else {
+                    clientQueryable.where(t -> {
+                        t.and(() -> {
+                            t.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), navigateMetadata.getSelfPropertiesOrPrimary());
+                            navigateMetadata.predicateFilterApply(t);
+                        });
+                    });
+                }
+                EasyEntityQueryable<TPropertyProxy, TProperty> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
+                queryable.get1Proxy().setNavValue(getFullNavValue(property));
+                EasySQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EasySQLManyQueryable<>(this.getEntitySQLContext(), queryable, leftTable);
+                query._setProxy(castChain());
+                return query;
             }
-            EasyEntityQueryable<TPropertyProxy, TProperty> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
-            queryable.get1Proxy().setNavValue(getFullNavValue(property));
-            EasySQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EasySQLManyQueryable<>(this.getEntitySQLContext(), queryable, leftTable);
-            query._setProxy(castChain());
-            return query;
+
         }
     }
 
@@ -414,5 +377,18 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
 
     protected TProxy castChain() {
         return (TProxy) this;
+    }
+
+
+    public SQLAnyTypeColumn<TProxy, Object> anyColumn(String property) {
+        return anyColumn(property, Object.class);
+    }
+
+    public <TProperty> SQLAnyTypeColumn<TProxy, TProperty> anyColumn(String property, @Nullable Class<TProperty> propType) {
+        EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(this.getEntitySQLContext().getEntityExpressionBuilder(), this.getTable(), property);
+        SQLAnyTypeColumn<TProxy, TProperty> column = new SQLAnyTypeColumnImpl<>(this.getEntitySQLContext(), tableOrRelationalTable.table, tableOrRelationalTable.property, propType);
+        column._setProxy(castChain());
+        column.setNavValue(getFullNavValue(property));
+        return column;
     }
 }

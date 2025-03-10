@@ -14,9 +14,11 @@ import java.util.Objects;
  */
 public class MultiRelationValue implements RelationValue {
     protected final List<Object> values;
+    private final RelationNullValueValidator relationNullValueValidator;
 
-    public MultiRelationValue(List<Object> values) {
+    public MultiRelationValue(List<Object> values, RelationNullValueValidator relationNullValueValidator) {
         this.values = values;
+        this.relationNullValueValidator = relationNullValueValidator;
     }
 
     @Override
@@ -27,11 +29,12 @@ public class MultiRelationValue implements RelationValue {
     /**
      * 当且仅当values中的有任意元素是null时返回true
      * 如果你认为例子中的id或者username有其他不符合就可以直接忽略可以使用重写该类来替换掉默认行为
+     *
      * @return
      */
     @Override
     public boolean isNull() {
-        return EasyCollectionUtil.any(values, Objects::isNull);
+        return EasyCollectionUtil.any(values, o -> relationNullValueValidator.isNullValue(o));
     }
 
     @Override

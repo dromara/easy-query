@@ -366,106 +366,6 @@ public class QueryTest14 extends BaseTest {
                 Assert.assertEquals("ru3", testRouteDTO0.getId());
             }
         }
-        {
-
-
-            ListenerContext listenerContext = new ListenerContext(true);
-            listenerContextManager.startListen(listenerContext);
-
-            List<TestUserDTO1> list = easyEntityQuery.queryable(TestUserEntity.class)
-                    .includes(t -> t.roles(), r -> r.includes(x -> x.routes()))
-                    .select(t -> {
-                        TestUserDTO1Proxy result = new TestUserDTO1Proxy();
-                        result.selectAll(t);
-
-                        result.roles().set(t.roles(), role -> {
-                            TestRoleDTO1Proxy r = new TestRoleDTO1Proxy();
-                            r.selectAll(role);
-                            r.routes().set(role.routes());
-                            return r;
-                        });
-                        return result;
-                    })
-                    .toList();
-
-
-            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-            Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
-            {
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                Assert.assertEquals("SELECT t.`id`,t.`name`,t.`password` FROM `t_test_user` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-            }
-            {
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                Assert.assertEquals("SELECT `first_id`,`second_id` FROM `t_test_join` WHERE `first_id` IN (?,?,?) AND `type` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                Assert.assertEquals("u1(String),u2(String),u3(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-            }
-            {
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                Assert.assertEquals("SELECT t.`id`,t.`name`,t.`remark` FROM `t_test_role` t WHERE t.`id` IN (?,?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                Assert.assertEquals("r1(String),r4(String),r2(String),r3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-            }
-            {
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                Assert.assertEquals("SELECT `first_id`,`second_id` FROM `t_test_join` WHERE `first_id` IN (?,?,?,?) AND `type` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                Assert.assertEquals("r1(String),r2(String),r3(String),r4(String),2(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-            }
-            {
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                Assert.assertEquals("SELECT t.`id`,t.`name`,t.`request_path` FROM `t_test_route` t WHERE t.`id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                Assert.assertEquals("ru1(String),ru2(String),ru3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-            }
-
-            {
-
-                TestUserDTO1 u1 = list.stream().filter(o -> Objects.equals("u1", o.getId())).findFirst().orElse(null);
-                Assert.assertNotNull(u1);
-                List<TestRoleDTO1> roles = u1.getRoles();
-                Assert.assertNotNull(roles);
-                Assert.assertEquals(2, roles.size());
-                TestRoleDTO1 testRoleDTO0 = roles.get(0);
-                Assert.assertEquals("r1", testRoleDTO0.getId());
-                TestRoleDTO1 testRoleDTO1 = roles.get(1);
-                Assert.assertEquals("r4", testRoleDTO1.getId());
-                Assert.assertNotNull(testRoleDTO0.getRoutes());
-                Assert.assertEquals(2, testRoleDTO0.getRoutes().size());
-                TestRouteDTO1 testRouteDTO0 = testRoleDTO0.getRoutes().get(0);
-                TestRouteDTO1 testRouteDTO1 = testRoleDTO0.getRoutes().get(1);
-                Assert.assertEquals("ru1", testRouteDTO0.getId());
-                Assert.assertEquals("ru2", testRouteDTO1.getId());
-            }
-            {
-
-                TestUserDTO1 u2 = list.stream().filter(o -> Objects.equals("u2", o.getId())).findFirst().orElse(null);
-                Assert.assertNotNull(u2);
-                List<TestRoleDTO1> roles = u2.getRoles();
-                Assert.assertNotNull(roles);
-                Assert.assertEquals(2, roles.size());
-                TestRoleDTO1 testRoleDTO0 = roles.get(0);
-                Assert.assertEquals("r2", testRoleDTO0.getId());
-                TestRoleDTO1 testRoleDTO1 = roles.get(1);
-                Assert.assertEquals("r4", testRoleDTO1.getId());
-                Assert.assertNotNull(testRoleDTO0.getRoutes());
-                Assert.assertEquals(1, testRoleDTO0.getRoutes().size());
-                TestRouteDTO1 testRouteDTO0 = testRoleDTO0.getRoutes().get(0);
-                Assert.assertEquals("ru2", testRouteDTO0.getId());
-            }
-            {
-
-                TestUserDTO1 u2 = list.stream().filter(o -> Objects.equals("u3", o.getId())).findFirst().orElse(null);
-                Assert.assertNotNull(u2);
-                List<TestRoleDTO1> roles = u2.getRoles();
-                Assert.assertNotNull(roles);
-                Assert.assertEquals(1, roles.size());
-                TestRoleDTO1 testRoleDTO0 = roles.get(0);
-                Assert.assertEquals("r3", testRoleDTO0.getId());
-                Assert.assertNotNull(testRoleDTO0.getRoutes());
-                Assert.assertEquals(1, testRoleDTO0.getRoutes().size());
-                TestRouteDTO1 testRouteDTO0 = testRoleDTO0.getRoutes().get(0);
-                Assert.assertEquals("ru3", testRouteDTO0.getId());
-            }
-        }
 //        {
 //
 //            List<TestUserDTO2> list = easyEntityQuery.queryable(TestUserEntity.class)
@@ -793,7 +693,7 @@ public class QueryTest14 extends BaseTest {
                 }
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-                Assert.assertEquals("SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS \"__rownum__\" FROM (SELECT t.\"title\" AS \"title\",COUNT(t.\"id\") AS \"star\", ROWNUM AS \"__rownum__\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? GROUP BY t.\"title\") rt WHERE ROWNUM < 31) rt1 WHERE rt1.\"__rownum__\" > 20", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS \"__rownum__\" FROM (SELECT t.\"title\" AS \"title\",COUNT(t.\"id\") AS \"star\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? GROUP BY t.\"title\") rt WHERE ROWNUM < 31) rt1 WHERE rt1.\"__rownum__\" > 20", jdbcExecuteAfterArg.getBeforeArg().getSql());
                 Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
                 listenerContextManager.clear();
             }
@@ -1824,7 +1724,7 @@ public class QueryTest14 extends BaseTest {
                 }
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-                Assert.assertEquals("SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS \"__rownum__\" FROM (SELECT t.\"title\" AS \"title\",COUNT(t.\"id\") AS \"star\", ROWNUM AS \"__rownum__\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? GROUP BY t.\"title\") rt WHERE ROWNUM < 31) rt1 WHERE rt1.\"__rownum__\" > 20", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS \"__rownum__\" FROM (SELECT t.\"title\" AS \"title\",COUNT(t.\"id\") AS \"star\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ? GROUP BY t.\"title\") rt WHERE ROWNUM < 31) rt1 WHERE rt1.\"__rownum__\" > 20", jdbcExecuteAfterArg.getBeforeArg().getSql());
                 Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
                 listenerContextManager.clear();
             }

@@ -126,4 +126,9 @@ public class SQLiteFuncImpl extends SQLFuncImpl {
     public SQLFunction duration(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum) {
         return new SQLiteDateTimeDurationSQLFunction(getColumnExpressions(sqlExpression), durationEnum);
     }
+
+    @Override
+    public SQLFunction booleanConstantSQLFunction(boolean trueOrFalse) {
+        return new SQLiteBooleanConstantSQLFunction(trueOrFalse);
+    }
 }

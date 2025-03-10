@@ -15,9 +15,11 @@ import java.util.Objects;
  */
 public class SingleRelationValue implements RelationValue {
     protected final Object value;
+    private final RelationNullValueValidator relationNullValueValidator;
 
-    public SingleRelationValue(Object value) {
+    public SingleRelationValue(Object value, RelationNullValueValidator relationNullValueValidator) {
         this.value = value;
+        this.relationNullValueValidator = relationNullValueValidator;
     }
 
     @Override
@@ -27,7 +29,7 @@ public class SingleRelationValue implements RelationValue {
 
     @Override
     public boolean isNull() {
-        return Objects.isNull(value);
+        return relationNullValueValidator.isNullValue(value);
     }
 
     @Override

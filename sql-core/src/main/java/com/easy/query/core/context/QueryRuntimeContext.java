@@ -32,6 +32,7 @@ import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFacto
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeProvider;
+import com.easy.query.core.expression.sql.include.RelationNullValueValidator;
 import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadataFactory;
 import com.easy.query.core.expression.sql.include.relation.RelationValueFactory;
 import com.easy.query.core.func.SQLFunc;
@@ -107,4 +108,6 @@ public interface QueryRuntimeContext {
     MapKeyNameConversion getMapKeyNameConversion();
     DatabaseCodeFirst getDatabaseCodeFirst();
     IncludeProvider getIncludeProvider();
+
+    RelationNullValueValidator getRelationNullValueValidator();
 }

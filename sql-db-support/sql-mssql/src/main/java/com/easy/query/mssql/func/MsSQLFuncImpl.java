@@ -150,4 +150,9 @@ public class MsSQLFuncImpl extends SQLFuncImpl {
         }
         return likeSQLFunction;
     }
+
+    @Override
+    public SQLFunction booleanConstantSQLFunction(boolean trueOrFalse) {
+        return new MsSQLBooleanConstantSQLFunction(trueOrFalse);
+    }
 }

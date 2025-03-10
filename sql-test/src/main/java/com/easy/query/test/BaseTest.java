@@ -56,7 +56,6 @@ import com.easy.query.test.keytest.MyTestPrimaryKeyGenerator;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
-import com.easy.query.test.mypage.MyEasyPageResultProvider;
 import com.easy.query.test.parser.MyLambdaParser;
 import com.easy.query.test.sharding.DataSourceAndTableShardingInitializer;
 import com.easy.query.test.sharding.DataSourceShardingInitializer;
@@ -70,7 +69,6 @@ import com.easy.query.test.sharding.TopicShardingTimeTableRoute;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -228,7 +226,7 @@ public abstract class BaseTest {
     }
 
     public static void initData() {
-        easyQuery.deletable(BlogEntity.class).where(o -> o.isNotBank(BlogEntity::getId)).disableLogicDelete().allowDeleteStatement(true).executeRows();
+        easyQuery.deletable(BlogEntity.class).where(o -> o.isNotBlank(BlogEntity::getId)).disableLogicDelete().allowDeleteStatement(true).executeRows();
         boolean any = easyQuery.queryable(BlogEntity.class).any();
         if (!any) {
 

@@ -31,12 +31,4 @@ public final class RelationTableKey {
     public int hashCode() {
         return Objects.hash(sourceClass, targetClass, fullName);
     }
-
-    public Class<?> getSourceClass() {
-        return sourceClass;
-    }
-
-    public Class<?> getTargetClass() {
-        return targetClass;
-    }
 }

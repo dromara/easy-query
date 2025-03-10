@@ -11,6 +11,8 @@ import com.easy.query.test.doc.entity.proxy.DocBankCardProxy;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
+import java.util.List;
+
 /**
  * create time 2025/1/4 11:12
  * 文件说明
@@ -45,4 +47,8 @@ public class DocBankCard implements ProxyEntityAvailable<DocBankCard, DocBankCar
 
     @Navigate(value = RelationTypeEnum.ManyToOne, selfProperty = Fields.bankId)
     private DocBank bank;
+
+
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {DocBankCard.Fields.id}, targetProperty = {DocPart.Fields.cardId})
+    private List<DocPart> parts;
 }

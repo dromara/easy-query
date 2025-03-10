@@ -28,7 +28,7 @@ public class CastSQLFunction extends AbstractExpressionSQLFunction {
         String targetClassName = EasyClassUtil.getFullName(targetClass);
         switch (targetClassName){
             case "boolean":
-            case "java.lang.Boolean": return "({0} NOT IN ('0','false'))";
+            case "java.lang.Boolean": return " CAST({0} AS SIGNED)";
             case "char": return "SUBSTR(CAST({0} AS CHAR), 1, 1)";
             case "java.sql.Time":
             case "java.time.Time": return "CAST({0} AS TIME)";

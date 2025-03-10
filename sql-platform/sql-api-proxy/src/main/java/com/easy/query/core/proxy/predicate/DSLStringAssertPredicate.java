@@ -44,11 +44,11 @@ public interface DSLStringAssertPredicate<TProperty> extends TablePropColumn, En
            }));
         }
     }
-    default void isBank() {
-         isBank(true);
+    default void isBlank() {
+         isBlank(true);
     }
 
-    default void isBank(boolean condition){
+    default void isBlank(boolean condition){
         if(condition){
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
@@ -59,11 +59,11 @@ public interface DSLStringAssertPredicate<TProperty> extends TablePropColumn, En
             }));
         }
     }
-    default void isNotBank() {
-         isNotBank(true);
+    default void isNotBlank() {
+         isNotBlank(true);
     }
 
-    default void isNotBank(boolean condition){
+    default void isNotBlank(boolean condition){
         if(condition){
            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                SQLFunc fx = f.getRuntimeContext().fx();

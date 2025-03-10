@@ -5,6 +5,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.core.proxy.sql.include.IncludeExpression;
 
 /**
  * create time 2023/8/17 13:34
@@ -14,6 +15,7 @@ import com.easy.query.core.proxy.ProxyEntityAvailable;
  */
 public interface EntityIncludeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends ClientEntityQueryableAvailable<T1>, EntityQueryableAvailable<T1Proxy, T1> {
 
+//   <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includeMany(SQLExpression1<T1Proxy> navigateIncludeSQLExpression);
     /**
      * <blockquote><pre>
      * easyEntityQuery.queryable(SchoolStudent.class)

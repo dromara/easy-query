@@ -29,14 +29,15 @@ public class DamengQuerySQLExpression extends QuerySQLExpressionImpl {
 
     /**
      * 分页部分代码参考 <a href="https://github.com/dotnetcore/FreeSql">FreeSQL</a>
+     *
      * @param toSQLContext
      * @return
      */
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         boolean root = EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
-        if(root){
-            if(entitySQLExpressionMetadata.getExpressionContext().hasDeclareExpressions()){
+        if (root) {
+            if (entitySQLExpressionMetadata.getExpressionContext().hasDeclareExpressions()) {
                 StringBuilder sb = new StringBuilder();
                 List<ExpressionBuilder> declareExpressions = entitySQLExpressionMetadata.getExpressionContext().getDeclareExpressions();
                 for (ExpressionBuilder declareExpression : declareExpressions) {
@@ -51,7 +52,7 @@ public class DamengQuerySQLExpression extends QuerySQLExpressionImpl {
         return toSQL0(true, toSQLContext);
     }
 
-    protected String toSQL0(boolean root,ToSQLContext toSQLContext){
+    protected String toSQL0(boolean root, ToSQLContext toSQLContext) {
         SQLKeyword SQLKeyWord = getRuntimeContext().getQueryConfiguration().getDialect();
         String rowNum = SQLKeyWord.getQuoteName(KeywordTool.ROW_NUM);
         StringBuilder sql = new StringBuilder("SELECT ");
@@ -62,7 +63,7 @@ public class DamengQuerySQLExpression extends QuerySQLExpressionImpl {
         sql.append(this.projects.toSQL(toSQLContext));
         boolean hasOrderBy = this.order != null && this.order.isNotEmpty();
         boolean hasGroup = this.group != null && this.group.isNotEmpty();
-        if (!hasOrderBy && offset > 0) {
+        if (!hasOrderBy && offset > 0 && !hasGroup) {
             sql.append(", ROWNUM AS ").append(rowNum);
         }
 
@@ -85,12 +86,12 @@ public class DamengQuerySQLExpression extends QuerySQLExpressionImpl {
             sql.append(whereSQL);
         }
         if (!hasOrderBy && !hasGroup && (offset > 0 || rows > 0)) {
-            if(!hasWhere){
+            if (!hasWhere) {
                 sql.append(" WHERE ROWNUM < ");
-            }else{
+            } else {
                 sql.append(" AND ROWNUM < ");
             }
-            sql.append(offset+rows+1);
+            sql.append(offset + rows + 1);
         }
         if (hasGroup) {
             sql.append(" GROUP BY ").append(this.group.toSQL(toSQLContext));
@@ -102,18 +103,18 @@ public class DamengQuerySQLExpression extends QuerySQLExpressionImpl {
             sql.append(" ORDER BY ").append(this.order.toSQL(toSQLContext));
         }
 
-        if(!hasOrderBy&&!hasGroup){
-            if(offset>0){
+        if (!hasOrderBy && !hasGroup) {
+            if (offset > 0) {
                 sql.insert(0, "SELECT rt.* FROM(").append(") rt WHERE rt.").append(rowNum).append(" > ").append(offset);
             }
-        }else{
-            if(offset>0&&rows>0){
+        } else {
+            if (offset > 0 && rows > 0) {
                 sql.insert(0, "SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS " + rowNum + " FROM (")
                         .append(") rt WHERE ROWNUM < ").append(offset + rows + 1).append(") rt1 WHERE rt1.").append(rowNum).append(" > ").append(offset);
-            }else if(offset>0){
-                sql.insert(0,"SELECT rt.* FROM (").append(") rt WHERE ROWNUM > ").append(offset);
-            }else if(rows>0){
-                sql.insert(0,"SELECT rt.* FROM (").append(") rt WHERE ROWNUM < ").append(rows + 1);
+            } else if (offset > 0) {
+                sql.insert(0, "SELECT rt.* FROM (").append(") rt WHERE ROWNUM > ").append(offset);
+            } else if (rows > 0) {
+                sql.insert(0, "SELECT rt.* FROM (").append(") rt WHERE ROWNUM < ").append(rows + 1);
             }
         }
 

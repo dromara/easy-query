@@ -36,7 +36,7 @@ public class NumberCalcSQLFunction extends AbstractExpressionSQLFunction {
                 return "({0} - {1})";
             case NUMBER_MULTIPLY:
                 return "({0} * {1})";
-            case NUMBER_DEVIDE:
+            case NUMBER_DIVIDE:
                 return "({0} / {1})";
         }
         throw new UnsupportedOperationException("不支持当前函数NumberCalcSQLFunction:"+ numberCalcEnum);

@@ -27,13 +27,15 @@ import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
+import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
-import com.easy.query.core.metadata.NavigateOrderProp;
+import com.easy.query.core.proxy.ManyPropColumn;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
@@ -52,7 +54,6 @@ import com.easy.query.core.util.EasySQLSegmentUtil;
 import java.math.BigDecimal;
 import java.sql.Statement;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -98,7 +99,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public EntityQueryable<T1Proxy, T1> toCteAs(String tableName) {
-        return new EasyEntityQueryable<>(get1Proxy(),getClientQueryable().toCteAs(tableName));
+        return new EasyEntityQueryable<>(get1Proxy(), getClientQueryable().toCteAs(tableName));
     }
 
     @Override
@@ -223,6 +224,18 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <TNumber extends Number> Query<TNumber> selectCount(Class<TNumber> numberClass) {
         return getClientQueryable().selectCount(numberClass);
+    }
+
+    @Override
+    public <TMember> Query<TMember> selectCount(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> selectExpression,boolean distinct) {
+        PropTypeColumn<TMember> column = selectExpression.apply(get1Proxy());
+        Class<TMember> propertyType = EasyObjectUtil.typeCastNullable(column.getPropertyType());
+        return getClientQueryable().select(propertyType,s->{
+            DistinctDefaultSQLFunction count = s.fx().count(x -> {
+                PropTypeColumn.columnFuncSelector(x, column);
+            }).distinct(distinct);
+            s.sqlFunc(count);
+        });
     }
 
     @Override
@@ -374,10 +387,10 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         if (condition) {
 
             T1Proxy proxy = getQueryable().get1Proxy();
-            ValueHolder<TPropertyProxy> valueHolder = new ValueHolder<>();
+            ValueHolder<String> valueHolder = new ValueHolder<>();
             proxy.getEntitySQLContext()._include(() -> {
                 TPropertyProxy navigateColumn = navigateIncludeSQLExpression.apply(proxy);
-                valueHolder.setValue(navigateColumn);
+                valueHolder.setValue(navigateColumn.getNavValue());
             });
 
 //        getSQLEntityExpressionBuilder().removeRelationEntityTableExpression(new RelationTableKey(proxy.getEntityClass(),navigateColumn.getEntityClass()));
@@ -391,24 +404,24 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         if (condition) {
 
             T1Proxy proxy = getQueryable().get1Proxy();
-            ValueHolder<TPropertyProxy> valueHolder = new ValueHolder<>();
+            ValueHolder<String> valueHolder = new ValueHolder<>();
             proxy.getEntitySQLContext()._include(() -> {
                 SQLQueryable<TPropertyProxy, TProperty> navigateColumnQueryable = navigateIncludeSQLExpression.apply(proxy);
-                TPropertyProxy navigateColumn = navigateColumnQueryable.getQueryable().get1Proxy();
-                valueHolder.setValue(navigateColumn);
+//                TPropertyProxy navigateColumn = navigateColumnQueryable.getQueryable().get1Proxy();
+                valueHolder.setValue(navigateColumnQueryable.getNavValue());
             });
             return include0(valueHolder.getValue(), includeAdapterExpression, groupSize);
         }
         return this;
     }
 
-    private <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> include0(TPropertyProxy navigateColumn, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
+    private <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> include0(String navValue, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
 
-        Objects.requireNonNull(navigateColumn.getNavValue(), "include [navValue] is null");
+        Objects.requireNonNull(navValue, "include [navValue] is null");
 
         ConfigureArgument configureArgument = getQueryable().getSQLEntityExpressionBuilder().getExpressionContext().getConfigureArgument();
         getClientQueryable().include(navigateInclude -> {
-            ClientQueryable<TProperty> queryable = navigateInclude.with(navigateColumn.getNavValue(), groupSize);
+            ClientQueryable<TProperty> queryable = navigateInclude.with(navValue, groupSize);
             NavigateMetadata navigateMetadata = navigateInclude.getIncludeNavigateParams().getNavigateMetadata();
             ClientQueryable<TProperty> clientQueryable = EasyNavigateUtil.navigateOrderBy(
                     queryable,
@@ -423,6 +436,34 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
             return entityQueryable.getClientQueryable();
         });
 
+        return getQueryable();
+    }
+
+    @Override
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable<T1Proxy, T1> manyJoin(boolean condition, SQLFuncExpression1<T1Proxy, ManyPropColumn<T2Proxy, T2>> manyPropColumnExpression, SQLFuncExpression1<EntityQueryable<T2Proxy, T2>, EntityQueryable<T2Proxy, T2>> adapterExpression) {
+        if (condition) {
+
+            T1Proxy proxy = getQueryable().get1Proxy();
+            ValueHolder<ManyPropColumn<T2Proxy, T2>> valueHolder = new ValueHolder<>();
+            proxy.getEntitySQLContext()._include(() -> {
+                ManyPropColumn<T2Proxy, T2> value = manyPropColumnExpression.apply(proxy);
+                valueHolder.setValue(value);
+            });
+            TableAvailable table = valueHolder.getValue().getOriginalTable();
+            String value = valueHolder.getValue().getValue();
+            if (adapterExpression == null) {
+
+                getClientQueryable().manyJoin(manyJoinSelector -> manyJoinSelector.manyColumn(table,value), null);
+            } else {
+                getClientQueryable().manyJoin(manyJoinSelector -> manyJoinSelector.manyColumn(table,value), cq -> {
+                    ClientQueryable<T2> innerClientQueryable = EasyObjectUtil.typeCastNullable(cq);
+                    T2Proxy tPropertyProxy = EntityQueryProxyManager.create(innerClientQueryable.queryClass());
+                    EasyEntityQueryable<T2Proxy, T2> entityQueryable = new EasyEntityQueryable<>(tPropertyProxy, innerClientQueryable);
+                    adapterExpression.apply(entityQueryable);
+                    return entityQueryable.getClientQueryable();
+                });
+            }
+        }
         return getQueryable();
     }
 

@@ -6,9 +6,12 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.GroupKeys;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
+import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.listener.ListenerContext;
@@ -43,6 +46,22 @@ public class InsertOrUpdateTest extends BaseTest{
                 .build();
 
         DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+
+
+//        List<Draft2<Boolean, Boolean>> list = defaultEasyEntityQuery.queryable(DocUser.class)
+//                .manyJoin(o -> o.bankCards())
+//                .where(user -> {
+//                    user.bankCards().any();
+//                    user.bankCards().none();
+//                    user.bankCards().anyValue().eq(false);
+//                    user.bankCards().noneValue().eq(true);
+//
+//                })
+//                .select(user -> Select.DRAFT.of(
+//                        user.bankCards().anyValue(),
+//                        user.bankCards().noneValue()
+//                ))
+//                .toList();
 
         {
 

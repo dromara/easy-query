@@ -11,6 +11,8 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
@@ -19,10 +21,16 @@ import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
+import com.easy.query.core.expression.parser.core.base.many.ManyColumn;
+import com.easy.query.core.expression.parser.core.base.many.ManyJoinSelector;
+import com.easy.query.core.expression.parser.core.base.many.ManyJoinSelectorImpl;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.math.BigDecimal;
@@ -97,6 +105,20 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractOverrideC
         entityQueryExpressionBuilder.getExpressionContext().extract(selectAllT2Queryable.getSQLEntityExpressionBuilder().getExpressionContext());
         ClientQueryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable3(t1Class, t2Class, selectAllT2Queryable, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
         return EasySQLExpressionUtil.executeJoinOn(queryable3, on);
+    }
+
+    @Override
+    public ClientQueryable2<T1, T2> manyJoin(boolean condition, SQLFuncExpression2<ManyJoinSelector<T1>, ManyJoinSelector<T2>, ManyColumn> manyPropColumnExpression, SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> adapterExpression) {
+        if(condition){
+            EntityTableExpressionBuilder table1 = entityQueryExpressionBuilder.getTable(0);
+            EntityTableExpressionBuilder table2 = entityQueryExpressionBuilder.getTable(1);
+            ManyColumn manyColumn = manyPropColumnExpression.apply(new ManyJoinSelectorImpl<>(table1.getEntityTable()),new ManyJoinSelectorImpl<>(table2.getEntityTable()));
+            EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
+            TableAvailable leftTable = tableOrRelationalTable.table;
+            NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(tableOrRelationalTable.property);
+            EasyRelationalUtil.getManyJoinRelationTable(entityQueryExpressionBuilder, leftTable, navigateMetadata, manyColumn.getNavValue(),adapterExpression);
+        }
+        return this;
     }
 
     @Override

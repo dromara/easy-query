@@ -11,8 +11,10 @@ import com.easy.query.core.expression.segment.CloneableSQLSegment;
  */
 public interface SelectorColumn<TChain> {
     TChain column(TableAvailable table, String property);
+
     TChain columnIgnore(TableAvailable table, String property);
 
     TChain columnIfAbsent(TableAvailable table, String property);
+
     TChain sqlSegmentAs(CloneableSQLSegment sqlColumnSegment);
 }

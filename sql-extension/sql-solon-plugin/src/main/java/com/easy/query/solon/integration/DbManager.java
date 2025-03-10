@@ -174,7 +174,6 @@ public class DbManager {
                     builder.setDefaultSchema(solonEasyQueryProperties.getDefaultSchema());
                     builder.setResultSizeLimit(solonEasyQueryProperties.getResultSizeLimit());
                     builder.setShardingQueryInTransaction(solonEasyQueryProperties.getShardingQueryInTransaction());
-                    builder.setRelationTableAppend(solonEasyQueryProperties.getRelationTableAppend());
                 });
         DatabaseConfiguration databaseConfigure = getDatabaseConfigure(solonEasyQueryProperties);
         if (databaseConfigure != null) {

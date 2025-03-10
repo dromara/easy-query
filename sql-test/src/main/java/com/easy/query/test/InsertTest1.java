@@ -169,7 +169,7 @@ public class InsertTest1 extends BaseTest {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(TestInsert.class));
         codeFirstCommand.executeWithTransaction(arg->{
-            System.out.println(arg.sql);
+            System.out.println(arg.getSQL());
             arg.commit();
         });
 

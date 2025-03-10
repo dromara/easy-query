@@ -17,6 +17,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.RelationExtraColumn;
+import com.easy.query.core.metadata.RelationExtraColumnAddResult;
 import com.easy.query.core.metadata.RelationExtraMetadata;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -118,8 +119,7 @@ public class NavigateIncludeImpl implements NavigateInclude {
             columnSelector.column(relationColumn);
 
             ColumnMetadata columnMetadata = columnSelector.getEntityMetadata().getColumnNotNull(relationColumn);
-            String alias = "__relation__" + relationColumn;
-            RelationExtraColumn relationExtraColumn = relationExtraMetadata.getRelationExtraColumnMap().putIfAbsent(alias, new RelationExtraColumn(relationColumn, alias, columnMetadata, false));
+            EasySQLExpressionUtil.addRelationExtraColumn(columnMetadata, relationColumn, relationExtraMetadata, false);
 
         }
     }

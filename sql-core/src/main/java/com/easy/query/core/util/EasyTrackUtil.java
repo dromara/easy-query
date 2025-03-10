@@ -2,6 +2,7 @@ package com.easy.query.core.util;
 
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.EntityTrackProperty;
+import com.easy.query.core.basic.extension.track.EntityValueState;
 import com.easy.query.core.basic.extension.track.TrackDiffEntry;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -119,35 +120,15 @@ public class EasyTrackUtil {
                 continue;
             }
 
-            Object originalPropertyValue =EasyBeanUtil.getPropertyValue(entityState.getOriginalValue(),entityMetadata,columnMetadata);
-            Object currentPropertyValue = EasyBeanUtil.getPropertyValue(entityState.getCurrentValue(),entityMetadata,columnMetadata);
-
-
-            if (propertyValueEquals(columnMetadata,originalPropertyValue,currentPropertyValue)) {
+            EntityValueState entityValueState = entityState.getEntityValueState(columnMetadata);
+            if (entityValueState.notChanged()) {
                 entityTrackProperty.getSameProperties().add(propertyName);
             } else {
-                entityTrackProperty.getDiffProperties().put(propertyName, new TrackDiffEntry(originalPropertyValue, currentPropertyValue));
+                entityTrackProperty.getDiffProperties().put(propertyName, entityValueState);
             }
         }
         return entityTrackProperty;
     }
-
-    private static boolean propertyValueEquals(ColumnMetadata columnMetadata,Object original,Object current){
-        if(original == null && current == null){
-          return true;
-        }
-        if(original==null){
-            return false;
-        }
-        if(current==null){
-            return false;
-        }
-        if(Comparable.class.isAssignableFrom(columnMetadata.getPropertyType())){
-            return ((Comparable<?>)original).compareTo(EasyObjectUtil.typeCastNullable(current))==0;
-        }
-        return Objects.equals(original, current);
-    }
-
 
     public static boolean trackBean(ExecutorContext context, Class<?> clazz) {
         //当前查询是否使用了追踪如果没有就直接不使用追踪

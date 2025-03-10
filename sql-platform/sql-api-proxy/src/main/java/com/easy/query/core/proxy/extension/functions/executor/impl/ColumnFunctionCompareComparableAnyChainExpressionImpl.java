@@ -4,6 +4,7 @@ import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.builder.Selector;
+import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.func.SQLFunc;
@@ -11,9 +12,13 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.SQLFunctionExpressionUtil;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
 import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
+import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
+import com.easy.query.core.util.EasyClassUtil;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -154,6 +159,15 @@ public class ColumnFunctionCompareComparableAnyChainExpressionImpl<TProperty> im
             sqlFunction.consume(new SQLNativeChainExpressionContextImpl(getTable(), c.getSQLNativeExpressionContext()));
         });
     }
+
+//    @Override
+//    public void eq(boolean condition,TProperty val) {
+//        if(val!=null&& EasyClassUtil.isBooleanType(val.getClass())){
+//            ColumnFunctionCompareComparableAnyChainExpression.super.eq(true,Expression.of(getEntitySQLContext()).sqlSegment("CAST(? AS JSON)",c->c.value(val)));;
+//        }else{
+//            ColumnFunctionCompareComparableAnyChainExpression.super.eq(val);
+//        }
+//    }
 }
 //        if(condition){
 //            return new SQLPredicateImpl(f->{

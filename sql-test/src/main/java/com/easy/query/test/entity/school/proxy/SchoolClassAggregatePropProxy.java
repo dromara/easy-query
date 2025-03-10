@@ -9,7 +9,7 @@ import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.test.entity.school.SchoolClassAggregateProp;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.columns.SQLNavigateColumn;
-import com.easy.query.core.proxy.columns.SQLQueryable;
+import com.easy.query.core.proxy.columns.SQLManyQueryable;
 import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
 import com.easy.query.core.proxy.columns.types.SQLLongTypeColumn;
 
@@ -23,6 +23,8 @@ import com.easy.query.core.proxy.columns.types.SQLLongTypeColumn;
 public class SchoolClassAggregatePropProxy extends AbstractProxyEntity<SchoolClassAggregatePropProxy, SchoolClassAggregateProp> {
 
     private static final Class<SchoolClassAggregateProp> entityClass = SchoolClassAggregateProp.class;
+
+    public static final SchoolClassAggregatePropProxy TABLE = createTable().createEmpty();
 
     public static SchoolClassAggregatePropProxy createTable() {
         return new SchoolClassAggregatePropProxy();
@@ -49,8 +51,8 @@ public class SchoolClassAggregatePropProxy extends AbstractProxyEntity<SchoolCla
      * 一对多 一个班级多个学生
      * {@link SchoolClassAggregateProp#getSchoolStudents}
      */
-    public SQLQueryable<com.easy.query.test.entity.school.proxy.SchoolStudentProxy, com.easy.query.test.entity.school.SchoolStudent> schoolStudents() {
-        return getNavigates("schoolStudents", new com.easy.query.test.entity.school.proxy.SchoolStudentProxy());
+    public SQLManyQueryable<SchoolClassAggregatePropProxy, com.easy.query.test.entity.school.proxy.SchoolStudentProxy, com.easy.query.test.entity.school.SchoolStudent> schoolStudents() {
+        return getNavigateMany("schoolStudents", new com.easy.query.test.entity.school.proxy.SchoolStudentProxy());
     }
 
     /**

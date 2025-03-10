@@ -427,7 +427,7 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
     <T2> WherePredicate<T2> withOther(WherePredicate<T2> wherePredicate);
 
     @Override
-    default WherePredicate<T1> isBank(boolean condition, String property) {
+    default WherePredicate<T1> isBlank(boolean condition, String property) {
         if (condition) {
             SQLFunction bank = fx().bank(property);
             getFilter().sqlNativeSegment(bank.sqlSegment(getTable()),c->{
@@ -438,7 +438,7 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
     }
 
     @Override
-    default WherePredicate<T1> isNotBank(boolean condition, String property) {
+    default WherePredicate<T1> isNotBlank(boolean condition, String property) {
         if (condition) {
             SQLFunction bank = fx().notBank(property);
             getFilter().sqlNativeSegment(bank.sqlSegment(getTable()),c->{

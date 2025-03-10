@@ -7,8 +7,7 @@ import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
 import com.easy.query.core.expression.builder.impl.OrderSelectorImpl;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.metadata.ColumnMetadata;
-import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasySQLUtil;
 
 import java.util.Map;
 
@@ -18,7 +17,7 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public class DefaultObjectSortQueryExecutor implements ObjectSortQueryExecutor{
+public class DefaultObjectSortQueryExecutor implements ObjectSortQueryExecutor {
     @Override
     public void orderByObject(ObjectSort objectSort, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         boolean strictMode = objectSort.useStrictMode();
@@ -27,6 +26,8 @@ public class DefaultObjectSortQueryExecutor implements ObjectSortQueryExecutor{
         objectSort.configure(orderByBuilder);
         Map<String, ObjectSortEntry> orderProperties = orderByBuilder.build();
         if (!orderProperties.isEmpty()) {
+
+            OrderSelectorImpl orderSelector = new OrderSelectorImpl(entityQueryExpressionBuilder,entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getOrder());
 
             for (Map.Entry<String, ObjectSortEntry> sortKv : orderProperties.entrySet()) {
                 String property = sortKv.getKey();
@@ -39,20 +40,11 @@ public class DefaultObjectSortQueryExecutor implements ObjectSortQueryExecutor{
                     continue;
                 }
                 TableAvailable entityTable = entityQueryExpressionBuilder.getTable(tableIndex).getEntityTable();
-                ColumnMetadata columnMetadata = entityTable.getEntityMetadata().getColumnOrNull(property);
-                if (columnMetadata == null) {
-                    if (strictMode) {
-                        throw new EasyQueryOrderByInvalidOperationException(property, EasyClassUtil.getSimpleName(entityTable.getEntityClass()) + " not found [" + property + "] in entity class");
-                    }
-                    continue;
-                }
-
-                OrderSelectorImpl orderSelector = new OrderSelectorImpl(entityQueryExpressionBuilder.getRuntimeContext(),entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getOrder());
-                orderSelector.setAsc(objectSortEntry.isAsc());
-                orderSelector.column(entityTable, property);
+                EasySQLUtil.dynamicOrderBy(orderSelector, entityTable, property, objectSortEntry.isAsc(), objectSortEntry.getOrderByMode(), strictMode);
             }
 
         }
         orderByBuilder.clear();
     }
+
 }
