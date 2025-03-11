@@ -172,8 +172,8 @@ public class EasyManyJoinSQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1
 
     @Override
     public ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<T1Proxy, PropTypeColumn<String>> columnSelector, String delimiter) {
-        ColumnFunctionCompareComparableStringChainExpression<String> join = new DefaultSQLGroupQueryable<>(manyJoinPredicateToGroupProjectProvider.getT1Proxy(), this.getEntitySQLContext(), null).distinct(distinct).join(columnSelector,delimiter);
-        String alias = manyJoinPredicateToGroupProjectProvider.getOrAppendGroupProjects(join, "join");
+        ColumnFunctionCompareComparableStringChainExpression<String> joining = new DefaultSQLGroupQueryable<>(manyJoinPredicateToGroupProjectProvider.getT1Proxy(), this.getEntitySQLContext(), null).distinct(distinct).joining(columnSelector,delimiter);
+        String alias = manyJoinPredicateToGroupProjectProvider.getOrAppendGroupProjects(joining, "joining");
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), manyJoinPredicateToGroupProjectProvider.getManyGroupJoinTable(), alias, f -> f.anySQLFunction("{0}", c -> c.column(alias)), String.class);
     }
 

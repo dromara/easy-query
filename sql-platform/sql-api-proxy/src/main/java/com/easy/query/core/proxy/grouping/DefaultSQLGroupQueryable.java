@@ -144,7 +144,7 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     }
 
     @Override
-    public <TMember> ColumnFunctionCompareComparableStringChainExpression<String> join(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector, String delimiter) {
+    public <TMember> ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector, String delimiter) {
         PropTypeColumn<TMember> column = columnSelector.apply(groupTable);
         PropTypeColumn<?> preColumn = predicate == null ? column : new CaseWhenEntityBuilder(this.getEntitySQLContext()).caseWhen(() -> predicate.apply(groupTable)).then(column).elseEnd(null, column.getPropertyType());
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {

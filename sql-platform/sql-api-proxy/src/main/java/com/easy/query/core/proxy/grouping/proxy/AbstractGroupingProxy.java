@@ -105,7 +105,7 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
     }
 
     public <TProperty> ColumnFunctionCompareComparableStringChainExpression<String> join(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TProperty>> columnSelector, String delimiter) {
-        return where(null).join(columnSelector, delimiter);
+        return where(null).joining(columnSelector, delimiter);
     }
 
 

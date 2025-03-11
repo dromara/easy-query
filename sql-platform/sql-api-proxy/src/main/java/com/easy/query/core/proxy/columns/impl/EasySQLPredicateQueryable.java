@@ -121,7 +121,7 @@ public class EasySQLPredicateQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>,
     }
 
     @Override
-    public <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> joining(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
+    public <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> min(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
         return sqlQueryable.min(columnSelector);
     }
 

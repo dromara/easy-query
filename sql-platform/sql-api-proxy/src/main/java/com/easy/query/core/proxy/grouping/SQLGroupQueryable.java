@@ -1,16 +1,12 @@
 package com.easy.query.core.proxy.grouping;
 
-import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
-import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.math.BigDecimal;
 
@@ -53,5 +49,5 @@ public interface SQLGroupQueryable<TSourceProxy> extends EntitySQLContextAvailab
 
     <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> min(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TMember>> columnSelector);
 
-    <TMember> ColumnFunctionCompareComparableStringChainExpression<String> join(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TMember>> columnSelector, String delimiter);
+    <TMember> ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TMember>> columnSelector, String delimiter);
 }

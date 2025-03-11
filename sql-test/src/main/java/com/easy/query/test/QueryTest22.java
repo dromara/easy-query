@@ -134,7 +134,7 @@ public class QueryTest22 extends BaseTest {
                         user.bankCards().where(x -> x.type().eq("123")).
                                 sum(o -> o.code().toNumber(Integer.class)),
                         user.bankCards().where(x -> x.type().eq("123")).
-                                joining(o -> o.code())
+                                min(o -> o.code())
                 ))
                 .toList();
         listenerContextManager.clear();
@@ -927,7 +927,7 @@ public class QueryTest22 extends BaseTest {
                 .manyJoin(x->x.bankCards())
                 .where(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设")).distinct()
-                            .joining(x -> x.type()).eq("maxtype");
+                            .min(x -> x.type()).eq("maxtype");
 
                 }).toList();
         listenerContextManager.clear();
@@ -949,7 +949,7 @@ public class QueryTest22 extends BaseTest {
                 .manyJoin(x->x.bankCards())
                 .where(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设"))
-                            .joining(x -> x.type()).eq("maxtype");
+                            .min(x -> x.type()).eq("maxtype");
 
                 }).toList();
         listenerContextManager.clear();
@@ -971,7 +971,7 @@ public class QueryTest22 extends BaseTest {
 //                .manyJoin(x->x.bankCards())
                 .where(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设"))
-                            .joining(x -> x.type()).eq("maxtype");
+                            .min(x -> x.type()).eq("maxtype");
 
                 }).toList();
         listenerContextManager.clear();
@@ -1054,7 +1054,7 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t2.`__join2__` AS `value1`,t2.`__join3__` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,GROUP_CONCAT((CASE WHEN t1.`type` = ? THEN t1.`code` ELSE ? END) SEPARATOR ?) AS `__join2__`,GROUP_CONCAT(t1.`code` SEPARATOR ?) AS `__join3__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t2.`__joining2__` AS `value1`,t2.`__joining3__` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,GROUP_CONCAT((CASE WHEN t1.`type` = ? THEN t1.`code` ELSE ? END) SEPARATOR ?) AS `__joining2__`,GROUP_CONCAT(t1.`code` SEPARATOR ?) AS `__joining3__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),null(null),,(String),,(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
