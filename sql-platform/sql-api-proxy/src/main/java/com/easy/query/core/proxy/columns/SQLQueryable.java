@@ -1,36 +1,20 @@
 package com.easy.query.core.proxy.columns;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.core.basic.api.internal.ExpressionConfigurable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
-import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.ManyPropColumn;
-import com.easy.query.core.proxy.PropColumn;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
-import com.easy.query.core.proxy.columns.impl.EasySQLPredicateQueryable;
-import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.core.ProxyFlatElementEntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableBooleanChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableAnyChainExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableBooleanChainExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
-import com.easy.query.core.proxy.impl.SQLColumnIncludeColumn2Impl;
-import com.easy.query.core.proxy.impl.SQLPredicateImpl;
-import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
-import com.easy.query.core.proxy.sql.include.IncludeManyAvailable;
-import com.easy.query.core.util.EasyClassUtil;
-import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
 
 import java.math.BigDecimal;
 
@@ -115,6 +99,8 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
     <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> max(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector);
 
     <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> min(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector);
+
+    ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<T1Proxy, PropTypeColumn<String>> columnSelector, String delimiter);
 
     /**
      * 暂开集合元素

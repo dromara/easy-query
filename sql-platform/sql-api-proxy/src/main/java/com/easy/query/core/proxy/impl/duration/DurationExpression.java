@@ -3,6 +3,7 @@ package com.easy.query.core.proxy.impl.duration;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
+import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.extension.functions.ColumnDateTimeFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
@@ -35,46 +36,18 @@ public class DurationExpression {
     private ColumnFunctionCompareComparableNumberChainExpression<Long> duration(DateTimeDurationEnum durationEnum) {
         if (afterConstant != null) {
             return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(before.getEntitySQLContext(), before.getTable(), before.getValue(), fx -> {
-                if (before instanceof DSLSQLFunctionAvailable) {
-                    SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) before).func().apply(fx);
-                    return fx.duration2(s -> {
-                        s.sqlFunc(sqlFunction).value(afterConstant);
-                    }, durationEnum);
-                } else {
-                    return fx.duration2(s -> {
-                        s.column(before,before.getValue()).value(afterConstant);
-                    }, durationEnum);
-                }
+                return fx.duration2(s -> {
+                    PropTypeColumn.columnFuncSelector(s,before);
+                    s.value(afterConstant);
+                }, durationEnum);
             }, Long.class);
         } else if (afterColumn != null) {
 
             return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(before.getEntitySQLContext(), before.getTable(), before.getValue(), fx -> {
-                if (before instanceof DSLSQLFunctionAvailable) {
-                    SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) before).func().apply(fx);
-                    if (afterColumn instanceof DSLSQLFunctionAvailable) {
-                        DSLSQLFunctionAvailable otherFunction = (DSLSQLFunctionAvailable) afterColumn;
-                        SQLFunction otherDateTimeFunction = otherFunction.func().apply(fx);
-                        return fx.duration2(s -> {
-                            s.sqlFunc(sqlFunction).sqlFunc(otherDateTimeFunction);
-                        }, durationEnum);
-                    } else {
-                        return fx.duration2(s -> {
-                            s.sqlFunc(sqlFunction).column(afterColumn, afterColumn.getValue());
-                        }, durationEnum);
-                    }
-                } else {
-                    if (afterColumn instanceof DSLSQLFunctionAvailable) {
-                        DSLSQLFunctionAvailable otherFunction = (DSLSQLFunctionAvailable) afterColumn;
-                        SQLFunction otherDateTimeFunction = otherFunction.func().apply(fx);
-                        return fx.duration2(s -> {
-                            s.column(before, before.getValue()).sqlFunc(otherDateTimeFunction);
-                        }, durationEnum);
-                    } else {
-                        return fx.duration2(s -> {
-                            s.column(before, before.getValue()).column(afterColumn, afterColumn.getValue());
-                        }, durationEnum);
-                    }
-                }
+                return fx.duration2(s -> {
+                    PropTypeColumn.columnFuncSelector(s,before);
+                    PropTypeColumn.columnFuncSelector(s,afterColumn);
+                }, durationEnum);
             }, Long.class);
         } else {
             throw new EasyQueryInvalidOperationException("duration error,after constant and after column all null");

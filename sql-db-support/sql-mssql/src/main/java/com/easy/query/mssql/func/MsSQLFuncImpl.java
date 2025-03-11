@@ -89,8 +89,8 @@ public class MsSQLFuncImpl extends SQLFuncImpl {
     }
 
     @Override
-    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression,boolean distinct) {
-        return new MsSQLJoinSQLFunction(getColumnExpressions(sqlExpression),distinct);
+    public SQLFunction joining(SQLExpression1<ColumnFuncSelector> sqlExpression,boolean distinct) {
+        return new MsSQLJoiningSQLFunction(getColumnExpressions(sqlExpression),distinct);
     }
 
     @Override

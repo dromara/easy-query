@@ -1,4 +1,4 @@
-package com.easy.query.kingbase.es.func;
+package com.easy.query.clickhouse.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
@@ -12,25 +12,20 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class KingbaseESJoinSQLFunction extends AbstractExpressionSQLFunction {
+public class ClickHouseJoiningSQLFunction extends AbstractExpressionSQLFunction {
     private final List<ColumnExpression> columnExpressions;
-    private final boolean distinct;
 
-    public KingbaseESJoinSQLFunction(List<ColumnExpression> columnExpressions,boolean distinct) {
+    public ClickHouseJoiningSQLFunction(List<ColumnExpression> columnExpressions) {
 
         this.columnExpressions = columnExpressions;
-        this.distinct = distinct;
     }
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         if(columnExpressions.size()!=2){
-            throw new IllegalArgumentException("join arguments != 2");
+            throw new IllegalArgumentException("joining arguments != 2");
         }
-        if(distinct){
-            return "STRING_AGG(DISTINCT ({1})::TEXT,{0})";
-        }
-        return "STRING_AGG(({1})::TEXT,{0})";
+        return "arrayStringConcat({1},{0})";
     }
 
     @Override

@@ -1,20 +1,13 @@
 package com.easy.query.db2.func;
 
-import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.SQLFuncImpl;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
-import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
-import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
-import com.easy.query.core.func.def.enums.MathMethodEnum;
-import com.easy.query.core.func.def.enums.TimeUnitEnum;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * create time 2023/10/13 18:16
@@ -63,8 +56,8 @@ public class DB2FuncImpl extends SQLFuncImpl {
     }
 
     @Override
-    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean distinct) {
-        return new DB2JoinSQLFunction(getColumnExpressions(sqlExpression),distinct);
+    public SQLFunction joining(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean distinct) {
+        return new DB2JoiningSQLFunction(getColumnExpressions(sqlExpression),distinct);
     }
 
     @Override

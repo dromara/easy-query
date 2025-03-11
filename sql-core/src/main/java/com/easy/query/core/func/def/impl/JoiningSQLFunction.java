@@ -1,4 +1,4 @@
-package com.easy.query.pgsql.func;
+package com.easy.query.core.func.def.impl;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
@@ -12,11 +12,11 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class PgSQLJoinSQLFunction extends AbstractExpressionSQLFunction {
+public class JoiningSQLFunction extends AbstractExpressionSQLFunction {
     private final List<ColumnExpression> columnExpressions;
     private final boolean distinct;
 
-    public PgSQLJoinSQLFunction(List<ColumnExpression> columnExpressions,boolean distinct) {
+    public JoiningSQLFunction(List<ColumnExpression> columnExpressions, boolean distinct) {
 
         this.columnExpressions = columnExpressions;
         this.distinct = distinct;
@@ -24,13 +24,13 @@ public class PgSQLJoinSQLFunction extends AbstractExpressionSQLFunction {
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        if(columnExpressions.size()!=2){
-            throw new IllegalArgumentException("join arguments != 2");
+        if (columnExpressions.size() != 2) {
+            throw new IllegalArgumentException("joining arguments != 2");
         }
-        if(distinct){
-            return "STRING_AGG(DISTINCT ({1})::TEXT, {0})";
+        if (distinct) {
+            return "GROUP_CONCAT(DISTINCT {1} SEPARATOR {0})";
         }
-        return "STRING_AGG(({1})::TEXT, {0})";
+        return "GROUP_CONCAT({1} SEPARATOR {0})";
     }
 
     @Override

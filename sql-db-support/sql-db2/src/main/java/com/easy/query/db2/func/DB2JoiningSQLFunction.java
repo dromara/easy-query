@@ -1,4 +1,4 @@
-package com.easy.query.dameng.func;
+package com.easy.query.db2.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
@@ -17,11 +17,11 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class DamengJoinSQLFunction extends AbstractExpressionSQLFunction {
+public class DB2JoiningSQLFunction extends AbstractExpressionSQLFunction {
     private final List<ColumnExpression> columnExpressions;
     private final boolean distinct;
 
-    public DamengJoinSQLFunction(List<ColumnExpression> columnExpressions, boolean distinct) {
+    public DB2JoiningSQLFunction(List<ColumnExpression> columnExpressions, boolean distinct) {
 
         this.columnExpressions = columnExpressions;
         this.distinct = distinct;
@@ -30,7 +30,7 @@ public class DamengJoinSQLFunction extends AbstractExpressionSQLFunction {
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         if (columnExpressions.size() < 2) {
-            throw new IllegalArgumentException("join arguments < 2");
+            throw new IllegalArgumentException("joining arguments < 2");
         }
         if (columnExpressions.size() == 2) {
             if (defaultTable != null) {
@@ -51,7 +51,7 @@ public class DamengJoinSQLFunction extends AbstractExpressionSQLFunction {
         for (int i = 0; i < i1; i++) {
             orders.add("{" + (i + 2) + "}");
         }
-        if(distinct){
+        if (distinct) {
             return String.format("LISTAGG(DISTINCT TO_CHAR({1}), {0}) WITHIN GROUP(ORDER BY %s)", String.join(",", orders));
         }
         return String.format("LISTAGG(TO_CHAR({1}), {0}) WITHIN GROUP(ORDER BY %s)", String.join(",", orders));

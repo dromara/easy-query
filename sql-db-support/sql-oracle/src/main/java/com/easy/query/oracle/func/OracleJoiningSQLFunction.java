@@ -1,4 +1,4 @@
-package com.easy.query.db2.func;
+package com.easy.query.oracle.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
@@ -17,11 +17,11 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class DB2JoinSQLFunction extends AbstractExpressionSQLFunction {
+public class OracleJoiningSQLFunction extends AbstractExpressionSQLFunction {
     private final List<ColumnExpression> columnExpressions;
     private final boolean distinct;
 
-    public DB2JoinSQLFunction(List<ColumnExpression> columnExpressions, boolean distinct) {
+    public OracleJoiningSQLFunction(List<ColumnExpression> columnExpressions, boolean distinct) {
 
         this.columnExpressions = columnExpressions;
         this.distinct = distinct;
@@ -30,7 +30,7 @@ public class DB2JoinSQLFunction extends AbstractExpressionSQLFunction {
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         if (columnExpressions.size() < 2) {
-            throw new IllegalArgumentException("join arguments < 2");
+            throw new IllegalArgumentException("joining arguments < 2");
         }
         if (columnExpressions.size() == 2) {
             if (defaultTable != null) {

@@ -310,17 +310,36 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
             }
         }, String.class);
     }
+
+    /**
+     * 请使用{@link #joining(String)}
+     * @param delimiter
+     * @return
+     */
+    @Deprecated
     default ColumnFunctionCompareComparableStringChainExpression<String> join(String delimiter) {
-        return join(delimiter,false);
+        return joining(delimiter,false);
     }
+
+    /**
+     * 请使用 {@link #joining(String, boolean)}
+     * @param delimiter
+     * @param distinct
+     * @return
+     */
+    @Deprecated
     default ColumnFunctionCompareComparableStringChainExpression<String> join(String delimiter, boolean distinct) {
+        return joining(delimiter,distinct);
+    }
+    default ColumnFunctionCompareComparableStringChainExpression<String> joining(String delimiter) {
+        return joining(delimiter,false);
+    }
+    default ColumnFunctionCompareComparableStringChainExpression<String> joining(String delimiter, boolean distinct) {
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.join(sqlFunction,delimiter,distinct);
-            } else {
-                return fx.join(this.getValue(),delimiter,distinct);
-            }
+            return fx.joining(x->{
+                x.value(delimiter);
+                PropTypeColumn.columnFuncSelector(x,this);
+            },distinct);
         }, String.class);
     }
 

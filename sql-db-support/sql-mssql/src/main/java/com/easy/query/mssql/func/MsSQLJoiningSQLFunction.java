@@ -3,7 +3,6 @@ package com.easy.query.mssql.func;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
-import com.easy.query.core.inject.ServiceProvider;
 
 import java.util.List;
 
@@ -13,11 +12,11 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class MsSQLJoinSQLFunction extends AbstractExpressionSQLFunction {
+public class MsSQLJoiningSQLFunction extends AbstractExpressionSQLFunction {
     private final List<ColumnExpression> columnExpressions;
     private final boolean distinct;
 
-    public MsSQLJoinSQLFunction(List<ColumnExpression> columnExpressions,boolean distinct) {
+    public MsSQLJoiningSQLFunction(List<ColumnExpression> columnExpressions, boolean distinct) {
 
         this.columnExpressions = columnExpressions;
         this.distinct = distinct;
@@ -25,8 +24,8 @@ public class MsSQLJoinSQLFunction extends AbstractExpressionSQLFunction {
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        if(columnExpressions.size()!=2){
-                throw new IllegalArgumentException("join arguments != 2");
+        if (columnExpressions.size() != 2) {
+            throw new IllegalArgumentException("joining arguments != 2");
         }
 //        if(defaultTable!=null){
 //            ColumnPropertyExpression columnPropertyExpression = (ColumnPropertyExpression)columnExpressions.get(1);
@@ -41,7 +40,7 @@ public class MsSQLJoinSQLFunction extends AbstractExpressionSQLFunction {
 //            columnExpressions.add(new ColumnSubQueryExpressionImpl(forXmlQuery));
 //            return "STUFF(({1} FOR XML PATH('')),1,LEN({0}),'')";
 //        }
-        if(distinct){
+        if (distinct) {
             return "STRING_AGG(DISTINCT {1}, {0})";
         }
         return "STRING_AGG({1}, {0})";

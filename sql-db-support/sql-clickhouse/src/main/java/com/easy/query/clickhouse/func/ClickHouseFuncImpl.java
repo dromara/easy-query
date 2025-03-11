@@ -8,7 +8,6 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
-import com.easy.query.core.func.def.impl.UtcNowSQLFunction;
 
 import java.util.concurrent.TimeUnit;
 
@@ -74,8 +73,8 @@ public class ClickHouseFuncImpl extends SQLFuncImpl {
     }
 
     @Override
-    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression,boolean distinct) {
-        return new ClickHouseJoinSQLFunction(getColumnExpressions(sqlExpression));
+    public SQLFunction joining(SQLExpression1<ColumnFuncSelector> sqlExpression,boolean distinct) {
+        return new ClickHouseJoiningSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override

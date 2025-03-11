@@ -84,8 +84,8 @@ public class OracleSQLFuncImpl extends SQLFuncImpl {
     }
 
     @Override
-    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression,boolean distinct) {
-        return new OracleJoinSQLFunction(getColumnExpressions(sqlExpression),distinct);
+    public SQLFunction joining(SQLExpression1<ColumnFuncSelector> sqlExpression,boolean distinct) {
+        return new OracleJoiningSQLFunction(getColumnExpressions(sqlExpression),distinct);
     }
 
     @Override

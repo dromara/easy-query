@@ -10,8 +10,10 @@ import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailab
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableBooleanChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableAnyChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableStringChainExpressionImpl;
 import com.easy.query.core.proxy.grouping.DefaultSQLGroupQueryable;
 
 import java.math.BigDecimal;
@@ -133,13 +135,22 @@ public class EasyGroupSQLPredicateQueryable<T1Proxy extends ProxyEntity<T1Proxy,
     }
 
     @Override
-    public <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> min(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
+    public <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> joining(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
         ColumnFunctionCompareComparableAnyChainExpression<TMember> min = new DefaultSQLGroupQueryable<>(manyJoinPredicateToGroupProjectProvider.getT1Proxy(), manyJoinPredicateToGroupProjectProvider.getT1Proxy().getEntitySQLContext(), manyJoinPredicateToGroupProjectProvider.getManyGroupJoinWhereExpression()).min(columnSelector);
         String alias = manyJoinPredicateToGroupProjectProvider.getOrAppendGroupProjects(min, "min");
         return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), manyJoinPredicateToGroupProjectProvider.getManyGroupJoinTable(), alias, f -> f.anySQLFunction("{0}", c -> c.column(alias)), min.getPropertyType());
 
     }
-//    @Override
+
+    @Override
+    public ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<T1Proxy, PropTypeColumn<String>> columnSelector, String delimiter) {
+
+        ColumnFunctionCompareComparableStringChainExpression<String> join = new DefaultSQLGroupQueryable<>(manyJoinPredicateToGroupProjectProvider.getT1Proxy(), manyJoinPredicateToGroupProjectProvider.getT1Proxy().getEntitySQLContext(), manyJoinPredicateToGroupProjectProvider.getManyGroupJoinWhereExpression()).distinct(distinct).join(columnSelector,delimiter);
+        String alias = manyJoinPredicateToGroupProjectProvider.getOrAppendGroupProjects(join, "join");
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), manyJoinPredicateToGroupProjectProvider.getManyGroupJoinTable(), alias, f -> f.anySQLFunction("{0}", c -> c.column(alias)), join.getPropertyType());
+
+    }
+    //    @Override
 //    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<TMember> sum(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
 //        return sqlQueryable.sum(columnSelector);
 //    }

@@ -11,6 +11,7 @@ import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailab
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableBooleanChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
 
 import java.math.BigDecimal;
 
@@ -120,11 +121,15 @@ public class EasySQLPredicateQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>,
     }
 
     @Override
-    public <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> min(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
+    public <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> joining(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
         return sqlQueryable.min(columnSelector);
     }
 
-//    @Override
+    @Override
+    public ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<T1Proxy, PropTypeColumn<String>> columnSelector, String delimiter) {
+        return sqlQueryable.distinct(distinct).joining(columnSelector,delimiter);
+    }
+    //    @Override
 //    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<TMember> sum(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
 //        return sqlQueryable.sum(columnSelector);
 //    }

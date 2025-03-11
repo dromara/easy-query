@@ -39,7 +39,7 @@ import com.easy.query.core.func.def.impl.DateTimePropertySQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeSQLFormatSQLFunction;
 import com.easy.query.core.func.def.impl.EmptySQLFunction;
 import com.easy.query.core.func.def.impl.EqualsWithSQLFunction;
-import com.easy.query.core.func.def.impl.JoinSQLFunction;
+import com.easy.query.core.func.def.impl.JoiningSQLFunction;
 import com.easy.query.core.func.def.impl.JsonFieldSQLFunction;
 import com.easy.query.core.func.def.impl.LeftPadSQLFunction;
 import com.easy.query.core.func.def.impl.LengthSQLFunction;
@@ -254,8 +254,8 @@ public class SQLFuncImpl implements SQLFunc {
     }
 
     @Override
-    public SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean distinct) {
-        return new JoinSQLFunction(getColumnExpressions(sqlExpression), distinct);
+    public SQLFunction joining(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean distinct) {
+        return new JoiningSQLFunction(getColumnExpressions(sqlExpression), distinct);
     }
 
     @Override

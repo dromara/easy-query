@@ -6,7 +6,6 @@ import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
-import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
@@ -14,24 +13,17 @@ import com.easy.query.core.proxy.core.draft.proxy.Draft4Proxy;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.doc.MyComUser;
-import com.easy.query.test.doc.entity.DocBank;
 import com.easy.query.test.doc.entity.DocBankCard;
 import com.easy.query.test.doc.entity.DocPart;
 import com.easy.query.test.doc.entity.DocUser;
-import com.easy.query.test.doc.entity.DocUserBook;
 import com.easy.query.test.doc.entity.proxy.DocUserProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
-import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -142,7 +134,7 @@ public class QueryTest22 extends BaseTest {
                         user.bankCards().where(x -> x.type().eq("123")).
                                 sum(o -> o.code().toNumber(Integer.class)),
                         user.bankCards().where(x -> x.type().eq("123")).
-                                min(o -> o.code())
+                                joining(o -> o.code())
                 ))
                 .toList();
         listenerContextManager.clear();
@@ -935,7 +927,7 @@ public class QueryTest22 extends BaseTest {
                 .manyJoin(x->x.bankCards())
                 .where(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设")).distinct()
-                            .min(x -> x.type()).eq("maxtype");
+                            .joining(x -> x.type()).eq("maxtype");
 
                 }).toList();
         listenerContextManager.clear();
@@ -957,7 +949,7 @@ public class QueryTest22 extends BaseTest {
                 .manyJoin(x->x.bankCards())
                 .where(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设"))
-                            .min(x -> x.type()).eq("maxtype");
+                            .joining(x -> x.type()).eq("maxtype");
 
                 }).toList();
         listenerContextManager.clear();
@@ -979,7 +971,7 @@ public class QueryTest22 extends BaseTest {
 //                .manyJoin(x->x.bankCards())
                 .where(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设"))
-                            .min(x -> x.type()).eq("maxtype");
+                            .joining(x -> x.type()).eq("maxtype");
 
                 }).toList();
         listenerContextManager.clear();
@@ -1043,6 +1035,47 @@ public class QueryTest22 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT MAX((t.`star` + ?)) FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Long),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testSelectAnyElement(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft2<String, String>> list = easyEntityQuery.queryable(DocUser.class)
+                .manyJoin(x -> x.bankCards())
+                .select(user -> Select.DRAFT.of(
+                        user.bankCards().where(o -> o.type().eq("123")).joining(x -> x.code(), ","),
+                        user.bankCards().joining(x -> x.code(), ",")
+                )).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t2.`__join2__` AS `value1`,t2.`__join3__` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,GROUP_CONCAT((CASE WHEN t1.`type` = ? THEN t1.`code` ELSE ? END) SEPARATOR ?) AS `__join2__`,GROUP_CONCAT(t1.`code` SEPARATOR ?) AS `__join3__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),null(null),,(String),,(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testSelectAnyElement2(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft2<String, String>> list = easyEntityQuery.queryable(DocUser.class)
+                .select(user -> Select.DRAFT.of(
+                        user.bankCards().where(o -> o.type().eq("123")).joining(x -> x.code(), ","),
+                        user.bankCards().joining(x -> x.code(), ",")
+                )).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT (SELECT GROUP_CONCAT(t1.`code` SEPARATOR ?) FROM `doc_bank_card` t1 WHERE t1.`uid` = t.`id` AND t1.`type` = ?) AS `value1`,(SELECT GROUP_CONCAT(t3.`code` SEPARATOR ?) FROM `doc_bank_card` t3 WHERE t3.`uid` = t.`id`) AS `value2` FROM `doc_user` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(",(String),123(String),,(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 

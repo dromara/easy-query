@@ -228,14 +228,26 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, String.class);
     }
 
+    /**
+     * 请使用{@link #joining(String)} 或{@link #joining(String, boolean)}
+     * @param delimiter
+     * @return
+     */
+    @Deprecated
     default ColumnFunctionCompareComparableAnyChainExpression<String> join(String delimiter) {
+        return joining(delimiter);
+    }
+
+    default ColumnFunctionCompareComparableAnyChainExpression<String> joining(String delimiter) {
+        return joining(delimiter,false);
+    }
+
+    default ColumnFunctionCompareComparableAnyChainExpression<String> joining(String delimiter, boolean distinct) {
         return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.join(sqlFunction, delimiter);
-            } else {
-                return fx.join(this.getValue(), delimiter);
-            }
+            return fx.joining(x -> {
+                x.value(delimiter);
+                PropTypeColumn.columnFuncSelector(x, this);
+            }, distinct);
         }, String.class);
     }
 

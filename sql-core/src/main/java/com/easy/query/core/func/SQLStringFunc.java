@@ -550,25 +550,40 @@ public interface SQLStringFunc {
      * @param delimiter 分隔符
      * @return 列组合函数
      */
+    @Deprecated
     default SQLFunction join(String property, String delimiter) {
         return join(s -> {
             s.value(delimiter);
             s.column(property);
-        },false);
+        }, false);
     }
+    default SQLFunction joining(String property, String delimiter) {
+        return joining(s -> {
+            s.value(delimiter);
+            s.column(property);
+        }, false);
+    }
+
     /**
      * 列组合
      *
      * @param property  属性列
      * @param delimiter 分隔符
-     * @param distinct 是否去重
+     * @param distinct  是否去重
      * @return 列组合函数
      */
+    @Deprecated
     default SQLFunction join(String property, String delimiter, boolean distinct) {
         return join(s -> {
             s.value(delimiter);
             s.column(property);
-        },distinct);
+        }, distinct);
+    }
+    default SQLFunction joining(String property, String delimiter, boolean distinct) {
+        return joining(s -> {
+            s.value(delimiter);
+            s.column(property);
+        }, distinct);
     }
 
     /**
@@ -578,12 +593,18 @@ public interface SQLStringFunc {
      * @param delimiter   分隔符
      * @return 列组合函数
      */
+    @Deprecated
     default SQLFunction join(SQLFunction sqlFunction, String delimiter) {
         return join(s -> {
             s.value(delimiter);
             s.sqlFunc(sqlFunction);
-        },false);
+        }, false);
     }
+
+    default SQLFunction joining(SQLFunction sqlFunction, String delimiter) {
+        return joining(sqlFunction, delimiter, false);
+    }
+
     /**
      * 列组合
      *
@@ -591,11 +612,19 @@ public interface SQLStringFunc {
      * @param delimiter   分隔符
      * @return 列组合函数
      */
+    @Deprecated
     default SQLFunction join(SQLFunction sqlFunction, String delimiter, boolean distinct) {
         return join(s -> {
             s.value(delimiter);
             s.sqlFunc(sqlFunction);
-        },distinct);
+        }, distinct);
+    }
+
+    default SQLFunction joining(SQLFunction sqlFunction, String delimiter, boolean distinct) {
+        return joining(s -> {
+            s.value(delimiter);
+            s.sqlFunc(sqlFunction);
+        }, distinct);
     }
 
     /**
@@ -605,7 +634,12 @@ public interface SQLStringFunc {
      * @param distinct      是否去重
      * @return 列组合函数
      */
-    SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean distinct);
+    @Deprecated
+    default SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean distinct) {
+        return joining(sqlExpression, distinct);
+    }
+
+    SQLFunction joining(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean distinct);
 
     /**
      * 长度
