@@ -24,6 +24,7 @@ import java.util.concurrent.Executors;
 public class EasyQueryProperties {
 
     private Boolean enable = false;
+    private Boolean build = true;
     private Boolean deleteThrow = true;
     private DatabaseEnum database = DatabaseEnum.DEFAULT;
     private SQLParameterPrintEnum sqlParameterPrint = SQLParameterPrintEnum.DEFAULT;
@@ -468,6 +469,14 @@ public class EasyQueryProperties {
 
     public void setMappingStrategy(EntityMappingStrategyEnum mappingStrategy) {
         this.mappingStrategy = mappingStrategy;
+    }
+
+    public Boolean getBuild() {
+        return build;
+    }
+
+    public void setBuild(Boolean build) {
+        this.build = build;
     }
 
     public EasyQueryProperties() {
