@@ -12,7 +12,7 @@ import com.easy.query.core.proxy.SQLColumnSetExpression;
 import com.easy.query.core.proxy.SQLOrderByExpression;
 import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
-import com.easy.query.core.proxy.columns.impl.ManyJoinPredicateToGroupProjectProvider;
+import com.easy.query.core.proxy.columns.impl.RewritePredicteToSelectProvider;
 import com.easy.query.core.proxy.core.accpet.EntityExpressionAccept;
 
 /**
@@ -22,13 +22,13 @@ import com.easy.query.core.proxy.core.accpet.EntityExpressionAccept;
  * @author xuejiaming
  */
 public class ProxyManyJoinFlatElementEntitySQLContext implements FlatEntitySQLContext {
-    private final ManyJoinPredicateToGroupProjectProvider<?, ?> manyJoinPredicateToGroupProjectProvider;
+    private final RewritePredicteToSelectProvider<?, ?> rewritePredicteToSelectProvider;
     private final EntityExpressionBuilder entityExpressionBuilder;
     private final QueryRuntimeContext runtimeContext;
     private final SQLFuncExpression1<?, SQLSelectAsExpression> sqlSelectAsExpressionFunction;
 
-    public ProxyManyJoinFlatElementEntitySQLContext(ManyJoinPredicateToGroupProjectProvider<?, ?> manyJoinPredicateToGroupProjectProvider, EntityExpressionBuilder entityExpressionBuilder, QueryRuntimeContext runtimeContext, SQLFuncExpression1<?, SQLSelectAsExpression> sqlSelectAsExpressionFunction) {
-        this.manyJoinPredicateToGroupProjectProvider = manyJoinPredicateToGroupProjectProvider;
+    public ProxyManyJoinFlatElementEntitySQLContext(RewritePredicteToSelectProvider<?, ?> rewritePredicteToSelectProvider, EntityExpressionBuilder entityExpressionBuilder, QueryRuntimeContext runtimeContext, SQLFuncExpression1<?, SQLSelectAsExpression> sqlSelectAsExpressionFunction) {
+        this.rewritePredicteToSelectProvider = rewritePredicteToSelectProvider;
         this.entityExpressionBuilder = entityExpressionBuilder;
 
         this.runtimeContext = runtimeContext;
@@ -42,7 +42,7 @@ public class ProxyManyJoinFlatElementEntitySQLContext implements FlatEntitySQLCo
 
     @Override
     public void accept(SQLPredicateExpression sqlPredicateExpression) {
-        manyJoinPredicateToGroupProjectProvider.flatElementFilterValue(sqlPredicateExpression).eq(true);
+        rewritePredicteToSelectProvider.flatElementFilterValue(sqlPredicateExpression).eq(true);
     }
 
     @Override

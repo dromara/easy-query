@@ -450,7 +450,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
                 valueHolder.setValue(value);
             });
             TableAvailable table = valueHolder.getValue().getOriginalTable();
-            String value = valueHolder.getValue().getValue();
+            String value = valueHolder.getValue().getNavValue();
             if (adapterExpression == null) {
 
                 getClientQueryable().manyJoin(manyJoinSelector -> manyJoinSelector.manyColumn(table,value), null);

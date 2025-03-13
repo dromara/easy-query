@@ -5,7 +5,7 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.expression.EntityTableAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.sql.builder.AnonymousManyGroupJoinEntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -37,7 +37,7 @@ public interface ExpressionBuilderFactory {
        return createAnonymousEntityTableExpressionBuilder(new EntityTableAvailable(entityMetadata,true),multiTableType,entityQueryExpressionBuilder);
    }
     EntityTableExpressionBuilder createAnonymousEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
-    AnonymousManyGroupJoinEntityTableExpressionBuilder createAnonymousManyGroupEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder, String[] defaultKeys);
+    AnonymousManyJoinEntityTableExpressionBuilder createAnonymousManyGroupEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder, String[] defaultKeys);
     EntityQueryExpressionBuilder createEntityQueryExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass);
     default EntityQueryExpressionBuilder createAnonymousQueryExpressionBuilder(String sql, Collection<Object> sqlParams, ExpressionContext sqlExpressionContext, Class<?> queryClass){
         return new AnonymousQueryExpressionBuilder(sql,sqlParams,sqlExpressionContext,queryClass);

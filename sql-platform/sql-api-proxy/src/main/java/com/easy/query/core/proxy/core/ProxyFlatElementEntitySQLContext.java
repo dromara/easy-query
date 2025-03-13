@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.core;
 
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
@@ -25,12 +26,14 @@ import com.easy.query.core.proxy.core.accpet.EntityExpressionAccept;
 public class ProxyFlatElementEntitySQLContext implements FlatEntitySQLContext {
     private final SQLQueryable<?,?> sqlQueryable;
     private final FilterContext whereFilterContext;
+    private final ClientQueryable<?> clientQueryable;
     private final QueryRuntimeContext runtimeContext;
     private final SQLFuncExpression1<?, SQLSelectAsExpression> sqlSelectAsExpressionFunction;
 
-    public ProxyFlatElementEntitySQLContext(SQLQueryable<?,?> sqlQueryable, QueryRuntimeContext runtimeContext, SQLFuncExpression1<?, SQLSelectAsExpression> sqlSelectAsExpressionFunction) {
+    public ProxyFlatElementEntitySQLContext(SQLQueryable<?,?> sqlQueryable, ClientQueryable<?> clientQueryable, QueryRuntimeContext runtimeContext, SQLFuncExpression1<?, SQLSelectAsExpression> sqlSelectAsExpressionFunction) {
         this.sqlQueryable = sqlQueryable;
-        this.whereFilterContext = sqlQueryable.getQueryable().getClientQueryable().getSQLExpressionProvider1().getWhereFilterContext();
+        this.whereFilterContext = clientQueryable.getSQLExpressionProvider1().getWhereFilterContext();
+        this.clientQueryable = clientQueryable;
 
         this.runtimeContext = runtimeContext;
         this.sqlSelectAsExpressionFunction = sqlSelectAsExpressionFunction;
@@ -81,7 +84,7 @@ public class ProxyFlatElementEntitySQLContext implements FlatEntitySQLContext {
 
     @Override
     public EntityExpressionBuilder getEntityExpressionBuilder() {
-        return sqlQueryable.getQueryable().getSQLEntityExpressionBuilder();
+        return sqlQueryable.getSubQueryContext().getEntityExpressionBuilder();
     }
 
     @Override

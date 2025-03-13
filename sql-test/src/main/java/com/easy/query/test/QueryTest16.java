@@ -7,22 +7,14 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
-import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.core.draft.Draft2;
-import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.oracle.config.OracleDatabaseConfiguration;
-import com.easy.query.test.dto.UserBookEncryptVO;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.blogtest.Company;
 import com.easy.query.test.entity.blogtest.CompanyVO;
-import com.easy.query.test.entity.blogtest.SysMenu;
-import com.easy.query.test.entity.blogtest.SysRole;
 import com.easy.query.test.entity.blogtest.SysUser;
-import com.easy.query.test.entity.blogtest.SysUserAddress;
-import com.easy.query.test.entity.blogtest.UserRole;
-import com.easy.query.test.entity.blogtest.dto.SysUserDTO;
 import com.easy.query.test.entity.blogtest.proxy.CompanyProxy;
 import com.easy.query.test.entity.blogtest.proxy.CompanyVOProxy;
 import com.easy.query.test.entity.navf.UVO;
@@ -37,7 +29,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * create time 2024/4/29 23:02
@@ -1139,7 +1130,7 @@ public class QueryTest16 extends BaseTest {
             LocalDateTime end = LocalDateTime.of(2026, 1, 1, 1, 2);
             List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                     .where(user -> {
-                        user.roles().configure(r -> {
+                        user.roles().configureToSubQuery(r -> {
                             r.asAlias("myRole");
                         }).any(role -> {
                             role.name().like("查询的角色名");
@@ -1167,7 +1158,7 @@ public class QueryTest16 extends BaseTest {
                     .where(user -> {
                         user.company().name().like("123");
 
-                        user.roles().configure(r -> {
+                        user.roles().configureToSubQuery(r -> {
                             r.asAlias("myRole");
                         }).any(role -> {
                             role.name().like("查询的角色名");

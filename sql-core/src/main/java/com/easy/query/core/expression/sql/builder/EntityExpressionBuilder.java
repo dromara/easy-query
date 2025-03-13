@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql.builder;
 
+import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.RelationTableKey;
@@ -33,7 +34,12 @@ public interface EntityExpressionBuilder extends ExpressionBuilder, RuntimeConte
 
     EntityTableExpressionBuilder addRelationEntityTableExpression(RelationTableKey relationTableKey, Function<RelationTableKey, EntityTableExpressionBuilder> tableExpressionSupplier);
 
-    boolean hasManyGroupJoinTable(RelationTableKey relationTableKey);
+    boolean hasManyJoinTable(RelationTableKey relationTableKey);
+    ManyConfiguration addManyConfiguration(RelationTableKey relationTableKey, ManyConfiguration manyConfiguration);
+    ManyConfiguration getManyConfiguration(RelationTableKey relationTableKey);
+
+    void addManyJoinConfiguration(RelationTableKey relationTableKey);
+    boolean hasManyJoinConfiguration(RelationTableKey relationTableKey);
 
     //    EntityTableExpressionBuilder removeRelationEntityTableExpression(RelationTableKey relationTableKey);
     Map<RelationTableKey, EntityTableExpressionBuilder> getRelationTables();

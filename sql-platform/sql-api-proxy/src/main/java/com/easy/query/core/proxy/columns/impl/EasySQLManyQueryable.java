@@ -1,6 +1,7 @@
 package com.easy.query.core.proxy.columns.impl;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.core.basic.api.internal.ExpressionConfigurable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -9,8 +10,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
-import com.easy.query.core.proxy.columns.SQLManyQueryable;
-import com.easy.query.core.proxy.columns.SQLPredicateQueryable;
+import com.easy.query.core.proxy.columns.SubQueryContext;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.core.ProxyFlatElementEntitySQLContext;
@@ -35,38 +35,45 @@ import java.math.BigDecimal;
  *
  * @author xuejiaming
  */
-public class EasySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> implements SQLManyQueryable<TProxy, T1Proxy, T1> {
-    private final EntitySQLContext entitySQLContext;
+public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> implements SQLQueryable<T1Proxy, T1> {
+    private final SubQueryContext<T1Proxy, T1> subqueryContext;
     private final EntityQueryable<T1Proxy, T1> easyEntityQueryable;
-    private final TableAvailable originalTable;
-    private TProxy tProxy;
-    private boolean distinct = false;
 
-    public EasySQLManyQueryable(EntitySQLContext entitySQLContext, EntityQueryable<T1Proxy, T1> easyEntityQueryable, TableAvailable originalTable) {
-
-        this.entitySQLContext = entitySQLContext;
+    public EasySQLManyQueryable(SubQueryContext<T1Proxy, T1> subqueryContext, EntityQueryable<T1Proxy, T1> easyEntityQueryable) {
+        this.subqueryContext = subqueryContext;
         this.easyEntityQueryable = easyEntityQueryable;
-        this.originalTable = originalTable;
     }
 
     @Override
     public EntitySQLContext getEntitySQLContext() {
-        return entitySQLContext;
+        return subqueryContext.getEntitySQLContext();
     }
 
     @Override
-    public EntityQueryable<T1Proxy, T1> getQueryable() {
-        return easyEntityQueryable;
+    public SubQueryContext<T1Proxy, T1> getSubQueryContext() {
+        return subqueryContext;
     }
 
     @Override
     public TableAvailable getOriginalTable() {
-        return originalTable;
+        return subqueryContext.getLeftTable();
     }
+
+//    @Override
+//    public T1Proxy element(int index) {
+//        //添加当前表的partition row_number=0 join当前表作为子表生成relationTableKey
+//        EasyRelationalUtil.getManyJoinRelationTable()
+//        return null;
+//    }
 
     @Override
     public String getNavValue() {
-        return easyEntityQueryable.get1Proxy().getNavValue();
+        return subqueryContext.getFullName();
+    }
+
+    @Override
+    public String getValue() {
+        return subqueryContext.getProperty();
     }
 
     @Override
@@ -76,14 +83,20 @@ public class EasySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
 
     @Override
     public SQLQueryable<T1Proxy, T1> distinct(boolean useDistinct) {
-        this.distinct = useDistinct;
+        this.getSubQueryContext().distinct(useDistinct);
         return this;
     }
 
     @Override
-    public SQLPredicateQueryable<T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression) {
-        getQueryable().where(whereExpression);
-        return new EasySQLPredicateQueryable<>(this, this.distinct);
+    public SQLQueryable<T1Proxy, T1> orderBy(boolean condition, SQLExpression1<T1Proxy> orderExpression) {
+        this.getSubQueryContext().appendOrderByExpression(orderExpression);
+        return this;
+    }
+
+    @Override
+    public SQLQueryable<T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression) {
+        this.getSubQueryContext().appendWhereExpression(whereExpression);
+        return this;
     }
 
     @Override
@@ -91,9 +104,26 @@ public class EasySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
         where(whereExpression).any();
     }
 
+    private void queryableAcceptExpression() {
+        if (this.subqueryContext.getConfigureExpression() != null) {
+            this.subqueryContext.getConfigureExpression().apply(this.easyEntityQueryable);
+        }
+        if (this.subqueryContext.getWhereExpression() != null) {
+            this.easyEntityQueryable.where(this.subqueryContext.getWhereExpression());
+        }
+        if (this.subqueryContext.getOrderByExpression() != null) {
+            this.easyEntityQueryable.orderBy(this.subqueryContext.getOrderByExpression());
+        }
+    }
+
+    private boolean isDistinct() {
+        return this.subqueryContext.isDistinct();
+    }
+
     @Override
     public void any() {
-        getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(getQueryable().limit(1))));
+        queryableAcceptExpression();
+        getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(this.easyEntityQueryable.limit(1))));
     }
 
     @Override
@@ -103,30 +133,35 @@ public class EasySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
 
     @Override
     public void none() {
-        getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.none(getQueryable().limit(1))));
+        queryableAcceptExpression();
+        getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.none(this.easyEntityQueryable.limit(1))));
     }
 
     @Override
     public ColumnFunctionCompareComparableBooleanChainExpression<Boolean> anyValue() {
-        Query<?> anyQuery = getQueryable().limit(1).select("1");
+        queryableAcceptExpression();
+        Query<?> anyQuery = this.easyEntityQueryable.limit(1).select("1");
         return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.exists(anyQuery), Boolean.class);
     }
 
     @Override
     public ColumnFunctionCompareComparableBooleanChainExpression<Boolean> noneValue() {
-        Query<?> anyQuery = getQueryable().limit(1).select("1");
+        queryableAcceptExpression();
+        Query<?> anyQuery = this.easyEntityQueryable.limit(1).select("1");
         return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.not(f.exists(anyQuery)), Boolean.class);
     }
 
     @Override
     public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Long> count(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
-        Query<TMember> longQuery = getQueryable().selectCount(columnSelector, distinct);
+        queryableAcceptExpression();
+        Query<TMember> longQuery = this.easyEntityQueryable.selectCount(columnSelector, isDistinct());
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.subQueryValue(longQuery), Long.class);
     }
 
     @Override
     public ColumnFunctionCompareComparableNumberChainExpression<Long> count() {
-        Query<?> longQuery = getQueryable().selectCount();
+        queryableAcceptExpression();
+        Query<?> longQuery = this.easyEntityQueryable.selectCount();
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.subQueryValue(longQuery), Long.class);
     }
 
@@ -142,57 +177,58 @@ public class EasySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
 
     @Override
     public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<TMember> sum(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
-        Query<TMember> sumQuery = staticSum(getQueryable(), columnSelector, distinct, null);
+        queryableAcceptExpression();
+        Query<TMember> sumQuery = staticSum(this.easyEntityQueryable, columnSelector, isDistinct(), null);
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.nullOrDefault(x -> x.subQuery(sumQuery).format(0)), sumQuery.queryClass());
     }
 
     @Override
     public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
-        Query<TMember> sumQuery = staticSum(getQueryable(), columnSelector, distinct, BigDecimal.class);
+        queryableAcceptExpression();
+        Query<TMember> sumQuery = staticSum(this.easyEntityQueryable, columnSelector, isDistinct(), BigDecimal.class);
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.nullOrDefault(x -> x.subQuery(sumQuery).format(0)), BigDecimal.class);
     }
 
     @Override
     public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
-        Query<BigDecimal> avgQuery = staticAvg(getQueryable(), columnSelector, distinct);
+        queryableAcceptExpression();
+        Query<BigDecimal> avgQuery = staticAvg(this.easyEntityQueryable, columnSelector, isDistinct());
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.nullOrDefault(x -> x.subQuery(avgQuery).format(0)), BigDecimal.class);
     }
 
     @Override
     public <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> max(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
-        Query<TMember> maxQuery = staticMinOrMax(getQueryable(), columnSelector, true);
+        queryableAcceptExpression();
+        Query<TMember> maxQuery = staticMinOrMax(this.easyEntityQueryable, columnSelector, true);
         return minOrMax(maxQuery, this.getEntitySQLContext());
     }
 
     @Override
     public <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> min(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
-        Query<TMember> minQuery = staticMinOrMax(getQueryable(), columnSelector, false);
+        queryableAcceptExpression();
+        Query<TMember> minQuery = staticMinOrMax(this.easyEntityQueryable, columnSelector, false);
         return minOrMax(minQuery, this.getEntitySQLContext());
     }
 
     @Override
     public ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<T1Proxy, PropTypeColumn<String>> columnSelector, String delimiter) {
-        Query<String> joiningQuery = staticJoining(getQueryable(), columnSelector, delimiter, distinct);
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.anySQLFunction("{0}",x -> x.subQuery(joiningQuery)), String.class);
-    }
-
-    @Override
-    public SQLQueryable<T1Proxy, T1> useLogicDelete(boolean enable) {
-        easyEntityQueryable.useLogicDelete(enable);
-        return this;
-    }
-
-    @Override
-    public void _setProxy(TProxy tProxy) {
-        this.tProxy = tProxy;
+        queryableAcceptExpression();
+        Query<String> joiningQuery = staticJoining(this.easyEntityQueryable, columnSelector, delimiter, isDistinct());
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.anySQLFunction("{0}", x -> x.subQuery(joiningQuery)), String.class);
     }
 
     @Override
     public T1Proxy flatElement(SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> flatAdapterExpression) {
         QueryRuntimeContext runtimeContext = this.getEntitySQLContext().getRuntimeContext();
-        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), new ProxyFlatElementEntitySQLContext(this, runtimeContext, flatAdapterExpression));
+        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), new ProxyFlatElementEntitySQLContext(this, this.easyEntityQueryable.getClientQueryable(), runtimeContext, flatAdapterExpression));
         tPropertyProxy.setNavValue(getNavValue());
         return tPropertyProxy;
+    }
+
+    @Override
+    public SQLQueryable<T1Proxy, T1> configureToSubQuery(SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression) {
+        this.subqueryContext.appendConfigureExpression(configureExpression);
+        return this;
     }
 
 

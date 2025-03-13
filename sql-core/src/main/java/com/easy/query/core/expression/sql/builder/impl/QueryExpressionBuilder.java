@@ -6,6 +6,7 @@ import com.easy.query.core.common.reverse.EmptyReverseEach;
 import com.easy.query.core.common.reverse.ReverseEach;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SelectConstSegment;
@@ -40,7 +41,6 @@ import com.easy.query.core.util.EasySQLSegmentUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeSet;
 
 /**
  * @author xuejiaming
@@ -342,6 +342,16 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         if (super.relationTables != null) {
             for (Map.Entry<RelationTableKey, EntityTableExpressionBuilder> relationTableKV : super.relationTables.entrySet()) {
                 queryExpressionBuilder.getRelationTables().put(relationTableKV.getKey(), relationTableKV.getValue().copyEntityTableExpressionBuilder());
+            }
+        }
+        if(super.manyConfigurationMaps!=null){
+            for (Map.Entry<RelationTableKey, ManyConfiguration> manyJoinConfigurationEntry : super.manyConfigurationMaps.entrySet()) {
+                queryExpressionBuilder.addManyConfiguration(manyJoinConfigurationEntry.getKey(),manyJoinConfigurationEntry.getValue());
+            }
+        }
+        if(super.manyJoinConfigurationSets!=null){
+            for (RelationTableKey manyJoinConfigurationSet : super.manyJoinConfigurationSets) {
+                queryExpressionBuilder.addManyJoinConfiguration(manyJoinConfigurationSet);
             }
         }
         return queryExpressionBuilder;

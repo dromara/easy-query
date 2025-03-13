@@ -1,16 +1,13 @@
 package com.easy.query.test;
 
-import com.easy.query.api.proxy.base.LongProxy;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyObjectUtil;
-import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.doc.MyComUser;
@@ -25,7 +22,6 @@ import com.easy.query.test.doc.MyUser;
 import com.easy.query.test.doc.dto.MyComUserDTO1;
 import com.easy.query.test.doc.dto.MyComUserDTO10;
 import com.easy.query.test.doc.dto.MyComUserDTO11;
-import com.easy.query.test.doc.dto.MyComUserDTO2;
 import com.easy.query.test.doc.dto.MyComUserDTO3;
 import com.easy.query.test.doc.dto.MyComUserDTO4;
 import com.easy.query.test.doc.dto.MyComUserDTO5;
@@ -38,10 +34,6 @@ import com.easy.query.test.doc.dto.MySignUpDTO2;
 import com.easy.query.test.doc.dto.MySignUpDTO3;
 import com.easy.query.test.doc.dto.MySignUpDTO4;
 import com.easy.query.test.doc.proxy.MySignUpProxy;
-import com.easy.query.test.dto.autodto.SchoolClassAOProp14;
-import com.easy.query.test.entity.SysUser;
-import com.easy.query.test.entity.Topic;
-import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.SchoolClassAggregate;
 import com.easy.query.test.listener.ListenerContext;
 import lombok.Data;
@@ -53,7 +45,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * create time 2024/10/14 11:14
@@ -190,7 +181,7 @@ public class QueryTestRelationTest extends BaseTest {
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
                 .where(m -> {
                     m.mySignUps()
-                            .configure(s -> {
+                            .configureToSubQuery(s -> {
                                 s.filterConfigure(NotNullOrEmptyValueFilter.DEFAULT);
                             })
                             .any(s -> s.userId().eq(""));

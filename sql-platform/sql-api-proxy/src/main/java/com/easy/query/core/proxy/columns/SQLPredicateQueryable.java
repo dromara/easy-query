@@ -21,10 +21,19 @@ import java.math.BigDecimal;
  */
 public interface SQLPredicateQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends EntitySQLContextAvailable {
 
-    default SQLPredicateQueryable<T1Proxy, T1> distinct(){
+    default SQLPredicateQueryable<T1Proxy, T1> distinct() {
         return distinct(true);
     }
+
     SQLPredicateQueryable<T1Proxy, T1> distinct(boolean useDistinct);
+
+    default SQLPredicateQueryable<T1Proxy, T1> orderBy(SQLExpression1<T1Proxy> orderExpression) {
+        return orderBy(true, orderExpression);
+    }
+
+    SQLPredicateQueryable<T1Proxy, T1> orderBy(boolean condition, SQLExpression1<T1Proxy> orderExpression);
+    T1Proxy element(int index);
+    SQLPredicateQueryable<T1Proxy, T1> elements(int begin,int end);
 
     SQLPredicateQueryable<T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression);
 
@@ -77,5 +86,6 @@ public interface SQLPredicateQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>,
     <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> max(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector);
 
     <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> min(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector);
+
     ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<T1Proxy, PropTypeColumn<String>> columnSelector, String delimiter);
 }

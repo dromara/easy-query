@@ -3,6 +3,7 @@ package com.easy.query.core.expression.sql.builder.internal;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
@@ -11,10 +12,12 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -30,6 +33,8 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
     protected final Class<?> queryClass;
     protected final List<EntityTableExpressionBuilder> tables;
     protected Map<RelationTableKey, EntityTableExpressionBuilder> relationTables;
+    protected Map<RelationTableKey, ManyConfiguration> manyConfigurationMaps;
+    protected Set<RelationTableKey> manyJoinConfigurationSets;
 
     public AbstractEntityExpressionBuilder(ExpressionContext expressionContext, Class<?> queryClass) {
         this.expressionContext = expressionContext;
@@ -82,7 +87,7 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
         }
         expressionContext.getTableContext().addTable(tableExpression.getEntityTable());
         if (tableExpression.getEntityTable() instanceof RelationEntityTableAvailable) {
-            relationTables.put(relationTableKey,tableExpression);
+            relationTables.put(relationTableKey, tableExpression);
             return tableExpression;
         } else {
             throw new UnsupportedOperationException();
@@ -90,11 +95,43 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
     }
 
     @Override
-    public boolean hasManyGroupJoinTable(RelationTableKey relationTableKey) {
+    public boolean hasManyJoinTable(RelationTableKey relationTableKey) {
         if (relationTables == null) {
             return false;
         }
         return relationTables.containsKey(relationTableKey);
+    }
+
+    @Override
+    public ManyConfiguration getManyConfiguration(RelationTableKey relationTableKey) {
+        if (manyConfigurationMaps == null) {
+            return null;
+        }
+        return manyConfigurationMaps.get(relationTableKey);
+    }
+
+    @Override
+    public ManyConfiguration addManyConfiguration(RelationTableKey relationTableKey, ManyConfiguration manyConfiguration) {
+        if (manyConfigurationMaps == null) {
+            this.manyConfigurationMaps = new HashMap<>();
+        }
+        return manyConfigurationMaps.put(relationTableKey, manyConfiguration);
+    }
+
+    @Override
+    public void addManyJoinConfiguration(RelationTableKey relationTableKey) {
+        if (manyJoinConfigurationSets == null) {
+            this.manyJoinConfigurationSets = new HashSet<>();
+        }
+        manyJoinConfigurationSets.add(relationTableKey);
+    }
+
+    @Override
+    public boolean hasManyJoinConfiguration(RelationTableKey relationTableKey) {
+        if (manyJoinConfigurationSets == null) {
+            return false;
+        }
+        return manyJoinConfigurationSets.contains(relationTableKey);
     }
     //
 //    @Override

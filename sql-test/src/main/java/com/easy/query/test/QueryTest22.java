@@ -35,10 +35,11 @@ import java.util.List;
  */
 public class QueryTest22 extends BaseTest {
 
-     public void test1(){
-         BigDecimal bigDecimal = easyEntityQuery.queryable(Topic.class)
-                 .maxOrDefault(x -> x.id().toNumber(Long.class).add(1), BigDecimal.ZERO);
-     }
+    public void test1() {
+        BigDecimal bigDecimal = easyEntityQuery.queryable(Topic.class)
+                .maxOrDefault(x -> x.id().toNumber(Long.class).add(1), BigDecimal.ZERO);
+    }
+
     @Test
     public void testManyGroup() {
 
@@ -64,6 +65,35 @@ public class QueryTest22 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum2__`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum3__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__sum2__` = ? AND t2.`__sum2__` = ? AND t2.`__sum3__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),0(Integer),456(String),0(Integer),123(Integer),456(Integer),789(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void testManyGroupx() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        easyEntityQuery.queryable(DocUser.class)
+                .manyJoin(o -> o.bankCards())
+                .where(user -> {
+//                    user.bankCards().element(0).type().eq("123");
+//                    user.bankCards().elements(0,1).where(x->x.type().eq("456"));
+
+                    user.bankCards().where(x -> x.type().eq("123"))
+                            .sum(o -> o.code().toNumber(Integer.class))
+                            .eq(123);
+                    user.bankCards().configureToSubQuery(x -> x.disableLogicDelete()).where(x -> x.type().eq("123")).
+                            sum(o -> o.code().toNumber(Integer.class))
+                            .eq(123);
+
+                })
+                .toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum2__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__sum2__` = ? AND IFNULL((SELECT SUM(CAST(t3.`code` AS SIGNED)) FROM `doc_bank_card` t3 WHERE t3.`uid` = t.`id` AND t3.`type` = ?),0) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),0(Integer),123(Integer),123(String),123(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 
@@ -99,6 +129,7 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("123(String),0(Integer),456(String),0(Integer),银行(String),%45678%(String),123(Integer),456(Integer),789(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void testManyGroupJoin2() {
 
@@ -146,7 +177,6 @@ public class QueryTest22 extends BaseTest {
     }
 
 
-
     @Test
     public void testManyGroupJoin3() {
 
@@ -161,9 +191,9 @@ public class QueryTest22 extends BaseTest {
                 })
                 .select(user -> Select.DRAFT.of(
                         user.id(),
-                        user.bankCards().where(x->x.type().eq("工商")).count(),
-                        user.bankCards().where(x->x.type().eq("建设")).count(),
-                        user.bankCards().where(x->x.type().eq("农业")).count()
+                        user.bankCards().where(x -> x.type().eq("工商")).count(),
+                        user.bankCards().where(x -> x.type().eq("建设")).count(),
+                        user.bankCards().where(x -> x.type().eq("农业")).count()
                 ))
                 .toList();
         listenerContextManager.clear();
@@ -644,11 +674,11 @@ public class QueryTest22 extends BaseTest {
     }
 
     @Test
-    public void testManyOrder(){
+    public void testManyOrder() {
 
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocPart.class));
-        codeFirstCommand.executeWithTransaction(s->s.commit());
+        codeFirstCommand.executeWithTransaction(s -> s.commit());
 
 
 //
@@ -671,7 +701,7 @@ public class QueryTest22 extends BaseTest {
     }
 
     @Test
-    public void testOrderCountDistinct1(){
+    public void testOrderCountDistinct1() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -682,7 +712,7 @@ public class QueryTest22 extends BaseTest {
 //                .manyJoin(x->x.bankCards())
                 .orderBy(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设"))
-                            .sum(x -> x.parts().distinct().count(p->p.id())).asc();
+                            .sum(x -> x.parts().distinct().count(p -> p.id())).asc();
 
                 }).toList();
         listenerContextManager.clear();
@@ -692,8 +722,9 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("建设(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testOrderCountDistinct2(){
+    public void testOrderCountDistinct2() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -701,10 +732,10 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x->x.bankCards())
+                .manyJoin(x -> x.bankCards())
                 .orderBy(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设"))
-                            .sum(x -> x.parts().distinct().count(p->p.id())).asc();
+                            .sum(x -> x.parts().distinct().count(p -> p.id())).asc();
 
                 }).toList();
         listenerContextManager.clear();
@@ -714,8 +745,9 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("建设(String),0(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testOrderCountDistinct3(){
+    public void testOrderCountDistinct3() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -736,15 +768,16 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("建设(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testOrderCountDistinct4(){
+    public void testOrderCountDistinct4() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<DocUser> list2 = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x->x.bankCards())
+                .manyJoin(x -> x.bankCards())
                 .orderBy(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设"))
                             .distinct()
@@ -758,8 +791,9 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("建设(String),null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testOrderCountDistinct5(){
+    public void testOrderCountDistinct5() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -770,7 +804,7 @@ public class QueryTest22 extends BaseTest {
 //                .manyJoin(x->x.bankCards())
                 .orderBy(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设")).distinct()
-                            .sum(x -> x.parts().distinct().count(p->p.id())).asc();
+                            .sum(x -> x.parts().distinct().count(p -> p.id())).asc();
 
                 }).toList();
         listenerContextManager.clear();
@@ -780,8 +814,9 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("建设(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testOrderCountDistinct6(){
+    public void testOrderCountDistinct6() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -789,10 +824,10 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x->x.bankCards())
+                .manyJoin(x -> x.bankCards())
                 .orderBy(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设")).distinct()
-                            .sum(x -> x.parts().distinct().count(p->p.id())).asc();
+                            .sum(x -> x.parts().distinct().count(p -> p.id())).asc();
 
                 }).toList();
         listenerContextManager.clear();
@@ -802,8 +837,9 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("建设(String),0(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testOrderCountDistinct7(){
+    public void testOrderCountDistinct7() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -811,10 +847,10 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x->x.bankCards())
+                .manyJoin(x -> x.bankCards())
                 .orderBy(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设")).distinct()
-                            .sum(x -> x.parts().distinct().count(p->p.id().nullOrDefault("x"))).asc();
+                            .sum(x -> x.parts().distinct().count(p -> p.id().nullOrDefault("x"))).asc();
 
                 }).toList();
         listenerContextManager.clear();
@@ -824,8 +860,9 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("建设(String),x(String),0(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testOrderCountDistinct8(){
+    public void testOrderCountDistinct8() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -833,7 +870,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x->x.bankCards())
+                .manyJoin(x -> x.bankCards())
                 .orderBy(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设")).distinct()
                             .avg(x -> x.type().toNumber(long.class)).asc();
@@ -846,8 +883,9 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("建设(String),null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testOrderCountDistinct9(){
+    public void testOrderCountDistinct9() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -855,7 +893,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x->x.bankCards())
+                .manyJoin(x -> x.bankCards())
                 .where(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设")).distinct()
                             .max(x -> x.type()).eq("maxtype");
@@ -868,8 +906,9 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("建设(String),null(null),maxtype(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testOrderCountDistinct10(){
+    public void testOrderCountDistinct10() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -877,7 +916,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x->x.bankCards())
+                .manyJoin(x -> x.bankCards())
                 .where(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设"))
                             .max(x -> x.type()).eq("maxtype");
@@ -890,8 +929,9 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("建设(String),null(null),maxtype(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testOrderCountDistinct11(){
+    public void testOrderCountDistinct11() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -914,9 +954,8 @@ public class QueryTest22 extends BaseTest {
     }
 
 
-
     @Test
-    public void testOrderCountDistinct12(){
+    public void testOrderCountDistinct12() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -924,7 +963,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x->x.bankCards())
+                .manyJoin(x -> x.bankCards())
                 .where(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设")).distinct()
                             .min(x -> x.type()).eq("maxtype");
@@ -937,8 +976,9 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("建设(String),null(null),maxtype(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testOrderCountDistinct13(){
+    public void testOrderCountDistinct13() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -946,7 +986,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x->x.bankCards())
+                .manyJoin(x -> x.bankCards())
                 .where(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设"))
                             .min(x -> x.type()).eq("maxtype");
@@ -959,8 +999,9 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("建设(String),null(null),maxtype(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testOrderCountDistinct14(){
+    public void testOrderCountDistinct14() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -981,8 +1022,9 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("建设(String),maxtype(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testOrderCountDistinct15(){
+    public void testOrderCountDistinct15() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -990,7 +1032,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x->x.bankCards())
+                .manyJoin(x -> x.bankCards())
                 .where(user -> {
                     user.bankCards().none(bk -> bk.type().eq("建设"));
 
@@ -1004,7 +1046,7 @@ public class QueryTest22 extends BaseTest {
     }
 
     @Test
-    public void testBigDecimal(){
+    public void testBigDecimal() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -1020,8 +1062,9 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testAdd(){
+    public void testAdd() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -1037,8 +1080,9 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("1(Long),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testSelectAnyElement(){
+    public void testSelectAnyElement() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -1058,8 +1102,9 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("123(String),null(null),,(String),,(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testSelectAnyElement2(){
+    public void testSelectAnyElement2() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -1078,8 +1123,9 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals(",(String),123(String),,(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testSelectAnyElement3(){
+    public void testSelectAnyElement3() {
 
 
         ListenerContext listenerContext = new ListenerContext();

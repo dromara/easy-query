@@ -2,6 +2,7 @@ package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.context.EmptyQueryRuntimeContext;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 
@@ -44,7 +45,27 @@ public class EmptyEntityExpressionBuilder implements EntityExpressionBuilder{
     }
 
     @Override
-    public boolean hasManyGroupJoinTable(RelationTableKey relationTableKey) {
+    public boolean hasManyJoinTable(RelationTableKey relationTableKey) {
+        return false;
+    }
+
+    @Override
+    public ManyConfiguration addManyConfiguration(RelationTableKey relationTableKey, ManyConfiguration manyConfiguration) {
+        return null;
+    }
+
+    @Override
+    public ManyConfiguration getManyConfiguration(RelationTableKey relationTableKey) {
+        return null;
+    }
+
+    @Override
+    public void addManyJoinConfiguration(RelationTableKey relationTableKey) {
+
+    }
+
+    @Override
+    public boolean hasManyJoinConfiguration(RelationTableKey relationTableKey) {
         return false;
     }
 

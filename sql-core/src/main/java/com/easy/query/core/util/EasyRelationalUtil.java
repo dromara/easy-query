@@ -6,20 +6,18 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.DefaultRelationTableKey;
 import com.easy.query.core.expression.RelationEntityTableAvailable;
-import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
-import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.AnonymousManyGroupJoinEntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
-import com.easy.query.core.expression.sql.builder.impl.AnonymousDefaultTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.DefaultTableExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
@@ -137,7 +135,7 @@ public class EasyRelationalUtil {
         } else {
 
             Class<?> navigateEntityClass = navigateMetadata.getNavigatePropertyType();
-            EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(new RelationTableKey(leftTable.getEntityClass(), navigateEntityClass, fullName), key -> {
+            EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(new DefaultRelationTableKey(leftTable.getEntityClass(), navigateEntityClass, fullName), key -> {
                 EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateEntityClass);
 //            TableAvailable leftTable = getTable();
                 RelationEntityTableAvailable rightTable = new RelationEntityTableAvailable(key, leftTable, entityMetadata, false);
@@ -161,14 +159,14 @@ public class EasyRelationalUtil {
 
     }
 
-    public static AnonymousManyGroupJoinEntityTableExpressionBuilder getManyJoinRelationTable(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, String fullName, SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> adapterExpression) {
+    public static AnonymousManyJoinEntityTableExpressionBuilder getManyJoinRelationTable(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, String fullName, SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> adapterExpression) {
         QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
 
         if (navigateMetadata.getRelationType() != RelationTypeEnum.OneToMany && navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
             throw new EasyQueryInvalidOperationException("navigate relation table should [OneToMany or ManyToMany],now is " + navigateMetadata.getRelationType());
         }
 
-        EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(new RelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName), key -> {
+        EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName), key -> {
 //            TableAvailable leftTable = getTable();
 
             String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
@@ -189,7 +187,7 @@ public class EasyRelationalUtil {
             tableExpressionBuilder.getOn().addPredicateSegment(andPredicateSegment);
             return tableExpressionBuilder;
         });
-        return ((AnonymousManyGroupJoinEntityTableExpressionBuilder) entityTableExpressionBuilder);
+        return ((AnonymousManyJoinEntityTableExpressionBuilder) entityTableExpressionBuilder);
     }
 
 

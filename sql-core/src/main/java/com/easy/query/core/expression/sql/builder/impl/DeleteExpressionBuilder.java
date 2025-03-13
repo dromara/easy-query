@@ -5,6 +5,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
@@ -20,15 +21,12 @@ import com.easy.query.core.expression.segment.builder.UpdateSetSQLBuilderSegment
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnEqualsPropertyPredicate;
-import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.AbstractPredicateEntityExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityDeleteSQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityPredicateSQLExpression;
-import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
-import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
@@ -268,6 +266,17 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
                 deleteExpressionBuilder.getRelationTables().put(entry.getKey(), entry.getValue().copyEntityTableExpressionBuilder());
             }
         }
+        if(super.manyConfigurationMaps!=null){
+            for (Map.Entry<RelationTableKey, ManyConfiguration> manyJoinConfigurationEntry : super.manyConfigurationMaps.entrySet()) {
+                deleteExpressionBuilder.addManyConfiguration(manyJoinConfigurationEntry.getKey(),manyJoinConfigurationEntry.getValue());
+            }
+        }
+        if(super.manyJoinConfigurationSets!=null){
+            for (RelationTableKey manyJoinConfigurationSet : super.manyJoinConfigurationSets) {
+                deleteExpressionBuilder.addManyJoinConfiguration(manyJoinConfigurationSet);
+            }
+        }
+
         return deleteExpressionBuilder;
     }
 

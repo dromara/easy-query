@@ -1,10 +1,9 @@
 package com.easy.query.core.proxy.columns;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.core.basic.api.internal.LogicDeletable;
+import com.easy.query.core.basic.api.internal.ExpressionConfigurable;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.ManyPropColumn;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -24,24 +23,29 @@ import java.math.BigDecimal;
  *
  * @author xuejiaming
  */
-public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends EntitySQLContextAvailable, ManyPropColumn<T1Proxy,T1>, LogicDeletable<SQLQueryable<T1Proxy, T1>> {//,ProxyEntity<T1Proxy,T1>
+public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends EntitySQLContextAvailable, ManyPropColumn<T1Proxy, T1> {//,ProxyEntity<T1Proxy,T1>
 
-    EntityQueryable<T1Proxy, T1> getQueryable();
+    SubQueryContext<T1Proxy, T1> getSubQueryContext();
 
-    TableAvailable getOriginalTable();
 
-    @Override
-    default String getValue() {
-        return getNavValue();
-    }
+//    SQLQueryable<T1Proxy, T1> elements(int begin,int end);
+//    SQLQueryable<T1Proxy, T1> subList(int begin,int end);
 
-   default SQLQueryable<T1Proxy, T1> distinct(){
+    default SQLQueryable<T1Proxy, T1> distinct() {
         return distinct(true);
-   }
+    }
 
     SQLQueryable<T1Proxy, T1> distinct(boolean useDistinct);
 
-    SQLPredicateQueryable<T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression);
+    default SQLQueryable<T1Proxy, T1> orderBy(SQLExpression1<T1Proxy> orderExpression) {
+        return orderBy(true, orderExpression);
+    }
+
+    SQLQueryable<T1Proxy, T1> orderBy(boolean condition, SQLExpression1<T1Proxy> orderExpression);
+
+//    SQLQueryable<T1Proxy, T1> elements(int begin,int end);
+
+    SQLQueryable<T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression);
 
     /**
      * 存在任意一个满足条件
@@ -113,4 +117,25 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
     }
 
     T1Proxy flatElement(SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> flatAdapterExpression);
+
+
+    /**
+     * 请使用{@link #configureToSubQuery(SQLExpression1)}
+     *
+     * @param configureExpression
+     * @return
+     */
+    @Deprecated
+    default SQLQueryable<T1Proxy, T1> configure(SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression) {
+        return configureToSubQuery(configureExpression);
+    }
+
+    /**
+     * 仅子查询配置生效
+     * manyJoin下使用则会转成独立SubQuery
+     *
+     * @param configureExpression
+     * @return
+     */
+    SQLQueryable<T1Proxy, T1> configureToSubQuery(SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression);
 }
