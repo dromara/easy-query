@@ -7,7 +7,7 @@
     <groupId>com.easy-query</groupId>
     <artifactId>easy-query-all</artifactId>
     <packaging>pom</packaging>
-    <version>2.7.5</version>
+    <version>2.7.6</version>
     <name>easy-query</name>
     <description>java object query distributed connector</description>
     <url>https://github.com/xuejmnet/easy-query</url>
@@ -44,7 +44,7 @@
         <module>sql-processor</module>
         <module>sql-ksp-processor</module>
         <!--        以下是不需要deploy到远程仓库的-->
-        <module>sql-test</module>
+<!--        <module>sql-test</module>-->
     </modules>
 
     <properties>
