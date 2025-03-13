@@ -6,6 +6,7 @@ import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.core.proxy.SQLMathExpression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
@@ -21,6 +22,7 @@ import com.easy.query.test.doc.entity.DocPart;
 import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.doc.entity.DocUserBook;
 import com.easy.query.test.doc.entity.proxy.DocUserProxy;
+import com.easy.query.test.dto.AggregateFxVO;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.proxy.TopicProxy;
@@ -1043,6 +1045,26 @@ public class QueryTest22 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT MAX((t.`star` + ?)) FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Long),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testAggregateFx(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        AggregateFxVO list = easyEntityQuery.queryable(BlogEntity.class)
+                .select(AggregateFxVO.class, t_blog -> Select.of(
+                        t_blog.expression().sqlSegment("sum(if({0} < {1}, 1, 0))", c ->
+                                        c.expression(t_blog.createTime().duration(LocalDateTime.of(2025,1,1,0,0)).toDays()).value(2), Integer.class)
+                                .as(AggregateFxVO::getCount)
+                )).singleOrDefault(new AggregateFxVO());
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT sum(if(timestampdiff(DAY, t.`create_time`, ?) < ?, 1, 0)) AS `count` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2025-01-01T00:00(LocalDateTime),2(Integer),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 

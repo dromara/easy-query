@@ -1,5 +1,6 @@
 package com.easy.query.sql.starter.config;
 
+import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
@@ -10,11 +11,17 @@ import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
 import com.easy.query.core.basic.extension.navigate.NavigateValueSetter;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
+import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
+import com.easy.query.core.configuration.QueryConfiguration;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
 import com.easy.query.core.sharding.route.table.TableRoute;
+import com.easy.query.core.sharding.router.manager.DataSourceRouteManager;
+import com.easy.query.core.sharding.router.manager.TableRouteManager;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -91,11 +98,17 @@ public final class EasyQueryInitializeOption {
     public Map<String, NavigateValueSetter> getNavigateValueSetterMap() {
         return navigateValueSetterMap;
     }
+
     public Map<String, PrimaryKeyGenerator> getPrimaryKeyGeneratorMap() {
         return primaryKeyGeneratorMap;
     }
 
-    public EasyQueryInitializeOption(Map<String, Interceptor> interceptorMap, Map<String, VersionStrategy> versionStrategyMap, Map<String, LogicDeleteStrategy> logicDeleteStrategyMap, Map<String, ShardingInitializer> shardingInitializerMap, Map<String, EncryptionStrategy> encryptionStrategyMap, Map<String, ValueConverter<?, ?>> valueConverterMap,
+    public EasyQueryInitializeOption(Map<String, Interceptor> interceptorMap
+            , Map<String, VersionStrategy> versionStrategyMap
+            , Map<String, LogicDeleteStrategy> logicDeleteStrategyMap
+            , Map<String, ShardingInitializer> shardingInitializerMap
+            , Map<String, EncryptionStrategy> encryptionStrategyMap
+            , Map<String, ValueConverter<?, ?>> valueConverterMap,
                                      Map<String, TableRoute<?>> tableRouteMap,
                                      Map<String, DataSourceRoute<?>> dataSourceRouteMap,
                                      Map<String, JdbcTypeHandler> jdbcTypeHandlerMap,
@@ -119,5 +132,90 @@ public final class EasyQueryInitializeOption {
         this.navigateExtraFilterStrategyMap = navigateExtraFilterStrategyMap;
         this.navigateValueSetterMap = navigateValueSetterMap;
         this.primaryKeyGeneratorMap = primaryKeyGeneratorMap;
+    }
+
+    public EasyQueryInitializeOption() {
+        this(new HashMap<>()
+                , new HashMap<>()
+                , new HashMap<>()
+                , new HashMap<>()
+                , new HashMap<>()
+                , new HashMap<>()
+                , new HashMap<>()
+                , new HashMap<>()
+                , new HashMap<>()
+                , new HashMap<>()
+                , new HashMap<>()
+                , new HashMap<>()
+                , new HashMap<>()
+                , new HashMap<>());
+    }
+
+    public void addComponents(EasyQueryClient easyQueryClient) {
+
+        QueryRuntimeContext runtimeContext = easyQueryClient.getRuntimeContext();
+        QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
+        JdbcTypeHandlerManager jdbcTypeHandlerManager = runtimeContext.getJdbcTypeHandlerManager();
+        for (Map.Entry<String, JdbcTypeHandler> jdbcTypeHandlerEntry : this.getJdbcTypeHandlerMap().entrySet()) {
+            JdbcTypeHandler jdbcTypeHandler = jdbcTypeHandlerEntry.getValue();
+            if (jdbcTypeHandler instanceof JdbcTypeHandlerReplaceConfigurer) {
+                JdbcTypeHandlerReplaceConfigurer jdbcTypeHandlerReplaceConfiguration = (JdbcTypeHandlerReplaceConfigurer) jdbcTypeHandler;
+                if (jdbcTypeHandlerReplaceConfiguration.allowTypes() != null && !jdbcTypeHandlerReplaceConfiguration.allowTypes().isEmpty()) {
+                    boolean replace = jdbcTypeHandlerReplaceConfiguration.replace();
+                    for (Class<?> allowType : jdbcTypeHandlerReplaceConfiguration.allowTypes()) {
+                        jdbcTypeHandlerManager.appendHandler(allowType, jdbcTypeHandler, replace);
+                    }
+                }
+            }
+        }
+        //拦截器注册
+        for (Map.Entry<String, Interceptor> easyInterceptorEntry : this.getInterceptorMap().entrySet()) {
+            configuration.applyInterceptor(easyInterceptorEntry.getValue());
+        }
+        //逻辑删除
+        for (Map.Entry<String, LogicDeleteStrategy> logicDeleteStrategyEntry : this.getLogicDeleteStrategyMap().entrySet()) {
+            configuration.applyLogicDeleteStrategy(logicDeleteStrategyEntry.getValue());
+        }
+        //分片初始化
+        for (Map.Entry<String, ShardingInitializer> shardingInitializerEntry : this.getShardingInitializerMap().entrySet()) {
+            configuration.applyShardingInitializer(shardingInitializerEntry.getValue());
+        }
+        //列加密
+        for (Map.Entry<String, EncryptionStrategy> easyEncryptionStrategyEntry : this.getEncryptionStrategyMap().entrySet()) {
+            configuration.applyEncryptionStrategy(easyEncryptionStrategyEntry.getValue());
+        }
+        //数据行版本
+        for (Map.Entry<String, VersionStrategy> easyVersionStrategyEntry : this.getVersionStrategyMap().entrySet()) {
+            configuration.applyEasyVersionStrategy(easyVersionStrategyEntry.getValue());
+        }
+        //列转化
+        for (Map.Entry<String, ValueConverter<?, ?>> valueConverterEntry : this.getValueConverterMap().entrySet()) {
+            configuration.applyValueConverter(valueConverterEntry.getValue());
+        }
+
+        for (Map.Entry<String, ColumnValueSQLConverter> columnValueSQLConverterEntry : this.getColumnValueSQLConverterMap().entrySet()) {
+            configuration.applyColumnValueSQLConverter(columnValueSQLConverterEntry.getValue());
+        }
+        for (Map.Entry<String, GeneratedKeySQLColumnGenerator> incrementSQLColumnGeneratorEntry : this.getGeneratedKeySQLColumnGeneratorMap().entrySet()) {
+            configuration.applyGeneratedKeySQLColumnGenerator(incrementSQLColumnGeneratorEntry.getValue());
+        }
+        for (Map.Entry<String, NavigateExtraFilterStrategy> navigateExtraFilterStrategyEntry : this.getNavigateExtraFilterStrategyMap().entrySet()) {
+            configuration.applyNavigateExtraFilterStrategy(navigateExtraFilterStrategyEntry.getValue());
+        }
+        for (Map.Entry<String, NavigateValueSetter> navigateValueSetterEntry : this.getNavigateValueSetterMap().entrySet()) {
+            configuration.applyNavigateValueSetter(navigateValueSetterEntry.getValue());
+        }
+        for (Map.Entry<String, PrimaryKeyGenerator> primaryKeyGeneratorEntry : this.getPrimaryKeyGeneratorMap().entrySet()) {
+            configuration.applyPrimaryKeyGenerator(primaryKeyGeneratorEntry.getValue());
+        }
+        TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
+        for (Map.Entry<String, TableRoute<?>> tableRouteEntry : this.getTableRouteMap().entrySet()) {
+            tableRouteManager.addRoute(tableRouteEntry.getValue());
+        }
+        DataSourceRouteManager dataSourceRouteManager = runtimeContext.getDataSourceRouteManager();
+        for (Map.Entry<String, DataSourceRoute<?>> dataSourceRouteEntry : this.getDataSourceRouteMap().entrySet()) {
+            dataSourceRouteManager.addRoute(dataSourceRouteEntry.getValue());
+        }
+
     }
 }
