@@ -191,48 +191,52 @@ public class EasyRelationalUtil {
         return ((AnonymousManyJoinEntityTableExpressionBuilder) entityTableExpressionBuilder);
     }
 
-//    public static AnonymousManyJoinEntityTableExpressionBuilder getManySingleJoinRelationTable(RelationTableKey relationTableKey
-//            , EntityExpressionBuilder entityExpressionBuilder
-//            , TableAvailable leftTable
-//            , NavigateMetadata navigateMetadata
-//            , String fullName
-//            , ClientQueryable<?>  clientQueryable) {
-//        QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
-//
-//        if (navigateMetadata.getRelationType() != RelationTypeEnum.OneToMany && navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
-//            throw new EasyQueryInvalidOperationException("navigate relation table should [OneToMany or ManyToMany],now is " + navigateMetadata.getRelationType());
-//        }
-//
-//        EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(relationTableKey, key -> {
-////            TableAvailable leftTable = getTable();
-//
-//            String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
-//            ClientQueryable<?> manyQueryable = createManyPartitionByQueryable(leftTable, runtimeContext, navigateMetadata, targetPropertiesOrPrimary, adapterExpression);
-//            EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(Map.class);
-//            RelationEntityTableAvailable rightTable = new RelationEntityTableAvailable(key, leftTable, entityMetadata, true);
-//            entityExpressionBuilder.getExpressionContext().extract(manyQueryable.getSQLEntityExpressionBuilder().getExpressionContext());
-//            ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();
-//            EntityTableExpressionBuilder tableExpressionBuilder = expressionBuilderFactory.createAnonymousManyGroupEntityTableExpressionBuilder(rightTable, MultiTableTypeEnum.LEFT_JOIN, manyQueryable.getSQLEntityExpressionBuilder(), targetPropertiesOrPrimary);
-//
-//            AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
-//
-//            SQLExpressionInvokeFactory easyQueryLambdaFactory = runtimeContext.getSQLExpressionInvokeFactory();
-//            WherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createWherePredicate(rightTable, entityExpressionBuilder, andPredicateSegment);
-//            sqlPredicate.and(() -> {
-//                sqlPredicate.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), targetPropertiesOrPrimary, navigateMetadata.getSelfPropertiesOrPrimary());
-//            });
-//            tableExpressionBuilder.getOn().addPredicateSegment(andPredicateSegment);
-//            return tableExpressionBuilder;
-//        });
-//        return ((AnonymousManyJoinEntityTableExpressionBuilder) entityTableExpressionBuilder);
-//    }
+    public static AnonymousManyJoinEntityTableExpressionBuilder getManySingleJoinRelationTable(RelationTableKey relationTableKey
+            , EntityExpressionBuilder entityExpressionBuilder
+            , TableAvailable leftTable
+            , NavigateMetadata navigateMetadata
+            , String fullName
+            , int index
+            , ClientQueryable<?> clientQueryable) {
+        QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
 
-    private static ClientQueryable<?> createManyPartitionByQueryable(TableAvailable leftTable, QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertiesOrPrimary, SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> adapterExpression) {
-
-        ClientQueryable<?> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getNavigatePropertyType(), runtimeContext);
-        if (adapterExpression != null) {
-            clientQueryable = adapterExpression.apply(clientQueryable);
+        if (navigateMetadata.getRelationType() != RelationTypeEnum.OneToMany && navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
+            throw new EasyQueryInvalidOperationException("navigate relation table should [OneToMany or ManyToMany],now is " + navigateMetadata.getRelationType());
         }
+
+        EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(relationTableKey, key -> {
+//            TableAvailable leftTable = getTable();
+
+            String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
+            ClientQueryable<?> manyPartitionByQueryable = createManyPartitionByQueryable(leftTable, runtimeContext, navigateMetadata, targetPropertiesOrPrimary, clientQueryable, index);
+            ClientQueryable<?> manyQueryable = manyPartitionByQueryable
+                    .select(t -> {
+                        t.columnAll();
+                        t.columnIgnore("__row__");
+                    });
+            EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(Map.class);
+            RelationEntityTableAvailable rightTable = new RelationEntityTableAvailable(key, leftTable, entityMetadata, true);
+            entityExpressionBuilder.getExpressionContext().extract(manyQueryable.getSQLEntityExpressionBuilder().getExpressionContext());
+            ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();
+            EntityTableExpressionBuilder tableExpressionBuilder = expressionBuilderFactory.createAnonymousManyGroupEntityTableExpressionBuilder(rightTable, MultiTableTypeEnum.LEFT_JOIN, manyQueryable.getSQLEntityExpressionBuilder(), targetPropertiesOrPrimary);
+
+            AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+
+            SQLExpressionInvokeFactory easyQueryLambdaFactory = runtimeContext.getSQLExpressionInvokeFactory();
+            WherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createWherePredicate(rightTable, entityExpressionBuilder, andPredicateSegment);
+            sqlPredicate.and(() -> {
+                sqlPredicate.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), targetPropertiesOrPrimary, navigateMetadata.getSelfPropertiesOrPrimary());
+            });
+            tableExpressionBuilder.getOn().addPredicateSegment(andPredicateSegment);
+            return tableExpressionBuilder;
+        });
+        return ((AnonymousManyJoinEntityTableExpressionBuilder) entityTableExpressionBuilder);
+    }
+
+    private static ClientQueryable<?> createManyPartitionByQueryable(TableAvailable leftTable, QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertiesOrPrimary, ClientQueryable<?> clientQueryable, int index) {
+        clientQueryable.where(o -> {
+            o.le("__row__", index + 1);
+        });
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
             ClientQueryable<?> mappingQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
             return clientQueryable.where(x -> {
@@ -245,27 +249,11 @@ public class EasyRelationalUtil {
                     x.exists(subMappingQueryable);
                     navigateMetadata.predicateFilterApply(x);
                 });
-            }).groupBy(o -> {
-                for (String column : targetPropertiesOrPrimary) {
-                    o.column(column);
-                }
-            }).select(o -> {
-                for (String column : targetPropertiesOrPrimary) {
-                    o.column(column);
-                }
             });
         } else {
             return clientQueryable.where(t -> {
                 navigateMetadata.predicateFilterApply(t);
 
-            }).groupBy(o -> {
-                for (String column : targetPropertiesOrPrimary) {
-                    o.column(column);
-                }
-            }).select(o -> {
-                for (String column : targetPropertiesOrPrimary) {
-                    o.column(column);
-                }
             });
         }
     }
