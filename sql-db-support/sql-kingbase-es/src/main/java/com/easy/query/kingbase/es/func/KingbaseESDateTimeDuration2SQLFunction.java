@@ -29,12 +29,12 @@ public class KingbaseESDateTimeDuration2SQLFunction extends AbstractExpressionSQ
             throw new IllegalArgumentException("date time duration sql arguments != 2");
         }
         switch (durationEnum){
-            case Days:return "(extract(epoch from ({1})::timestamp-({2})::timestamp)/86400)::int";
-            case Hours:return "(extract(epoch from ({1})::timestamp-({2})::timestamp)/3600)::int";
-            case Minutes:return "(extract(epoch from ({1})::timestamp-({2})::timestamp)/60)::int";
-            case Seconds:return "(extract(epoch from ({1})::timestamp-({2})::timestamp))::int";
+            case Days:return "timestampdiff('DAY', {0}, {1})";
+            case Hours:return "timestampdiff('HOUR', {0}, {1})";
+            case Minutes:return "timestampdiff('MINUTE', {0}, {1})";
+            case Seconds:return "timestampdiff('SECOND', {0}, {1})";
         }
-        throw new UnsupportedOperationException("不支持当前属性获取:"+ durationEnum);
+        throw new UnsupportedOperationException("not support current function DateTimeDurationSQLFunction:"+ durationEnum);
     }
 
     @Override
