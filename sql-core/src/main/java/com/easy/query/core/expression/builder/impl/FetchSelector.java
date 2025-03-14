@@ -58,6 +58,11 @@ public class FetchSelector implements Selector {
     }
 
     @Override
+    public Selector columnFixedAs(TableAvailable table, String property, String propertyAlias) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Selector columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction) {
         throw new UnsupportedOperationException();
     }

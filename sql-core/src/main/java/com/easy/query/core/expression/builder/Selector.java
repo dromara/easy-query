@@ -27,6 +27,7 @@ public interface Selector extends SelectorColumn<Selector>,SQLNative<Selector>, 
 
     Selector columnKeys(TableAvailable table);
     Selector columnAs(TableAvailable table, String property,String propertyAlias);
+    Selector columnFixedAs(TableAvailable table, String property,String propertyAlias);
 
     Selector columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction);
 

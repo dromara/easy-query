@@ -44,6 +44,12 @@ public class ColumnSelectorImpl<T1> implements ColumnSelector<T1> {
     }
 
     @Override
+    public ColumnSelector<T1> columnFixedAs(String property, String alias) {
+        selector.columnFixedAs(table, property,alias);
+        return this;
+    }
+
+    @Override
     public ColumnSelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
         selector.columnFunc(table, columnPropertyFunction);
         return this;
