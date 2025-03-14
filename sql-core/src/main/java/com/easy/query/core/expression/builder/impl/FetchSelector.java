@@ -51,6 +51,7 @@ public class FetchSelector implements Selector {
         return this;
     }
 
+
     @Override
     public Selector columnAs(TableAvailable table, String property, String propertyAlias) {
         throw new UnsupportedOperationException();

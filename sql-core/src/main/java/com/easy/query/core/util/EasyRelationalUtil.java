@@ -21,6 +21,7 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousDefaultTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.DefaultTableExpressionBuilder;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 
@@ -217,7 +218,8 @@ public class EasyRelationalUtil {
                 }
             }).select(o -> {
                 for (String column : targetPropertiesOrPrimary) {
-                    o.column(column);
+                    ColumnMetadata columnMetadata = o.getEntityMetadata().getColumnNotNull(column);
+                    o.columnAs(column,columnMetadata.getName());
                 }
             });
         } else {
@@ -230,7 +232,8 @@ public class EasyRelationalUtil {
                 }
             }).select(o -> {
                 for (String column : targetPropertiesOrPrimary) {
-                    o.column(column);
+                    ColumnMetadata columnMetadata = o.getEntityMetadata().getColumnNotNull(column);
+                    o.columnAs(column,columnMetadata.getName());
                 }
             });
         }
