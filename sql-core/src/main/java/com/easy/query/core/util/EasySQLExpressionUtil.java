@@ -661,6 +661,7 @@ public class EasySQLExpressionUtil {
 
     /**
      * 添加关联关系并且返回旧的关系
+     * 存在include查询
      *
      * @param columnMetadata
      * @param relationColumn

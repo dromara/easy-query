@@ -13,18 +13,9 @@ import com.easy.query.core.proxy.ProxyEntityAvailable;
  * @author xuejiaming
  */
 public interface EntityManyJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
-    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable<T1Proxy, T1> manyJoin(SQLFuncExpression1<T1Proxy, ManyPropColumn<T2Proxy,T2>> manyPropColumnExpression) {
-        return manyJoin(true, manyPropColumnExpression,null);
-    }
-    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable<T1Proxy, T1> manyJoin(SQLFuncExpression1<T1Proxy, ManyPropColumn<T2Proxy,T2>> manyPropColumnExpression,
-                                                                                                                                           SQLFuncExpression1<EntityQueryable<T2Proxy,T2>,EntityQueryable<T2Proxy,T2>> adapterExpression) {
-        return manyJoin(true, manyPropColumnExpression,adapterExpression);
-    }
-    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable<T1Proxy, T1> manyJoin(boolean condition,SQLFuncExpression1<T1Proxy, ManyPropColumn<T2Proxy,T2>> manyPropColumnExpression) {
-        return manyJoin(condition, manyPropColumnExpression,null);
+    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable<T1Proxy, T1> manyJoin(SQLFuncExpression1<T1Proxy, ManyPropColumn<T2Proxy, T2>> manyPropColumnExpression) {
+        return manyJoin(true, manyPropColumnExpression);
     }
 
-    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable<T1Proxy, T1> manyJoin(boolean condition, SQLFuncExpression1<T1Proxy, ManyPropColumn<T2Proxy,T2>> manyPropColumnExpression,
-                                                                                                                                           SQLFuncExpression1<EntityQueryable<T2Proxy,T2>,EntityQueryable<T2Proxy,T2>> adapterExpression);
-
+    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable<T1Proxy, T1> manyJoin(boolean condition, SQLFuncExpression1<T1Proxy, ManyPropColumn<T2Proxy, T2>> manyPropColumnExpression);
 }

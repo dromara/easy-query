@@ -227,10 +227,10 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public <TMember> Query<TMember> selectCount(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> selectExpression,boolean distinct) {
+    public <TMember> Query<TMember> selectCount(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> selectExpression, boolean distinct) {
         PropTypeColumn<TMember> column = selectExpression.apply(get1Proxy());
         Class<TMember> propertyType = EasyObjectUtil.typeCastNullable(column.getPropertyType());
-        return getClientQueryable().select(propertyType,s->{
+        return getClientQueryable().select(propertyType, s -> {
             DistinctDefaultSQLFunction count = s.fx().count(x -> {
                 PropTypeColumn.columnFuncSelector(x, column);
             }).distinct(distinct);
@@ -440,7 +440,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable<T1Proxy, T1> manyJoin(boolean condition, SQLFuncExpression1<T1Proxy, ManyPropColumn<T2Proxy, T2>> manyPropColumnExpression, SQLFuncExpression1<EntityQueryable<T2Proxy, T2>, EntityQueryable<T2Proxy, T2>> adapterExpression) {
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable<T1Proxy, T1> manyJoin(boolean condition, SQLFuncExpression1<T1Proxy, ManyPropColumn<T2Proxy, T2>> manyPropColumnExpression) {
         if (condition) {
 
             T1Proxy proxy = getQueryable().get1Proxy();
@@ -451,23 +451,35 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
             });
             TableAvailable table = valueHolder.getValue().getOriginalTable();
             String value = valueHolder.getValue().getNavValue();
-            if (adapterExpression == null) {
-
-                getClientQueryable().manyJoin(manyJoinSelector -> manyJoinSelector.manyColumn(table,value), null);
-            } else {
-                getClientQueryable().manyJoin(manyJoinSelector -> manyJoinSelector.manyColumn(table,value), cq -> {
-                    ClientQueryable<T2> innerClientQueryable = EasyObjectUtil.typeCastNullable(cq);
-                    T2Proxy tPropertyProxy = EntityQueryProxyManager.create(innerClientQueryable.queryClass());
-                    EasyEntityQueryable<T2Proxy, T2> entityQueryable = new EasyEntityQueryable<>(tPropertyProxy, innerClientQueryable);
-                    adapterExpression.apply(entityQueryable);
-                    return entityQueryable.getClientQueryable();
-                });
-            }
+            getClientQueryable().manyJoin(manyJoinSelector -> manyJoinSelector.manyColumn(table, value));
         }
         return getQueryable();
     }
 
-    //    @Override
+    @Override
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable<T1Proxy, T1> manyConfigure(boolean condition, SQLFuncExpression1<T1Proxy, ManyPropColumn<T2Proxy, T2>> manyPropColumnExpression, SQLFuncExpression1<EntityQueryable<T2Proxy, T2>, EntityQueryable<T2Proxy, T2>> adapterExpression) {
+        if (condition) {
+
+            T1Proxy proxy = getQueryable().get1Proxy();
+            ValueHolder<ManyPropColumn<T2Proxy, T2>> valueHolder = new ValueHolder<>();
+            proxy.getEntitySQLContext()._include(() -> {
+                ManyPropColumn<T2Proxy, T2> value = manyPropColumnExpression.apply(proxy);
+                valueHolder.setValue(value);
+            });
+            TableAvailable table = valueHolder.getValue().getOriginalTable();
+            String value = valueHolder.getValue().getNavValue();
+            getClientQueryable().manyConfigure(manyJoinSelector -> manyJoinSelector.manyColumn(table, value), cq->{
+                ClientQueryable<T2> innerClientQueryable = EasyObjectUtil.typeCastNullable(cq);
+                T2Proxy tPropertyProxy = EntityQueryProxyManager.create(innerClientQueryable.queryClass());
+                EasyEntityQueryable<T2Proxy, T2> entityQueryable = new EasyEntityQueryable<>(tPropertyProxy, innerClientQueryable);
+                adapterExpression.apply(entityQueryable);
+                return entityQueryable.getClientQueryable();
+            });
+        }
+        return getQueryable();
+    }
+
+//    @Override
 //    public <TR> Query<TR> select(Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression) {
 //        SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy());
 //        return entityQueryable.select(resultClass, columnAsSelector -> {

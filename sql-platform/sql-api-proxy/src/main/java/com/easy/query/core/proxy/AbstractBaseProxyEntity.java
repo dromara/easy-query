@@ -315,56 +315,6 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
 //        QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
         String fullName = getFullNavValue(property);
         return new PropertySQLManyQueryable<>(new SubQueryContext<TPropertyProxy, TProperty>(entityExpressionBuilder, this.getEntitySQLContext(), getTable(), property, fullName, propertyProxy));
-//        if (entityExpressionBuilder == null || entitySQLContext.methodIsInclude() || runtimeContext instanceof EmptyQueryRuntimeContext) {
-//            propertyProxy.setNavValue(getFullNavValue(property));
-//            SQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EmptySQLManyQueryable<>(this.getEntitySQLContext(), propertyProxy, getTable());
-//            query._setProxy(castChain());
-//            return query;
-//        } else {
-//            TableAvailable leftTable = getTable();
-//            if (leftTable == null) {
-//                throw new EasyQueryInvalidOperationException(String.format("getNavigate %s cant not found table", property));
-//            }
-//            NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
-//            if (entityExpressionBuilder.hasManyGroupJoinTable(new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName))) {
-//                AnonymousManyJoinEntityTableExpressionBuilder manyJoinRelationTable = EasyRelationalUtil.getManyJoinRelationTable(entityExpressionBuilder, leftTable, navigateMetadata, fullName, null);
-//                EntityTableExpressionBuilder manyGroupTable = manyJoinRelationTable.getEntityQueryExpressionBuilder().getTable(0);
-//                TPropertyProxy tPropertyProxy = propertyProxy.create(manyGroupTable.getEntityTable(), manyJoinRelationTable.getEntityQueryExpressionBuilder(), runtimeContext);
-//                tPropertyProxy.setNavValue(fullName);
-//                EasyManyJoinSQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EasyManyJoinSQLManyQueryable<>(this.getEntitySQLContext(), manyJoinRelationTable, entityExpressionBuilder, leftTable, fullName, tPropertyProxy);
-//                query._setProxy(castChain());
-//                return query;
-//            } else {
-//                ClientQueryable<TProperty> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext);
-//                if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
-//                    ClientQueryable<?> mappingQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
-//                    clientQueryable.where(x -> {
-//                        x.and(() -> {
-//                            ClientQueryable<?> subMappingQueryable = mappingQueryable.where(m -> {
-//                                m.multiEq(true, x, navigateMetadata.getTargetMappingProperties(), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
-//                                m.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getSelfMappingProperties(), navigateMetadata.getSelfPropertiesOrPrimary());
-//                                navigateMetadata.predicateMappingClassFilterApply(m);
-//                            }).limit(1);
-//                            x.exists(subMappingQueryable);
-//                            navigateMetadata.predicateFilterApply(x);
-//                        });
-//                    });
-//                } else {
-//                    clientQueryable.where(t -> {
-//                        t.and(() -> {
-//                            t.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), navigateMetadata.getSelfPropertiesOrPrimary());
-//                            navigateMetadata.predicateFilterApply(t);
-//                        });
-//                    });
-//                }
-//                EasyEntityQueryable<TPropertyProxy, TProperty> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
-//                queryable.get1Proxy().setNavValue(fullName);
-//                EasySQLManyQueryable<TProxy, TPropertyProxy, TProperty> query = new EasySQLManyQueryable<>(new SubQueryContext(entityExpressionBuilder,this.getEntitySQLContext(),leftTable,property,fullName),queryable);
-//                query._setProxy(castChain());
-//                return query;
-//            }
-
-//        }
     }
 
     private String getFullNavValue(String navValue) {

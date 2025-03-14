@@ -6,6 +6,7 @@ import com.easy.query.api.proxy.entity.select.extension.queryable.ClientEntityQu
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityAggregatable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityCountable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityFilterable1;
+import com.easy.query.api.proxy.entity.select.extension.queryable.EntityManyConfigurable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityManyJoinable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityPageAble1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.IEntityGroup1;
@@ -50,6 +51,7 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
         IEntityGroup1<T1Proxy, T1>,
         EntityJoinable1<T1Proxy, T1>,
         EntityManyJoinable1<T1Proxy, T1>,
+        EntityManyConfigurable1<T1Proxy, T1>,
 //        EntityFillable1<T1Proxy,T1>,
 //        EntityMultiable1<T1Proxy,T1>,
         IEntityTree1<T1Proxy, T1>,

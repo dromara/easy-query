@@ -114,6 +114,9 @@ public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
         if (this.subqueryContext.getOrderByExpression() != null) {
             this.easyEntityQueryable.orderBy(this.subqueryContext.getOrderByExpression());
         }
+        if (this.subqueryContext.hasElements()) {
+            this.easyEntityQueryable.limit(this.subqueryContext.getFromIndex(), this.subqueryContext.getToIndex() - this.subqueryContext.getFromIndex() + 1);
+        }
     }
 
     private boolean isDistinct() {

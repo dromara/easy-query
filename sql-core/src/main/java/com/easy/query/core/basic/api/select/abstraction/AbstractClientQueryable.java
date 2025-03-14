@@ -48,6 +48,8 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
+import com.easy.query.core.expression.DefaultRelationTableKey;
+import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.builder.core.ValueFilter;
@@ -1413,14 +1415,27 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public ClientQueryable<T1> manyJoin(boolean condition, SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression, SQLFuncExpression1<ClientQueryable<?>,ClientQueryable<?>> adapterExpression) {
+    public ClientQueryable<T1> manyJoin(boolean condition, SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression) {
         if(condition){
             EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
             ManyColumn manyColumn = manyPropColumnExpression.apply(new ManyJoinSelectorImpl<>(table.getEntityTable()));
             EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
             TableAvailable leftTable = tableOrRelationalTable.table;
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(tableOrRelationalTable.property);
-            EasyRelationalUtil.getManyJoinRelationTable(entityQueryExpressionBuilder, leftTable, navigateMetadata, manyColumn.getNavValue(),adapterExpression);
+            entityQueryExpressionBuilder.addManyJoinConfiguration(new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), manyColumn.getNavValue()));
+        }
+        return this;
+    }
+
+    @Override
+    public ClientQueryable<T1> manyConfigure(boolean condition, SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression, SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> adapterExpression) {
+        if(condition){
+            EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
+            ManyColumn manyColumn = manyPropColumnExpression.apply(new ManyJoinSelectorImpl<>(table.getEntityTable()));
+            EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
+            TableAvailable leftTable = tableOrRelationalTable.table;
+            NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(tableOrRelationalTable.property);
+            entityQueryExpressionBuilder.addManyConfiguration(new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), manyColumn.getNavValue()),new ManyConfiguration(adapterExpression));
         }
         return this;
     }

@@ -73,7 +73,6 @@ public interface SQLSelectExpression extends TablePropColumn {
         if (condition) {
             getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
                 s.setAsc(true);
-
                 if (nullsModeEnum != null) {
                     SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
                     SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(this.getTable(), this.getValue(), true, nullsModeEnum);

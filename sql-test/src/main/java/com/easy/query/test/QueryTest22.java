@@ -27,6 +27,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -108,7 +109,8 @@ public class QueryTest22 extends BaseTest {
 
 
         easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(o -> o.bankCards(), bcq -> bcq.where(x -> {
+                .manyJoin(o -> o.bankCards())
+                .manyConfigure(o -> o.bankCards(), bcq -> bcq.where(x -> {
                     //支持隐式join和普通属性筛选
                     x.bank().name().eq("银行");
                     x.type().like("45678");
@@ -141,7 +143,8 @@ public class QueryTest22 extends BaseTest {
 
 
         List<Draft3<String, Integer, String>> 银行 = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(o -> o.bankCards(), bcq -> bcq.where(x -> {
+                .manyJoin(o -> o.bankCards())
+                .manyConfigure(o -> o.bankCards(), bcq -> bcq.where(x -> {
                     //支持隐式join和普通属性筛选
                     x.bank().name().eq("银行");
                     x.type().like("45678");
@@ -544,7 +547,8 @@ public class QueryTest22 extends BaseTest {
 
         Long c = 1L;
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(o -> o.bankCards(), bcq -> bcq.where(o -> o.code().likeMatchRight("coder")))
+                .manyJoin(o -> o.bankCards())
+                .manyConfigure(o -> o.bankCards(), bcq -> bcq.where(o -> o.code().likeMatchRight("coder")))
                 .where(user -> {
                     user.bankCards().where(bc -> {
                         bc.user().phone().eq("12345");

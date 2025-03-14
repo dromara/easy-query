@@ -13,17 +13,9 @@ import com.easy.query.core.expression.parser.core.base.many.ManyJoinSelector;
  * @author xuejiaming
  */
 public interface ManyJoinable1<T1> {
-    default ClientQueryable<T1> manyJoin(SQLFuncExpression1<ManyJoinSelector<T1>,ManyColumn> manyPropColumnExpression) {
+    default ClientQueryable<T1> manyJoin(SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression) {
         return manyJoin(true, manyPropColumnExpression);
     }
 
-    default ClientQueryable<T1> manyJoin(SQLFuncExpression1<ManyJoinSelector<T1>,ManyColumn> manyPropColumnExpression, SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> adapterExpression) {
-        return manyJoin(true, manyPropColumnExpression, adapterExpression);
-    }
-
-    default ClientQueryable<T1> manyJoin(boolean condition, SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression) {
-        return manyJoin(condition, manyPropColumnExpression, null);
-    }
-
-    ClientQueryable<T1> manyJoin(boolean condition, SQLFuncExpression1<ManyJoinSelector<T1>,ManyColumn> manyPropColumnExpression, SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> adapterExpression);
+    ClientQueryable<T1> manyJoin(boolean condition, SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression);
 }

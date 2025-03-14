@@ -1007,4 +1007,12 @@ public void query10() {
         Assert.assertEquals("false(Boolean),456(String),false(Boolean),false(Boolean),false(Boolean),123(String),t2123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
+    @Test
+    public void testDuration(){
+        List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.createTime().duration(LocalDateTime.now()).toDays().gt(1L);
+                }).toList();
+    }
 }
