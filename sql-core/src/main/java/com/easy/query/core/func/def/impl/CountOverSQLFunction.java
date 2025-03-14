@@ -2,11 +2,15 @@ package com.easy.query.core.func.def.impl;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
+import com.easy.query.core.expression.segment.impl.CaseWhenSQLSegment;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
+import com.easy.query.core.func.column.impl.ColumSQLExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnFunctionExpressionImpl;
 import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
 import com.easy.query.core.func.def.PartitionBySQLFunction;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.List;
 
@@ -66,6 +70,12 @@ public class CountOverSQLFunction extends AbstractExpressionSQLFunction implemen
     public PartitionBySQLFunction addOrder(SQLFunction sqlFunction) {
         ColumnFunctionExpressionImpl columnFunctionExpression = new ColumnFunctionExpressionImpl(null, sqlFunction);
         columnExpressions.add(columnFunctionExpression);
+        return this;
+    }
+    @Override
+    public PartitionBySQLFunction addOrder(SQLBuilderSegment sqlSegment) {
+        ColumSQLExpressionImpl columSQLExpression = new ColumSQLExpressionImpl(new CaseWhenSQLSegment(toSQLContext -> sqlSegment.toSQL(toSQLContext), visitor -> EasySQLSegmentUtil.tableVisit(sqlSegment, visitor)));
+        columnExpressions.add(columSQLExpression);
         return this;
     }
 }

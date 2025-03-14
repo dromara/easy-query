@@ -1,29 +1,23 @@
 package com.easy.query.core.proxy.columns.impl;
 
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
-import com.easy.query.api.proxy.extension.partition.RowNumberOverBuilder;
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
-import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.DefaultRelationTableKey;
 import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.PartitionByRelationTableKey;
 import com.easy.query.core.expression.RelationTableKey;
-import com.easy.query.core.expression.builder.impl.AsSelectorImpl;
-import com.easy.query.core.expression.builder.impl.OrderSelectorImpl;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.parser.core.available.EmptyTableAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
-import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
+import com.easy.query.core.expression.segment.impl.DefaultSQLSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.func.def.PartitionBySQLFunction;
 import com.easy.query.core.metadata.NavigateMetadata;
@@ -33,7 +27,6 @@ import com.easy.query.core.proxy.columns.SubQueryContext;
 import com.easy.query.core.proxy.columns.SubQuerySQLQueryableFactory;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
-import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasySQLUtil;
 
 import java.util.Map;
@@ -56,9 +49,13 @@ public class DefaultSubQuerySQLQueryableFactory implements SubQuerySQLQueryableF
         String property = subQueryContext.getProperty();
         T1Proxy propertyProxy = subQueryContext.getPropertyProxy();
         String fullName = subQueryContext.getFullName();
+        if (leftTable == null || leftTable instanceof EmptyTableAvailable) {
+            propertyProxy.setNavValue(fullName);
+            return new EmptySQLQueryable<>(subQueryContext.getEntitySQLContext(), propertyProxy);
+        }
         NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
         RelationTableKey defaultRelationTableKey = new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName);
-        if (subQueryContext.getConfigureExpression() != null || subQueryContext.getOrderByExpression() != null || !subQueryContext.hasElements()) {
+        if (subQueryContext.getConfigureExpression() == null && subQueryContext.getOrderByExpression() == null && !subQueryContext.hasElements()) {
 
             if (entityExpressionBuilder.hasManyJoinConfiguration(defaultRelationTableKey)) {
                 ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(defaultRelationTableKey);
@@ -113,26 +110,26 @@ public class DefaultSubQuerySQLQueryableFactory implements SubQuerySQLQueryableF
         String fullName = subQueryContext.getFullName();
         NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
         ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName));
-        ClientQueryable<T1> clientQueryable = createSQLKey(subQueryContext, navigateMetadata, manyConfiguration);
+        ClientQueryable<?> clientQueryable = createPartitionQueryable(subQueryContext, navigateMetadata, manyConfiguration);
         ToSQLResult sqlResult = clientQueryable.toSQLResult();
         String sql = sqlResult.getSQL();
         String parameterString = EasySQLUtil.sqlParameterToString(sqlResult.getSqlContext().getParameters());
 
-        RelationTableKey partitionByRelationTableKey = new PartitionByRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName, index, String.format("%s:%s",sql,parameterString));
+        RelationTableKey partitionByRelationTableKey = new PartitionByRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName, index, String.format("%s:%s", sql, parameterString));
 
-        AnonymousManyJoinEntityTableExpressionBuilder manySingleJoinRelationTable = EasyRelationalUtil.getManySingleJoinRelationTable(partitionByRelationTableKey, subQueryContext.getEntityExpressionBuilder(), subQueryContext.getLeftTable(), navigateMetadata, fullName, clientQueryable);
-        return null;
+        AnonymousManyJoinEntityTableExpressionBuilder manySingleJoinRelationTable = EasyRelationalUtil.getManySingleJoinRelationTable(partitionByRelationTableKey, subQueryContext.getEntityExpressionBuilder(), subQueryContext.getLeftTable(), navigateMetadata, fullName, index, clientQueryable);
+        return propertyProxy.create(manySingleJoinRelationTable.getEntityTable(), subQueryContext.getEntitySQLContext());
     }
 
-    private <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ClientQueryable<T1> createSQLKey(SubQueryContext<T1Proxy, T1> subQueryContext, NavigateMetadata navigateMetadata,ManyConfiguration manyConfiguration) {
+    private <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ClientQueryable<?> createPartitionQueryable(SubQueryContext<T1Proxy, T1> subQueryContext, NavigateMetadata navigateMetadata, ManyConfiguration manyConfiguration) {
         QueryRuntimeContext runtimeContext = subQueryContext.getRuntimeContext();
         T1Proxy propertyProxy = subQueryContext.getPropertyProxy();
         String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
 
         ClientQueryable<T1> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext);
         SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> queryableSQLFuncExpression1 = Optional.ofNullable(manyConfiguration).map(x -> x.getConfigureExpression()).orElse(null);
-        if(queryableSQLFuncExpression1!=null){
-            clientQueryable= EasyObjectUtil.typeCastNullable(queryableSQLFuncExpression1.apply(clientQueryable));
+        if (queryableSQLFuncExpression1 != null) {
+            clientQueryable = EasyObjectUtil.typeCastNullable(queryableSQLFuncExpression1.apply(clientQueryable));
         }
         EasyEntityQueryable<T1Proxy, T1> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
         if (subQueryContext.getWhereExpression() != null) {
@@ -148,7 +145,7 @@ public class DefaultSubQuerySQLQueryableFactory implements SubQuerySQLQueryableF
         order.copyTo(orderBySQLBuilderSegment);
         order.clear();
 
-        clientQueryable.select(Map.class,x->{
+        return clientQueryable.select(Map.class, x -> {
             x.columnAll();
 
 
@@ -157,12 +154,14 @@ public class DefaultSubQuerySQLQueryableFactory implements SubQuerySQLQueryableF
                     s.column(column);
                 }
             });
+            partitionBySQLFunction.addOrder(orderBySQLBuilderSegment);
+            x.sqlFuncAs(partitionBySQLFunction, "__row__");
+
 //            runtimeContext.fx().anySQLFunction("{0}",c->{
 //            })
 //            partitionBySQLFunction.addOrder()
         });
 
-        return clientQueryable;
 //        else{
 //            clientQueryable.orderByAsc(x->{
 //                for (String column : navigateMetadata.getSelfPropertiesOrPrimary()) {

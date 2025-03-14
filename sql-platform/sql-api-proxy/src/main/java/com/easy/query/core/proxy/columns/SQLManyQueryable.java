@@ -17,6 +17,9 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
 
     //    void _setProxy(TProxy tProxy);
 
+    default T1Proxy first(){
+        return element(0);
+    }
     T1Proxy element(int index);
 
     default SQLQueryable<T1Proxy, T1> elements(int fromIndex, int toIndex) {

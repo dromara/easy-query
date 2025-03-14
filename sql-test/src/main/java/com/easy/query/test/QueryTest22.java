@@ -15,6 +15,7 @@ import com.easy.query.core.proxy.core.draft.proxy.Draft4Proxy;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.doc.MyComUser;
 import com.easy.query.test.doc.entity.DocBankCard;
 import com.easy.query.test.doc.entity.DocPart;
 import com.easy.query.test.doc.entity.DocUser;
@@ -39,10 +40,6 @@ import java.util.List;
  */
 public class QueryTest22 extends BaseTest {
 
-    public void test1() {
-        BigDecimal bigDecimal = easyEntityQuery.queryable(Topic.class)
-                .maxOrDefault(x -> x.id().toNumber(Long.class).add(1), BigDecimal.ZERO);
-    }
 
     @Test
     public void testManyGroup() {
@@ -81,8 +78,6 @@ public class QueryTest22 extends BaseTest {
         easyEntityQuery.queryable(DocUser.class)
                 .manyJoin(o -> o.bankCards())
                 .where(user -> {
-//                    user.bankCards().element(0).type().eq("123");
-//                    user.bankCards().elements(0,1).where(x->x.type().eq("456"));
 
                     user.bankCards().where(x -> x.type().eq("123"))
                             .sum(o -> o.code().toNumber(Integer.class))
@@ -96,7 +91,7 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum2__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__sum2__` = ? AND IFNULL((SELECT SUM(CAST(t3.`code` AS SIGNED)) FROM `doc_bank_card` t3 WHERE t3.`uid` = t.`id` AND t3.`type` = ?),0) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum2__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__sum2__` = ? AND IFNULL((SELECT SUM(CAST(t3.`code` AS SIGNED)) FROM `doc_bank_card` t3 WHERE t3.`uid` = t.`id` AND t3.`type` = ?),0) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),0(Integer),123(Integer),123(String),123(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -110,18 +105,10 @@ public class QueryTest22 extends BaseTest {
 
         easyEntityQuery.queryable(DocUser.class)
                 .manyJoin(o -> o.bankCards())
-                .manyConfigure(o -> o.bankCards(), bcq -> bcq.where(x -> {
-                    //支持隐式join和普通属性筛选
-                    x.bank().name().eq("银行");
-                    x.type().like("45678");
-                }))
                 .where(user -> {
                     user.bankCards().where(x -> x.type().eq("123")).
                             sum(o -> o.code().toNumber(Integer.class))
                             .eq(123);
-                    user.bankCards().where(x -> x.type().eq("123")).
-                            sum(o -> o.code().toNumber(Integer.class))
-                            .eq(456);
                     user.bankCards().where(x -> x.type().eq("456")).
                             sum(o -> o.code().toNumber(Integer.class))
                             .eq(789);
@@ -130,8 +117,8 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum2__`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum3__` FROM `doc_bank_card` t1 LEFT JOIN `doc_bank` t2 ON t2.`id` = t1.`bank_id` WHERE t2.`name` = ? AND t1.`type` LIKE ? GROUP BY t1.`uid`) t3 ON t3.`uid` = t.`id` WHERE t3.`__sum2__` = ? AND t3.`__sum2__` = ? AND t3.`__sum3__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("123(String),0(Integer),456(String),0(Integer),银行(String),%45678%(String),123(Integer),456(Integer),789(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum2__`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum3__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__sum2__` = ? AND t2.`__sum3__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),0(Integer),456(String),0(Integer),123(Integer),789(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 
@@ -534,7 +521,7 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,MAX((CASE WHEN t4.`phone` = ? THEN t1.`type` ELSE ? END)) AS `__max2__` FROM `doc_bank_card` t1 LEFT JOIN `doc_user` t4 ON t4.`id` = t1.`uid` GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` LEFT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t2.`__max2__` = t3.`title` WHERE t3.`score` > ? AND t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t2.`uid` AS `uid`,MAX((CASE WHEN t4.`phone` = ? THEN t2.`type` ELSE ? END)) AS `__max2__` FROM `doc_bank_card` t2 LEFT JOIN `doc_user` t4 ON t4.`id` = t2.`uid` GROUP BY t2.`uid`) t3 ON t3.`uid` = t.`id` LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t3.`__max2__` = t1.`title` WHERE t1.`score` > ? AND t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("12345(String),null(null),false(Boolean),0(BigDecimal),%abc%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 
@@ -1153,7 +1140,7 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t2.`__joining2__` AS `value1`,t2.`__joining3__` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,GROUP_CONCAT((CASE WHEN t1.`type` = ? THEN t1.`code` ELSE ? END) SEPARATOR ?) AS `__joining2__`,GROUP_CONCAT(t1.`code` SEPARATOR ?) AS `__joining3__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t2.`__joining2__` AS `value1`,t2.`__joining3__` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,GROUP_CONCAT((CASE WHEN t1.`type` = ? THEN t1.`code` ELSE ? END) SEPARATOR ?) AS `__joining2__`,GROUP_CONCAT(t1.`code` SEPARATOR ?) AS `__joining3__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),null(null),,(String),,(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -1196,7 +1183,7 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t2.`__max2__` AS `value1`,t2.`__min3__` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid`,MAX((CASE WHEN t1.`type` = ? THEN t1.`code` ELSE ? END)) AS `__max2__`,MIN(t1.`type`) AS `__min3__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t2.`__max2__` AS `value1`,t2.`__min3__` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,MAX((CASE WHEN t1.`type` = ? THEN t1.`code` ELSE ? END)) AS `__max2__`,MIN(t1.`type`) AS `__min3__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }

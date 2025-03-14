@@ -19,13 +19,5 @@ public interface ManyJoinable2<T1, T2> {
         return manyJoin(true, manyPropColumnExpression);
     }
 
-    default ClientQueryable2<T1, T2> manyJoin(SQLFuncExpression2<ManyJoinSelector<T1>,ManyJoinSelector<T2>, ManyColumn> manyPropColumnExpression, SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> adapterExpression) {
-        return manyJoin(true, manyPropColumnExpression, adapterExpression);
-    }
-
-    default ClientQueryable2<T1, T2> manyJoin(boolean condition, SQLFuncExpression2<ManyJoinSelector<T1>,ManyJoinSelector<T2>, ManyColumn> manyPropColumnExpression) {
-        return manyJoin(condition, manyPropColumnExpression, null);
-    }
-
-    ClientQueryable2<T1, T2> manyJoin(boolean condition, SQLFuncExpression2<ManyJoinSelector<T1>,ManyJoinSelector<T2>, ManyColumn> manyPropColumnExpression, SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> adapterExpression);
+    ClientQueryable2<T1, T2> manyJoin(boolean condition, SQLFuncExpression2<ManyJoinSelector<T1>,ManyJoinSelector<T2>, ManyColumn> manyPropColumnExpression);
 }

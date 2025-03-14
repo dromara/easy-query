@@ -23,41 +23,21 @@ import com.easy.query.core.util.EasyObjectUtil;
 public interface EntityManyJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> extends ClientEntityQueryable2Available<T1, T2>, EntityQueryable2Available<T1Proxy, T1, T2Proxy, T2> {
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> manyJoin(SQLFuncExpression2<T1Proxy, T2Proxy, ManyPropColumn<TRProxy, TR>> manyPropColumnExpression) {
-        return manyJoin(true, manyPropColumnExpression, null);
-    }
-
-    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> manyJoin(SQLFuncExpression2<T1Proxy, T2Proxy, ManyPropColumn<TRProxy, TR>> manyPropColumnExpression,
-                                                                                                                                                         SQLFuncExpression1<EntityQueryable<TRProxy, TR>, EntityQueryable<TRProxy, TR>> adapterExpression) {
-        return manyJoin(true, manyPropColumnExpression, adapterExpression);
+        return manyJoin(true, manyPropColumnExpression);
     }
 
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> manyJoin(boolean condition, SQLFuncExpression2<T1Proxy, T2Proxy, ManyPropColumn<TRProxy, TR>> manyPropColumnExpression) {
-        return manyJoin(condition, manyPropColumnExpression, null);
-    }
-
-    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR extends ProxyEntityAvailable<TR, TRProxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> manyJoin(boolean condition, SQLFuncExpression2<T1Proxy, T2Proxy, ManyPropColumn<TRProxy, TR>> manyPropColumnExpression,
-                                                                                                                                                         SQLFuncExpression1<EntityQueryable<TRProxy, TR>, EntityQueryable<TRProxy, TR>> adapterExpression) {
-        if(condition){
+        if (condition) {
 
             ValueHolder<ManyPropColumn<TRProxy, TR>> valueHolder = new ValueHolder<>();
             get1Proxy().getEntitySQLContext()._include(() -> {
-                ManyPropColumn<TRProxy, TR> value = manyPropColumnExpression.apply(get1Proxy(),get2Proxy());
+                ManyPropColumn<TRProxy, TR> value = manyPropColumnExpression.apply(get1Proxy(), get2Proxy());
                 valueHolder.setValue(value);
             });
             TableAvailable table = valueHolder.getValue().getOriginalTable();
             String value = valueHolder.getValue().getValue();
-            if (adapterExpression == null) {
+            getClientQueryable2().manyJoin((mj1, mj2) -> mj1.manyColumn(table, value));
 
-                getClientQueryable2().manyJoin((mj1,mj2) -> mj1.manyColumn(table,value), null);
-            } else {
-                getClientQueryable2().manyJoin((mj1,mj2) -> mj1.manyColumn(table,value), cq -> {
-                    ClientQueryable<TR> innerClientQueryable = EasyObjectUtil.typeCastNullable(cq);
-                    TRProxy tPropertyProxy = EntityQueryProxyManager.create(innerClientQueryable.queryClass());
-                    EasyEntityQueryable<TRProxy, TR> entityQueryable = new EasyEntityQueryable<>(tPropertyProxy, innerClientQueryable);
-                    adapterExpression.apply(entityQueryable);
-                    return entityQueryable.getClientQueryable();
-                });
-            }
         }
         return getQueryable2();
     }

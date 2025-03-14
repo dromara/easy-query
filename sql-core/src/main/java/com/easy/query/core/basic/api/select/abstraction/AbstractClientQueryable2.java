@@ -8,6 +8,7 @@ import com.easy.query.core.basic.api.select.extension.queryable2.override.Abstra
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.DefaultRelationTableKey;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLExpression3;
@@ -108,7 +109,7 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractOverrideC
     }
 
     @Override
-    public ClientQueryable2<T1, T2> manyJoin(boolean condition, SQLFuncExpression2<ManyJoinSelector<T1>, ManyJoinSelector<T2>, ManyColumn> manyPropColumnExpression, SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> adapterExpression) {
+    public ClientQueryable2<T1, T2> manyJoin(boolean condition, SQLFuncExpression2<ManyJoinSelector<T1>, ManyJoinSelector<T2>, ManyColumn> manyPropColumnExpression) {
         if(condition){
             EntityTableExpressionBuilder table1 = entityQueryExpressionBuilder.getTable(0);
             EntityTableExpressionBuilder table2 = entityQueryExpressionBuilder.getTable(1);
@@ -116,7 +117,7 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractOverrideC
             EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
             TableAvailable leftTable = tableOrRelationalTable.table;
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(tableOrRelationalTable.property);
-            EasyRelationalUtil.getManyJoinRelationTable(entityQueryExpressionBuilder, leftTable, navigateMetadata, manyColumn.getNavValue(),adapterExpression);
+            entityQueryExpressionBuilder.addManyJoinConfiguration(new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), manyColumn.getNavValue()));
         }
         return this;
     }

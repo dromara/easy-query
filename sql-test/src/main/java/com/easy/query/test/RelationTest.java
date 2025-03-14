@@ -210,7 +210,8 @@ public class RelationTest extends BaseTest {
                 {
 
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("SELECT t.`id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
                 }
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
@@ -1219,7 +1220,7 @@ public class RelationTest extends BaseTest {
                 {
 
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("SELECT t.`id` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
                 }
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);

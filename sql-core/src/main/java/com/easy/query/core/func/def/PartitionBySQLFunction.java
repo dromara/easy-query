@@ -1,5 +1,6 @@
 package com.easy.query.core.func.def;
 
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.func.SQLFunction;
 
 /**
@@ -10,4 +11,5 @@ import com.easy.query.core.func.SQLFunction;
  */
 public interface PartitionBySQLFunction extends SQLFunction{
     PartitionBySQLFunction addOrder(SQLFunction sqlFunction);
+    PartitionBySQLFunction addOrder(SQLBuilderSegment sqlSegment);
 }

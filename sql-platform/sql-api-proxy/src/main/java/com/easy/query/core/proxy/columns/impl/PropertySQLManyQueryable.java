@@ -72,10 +72,9 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public T1Proxy element(int index) {
-
+        return DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext,index);
 //        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
 //        return sqlQueryable.element(index);
-        return null;
     }
 
     @Override
