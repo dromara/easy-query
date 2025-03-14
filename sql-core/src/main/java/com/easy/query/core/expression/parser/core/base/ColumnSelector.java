@@ -25,6 +25,7 @@ public interface ColumnSelector<T1> extends EntitySQLTableOwner<T1>, SQLProperty
     }
 
     ColumnSelector<T1> column(String property);
+    ColumnSelector<T1> columnAs(String property,String alias);
 
 
     /**
