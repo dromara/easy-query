@@ -127,6 +127,11 @@ public abstract class AbstractSelector<TChain> {
         appendColumnMetadata(table, columnMetadata, true, false, false, alias);
         return castChain();
     }
+    public TChain columnFixedAs(TableAvailable table, String property, String propertyAlias) {
+        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
+        appendColumnMetadata(table, columnMetadata, true, false, false, propertyAlias);
+        return castChain();
+    }
 
     public TChain columnInclude(TableAvailable table, String selfProperty, String aliasProperty, SQLExpression1<AsSelector> includeSelectorExpression) {
 //        TableAvailable entityTable = entityQueryExpressionBuilder.getTable(0).getEntityTable();

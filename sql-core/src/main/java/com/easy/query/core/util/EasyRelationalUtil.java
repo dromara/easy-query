@@ -284,7 +284,7 @@ public class EasyRelationalUtil {
             }).select(o -> {
                 for (String column : targetPropertiesOrPrimary) {
 //                    ColumnMetadata columnMetadata = o.getEntityMetadata().getColumnNotNull(column);
-                    o.columnAs(column,column);
+                    o.columnFixedAs(column,column);
                 }
             });
         } else {
@@ -298,7 +298,7 @@ public class EasyRelationalUtil {
             }).select(o -> {
                 for (String column : targetPropertiesOrPrimary) {
 //                    ColumnMetadata columnMetadata = o.getEntityMetadata().getColumnNotNull(column);
-                    o.columnAs(column,column);
+                    o.columnFixedAs(column,column);
                 }
             });
         }

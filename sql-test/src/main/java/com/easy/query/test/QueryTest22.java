@@ -1087,8 +1087,9 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("1(Long),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testAggregateFx(){
+    public void testAggregateFx() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -1097,7 +1098,7 @@ public class QueryTest22 extends BaseTest {
         AggregateFxVO list = easyEntityQuery.queryable(BlogEntity.class)
                 .select(AggregateFxVO.class, t_blog -> Select.of(
                         t_blog.expression().sqlSegment("sum(if({0} < {1}, 1, 0))", c ->
-                                        c.expression(t_blog.createTime().duration(LocalDateTime.of(2025,1,1,0,0)).toDays()).value(2), Integer.class)
+                                        c.expression(t_blog.createTime().duration(LocalDateTime.of(2025, 1, 1, 0, 0)).toDays()).value(2), Integer.class)
                                 .as(AggregateFxVO::getCount)
                 )).singleOrDefault(new AggregateFxVO());
         listenerContextManager.clear();
@@ -1105,6 +1106,33 @@ public class QueryTest22 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT sum(if(timestampdiff(DAY, t.`create_time`, ?) < ?, 1, 0)) AS `count` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("2025-01-01T00:00(LocalDateTime),2(Integer),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void testDoubleField() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft2<Long, Long>> list = easyEntityQuery.queryable(MyComUser.class)
+                .manyJoin(x -> x.mySignUps())
+                .where(m -> {
+                    m.mySignUps().where(x -> x.userId().eq("123")).count().eq(1L);
+                }).select(m -> Select.DRAFT.of(
+                        m.mySignUps().where(x -> x.userId().eq("123")).count(),
+                        m.mySignUps().where(x -> x.userId().eq("123")).distinct().count(x -> x.content())
+                )).toList();
+        for (Draft2<Long, Long> longLongDraft2 : list) {
+
+            Long value1 = longLongDraft2.getValue1();
+            Long value2 = longLongDraft2.getValue2();
+        }
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t2.`__count3__` AS `value1`,t2.`__count4__` AS `value2` FROM `my_com_user` t LEFT JOIN (SELECT t1.`com_id` AS `comId`,t1.`user_id` AS `userId`,COUNT((CASE WHEN t1.`user_id` = ? THEN ? ELSE ? END)) AS `__count3__`,COUNT(DISTINCT (CASE WHEN t1.`user_id` = ? THEN t1.`content` ELSE ? END)) AS `__count4__` FROM `my_sign_up` t1 GROUP BY t1.`com_id`,t1.`user_id`) t2 ON (t2.`comId` = t.`com_id` AND t2.`userId` = t.`user_id`) WHERE t2.`__count3__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(Integer),null(null),123(String),null(null),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 
