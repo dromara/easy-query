@@ -51,6 +51,69 @@
 
 </div>
 
+## Five Implicit Features 🔥🔥🔥
+- [x] Implicit Join - Automatically implements join queries for OneToOne and ManyToOne relationships, supporting filtering, sorting, and result fetching
+- [x] Implicit Subquery - Automatically handles subqueries for OneToMany and ManyToMany relationships, supporting filtering, sorting, and aggregate function results
+- [x] Implicit Grouping - Optimizes and merges multiple subqueries into grouped queries for OneToMany and ManyToMany relationships, supporting filtering, sorting, and aggregate functions
+- [x] Implicit Partition Grouping - Enables first/Nth element operations for OneToMany and ManyToMany relationships, supporting filtering, sorting, and aggregate function results
+- [x] Implicit CASE WHEN Expression - property.aggregate.filter() syntax, e.g., o.age().sum().filter(()->o.name().like("123"))
+
+### Implicit Join
+```java
+List<SysUser> userInXXCompany = entityQuery.queryable(SysUser.class)
+        .where(user -> {
+            user.company().name().like("xx Company");
+        })
+        .orderBy(user -> {
+            user.company().registerMoney().desc();
+            user.birthday().asc();
+        }).toList();
+```
+### Implicit Subquery
+```java
+List<Company> companies = entityQuery.queryable(Company.class)
+        .where(company -> {
+          company.users().any(u -> u.name().like("Xiao Ming"));
+          company.users().where(u -> u.name().like("Xiao Ming"))
+                  .max(u -> u.birthday()).gt(LocalDateTime.now());
+        }).toList();
+```
+### Implicit Grouping
+```java
+List<Company> companies = entityQuery.queryable(Company.class)
+        // Two subqueries in where will be merged
+        .manyJoin(company -> company.users())
+        .where(company -> {
+          company.users().any(u -> u.name().like("Xiao Ming"));
+          company.users().where(u -> u.name().like("Xiao Ming"))
+                  .max(u -> u.birthday()).gt(LocalDateTime.now());
+        }).toList();
+```
+### Implicit Partition Grouping
+```java
+List<Company> companies = entityQuery.queryable(Company.class)
+        .where(company -> {
+          company.users().orderBy(u->u.birthday().desc()).first().name().eq("Xiao Ming");
+          company.users().orderBy(u->u.birthday().desc()).element(0)
+                  .birthday().lt(LocalDateTime.now());
+        }).toList();
+```
+### Implicit CASE WHEN Expression
+```java
+List<Draft2<LocalDateTime, Long>> customVO = entityQuery.queryable(SysUser.class)
+        .where(user -> {
+            user.birthday().lt(LocalDateTime.now());
+        }).groupBy(user -> GroupKeys.of(user.companyId()))
+        .select(group -> Select.DRAFT.of(
+                group.groupTable().birthday().max().filter(() -> {
+                    group.groupTable().name().like("Xiao Ming");
+                }),
+                group.groupTable().id().count().filter(() -> {
+                    group.groupTable().birthday().ge(LocalDateTime.of(2024, 1, 1, 0, 0));
+                })
+        )).toList();
+```
+
 ## Dependency
 entity use `@EntityProxy` or `@EntityFileProxy` annotation then build project apt will auto generate java code for proxy
 ```xml

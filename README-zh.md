@@ -53,6 +53,75 @@
 
 </div>
 
+## 五大隐式 🔥🔥🔥
+- [x] 隐式join `OneToOne`、`ManyToOne` 自动实现join查询筛选、排序和结果获取
+- [x] 隐式子查询 `OneToMany`、`ManyToMany` 自动实现子查询查询筛选、排序和聚合函数结果获取
+- [x] 隐式分组 `OneToMany`、`ManyToMany` 自动实现子查询优化合并将多个子查询合并成一个分组查询支持筛选、排序和聚合函数结果获取
+- [x] 隐式分区分组 `OneToMany`、`ManyToMany` 自动实现第一个、第N个数据的筛选、排序和聚合函数结果获取
+- [x] 隐式CASE WHEN表达式 `属性.聚合函数.筛选`，`o.age().sum().filter(()->o.name().like("123"))`
+
+### 隐式join
+```java
+
+List<SysUser> userInXXCompany = entityQuery.queryable(SysUser.class)
+        .where(user -> {
+            user.company().name().like("xx公司");
+        })
+        .orderBy(user -> {
+            user.company().registerMoney().desc();
+            user.birthday().asc();
+        }).toList();
+```
+
+
+### 隐式子查询
+```java
+
+List<Company> companies = entityQuery.queryable(Company.class)
+        .where(company -> {
+          company.users().any(u -> u.name().like("小明"));
+          company.users().where(u -> u.name().like("小明")).max(u -> u.birthday()).gt(LocalDateTime.now());
+        }).toList();
+```
+### 隐式分组
+```java
+
+List<Company> companies = entityQuery.queryable(Company.class)
+        //在where中的两个子查询会进行合并
+        .manyJoin(company -> company.users())
+        .where(company -> {
+          company.users().any(u -> u.name().like("小明"));
+          company.users().where(u -> u.name().like("小明")).max(u -> u.birthday()).gt(LocalDateTime.now());
+        }).toList();
+```
+
+### 隐式分区分组
+```java
+
+List<Company> companies = entityQuery.queryable(Company.class)
+        .where(company -> {
+          company.users().orderBy(u->u.birthday().desc()).first().name().eq("小明");
+          company.users().orderBy(u->u.birthday().desc()).element(0).birthday().lt(LocalDateTime.now());
+        }).toList();
+```
+
+### 隐式CASE WHEN表达式
+```java
+
+List<Draft2<LocalDateTime, Long>> customVO = entityQuery.queryable(SysUser.class)
+        .where(user -> {
+            user.birthday().lt(LocalDateTime.now());
+        }).groupBy(user -> GroupKeys.of(user.companyId()))
+        .select(group -> Select.DRAFT.of(
+                group.groupTable().birthday().max().filter(() -> {
+                    group.groupTable().name().like("小明");
+                }),
+                group.groupTable().id().count().filter(() -> {
+                    group.groupTable().birthday().ge(LocalDateTime.of(2024, 1, 1, 0, 0));
+                })
+        )).toList();
+```
+
 
 ## 单表完整案例
 首先我们来看一下完整版本的单表查询,涉及到筛选、聚合、聚合筛选、映射查询、排序
