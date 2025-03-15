@@ -1,7 +1,10 @@
 package com.easy.query.core.proxy.grouping.proxy;
 
 import com.easy.query.core.expression.builder.GroupSelector;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.grouping.DefaultSQLGroupQueryable;
 import com.easy.query.core.proxy.grouping.Grouping1;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -34,4 +37,9 @@ public class Grouping1Proxy<TKey1Proxy extends PropTypeColumn<TKey1>, TKey1, TSo
     public void accept(GroupSelector s) {
         acceptGroupSelector(k1, s);
     }
+
+//    public TSourceProxy element(int index) {
+//        tSourceProxy
+//        return new DefaultSQLGroupQueryable<>(tSourceProxy, this.entitySQLContext, condition, where);
+//    }
 }

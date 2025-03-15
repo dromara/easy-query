@@ -38,4 +38,8 @@ public class M8User2 implements ProxyEntityAvailable<M8User2, M8User2Proxy> {
             targetMappingProperty = {M8UserRole2.Fields.roleId},
             targetProperty = {M8Role2.Fields.roleId})
     private List<M8Role2> roles;
+
+
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {M8User2.Fields.userId}, targetProperty = {M8UserBook.Fields.userId})
+    private List<M8UserBook> books;
 }

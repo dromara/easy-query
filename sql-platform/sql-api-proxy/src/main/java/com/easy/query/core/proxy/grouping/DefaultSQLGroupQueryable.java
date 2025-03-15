@@ -4,6 +4,7 @@ import com.easy.query.api.proxy.extension.casewhen.CaseWhenEntityBuilder;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
@@ -159,4 +160,9 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     public EntitySQLContext getEntitySQLContext() {
         return entitySQLContext;
     }
+
+//
+//    public <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> T1Proxy element(int index, SQLFuncExpression1<TProxy,T1Proxy> elementSelector) {
+//        return new DefaultSQLGroupQueryable<>(tSourceProxy, this.entitySQLContext, condition, where);
+//    }
 }

@@ -112,5 +112,9 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
     public SQLGroupQueryable<TSourceProxy> where(SQLExpression1<TSourceProxy> where) {
         return new DefaultSQLGroupQueryable<>(tSourceProxy, this.entitySQLContext, where);
     }
+//
+//    public <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> T1Proxy element(int index, SQLFuncExpression1<TSourceProxy,T1Proxy> elementSelector) {
+//        return new DefaultSQLGroupQueryable<>(tSourceProxy, this.entitySQLContext, condition, where);
+//    }
 
 }

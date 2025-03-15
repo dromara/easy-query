@@ -2,6 +2,7 @@ package com.easy.query.core.proxy.grouping;
 
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
@@ -50,4 +51,6 @@ public interface SQLGroupQueryable<TSourceProxy> extends EntitySQLContextAvailab
     <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> min(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TMember>> columnSelector);
 
     <TMember> ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TMember>> columnSelector, String delimiter);
+
+//    <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> T1Proxy element(int index, SQLFuncExpression1<TSourceProxy,T1Proxy> elementSelector);
 }

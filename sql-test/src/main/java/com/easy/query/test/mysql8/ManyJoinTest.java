@@ -3,7 +3,9 @@ package com.easy.query.test.mysql8;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.doc.entity.DocBank;
@@ -18,12 +20,14 @@ import com.easy.query.test.mysql8.entity.M8Role;
 import com.easy.query.test.mysql8.entity.M8Role2;
 import com.easy.query.test.mysql8.entity.M8User;
 import com.easy.query.test.mysql8.entity.M8User2;
+import com.easy.query.test.mysql8.entity.M8UserBook;
 import com.easy.query.test.mysql8.entity.M8UserRole;
 import com.easy.query.test.mysql8.entity.M8UserRole2;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,7 +42,7 @@ public class ManyJoinTest extends BaseTest{
     public void before(){
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
-        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBankCard.class, DocBank.class, DocUser.class, DocUserBook.class,SchoolClass.class, SchoolTeacher.class, SchoolClassTeacher.class, M8User.class, M8Role.class, M8UserRole.class, M8User2.class, M8Role2.class, M8UserRole2.class));
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBankCard.class, DocBank.class, DocUser.class, DocUserBook.class,SchoolClass.class, SchoolTeacher.class, SchoolClassTeacher.class, M8User.class, M8Role.class, M8UserRole.class, M8User2.class, M8Role2.class, M8UserRole2.class, M8UserBook.class));
         codeFirstCommand.executeWithTransaction(s->s.commit());
         {
             easyEntityQuery.deletable(DocBankCard.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
@@ -54,6 +58,7 @@ public class ManyJoinTest extends BaseTest{
             easyEntityQuery.deletable(M8User2.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
             easyEntityQuery.deletable(M8Role2.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
             easyEntityQuery.deletable(M8UserRole2.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
+            easyEntityQuery.deletable(M8UserBook.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
         }
     }
 
@@ -340,4 +345,44 @@ public class ManyJoinTest extends BaseTest{
         Assert.assertEquals("%小明角色%(String),1(Integer),123123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+    @Test
+    public void manyJoinMany2Many9() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<M8User2> list = easyEntityQuery.queryable(M8User2.class)
+                .where(s -> {
+                    s.books().where(x -> x.bookPrice().gt(BigDecimal.valueOf(100))).orderBy(x->{
+                        x.bookPrice().desc(OrderByModeEnum.NULLS_LAST);
+                    }).first().bookPrice().eq(BigDecimal.ONE);
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`user_id`,t.`user_name`,t.`user_age`,t.`create_time` FROM `m8_user2` t LEFT JOIN (SELECT t2.`book_id` AS `book_id`,t2.`user_id` AS `user_id`,t2.`book_name` AS `book_name`,t2.`book_price` AS `book_price` FROM (SELECT t1.`book_id`,t1.`user_id`,t1.`book_name`,t1.`book_price`,(ROW_NUMBER() OVER (PARTITION BY t1.`user_id` ORDER BY CASE WHEN t1.`book_price` IS NULL THEN 1 ELSE 0 END ASC,t1.`book_price` DESC)) AS `__row__` FROM `m8_user_book` t1 WHERE t1.`book_price` > ?) t2 WHERE t2.`__row__` = ?) t4 ON t4.`user_id` = t.`user_id` WHERE t4.`book_price` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("100(BigDecimal),1(Integer),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void manyJoinMany2Many10() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<M8User2> list = easyEntityQuery.queryable(M8User2.class)
+                .manyJoin(x -> x.books())
+                .where(s -> {
+                    s.books().where(x -> x.bookPrice().gt(BigDecimal.valueOf(100))).sum(x->x.bookPrice()).eq(BigDecimal.ONE);
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`user_id`,t.`user_name`,t.`user_age`,t.`create_time` FROM `m8_user2` t LEFT JOIN (SELECT t1.`user_id` AS `userId`,SUM((CASE WHEN t1.`book_price` > ? THEN t1.`book_price` ELSE ? END)) AS `__sum2__` FROM `m8_user_book` t1 GROUP BY t1.`user_id`) t2 ON t2.`userId` = t.`user_id` WHERE IFNULL(t2.`__sum2__`,0) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("100(BigDecimal),0(Integer),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+
 }
