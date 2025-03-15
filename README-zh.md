@@ -60,6 +60,8 @@
 - [x] 隐式分区分组 `OneToMany`、`ManyToMany` 自动实现第一个、第N个数据的筛选、排序和聚合函数结果获取
 - [x] 隐式CASE WHEN表达式 `属性.聚合函数.筛选`，`o.age().sum().filter(()->o.name().like("123"))`
 
+`Company` OneToMany `SysUser`
+
 ### 隐式join
 ```java
 

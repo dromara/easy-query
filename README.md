@@ -58,6 +58,9 @@
 - [x] Implicit Partition Grouping - Enables first/Nth element operations for OneToMany and ManyToMany relationships, supporting filtering, sorting, and aggregate function results
 - [x] Implicit CASE WHEN Expression - property.aggregate.filter() syntax, e.g., o.age().sum().filter(()->o.name().like("123"))
 
+
+`Company` OneToMany `SysUser`
+
 ### Implicit Join
 ```java
 List<SysUser> userInXXCompany = entityQuery.queryable(SysUser.class)
