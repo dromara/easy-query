@@ -10,6 +10,9 @@ import com.easy.query.test.doc.entity.DocBank;
 import com.easy.query.test.doc.entity.DocBankCard;
 import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.doc.entity.DocUserBook;
+import com.easy.query.test.entity.school.SchoolClass;
+import com.easy.query.test.entity.school.SchoolClassTeacher;
+import com.easy.query.test.entity.school.SchoolTeacher;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,13 +32,16 @@ public class ManyJoinTest extends BaseTest{
     public void before(){
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
-        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBankCard.class, DocBank.class, DocUser.class, DocUserBook.class));
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBankCard.class, DocBank.class, DocUser.class, DocUserBook.class,SchoolClass.class, SchoolTeacher.class, SchoolClassTeacher.class));
         codeFirstCommand.executeWithTransaction(s->s.commit());
         {
             easyEntityQuery.deletable(DocBankCard.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
             easyEntityQuery.deletable(DocBank.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
             easyEntityQuery.deletable(DocUser.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
             easyEntityQuery.deletable(DocUserBook.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
+            easyEntityQuery.deletable(SchoolClass.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
+            easyEntityQuery.deletable(SchoolTeacher.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
+            easyEntityQuery.deletable(SchoolClassTeacher.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
         }
     }
 
@@ -194,6 +200,28 @@ public class ManyJoinTest extends BaseTest{
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT (SELECT MAX(t5.`code`) FROM `doc_bank_card` t5 WHERE t5.`uid` = t.`id` AND t5.`type` = ? LIMIT 3 OFFSET 3) AS `value1`,t4.`type` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t2.`id` AS `id`,t2.`uid` AS `uid`,t2.`code` AS `code`,t2.`type` AS `type`,t2.`bank_id` AS `bank_id` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,(ROW_NUMBER() OVER (PARTITION BY t1.`uid` ORDER BY 1 = 1)) AS `__row__` FROM `doc_bank_card` t1 WHERE t1.`type` = ?) t2 WHERE t2.`__row__` = ?) t4 ON t4.`uid` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),123(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void manyJoinMany2Many2() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
+                .manyJoin(x -> x.schoolTeachers())
+                .where(s -> {
+                    s.schoolTeachers().where(x -> x.name().like("小明")).orderBy(x->{
+                        x.name().asc();
+                    }).first().name().like("123123");
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t LEFT JOIN (SELECT t2.`id` AS `id`,t2.`name` AS `name` FROM (SELECT t1.`id`,t1.`name`,(ROW_NUMBER() OVER (PARTITION BY t1.`id` ORDER BY t1.`name` ASC)) AS `__row__` FROM `school_teacher` t1 WHERE t1.`name` LIKE ?) t2 WHERE t2.`__row__` = ?) t5 ON (t5.`id` = t.`id` AND EXISTS (SELECT 1 FROM `school_class_teacher` t4 WHERE t4.`teacher_id` = t5.`id` AND t4.`class_id` = t.`id` LIMIT 1)) WHERE t5.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%小明%(String),1(Integer),%123123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 }
