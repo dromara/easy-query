@@ -25,6 +25,10 @@ import com.easy.query.core.proxy.grouping.DefaultSQLGroupQueryable;
 import com.easy.query.core.proxy.grouping.FlatElementSQLAnyQueryable;
 import com.easy.query.core.util.EasySQLUtil;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * create time 2025/3/8 21:16
  * 文件说明
@@ -71,7 +75,7 @@ public class RewritePredicteToSelectProvider<T1Proxy extends ProxyEntity<T1Proxy
         return manyGroupJoinEntityTableExpressionBuilder;
     }
 
-    public SubQueryContext<T1Proxy,T1> getSubQueryContext() {
+    public SubQueryContext<T1Proxy, T1> getSubQueryContext() {
         return subQueryContext;
     }
 
@@ -94,6 +98,7 @@ public class RewritePredicteToSelectProvider<T1Proxy extends ProxyEntity<T1Proxy
     public TableAvailable getManyGroupJoinTable() {
         return manyGroupJoinTable;
     }
+
 
     public String getOrAppendGroupProjects(SQLSelectAsExpression sqlSelectAsExpression, String methodName) {
 
