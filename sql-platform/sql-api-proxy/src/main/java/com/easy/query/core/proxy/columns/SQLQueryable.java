@@ -119,23 +119,4 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
     T1Proxy flatElement(SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> flatAdapterExpression);
 
 
-    /**
-     * 请使用{@link #configureToSubQuery(SQLExpression1)}
-     *
-     * @param configureExpression
-     * @return
-     */
-    @Deprecated
-    default SQLQueryable<T1Proxy, T1> configure(SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression) {
-        return configureToSubQuery(configureExpression);
-    }
-
-    /**
-     * 仅子查询配置生效
-     * manyJoin下使用则会转成独立SubQuery
-     *
-     * @param configureExpression
-     * @return
-     */
-    SQLQueryable<T1Proxy, T1> configureToSubQuery(SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression);
 }

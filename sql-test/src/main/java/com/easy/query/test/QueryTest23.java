@@ -45,4 +45,5 @@ public class QueryTest23 extends BaseTest {
         Assert.assertEquals("123(String),null(null),123(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
 }

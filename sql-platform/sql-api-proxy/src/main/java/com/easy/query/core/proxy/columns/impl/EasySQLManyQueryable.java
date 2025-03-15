@@ -228,11 +228,6 @@ public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
         return tPropertyProxy;
     }
 
-    @Override
-    public SQLQueryable<T1Proxy, T1> configureToSubQuery(SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression) {
-        this.subqueryContext.appendConfigureExpression(configureExpression);
-        return this;
-    }
 
 
     /**

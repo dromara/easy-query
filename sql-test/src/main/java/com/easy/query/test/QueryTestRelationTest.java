@@ -181,7 +181,7 @@ public class QueryTestRelationTest extends BaseTest {
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
                 .where(m -> {
                     m.mySignUps()
-                            .configureToSubQuery(s -> {
+                            .configure(s -> {
                                 s.filterConfigure(NotNullOrEmptyValueFilter.DEFAULT);
                             })
                             .any(s -> s.userId().eq(""));

@@ -1130,7 +1130,7 @@ public class QueryTest16 extends BaseTest {
             LocalDateTime end = LocalDateTime.of(2026, 1, 1, 1, 2);
             List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                     .where(user -> {
-                        user.roles().configureToSubQuery(r -> {
+                        user.roles().configure(r -> {
                             r.asAlias("myRole");
                         }).any(role -> {
                             role.name().like("查询的角色名");
@@ -1158,7 +1158,7 @@ public class QueryTest16 extends BaseTest {
                     .where(user -> {
                         user.company().name().like("123");
 
-                        user.roles().configureToSubQuery(r -> {
+                        user.roles().configure(r -> {
                             r.asAlias("myRole");
                         }).any(role -> {
                             role.name().like("查询的角色名");

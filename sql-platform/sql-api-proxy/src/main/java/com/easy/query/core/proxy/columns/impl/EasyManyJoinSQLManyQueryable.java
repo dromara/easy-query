@@ -198,12 +198,6 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
     }
 
     @Override
-    public SQLQueryable<T1Proxy, T1> configureToSubQuery(SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression) {
-        getSubQueryContext().appendConfigureExpression(configureExpression);
-        return this;
-    }
-
-    @Override
     public String getValue() {
         return getSubQueryContext().getProperty();
     }

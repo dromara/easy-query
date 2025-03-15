@@ -6,8 +6,6 @@ import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
-import com.easy.query.core.proxy.SQLMathExpression;
-import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
@@ -22,7 +20,6 @@ import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.doc.entity.proxy.DocUserProxy;
 import com.easy.query.test.dto.AggregateFxVO;
 import com.easy.query.test.entity.BlogEntity;
-import com.easy.query.test.entity.Topic;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -82,7 +79,7 @@ public class QueryTest22 extends BaseTest {
                     user.bankCards().where(x -> x.type().eq("123"))
                             .sum(o -> o.code().toNumber(Integer.class))
                             .eq(123);
-                    user.bankCards().configureToSubQuery(x -> x.disableLogicDelete()).where(x -> x.type().eq("123")).
+                    user.bankCards().configure(x -> x.disableLogicDelete()).where(x -> x.type().eq("123")).
                             sum(o -> o.code().toNumber(Integer.class))
                             .eq(123);
 

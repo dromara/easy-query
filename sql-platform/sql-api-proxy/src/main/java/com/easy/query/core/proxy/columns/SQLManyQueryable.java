@@ -40,19 +40,17 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
 
     SQLManyQueryable<TProxy, T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression);
 
-    default SQLManyQueryable<TProxy, T1Proxy, T1> configureToSubQuery(SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression) {
-        this.getSubQueryContext().appendConfigureExpression(configureExpression);
-        return this;
-    }
     /**
-     * 请使用{@link #configureToSubQuery(SQLExpression1)}
+     * 仅子查询配置生效
+     * manyJoin下使用则会转成独立SubQuery
      *
      * @param configureExpression
      * @return
      */
-    @Deprecated
     default SQLManyQueryable<TProxy, T1Proxy, T1> configure(SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression) {
-        return configureToSubQuery(configureExpression);
+        this.getSubQueryContext().appendConfigureExpression(configureExpression);
+        return this;
     }
+
 
 }

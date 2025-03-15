@@ -179,7 +179,7 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
     }
 
     public <TR> List<TR> toList() {
-        List<?> entities = queryable.toList(queryable.queryClass());
+        List<?> entities = queryable.toList();
         return entities.stream().map(o -> {
             return this.<Collection<TR>>getNavigates(o);
         }).flatMap(o -> o.stream()).filter(o -> o != null).distinct().collect(Collectors.toList());

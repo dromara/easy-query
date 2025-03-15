@@ -171,15 +171,6 @@ public class EmptySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> imp
         return tPropertyProxy;
     }
 
-    @Override
-    public SQLQueryable<T1Proxy, T1> configure(SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configure) {
-        return null;
-    }
-
-    @Override
-    public SQLQueryable<T1Proxy, T1> configureToSubQuery(SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression) {
-        return null;
-    }
 
     @Override
     public String getValue() {

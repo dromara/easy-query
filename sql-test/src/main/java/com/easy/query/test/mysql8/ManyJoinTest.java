@@ -171,4 +171,29 @@ public class ManyJoinTest extends BaseTest{
         Assert.assertEquals("123(String),null(null),123(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+    @Test
+    public void testElement8() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        try {
+
+            List<Draft2<String, String>> list = easyEntityQuery.queryable(DocUser.class)
+                    .manyJoin(x -> x.bankCards())
+                    .select(user -> Select.DRAFT.of(
+                            user.bankCards().where(o -> o.type().eq("123")).elements(3,5).max(x -> x.code()),
+                            user.bankCards().where(o -> o.type().eq("123")).element(0).type()
+                    )).toList();
+        } catch (Exception ex) {
+
+        }
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT (SELECT MAX(t5.`code`) FROM `doc_bank_card` t5 WHERE t5.`uid` = t.`id` AND t5.`type` = ? LIMIT 3 OFFSET 3) AS `value1`,t4.`type` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t2.`id` AS `id`,t2.`uid` AS `uid`,t2.`code` AS `code`,t2.`type` AS `type`,t2.`bank_id` AS `bank_id` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,(ROW_NUMBER() OVER (PARTITION BY t1.`uid` ORDER BY 1 = 1)) AS `__row__` FROM `doc_bank_card` t1 WHERE t1.`type` = ?) t2 WHERE t2.`__row__` = ?) t4 ON t4.`uid` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),123(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
 }
