@@ -114,6 +114,54 @@ List<Draft2<LocalDateTime, Long>> customVO = entityQuery.queryable(SysUser.class
         )).toList();
 ```
 
+
+## Complete Single-Table Example
+First, let's look at a complete single-table query example involving filtering, aggregation, aggregate filtering, projection, and sorting.
+```java
+List<Draft3<String, Integer, LocalDateTime>> myBlog = easyEntityQuery.queryable(BlogEntity.class)
+        .where(b -> {
+          b.content().like("my blog");
+        })
+        .groupBy(b -> GroupKeys.of(b.title()))
+        .having(group -> {
+          group.groupTable().star().sum().lt(10);
+        })
+        // The select statement will wrap previous expressions as an inline view (t1 table)
+        // If no subsequent chained operations exist, it will expand directly
+        .select(group -> Select.DRAFT.of(
+                group.key1(),        // value1
+                group.groupTable().star().sum().asAnyType(Integer.class),  // value2
+                group.groupTable().createTime().max()  // value3
+        ))
+        // If no orderBy is added, no inline view (t1 table) SQL will be generated
+        // Because orderBy operates on the previous select results
+        .orderBy(group -> group.value3().desc())
+        .limit(2, 2)  // Apply result pagination
+        .toList();
+
+-- 第1条sql数据
+SELECT
+    t1.`value1` AS `value1`,
+    t1.`value2` AS `value2`,
+    t1.`value3` AS `value3` 
+FROM
+    (SELECT
+        t.`title` AS `value1`,
+        SUM(t.`star`) AS `value2`,
+        MAX(t.`create_time`) AS `value3` 
+    FROM
+        `t_blog` t 
+    WHERE
+        t.`deleted` = false 
+        AND t.`content` LIKE '%my blog%' 
+    GROUP BY
+        t.`title` 
+    HAVING
+        SUM(t.`star`) < 10) t1 
+ORDER BY
+    t1.`value3` DESC LIMIT 2,2
+```
+
 ## Dependency
 entity use `@EntityProxy` or `@EntityFileProxy` annotation then build project apt will auto generate java code for proxy
 ```xml
