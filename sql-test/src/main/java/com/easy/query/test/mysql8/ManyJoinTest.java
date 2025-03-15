@@ -14,6 +14,12 @@ import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.SchoolClassTeacher;
 import com.easy.query.test.entity.school.SchoolTeacher;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.entity.M8Role;
+import com.easy.query.test.mysql8.entity.M8Role2;
+import com.easy.query.test.mysql8.entity.M8User;
+import com.easy.query.test.mysql8.entity.M8User2;
+import com.easy.query.test.mysql8.entity.M8UserRole;
+import com.easy.query.test.mysql8.entity.M8UserRole2;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +38,7 @@ public class ManyJoinTest extends BaseTest{
     public void before(){
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
-        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBankCard.class, DocBank.class, DocUser.class, DocUserBook.class,SchoolClass.class, SchoolTeacher.class, SchoolClassTeacher.class));
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBankCard.class, DocBank.class, DocUser.class, DocUserBook.class,SchoolClass.class, SchoolTeacher.class, SchoolClassTeacher.class, M8User.class, M8Role.class, M8UserRole.class, M8User2.class, M8Role2.class, M8UserRole2.class));
         codeFirstCommand.executeWithTransaction(s->s.commit());
         {
             easyEntityQuery.deletable(DocBankCard.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
@@ -42,6 +48,12 @@ public class ManyJoinTest extends BaseTest{
             easyEntityQuery.deletable(SchoolClass.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
             easyEntityQuery.deletable(SchoolTeacher.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
             easyEntityQuery.deletable(SchoolClassTeacher.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
+            easyEntityQuery.deletable(M8User.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
+            easyEntityQuery.deletable(M8Role.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
+            easyEntityQuery.deletable(M8UserRole.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
+            easyEntityQuery.deletable(M8User2.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
+            easyEntityQuery.deletable(M8Role2.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
+            easyEntityQuery.deletable(M8UserRole2.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
         }
     }
 
@@ -220,8 +232,92 @@ public class ManyJoinTest extends BaseTest{
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t LEFT JOIN (SELECT t2.`id` AS `id`,t2.`name` AS `name` FROM (SELECT t1.`id`,t1.`name`,(ROW_NUMBER() OVER (PARTITION BY t1.`id` ORDER BY t1.`name` ASC)) AS `__row__` FROM `school_teacher` t1 WHERE t1.`name` LIKE ?) t2 WHERE t2.`__row__` = ?) t5 ON (t5.`id` = t.`id` AND EXISTS (SELECT 1 FROM `school_class_teacher` t4 WHERE t4.`teacher_id` = t5.`id` AND t4.`class_id` = t.`id` LIMIT 1)) WHERE t5.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t LEFT JOIN (SELECT t4.`id` AS `id`,t4.`name` AS `name`,t4.`class_id` AS `class_id` FROM (SELECT t2.`class_id` AS `class_id`,t1.`id`,t1.`name`,(ROW_NUMBER() OVER (PARTITION BY t1.`id` ORDER BY t1.`name` ASC)) AS `__row__` FROM `school_teacher` t1 INNER JOIN `school_class_teacher` t2 ON t1.`id` = t2.`teacher_id` WHERE t1.`name` LIKE ?) t4 WHERE t4.`__row__` = ?) t6 ON t6.`class_id` = t.`id` WHERE t6.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%小明%(String),1(Integer),%123123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void manyJoinMany2Many3() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<M8User> list = easyEntityQuery.queryable(M8User.class)
+                .manyJoin(x -> x.roles())
+                .where(s -> {
+                    s.roles().where(x -> x.name().like("小明角色")).count().eq(123L);
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`age`,t.`create_time` FROM `m8_user` t LEFT JOIN (SELECT t2.`user_id` AS `user_id`,COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE ? END)) AS `__count2__` FROM `m8_role` t1 INNER JOIN `m8_user_role` t2 ON t1.`id` = t2.`role_id` GROUP BY t2.`user_id`) t4 ON t4.`user_id` = t.`id` WHERE t4.`__count2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%小明角色%(String),1(Integer),null(null),123(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void manyJoinMany2Many3_1() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<M8User2> list = easyEntityQuery.queryable(M8User2.class)
+                .manyJoin(x -> x.roles())
+                .where(s -> {
+                    s.roles().where(x -> x.roleName().like("小明角色")).count().eq(123L);
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`user_id`,t.`user_name`,t.`user_age`,t.`create_time` FROM `m8_user2` t LEFT JOIN (SELECT t2.`user_id` AS `user_id`,COUNT((CASE WHEN t1.`role_name` LIKE ? THEN ? ELSE ? END)) AS `__count2__` FROM `m8_role2` t1 INNER JOIN `m8_user_role2` t2 ON t1.`role_id` = t2.`role_id` GROUP BY t2.`user_id`) t4 ON t4.`user_id` = t.`user_id` WHERE t4.`__count2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%小明角色%(String),1(Integer),null(null),123(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void manyJoinMany2Many4() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<M8User> list = easyEntityQuery.queryable(M8User.class)
+                .manyJoin(x -> x.roles())
+                .where(s -> {
+                    s.roles().where(x -> x.name().like("小明角色")).orderBy(x->{
+                        x.name().asc();
+                    }).first().name().eq("123123");
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`age`,t.`create_time` FROM `m8_user` t LEFT JOIN (SELECT t4.`id` AS `id`,t4.`name` AS `name`,t4.`user_id` AS `user_id` FROM (SELECT t2.`user_id` AS `user_id`,t1.`id`,t1.`name`,(ROW_NUMBER() OVER (PARTITION BY t1.`id` ORDER BY t1.`name` ASC)) AS `__row__` FROM `m8_role` t1 INNER JOIN `m8_user_role` t2 ON t1.`id` = t2.`role_id` WHERE t1.`name` LIKE ?) t4 WHERE t4.`__row__` = ?) t6 ON t6.`user_id` = t.`id` WHERE t6.`name` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%小明角色%(String),1(Integer),123123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void manyJoinMany2Many4_1() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<M8User2> list = easyEntityQuery.queryable(M8User2.class)
+                .manyJoin(x -> x.roles())
+                .where(s -> {
+                    s.roles().where(x -> x.roleName().like("小明角色")).orderBy(x->{
+                        x.roleName().asc();
+                    }).first().roleName().eq("123123");
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`user_id`,t.`user_name`,t.`user_age`,t.`create_time` FROM `m8_user2` t LEFT JOIN (SELECT t4.`role_id` AS `role_id`,t4.`role_name` AS `role_name`,t4.`user_id` AS `user_id` FROM (SELECT t2.`user_id` AS `user_id`,t1.`role_id`,t1.`role_name`,(ROW_NUMBER() OVER (PARTITION BY t1.`role_id` ORDER BY t1.`role_name` ASC)) AS `__row__` FROM `m8_role2` t1 INNER JOIN `m8_user_role2` t2 ON t1.`role_id` = t2.`role_id` WHERE t1.`role_name` LIKE ?) t4 WHERE t4.`__row__` = ?) t6 ON t6.`user_id` = t.`user_id` WHERE t6.`role_name` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%小明角色%(String),1(Integer),123123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 }

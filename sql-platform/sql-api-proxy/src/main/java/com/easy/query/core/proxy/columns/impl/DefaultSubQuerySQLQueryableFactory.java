@@ -20,6 +20,8 @@ import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableEx
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.func.def.PartitionBySQLFunction;
+import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.columns.SQLQueryable;
@@ -131,6 +133,30 @@ public class DefaultSubQuerySQLQueryableFactory implements SubQuerySQLQueryableF
         if (queryableSQLFuncExpression1 != null) {
             clientQueryable = EasyObjectUtil.typeCastNullable(queryableSQLFuncExpression1.apply(clientQueryable));
         }
+
+
+        if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
+            clientQueryable.innerJoin(navigateMetadata.getMappingClass(), (target, middle) -> {
+                        target.multiEq(true, middle, navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), navigateMetadata.getTargetMappingProperties());
+                    })
+                    .where((target, middle) -> {
+                        navigateMetadata.predicateMappingClassFilterApply(middle);
+                        navigateMetadata.predicateFilterApply(target);
+                    }).select(Map.class,(target, middle) -> {
+                        EntityMetadata middleEntityMetadata = middle.getEntityMetadata();
+                        for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {
+                            ColumnMetadata columnMetadata = middleEntityMetadata.getColumnNotNull(selfMappingProperty);
+                            middle.columnAs(selfMappingProperty, columnMetadata.getName());
+                        }
+                    });
+        } else {
+            clientQueryable.where(t -> {
+                navigateMetadata.predicateFilterApply(t);
+
+            });
+        }
+
+
         EasyEntityQueryable<T1Proxy, T1> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
         if (subQueryContext.getWhereExpression() != null) {
             queryable.where(subQueryContext.getWhereExpression());
