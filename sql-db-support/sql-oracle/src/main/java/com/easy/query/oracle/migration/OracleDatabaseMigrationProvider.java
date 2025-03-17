@@ -148,6 +148,8 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
                     sql.append(")");
                 }
             }
+        }else{
+            sql.deleteCharAt(sql.length() - 1);
         }
 //        sql.append(newLine).append(")");
         sql.append(newLine).append(") LOGGING ';");

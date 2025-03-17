@@ -130,6 +130,8 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
                     sql.append(")");
                 }
             }
+        } else {
+            sql.deleteCharAt(sql.length() - 1);
         }
         sql.append(newLine).append(") Engine=InnoDB");
         String tableComment = getTableComment(entityMigrationMetadata, "'");

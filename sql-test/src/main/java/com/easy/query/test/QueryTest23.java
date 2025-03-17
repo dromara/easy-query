@@ -1,6 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.proxy.SQLMathExpression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.Select;
@@ -100,5 +101,25 @@ public class QueryTest23 extends BaseTest {
 //                     t_blog.score().asc();
 //                 }).toList();
      }
+
+     @Test
+     public void testAddMulty(){
+
+         ListenerContext listenerContext = new ListenerContext();
+         listenerContextManager.startListen(listenerContext);
+
+         List<Draft1<BigDecimal>> list = easyEntityQuery.queryable(BlogEntity.class)
+                 .select(t_blog -> Select.DRAFT.of(
+                         t_blog.order().add(t_blog.star()).divide(t_blog.score())
+                 )).toList();
+
+         listenerContextManager.clear();
+         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+         Assert.assertEquals("SELECT ((t.`order` + t.`star`) / t.`score`) AS `value1` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+     }
+
 
 }

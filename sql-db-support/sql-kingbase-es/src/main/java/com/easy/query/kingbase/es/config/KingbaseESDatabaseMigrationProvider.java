@@ -153,6 +153,8 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
                     sql.append(")");
                 }
             }
+        }else{
+            sql.deleteCharAt(sql.length() - 1);
         }
         sql.append(newLine).append(");");
         if (columnCommentSQL.length() > 0) {
