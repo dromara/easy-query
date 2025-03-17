@@ -1,15 +1,19 @@
 package com.easy.query.test;
 
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.doc.entity.DocUser;
+import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -67,5 +71,34 @@ public class QueryTest23 extends BaseTest {
         Assert.assertEquals("%小明%(String),1(Integer),null(null),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
+    @Test
+     public void fetcherOrder(){
+        List<Draft1<BigDecimal>> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                .select(t_blog -> Select.DRAFT.of(
+                        t_blog.expression().sqlSegment("({0}+{1})/{2}", c -> {
+                            c.expression(t_blog.score()).expression(t_blog.star()).expression(t_blog.order());
+                        }, BigDecimal.class)
+                )).toList();
+
+
+        easyEntityQuery.queryable(BlogEntity.class)
+                .select(t_blog -> Select.DRAFT.of(
+                       t_blog.expression().caseWhen(()->{}).then(1)
+                               .elseEnd(
+                                       t_blog.expression().sqlSegment("({0}+{1})/{2}", c -> {
+                                           c.expression(t_blog.score()).expression(t_blog.star()).expression(t_blog.order());
+                                       }, BigDecimal.class)
+                               )
+                )).toList();
+
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                 .where(t_blog -> t_blog.createTime().gt(LocalDateTime.of(2020, 1, 1, 0, 0)))
+                 .select(t_blog -> t_blog.FETCHER.id().score())
+                 .orderBy(t_blog -> {
+                     t_blog.score().asc();
+                 }).toList();
+     }
 
 }

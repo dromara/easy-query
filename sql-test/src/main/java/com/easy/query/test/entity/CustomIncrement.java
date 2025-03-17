@@ -5,6 +5,8 @@ import com.easy.query.core.annotation.Table;
 import com.easy.query.test.increment.MyDatabaseIncrementSQLColumnGenerator;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * create time 2023/8/9 10:53
  * 文件说明

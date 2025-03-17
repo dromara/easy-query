@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
  * @author xuejiaming
  */
 public class DamengQueryTest extends DamengBaseTest {
+
     @Test
     public void query0() {
         Queryable<DamengMyTopic> queryable = easyQuery.queryable(DamengMyTopic.class)

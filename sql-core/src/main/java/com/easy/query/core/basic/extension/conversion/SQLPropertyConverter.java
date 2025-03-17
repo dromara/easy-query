@@ -20,6 +20,27 @@ public interface SQLPropertyConverter extends SQLTableOwner, SQLSegment {
         sqlNativeSegment(sqlSegment,c->{});
     }
     void sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume);
+    default void sqlFunction(SQLFunction sqlFunction, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume){
+        String sqlSegment = sqlFunction.sqlSegment(getTable());
+        sqlNativeSegment(sqlSegment,context->{
+            sqlFunction.consume(context.getSQLNativeChainExpressionContext());
+            contextConsume.apply(context);
+        });
+    }
+    default void sqlFunction(SQLFunction sqlFunction){
+        String sqlSegment = sqlFunction.sqlSegment(getTable());
+        sqlNativeSegment(sqlSegment,context->{
+            sqlFunction.consume(context.getSQLNativeChainExpressionContext());
+        });
+    }
+
+    /**
+     * 使用{@link #sqlFunction(SQLFunction, SQLExpression1)}
+     * @param table
+     * @param sqlFunction
+     * @param aliasProp
+     */
+    @Deprecated
    default void sqlNativeSegment(TableAvailable table, SQLFunction sqlFunction,String aliasProp){
        String sqlSegment = sqlFunction.sqlSegment(table);
        sqlNativeSegment(sqlSegment,context->{

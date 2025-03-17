@@ -12,6 +12,7 @@ import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Collection;
 

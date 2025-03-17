@@ -24,10 +24,10 @@ import java.math.BigDecimal;
  * @author xuejiaming
  */
 public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProxy> {
-    private final SQLExpression1<TProxy> predicate;
-    private final TProxy groupTable;
-    private final EntitySQLContext entitySQLContext;
-    private boolean distinct = false;
+    protected final SQLExpression1<TProxy> predicate;
+    protected final TProxy groupTable;
+    protected final EntitySQLContext entitySQLContext;
+    protected boolean distinct = false;
 
     public DefaultSQLGroupQueryable(TProxy groupTable, EntitySQLContext entitySQLContext, SQLExpression1<TProxy> predicate) {
         this.groupTable = groupTable;
@@ -161,8 +161,5 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
         return entitySQLContext;
     }
 
-//
-//    public <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> T1Proxy element(int index, SQLFuncExpression1<TProxy,T1Proxy> elementSelector) {
-//        return new DefaultSQLGroupQueryable<>(tSourceProxy, this.entitySQLContext, condition, where);
-//    }
+
 }
