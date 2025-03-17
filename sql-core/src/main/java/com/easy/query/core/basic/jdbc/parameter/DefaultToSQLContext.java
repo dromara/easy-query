@@ -19,7 +19,8 @@ public class DefaultToSQLContext implements ToSQLContext {
     private final SQLRewriteUnit sqlRewriteUnit;
     private final ToTableContext toTableContext;
     private int invokeCount;
-    private TableAvailable ignoreAliasTable;
+    private TableAvailable aliasTable;
+    private String alias;
 
     public DefaultToSQLContext(TableContext tableContext, String alias) {
         this(tableContext, 10, null, alias);
@@ -72,8 +73,8 @@ public class DefaultToSQLContext implements ToSQLContext {
 
     @Override
     public String getAlias(TableAvailable table) {
-        if (this.ignoreAliasTable == table) {
-            return null;
+        if(this.aliasTable == table){
+            return alias;
         }
         return toTableContext.getAlias(table);
     }
@@ -92,7 +93,8 @@ public class DefaultToSQLContext implements ToSQLContext {
     }
 
     @Override
-    public void setTableAliasNull(TableAvailable table) {
-        this.ignoreAliasTable = table;
+    public void setTableAlias(TableAvailable table, String alias) {
+        this.aliasTable=table;
+        this.alias=alias;
     }
 }

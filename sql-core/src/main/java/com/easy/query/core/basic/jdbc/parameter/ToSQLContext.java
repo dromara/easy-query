@@ -30,5 +30,5 @@ public interface ToSQLContext {
 
     String getAlias(TableAvailable table);
     ToTableContext getToTableContext();
-     void setTableAliasNull(TableAvailable table);
+     void setTableAlias(TableAvailable table,String alias);
 }

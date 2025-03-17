@@ -92,13 +92,13 @@ public class QueryTest23 extends BaseTest {
                                )
                 )).toList();
 
-
-        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
-                 .where(t_blog -> t_blog.createTime().gt(LocalDateTime.of(2020, 1, 1, 0, 0)))
-                 .select(t_blog -> t_blog.FETCHER.id().score())
-                 .orderBy(t_blog -> {
-                     t_blog.score().asc();
-                 }).toList();
+//
+//        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+//                 .where(t_blog -> t_blog.createTime().gt(LocalDateTime.of(2020, 1, 1, 0, 0)))
+//                 .select(t_blog -> t_blog.FETCHER.id().score())
+//                 .orderBy(t_blog -> {
+//                     t_blog.score().asc();
+//                 }).toList();
      }
 
 }

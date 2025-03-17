@@ -959,6 +959,53 @@ public class QueryTest14 extends BaseTest {
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
                 .build();
         DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            try {
+
+                defaultEasyEntityQuery.deletable(BlogEntity.class)
+                        .where(b -> b.expression().exists(()->{
+                            return defaultEasyEntityQuery.queryable(BlogEntity.class)
+                                    .where(t_blog -> {
+                                        t_blog.id().eq(b.id());
+                                    });
+                        })).executeRows();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("UPDATE \"t_blog\" SET \"deleted\" = ? WHERE \"t_blog\".\"deleted\" = ? AND EXISTS (SELECT 1 FROM \"t_blog\" t1 WHERE t1.\"deleted\" = ? AND t1.\"id\" = \"t_blog\".\"id\")", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("true(Boolean),false(Boolean),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            try {
+
+                defaultEasyEntityQuery.deletable(BlogEntity.class)
+                        .allowDeleteStatement(true)
+                        .disableLogicDelete()
+                        .where(b -> b.expression().exists(()->{
+                            return defaultEasyEntityQuery.queryable(BlogEntity.class)
+                                    .where(t_blog -> {
+                                        t_blog.id().eq(b.id());
+                                    });
+                        })).executeRows();
+            } catch (Exception ignore) {
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("DELETE FROM \"t_blog\" WHERE EXISTS (SELECT 1 FROM \"t_blog\" t1 WHERE t1.\"deleted\" = ? AND t1.\"id\" = \"t_blog\".\"id\")", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
         {
 
             {

@@ -276,7 +276,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         TRProxy resultProxy = selectExpression.apply(get1Proxy());
         if (resultProxy instanceof EntityFetcher) {
             EntityFetcher resultProxy1 = (EntityFetcher) resultProxy;
-            return Select.selectProxy(EasyObjectUtil.typeCastNullable(resultProxy1), getClientQueryable());
+            return Select.selectProxy(EasyObjectUtil.typeCastNullable(resultProxy1.fetchProxy()), getClientQueryable());
         }
         return Select.selectProxy(resultProxy, getClientQueryable());
 //
