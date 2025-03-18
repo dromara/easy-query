@@ -34,12 +34,6 @@ public class DamengDateTimeFormatSQLFunction extends AbstractExpressionSQLFuncti
     public int paramMarks() {
         return columnExpressions.size();
     }
-
-    /**
-     * 代码参考 <a href="https://github.com/dotnetcore/FreeSql">FreeSQL</a>
-     *
-     * @return
-     */
     public String getSQLSegment() {
         if (this.javaFormat != null) {
             String format = this.javaFormat;

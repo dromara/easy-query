@@ -374,7 +374,7 @@ public class DamengQueryTest extends DamengBaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.\"CREATE_TIME\" AS \"VALUE1\",TO_CHAR(t.\"CREATE_TIME\", 'YYYY')||'-'||TO_CHAR(t.\"CREATE_TIME\", 'MM')||'-01' AS \"VALUE2\" FROM \"MY_TOPIC\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.\"CREATE_TIME\" AS \"VALUE1\",TO_CHAR(t.\"CREATE_TIME\",'YYYY-MM-\"01\"') AS \"VALUE2\" FROM \"MY_TOPIC\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 
     }
 
@@ -399,7 +399,7 @@ public class DamengQueryTest extends DamengBaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.\"CREATE_TIME\" AS \"VALUE1\",TO_CHAR(t.\"CREATE_TIME\", 'YYYY')||'年'||TO_CHAR(t.\"CREATE_TIME\", 'MM')||'-01' AS \"VALUE2\" FROM \"MY_TOPIC\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.\"CREATE_TIME\" AS \"VALUE1\",TO_CHAR(t.\"CREATE_TIME\",'YYYY\"年\"MM-\"01\"') AS \"VALUE2\" FROM \"MY_TOPIC\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 
     }
 
@@ -424,7 +424,7 @@ public class DamengQueryTest extends DamengBaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.\"CREATE_TIME\" AS \"VALUE1\",TO_CHAR(t.\"CREATE_TIME\", 'YYYY')||'年'||TO_CHAR(t.\"CREATE_TIME\", 'MM')||'-01 '||TO_CHAR(t.\"CREATE_TIME\", 'HH24')||'时'||TO_CHAR(t.\"CREATE_TIME\", 'MI')||'分'||TO_CHAR(t.\"CREATE_TIME\", 'SS')||'秒' AS \"VALUE2\" FROM \"MY_TOPIC\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.\"CREATE_TIME\" AS \"VALUE1\",TO_CHAR(t.\"CREATE_TIME\",'YYYY\"年\"MM-\"01\" HH24\"时\"MI\"分\"SS\"秒\"') AS \"VALUE2\" FROM \"MY_TOPIC\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 
     }
 
@@ -449,7 +449,7 @@ public class DamengQueryTest extends DamengBaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.\"CREATE_TIME\" AS \"VALUE1\",TO_CHAR(t.\"CREATE_TIME\", 'YYYY')||'年'||TO_CHAR(t.\"CREATE_TIME\", 'MM')||'-01 '||TO_CHAR(t.\"CREATE_TIME\", 'HH24')||':'||TO_CHAR(t.\"CREATE_TIME\", 'MI')||'分'||TO_CHAR(t.\"CREATE_TIME\", 'SS')||'秒' AS \"VALUE2\" FROM \"MY_TOPIC\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.\"CREATE_TIME\" AS \"VALUE1\",TO_CHAR(t.\"CREATE_TIME\",'YYYY\"年\"MM-\"01\" HH24:MI\"分\"SS\"秒\"') AS \"VALUE2\" FROM \"MY_TOPIC\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 
     }
 
