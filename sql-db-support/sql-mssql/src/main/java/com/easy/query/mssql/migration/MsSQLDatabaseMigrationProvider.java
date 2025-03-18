@@ -1,4 +1,4 @@
-package com.easy.query.mssql.config;
+package com.easy.query.mssql.migration;
 
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -11,18 +11,14 @@ import com.easy.query.core.migration.commands.DefaultMigrationCommand;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.core.util.EasyStringUtil;
-import com.easy.query.core.util.EasyToSQLUtil;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -120,7 +116,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
                     .append(newLine).append("go");
         }
 
-        sql.append("USE ").append(getQuoteSQLName(this.databaseName))
+        sql.append("USE ").append(getQuoteSQLName(this.getDatabaseName()))
 //                .append("go")
                 .append(newLine);
         sql.append("CREATE TABLE ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName())).append(" ( ");

@@ -8,6 +8,7 @@ import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.migration.DatabaseMigrationProvider;
 import com.easy.query.mssql.expression.MsSQLExpressionFactory;
 import com.easy.query.mssql.func.MsSQLFuncImpl;
+import com.easy.query.mssql.migration.MsSQLDatabaseMigrationProvider;
 
 /**
  * create time 2023/5/10 13:40

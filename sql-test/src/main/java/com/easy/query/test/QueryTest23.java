@@ -121,6 +121,32 @@ public class QueryTest23 extends BaseTest {
          Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
      }
+     @Test
+     public void testAddMulty2(){
+
+         ListenerContext listenerContext = new ListenerContext();
+         listenerContextManager.startListen(listenerContext);
+
+         List<Draft2<BigDecimal,BigDecimal>> list = easyEntityQuery.queryable(BlogEntity.class)
+                 .configure(o->o.setPrintSQL(false))
+                 .select(t_blog -> Select.DRAFT.of(
+                         t_blog.expression().caseWhen(()->{
+                             t_blog.id().isNull();
+                         }).then(1).elseEnd(t_blog.order().add(t_blog.star()).divide(t_blog.score()),BigDecimal.class),
+                         t_blog.order().add(t_blog.star()).divide(t_blog.score())
+                 )).toList();
+         for (Draft2<BigDecimal,BigDecimal> bigDecimalDraft1 : list) {
+             System.out.println(bigDecimalDraft1.getValue1());
+             System.out.println(bigDecimalDraft1.getValue2());
+         }
+
+         listenerContextManager.clear();
+         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+         Assert.assertEquals("SELECT ((t.`order` + t.`star`) / t.`score`) AS `value1` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+     }
 
 
 }
