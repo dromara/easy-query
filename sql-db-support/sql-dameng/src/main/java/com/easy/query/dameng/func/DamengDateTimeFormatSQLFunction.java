@@ -4,9 +4,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,6 +15,8 @@ import java.util.regex.Pattern;
  * @author xuejiaming
  */
 public class DamengDateTimeFormatSQLFunction extends AbstractExpressionSQLFunction {
+    private static final Pattern FORMAT_PATTERN = Pattern.compile("(yyyy|yy|MM|dd|HH|hh|mm|ss|[MdHhmsa:/\\-_ ])");
+
     private final List<ColumnExpression> columnExpressions;
     private final String javaFormat;
 
@@ -73,64 +73,55 @@ public class DamengDateTimeFormatSQLFunction extends AbstractExpressionSQLFuncti
         }
         return "TO_CHAR({0},'YYYY-MM-DD HH24:MI:SS.FF6')";
     }
-    private static final Pattern FORMAT_PATTERN = Pattern.compile("(yyyy|yy|MM|dd|HH|hh|mm|ss|[MdHhmsa]|(?:(?!yyyy|yy|MM|dd|HH|hh|mm|ss|[MdHhmsa]).)+)");
+
     protected String getReplacedFormats(String format) {
         Matcher matcher = FORMAT_PATTERN.matcher(format);
-        StringJoiner sj = new StringJoiner("||");
+        StringBuilder sb = new StringBuilder();
+
+        int cursor = 0;
         while (matcher.find()) {
+            if (cursor != matcher.start()) {
+                sb.append('"').append(format, cursor, matcher.start()).append('"');
+            }
             String match = matcher.group(1);
             switch (match) {
-                case "yyyy":
-                    sj.add("TO_CHAR({0}, 'YYYY')");
-                    break;
-                case "yy":
-                    sj.add("TO_CHAR({0}, 'YY')");
-                    break;
-                case "MM":
-                    sj.add("TO_CHAR({0}, 'MM')");
-                    break;
                 case "M":
-                    sj.add("TO_CHAR({0}, 'FMMM')");
-                    break;
-                case "dd":
-                    sj.add("TO_CHAR({0}, 'DD')");
+                    sb.append("FMMM");
                     break;
                 case "d":
-                    sj.add("TO_CHAR({0}, 'FMDD')");
+                    sb.append("FMDD");
                     break;
                 case "HH":
-                    sj.add("TO_CHAR({0}, 'HH24')");
+                    sb.append("HH24");
                     break;
                 case "H":
-                    sj.add("TO_CHAR({0}, 'FMHH24')");
-                    break;
-                case "hh":
-                    sj.add("TO_CHAR({0}, 'HH')");
+                    sb.append("FMHH24");
                     break;
                 case "h":
-                    sj.add("TO_CHAR({0}, 'FMHH')");
+                    sb.append("FMHH");
                     break;
                 case "mm":
-                    sj.add("TO_CHAR({0}, 'MI')");
+                    sb.append("MI");
                     break;
                 case "m":
-                    sj.add("TO_CHAR({0}, 'FMMI')");
-                    break;
-                case "ss":
-                    sj.add("TO_CHAR({0}, 'SS')");
+                    sb.append("FMMI");
                     break;
                 case "s":
-                    sj.add("TO_CHAR({0}, 'FMSS')");
+                    sb.append("FMSS");
                     break;
                 case "a":
-                    sj.add("TO_CHAR({0}, 'AM')");
+                    sb.append("AM");
                     break;
                 default:
-                    sj.add("'" + match + "'");
+                    sb.append(match.toUpperCase());
                     break;
             }
+            cursor = matcher.end();
         }
-        return sj.toString();
+        if (cursor != format.length()) {
+            sb.append('"').append(format, cursor, format.length()).append('"');
+        }
+        return String.format("TO_CHAR({0},'%s')", sb);
     }
 
     @Override
