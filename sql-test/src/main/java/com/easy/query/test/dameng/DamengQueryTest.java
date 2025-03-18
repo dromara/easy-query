@@ -353,6 +353,106 @@ public class DamengQueryTest extends DamengBaseTest {
                 .limit(2, 10).toList();
     }
 
+    @Test
+    public void queryFormat1() {
+
+        String formater="yyyy-MM-01";
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Draft2<LocalDateTime,String>> list = entityQuery.queryable(DamengMyTopic.class)
+                .select(d -> Select.DRAFT.of(
+                        d.createTime(),
+                        d.createTime().format(formater)
+                )).toList();
+        Assert.assertFalse(list.isEmpty());
+        for (Draft2<LocalDateTime,String> timeAndFormat : list) {
+            LocalDateTime value1 = timeAndFormat.getValue1();
+            String format = value1.format(DateTimeFormatter.ofPattern(formater));
+            Assert.assertEquals(format, timeAndFormat.getValue2());
+        }
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.\"CREATE_TIME\" AS \"VALUE1\",TO_CHAR(t.\"CREATE_TIME\", 'YYYY')||'-'||TO_CHAR(t.\"CREATE_TIME\", 'MM')||'-01' AS \"VALUE2\" FROM \"MY_TOPIC\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+
+    }
+
+    @Test
+    public void queryFormat2() {
+
+        String formater="yyyy年MM-01";
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Draft2<LocalDateTime,String>> list = entityQuery.queryable(DamengMyTopic.class)
+                .select(d -> Select.DRAFT.of(
+                        d.createTime(),
+                        d.createTime().format(formater)
+                )).toList();
+        Assert.assertFalse(list.isEmpty());
+        for (Draft2<LocalDateTime,String> timeAndFormat : list) {
+            LocalDateTime value1 = timeAndFormat.getValue1();
+            String format = value1.format(DateTimeFormatter.ofPattern(formater));
+            Assert.assertEquals(format, timeAndFormat.getValue2());
+        }
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.\"CREATE_TIME\" AS \"VALUE1\",TO_CHAR(t.\"CREATE_TIME\", 'YYYY')||'年'||TO_CHAR(t.\"CREATE_TIME\", 'MM')||'-01' AS \"VALUE2\" FROM \"MY_TOPIC\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+
+    }
+
+    @Test
+    public void queryFormat3() {
+
+        String formater="yyyy年MM-01 HH时mm分ss秒";
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Draft2<LocalDateTime,String>> list = entityQuery.queryable(DamengMyTopic.class)
+                .select(d -> Select.DRAFT.of(
+                        d.createTime(),
+                        d.createTime().format(formater)
+                )).toList();
+        Assert.assertFalse(list.isEmpty());
+        for (Draft2<LocalDateTime,String> timeAndFormat : list) {
+            LocalDateTime value1 = timeAndFormat.getValue1();
+            String format = value1.format(DateTimeFormatter.ofPattern(formater));
+            Assert.assertEquals(format, timeAndFormat.getValue2());
+        }
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.\"CREATE_TIME\" AS \"VALUE1\",TO_CHAR(t.\"CREATE_TIME\", 'YYYY')||'年'||TO_CHAR(t.\"CREATE_TIME\", 'MM')||'-01 '||TO_CHAR(t.\"CREATE_TIME\", 'HH24')||'时'||TO_CHAR(t.\"CREATE_TIME\", 'MI')||'分'||TO_CHAR(t.\"CREATE_TIME\", 'SS')||'秒' AS \"VALUE2\" FROM \"MY_TOPIC\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+
+    }
+
+    @Test
+    public void queryFormat4() {
+
+        String formater="yyyy年MM-01 HH:mm分ss秒";
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Draft2<LocalDateTime,String>> list = entityQuery.queryable(DamengMyTopic.class)
+                .select(d -> Select.DRAFT.of(
+                        d.createTime(),
+                        d.createTime().format(formater)
+                )).toList();
+        Assert.assertFalse(list.isEmpty());
+        for (Draft2<LocalDateTime,String> timeAndFormat : list) {
+            LocalDateTime value1 = timeAndFormat.getValue1();
+            String format = value1.format(DateTimeFormatter.ofPattern(formater));
+            Assert.assertEquals(format, timeAndFormat.getValue2());
+        }
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.\"CREATE_TIME\" AS \"VALUE1\",TO_CHAR(t.\"CREATE_TIME\", 'YYYY')||'年'||TO_CHAR(t.\"CREATE_TIME\", 'MM')||'-01 '||TO_CHAR(t.\"CREATE_TIME\", 'HH24')||':'||TO_CHAR(t.\"CREATE_TIME\", 'MI')||'分'||TO_CHAR(t.\"CREATE_TIME\", 'SS')||'秒' AS \"VALUE2\" FROM \"MY_TOPIC\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+
+    }
+
 //    @Data
 //    @FieldNameConstants
 //    public static class TestVO {

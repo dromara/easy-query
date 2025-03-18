@@ -109,6 +109,7 @@ public class QueryTest23 extends BaseTest {
          listenerContextManager.startListen(listenerContext);
 
          List<Draft1<BigDecimal>> list = easyEntityQuery.queryable(BlogEntity.class)
+                 .configure(o->o.setPrintSQL(false))
                  .select(t_blog -> Select.DRAFT.of(
                          t_blog.order().add(t_blog.star()).divide(t_blog.score())
                  )).toList();
