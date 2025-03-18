@@ -5,7 +5,6 @@ import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.core.draft.Draft2;
-import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.doc.entity.DocBank;
@@ -231,7 +230,7 @@ public class ManyJoinTest extends BaseTest{
                 .where(s -> {
                     s.schoolTeachers().where(x -> x.name().like("小明")).orderBy(x->{
                         x.name().asc();
-                    }).first().name().like("123123");
+                    }).firstElement().name().like("123123");
                 }).toList();
 
         listenerContextManager.clear();
@@ -313,7 +312,7 @@ public class ManyJoinTest extends BaseTest{
                 .where(s -> {
                     s.roles().where(x -> x.name().like("小明角色")).orderBy(x->{
                         x.name().asc();
-                    }).first().name().eq("123123");
+                    }).firstElement().name().eq("123123");
                 }).toList();
 
         listenerContextManager.clear();
@@ -335,7 +334,7 @@ public class ManyJoinTest extends BaseTest{
                 .where(s -> {
                     s.roles().where(x -> x.roleName().like("小明角色")).orderBy(x->{
                         x.roleName().asc();
-                    }).first().roleName().eq("123123");
+                    }).firstElement().roleName().eq("123123");
                 }).toList();
 
         listenerContextManager.clear();
@@ -356,7 +355,7 @@ public class ManyJoinTest extends BaseTest{
                 .where(s -> {
                     s.books().where(x -> x.bookPrice().gt(BigDecimal.valueOf(100))).orderBy(x->{
                         x.bookPrice().desc(OrderByModeEnum.NULLS_LAST);
-                    }).first().bookPrice().eq(BigDecimal.ONE);
+                    }).firstElement().bookPrice().eq(BigDecimal.ONE);
                 }).toList();
 
         listenerContextManager.clear();
@@ -385,4 +384,13 @@ public class ManyJoinTest extends BaseTest{
         Assert.assertEquals("100(BigDecimal),0(Integer),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 
+    @Test
+    public void groupPartition(){
+//        easyEntityQuery.queryable(M8UserBook.class)
+//                .groupBy(m -> GroupKeys.of(m.userId()))
+//                .select(group -> {
+//                    group.where().element(1).bookPrice();
+//                })
+
+    }
 }

@@ -13,9 +13,10 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.EmptyTableAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner;
+import com.easy.query.core.expression.segment.builder.GroupBySQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
-import com.easy.query.core.expression.segment.impl.DefaultSQLSegment;
+import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -26,7 +27,7 @@ import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.columns.SubQueryContext;
-import com.easy.query.core.proxy.columns.SubQuerySQLQueryableFactory;
+import com.easy.query.core.proxy.columns.SubquerySQLQueryableFactory;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasySQLUtil;
@@ -40,24 +41,24 @@ import java.util.Optional;
  *
  * @author xuejiaming
  */
-public class DefaultSubQuerySQLQueryableFactory implements SubQuerySQLQueryableFactory {
-    public static final SubQuerySQLQueryableFactory INSTANCE = new DefaultSubQuerySQLQueryableFactory();
+public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableFactory {
+    public static final SubquerySQLQueryableFactory INSTANCE = new DefaultSubquerySQLQueryableFactory();
 
-    public <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> SQLQueryable<T1Proxy, T1> create(SubQueryContext<T1Proxy, T1> subQueryContext) {
+    public <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> SQLQueryable<T1Proxy, T1> create(SubQueryContext<T1Proxy, T1> subqueryContext) {
 
-        EntityExpressionBuilder entityExpressionBuilder = subQueryContext.getEntityExpressionBuilder();
+        EntityExpressionBuilder entityExpressionBuilder = subqueryContext.getEntityExpressionBuilder();
         QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
-        TableAvailable leftTable = subQueryContext.getLeftTable();
-        String property = subQueryContext.getProperty();
-        T1Proxy propertyProxy = subQueryContext.getPropertyProxy();
-        String fullName = subQueryContext.getFullName();
+        TableAvailable leftTable = subqueryContext.getLeftTable();
+        String property = subqueryContext.getProperty();
+        T1Proxy propertyProxy = subqueryContext.getPropertyProxy();
+        String fullName = subqueryContext.getFullName();
         if (leftTable == null || leftTable instanceof EmptyTableAvailable) {
             propertyProxy.setNavValue(fullName);
-            return new EmptySQLQueryable<>(subQueryContext.getEntitySQLContext(), propertyProxy);
+            return new EmptySQLQueryable<>(subqueryContext.getEntitySQLContext(), propertyProxy);
         }
         NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
         RelationTableKey defaultRelationTableKey = new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName);
-        if (subQueryContext.getConfigureExpression() == null && subQueryContext.getOrderByExpression() == null && !subQueryContext.hasElements()) {
+        if (subqueryContext.getConfigureExpression() == null && subqueryContext.getOrderByExpression() == null && !subqueryContext.hasElements()) {
 
             if (entityExpressionBuilder.hasManyJoinConfiguration(defaultRelationTableKey)) {
                 ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(defaultRelationTableKey);
@@ -66,7 +67,7 @@ public class DefaultSubQuerySQLQueryableFactory implements SubQuerySQLQueryableF
                 EntityTableExpressionBuilder manyJoinTableExpressionBuilder = anonymousManyJoinEntityTableExpressionBuilder.getEntityQueryExpressionBuilder().getTable(0);
                 T1Proxy manyJoinPropertyProxy = propertyProxy.create(manyJoinTableExpressionBuilder.getEntityTable(), anonymousManyJoinEntityTableExpressionBuilder.getEntityQueryExpressionBuilder(), runtimeContext);
                 manyJoinPropertyProxy.setNavValue(fullName);
-                return new EasyManyJoinSQLManyQueryable<>(subQueryContext, anonymousManyJoinEntityTableExpressionBuilder, manyJoinPropertyProxy);
+                return new EasyManyJoinSQLManyQueryable<>(subqueryContext, anonymousManyJoinEntityTableExpressionBuilder, manyJoinPropertyProxy);
             }
         }
         ClientQueryable<T1> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext);
@@ -97,29 +98,33 @@ public class DefaultSubQuerySQLQueryableFactory implements SubQuerySQLQueryableF
         }
         EasyEntityQueryable<T1Proxy, T1> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
         queryable.get1Proxy().setNavValue(fullName);
-        EasySQLManyQueryable<T1Proxy, T1> query = new EasySQLManyQueryable<>(subQueryContext, queryable);
+        EasySQLManyQueryable<T1Proxy, T1> query = new EasySQLManyQueryable<>(subqueryContext, queryable);
         return query;
     }
 
     @Override
-    public <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> T1Proxy create(SubQueryContext<T1Proxy, T1> subQueryContext, int index) {
+    public <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> T1Proxy create(SubQueryContext<T1Proxy, T1> subqueryContext, int index) {
 
-        EntityExpressionBuilder entityExpressionBuilder = subQueryContext.getEntityExpressionBuilder();
-        TableAvailable leftTable = subQueryContext.getLeftTable();
-        String property = subQueryContext.getProperty();
-        T1Proxy propertyProxy = subQueryContext.getPropertyProxy();
-        String fullName = subQueryContext.getFullName();
+        EntityExpressionBuilder entityExpressionBuilder = subqueryContext.getEntityExpressionBuilder();
+        TableAvailable leftTable = subqueryContext.getLeftTable();
+        String property = subqueryContext.getProperty();
+        T1Proxy propertyProxy = subqueryContext.getPropertyProxy();
+        String fullName = subqueryContext.getFullName();
+        //获取导航元信息
         NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
+        //获取表达式配置信息
         ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName));
-        ClientQueryable<?> clientQueryable = createPartitionQueryable(subQueryContext, navigateMetadata, manyConfiguration);
+        //创建分区分组查询表达式
+        ClientQueryable<?> clientQueryable = createPartitionQueryable(subqueryContext, navigateMetadata, manyConfiguration);
         ToSQLResult sqlResult = clientQueryable.toSQLResult();
         String sql = sqlResult.getSQL();
+        //后续SQLParameter改成实现hashCode和equals
         String parameterString = EasySQLUtil.sqlParameterToString(sqlResult.getSqlContext().getParameters());
 
         RelationTableKey partitionByRelationTableKey = new PartitionByRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName, index, String.format("%s:%s", sql, parameterString));
 
-        AnonymousManyJoinEntityTableExpressionBuilder manySingleJoinRelationTable = EasyRelationalUtil.getManySingleJoinRelationTable(partitionByRelationTableKey, subQueryContext.getEntityExpressionBuilder(), subQueryContext.getLeftTable(), navigateMetadata, index, clientQueryable);
-        return propertyProxy.create(manySingleJoinRelationTable.getEntityTable(), subQueryContext.getEntitySQLContext());
+        AnonymousManyJoinEntityTableExpressionBuilder manySingleJoinRelationTable = EasyRelationalUtil.getManySingleJoinRelationTable(partitionByRelationTableKey, subqueryContext.getEntityExpressionBuilder(), subqueryContext.getLeftTable(), navigateMetadata, index, clientQueryable);
+        return propertyProxy.create(manySingleJoinRelationTable.getEntityTable(), subqueryContext.getEntitySQLContext());
     }
 
     private <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ClientQueryable<?> createPartitionQueryable(SubQueryContext<T1Proxy, T1> subQueryContext, NavigateMetadata navigateMetadata, ManyConfiguration manyConfiguration) {
@@ -141,7 +146,7 @@ public class DefaultSubQuerySQLQueryableFactory implements SubQuerySQLQueryableF
                     .where((target, middle) -> {
                         navigateMetadata.predicateMappingClassFilterApply(middle);
                         navigateMetadata.predicateFilterApply(target);
-                    }).select(Map.class,(target, middle) -> {
+                    }).select(Map.class, (target, middle) -> {
                         EntityMetadata middleEntityMetadata = middle.getEntityMetadata();
                         for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {
                             ColumnMetadata columnMetadata = middleEntityMetadata.getColumnNotNull(selfMappingProperty);
@@ -182,25 +187,57 @@ public class DefaultSubQuerySQLQueryableFactory implements SubQuerySQLQueryableF
             partitionBySQLFunction.addOrder(orderBySQLBuilderSegment);
             x.sqlFuncAs(partitionBySQLFunction, "__row__");
 
-//            runtimeContext.fx().anySQLFunction("{0}",c->{
-//            })
-//            partitionBySQLFunction.addOrder()
         });
-
-//        else{
-//            clientQueryable.orderByAsc(x->{
-//                for (String column : navigateMetadata.getSelfPropertiesOrPrimary()) {
-//                    x.column(column);
-//                }
-//            });
-//        }
-//        ToSQLResult sqlResult = queryable.toSQLResult();
-//        String resultSQL = sqlResult.getSQL();
-//        String parameterString = EasySQLUtil.sqlParameterToString(sqlResult.getSqlContext().getParameters());
-//
-//        StringBuilder sqlKey = new StringBuilder();
-//        sqlKey.append("COLUMNS:").append(String.join(",", targetPropertiesOrPrimary));
-//        sqlKey.append("SQL:").append(resultSQL).append("PARAMETERS:").append(parameterString);
-//        return sqlKey.toString();
     }
+
+//    @Override
+//    public <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> T1Proxy create(GroupingQueryContext<T1Proxy, T1> groupingQueryContext, int index) {
+//        EntityExpressionBuilder entityExpressionBuilder = groupingQueryContext.getEntityExpressionBuilder();
+//        TableAvailable leftTable = groupingQueryContext.getLeftTable();
+//        T1Proxy propertyProxy = groupingQueryContext.getPropertyProxy();
+//        ClientQueryable<?> clientQueryable = createPartitionQueryable(groupingQueryContext);
+//
+//        RelationTableKey partitionByRelationTableKey = new PartitionByRelationTableKey(leftTable.getEntityClass(), leftTable.getEntityClass(), "__self__", index, "__group_partition__");
+//
+//        AnonymousManyJoinEntityTableExpressionBuilder manySingleJoinRelationTable = EasyRelationalUtil.getManySingleJoinRelationTable(partitionByRelationTableKey, groupingQueryContext.getEntityExpressionBuilder(), groupingQueryContext.getLeftTable(), navigateMetadata, index, clientQueryable);
+//        return propertyProxy.create(manySingleJoinRelationTable.getEntityTable(), groupingQueryContext.getEntitySQLContext());
+//    }
+
+
+//    private <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> ClientQueryable<?> createPartitionQueryable(GroupingQueryContext<T1Proxy, T1> groupingQueryContext) {
+//        QueryRuntimeContext runtimeContext = groupingQueryContext.getRuntimeContext();
+//        T1Proxy propertyProxy = groupingQueryContext.getPropertyProxy();
+//
+//        ClientQueryable<T1> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext);
+//
+//
+//        EasyEntityQueryable<T1Proxy, T1> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
+//        if (groupingQueryContext.getWhereExpression() != null) {
+//            queryable.where(groupingQueryContext.getWhereExpression());
+//        }
+//        if (groupingQueryContext.getOrderByExpression() != null) {
+//            queryable.orderBy(groupingQueryContext.getOrderByExpression());
+//        }
+////        queryable.get1Proxy()
+//
+//        OrderBySQLBuilderSegment order = clientQueryable.getSQLEntityExpressionBuilder().getOrder();
+//        OrderBySQLBuilderSegmentImpl orderBySQLBuilderSegment = new OrderBySQLBuilderSegmentImpl();
+//        order.copyTo(orderBySQLBuilderSegment);
+//        order.clear();
+//        SQLBuilderSegment group = clientQueryable.getSQLEntityExpressionBuilder().getGroup();
+//        GroupBySQLBuilderSegmentImpl groupBySQLBuilderSegment = new GroupBySQLBuilderSegmentImpl();
+//        group.copyTo(groupBySQLBuilderSegment);
+//
+//        return clientQueryable.select(Map.class, x -> {
+//            x.columnAll();
+//
+//
+//            PartitionBySQLFunction partitionBySQLFunction = runtimeContext.fx().rowNumberOver(s -> {
+//                s.sql(groupBySQLBuilderSegment);
+//            });
+//            partitionBySQLFunction.addOrder(orderBySQLBuilderSegment);
+//            x.sqlFuncAs(partitionBySQLFunction, "__row__");
+//
+//        });
+//    }
 }

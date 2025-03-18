@@ -1,18 +1,34 @@
 package com.easy.query.test.mssql;
 
+import com.easy.query.api.proxy.base.MapProxy;
+import com.easy.query.api.proxy.base.MapTypeProxy;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.api.proxy.key.MapKey;
+import com.easy.query.api.proxy.key.MapKeys;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.api.database.CodeFirstCommand;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mssql.entity.MsSQLCalc;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic1;
+import com.easy.query.test.mssql.entity.proxy.MsSQLCalcProxy;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +40,27 @@ import java.util.Map;
  * @author xuejiaming
  */
 public class MsSQLQueryTest extends MsSQLBaseTest{
+    @Before
+    public void beforeTest(){
+        {
+
+            DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MsSQLCalc.class));
+            codeFirstCommand.executeWithTransaction(s->s.commit());
+        }
+        {
+
+            DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(MsSQLCalc.class));
+            codeFirstCommand.executeWithTransaction(s->s.commit());
+        }
+        {
+
+            DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MsSQLCalc.class));
+            codeFirstCommand.executeWithTransaction(s->s.commit());
+        }
+    }
 
     @Test
     public void query0() {
@@ -343,5 +380,116 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Title] LIKE ('%'+CAST(? + [Id] + ? AS NVARCHAR(MAX)))", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%(String),%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+    }
+
+
+    @Test
+    public void testBigDecimal(){
+        try {
+
+            entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereById("1").executeRows();
+            MsSQLCalc msSQLCalc = new MsSQLCalc();
+            msSQLCalc.setId("1");
+            msSQLCalc.setColumn1(new BigDecimal("-8.87"));
+            msSQLCalc.setColumn2(new BigDecimal("-1.15"));
+            msSQLCalc.setColumn3(new BigDecimal("1.0000"));
+            entityQuery.insertable(msSQLCalc).executeRows();
+
+            List<Draft1<BigDecimal>> list = entityQuery.queryable(MsSQLCalc.class)
+                    .select(m -> Select.DRAFT.of(
+                            m.expression().caseWhen(() -> {
+                                m.id().isNull();
+                            }).then(1).elseEnd(m.column1().add(m.column2()).divide(m.column3()), BigDecimal.class)
+                    )).toList();
+            for (Draft1<BigDecimal> bigDecimalDraft1 : list) {
+                int i = new BigDecimal("-10.0200000000000000000").compareTo(bigDecimalDraft1.getValue1());
+                Assert.assertEquals(0,i);
+                System.out.println(bigDecimalDraft1.getValue1());
+            }
+        }finally {
+
+            entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereById("1").executeRows();
+        }
+    }
+    @Test
+    public void testBigDecima2() throws SQLException {
+        try {
+
+            entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereById("1").executeRows();
+            MsSQLCalc msSQLCalc = new MsSQLCalc();
+            msSQLCalc.setId("1");
+            msSQLCalc.setColumn1(new BigDecimal("-8.87"));
+            msSQLCalc.setColumn2(new BigDecimal("-1.15"));
+            msSQLCalc.setColumn3(new BigDecimal("1.0000"));
+            entityQuery.insertable(msSQLCalc).executeRows();
+
+
+            try(Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement("SELECT (CASE WHEN t.[Id] IS NULL THEN ? ELSE ((t.[Column1] + t.[Column2]) / t.[Column3]) END) AS [Value1] FROM [t_calc] t");){
+
+                preparedStatement.setBigDecimal(1,BigDecimal.ZERO);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                boolean next = resultSet.next();
+                BigDecimal bigDecimal = resultSet.getBigDecimal(1);
+                System.out.println(bigDecimal);
+            }
+
+            try(Connection connection = dataSource.getConnection()){
+
+                PreparedStatement preparedStatement = connection.prepareStatement("SELECT (CASE WHEN t.[Id] IS NULL THEN ? ELSE ((t.[Column1] + t.[Column2]) / t.[Column3]) END) AS [Value1] FROM [t_calc] t");
+                preparedStatement.setInt(1,0);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                boolean next = resultSet.next();
+                BigDecimal bigDecimal = resultSet.getBigDecimal(1);
+                System.out.println(bigDecimal);
+            }
+
+
+            List<MsSQLCalc> list = entityQuery.queryable(MsSQLCalc.class)
+                    .select(m -> new MsSQLCalcProxy()
+                            .column1().set(
+                                    m.expression().caseWhen(() -> {
+                                        m.id().isNull();
+                                    }).then(1).elseEnd(m.column1().add(m.column2()).divide(m.column3()), BigDecimal.class)
+                            )).toList();
+            for (MsSQLCalc bigDecimalDraft1 : list) {
+                int i = new BigDecimal("-10.0200000000000000000").compareTo(bigDecimalDraft1.getColumn1());
+                Assert.assertEquals(0,i);
+                System.out.println(bigDecimalDraft1.getColumn1());
+            }
+        }finally {
+
+            entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereById("1").executeRows();
+        }
+    }
+    @Test
+    public void testBigDecima4(){
+        try {
+
+            entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereById("1").executeRows();
+            MsSQLCalc msSQLCalc = new MsSQLCalc();
+            msSQLCalc.setId("1");
+            msSQLCalc.setColumn1(new BigDecimal("-8.87"));
+            msSQLCalc.setColumn2(new BigDecimal("-1.15"));
+            msSQLCalc.setColumn3(new BigDecimal("1.0000"));
+            entityQuery.insertable(msSQLCalc).executeRows();
+
+            MapKey<BigDecimal> aa = MapKeys.bigDecimalKey("aa");
+            MapKey<String> bb = MapKeys.stringKey("bb");
+
+            EntityQueryable<MapTypeProxy, Map<String, Object>> select = entityQuery.queryable(MsSQLCalc.class)
+                    .select(m -> new MapTypeProxy()
+                            .put(aa, m.column1())
+                            .put(bb, m.id())
+                    );
+            List<MsSQLCalc> list = entityQuery.queryable(MsSQLCalc.class)
+                    .leftJoin(select, (m, o2) -> m.column1().eq(o2.get(aa)))
+                    .where((a, b) -> {
+                        b.get(bb).eq(a.id());
+                    }).toList();
+        }finally {
+
+            entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereById("1").executeRows();
+        }
     }
 }

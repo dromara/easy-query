@@ -333,6 +333,55 @@ public class EasyRelationalUtil {
         }
     }
 
+
+
+//    public static AnonymousManyJoinEntityTableExpressionBuilder getGroupPartitionByRelationTable(RelationTableKey relationTableKey
+//            , EntityExpressionBuilder entityExpressionBuilder
+//            , TableAvailable leftTable
+//            , NavigateMetadata navigateMetadata
+//            , int index
+//            , ClientQueryable<?> clientQueryable) {
+//        QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
+//
+//        if (navigateMetadata.getRelationType() != RelationTypeEnum.OneToMany && navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
+//            throw new EasyQueryInvalidOperationException("navigate relation table should [OneToMany or ManyToMany],now is " + navigateMetadata.getRelationType());
+//        }
+//        EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(relationTableKey, key -> {
+////            TableAvailable leftTable = getTable();
+//
+//            EntityMetadata partitionByEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(leftTable.getEntityClass());
+//
+//            String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
+//            ClientQueryable<?> select = clientQueryable.where(m -> m.eq("__row__", index + 1))
+//                    .select(navigateMetadata.getNavigatePropertyType(), o -> {
+//                        for (Map.Entry<String, ColumnMetadata> columnMetadataEntry : partitionByEntityMetadata.getProperty2ColumnMap().entrySet()) {
+////                            o.column(columnMetadataEntry.getValue().getName());
+//                            o.sqlNativeSegment("{0}",c->{
+//                                c.expression(columnMetadataEntry.getValue().getName());
+//                                c.setAlias(columnMetadataEntry.getValue().getName());
+//                            });
+//                        }
+//                    });
+//
+//            RelationEntityTableAvailable rightTable = new RelationEntityTableAvailable(key, leftTable, partitionByEntityMetadata, true);
+//            entityExpressionBuilder.getExpressionContext().extract(select.getSQLEntityExpressionBuilder().getExpressionContext());
+//            ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();
+//            EntityTableExpressionBuilder tableExpressionBuilder = expressionBuilderFactory.createAnonymousManyGroupEntityTableExpressionBuilder(rightTable, MultiTableTypeEnum.LEFT_JOIN, clientQueryable.getSQLEntityExpressionBuilder(), targetPropertiesOrPrimary);
+//
+//            AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+//
+//            SQLExpressionInvokeFactory easyQueryLambdaFactory = runtimeContext.getSQLExpressionInvokeFactory();
+//            WherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createWherePredicate(rightTable, entityExpressionBuilder, andPredicateSegment);
+//
+//            sqlPredicate.and(() -> {
+//                sqlPredicate.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), targetPropertiesOrPrimary, navigateMetadata.getSelfPropertiesOrPrimary());
+//            });
+//            tableExpressionBuilder.getOn().addPredicateSegment(andPredicateSegment);
+//            return tableExpressionBuilder;
+//        });
+//        return ((AnonymousManyJoinEntityTableExpressionBuilder) entityTableExpressionBuilder);
+//    }
+
     public static class TableOrRelationTable {
         public final TableAvailable table;
         public final String property;

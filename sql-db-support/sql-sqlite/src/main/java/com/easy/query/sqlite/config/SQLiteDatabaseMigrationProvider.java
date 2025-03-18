@@ -125,6 +125,8 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
                     sql.append(")");
                 }
             }
+        }else{
+            sql.deleteCharAt(sql.length() - 1);
         }
         sql.append(newLine).append(");");
 //        String tableComment = getTableComment(entityMigrationMetadata);

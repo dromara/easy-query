@@ -43,9 +43,9 @@ public class PostgresSQLUpdateSQLExpression extends UpdateSQLExpressionImpl {
         EntityTableSQLExpression firstTable = tables.get(0);
         sql.append(firstTable.toSQL(toSQLContext));
         sql.append(" SET ");
-        toSQLContext.setTableAliasNull(firstTable.getEntityTable());
+        toSQLContext.setTableAlias(firstTable.getEntityTable(),null);
         sql.append(setColumns.toSQL(toSQLContext));
-        toSQLContext.setTableAliasNull(null);
+        toSQLContext.setTableAlias(null,null);
 
         if (tables.size() > 1) {
             List<EntityTableSQLExpression> joinTables = tables.subList(1, tables.size());

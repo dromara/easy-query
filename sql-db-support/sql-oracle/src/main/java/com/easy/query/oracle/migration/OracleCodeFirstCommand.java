@@ -12,6 +12,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.migration.MigrationCommand;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.Collections;
@@ -25,11 +26,11 @@ import java.util.function.Consumer;
  * @author xuejiaming
  */
 public class OracleCodeFirstCommand implements CodeFirstCommand {
-    private static final Log log= LogFactory.getLog(OracleCodeFirstCommand.class);
+    private static final Log log = LogFactory.getLog(OracleCodeFirstCommand.class);
     private final QueryRuntimeContext runtimeContext;
     private final List<MigrationCommand> migrationCommands;
 
-    public OracleCodeFirstCommand(QueryRuntimeContext runtimeContext, List<MigrationCommand> migrationCommands){
+    public OracleCodeFirstCommand(QueryRuntimeContext runtimeContext, List<MigrationCommand> migrationCommands) {
         this.runtimeContext = runtimeContext;
         this.migrationCommands = migrationCommands;
     }
@@ -37,15 +38,19 @@ public class OracleCodeFirstCommand implements CodeFirstCommand {
     @Override
     public void executeWithEnvTransaction(Consumer<CodeFirstCommandArg> consumer) {
         StringBuilder sql = new StringBuilder();
-        sql.append("BEGIN");
-        for (MigrationCommand migrationCommand : migrationCommands) {
+
+        if (EasyCollectionUtil.isNotEmpty(migrationCommands)) {
+
+            sql.append("BEGIN");
+            for (MigrationCommand migrationCommand : migrationCommands) {
+                sql.append(System.lineSeparator());
+                sql.append(migrationCommand.toSQL());
+            }
             sql.append(System.lineSeparator());
-            sql.append(migrationCommand.toSQL());
+            sql.append("END;");
         }
-        sql.append(System.lineSeparator());
-        sql.append("END;");
         String executeSQL = sql.toString();
-        if(EasyStringUtil.isBlank(executeSQL)){
+        if (EasyStringUtil.isBlank(executeSQL)) {
             log.info("execute sql is empty.");
             return;
         }
@@ -58,21 +63,23 @@ public class OracleCodeFirstCommand implements CodeFirstCommand {
     public void executeWithTransaction(Consumer<CodeFirstCommandTxArg> consumer) {
 
         StringBuilder sql = new StringBuilder();
-        sql.append("BEGIN");
-        for (MigrationCommand migrationCommand : migrationCommands) {
+        if (EasyCollectionUtil.isNotEmpty(migrationCommands)) {
+            sql.append("BEGIN");
+            for (MigrationCommand migrationCommand : migrationCommands) {
+                sql.append(System.lineSeparator());
+                sql.append(migrationCommand.toSQL());
+            }
             sql.append(System.lineSeparator());
-            sql.append(migrationCommand.toSQL());
+            sql.append("END;");
         }
-        sql.append(System.lineSeparator());
-        sql.append("END;");
         String executeSQL = sql.toString();
-        if(EasyStringUtil.isBlank(executeSQL)){
+        if (EasyStringUtil.isBlank(executeSQL)) {
             log.info("execute sql is empty.");
             return;
         }
         ConnectionManager connectionManager = runtimeContext.getConnectionManager();
         SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
-        try(Transaction transaction = connectionManager.beginTransaction()){
+        try (Transaction transaction = connectionManager.beginTransaction()) {
             DefaultCodeFirstCommandTxArg codeFirstCommandTxArg = new DefaultCodeFirstCommandTxArg(executeSQL);
             consumer.accept(codeFirstCommandTxArg);
 

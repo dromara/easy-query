@@ -12,6 +12,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.migration.MigrationCommand;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.Collections;
@@ -37,13 +38,16 @@ public class DamengCodeFirstCommand implements CodeFirstCommand {
     @Override
     public void executeWithEnvTransaction(Consumer<CodeFirstCommandArg> consumer) {
         StringBuilder sql = new StringBuilder();
-        sql.append("BEGIN");
-        for (MigrationCommand migrationCommand : migrationCommands) {
+        if(EasyCollectionUtil.isNotEmpty(migrationCommands)){
+
+            sql.append("BEGIN");
+            for (MigrationCommand migrationCommand : migrationCommands) {
+                sql.append(System.lineSeparator());
+                sql.append(migrationCommand.toSQL());
+            }
             sql.append(System.lineSeparator());
-            sql.append(migrationCommand.toSQL());
+            sql.append("END;");
         }
-        sql.append(System.lineSeparator());
-        sql.append("END;");
         String executeSQL = sql.toString();
         if(EasyStringUtil.isBlank(executeSQL)){
             log.info("execute sql is empty.");
@@ -58,13 +62,16 @@ public class DamengCodeFirstCommand implements CodeFirstCommand {
     public void executeWithTransaction(Consumer<CodeFirstCommandTxArg> consumer) {
 
         StringBuilder sql = new StringBuilder();
-        sql.append("BEGIN");
-        for (MigrationCommand migrationCommand : migrationCommands) {
+        if(EasyCollectionUtil.isNotEmpty(migrationCommands)){
+
+            sql.append("BEGIN");
+            for (MigrationCommand migrationCommand : migrationCommands) {
+                sql.append(System.lineSeparator());
+                sql.append(migrationCommand.toSQL());
+            }
             sql.append(System.lineSeparator());
-            sql.append(migrationCommand.toSQL());
+            sql.append("END;");
         }
-        sql.append(System.lineSeparator());
-        sql.append("END;");
         String executeSQL = sql.toString();
         if(EasyStringUtil.isBlank(executeSQL)){
             log.info("execute sql is empty.");

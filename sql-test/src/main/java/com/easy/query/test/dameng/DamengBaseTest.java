@@ -5,6 +5,8 @@ import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.database.CodeFirstCommand;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
@@ -18,6 +20,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -73,6 +76,9 @@ public abstract class DamengBaseTest {
     }
 
     public static void initData() {
+        DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DamengMyTopic.class));
+        codeFirstCommand.executeWithTransaction(s->s.commit());
 
         easyQuery.deletable(DamengMyTopic.class).where(d -> d.isNotNull(DamengMyTopic::getId)).allowDeleteStatement(true).disableLogicDelete().executeRows();
         boolean topicAny = easyQuery.queryable(DamengMyTopic.class).any();

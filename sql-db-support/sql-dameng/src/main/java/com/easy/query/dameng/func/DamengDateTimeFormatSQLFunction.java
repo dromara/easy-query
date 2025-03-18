@@ -74,7 +74,7 @@ public class DamengDateTimeFormatSQLFunction extends AbstractExpressionSQLFuncti
         }
         return "TO_CHAR({0},'YYYY-MM-DD HH24:MI:SS.FF6')";
     }
-
+    private static final Pattern FORMAT_PATTERN = Pattern.compile("(yyyy|yy|MM|dd|HH|hh|mm|ss|[MdHhmsa]|(?:(?!yyyy|yy|MM|dd|HH|hh|mm|ss|[MdHhmsa]).)+)");
     protected String getReplacedFormats(String format) {
         Matcher matcher = FORMAT_PATTERN.matcher(format);
         StringJoiner sj = new StringJoiner("||");

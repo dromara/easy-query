@@ -4,7 +4,6 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.api.internal.ExpressionConfigurable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 
 /**
@@ -17,7 +16,7 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
 
     //    void _setProxy(TProxy tProxy);
 
-    default T1Proxy first(){
+    default T1Proxy firstElement(){
         return element(0);
     }
     T1Proxy element(int index);

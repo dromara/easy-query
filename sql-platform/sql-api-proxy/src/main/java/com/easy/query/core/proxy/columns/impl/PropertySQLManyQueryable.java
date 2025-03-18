@@ -2,7 +2,6 @@ package com.easy.query.core.proxy.columns.impl;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.parser.core.available.EmptyTableAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -10,7 +9,6 @@ import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SQLManyQueryable;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.columns.SubQueryContext;
-import com.easy.query.core.proxy.core.EmptyFlatEntitySQLContext;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
@@ -74,7 +72,7 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public T1Proxy element(int index) {
-        return DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext,index);
+        return DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext,index);
 //        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
 //        return sqlQueryable.element(index);
     }
@@ -83,7 +81,7 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
     public SQLQueryable<T1Proxy, T1> elements(boolean condition, int fromIndex, int toIndex) {
         if(condition){
             subQueryContext.elements(fromIndex,toIndex);
-            SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+            SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
             return sqlQueryable;
         }
         return this;
@@ -110,98 +108,98 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
     @Override
     public void any(SQLExpression1<T1Proxy> whereExpression) {
         subQueryContext.appendWhereExpression(whereExpression);
-        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         sqlQueryable.any();
     }
 
     @Override
     public void any() {
-        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         sqlQueryable.any();
     }
 
     @Override
     public void none(SQLExpression1<T1Proxy> whereExpression) {
         subQueryContext.appendWhereExpression(whereExpression);
-        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         sqlQueryable.none();
     }
 
     @Override
     public void none() {
-        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         sqlQueryable.none();
     }
 
     @Override
     public ColumnFunctionCompareComparableBooleanChainExpression<Boolean> anyValue() {
-        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         return sqlQueryable.anyValue();
     }
 
     @Override
     public ColumnFunctionCompareComparableBooleanChainExpression<Boolean> noneValue() {
-        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         return sqlQueryable.noneValue();
     }
 
     @Override
     public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Long> count(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
-        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         return sqlQueryable.count(columnSelector);
     }
 
     @Override
     public ColumnFunctionCompareComparableNumberChainExpression<Long> count() {
-        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         return sqlQueryable.count();
     }
 
     @Override
     public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
-        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         return sqlQueryable.intCount(columnSelector);
     }
 
     @Override
     public ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount() {
-        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         return sqlQueryable.intCount();
     }
 
     @Override
     public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<TMember> sum(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
-        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         return sqlQueryable.sum(columnSelector);
     }
 
     @Override
     public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
-        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         return sqlQueryable.sumBigDecimal(columnSelector);
     }
 
     @Override
     public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
-        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         return sqlQueryable.avg(columnSelector);
     }
 
     @Override
     public <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> max(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
-        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         return sqlQueryable.max(columnSelector);
     }
 
     @Override
     public <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> min(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
-        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         return sqlQueryable.min(columnSelector);
     }
 
     @Override
     public ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<T1Proxy, PropTypeColumn<String>> columnSelector, String delimiter) {
-        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         return sqlQueryable.joining(columnSelector, delimiter);
     }
 
@@ -212,7 +210,7 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
 //            tPropertyProxy.setNavValue(getNavValue());
 //            return tPropertyProxy;
 //        }
-        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         return sqlQueryable.flatElement(flatAdapterExpression);
     }
 

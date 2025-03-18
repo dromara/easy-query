@@ -487,18 +487,17 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         setExecuteMethod(ExecuteMethodEnum.SINGLE);
         boolean autoAllColumn = compensateSelect(resultClass);
         EntityMetadata resultEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(resultClass);
-        boolean printSql = runtimeContext.getQueryConfiguration().getEasyQueryOption().isPrintSql();
         JdbcResultWrap<TR> jdbcResultWrap = toInternalStreamByExpression(entityQueryExpressionBuilder, resultClass, resultEntityMetadata, autoAllColumn, statement -> {
             statement.setFetchSize(2);
         });
         TR next = null;
         try (JdbcStreamResult<TR> jdbcStreamResult = jdbcResultWrap.getJdbcResult().getJdbcStreamResult()) {
             StreamIterable<TR> streamResult = jdbcStreamResult.getStreamIterable();
-
+            boolean printSQL = EasyJdbcExecutorUtil.isPrintSQL(jdbcStreamResult.getExecutorContext());
             Iterator<TR> iterator = streamResult.iterator();
             boolean firstHasNext = iterator.hasNext();
             if (!firstHasNext) {
-                if (printSql) {
+                if (printSQL) {
                     log.info("<== Total: 0");
                 }
                 return null;
@@ -514,7 +513,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 next = iterator.next();
                 i++;
             } while (iterator.hasNext());
-            if (printSql) {
+            if (printSQL) {
                 log.info("<== Total: 1");
             }
 
