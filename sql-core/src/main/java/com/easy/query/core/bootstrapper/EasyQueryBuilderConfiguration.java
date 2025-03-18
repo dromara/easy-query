@@ -88,6 +88,8 @@ import com.easy.query.core.expression.sql.include.relation.DefaultRelationValueC
 import com.easy.query.core.expression.sql.include.relation.DefaultRelationValueFactory;
 import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadataFactory;
 import com.easy.query.core.expression.sql.include.relation.RelationValueFactory;
+import com.easy.query.core.extension.casewhen.DefaultSQLCaseWhenBuilderFactory;
+import com.easy.query.core.extension.casewhen.SQLCaseWhenBuilderFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFuncImpl;
 import com.easy.query.core.inject.ServiceCollection;
@@ -221,6 +223,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(DatabaseCodeFirst.class, DefaultDatabaseCodeFirst.class)
                 .replaceService(IncludeProvider.class, DefaultIncludeProvider.class)
                 .replaceService(RelationNullValueValidator.class, DefaultRelationNullValueValidator.class)
+                .replaceService(SQLCaseWhenBuilderFactory.class, DefaultSQLCaseWhenBuilderFactory.class)
 //                .replaceService(NavigateNamedGuess.class, DefaultNavigateNamedGuess.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }

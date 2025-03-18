@@ -5,6 +5,7 @@ import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.extension.casewhen.CaseWhenBuilderExpression;
+import com.easy.query.core.extension.casewhen.SQLCaseWhenBuilder;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.core.EntitySQLContext;
@@ -21,14 +22,14 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public class FlatElementCaseWhenEntityBuilder {
-    private final CaseWhenBuilderExpression caseWhenBuilder;
+    private final SQLCaseWhenBuilder caseWhenBuilder;
     private final EntitySQLContext entitySQLContext;
 
     public FlatElementCaseWhenEntityBuilder(EntitySQLContext entitySQLContext){
         this.entitySQLContext = entitySQLContext;
         EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
         Objects.requireNonNull(entityExpressionBuilder,"CaseWhenEntityBuilder entitySQLContext.getEntityExpressionBuilder() is null");
-        this.caseWhenBuilder=new CaseWhenBuilderExpression(entitySQLContext.getRuntimeContext(),entityExpressionBuilder.getExpressionContext());
+        this.caseWhenBuilder=entitySQLContext.getRuntimeContext().getSQLCaseWhenBuilderFactory().create(entityExpressionBuilder.getExpressionContext());
     }
     public CaseWhenThenEntityBuilder caseWhen(SQLPredicateExpression sqlPredicateExpression){
         return new CaseWhenThenEntityBuilder(this,entitySQLContext,caseWhenBuilder,sqlPredicateExpression);

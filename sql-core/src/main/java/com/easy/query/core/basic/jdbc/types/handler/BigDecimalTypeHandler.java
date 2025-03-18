@@ -3,8 +3,10 @@ package com.easy.query.core.basic.jdbc.types.handler;
 import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 
 /**

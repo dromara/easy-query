@@ -35,6 +35,7 @@ import com.easy.query.core.expression.sql.include.IncludeProvider;
 import com.easy.query.core.expression.sql.include.RelationNullValueValidator;
 import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadataFactory;
 import com.easy.query.core.expression.sql.include.relation.RelationValueFactory;
+import com.easy.query.core.extension.casewhen.SQLCaseWhenBuilderFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.job.EasyTimeJobManager;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -275,6 +276,11 @@ public class EmptyQueryRuntimeContext implements QueryRuntimeContext{
 
     @Override
     public RelationNullValueValidator getRelationNullValueValidator() {
+        return null;
+    }
+
+    @Override
+    public SQLCaseWhenBuilderFactory getSQLCaseWhenBuilderFactory() {
         return null;
     }
 }

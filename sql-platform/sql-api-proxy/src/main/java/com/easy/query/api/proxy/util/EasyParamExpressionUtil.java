@@ -1,7 +1,7 @@
 package com.easy.query.api.proxy.util;
 
 import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.expression.segment.scec.expression.ColumnConstSQLParameterExpressionImpl;
+import com.easy.query.core.expression.segment.scec.expression.ColumnConstParameterExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.SQLSegmentParamExpressionImpl;
@@ -33,7 +33,7 @@ public class EasyParamExpressionUtil {
             ExpressionContext expressionContext = entitySQLContext.getEntityExpressionBuilder().getExpressionContext();
             return new SQLSegmentParamExpressionImpl(sqlFunction, expressionContext, dslSQLFunction.getTable(), expressionContext.getRuntimeContext(), null);
         } else {
-            return new ColumnConstSQLParameterExpressionImpl(value);
+            return new ColumnConstParameterExpressionImpl(value);
         }
     }
 }

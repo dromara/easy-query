@@ -25,10 +25,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -423,26 +425,27 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
             msSQLCalc.setColumn3(new BigDecimal("1.0000"));
             entityQuery.insertable(msSQLCalc).executeRows();
 
-
-            try(Connection connection = dataSource.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement("SELECT (CASE WHEN t.[Id] IS NULL THEN ? ELSE ((t.[Column1] + t.[Column2]) / t.[Column3]) END) AS [Value1] FROM [t_calc] t");){
-
-                preparedStatement.setBigDecimal(1,BigDecimal.ZERO);
-                ResultSet resultSet = preparedStatement.executeQuery();
-                boolean next = resultSet.next();
-                BigDecimal bigDecimal = resultSet.getBigDecimal(1);
-                System.out.println(bigDecimal);
-            }
-
-            try(Connection connection = dataSource.getConnection()){
-
-                PreparedStatement preparedStatement = connection.prepareStatement("SELECT (CASE WHEN t.[Id] IS NULL THEN ? ELSE ((t.[Column1] + t.[Column2]) / t.[Column3]) END) AS [Value1] FROM [t_calc] t");
-                preparedStatement.setInt(1,0);
-                ResultSet resultSet = preparedStatement.executeQuery();
-                boolean next = resultSet.next();
-                BigDecimal bigDecimal = resultSet.getBigDecimal(1);
-                System.out.println(bigDecimal);
-            }
+//
+//            try(Connection connection = dataSource.getConnection();
+//                PreparedStatement preparedStatement = connection.prepareStatement("SELECT (CASE WHEN t.[Id] IS NULL THEN ? ELSE ((t.[Column1] + t.[Column2]) / t.[Column3]) END) AS [Value1] FROM [t_calc] t");){
+//
+//                preparedStatement.setBigDecimal(1,BigDecimal.ZERO);
+////                preparedStatement.setBigDecimal(1,new BigDecimal("0.0000"));
+//                ResultSet resultSet = preparedStatement.executeQuery();
+//                boolean next = resultSet.next();
+//                BigDecimal bigDecimal = resultSet.getBigDecimal(1);
+//                System.out.println(bigDecimal);
+//            }
+//
+//            try(Connection connection = dataSource.getConnection()){
+//
+//                PreparedStatement preparedStatement = connection.prepareStatement("SELECT (CASE WHEN t.[Id] IS NULL THEN ? ELSE ((t.[Column1] + t.[Column2]) / t.[Column3]) END) AS [Value1] FROM [t_calc] t");
+//                preparedStatement.setInt(1,0);
+//                ResultSet resultSet = preparedStatement.executeQuery();
+//                boolean next = resultSet.next();
+//                BigDecimal bigDecimal = resultSet.getBigDecimal(1);
+//                System.out.println(bigDecimal);
+//            }
 
 
             List<MsSQLCalc> list = entityQuery.queryable(MsSQLCalc.class)
@@ -450,7 +453,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
                             .column1().set(
                                     m.expression().caseWhen(() -> {
                                         m.id().isNull();
-                                    }).then(1).elseEnd(m.column1().add(m.column2()).divide(m.column3()), BigDecimal.class)
+                                    }).then(BigDecimal.ZERO).elseEnd(m.column1().add(m.column2()).divide(m.column3()), BigDecimal.class)
                             )).toList();
             for (MsSQLCalc bigDecimalDraft1 : list) {
                 int i = new BigDecimal("-10.0200000000000000000").compareTo(bigDecimalDraft1.getColumn1());
@@ -490,6 +493,59 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         }finally {
 
             entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereById("1").executeRows();
+        }
+    }
+
+    @Test
+    public  void testBatchInsert(){
+        try {
+
+            entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereByIds(Arrays.asList("2","3","4","5")).executeRows();
+            ArrayList<MsSQLCalc> msSQLCalcs = new ArrayList<>();
+            {
+
+                MsSQLCalc msSQLCalc = new MsSQLCalc();
+                msSQLCalc.setId("2");
+                msSQLCalc.setColumn1(new BigDecimal("-8.87"));
+                msSQLCalc.setColumn2(new BigDecimal("-1.15"));
+                msSQLCalc.setColumn3(new BigDecimal("1.10"));
+                msSQLCalcs.add(msSQLCalc);
+            }
+            {
+
+                MsSQLCalc msSQLCalc = new MsSQLCalc();
+                msSQLCalc.setId("3");
+                msSQLCalc.setColumn1(new BigDecimal("-8.87"));
+                msSQLCalc.setColumn2(new BigDecimal("-1.15"));
+                msSQLCalc.setColumn3(new BigDecimal("1.0010"));
+                msSQLCalcs.add(msSQLCalc);
+            }
+            {
+
+                MsSQLCalc msSQLCalc = new MsSQLCalc();
+                msSQLCalc.setId("4");
+                msSQLCalc.setColumn1(new BigDecimal("-8.87"));
+                msSQLCalc.setColumn2(new BigDecimal("-1.15"));
+                msSQLCalc.setColumn3(new BigDecimal("1.234"));
+                msSQLCalcs.add(msSQLCalc);
+            }
+            {
+
+                MsSQLCalc msSQLCalc = new MsSQLCalc();
+                msSQLCalc.setId("5");
+                msSQLCalc.setColumn1(new BigDecimal("-8.87"));
+                msSQLCalc.setColumn2(new BigDecimal("-1.15"));
+                msSQLCalc.setColumn3(new BigDecimal("1.0000"));
+                msSQLCalcs.add(msSQLCalc);
+            }
+            entityQuery.insertable(msSQLCalcs).batch().executeRows();
+            List<MsSQLCalc> list = entityQuery.queryable(MsSQLCalc.class).toList();
+            for (MsSQLCalc msSQLCalc : list) {
+
+                System.out.println(msSQLCalc);
+            }
+        }finally {
+            entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereByIds(Arrays.asList("2","3","4","5")).executeRows();
         }
     }
 }

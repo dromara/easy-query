@@ -37,6 +37,7 @@ import com.easy.query.core.expression.sql.include.IncludeProvider;
 import com.easy.query.core.expression.sql.include.RelationNullValueValidator;
 import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadataFactory;
 import com.easy.query.core.expression.sql.include.relation.RelationValueFactory;
+import com.easy.query.core.extension.casewhen.SQLCaseWhenBuilderFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.job.EasyTimeJobManager;
@@ -102,6 +103,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final DatabaseCodeFirst databaseCodeFirst;
     private final IncludeProvider includeProvider;
     private final RelationNullValueValidator relationNullValueValidator;
+    private final SQLCaseWhenBuilderFactory sqlCaseWhenBuilderFactory;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -148,7 +150,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           MapKeyNameConversion mapKeyNameConversion,
                                           DatabaseCodeFirst databaseCodeFirst,
                                           IncludeProvider includeProvider,
-                                          RelationNullValueValidator relationNullValueValidator) {
+                                          RelationNullValueValidator relationNullValueValidator,
+                                          SQLCaseWhenBuilderFactory sqlCaseWhenBuilderFactory) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -195,6 +198,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.databaseCodeFirst = databaseCodeFirst;
         this.includeProvider = includeProvider;
         this.relationNullValueValidator = relationNullValueValidator;
+        this.sqlCaseWhenBuilderFactory = sqlCaseWhenBuilderFactory;
     }
 
     @Override
@@ -426,5 +430,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public RelationNullValueValidator getRelationNullValueValidator() {
         return relationNullValueValidator;
+    }
+
+    @Override
+    public SQLCaseWhenBuilderFactory getSQLCaseWhenBuilderFactory() {
+        return sqlCaseWhenBuilderFactory;
     }
 }

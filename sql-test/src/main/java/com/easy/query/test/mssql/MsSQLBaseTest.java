@@ -9,6 +9,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
+import com.easy.query.core.extension.casewhen.SQLCaseWhenBuilderFactory;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
 import com.easy.query.test.listener.ListenerContextManager;
@@ -46,7 +47,7 @@ public abstract class MsSQLBaseTest {
 
     public static void initDatasource() {
         dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl("jdbc:sqlserver://localhost:1433;database=mssql_eq");
+        dataSource.setJdbcUrl("jdbc:sqlserver://localhost:1433;database=mssql_eq;encrypt=true;trustServerCertificate=true");
         dataSource.setUsername("sa");
         dataSource.setPassword("Password.1");
         dataSource.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -65,6 +66,7 @@ public abstract class MsSQLBaseTest {
                 .useDatabaseConfigure(new MsSQLDatabaseConfiguration())
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
                 .replaceService(NameConversion.class, UpperCamelCaseNameConversion.class)
+                .replaceService(SQLCaseWhenBuilderFactory.class, MyMsSQLCaseWhenBuilderFactory.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
         easyQuery = new DefaultEasyQuery(easyQueryClient);

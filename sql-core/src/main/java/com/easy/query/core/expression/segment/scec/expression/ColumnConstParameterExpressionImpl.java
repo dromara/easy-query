@@ -11,10 +11,10 @@ import com.easy.query.core.util.EasySQLUtil;
  *
  * @author xuejiaming
  */
-public class ColumnConstSQLParameterExpressionImpl implements ColumnParamExpression {
+public class ColumnConstParameterExpressionImpl implements ColumnConstParamExpression {
     private final Object val;
 
-    public ColumnConstSQLParameterExpressionImpl(Object val){
+    public ColumnConstParameterExpressionImpl(Object val){
         this.val = val;
     }
     @Override
@@ -25,5 +25,10 @@ public class ColumnConstSQLParameterExpressionImpl implements ColumnParamExpress
     @Override
     public void accept(TableVisitor visitor) {
 
+    }
+
+    @Override
+    public Object getConstValue() {
+        return val;
     }
 }

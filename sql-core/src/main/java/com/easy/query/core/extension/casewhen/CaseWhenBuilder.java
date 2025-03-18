@@ -7,7 +7,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
-import com.easy.query.core.expression.segment.scec.expression.ColumnConstSQLParameterExpressionImpl;
+import com.easy.query.core.expression.segment.scec.expression.ColumnConstParameterExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -33,7 +33,7 @@ public class CaseWhenBuilder {
         whens=new ArrayList<>();
     }
     public CaseWhenBuilder caseWhen(SQLExpression1<Filter> predicate, Object then){
-        whens.add(new Tuple2<>(predicate,new ColumnConstSQLParameterExpressionImpl(then)));
+        whens.add(new Tuple2<>(predicate,new ColumnConstParameterExpressionImpl(then)));
         return this;
     }
     public CaseWhenBuilder caseWhenColumn(SQLExpression1<Filter> predicate, TableAvailable table, String property){
@@ -44,7 +44,7 @@ public class CaseWhenBuilder {
         return caseWhenColumn(predicate,sqlTableOwner.getTable(),property);
     }
     public CloneableSQLSegment elseEnd(Object elseValue){
-        return new CaseWhenSQLColumnSegment(expressionContext, EasyObjectUtil.typeCastNullable(whens),new ColumnConstSQLParameterExpressionImpl(elseValue));
+        return new CaseWhenSQLColumnSegment(expressionContext, EasyObjectUtil.typeCastNullable(whens),new ColumnConstParameterExpressionImpl(elseValue));
     }
     public CloneableSQLSegment elseEndColumn(TableAvailable table, String property){
         return new CaseWhenSQLColumnSegment(expressionContext, EasyObjectUtil.typeCastNullable(whens),new ColumnPropertyExpressionImpl(table,property,expressionContext));

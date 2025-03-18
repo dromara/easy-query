@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 public class MsSQLCalc implements ProxyEntityAvailable<MsSQLCalc , MsSQLCalcProxy> {
     @Column(primaryKey = true)
     private String id;
-    @Column(dbType = "decimal(18,4)")
+    @Column(dbType = "decimal(18,2)")
     private BigDecimal column1;
     @Column(dbType = "decimal(18,4)")
     private BigDecimal column2;

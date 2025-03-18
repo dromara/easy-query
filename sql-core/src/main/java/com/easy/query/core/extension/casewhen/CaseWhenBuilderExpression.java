@@ -6,7 +6,7 @@ import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.scec.expression.ColumnConstSQLParameterExpressionImpl;
+import com.easy.query.core.expression.segment.scec.expression.ColumnConstParameterExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -33,22 +33,14 @@ public class CaseWhenBuilderExpression {
         whens=new ArrayList<>();
     }
     public CaseWhenBuilderExpression caseWhen(SQLExpression1<Filter> predicate, Object then){
-        whens.add(new Tuple2<>(predicate,new ColumnConstSQLParameterExpressionImpl(then)));
-        return this;
+        return caseWhen(predicate,new ColumnConstParameterExpressionImpl(then));
     }
     public CaseWhenBuilderExpression caseWhen(SQLExpression1<Filter> predicate, ParamExpression paramExpression){
         whens.add(new Tuple2<>(predicate,paramExpression));
         return this;
     }
-    public CaseWhenBuilderExpression caseWhenColumn(SQLExpression1<Filter> predicate, TableAvailable table, String property){
-        whens.add(new Tuple2<>(predicate,new ColumnPropertyExpressionImpl(table,property,expressionContext)));
-        return this;
-    }
-    public CaseWhenBuilderExpression caseWhenColumn(SQLExpression1<Filter> predicate, SQLTableOwner sqlTableOwner, String property){
-        return caseWhenColumn(predicate,sqlTableOwner.getTable(),property);
-    }
     public SQLFunction elseEnd(Object elseValue){
-        return new CaseWhenSQLFunction(runtimeContext,expressionContext,whens,new ColumnConstSQLParameterExpressionImpl(elseValue));
+        return elseEnd(new ColumnConstParameterExpressionImpl(elseValue));
     }
     public SQLFunction elseEnd(ParamExpression paramExpression){
         return new CaseWhenSQLFunction(runtimeContext,expressionContext,whens,paramExpression);
