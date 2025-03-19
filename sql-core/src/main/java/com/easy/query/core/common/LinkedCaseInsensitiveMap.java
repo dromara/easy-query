@@ -30,12 +30,8 @@ public class LinkedCaseInsensitiveMap<V> extends LinkedHashMap<String, V> {
 
     public LinkedCaseInsensitiveMap(int expectedSize, Locale locale) {
         super(expectedSize);
-        this.caseInsensitiveKeys = newHashMap(expectedSize);
+        this.caseInsensitiveKeys = new HashMap<>((int) ((float) expectedSize / 0.75F), 0.75F);
         this.locale = locale;
-    }
-
-    public <Key, Value> HashMap<Key, Value> newHashMap(int expectedSize) {
-        return new HashMap<Key, Value>((int) ((float) expectedSize / 0.75F), 0.75F);
     }
 
     @Override

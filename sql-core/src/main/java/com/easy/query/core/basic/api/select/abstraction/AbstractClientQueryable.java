@@ -495,26 +495,18 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             StreamIterable<TR> streamResult = jdbcStreamResult.getStreamIterable();
             boolean printSQL = EasyJdbcExecutorUtil.isPrintSQL(jdbcStreamResult.getExecutorContext());
             Iterator<TR> iterator = streamResult.iterator();
-            boolean firstHasNext = iterator.hasNext();
-            if (!firstHasNext) {
-                if (printSQL) {
-                    log.info("<== Total: 0");
-                }
-                return null;
-            }
+
             int i = 0;
-            do {
-//                if(next!=null){ //因为存在查询单个属性单个属性可能为null
-//                    throw new EasyQuerySingleMoreElementException("single query has more element in result set.");
-//                }
+            while (iterator.hasNext()) {
                 if (i >= 1) {
                     throw runtimeContext.getAssertExceptionFactory().createSingleMoreElementException(this);
                 }
+
                 next = iterator.next();
                 i++;
-            } while (iterator.hasNext());
+            }
             if (printSQL) {
-                log.info("<== Total: 1");
+                log.info("<== Total: " + i);
             }
 
         } catch (SQLException e) {
