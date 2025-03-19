@@ -47,7 +47,7 @@ public abstract class MsSQLBaseTest {
 
     public static void initDatasource() {
         dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl("jdbc:sqlserver://localhost:1433;database=mssql_eq;encrypt=true;trustServerCertificate=true");
+        dataSource.setJdbcUrl("jdbc:sqlserver://localhost:1433;database=mssql_eq");
         dataSource.setUsername("sa");
         dataSource.setPassword("Password.1");
         dataSource.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");

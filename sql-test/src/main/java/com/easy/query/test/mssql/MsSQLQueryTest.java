@@ -15,6 +15,7 @@ import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.dameng.entity.DamengMyTopic;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mssql.entity.MsSQLCalc;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
@@ -30,6 +31,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -547,5 +550,32 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         }finally {
             entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereByIds(Arrays.asList("2","3","4","5")).executeRows();
         }
+    }
+
+    @Test
+    public void testFormat(){
+//        entityQuery.queryable(MsSQLMyTopic.class);
+
+        String formater="yyyy年MM-01 HH:mm分ss秒";
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Draft2<LocalDateTime,String>> list = entityQuery.queryable(MsSQLMyTopic.class)
+                .select(d -> Select.DRAFT.of(
+                        d.createTime(),
+                        d.createTime().format(formater)
+                )).toList();
+        Assert.assertFalse(list.isEmpty());
+        for (Draft2<LocalDateTime,String> timeAndFormat : list) {
+            LocalDateTime value1 = timeAndFormat.getValue1();
+            String format = value1.format(DateTimeFormatter.ofPattern(formater));
+            Assert.assertEquals(format, timeAndFormat.getValue2());
+        }
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.[CreateTime] AS [Value1],SUBSTRING(CONVERT(CHAR(8), t.[CreateTime], 112), 1, 4) + N'年' + SUBSTRING(CONVERT(CHAR(6), t.[CreateTime], 12), 3, 2) + N'-01 ' + SUBSTRING(CONVERT(CHAR(8), t.[CreateTime], 24), 1, 2) + N':' + SUBSTRING(CONVERT(CHAR(8), t.[CreateTime], 24), 4, 2) + N'分' + SUBSTRING(CONVERT(CHAR(8), t.[CreateTime], 24), 7, 2) + N'秒' AS [Value2] FROM [MyTopic] t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+
+
     }
 }

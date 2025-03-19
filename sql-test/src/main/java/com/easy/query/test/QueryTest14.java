@@ -1747,7 +1747,7 @@ public class QueryTest14 extends BaseTest {
                 }
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-                Assert.assertEquals("SELECT \"id\",\"create_time\",\"update_time\",\"create_by\",\"update_by\",\"deleted\",\"title\",\"content\",\"url\",\"star\",\"publish_time\",\"score\",\"status\",\"order\",\"is_top\",\"top\" FROM \"t_blog\" WHERE \"deleted\" = ? AND (TO_CHAR(\"create_time\",'YYYY年MM月DD日 HH24时MI分SS秒')) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("SELECT \"id\",\"create_time\",\"update_time\",\"create_by\",\"update_by\",\"deleted\",\"title\",\"content\",\"url\",\"star\",\"publish_time\",\"score\",\"status\",\"order\",\"is_top\",\"top\" FROM \"t_blog\" WHERE \"deleted\" = ? AND TO_CHAR(\"create_time\",'YYYY\"年\"MM\"月\"DD\"日\" HH24\"时\"MI\"分\"SS\"秒\"') = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
                 Assert.assertEquals("false(Boolean),2022年01月01日 01时01分01秒(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
                 listenerContextManager.clear();
             }
