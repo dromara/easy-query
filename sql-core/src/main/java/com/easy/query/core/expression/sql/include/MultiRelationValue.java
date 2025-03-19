@@ -14,7 +14,7 @@ import java.util.Objects;
  */
 public class MultiRelationValue implements RelationValue {
     protected final List<Object> values;
-    private final RelationNullValueValidator relationNullValueValidator;
+    protected final RelationNullValueValidator relationNullValueValidator;
 
     public MultiRelationValue(List<Object> values, RelationNullValueValidator relationNullValueValidator) {
         this.values = values;

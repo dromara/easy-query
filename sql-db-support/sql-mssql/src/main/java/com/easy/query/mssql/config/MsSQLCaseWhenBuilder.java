@@ -36,7 +36,7 @@ public class MsSQLCaseWhenBuilder extends DefaultCaseWhenBuilder {
         return super.caseWhen(predicate, processorConstBigDecimal(paramExpression));
     }
 
-    private ParamExpression processorConstBigDecimal(ParamExpression paramExpression) {
+    protected ParamExpression processorConstBigDecimal(ParamExpression paramExpression) {
         if (paramExpression instanceof ColumnConstParamExpression) {
             ColumnConstParamExpression columnConstParamExpression = (ColumnConstParamExpression) paramExpression;
             Object constValue = columnConstParamExpression.getConstValue();

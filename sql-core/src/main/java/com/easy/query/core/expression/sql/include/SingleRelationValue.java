@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 public class SingleRelationValue implements RelationValue {
     protected final Object value;
-    private final RelationNullValueValidator relationNullValueValidator;
+    protected final RelationNullValueValidator relationNullValueValidator;
 
     public SingleRelationValue(Object value, RelationNullValueValidator relationNullValueValidator) {
         this.value = value;
