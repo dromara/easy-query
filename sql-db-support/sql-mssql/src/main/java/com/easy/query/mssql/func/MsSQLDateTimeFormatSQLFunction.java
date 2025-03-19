@@ -141,7 +141,7 @@ public class MsSQLDateTimeFormatSQLFunction extends AbstractExpressionSQLFunctio
                     break;
             }
         }
-        return String.join(" + ", results);
+        return "("+String.join(" + ", results)+")";
 //        matcher.appendTail(result);
 //        return result.toString();
     }
