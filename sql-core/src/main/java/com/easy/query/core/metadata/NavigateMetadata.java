@@ -7,6 +7,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.many.ToManySubquerySQLStrategy;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyMapUtil;
@@ -59,6 +60,7 @@ public class NavigateMetadata {
     private final SQLExpression1<WherePredicate<?>> predicateMappingClassFilterExpression;
 
     private final Map<String, NavigateMetadata> directMappingMetadataMap;
+    private final ToManySubquerySQLStrategy toManySubquerySQLStrategy;
 
     private final long offset;
     private final long limit;
@@ -78,6 +80,7 @@ public class NavigateMetadata {
         this.targetMappingProperties = navigateOption.getTargetMappingProperties();
         this.predicateFilterExpression = navigateOption.getPredicateFilterExpression();
         this.predicateMappingClassFilterExpression = navigateOption.getPredicateMappingClassFilterExpression();
+        this.toManySubquerySQLStrategy = navigateOption.getToManySubquerySQLStrategy();
         this.basicType = navigateOption.isBasicType();
         this.orderProps = navigateOption.getOrderProps();
         this.offset = navigateOption.getOffset();
@@ -292,5 +295,9 @@ public class NavigateMetadata {
 
     public String[] getDirectMapping() {
         return directMapping;
+    }
+
+    public ToManySubquerySQLStrategy getToManySubquerySQLStrategy() {
+        return toManySubquerySQLStrategy;
     }
 }

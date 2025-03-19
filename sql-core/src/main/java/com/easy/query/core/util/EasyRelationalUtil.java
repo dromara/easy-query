@@ -300,7 +300,7 @@ public class EasyRelationalUtil {
 
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
              clientQueryable.innerJoin(navigateMetadata.getMappingClass(), (target, middle) -> {
-                        target.multiEq(true, middle, navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), navigateMetadata.getTargetMappingProperties());
+                        target.multiEq(true, middle, targetPropertiesOrPrimary, navigateMetadata.getTargetMappingProperties());
                     })
                     .where((target, middle) -> {
                         navigateMetadata.predicateMappingClassFilterApply(middle);
@@ -320,7 +320,6 @@ public class EasyRelationalUtil {
         } else {
             return clientQueryable.where(t -> {
                 navigateMetadata.predicateFilterApply(t);
-
             }).groupBy(o -> {
                 for (String column : targetPropertiesOrPrimary) {
                     o.column(column);

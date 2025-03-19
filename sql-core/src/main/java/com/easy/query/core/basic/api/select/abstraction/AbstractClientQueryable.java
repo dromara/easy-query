@@ -495,26 +495,18 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             StreamIterable<TR> streamResult = jdbcStreamResult.getStreamIterable();
             boolean printSQL = EasyJdbcExecutorUtil.isPrintSQL(jdbcStreamResult.getExecutorContext());
             Iterator<TR> iterator = streamResult.iterator();
-            boolean firstHasNext = iterator.hasNext();
-            if (!firstHasNext) {
-                if (printSQL) {
-                    log.info("<== Total: 0");
-                }
-                return null;
-            }
+
             int i = 0;
-            do {
-//                if(next!=null){ //因为存在查询单个属性单个属性可能为null
-//                    throw new EasyQuerySingleMoreElementException("single query has more element in result set.");
-//                }
+            while (iterator.hasNext()) {
                 if (i >= 1) {
                     throw runtimeContext.getAssertExceptionFactory().createSingleMoreElementException(this);
                 }
+
                 next = iterator.next();
                 i++;
-            } while (iterator.hasNext());
+            }
             if (printSQL) {
-                log.info("<== Total: 1");
+                log.info("<== Total: " + i);
             }
 
         } catch (SQLException e) {
@@ -1415,7 +1407,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
     @Override
     public ClientQueryable<T1> manyJoin(boolean condition, SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression) {
-        if(condition){
+        if (condition) {
             EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
             ManyColumn manyColumn = manyPropColumnExpression.apply(new ManyJoinSelectorImpl<>(table.getEntityTable()));
             EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
@@ -1428,13 +1420,13 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
     @Override
     public ClientQueryable<T1> manyConfigure(boolean condition, SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression, SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> adapterExpression) {
-        if(condition){
+        if (condition) {
             EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
             ManyColumn manyColumn = manyPropColumnExpression.apply(new ManyJoinSelectorImpl<>(table.getEntityTable()));
             EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
             TableAvailable leftTable = tableOrRelationalTable.table;
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(tableOrRelationalTable.property);
-            entityQueryExpressionBuilder.addManyConfiguration(new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), manyColumn.getNavValue()),new ManyConfiguration(adapterExpression));
+            entityQueryExpressionBuilder.addManyConfiguration(new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), manyColumn.getNavValue()), new ManyConfiguration(adapterExpression));
         }
         return this;
     }

@@ -2,6 +2,8 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.many.ToManySubqueryColumnValuesSQLStrategy;
+import com.easy.query.core.expression.many.ToManySubquerySQLStrategy;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.util.EasyClassUtil;
 
@@ -31,6 +33,7 @@ public class NavigateOption {
     private String[] targetMappingProperties;
     private SQLExpression1<WherePredicate<?>> predicateFilterExpression;
     private SQLExpression1<WherePredicate<?>> predicateMappingClassFilterExpression;
+    private ToManySubquerySQLStrategy toManySubquerySQLStrategy;
 
     public NavigateOption(EntityMetadata entityMetadata,
                           String propertyName,
@@ -38,7 +41,7 @@ public class NavigateOption {
                           Class<?> navigatePropertyType,
                           RelationTypeEnum relationType,
                           String[] selfProperties,
-                          String[] targetProperties, List<NavigateOrderProp> orderProps,long offset,long limit,String[] directMapping){
+                          String[] targetProperties, List<NavigateOrderProp> orderProps, long offset, long limit, String[] directMapping) {
 
         this.entityMetadata = entityMetadata;
         this.propertyName = propertyName;
@@ -140,5 +143,13 @@ public class NavigateOption {
 
     public String[] getDirectMapping() {
         return directMapping;
+    }
+
+    public ToManySubquerySQLStrategy getToManySubquerySQLStrategy() {
+        return toManySubquerySQLStrategy;
+    }
+
+    public void setToManySubquerySQLStrategy(ToManySubquerySQLStrategy toManySubquerySQLStrategy) {
+        this.toManySubquerySQLStrategy = toManySubquerySQLStrategy;
     }
 }

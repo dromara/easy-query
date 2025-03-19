@@ -3,6 +3,8 @@ package com.easy.query.core.annotation;
 import com.easy.query.core.basic.extension.navigate.DefaultNavigateExtraFilterStrategy;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.expression.many.ToManySubqueryEqualSQLStrategy;
+import com.easy.query.core.expression.many.ToManySubquerySQLStrategy;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -100,4 +102,10 @@ public @interface Navigate {
      * @return
      */
     String[] directMapping() default {};
+
+    /**
+     * 属性关联策略
+     * @return
+     */
+    Class<? extends ToManySubquerySQLStrategy> toManySubqueryClass() default ToManySubqueryEqualSQLStrategy.class;
 }

@@ -24,6 +24,8 @@ import com.easy.query.core.basic.extension.version.VersionUUIDStrategy;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.many.ToManySubqueryEqualSQLStrategy;
+import com.easy.query.core.expression.many.ToManySubquerySQLStrategy;
 import com.easy.query.core.job.EasyTimeJobManager;
 import com.easy.query.core.job.TimeJob;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
@@ -70,6 +72,7 @@ public class QueryConfiguration {
     private Map<Class<? extends ColumnValueSQLConverter>, ColumnValueSQLConverter> columnValueSQLConverterMap = new ConcurrentHashMap<>();
     private Map<Class<? extends GeneratedKeySQLColumnGenerator>, GeneratedKeySQLColumnGenerator> generatedSQLColumnGeneratorMap = new ConcurrentHashMap<>();
     private Map<Class<? extends PrimaryKeyGenerator>, PrimaryKeyGenerator> primaryKeyGeneratorMap = new ConcurrentHashMap<>();
+    private Map<Class<? extends ToManySubquerySQLStrategy>, ToManySubquerySQLStrategy> toManySubquerySQLStrategyMap = new ConcurrentHashMap<>();
 
     //    public EasyQueryConfiguration(Dialect dialect, NameConversion nameConversion) {
 //       this(EasyQueryOption.defaultEasyQueryOption(),dialect,nameConversion);
@@ -84,6 +87,7 @@ public class QueryConfiguration {
         easyVersionStrategyMap.put(VersionUUIDStrategy.class, new VersionUUIDStrategy());
         easyVersionStrategyMap.put(VersionTimestampStrategy.class, new VersionTimestampStrategy());
         shardingInitializerMap.put(UnShardingInitializer.class, UnShardingInitializer.INSTANCE);
+        toManySubquerySQLStrategyMap.put(ToManySubqueryEqualSQLStrategy.class, ToManySubqueryEqualSQLStrategy.INSTANCE);
 //        primaryKeyGeneratorMap.put(UnsupportPrimaryKeyGenerator.class, UnsupportPrimaryKeyGenerator.INSTANCE);
     }
 
@@ -314,5 +318,16 @@ public class QueryConfiguration {
 
     public PrimaryKeyGenerator getPrimaryKeyGenerator(Class<? extends PrimaryKeyGenerator> primaryKeyGenerator) {
         return primaryKeyGeneratorMap.get(primaryKeyGenerator);
+    }
+    public void applyToManySubquerySQLStrategy(ToManySubquerySQLStrategy toManySubquerySQLStrategy) {
+        Class<? extends ToManySubquerySQLStrategy> toManySubquerySQLStrategyClass = toManySubquerySQLStrategy.getClass();
+        if (toManySubquerySQLStrategyMap.containsKey(toManySubquerySQLStrategyClass)) {
+            throw new EasyQueryException("to many subquery sql strategy:" + EasyClassUtil.getSimpleName(toManySubquerySQLStrategyClass) + ",repeat");
+        }
+        toManySubquerySQLStrategyMap.put(toManySubquerySQLStrategyClass, toManySubquerySQLStrategy);
+    }
+
+    public ToManySubquerySQLStrategy getToManySubquerySQLStrategy(Class<? extends ToManySubquerySQLStrategy> toManySubquerySQLStrategyClass) {
+        return toManySubquerySQLStrategyMap.get(toManySubquerySQLStrategyClass);
     }
 }

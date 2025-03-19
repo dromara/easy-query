@@ -71,35 +71,17 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
             }
         }
         ClientQueryable<T1> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(propertyProxy.getEntityClass(), runtimeContext);
+
+        clientQueryable = navigateMetadata.getToManySubquerySQLStrategy().toManySubquery(clientQueryable, leftTable, navigateMetadata, runtimeContext);
+
         ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(defaultRelationTableKey);
+
         if (manyConfiguration != null) {
             clientQueryable = EasyObjectUtil.typeCastNullable(manyConfiguration.getConfigureExpression().apply(clientQueryable));
         }
-        if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
-            ClientQueryable<?> mappingQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
-            clientQueryable.where(x -> {
-                x.and(() -> {
-                    ClientQueryable<?> subMappingQueryable = mappingQueryable.where(m -> {
-                        m.multiEq(true, x, navigateMetadata.getTargetMappingProperties(), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
-                        m.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getSelfMappingProperties(), navigateMetadata.getSelfPropertiesOrPrimary());
-                        navigateMetadata.predicateMappingClassFilterApply(m);
-                    }).limit(1);
-                    x.exists(subMappingQueryable);
-                    navigateMetadata.predicateFilterApply(x);
-                });
-            });
-        } else {
-            clientQueryable.where(t -> {
-                t.and(() -> {
-                    t.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), navigateMetadata.getSelfPropertiesOrPrimary());
-                    navigateMetadata.predicateFilterApply(t);
-                });
-            });
-        }
         EasyEntityQueryable<T1Proxy, T1> queryable = new EasyEntityQueryable<>(propertyProxy, clientQueryable);
         queryable.get1Proxy().setNavValue(fullName);
-        EasySQLManyQueryable<T1Proxy, T1> query = new EasySQLManyQueryable<>(subqueryContext, queryable);
-        return query;
+        return new EasySQLManyQueryable<>(subqueryContext, queryable);
     }
 
     @Override

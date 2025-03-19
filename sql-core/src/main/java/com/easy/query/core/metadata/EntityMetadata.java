@@ -76,6 +76,7 @@ import com.easy.query.core.exception.EasyQueryPropertyNotFoundException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.many.ToManySubquerySQLStrategy;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
@@ -337,6 +338,16 @@ public class EntityMetadata {
         return null;
     }
 
+    private @Nullable ToManySubquerySQLStrategy getToManySubquerySQLStrategy(QueryConfiguration configuration, Navigate navigate) {
+        Class<? extends ToManySubquerySQLStrategy> toManySubquerySQLStrategyClass = navigate.toManySubqueryClass();
+
+        ToManySubquerySQLStrategy toManySubquerySQLStrategy = configuration.getToManySubquerySQLStrategy(toManySubquerySQLStrategyClass);
+        if (toManySubquerySQLStrategy == null) {
+            throw new EasyQueryInvalidOperationException("not found navigate to many subquery sql strategy:[" + EasyClassUtil.getSimpleName(toManySubquerySQLStrategyClass) + "]");
+        }
+        return toManySubquerySQLStrategy;
+    }
+
     private void createNavigateMetadata(boolean tableEntity, Navigate navigate, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property, QueryConfiguration configuration) {
 
         RelationTypeEnum relationType = navigate.value();
@@ -369,6 +380,10 @@ public class EntityMetadata {
                     navigateOption.setPredicateFilterExpression(predicateFilterExpression);
                 }
             }
+
+            ToManySubquerySQLStrategy toManySubquerySQLStrategy = getToManySubquerySQLStrategy(configuration, navigate);
+            navigateOption.setToManySubquerySQLStrategy(toManySubquerySQLStrategy);
+
 
             if (RelationTypeEnum.ManyToMany == relationType) {
                 //有中间表多对多
@@ -637,6 +652,7 @@ public class EntityMetadata {
                     }
                 }
                 columnOption.setGeneratedKey(generatedKey);
+
 
                 columnOption.setLarge(column.large());
 //                    columnMetadata.setSelect(column.select());
