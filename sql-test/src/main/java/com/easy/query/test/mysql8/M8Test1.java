@@ -2,10 +2,12 @@ package com.easy.query.test.mysql8;
 
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
+import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.test.mysql8.entity.M8User2;
 import com.easy.query.test.mysql8.entity.M8UserBook2;
 import com.easy.query.test.mysql8.entity.M8UserBookIds;
 import com.easy.query.test.mysql8.entity.TableNoKey;
+import com.easy.query.test.mysql8.entity.proxy.M8User2Proxy;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -54,9 +56,24 @@ public class M8Test1 extends BaseTest{
 
     @Test
     public  void testRelationColumns(){
-        List<M8UserBookIds> list = easyEntityQuery.queryable(M8UserBookIds.class)
-                .where(m -> {
-                    m.books().any(x -> x.bookPrice().ge(BigDecimal.ZERO));
-                }).toList();
+
+//        List<M8User2> list1 = easyEntityQuery.queryable(M8User2.class)
+//                .where(m -> {
+//                    EntitySQLContext entitySQLContext = m.getEntitySQLContext();
+//                    m.expression().exists(() -> {
+//                        return easyEntityQuery.queryable(M8UserBook2.class)
+//                                .where(mb -> {
+//                                    M8User2Proxy m8User2Proxy = m.create(m.getTable(), mb.getEntitySQLContext());
+//                                    m8User2Proxy.userId().eq(mb.bookId());
+//                                });
+//                    });
+//
+//                    M8User2Proxy m8User2Proxy = m.create(m.getTable(), entitySQLContext);
+//                    m8User2Proxy.userName().like("123");
+//                }).toList();
+//        List<M8UserBookIds> list = easyEntityQuery.queryable(M8UserBookIds.class)
+//                .where(m -> {
+//                    m.books().any(x -> x.bookPrice().ge(BigDecimal.ZERO));
+//                }).toList();
     }
 }
