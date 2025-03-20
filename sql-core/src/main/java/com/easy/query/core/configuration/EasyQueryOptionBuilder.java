@@ -89,6 +89,10 @@ public class EasyQueryOptionBuilder {
      */
     private long resultSizeLimit;
     private ShardingQueryInTransactionEnum shardingQueryInTransaction;
+    /**
+     * 建议19
+     */
+    private int mssqlMinBigDecimalScale;
 
 
     public EasyQueryOptionBuilder() {
@@ -123,6 +127,7 @@ public class EasyQueryOptionBuilder {
         this.defaultSchema = null;
         this.resultSizeLimit = -1L;
         this.shardingQueryInTransaction = ShardingQueryInTransactionEnum.SERIALIZABLE;
+        this.mssqlMinBigDecimalScale = 0;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -268,6 +273,11 @@ public class EasyQueryOptionBuilder {
     public void setShardingQueryInTransaction(ShardingQueryInTransactionEnum shardingQueryInTransaction) {
         this.shardingQueryInTransaction = shardingQueryInTransaction;
     }
+
+    public void setMssqlMinBigDecimalScale(int mssqlMinBigDecimalScale) {
+        this.mssqlMinBigDecimalScale = mssqlMinBigDecimalScale;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -301,6 +311,7 @@ public class EasyQueryOptionBuilder {
                 this.defaultSchema,
                 this.resultSizeLimit,
                 this.printNavSql,
-                this.shardingQueryInTransaction);
+                this.shardingQueryInTransaction,
+                this.mssqlMinBigDecimalScale);
     }
 }

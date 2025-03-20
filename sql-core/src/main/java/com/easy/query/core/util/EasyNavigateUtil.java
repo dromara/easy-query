@@ -25,16 +25,32 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public class EasyNavigateUtil {
-    public static void checkProperties(String[] selfProperties, String[] targetProperties) {
+
+    public static void checkProperties(Class<?> entityClass, String property, String[] selfProperties, String[] selfMappingProperties, Class<?> mappingClass, String[] targetMappingProperties, String[] targetProperties) {
         if (selfProperties == null) {
             throw new IllegalArgumentException("selfProperties is null");
         }
         if (targetProperties == null) {
             throw new IllegalArgumentException("targetProperties is null");
         }
-        if (selfProperties.length > 1 || targetProperties.length > 1) {
-            if (selfProperties.length != targetProperties.length) {
-                throw new EasyQueryInvalidOperationException("selfProperties.length != targetProperties.length");
+        if (mappingClass == null) {
+            checkSameLength(entityClass, property, selfProperties, targetProperties);
+        } else {
+            if (selfMappingProperties == null) {
+                throw new IllegalArgumentException("selfMappingProperties is null");
+            }
+            if (targetMappingProperties == null) {
+                throw new IllegalArgumentException("targetMappingProperties is null");
+            }
+            checkSameLength(entityClass, property, selfProperties, selfMappingProperties);
+            checkSameLength(entityClass, property, targetMappingProperties, targetProperties);
+        }
+    }
+
+    private static void checkSameLength(Class<?> entityClass, String property, String[] self, String[] target) {
+        if (self.length > 1 || target.length > 1) {
+            if (self.length != target.length) {
+                throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityClass) + ":[" + property + "] navigate properties self.length:" + self.length + " != target.length:" + target.length);
             }
         }
     }
@@ -51,6 +67,7 @@ public class EasyNavigateUtil {
         }
         return navigateOrderBy0(clientQueryable, offsetLimit, navigateOrderProps, runtimeContext);
     }
+
     private static <T> ClientQueryable<T> navigateOrderBy0(ClientQueryable<T> clientQueryable, OffsetLimitEntry offsetLimit, List<NavigateOrderProp> navigateOrderProps, QueryRuntimeContext runtimeContext) {
         return clientQueryable.limit(offsetLimit.offset, offsetLimit.limit).orderBy(EasyCollectionUtil.isNotEmpty(navigateOrderProps), o -> {
             TableAvailable table = o.getTable();
@@ -60,7 +77,7 @@ public class EasyNavigateUtil {
                 OrderByModeEnum nullsModeEnum = orderProp.getMode();
                 if (nullsModeEnum != null) {
                     SQLFunc fx = runtimeContext.fx();
-                    SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(table,orderProp.getProperty(), orderProp.isAsc(), nullsModeEnum);
+                    SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(table, orderProp.getProperty(), orderProp.isAsc(), nullsModeEnum);
                     orderSelector.func(table, orderByNullsModeFunction, false);
                 } else {
                     orderSelector.column(table, orderProp.getProperty());

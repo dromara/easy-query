@@ -1,5 +1,6 @@
 package com.easy.query.mssql.config;
 
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -21,9 +22,11 @@ import java.math.RoundingMode;
  * @author xuejiaming
  */
 public class MsSQLCaseWhenBuilder extends DefaultCaseWhenBuilder {
+    private final EasyQueryOption easyQueryOption;
 
     public MsSQLCaseWhenBuilder(ExpressionContext expressionContext) {
         super(expressionContext);
+        this.easyQueryOption = expressionContext.getRuntimeContext().getQueryConfiguration().getEasyQueryOption();
     }
 
     @Override
@@ -41,12 +44,14 @@ public class MsSQLCaseWhenBuilder extends DefaultCaseWhenBuilder {
             ColumnConstParamExpression columnConstParamExpression = (ColumnConstParamExpression) paramExpression;
             Object constValue = columnConstParamExpression.getConstValue();
             if (constValue instanceof BigDecimal) {
-                throw new EasyQueryInvalidOperationException("Since the official mssql-jdbc driver may cause BigDecimal precision loss, please override the current type and set scale when using BigDecimal in CASE WHEN statements.");
-//                BigDecimal constBigDecimal = (BigDecimal) constValue;
-//                if (constBigDecimal.scale() < 19) {
-//                    constBigDecimal = constBigDecimal.setScale(19, RoundingMode.HALF_UP);
-//                    return new ColumnConstParameterExpressionImpl(constBigDecimal);
-//                }
+                if (easyQueryOption.getMssqlMinBigDecimalScale() <= 0) {
+                    throw new EasyQueryInvalidOperationException("Since the official mssql-jdbc driver may cause BigDecimal precision loss, please override the current type and set scale when using BigDecimal in CASE WHEN statements.");
+                }
+                BigDecimal constBigDecimal = (BigDecimal) constValue;
+                if (constBigDecimal.scale() < easyQueryOption.getMssqlMinBigDecimalScale()) {
+                    constBigDecimal = constBigDecimal.setScale(easyQueryOption.getMssqlMinBigDecimalScale(), RoundingMode.UNNECESSARY);
+                    return new ColumnConstParameterExpressionImpl(constBigDecimal);
+                }
             }
         }
         return paramExpression;
