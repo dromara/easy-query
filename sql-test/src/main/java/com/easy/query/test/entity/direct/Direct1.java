@@ -8,6 +8,7 @@ import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.entity.direct.proxy.Direct1Proxy;
 import com.easy.query.test.entity.direct.proxy.Direct2Proxy;
+import com.easy.query.test.entity.direct.proxy.Direct3Proxy;
 import lombok.Data;
 
 /**
@@ -29,6 +30,14 @@ public class Direct1 implements ProxyEntityAvailable<Direct1 , Direct1Proxy> {
 
     @Navigate(value = RelationTypeEnum.OneToOne, selfProperty = {Direct1Proxy.Fields.c1}, targetProperty = {Direct2Proxy.Fields.c7})
     private Direct2 direct2;
+
+
+    @Navigate(value = RelationTypeEnum.OneToOne, selfProperty = {Direct1Proxy.Fields.c1},
+            mappingClass = Direct2.class,
+            selfMappingProperty = {Direct2Proxy.Fields.c7},
+            targetMappingProperty = {Direct2Proxy.Fields.c8, Direct2Proxy.Fields.c9},
+            targetProperty = {Direct3Proxy.Fields.c13, Direct3Proxy.Fields.c14})
+    private Direct3 direct3;
 
 
     @Navigate(value = RelationTypeEnum.ManyToOne,directMapping = {"direct2","direct3","direct4"})

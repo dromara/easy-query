@@ -272,6 +272,14 @@ public class DirectRelationTest extends BaseTest {
         }
     }
 
+    @Test
+    public void test4(){
+        List<Direct1> list = easyEntityQuery.queryable(Direct1.class)
+                .where(d -> {
+                    d.direct3().c11().eq("123");
+                }).toList();
+    }
+
 
 //    @Test
 //    public void test4() {
