@@ -109,6 +109,9 @@ public class QueryTest23 extends BaseTest {
 //        List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
 //                .where(t_blog -> {
 //                    t_blog.createTime().duration(LocalDateTime.now()).toDays().gt(5L);
+//
+//                    t_blog.expression().now()
+//                            .duration(t_blog.createTime()).toDays().gt(5L);
 //                })
 //                .toList();
         ListenerContext listenerContext = new ListenerContext();
