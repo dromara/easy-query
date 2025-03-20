@@ -194,13 +194,13 @@ public class EasyRelationalUtil {
                     for (int i = 0; i < selfMappingColumnNames.length; i++) {
                         String selfMappingColumnName = selfMappingColumnNames[i];
                         String selfProperty = navigateMetadata.getSelfPropertiesOrPrimary()[i];
-                        sqlPredicate.sqlNativeSegment("{0} = {1}",c->{
+                        sqlPredicate.sqlNativeSegment("{0} = {1}", c -> {
                             c.columnName(selfMappingColumnName);
-                            c.expression(leftTable,selfProperty);
+                            c.expression(leftTable, selfProperty);
                         });
                     }
                 });
-            }else{
+            } else {
                 sqlPredicate.and(() -> {
                     sqlPredicate.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), targetPropertiesOrPrimary, navigateMetadata.getSelfPropertiesOrPrimary());
                 });
@@ -232,7 +232,7 @@ public class EasyRelationalUtil {
                     .select(navigateMetadata.getNavigatePropertyType(), o -> {
                         for (Map.Entry<String, ColumnMetadata> columnMetadataEntry : partitionByEntityMetadata.getProperty2ColumnMap().entrySet()) {
 //                            o.column(columnMetadataEntry.getValue().getName());
-                            o.sqlNativeSegment("{0}",c->{
+                            o.sqlNativeSegment("{0}", c -> {
                                 c.expression(columnMetadataEntry.getValue().getName());
                                 c.setAlias(columnMetadataEntry.getValue().getName());
                             });
@@ -242,7 +242,7 @@ public class EasyRelationalUtil {
                             for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {
                                 ColumnMetadata columnMetadata = mappingEntityMetadata.getColumnNotNull(selfMappingProperty);
 //                                o.columnAs(columnMetadata.getName(), columnMetadata.getName());
-                                o.sqlNativeSegment("{0}",c->{
+                                o.sqlNativeSegment("{0}", c -> {
                                     c.expression(columnMetadata.getName());
                                     c.setAlias(columnMetadata.getName());
                                 });
@@ -269,14 +269,14 @@ public class EasyRelationalUtil {
                     for (int i = 0; i < selfMappingColumnNames.length; i++) {
                         String selfMappingColumnName = selfMappingColumnNames[i];
                         String selfProperty = navigateMetadata.getSelfPropertiesOrPrimary()[i];
-                        sqlPredicate.sqlNativeSegment("{0} = {1}",c->{
+                        sqlPredicate.sqlNativeSegment("{0} = {1}", c -> {
                             c.columnName(selfMappingColumnName);
-                            c.expression(leftTable,selfProperty);
+                            c.expression(leftTable, selfProperty);
                         });
                     }
 //                    sqlPredicate.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), selfMappingColumnNames, navigateMetadata.getSelfPropertiesOrPrimary());
                 });
-            }else{
+            } else {
                 sqlPredicate.and(() -> {
                     sqlPredicate.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), targetPropertiesOrPrimary, navigateMetadata.getSelfPropertiesOrPrimary());
                 });
@@ -299,7 +299,7 @@ public class EasyRelationalUtil {
         }
 
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
-             clientQueryable.innerJoin(navigateMetadata.getMappingClass(), (target, middle) -> {
+            clientQueryable.innerJoin(navigateMetadata.getMappingClass(), (target, middle) -> {
                         target.multiEq(true, middle, targetPropertiesOrPrimary, navigateMetadata.getTargetMappingProperties());
                     })
                     .where((target, middle) -> {
@@ -309,14 +309,14 @@ public class EasyRelationalUtil {
                         for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {
                             middle.column(selfMappingProperty);
                         }
-                    }).select(Map.class,(target, middle) -> {
-                         EntityMetadata middleEntityMetadata = middle.getEntityMetadata();
+                    }).select(Map.class, (target, middle) -> {
+                        EntityMetadata middleEntityMetadata = middle.getEntityMetadata();
                         for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {
                             ColumnMetadata columnMetadata = middleEntityMetadata.getColumnNotNull(selfMappingProperty);
                             middle.columnAs(selfMappingProperty, columnMetadata.getName());
                         }
                     });
-             return clientQueryable;
+            return clientQueryable;
         } else {
             return clientQueryable.where(t -> {
                 navigateMetadata.predicateFilterApply(t);
@@ -331,7 +331,6 @@ public class EasyRelationalUtil {
             });
         }
     }
-
 
 
 //    public static AnonymousManyJoinEntityTableExpressionBuilder getGroupPartitionByRelationTable(RelationTableKey relationTableKey
@@ -354,7 +353,8 @@ public class EasyRelationalUtil {
 //            ClientQueryable<?> select = clientQueryable.where(m -> m.eq("__row__", index + 1))
 //                    .select(navigateMetadata.getNavigatePropertyType(), o -> {
 //                        for (Map.Entry<String, ColumnMetadata> columnMetadataEntry : partitionByEntityMetadata.getProperty2ColumnMap().entrySet()) {
-////                            o.column(columnMetadataEntry.getValue().getName());
+
+    /// /                            o.column(columnMetadataEntry.getValue().getName());
 //                            o.sqlNativeSegment("{0}",c->{
 //                                c.expression(columnMetadataEntry.getValue().getName());
 //                                c.setAlias(columnMetadataEntry.getValue().getName());

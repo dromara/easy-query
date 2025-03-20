@@ -34,6 +34,6 @@ public class M8UserBookIds implements ProxyEntityAvailable<M8UserBookIds , M8Use
     private String bookIds;
 
 
-    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {M8UserBookIds.Fields.bookIds}, targetProperty = {M8UserBook2.Fields.bookId},toManySubqueryClass = ToManySubqueryMySQLColumnValuesSQLStrategy.class)
+    @Navigate(value = RelationTypeEnum.ManyToMany, selfProperty = {M8UserBookIds.Fields.bookIds}, targetProperty = {M8UserBook2.Fields.bookId},toManySubqueryClass = ToManySubqueryMySQLColumnValuesSQLStrategy.class)
     private List<M8UserBook2> books;
 }
