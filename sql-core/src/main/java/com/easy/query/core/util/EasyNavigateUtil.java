@@ -16,6 +16,7 @@ import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.NavigateOrderProp;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -33,7 +34,7 @@ public class EasyNavigateUtil {
         if (targetProperties == null) {
             throw new IllegalArgumentException("targetProperties is null");
         }
-        if (mappingClass == null) {
+        if (mappingClass == null || Objects.equals(Object.class,mappingClass)) {
             checkSameLength(entityClass, property, selfProperties, targetProperties);
         } else {
             if (selfMappingProperties == null) {

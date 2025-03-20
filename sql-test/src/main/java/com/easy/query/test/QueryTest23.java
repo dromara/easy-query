@@ -74,7 +74,7 @@ public class QueryTest23 extends BaseTest {
     }
 
     @Test
-     public void fetcherOrder(){
+    public void fetcherOrder() {
         List<Draft1<BigDecimal>> list1 = easyEntityQuery.queryable(BlogEntity.class)
                 .select(t_blog -> Select.DRAFT.of(
                         t_blog.expression().sqlSegment("({0}+{1})/{2}", c -> {
@@ -85,12 +85,13 @@ public class QueryTest23 extends BaseTest {
 
         easyEntityQuery.queryable(BlogEntity.class)
                 .select(t_blog -> Select.DRAFT.of(
-                       t_blog.expression().caseWhen(()->{}).then(1)
-                               .elseEnd(
-                                       t_blog.expression().sqlSegment("({0}+{1})/{2}", c -> {
-                                           c.expression(t_blog.score()).expression(t_blog.star()).expression(t_blog.order());
-                                       }, BigDecimal.class)
-                               )
+                        t_blog.expression().caseWhen(() -> {
+                                }).then(1)
+                                .elseEnd(
+                                        t_blog.expression().sqlSegment("({0}+{1})/{2}", c -> {
+                                            c.expression(t_blog.score()).expression(t_blog.star()).expression(t_blog.order());
+                                        }, BigDecimal.class)
+                                )
                 )).toList();
 
 //
@@ -100,27 +101,32 @@ public class QueryTest23 extends BaseTest {
 //                 .orderBy(t_blog -> {
 //                     t_blog.score().asc();
 //                 }).toList();
-     }
+    }
 
-     @Test
-     public void testAddMulty(){
+    @Test
+    public void testAddMulty() {
 
-         ListenerContext listenerContext = new ListenerContext();
-         listenerContextManager.startListen(listenerContext);
+//        List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
+//                .where(t_blog -> {
+//                    t_blog.createTime().duration(LocalDateTime.now()).toDays().gt(5L);
+//                })
+//                .toList();
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
 
-         List<Draft1<BigDecimal>> list = easyEntityQuery.queryable(BlogEntity.class)
-                 .configure(o->o.setPrintSQL(false))
-                 .select(t_blog -> Select.DRAFT.of(
-                         t_blog.order().add(t_blog.star()).divide(t_blog.score())
-                 )).toList();
+        List<Draft1<BigDecimal>> list = easyEntityQuery.queryable(BlogEntity.class)
+                .configure(o -> o.setPrintSQL(false))
+                .select(t_blog -> Select.DRAFT.of(
+                        t_blog.order().add(t_blog.star()).divide(t_blog.score())
+                )).toList();
 
-         listenerContextManager.clear();
-         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-         Assert.assertEquals("SELECT ((t.`order` + t.`star`) / t.`score`) AS `value1` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT ((t.`order` + t.`star`) / t.`score`) AS `value1` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
-     }
+    }
 //     @Test
 //     public void testAddMulty2(){
 //
