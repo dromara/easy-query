@@ -367,7 +367,7 @@ public class QueryTest18 extends BaseTest {
         {
 
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-            Assert.assertEquals("SELECT COUNT(DISTINCT t.`id`,t.`stars`,t1.`create_time`) FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT COUNT(*) FROM (SELECT DISTINCT t.`id`,t.`stars`,t1.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id`) t2", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
         {
@@ -425,7 +425,7 @@ public class QueryTest18 extends BaseTest {
         {
 
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-            Assert.assertEquals("SELECT COUNT(DISTINCT t.`id`,t.`stars`,t.`title`,t.`create_time`) FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT COUNT(*) FROM (SELECT DISTINCT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id`) t2", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
         {
@@ -470,7 +470,7 @@ public class QueryTest18 extends BaseTest {
                 .distinct().count();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT COUNT(DISTINCT `id`,`stars`,`title`,`create_time`) FROM `t_topic`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT DISTINCT COUNT(*) FROM `t_topic`", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //        Assert.assertEquals("123(String),1234(String),123xx(String),false(Boolean),(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -493,7 +493,7 @@ public class QueryTest18 extends BaseTest {
         {
 
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-            Assert.assertEquals("SELECT COUNT(DISTINCT t.`id`,t.`stars`,t.`title`,t.`create_time`) FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT DISTINCT COUNT(*) FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
         {

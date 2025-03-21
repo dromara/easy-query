@@ -442,9 +442,13 @@ public class EasySQLExpressionUtil {
             }
             SQLBuilderSegment sqlBuilderSegment = entityQueryExpressionBuilder.getProjects().cloneSQLBuilder();
             entityQueryExpressionBuilder.getProjects().getSQLSegments().clear();
-            SQLSegment sqlSegment = sqlSegmentFactory.createSelectCountDistinctSegment(sqlBuilderSegment.getSQLSegments());
-            entityQueryExpressionBuilder.getProjects().append(sqlSegment);
-            entityQueryExpressionBuilder.setDistinct(false);
+            if(EasyCollectionUtil.isSingle(sqlBuilderSegment.getSQLSegments())){
+                SQLSegment sqlSegment = sqlSegmentFactory.createSelectCountDistinctSegment(sqlBuilderSegment.getSQLSegments());
+                entityQueryExpressionBuilder.getProjects().append(sqlSegment);
+                entityQueryExpressionBuilder.setDistinct(false);
+            }else{
+                return null;
+            }
 
         } else {
             entityQueryExpressionBuilder.getProjects().getSQLSegments().clear();

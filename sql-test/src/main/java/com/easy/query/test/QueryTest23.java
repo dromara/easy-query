@@ -158,8 +158,8 @@ public class QueryTest23 extends BaseTest {
             {
 
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                Assert.assertEquals("SELECT COUNT(DISTINCT t.`code`,t1.`name`) FROM `doc_bank_card` t LEFT JOIN `doc_user` t1 ON t1.`id` = t.`uid` WHERE (t.`id` = ? OR t.`id` IS NOT NULL)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                Assert.assertEquals("SELECT COUNT(*) FROM (SELECT DISTINCT t.`code` AS `value1`,t1.`name` AS `value2` FROM `doc_bank_card` t LEFT JOIN `doc_user` t1 ON t1.`id` = t.`uid` WHERE (t.`id` = ? OR t.`id` IS NOT NULL)) t2", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             }
 //            {
 //                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
@@ -228,5 +228,38 @@ public class QueryTest23 extends BaseTest {
 //
 //     }
 
+
+    @Test
+    public void testPageDistinct3(){
+
+
+        {
+            ListenerContext listenerContext = new ListenerContext(true);
+            listenerContextManager.startListen(listenerContext);
+
+            EasyPageResult<Draft1<String>> pageResult = easyEntityQuery.queryable(DocBankCard.class)
+                    .where(bank_card -> {
+                        bank_card.or(()->{
+                            bank_card.id().eq("123");
+                            bank_card.id().isNotNull();
+                        });
+                    })
+                    .select(bank_card -> Select.DRAFT.of(
+                            bank_card.user().name()
+                    )).distinct().toPageResult(1, 2);
+
+            {
+
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                Assert.assertEquals("SELECT COUNT(DISTINCT t1.`name`) FROM `doc_bank_card` t LEFT JOIN `doc_user` t1 ON t1.`id` = t.`uid` WHERE (t.`id` = ? OR t.`id` IS NOT NULL)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+//            {
+//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+//                Assert.assertEquals("SELECT t.`name`,t.`class_id` AS `__relation__classId` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            }
+        }
+    }
 
 }
