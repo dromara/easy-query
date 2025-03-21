@@ -260,6 +260,8 @@ public class QueryTest23 extends BaseTest {
 //                Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 //            }
         }
+
+
     }
 
 }

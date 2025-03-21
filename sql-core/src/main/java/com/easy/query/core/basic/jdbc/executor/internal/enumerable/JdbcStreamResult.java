@@ -25,7 +25,7 @@ public interface JdbcStreamResult<T> extends AutoCloseable {
      * @param chunk 处理每批数据，返回true表示继续返回false表示中断
      * @throws SQLException 抛出数据库异常
      */
-    void toChunk(int size, Predicate<List<T>> chunk) throws SQLException;
+    void toChunkIf(int size, Predicate<List<T>> chunk) throws SQLException;
 
     /**
      * 分批处理
@@ -35,7 +35,7 @@ public interface JdbcStreamResult<T> extends AutoCloseable {
      * @throws SQLException 抛出数据库异常
      */
     default void toChunk(int size, Consumer<List<T>> chunk) throws SQLException {
-        toChunk(size, list -> {
+        toChunkIf(size, list -> {
             chunk.accept(list);
             return list.size() <= size;
         });

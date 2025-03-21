@@ -385,7 +385,7 @@ public class DefaultMapQueryable implements MapQueryable {
     }
 
     @Override
-    public void toChunk(int size, Predicate<List<Map<String, Object>>> chunk) {
+    public void toChunkIf(int size, Predicate<List<Map<String, Object>>> chunk) {
         int offset = 0;
         while (true) {
             MapQueryable cloneQueryable = this.cloneQueryable();

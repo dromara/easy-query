@@ -37,7 +37,6 @@ import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.sql.Statement;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -181,8 +180,8 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     }
 
     @Override
-    public void toChunk(int size, Predicate<List<T1>> chunk) {
-        entityQueryable.toChunk(size,chunk);
+    public void toChunkIf(int size, Predicate<List<T1>> chunk) {
+        entityQueryable.toChunkIf(size,chunk);
     }
 
     @Override

@@ -385,7 +385,12 @@ public class ManyJoinTest extends BaseTest{
     }
 
     @Test
-    public void groupPartition(){
+    public void testManyJoinGroup(){
+        List<M8User2> list = easyEntityQuery.queryable(M8User2.class)
+                .manyJoin(x -> x.books())
+                .where(m -> {
+                    m.books().joining(x -> x.bookName(), ",").like("123");
+                }).toList();
 //        easyEntityQuery.queryable(M8UserBook.class)
 //                .groupBy(m -> GroupKeys.of(m.userId()))
 //                .select(group -> {

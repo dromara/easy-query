@@ -101,13 +101,21 @@ public class EasyStringUtil {
 
     public static String fromAllLowerNoUnderlined(String str) {
 
-        String[] splitArr = str.split("_");
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < splitArr.length; i++) {
-            sb.append(splitArr[i].toLowerCase());
+//        String[] splitArr = str.split("_");
+//        StringBuilder sb = new StringBuilder();
+//
+//        for (int i = 0; i < splitArr.length; i++) {
+//            sb.append(splitArr[i].toLowerCase());
+//        }
+//
+//        return sb.toString();
+        StringBuilder sb = new StringBuilder(str.length());
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (c != '_') {
+                sb.append(Character.toLowerCase(c));
+            }
         }
-
         return sb.toString();
     }
 

@@ -6,16 +6,13 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.DefaultPageResult;
 import com.easy.query.core.api.pagination.EasyPageResult;
-import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
-import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.exception.EasyQueryResultSizeLimitException;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.func.SQLFunction;
-import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -26,7 +23,6 @@ import com.easy.query.core.proxy.partition.Partition1;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyArrayUtil;
-import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.common.MyQueryConfiguration;
@@ -60,18 +56,11 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 
@@ -645,7 +634,7 @@ public class QueryTest18 extends BaseTest {
         easyEntityQuery.queryable(BlogEntity.class)
                 .orderBy(b -> b.createTime().asc())
                 .orderBy(b -> b.id().asc())
-                .toChunk(20, blogs -> {
+                .toChunkIf(20, blogs -> {
                     Assert.assertTrue(blogs.size() <= 20);
                     for (BlogEntity blog : blogs) {
                         if (ids.containsKey(blog.getId())) {
@@ -744,7 +733,7 @@ public class QueryTest18 extends BaseTest {
         easyEntityQuery.queryable(BlogEntity.class)
                 .orderBy(b -> b.createTime().asc())
                 .orderBy(b -> b.id().asc())
-                .toChunk(3, blogs -> {
+                .toChunkIf(3, blogs -> {
                     for (BlogEntity blog : blogs) {
                         a.incrementAndGet();
                     }

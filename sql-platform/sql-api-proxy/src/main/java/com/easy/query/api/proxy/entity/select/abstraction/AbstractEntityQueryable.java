@@ -207,8 +207,8 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public void toChunk(int size, Predicate<List<T1>> chunk) {
-        clientQueryable.toChunk(size, chunk);
+    public void toChunkIf(int size, Predicate<List<T1>> chunk) {
+        clientQueryable.toChunkIf(size, chunk);
     }
 
     @Override

@@ -581,11 +581,22 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public void toChunk(int size, Predicate<List<T1>> chunk) {
+    public void toChunkIf(int size, Predicate<List<T1>> chunk) {
         int offset = 0;
         while (true) {
 
             ClientQueryable<T1> cloneQueryable = this.cloneQueryable();
+            if(!cloneQueryable.getSQLEntityExpressionBuilder().hasOrder()){
+                cloneQueryable.orderByAsc(o->{
+                    Collection<String> keyProperties = o.getEntityMetadata().getKeyProperties();
+                    if(EasyCollectionUtil.isEmpty(keyProperties)){
+                        throw new EasyQueryInvalidOperationException("No primary key detected. Provide an ordering clause for sequence determination in the chunk function.");
+                    }
+                    for (String keyProperty : keyProperties) {
+                        o.column(keyProperty);
+                    }
+                });
+            }
             List<T1> list = cloneQueryable.limit(offset, size).toList();
             offset += size;
             if (EasyCollectionUtil.isEmpty(list)) {
