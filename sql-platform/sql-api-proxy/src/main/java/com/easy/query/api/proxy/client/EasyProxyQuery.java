@@ -22,6 +22,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
+@Deprecated
 public interface EasyProxyQuery extends EasyBaseQuery{
     <TProxy extends ProxyEntity<TProxy, T>, T> EntityQueryable<TProxy, T> queryable(TProxy table);
     <TProxy extends ProxyEntity<TProxy, T>, T> EntityQueryable<TProxy, T> queryable(String sql, TProxy table);

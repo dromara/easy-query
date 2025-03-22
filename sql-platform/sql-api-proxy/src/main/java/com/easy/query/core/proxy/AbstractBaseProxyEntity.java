@@ -119,16 +119,16 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         return EasyObjectUtil.typeCastNullable(this);
     }
 
-    @Deprecated
-    protected <TProperty> SQLColumn<TProxy, TProperty> get(String property) {
-        return get(property, null);
-    }
-
-    protected <TProperty> SQLColumn<TProxy, TProperty> get(String property, @Nullable Class<TProperty> propType) {
-        SQLColumn<TProxy, TProperty> column = new SQLColumnImpl<>(entitySQLContext, table, property, propType);
-        column._setProxy(castChain());
-        return column;
-    }
+//    @Deprecated
+//    protected <TProperty> SQLColumn<TProxy, TProperty> get(String property) {
+//        return get(property, null);
+//    }
+//
+//    protected <TProperty> SQLColumn<TProxy, TProperty> get(String property, @Nullable Class<TProperty> propType) {
+//        SQLColumn<TProxy, TProperty> column = new SQLColumnImpl<>(entitySQLContext, table, property, propType);
+//        column._setProxy(castChain());
+//        return column;
+//    }
 
     protected <TProperty> SQLDateTimeColumn<TProxy, TProperty> getDateTimeColumn(String property, @Nullable Class<TProperty> propType) {
         SQLDateTimeColumn<TProxy, TProperty> column = new SQLDateTimeColumnImpl<>(entitySQLContext, table, property, propType);

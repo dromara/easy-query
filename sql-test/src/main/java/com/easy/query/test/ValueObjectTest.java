@@ -12,7 +12,6 @@ import com.easy.query.test.entity.Company;
 import com.easy.query.test.entity.CompanyAddress;
 import com.easy.query.test.entity.CompanyCity;
 import com.easy.query.test.entity.company.ValueCompany;
-import com.easy.query.test.entity.company.ValueCompany1Proxy;
 import com.easy.query.test.entity.company.ValueCompanyAddress;
 import com.easy.query.test.entity.company.ValueCompanyLicense;
 import com.easy.query.test.entity.company.ValueCompanyLicenseExtra;
@@ -706,38 +705,6 @@ public class ValueObjectTest extends BaseTest {
         }
         finally {
             trackManager.release();
-        }
-
-        {
-
-            ValueCompany province12 = easyProxyQuery.queryable(ValueCompany1Proxy.createTable())
-                    .where(o -> o.address().province().eq( "province1"))
-                    .firstOrNull();
-            Assert.assertNotNull(province12);
-        }
-        {
-
-            ValueCompany1Proxy table = ValueCompany1Proxy.createTable();
-            ValueCompany province12 = easyProxyQuery.queryable(table)
-                    .where(o -> o.address().province().eq("province1"))
-                    .firstOrNull();
-            Assert.assertNotNull(province12);
-        }
-        {
-
-            ValueCompany province12 = easyProxyQuery.queryable(ValueCompany1Proxy.createTable())
-                    .where(o -> o.address().province().eq("province1"))
-                    .select(ValueCompany.class,v -> v.FETCHER.address()._concat(v.license().extra().licenseImage()))
-                    .firstOrNull();
-            Assert.assertNotNull(province12);
-        }
-        {
-
-            ValueCompany province12 = easyProxyQuery.queryable(ValueCompany1Proxy.createTable())
-                    .where(o -> o.address().province().eq("province1"))
-                    .select(ValueCompany.class,o-> Select.of(o.address(),o.license().extra()))
-                    .firstOrNull();
-            Assert.assertNotNull(province12);
         }
 
 

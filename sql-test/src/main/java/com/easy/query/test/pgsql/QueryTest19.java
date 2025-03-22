@@ -1,6 +1,7 @@
 package com.easy.query.test.pgsql;
 
 import com.easy.query.api.proxy.base.LongProxy;
+import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
@@ -370,6 +371,42 @@ public class QueryTest19 extends PgSQLBaseTest {
         entityQuery.queryable(BlogEntity.class)
                 .toChunk(100,s->{
                 });
+    }
+    @Test
+     public void testMapChain(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Map<String, Object>> list = entityQuery.queryable(BlogEntity.class)
+                .select(t_blog -> new MapProxy()
+                        .put("aaa", t_blog.score())
+                        .put("bbb", t_blog.star())
+                ).where(o -> {
+                    o.get("aaa").eq(123);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.\"aaa\" AS \"aaa\",t1.\"bbb\" AS \"bbb\" FROM (SELECT t.\"score\" AS \"aaa\",t.\"star\" AS \"bbb\" FROM \"t_blog\" t WHERE t.\"deleted\" = ?) t1 WHERE t1.\"aaa\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),123(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+     public void testMapChain2(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Map<String, Object>> list = entityQuery.queryable(BlogEntity.class)
+                .select(t_blog -> new MapProxy()
+                        .put("aaa", t_blog.score().multiply(100))
+                        .put("bbb", t_blog.star())
+                ).where(o -> {
+                    o.get("aaa").eq(123);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.\"aaa\" AS \"aaa\",t1.\"bbb\" AS \"bbb\" FROM (SELECT (t.\"score\" * ?) AS \"aaa\",t.\"star\" AS \"bbb\" FROM \"t_blog\" t WHERE t.\"deleted\" = ?) t1 WHERE t1.\"aaa\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("100(Integer),false(Boolean),123(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 
 }
