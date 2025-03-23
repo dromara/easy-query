@@ -189,8 +189,9 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id` AS `value1`,IFNULL(t2.`__count3__`,0) AS `value2`,IFNULL(t2.`__count4__`,0) AS `value3`,IFNULL(t2.`__count5__`,0) AS `value4` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t1.`code` LIKE ? THEN ? ELSE ? END)) > 0 THEN TRUE ELSE FALSE END) AS `__any2__`,COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE ? END)) AS `__count3__`,COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE ? END)) AS `__count4__`,COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE ? END)) AS `__count5__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__any2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("400%(String),1(Integer),null(null),工商(String),1(Integer),null(null),建设(String),1(Integer),null(null),农业(String),1(Integer),null(null),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id` AS `value1`,IFNULL(t2.`__count3__`,0) AS `value2`,IFNULL(t2.`__count4__`,0) AS `value3`,IFNULL(t2.`__count5__`,0) AS `value4` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t1.`code` LIKE ? THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__any2__`,COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE ? END)) AS `__count3__`,COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE ? END)) AS `__count4__`,COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE ? END)) AS `__count5__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__any2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("400%(String),1(Integer),null(null),true(Boolean),false(Boolean),工商(String),1(Integer),null(null),建设(String),1(Integer),null(null),农业(String),1(Integer),null(null),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
 
     }
 
@@ -302,8 +303,8 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t2.`__any2__` AS `value1`,t2.`__none3__` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END) AS `__any2__`,(CASE WHEN COUNT(*) > 0 THEN FALSE ELSE TRUE END) AS `__none3__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__any2__` = ? AND t2.`__none3__` = ? AND t2.`__any2__` = ? AND t2.`__none3__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("true(Boolean),true(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t2.`__any2__` AS `value1`,t2.`__none3__` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(CASE WHEN COUNT(*) > 0 THEN ? ELSE ? END) AS `__any2__`,(CASE WHEN COUNT(*) > 0 THEN ? ELSE ? END) AS `__none3__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__any2__` = ? AND t2.`__none3__` = ? AND t2.`__any2__` = ? AND t2.`__none3__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("true(Boolean),false(Boolean),false(Boolean),true(Boolean),true(Boolean),true(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 
@@ -325,8 +326,8 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE ? END)) > 0 THEN TRUE ELSE FALSE END) AS `__any2__`,(CASE WHEN COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE ? END)) > 0 THEN FALSE ELSE TRUE END) AS `__none3__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__any2__` = ? AND t2.`__none3__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("1(String),1(Integer),null(null),1(String),1(Integer),null(null),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__any2__`,(CASE WHEN COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__none3__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__any2__` = ? AND t2.`__none3__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String),1(Integer),null(null),true(Boolean),false(Boolean),1(String),1(Integer),null(null),false(Boolean),true(Boolean),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 
@@ -604,8 +605,8 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE ? END)) > 0 THEN TRUE ELSE FALSE END) AS `__any2__` FROM `doc_user_book` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__any2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("%123%(String),1(Integer),null(null),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `doc_user_book` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__any2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String),1(Integer),null(null),true(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 
     @Test
@@ -624,8 +625,8 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE ? END)) > 0 THEN TRUE ELSE FALSE END) AS `__any2__` FROM `doc_user_book` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__any2__` = ? AND t2.`__any2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("%123%(String),1(Integer),null(null),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `doc_user_book` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__any2__` = ? AND t2.`__any2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String),1(Integer),null(null),true(Boolean),false(Boolean),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 
 
@@ -1031,8 +1032,8 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE ? END)) > 0 THEN FALSE ELSE TRUE END) AS `__none2__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__none2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("建设(String),1(Integer),null(null),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__none2__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE t2.`__none2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("建设(String),1(Integer),null(null),false(Boolean),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 

@@ -1,4 +1,4 @@
-package com.easy.query.core.expression.parser.core.base.tree;
+package com.easy.query.api.proxy.extension.tree;
 
 import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;

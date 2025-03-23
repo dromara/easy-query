@@ -132,8 +132,10 @@ public class RewritePredicteToSelectProvider<T1Proxy extends ProxyEntity<T1Proxy
         ColumnFunctionCompareComparableNumberChainExpression<Long> count = new DefaultSQLGroupQueryable<>(getPropertyProxy(), getPropertyProxy().getEntitySQLContext(), getSubQueryContext().getWhereExpression()).count();
         ColumnFunctionCompareComparableBooleanChainExpressionImpl<Boolean> any = new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("(CASE WHEN {0} > 0 THEN {1} ELSE {2} END)", c -> {
             PropTypeColumn.columnFuncSelector(c, count);
-            c.sqlFunc(f.booleanConstantSQLFunction(true));
-            c.sqlFunc(f.booleanConstantSQLFunction(false));
+            c.value(true);
+            c.value(false);
+//            c.sqlFunc(f.booleanConstantSQLFunction(true));
+//            c.sqlFunc(f.booleanConstantSQLFunction(false));
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(any, "any");
         return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> f.anySQLFunction("{0}", c -> c.column(alias)), Boolean.class);
@@ -143,8 +145,10 @@ public class RewritePredicteToSelectProvider<T1Proxy extends ProxyEntity<T1Proxy
         ColumnFunctionCompareComparableNumberChainExpression<Long> count = new DefaultSQLGroupQueryable<>(getPropertyProxy(), getPropertyProxy().getEntitySQLContext(), getSubQueryContext().getWhereExpression()).count();
         ColumnFunctionCompareComparableBooleanChainExpressionImpl<Boolean> none = new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("(CASE WHEN {0} > 0 THEN {1} ELSE {2} END)", c -> {
             PropTypeColumn.columnFuncSelector(c, count);
-            c.sqlFunc(f.booleanConstantSQLFunction(false));
-            c.sqlFunc(f.booleanConstantSQLFunction(true));
+            c.value(false);
+            c.value(true);
+//            c.sqlFunc(f.booleanConstantSQLFunction(false));
+//            c.sqlFunc(f.booleanConstantSQLFunction(true));
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(none, "none");
         return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> f.anySQLFunction("{0}", c -> c.column(alias)), Boolean.class);
@@ -155,8 +159,10 @@ public class RewritePredicteToSelectProvider<T1Proxy extends ProxyEntity<T1Proxy
         ColumnFunctionCompareComparableNumberChainExpression<Long> count = new FlatElementSQLAnyQueryable(getPropertyProxy().getEntitySQLContext(), sqlPredicateExpression).count();
         ColumnFunctionCompareComparableBooleanChainExpressionImpl<Boolean> any = new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("(CASE WHEN {0} > 0 THEN {1} ELSE {2} END)", c -> {
             PropTypeColumn.columnFuncSelector(c, count);
-            c.sqlFunc(f.booleanConstantSQLFunction(true));
-            c.sqlFunc(f.booleanConstantSQLFunction(false));
+            c.value(true);
+            c.value(false);
+//            c.sqlFunc(f.booleanConstantSQLFunction(true));
+//            c.sqlFunc(f.booleanConstantSQLFunction(false));
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(any, "any");
         return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> f.anySQLFunction("{0}", c -> c.column(alias)), Boolean.class);

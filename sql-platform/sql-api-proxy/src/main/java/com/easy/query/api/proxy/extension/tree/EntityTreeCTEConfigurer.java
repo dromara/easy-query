@@ -1,7 +1,8 @@
-package com.easy.query.core.expression.parser.core.base.tree;
+package com.easy.query.api.proxy.extension.tree;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.proxy.ProxyEntity;
 
 /**
  * create time 2023/10/22 12:12
@@ -9,7 +10,7 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
  *
  * @author xuejiaming
  */
-public interface TreeCTEConfigurer {
+public interface EntityTreeCTEConfigurer<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
     /**
      * 最大深度 第一个为0
      * @param limitDeep -1表示不限制(默认)，0表示只查询第一级
@@ -40,5 +41,5 @@ public interface TreeCTEConfigurer {
      */
     void setDeepColumnName(String deepColumnName);
 
-    void setChildFilter(SQLExpression1<WherePredicate<?>> whereExpression);
+    void setChildFilter(SQLExpression1<T1Proxy> whereExpression);
 }
