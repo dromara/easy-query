@@ -10,6 +10,7 @@ import com.easy.query.api.proxy.key.MapKeys;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
+import com.easy.query.core.proxy.grouping.Grouping1;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -431,6 +432,40 @@ public class QueryTest19 extends PgSQLBaseTest {
         listenerContextManager.clear();
         System.out.println("123");
 //        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS ( (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL)  UNION ALL  (SELECT t2.`cte_deep` + 1 AS `cte_deep`,t3.`id`,t3.`stars`,t3.`title`,t3.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t3.`stars` = t2.`id`) )  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t WHERE t.`cte_deep` <= ?", sql);
+        LocalDateTime localDateTime = entityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.content().like("123");
+                }).maxOrNull(t -> t.createTime());
+        List<Draft2<Long, LocalDateTime>> list = entityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.content().like("123");
+                })
+                .select(t_blog -> Select.DRAFT.of(
+                        t_blog.id().count(),
+                        t_blog.createTime().max()
+                )).toList();
+        List<Grouping1<Integer>> list1 = entityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.content().like("123");
+                    t_blog.content().max();//你觉得这段代码在干嘛
+                    //他只是定义了一个content字段的max函数片段即没有比较也没有干嘛你觉得eq应该怎么给你生成
+                })
+                .groupBy(t_blog -> GroupKeys.of(t_blog.star()))
+                .having(x -> x.groupTable().createTime().max().lt(localDateTime.now()))
+                .toList();
+
+
+//        entityQuery.queryable(BlogEntity.class)
+//                .where(t_blog -> {
+//                    t_blog.content().eq(
+//                            entityQuery.queryable(BlogEntity.class)
+//                                    .where(t_blog1 -> {
+//                                        t_blog1.star().gt(1);
+//                                    }).selectColumn(t_blog1 -> t_blog1.content().max())
+//                    );
+//                })
     }
+
+
 
 }
