@@ -12,5 +12,6 @@ import com.easy.query.core.metadata.NavigateMetadata;
  * @author xuejiaming
  */
 public interface ToManySubquerySQLStrategy {
+    String getName();
     <T> ClientQueryable<T> toManySubquery(ClientQueryable<T> clientQueryable, TableAvailable leftTable, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext);
 }

@@ -72,7 +72,7 @@ public class QueryConfiguration {
     private Map<Class<? extends ColumnValueSQLConverter>, ColumnValueSQLConverter> columnValueSQLConverterMap = new ConcurrentHashMap<>();
     private Map<Class<? extends GeneratedKeySQLColumnGenerator>, GeneratedKeySQLColumnGenerator> generatedSQLColumnGeneratorMap = new ConcurrentHashMap<>();
     private Map<Class<? extends PrimaryKeyGenerator>, PrimaryKeyGenerator> primaryKeyGeneratorMap = new ConcurrentHashMap<>();
-    private Map<Class<? extends ToManySubquerySQLStrategy>, ToManySubquerySQLStrategy> toManySubquerySQLStrategyMap = new ConcurrentHashMap<>();
+    private Map<String, ToManySubquerySQLStrategy> toManySubquerySQLStrategyMap = new ConcurrentHashMap<>();
 
     //    public EasyQueryConfiguration(Dialect dialect, NameConversion nameConversion) {
 //       this(EasyQueryOption.defaultEasyQueryOption(),dialect,nameConversion);
@@ -87,7 +87,7 @@ public class QueryConfiguration {
         easyVersionStrategyMap.put(VersionUUIDStrategy.class, new VersionUUIDStrategy());
         easyVersionStrategyMap.put(VersionTimestampStrategy.class, new VersionTimestampStrategy());
         shardingInitializerMap.put(UnShardingInitializer.class, UnShardingInitializer.INSTANCE);
-        toManySubquerySQLStrategyMap.put(ToManySubqueryEqualSQLStrategy.class, ToManySubqueryEqualSQLStrategy.INSTANCE);
+        toManySubquerySQLStrategyMap.put("", ToManySubqueryEqualSQLStrategy.INSTANCE);
 //        primaryKeyGeneratorMap.put(UnsupportPrimaryKeyGenerator.class, UnsupportPrimaryKeyGenerator.INSTANCE);
     }
 
@@ -320,14 +320,13 @@ public class QueryConfiguration {
         return primaryKeyGeneratorMap.get(primaryKeyGenerator);
     }
     public void applyToManySubquerySQLStrategy(ToManySubquerySQLStrategy toManySubquerySQLStrategy) {
-        Class<? extends ToManySubquerySQLStrategy> toManySubquerySQLStrategyClass = toManySubquerySQLStrategy.getClass();
-        if (toManySubquerySQLStrategyMap.containsKey(toManySubquerySQLStrategyClass)) {
-            throw new EasyQueryException("to many subquery sql strategy:" + EasyClassUtil.getSimpleName(toManySubquerySQLStrategyClass) + ",repeat");
+        if (toManySubquerySQLStrategyMap.containsKey(toManySubquerySQLStrategy.getName())) {
+            throw new EasyQueryException("to many subquery sql strategy:" + toManySubquerySQLStrategy.getName() + ",repeat");
         }
-        toManySubquerySQLStrategyMap.put(toManySubquerySQLStrategyClass, toManySubquerySQLStrategy);
+        toManySubquerySQLStrategyMap.put(toManySubquerySQLStrategy.getName(), toManySubquerySQLStrategy);
     }
 
-    public ToManySubquerySQLStrategy getToManySubquerySQLStrategy(Class<? extends ToManySubquerySQLStrategy> toManySubquerySQLStrategyClass) {
-        return toManySubquerySQLStrategyMap.get(toManySubquerySQLStrategyClass);
+    public ToManySubquerySQLStrategy getToManySubquerySQLStrategy(String name) {
+        return toManySubquerySQLStrategyMap.get(name);
     }
 }

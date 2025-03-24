@@ -95,7 +95,7 @@ public class EasyTrackUtil {
         String propertyName = property.getKey();
         Object propertyValue = property.getValue().apply(entity);
         if (Objects.isNull(propertyValue)) {
-            throw new EasyQueryTrackInvalidOperationException("track key cant null :" + propertyName);
+            throw new EasyQueryTrackInvalidOperationException(EasyClassUtil.getInstanceSimpleName(entity)+": track key cant null :" + propertyName);
         }
         return propertyName + ":" + propertyValue;
     }

@@ -339,11 +339,10 @@ public class EntityMetadata {
     }
 
     private @Nullable ToManySubquerySQLStrategy getToManySubquerySQLStrategy(QueryConfiguration configuration, Navigate navigate) {
-        Class<? extends ToManySubquerySQLStrategy> toManySubquerySQLStrategyClass = navigate.toManySubqueryClass();
 
-        ToManySubquerySQLStrategy toManySubquerySQLStrategy = configuration.getToManySubquerySQLStrategy(toManySubquerySQLStrategyClass);
+        ToManySubquerySQLStrategy toManySubquerySQLStrategy = configuration.getToManySubquerySQLStrategy(navigate.toManySubqueryName());
         if (toManySubquerySQLStrategy == null) {
-            throw new EasyQueryInvalidOperationException("not found navigate to many subquery sql strategy:[" + EasyClassUtil.getSimpleName(toManySubquerySQLStrategyClass) + "]");
+            throw new EasyQueryInvalidOperationException("not found navigate to many subquery sql strategy:[" + navigate.toManySubqueryName()+ "]");
         }
         return toManySubquerySQLStrategy;
     }

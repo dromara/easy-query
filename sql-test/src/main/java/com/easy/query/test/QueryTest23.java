@@ -149,4 +149,12 @@ public class QueryTest23 extends BaseTest {
 //     }
 
 
+    @Test
+     public void testAdd(){
+        List<Draft1<BigDecimal>> list = easyEntityQuery.queryable(BlogEntity.class)
+                .select(t_blog -> Select.DRAFT.of(
+                        t_blog.star().add(t_blog.score()).multiply(t_blog.order())
+                )).toList();
+    }
+
 }

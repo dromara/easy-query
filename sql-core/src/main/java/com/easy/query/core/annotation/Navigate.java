@@ -107,5 +107,5 @@ public @interface Navigate {
      * 属性关联策略
      * @return
      */
-    Class<? extends ToManySubquerySQLStrategy> toManySubqueryClass() default ToManySubqueryEqualSQLStrategy.class;
+    String toManySubqueryName() default "";
 }

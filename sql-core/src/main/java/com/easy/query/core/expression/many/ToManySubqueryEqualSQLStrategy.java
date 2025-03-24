@@ -18,6 +18,11 @@ public class ToManySubqueryEqualSQLStrategy implements ToManySubquerySQLStrategy
     public static final ToManySubquerySQLStrategy INSTANCE = new ToManySubqueryEqualSQLStrategy();
 
     @Override
+    public String getName() {
+        return "";
+    }
+
+    @Override
     public <T> ClientQueryable<T> toManySubquery(ClientQueryable<T> clientQueryable, TableAvailable leftTable, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext) {
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
             ClientQueryable<?> mappingQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
