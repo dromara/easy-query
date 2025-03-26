@@ -2,8 +2,6 @@ package com.easy.query.core.proxy.predicate;
 
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.SQLFunc;
-import com.easy.query.core.func.SQLFuncAvailable;
-import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
@@ -51,12 +49,6 @@ public interface DSLFunctionComparePredicate<TProperty> extends TablePropColumn,
         if (condition) {
             getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-//                if(this instanceof DSLSQLFunctionAvailable){
-//                    SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-//                    f.eq(this.getTable(), sqlFunction, column.getTable(), column.func().apply(fx));
-//                }else{
-//                    f.eq(this.getTable(), this.getValue(), column.getTable(), column.func().apply(fx));
-//                }
                 f.eq(this.getTable(), this.getValue(), column.getTable(), column.func().apply(fx));
             }));
         }

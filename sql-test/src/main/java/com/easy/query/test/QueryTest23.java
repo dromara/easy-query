@@ -2,23 +2,34 @@ package com.easy.query.test;
 
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.proxy.SQLMathExpression;
+import com.easy.query.core.basic.extension.track.TrackManager;
+import com.easy.query.core.basic.jdbc.executor.internal.command.JdbcCommand;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.StreamIterable;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
+import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResult;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.doc.entity.DocBank;
 import com.easy.query.test.doc.entity.DocBankCard;
 import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * create time 2025/3/11 20:33
@@ -136,7 +147,7 @@ public class QueryTest23 extends BaseTest {
 
 
     @Test
-    public void testPageDistinct(){
+    public void testPageDistinct() {
 
 
         {
@@ -145,7 +156,7 @@ public class QueryTest23 extends BaseTest {
 
             EasyPageResult<Draft2<String, String>> pageResult = easyEntityQuery.queryable(DocBankCard.class)
                     .where(bank_card -> {
-                        bank_card.or(()->{
+                        bank_card.or(() -> {
                             bank_card.id().eq("123");
                             bank_card.id().isNotNull();
                         });
@@ -168,8 +179,9 @@ public class QueryTest23 extends BaseTest {
 //            }
         }
     }
+
     @Test
-    public void testPageDistinct2(){
+    public void testPageDistinct2() {
 
 
         {
@@ -192,7 +204,7 @@ public class QueryTest23 extends BaseTest {
 
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
                 Assert.assertEquals("SELECT DISTINCT t.`code` AS `value1`,t1.`name` AS `value2` FROM `doc_bank_card` t LEFT JOIN `doc_user` t1 ON t1.`id` = t.`uid` WHERE (t.`id` = ? OR t.`id` IS NOT NULL)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             }
 //            {
 //                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
@@ -230,7 +242,7 @@ public class QueryTest23 extends BaseTest {
 
 
     @Test
-    public void testPageDistinct3(){
+    public void testPageDistinct3() {
 
 
         {
@@ -239,7 +251,7 @@ public class QueryTest23 extends BaseTest {
 
             EasyPageResult<Draft1<String>> pageResult = easyEntityQuery.queryable(DocBankCard.class)
                     .where(bank_card -> {
-                        bank_card.or(()->{
+                        bank_card.or(() -> {
                             bank_card.id().eq("123");
                             bank_card.id().isNotNull();
                         });
@@ -260,8 +272,92 @@ public class QueryTest23 extends BaseTest {
 //                Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 //            }
         }
+//        SQLFunc fx = easyEntityQuery.getRuntimeContext().fx();
+//        SQLFunction caseWhenXxxxxx = fx.anySQLFunction("case when xxxxxx", c -> {
+//        });
+//        List<Draft1<BigDecimal>> list = easyEntityQuery.queryable(BlogEntity.class)
+//                .select(t_blog -> Select.DRAFT.of(
+//                        t_blog.expression().sqlSegment("({0} - {1})", c -> {
+//                            c.expression(t_blog.star()).subQuery(
+//                                    easyEntityQuery.queryable(Topic.class)
+//                                            .where(t_topic -> {
+//                                                t_topic.id().eq(t_blog.id());
+//                                            }).selectColumn(t_topic -> t_topic.stars().sum())
+//                            );
+//                        }, BigDecimal.class)
+//                )).toList();
+//
+//
+//        List<Draft1<BigDecimal>> list1 = easyEntityQuery.queryable(DocUser.class)
+//                .manyJoin(x->x.bankCards())
+//                .select(user -> Select.DRAFT.of(
+//                        user.bankCards().sum(x -> x.code().toNumber(BigDecimal.class))
+//                )).toList();
 
 
+//        easyEntityQuery.queryable(BlogEntity.class)
+//                .where(t_blog -> {
+//                    t_blog.expression().sql("id > 1");
+//                })
+
+    }
+
+
+    @Test
+    public void subquery() {
+
+//        try (JdbcStreamResult<BlogEntity> streamResult = easyEntityQuery.queryable(BlogEntity.class)
+//                .toStreamResult(100)) {
+//            StreamIterable<BlogEntity> streamIterable = streamResult.getStreamIterable();
+//            Iterator<BlogEntity> iterator = streamIterable.iterator();
+//
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+        try (JdbcStreamResult<Map> streamResult = easyEntityQuery.getEasyQueryClient()
+                .queryable("select * from t_blog where id <> ?", Map.class, Arrays.asList("1"))
+                .toStreamResult(100)) {
+            JdbcCommand<QueryExecuteResult> jdbcCommand = streamResult.getJdbcCommand();
+            QueryExecuteResult execute = jdbcCommand.execute();
+            StreamResultSet streamResultSet = execute.getStreamResultSet();
+            ResultSetMetaData metaData = streamResultSet.getMetaData();
+            Assert.assertNotNull(metaData);
+
+            StreamIterable<Map> streamIterable = streamResult.getStreamIterable();
+            for (Map map : streamIterable) {
+                System.out.println(map);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    Expression expression = t_blog.expression();
+
+//                    expression.exists(() -> {
+//                        return expression.subQueryable(Topic.class)
+//                                .where(t_topic -> {
+//                                    t_blog.id().eq(t_topic.id().nullOrDefault("1"));
+//                                });
+//                    });
+
+                })
+//                .select(t_blog -> {
+//
+//                    ColumnFunctionCompareComparableAnyChainExpression<Number> subQuery = t_blog.expression().subQuery(() -> {
+//                                return easyEntityQuery.queryable(Topic.class)
+//                                        .where(t_topic -> {
+//                                            t_topic.id().eq(t_blog.id());
+//                                        }).selectColumn(s -> s.stars().sum());
+//                            }
+//                    );
+//                    return Select.DRAFT.of(
+//                            t_blog.star().subtract(subQuery)
+//                    );
+//                })
+                .toList();
     }
 
 }

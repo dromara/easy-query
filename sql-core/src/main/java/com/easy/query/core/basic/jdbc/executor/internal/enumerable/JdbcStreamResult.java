@@ -1,6 +1,8 @@
 package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
+import com.easy.query.core.basic.jdbc.executor.internal.command.JdbcCommand;
+import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResult;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.function.Predicate;
  * @author xuejiaming
  */
 public interface JdbcStreamResult<T> extends AutoCloseable {
+    JdbcCommand<QueryExecuteResult> getJdbcCommand();
     StreamIterable<T> getStreamIterable() throws SQLException;
 
     ExecutorContext getExecutorContext();

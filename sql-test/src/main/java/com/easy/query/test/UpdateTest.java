@@ -258,6 +258,7 @@ public class UpdateTest extends BaseTest {
             topic.setTitle(newTitle);
             String sql = ((EasyEntityUpdatable<Topic>) easyQuery.updatable(topic))
                     .toSQL(topic);
+            //默认没开启track所以应该是更新所有
             Assert.assertEquals("UPDATE `t_topic` SET `stars` = ?,`title` = ?,`create_time` = ? WHERE `id` = ?", sql);
             long l = easyQuery.updatable(topic).executeRows();
             Assert.assertEquals(1, l);

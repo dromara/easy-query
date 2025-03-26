@@ -60,6 +60,7 @@ public class SpringBootStarterBuilder {
         EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .replaceService(DataSourceUnitFactory.class, SpringDataSourceUnitFactory.class)
+                .replaceService(ConnectionManager.class, SpringConnectionManager.class)
                 .customConfigure(s -> {
                     switch (easyQueryProperties.getNameConversion()) {
                         case UNDERLINED:
@@ -126,7 +127,6 @@ public class SpringBootStarterBuilder {
                         s.addService(SQLParameterPrintFormat.class, DefaultSQLParameterPrintFormat.class);
                     }
                 })
-                .replaceService(ConnectionManager.class, SpringConnectionManager.class)
                 .optionConfigure(builder -> {
                     builder.setDeleteThrowError(easyQueryProperties.getDeleteThrow());
                     builder.setInsertStrategy(easyQueryProperties.getInsertStrategy());

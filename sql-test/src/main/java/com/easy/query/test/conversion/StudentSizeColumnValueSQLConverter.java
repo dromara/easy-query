@@ -25,26 +25,35 @@ public class StudentSizeColumnValueSQLConverter implements ColumnValueSQLConvert
 
     @Override
     public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
-        SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
-        ClientQueryable<SchoolStudent> queryable = sqlClientApiFactory.createQueryable(SchoolStudent.class, runtimeContext);
-        ClientQueryable<Long> studentSizeQuery = queryable.where(t -> t.eq(new SimpleEntitySQLTableOwner<>(table), "classId", "id"))
-                .select(Long.class,s -> s.columnCount("id"));
+//        SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
+//        ClientQueryable<SchoolStudent> queryable = sqlClientApiFactory.createQueryable(SchoolStudent.class, runtimeContext);
+//        ClientQueryable<Long> studentSizeQuery = queryable.where(t -> t.eq(new SimpleEntitySQLTableOwner<>(table), "classId", "id"))
+//                .select(Long.class,s -> s.columnCount("id"));
 
+
+        ClientQueryable<Long> studentSizeQuery = createSubQueryable(table, runtimeContext);
         sqlPropertyConverter.sqlNativeSegment("{0}",context->{
             context.expression(studentSizeQuery);
             context.setAlias(columnMetadata.getName());
         });
+
     }
     @Override
     public void propertyColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
-        SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
-        ClientQueryable<SchoolStudent> queryable = sqlClientApiFactory.createQueryable(SchoolStudent.class, runtimeContext);
-        ClientQueryable<Long> studentSizeQuery = queryable.where(t -> t.eq(new SimpleEntitySQLTableOwner<>(table), "classId", "id"))
-                .select(Long.class,s -> s.columnCount("id"));
-
+//        SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
+//        ClientQueryable<SchoolStudent> queryable = sqlClientApiFactory.createQueryable(SchoolStudent.class, runtimeContext);
+//        ClientQueryable<Long> studentSizeQuery = queryable.where(t -> t.eq(new SimpleEntitySQLTableOwner<>(table), "classId", "id"))
+//                .select(Long.class,s -> s.columnCount("id"));
+        ClientQueryable<Long> studentSizeQuery = createSubQueryable(table, runtimeContext);
         sqlPropertyConverter.sqlNativeSegment("{0}",context->{
             context.expression(studentSizeQuery);
         });
+    }
+    private  ClientQueryable<Long> createSubQueryable(TableAvailable table, QueryRuntimeContext runtimeContext){
+        SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
+        ClientQueryable<SchoolStudent> queryable = sqlClientApiFactory.createQueryable(SchoolStudent.class, runtimeContext);
+        return queryable.where(t -> t.eq(new SimpleEntitySQLTableOwner<>(table), "classId", "id"))
+                .select(Long.class,s -> s.columnCount("id"));
     }
 
     @Override

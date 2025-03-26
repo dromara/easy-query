@@ -28,6 +28,12 @@ public class DefaultJdbcStreamResultSet<T> implements JdbcStreamResult<T> {
         this.resultMetadata = resultMetadata;
         this.command = command;
     }
+
+    @Override
+    public JdbcCommand<QueryExecuteResult> getJdbcCommand() {
+        return command;
+    }
+
     @Override
     public StreamIterable<T> getStreamIterable() throws SQLException {
         if(queryExecuteResult==null){

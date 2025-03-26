@@ -1,5 +1,8 @@
 package com.easy.query.core.proxy.core;
 
+import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.api.proxy.extension.casewhen.CaseWhenEntityBuilder;
 import com.easy.query.api.proxy.extension.casewhen.CaseWhenThenEntityBuilder;
 import com.easy.query.api.proxy.extension.partition.AvgOverBuilder;
@@ -10,12 +13,16 @@ import com.easy.query.api.proxy.extension.partition.MinOverBuilder;
 import com.easy.query.api.proxy.extension.partition.RankOverBuilder;
 import com.easy.query.api.proxy.extension.partition.RowNumberOverBuilder;
 import com.easy.query.api.proxy.extension.partition.SumOverBuilder;
+import com.easy.query.core.api.SQLClientApiFactory;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelector;
@@ -370,5 +377,12 @@ public class Expression {
     }
     public <TProperty> MinOverBuilder<TProperty> minOver(PropTypeColumn<TProperty> countColumn){
         return new MinOverBuilder<>(countColumn,entitySQLContext);
+    }
+
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityQueryable<TProxy, T> subQueryable(Class<T> entityClass) {
+        SQLClientApiFactory sqlClientApiFactory = entitySQLContext.getRuntimeContext().getSQLClientApiFactory();
+        ClientQueryable<T> queryable = sqlClientApiFactory.createQueryable(entityClass, entitySQLContext.getRuntimeContext(), entitySQLContext.getEntityExpressionBuilder().getExpressionContext());
+        TProxy tProxy = EntityQueryProxyManager.create(entityClass);
+        return new EasyEntityQueryable<>(tProxy, queryable);
     }
 }
