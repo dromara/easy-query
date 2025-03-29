@@ -105,5 +105,5 @@ public @interface Navigate {
      * 属性关联策略
      * @return
      */
-    String toManySubqueryName() default "";
+    String relationPropertyStrategy() default "";
 }

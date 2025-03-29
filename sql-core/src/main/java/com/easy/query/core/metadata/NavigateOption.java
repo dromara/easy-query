@@ -32,7 +32,7 @@ public class NavigateOption {
     private String[] targetMappingProperties;
     private SQLExpression1<WherePredicate<?>> predicateFilterExpression;
     private SQLExpression1<WherePredicate<?>> predicateMappingClassFilterExpression;
-    private EntityRelationPropertyProvider toManySubquerySQLStrategy;
+    private EntityRelationPropertyProvider entityRelationPropertyProvider;
 
     public NavigateOption(EntityMetadata entityMetadata,
                           String propertyName,
@@ -144,11 +144,11 @@ public class NavigateOption {
         return directMapping;
     }
 
-    public EntityRelationPropertyProvider getToManySubquerySQLStrategy() {
-        return toManySubquerySQLStrategy;
+    public EntityRelationPropertyProvider getEntityRelationPropertyProvider() {
+        return entityRelationPropertyProvider;
     }
 
-    public void setToManySubquerySQLStrategy(EntityRelationPropertyProvider toManySubquerySQLStrategy) {
-        this.toManySubquerySQLStrategy = toManySubquerySQLStrategy;
+    public void setEntityRelationPropertyProvider(EntityRelationPropertyProvider entityRelationPropertyProvider) {
+        this.entityRelationPropertyProvider = entityRelationPropertyProvider;
     }
 }

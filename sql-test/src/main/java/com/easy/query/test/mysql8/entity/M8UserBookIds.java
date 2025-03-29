@@ -33,6 +33,6 @@ public class M8UserBookIds implements ProxyEntityAvailable<M8UserBookIds , M8Use
     private String bookIds;
 
 
-    @Navigate(value = RelationTypeEnum.ManyToMany, selfProperty = {M8UserBookIds.Fields.bookIds}, targetProperty = {M8UserBook2.Fields.bookId},toManySubqueryName ="find_in_set")
+    @Navigate(value = RelationTypeEnum.ManyToMany, selfProperty = {M8UserBookIds.Fields.bookIds}, targetProperty = {M8UserBook2.Fields.bookId}, relationPropertyStrategy ="find_in_set")
     private List<M8UserBook2> books;
 }

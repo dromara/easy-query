@@ -49,6 +49,7 @@ import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConve
 import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperUnderlinedNameConversion;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
+import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
@@ -148,7 +149,8 @@ public class EasyQueryStarterAutoConfiguration {
                                                                Map<String, GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorMap,
                                                                Map<String, NavigateExtraFilterStrategy> navigateExtraFilterStrategyMap,
                                                                Map<String, NavigateValueSetter> navigateValueSetterMap,
-                                                               Map<String, PrimaryKeyGenerator> primaryKeyGeneratorMap) {
+                                                               Map<String, PrimaryKeyGenerator> primaryKeyGeneratorMap,
+                                                               Map<String, EntityRelationPropertyProvider> entityRelationPropertyProviderMap) {
         return new EasyQueryInitializeOption(interceptorMap,
                 versionStrategyMap,
                 logicDeleteStrategyMap,
@@ -162,6 +164,7 @@ public class EasyQueryStarterAutoConfiguration {
                 generatedKeySQLColumnGeneratorMap,
                 navigateExtraFilterStrategyMap,
                 navigateValueSetterMap,
-                primaryKeyGeneratorMap);
+                primaryKeyGeneratorMap,
+                entityRelationPropertyProviderMap);
     }
 }

@@ -318,14 +318,14 @@ public class QueryConfiguration {
     public PrimaryKeyGenerator getPrimaryKeyGenerator(Class<? extends PrimaryKeyGenerator> primaryKeyGenerator) {
         return primaryKeyGeneratorMap.get(primaryKeyGenerator);
     }
-    public void applyToManySubquerySQLStrategy(EntityRelationPropertyProvider toManySubquerySQLStrategy) {
+    public void applyRelationPropertyProvider(EntityRelationPropertyProvider toManySubquerySQLStrategy) {
         if (toManySubquerySQLStrategyMap.containsKey(toManySubquerySQLStrategy.getName())) {
-            throw new EasyQueryException("to many subquery sql strategy:" + toManySubquerySQLStrategy.getName() + ",repeat");
+            throw new EasyQueryException("entity relation property provider:" + toManySubquerySQLStrategy.getName() + ",repeat");
         }
         toManySubquerySQLStrategyMap.put(toManySubquerySQLStrategy.getName(), toManySubquerySQLStrategy);
     }
 
-    public EntityRelationPropertyProvider getToManySubquerySQLStrategy(String name) {
+    public EntityRelationPropertyProvider getRelationPropertyProvider(String name) {
         return toManySubquerySQLStrategyMap.get(name);
     }
 }

@@ -80,7 +80,7 @@ public class NavigateMetadata {
         this.targetMappingProperties = navigateOption.getTargetMappingProperties();
         this.predicateFilterExpression = navigateOption.getPredicateFilterExpression();
         this.predicateMappingClassFilterExpression = navigateOption.getPredicateMappingClassFilterExpression();
-        this.entityRelationPropertyProvider = navigateOption.getToManySubquerySQLStrategy();
+        this.entityRelationPropertyProvider = navigateOption.getEntityRelationPropertyProvider();
         this.basicType = navigateOption.isBasicType();
         this.orderProps = navigateOption.getOrderProps();
         this.offset = navigateOption.getOffset();

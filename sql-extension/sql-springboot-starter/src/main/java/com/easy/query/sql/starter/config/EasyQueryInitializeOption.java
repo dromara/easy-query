@@ -15,6 +15,7 @@ import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
 import com.easy.query.core.sharding.route.table.TableRoute;
@@ -46,6 +47,7 @@ public final class EasyQueryInitializeOption {
     private final Map<String, NavigateExtraFilterStrategy> navigateExtraFilterStrategyMap;
     private final Map<String, NavigateValueSetter> navigateValueSetterMap;
     private final Map<String, PrimaryKeyGenerator> primaryKeyGeneratorMap;
+    private final Map<String, EntityRelationPropertyProvider> entityRelationPropertyProviderMap;
 
     public Map<String, Interceptor> getInterceptorMap() {
         return interceptorMap;
@@ -103,6 +105,10 @@ public final class EasyQueryInitializeOption {
         return primaryKeyGeneratorMap;
     }
 
+    public Map<String, EntityRelationPropertyProvider> getEntityRelationPropertyProviderMap() {
+        return entityRelationPropertyProviderMap;
+    }
+
     public EasyQueryInitializeOption(Map<String, Interceptor> interceptorMap
             , Map<String, VersionStrategy> versionStrategyMap
             , Map<String, LogicDeleteStrategy> logicDeleteStrategyMap
@@ -116,7 +122,8 @@ public final class EasyQueryInitializeOption {
                                      Map<String, GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorMap,
                                      Map<String, NavigateExtraFilterStrategy> navigateExtraFilterStrategyMap,
                                      Map<String, NavigateValueSetter> navigateValueSetterMap,
-                                     Map<String, PrimaryKeyGenerator> primaryKeyGeneratorMap) {
+                                     Map<String, PrimaryKeyGenerator> primaryKeyGeneratorMap,
+                                     Map<String, EntityRelationPropertyProvider> entityRelationPropertyProviderMap) {
 
         this.interceptorMap = interceptorMap;
         this.versionStrategyMap = versionStrategyMap;
@@ -132,10 +139,12 @@ public final class EasyQueryInitializeOption {
         this.navigateExtraFilterStrategyMap = navigateExtraFilterStrategyMap;
         this.navigateValueSetterMap = navigateValueSetterMap;
         this.primaryKeyGeneratorMap = primaryKeyGeneratorMap;
+        this.entityRelationPropertyProviderMap = entityRelationPropertyProviderMap;
     }
 
     public EasyQueryInitializeOption() {
         this(new HashMap<>()
+                , new HashMap<>()
                 , new HashMap<>()
                 , new HashMap<>()
                 , new HashMap<>()
@@ -207,6 +216,9 @@ public final class EasyQueryInitializeOption {
         }
         for (Map.Entry<String, PrimaryKeyGenerator> primaryKeyGeneratorEntry : this.getPrimaryKeyGeneratorMap().entrySet()) {
             configuration.applyPrimaryKeyGenerator(primaryKeyGeneratorEntry.getValue());
+        }
+        for (Map.Entry<String, EntityRelationPropertyProvider> entityRelationPropertyProviderEntry : this.getEntityRelationPropertyProviderMap().entrySet()) {
+            configuration.applyRelationPropertyProvider();
         }
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         for (Map.Entry<String, TableRoute<?>> tableRouteEntry : this.getTableRouteMap().entrySet()) {

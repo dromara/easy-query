@@ -337,13 +337,13 @@ public class EntityMetadata {
         return null;
     }
 
-    private @Nullable EntityRelationPropertyProvider getToManySubquerySQLStrategy(QueryConfiguration configuration, Navigate navigate) {
+    private @Nullable EntityRelationPropertyProvider getEntityRelationPropertyProvider(QueryConfiguration configuration, Navigate navigate) {
 
-        EntityRelationPropertyProvider toManySubquerySQLStrategy = configuration.getToManySubquerySQLStrategy(navigate.toManySubqueryName());
-        if (toManySubquerySQLStrategy == null) {
-            throw new EasyQueryInvalidOperationException("not found navigate to many subquery sql strategy:[" + navigate.toManySubqueryName()+ "]");
+        EntityRelationPropertyProvider entityRelationPropertyProvider = configuration.getRelationPropertyProvider(navigate.relationPropertyStrategy());
+        if (entityRelationPropertyProvider == null) {
+            throw new EasyQueryInvalidOperationException("not found navigate to many subquery sql strategy:[" + navigate.relationPropertyStrategy()+ "]");
         }
-        return toManySubquerySQLStrategy;
+        return entityRelationPropertyProvider;
     }
 
     private void createNavigateMetadata(boolean tableEntity, Navigate navigate, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property, QueryConfiguration configuration) {
@@ -384,8 +384,8 @@ public class EntityMetadata {
                 }
             }
 
-            EntityRelationPropertyProvider toManySubquerySQLStrategy = getToManySubquerySQLStrategy(configuration, navigate);
-            navigateOption.setToManySubquerySQLStrategy(toManySubquerySQLStrategy);
+            EntityRelationPropertyProvider entityRelationPropertyProvider = getEntityRelationPropertyProvider(configuration, navigate);
+            navigateOption.setEntityRelationPropertyProvider(entityRelationPropertyProvider);
 
 
             if (RelationTypeEnum.ManyToMany == relationType) {

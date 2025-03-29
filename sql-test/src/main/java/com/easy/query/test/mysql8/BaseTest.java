@@ -81,7 +81,7 @@ public class BaseTest {
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
         QueryConfiguration queryConfiguration = easyQueryClient.getRuntimeContext().getQueryConfiguration();
-        queryConfiguration.applyToManySubquerySQLStrategy(FindInSetRelationToImplicitProvider.INSTANCE);
+        queryConfiguration.applyRelationPropertyProvider(FindInSetRelationToImplicitProvider.INSTANCE);
         easyQuery = new DefaultEasyQuery(easyQueryClient);
         easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
 
