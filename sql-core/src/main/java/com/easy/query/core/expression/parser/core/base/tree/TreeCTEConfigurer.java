@@ -1,5 +1,8 @@
 package com.easy.query.core.expression.parser.core.base.tree;
 
+import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
+
 /**
  * create time 2023/10/22 12:12
  * 文件说明
@@ -36,4 +39,6 @@ public interface TreeCTEConfigurer {
      * @param deepColumnName 默认 cte_deep
      */
     void setDeepColumnName(String deepColumnName);
+
+    void setChildFilter(SQLExpression1<WherePredicate<?>> whereExpression);
 }

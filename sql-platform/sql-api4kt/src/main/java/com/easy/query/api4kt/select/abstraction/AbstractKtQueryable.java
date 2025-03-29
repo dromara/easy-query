@@ -21,7 +21,6 @@ import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
-import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.executor.MethodQuery;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
@@ -38,7 +37,6 @@ import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.sql.Statement;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -184,8 +182,8 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
     }
 
     @Override
-    public void toChunk(int size, Predicate<List<T1>> chunk) {
-        entityQueryable.toChunk(size,chunk);
+    public void toChunkIf(int size, Predicate<List<T1>> chunk) {
+        entityQueryable.toChunkIf(size,chunk);
     }
 
     @Override

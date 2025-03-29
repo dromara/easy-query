@@ -1,4 +1,4 @@
-package com.easy.query.sqlite.config;
+package com.easy.query.sqlite.migration;
 
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.logging.Log;
@@ -71,6 +71,10 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         throw new UnsupportedOperationException("sqlite not support create database command.");
     }
 
+    @Override
+    public String getDatabaseName() {
+        return "main";
+    }
     @Override
     public boolean tableExists(String schema, String tableName) {
         ArrayList<Object> sqlParameters = new ArrayList<>();

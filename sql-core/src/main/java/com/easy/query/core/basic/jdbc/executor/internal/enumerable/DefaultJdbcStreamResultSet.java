@@ -28,6 +28,12 @@ public class DefaultJdbcStreamResultSet<T> implements JdbcStreamResult<T> {
         this.resultMetadata = resultMetadata;
         this.command = command;
     }
+
+    @Override
+    public JdbcCommand<QueryExecuteResult> getJdbcCommand() {
+        return command;
+    }
+
     @Override
     public StreamIterable<T> getStreamIterable() throws SQLException {
         if(queryExecuteResult==null){
@@ -42,7 +48,7 @@ public class DefaultJdbcStreamResultSet<T> implements JdbcStreamResult<T> {
     }
 
     @Override
-    public void toChunk(int size, Predicate<List<T>> chunk) throws SQLException {
+    public void toChunkIf(int size, Predicate<List<T>> chunk) throws SQLException {
         List<T> entities = new ArrayList<>(size);
         for (T result : this.getStreamIterable()) {
             entities.add(result);

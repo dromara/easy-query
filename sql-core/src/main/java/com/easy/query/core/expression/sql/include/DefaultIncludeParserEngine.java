@@ -194,7 +194,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 
         IncludeNavigateParams includeNavigateParams = includeParseContext.getIncludeNavigateParams();
 
-        List<?> mappingRows = EasyIncludeUtil.queryableExpressionGroupExecute(queryRelationGroupSize, includeNavigateParams.getMappingQueryableFunction(), includeNavigateParams, relationIds, Query::toList);
+        List<?> mappingRows = EasyIncludeUtil.queryableExpressionGroupExecute(queryRelationGroupSize, includeNavigateParams.getMappingQueryableFunction(), includeNavigateParams, relationIds, o->o.asNoTracking().toList());
         includeParseContext.setMappingRows(EasyObjectUtil.typeCastNullable(mappingRows));
     }
 

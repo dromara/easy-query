@@ -361,11 +361,14 @@ public class EntityMetadata {
         String[] targetProperties = tableEntity && !hasDirectMapping ? navigate.targetProperty() : EasyArrayUtil.EMPTY;
         String[] selfMappingProperties = tableEntity && !hasDirectMapping ? navigate.selfMappingProperty() : EasyArrayUtil.EMPTY;
         String[] targetMappingProperties = tableEntity && !hasDirectMapping ? navigate.targetMappingProperty() : EasyArrayUtil.EMPTY;
+
         EasyNavigateUtil.checkProperties(entityClass, property, selfProperties, selfMappingProperties, navigate.mappingClass(), targetMappingProperties, targetProperties);
+
         Class<?> navigateType = getNavigateType(toMany, field, fastBeanProperty);
         if (navigateType == null) {
             throw new EasyQueryInvalidOperationException("not found navigate type, property:[" + property + "]");
         }
+
         List<NavigateOrderProp> orderProps = toMany
                 ? Arrays.stream(navigate.orderByProps()).map(orderByProperty -> new NavigateOrderProp(orderByProperty.property(), orderByProperty.asc(), getOrderByMode(orderByProperty.mode()))).collect(Collectors.toList())
                 : EasyCollectionUtil.emptyList();

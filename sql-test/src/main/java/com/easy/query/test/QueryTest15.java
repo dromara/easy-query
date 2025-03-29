@@ -194,6 +194,36 @@ public class QueryTest15 extends BaseTest {
     }
 
     @Test
+    public void testSubqueryAnonymous() {
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+            List<Map<String, Object>> list1 = easyEntityQuery.queryable(SchoolClassAggregateProp.class)
+                    .select(s -> new MapProxy()
+                            .put("a", s.id())
+                            .put("b", s.name())
+                            .put("sc", s.studentSize())
+                    )
+                    .where(s -> {
+                        s.anyColumn("sc").gt(1);
+                    }).toList();
+
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//            Assert.assertEquals("SELECT t.`id`,t.`name`,(SELECT COUNT(t2.`id`) AS `id` FROM `school_student` t2 WHERE t2.`class_id` = t.`id`) AS `student_size` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t3.`a` AS `a`,t3.`b` AS `b`,t3.`sc` AS `sc` FROM (SELECT t.`id` AS `a`,t.`name` AS `b`,(SELECT COUNT(t1.`id`) AS `id` FROM `school_student` t1 WHERE t1.`class_id` = t.`id`) AS `sc` FROM `school_class` t) t3 WHERE t3.`sc` > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+            listenerContextManager.clear();
+        }
+    }
+
+    @Test
     public void test2() {
 
         try {

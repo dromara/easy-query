@@ -5,6 +5,9 @@ import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.grouping.Grouping5;
 import com.easy.query.core.util.EasyObjectUtil;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * create time 2023/12/28 21:17
  * 文件说明
@@ -61,6 +64,10 @@ public class Grouping5Proxy<TKey1Proxy extends PropTypeColumn<TKey1>, TKey1,
         return k5;
     }
 
+    @Override
+    public List<PropTypeColumn<?>> getKeys() {
+        return Arrays.asList(k1,k2,k3,k4,k5);
+    }
     @Override
     public void accept(GroupSelector s) {
         acceptGroupSelector(k1, s);

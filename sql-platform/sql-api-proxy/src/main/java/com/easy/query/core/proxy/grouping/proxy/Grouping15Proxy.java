@@ -6,6 +6,9 @@ import com.easy.query.core.proxy.grouping.Grouping14;
 import com.easy.query.core.proxy.grouping.Grouping15;
 import com.easy.query.core.util.EasyObjectUtil;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * create time 2023/12/28 21:20
  * 文件说明
@@ -28,7 +31,7 @@ public class Grouping15Proxy<TKey1Proxy extends PropTypeColumn<TKey1>, TKey1,
         TKey14Proxy extends PropTypeColumn<TKey14>, TKey14,
         TKey15Proxy extends PropTypeColumn<TKey15>, TKey15,
         TSourceProxy>
-        extends AbstractGroupingProxy<Grouping15Proxy<TKey1Proxy, TKey1, TKey2Proxy, TKey2, TKey3Proxy, TKey3, TKey4Proxy, TKey4, TKey5Proxy, TKey5, TKey6Proxy, TKey6, TKey7Proxy, TKey7, TKey8Proxy, TKey8, TKey9Proxy, TKey9, TKey10Proxy, TKey10,TKey11Proxy, TKey11,TKey12Proxy, TKey12,TKey13Proxy, TKey13,TKey14Proxy, TKey14,TKey15Proxy, TKey15, TSourceProxy>,
+        extends AbstractGroupingProxy<Grouping15Proxy<TKey1Proxy, TKey1, TKey2Proxy, TKey2, TKey3Proxy, TKey3, TKey4Proxy, TKey4, TKey5Proxy, TKey5, TKey6Proxy, TKey6, TKey7Proxy, TKey7, TKey8Proxy, TKey8, TKey9Proxy, TKey9, TKey10Proxy, TKey10, TKey11Proxy, TKey11, TKey12Proxy, TKey12, TKey13Proxy, TKey13, TKey14Proxy, TKey14, TKey15Proxy, TKey15, TSourceProxy>,
         Grouping15<TKey1, TKey2, TKey3, TKey4, TKey5, TKey6, TKey7, TKey8, TKey9, TKey10, TKey11, TKey12, TKey13, TKey14, TKey15>, TSourceProxy> {
 
     private static final Class<Grouping15> entityClass = Grouping15.class;
@@ -48,7 +51,7 @@ public class Grouping15Proxy<TKey1Proxy extends PropTypeColumn<TKey1>, TKey1,
     private final TKey14Proxy k14;
     private final TKey15Proxy k15;
 
-    public Grouping15Proxy(TKey1Proxy k1, TKey2Proxy k2, TKey3Proxy k3, TKey4Proxy k4, TKey5Proxy k5, TKey6Proxy k6, TKey7Proxy k7, TKey8Proxy k8, TKey9Proxy k9, TKey10Proxy k10, TKey11Proxy k11, TKey12Proxy k12, TKey13Proxy k13, TKey14Proxy k14,TKey15Proxy k15, TSourceProxy tSourceProxy) {
+    public Grouping15Proxy(TKey1Proxy k1, TKey2Proxy k2, TKey3Proxy k3, TKey4Proxy k4, TKey5Proxy k5, TKey6Proxy k6, TKey7Proxy k7, TKey8Proxy k8, TKey9Proxy k9, TKey10Proxy k10, TKey11Proxy k11, TKey12Proxy k12, TKey13Proxy k13, TKey14Proxy k14, TKey15Proxy k15, TSourceProxy tSourceProxy) {
         super(tSourceProxy);
         this.k1 = k1;
         this.k2 = k2;
@@ -111,20 +114,30 @@ public class Grouping15Proxy<TKey1Proxy extends PropTypeColumn<TKey1>, TKey1,
     public TKey10Proxy key10() {
         return k10;
     }
+
     public TKey11Proxy key11() {
         return k11;
     }
+
     public TKey12Proxy key12() {
         return k12;
     }
+
     public TKey13Proxy key13() {
         return k13;
     }
+
     public TKey14Proxy key14() {
         return k14;
     }
+
     public TKey15Proxy key15() {
         return k15;
+    }
+
+    @Override
+    public List<PropTypeColumn<?>> getKeys() {
+        return Arrays.asList(k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, k12, k13, k14, k15);
     }
 
     @Override

@@ -13,7 +13,6 @@ import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
-import com.easy.query.test.entity.base.TopicTestProxy;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
@@ -451,9 +450,6 @@ public class QueryTest9 extends BaseTest {
 
     @Test
     public void entityQuery1() {
-
-        TopicTestProxy table = TopicTestProxy.createTable();
-        BlogEntityProxy table1 = BlogEntityProxy.createTable();
 //        TopicTestProxy.TopicTestSelector title = table.selector().id().title();
 //        TopicTestProxy.TopicTestSelector blogEntityProxyTopicTestFetcher = table.selector().id().title().as(table1.createTime()).columns(table.id());
 //        TopicProxy topicProxy = EntityQueryProxyManager.create(Topic.class);

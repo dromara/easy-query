@@ -224,7 +224,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE ( '' + SUBSTRING(CONVERT(CHAR(8), [CreateTime], 112), 1, 4) + '年' + SUBSTRING(CONVERT(CHAR(6), [CreateTime], 12), 3, 2) + '月' + SUBSTRING(CONVERT(CHAR(6), [CreateTime], 12), 5, 2) + '日') = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE (SUBSTRING(CONVERT(CHAR(8), [CreateTime], 112), 1, 4) + N'年' + SUBSTRING(CONVERT(CHAR(6), [CreateTime], 12), 3, 2) + N'月' + SUBSTRING(CONVERT(CHAR(6), [CreateTime], 12), 5, 2) + N'日') = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("2022年01月01日(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -241,7 +241,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE ( '' + SUBSTRING(CONVERT(CHAR(8), [CreateTime], 112), 1, 4) + '年' + SUBSTRING(CONVERT(CHAR(6), [CreateTime], 12), 3, 2) + '月' + SUBSTRING(CONVERT(CHAR(6), [CreateTime], 12), 5, 2) + '日 ' + SUBSTRING(CONVERT(CHAR(8), [CreateTime], 24), 1, 2) + '时' + SUBSTRING(CONVERT(CHAR(8), [CreateTime], 24), 4, 2) + '分' + SUBSTRING(CONVERT(CHAR(8), [CreateTime], 24), 7, 2) + '秒') = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE (SUBSTRING(CONVERT(CHAR(8), [CreateTime], 112), 1, 4) + N'年' + SUBSTRING(CONVERT(CHAR(6), [CreateTime], 12), 3, 2) + N'月' + SUBSTRING(CONVERT(CHAR(6), [CreateTime], 12), 5, 2) + N'日 ' + SUBSTRING(CONVERT(CHAR(8), [CreateTime], 24), 1, 2) + N'时' + SUBSTRING(CONVERT(CHAR(8), [CreateTime], 24), 4, 2) + N'分' + SUBSTRING(CONVERT(CHAR(8), [CreateTime], 24), 7, 2) + N'秒') = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("2022年01月01日 01时01分01秒(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -574,7 +574,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.[CreateTime] AS [Value1],SUBSTRING(CONVERT(CHAR(8), t.[CreateTime], 112), 1, 4) + N'年' + SUBSTRING(CONVERT(CHAR(6), t.[CreateTime], 12), 3, 2) + N'-01 ' + SUBSTRING(CONVERT(CHAR(8), t.[CreateTime], 24), 1, 2) + N':' + SUBSTRING(CONVERT(CHAR(8), t.[CreateTime], 24), 4, 2) + N'分' + SUBSTRING(CONVERT(CHAR(8), t.[CreateTime], 24), 7, 2) + N'秒' AS [Value2] FROM [MyTopic] t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.[CreateTime] AS [Value1],(SUBSTRING(CONVERT(CHAR(8), t.[CreateTime], 112), 1, 4) + N'年' + SUBSTRING(CONVERT(CHAR(6), t.[CreateTime], 12), 3, 2) + N'-01 ' + SUBSTRING(CONVERT(CHAR(8), t.[CreateTime], 24), 1, 2) + N':' + SUBSTRING(CONVERT(CHAR(8), t.[CreateTime], 24), 4, 2) + N'分' + SUBSTRING(CONVERT(CHAR(8), t.[CreateTime], 24), 7, 2) + N'秒') AS [Value2] FROM [MyTopic] t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 
 
     }

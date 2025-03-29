@@ -5,14 +5,10 @@ import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.visitor.EmptyTableVisitor;
 import com.easy.query.core.expression.visitor.ExpressionTableVisitor;
 import com.easy.query.core.expression.visitor.TableVisitor;
-import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**

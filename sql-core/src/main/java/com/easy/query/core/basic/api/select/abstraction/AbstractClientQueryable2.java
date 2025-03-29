@@ -110,15 +110,14 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractOverrideC
 
     @Override
     public ClientQueryable2<T1, T2> manyJoin(boolean condition, SQLFuncExpression2<ManyJoinSelector<T1>, ManyJoinSelector<T2>, ManyColumn> manyPropColumnExpression) {
-        if(condition){
+        if (condition) {
             EntityTableExpressionBuilder table1 = entityQueryExpressionBuilder.getTable(0);
             EntityTableExpressionBuilder table2 = entityQueryExpressionBuilder.getTable(1);
-            ManyColumn manyColumn = manyPropColumnExpression.apply(new ManyJoinSelectorImpl<>(table1.getEntityTable()),new ManyJoinSelectorImpl<>(table2.getEntityTable()));
+            ManyColumn manyColumn = manyPropColumnExpression.apply(new ManyJoinSelectorImpl<>(table1.getEntityTable()), new ManyJoinSelectorImpl<>(table2.getEntityTable()));
             EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
             TableAvailable leftTable = tableOrRelationalTable.table;
-            NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(tableOrRelationalTable.property);
-            DefaultRelationTableKey relationTableKey = new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), manyColumn.getNavValue());
-            entityQueryExpressionBuilder.addManyJoinConfiguration(relationTableKey);
+            String property = tableOrRelationalTable.property;
+            entityQueryExpressionBuilder.addManyJoinConfiguration(new DefaultRelationTableKey(leftTable, property));
         }
         return this;
     }
@@ -145,11 +144,11 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractOverrideC
 
     @Override
     public <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLExpression2<ColumnAsSelector<T1, TR>, ColumnAsSelector<T2, TR>> selectExpression, boolean replace) {
-        selectAutoInclude0(resultClass,replace);
-        if(selectExpression!=null){
+        selectAutoInclude0(resultClass, replace);
+        if (selectExpression != null) {
             ColumnAsSelector<T1, TR> sqlColumnAsSelector1 = getSQLExpressionProvider1().getColumnAsSelector(entityQueryExpressionBuilder.getProjects(), resultClass);
             ColumnAsSelector<T2, TR> sqlColumnAsSelector2 = getSQLExpressionProvider2().getColumnAsSelector(entityQueryExpressionBuilder.getProjects(), resultClass);
-            selectExpression.apply(sqlColumnAsSelector1,sqlColumnAsSelector2);
+            selectExpression.apply(sqlColumnAsSelector1, sqlColumnAsSelector2);
         }
         return select(resultClass);
     }

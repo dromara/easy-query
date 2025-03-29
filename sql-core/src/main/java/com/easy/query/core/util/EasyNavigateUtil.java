@@ -16,6 +16,7 @@ import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.NavigateOrderProp;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -25,6 +26,7 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public class EasyNavigateUtil {
+
     public static void checkProperties(Class<?> entityClass, String property, String[] selfProperties, String[] selfMappingProperties, Class<?> mappingClass, String[] targetMappingProperties, String[] targetProperties) {
         if (selfProperties == null) {
             throw new IllegalArgumentException("selfProperties is null");
@@ -32,7 +34,7 @@ public class EasyNavigateUtil {
         if (targetProperties == null) {
             throw new IllegalArgumentException("targetProperties is null");
         }
-        if (mappingClass == null) {
+        if (mappingClass == null || Objects.equals(Object.class,mappingClass)) {
             checkSameLength(entityClass, property, selfProperties, targetProperties);
         } else {
             if (selfMappingProperties == null) {
@@ -49,7 +51,7 @@ public class EasyNavigateUtil {
     private static void checkSameLength(Class<?> entityClass, String property, String[] self, String[] target) {
         if (self.length > 1 || target.length > 1) {
             if (self.length != target.length) {
-                throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityClass) + "[" + property + "] navigate properties self.length:" + self.length + " != target.length:" + target.length);
+                throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityClass) + ":[" + property + "] navigate properties self.length:" + self.length + " != target.length:" + target.length);
             }
         }
     }

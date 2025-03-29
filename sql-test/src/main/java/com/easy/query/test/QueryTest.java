@@ -2092,7 +2092,7 @@ public class QueryTest extends BaseTest {
             EasyQuerySQLCommandException ex1 = (EasyQuerySQLCommandException) ex;
             Assert.assertTrue(ex1.getCause() instanceof EasyQuerySQLStatementException);
             String sql = ((EasyQuerySQLStatementException) ex1.getCause()).getSQL();
-            Assert.assertEquals("SELECT COUNT(DISTINCT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top`) FROM `t_12345` t WHERE t.`deleted` = ? AND t.`id` = ?", sql);
+            Assert.assertEquals("SELECT COUNT(*) FROM (SELECT t1.`id`,t1.`create_time`,t1.`update_time`,t1.`create_by`,t1.`update_by`,t1.`deleted`,t1.`title`,t1.`content`,t1.`url`,t1.`star`,t1.`publish_time`,t1.`score`,t1.`status`,t1.`order`,t1.`is_top`,t1.`top` FROM (SELECT DISTINCT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_12345` t WHERE t.`deleted` = ? AND t.`id` = ?) t1) t2", sql);
         }
     }
 

@@ -18,6 +18,7 @@ import com.easy.query.core.proxy.grouping.SQLGroupQueryable;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -43,6 +44,7 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
     public TSourceProxy groupTable() {
         return tSourceProxy;
     }
+    public abstract List<PropTypeColumn<?>> getKeys();
     public ColumnFunctionCompareComparableNumberChainExpression<Long> count() {
         return where(null).count();
     }
@@ -104,7 +106,23 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
         return where(null).avg(columnSelector);
     }
 
+    /**
+     * 请使用函数 {@link #joining(SQLFuncExpression1)}
+     * @param columnSelector
+     * @param delimiter
+     * @return
+     * @param <TProperty>
+     */
+    @Deprecated
     public <TProperty> ColumnFunctionCompareComparableStringChainExpression<String> join(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TProperty>> columnSelector, String delimiter) {
+        return where(null).joining(columnSelector, delimiter);
+    }
+    public <TProperty> ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TProperty>> columnSelector) {
+        return where(null).joining(columnSelector, ",");
+    }
+
+
+    public <TProperty> ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TProperty>> columnSelector, String delimiter) {
         return where(null).joining(columnSelector, delimiter);
     }
 

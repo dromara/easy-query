@@ -1,11 +1,16 @@
 package com.easy.query.test.pgsql;
 
 import com.easy.query.api.proxy.base.LongProxy;
+import com.easy.query.api.proxy.base.MapProxy;
+import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.api.proxy.key.MapKey;
+import com.easy.query.api.proxy.key.MapKeys;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
+import com.easy.query.core.proxy.grouping.Grouping1;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -20,7 +25,9 @@ import com.easy.query.test.vo.proxy.MyVOProxy;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * create time 2024/11/9 09:26
@@ -264,4 +271,201 @@ public class QueryTest19 extends PgSQLBaseTest {
         System.out.println("123");
 //        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS ( (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL)  UNION ALL  (SELECT t2.`cte_deep` + 1 AS `cte_deep`,t3.`id`,t3.`stars`,t3.`title`,t3.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t3.`stars` = t2.`id`) )  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t WHERE t.`cte_deep` <= ?", sql);
     }
+
+
+    @Test
+    public  void testJoining(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft2<String, String>> list = entityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.createTime().lt(LocalDateTime.of(2022, 1, 1, 0, 0));
+                }).groupBy(t_blog -> GroupKeys.of(t_blog.title()))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.groupTable().content().joining(",")
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.\"title\" AS \"value1\",STRING_AGG((t.\"content\")::TEXT, ?) AS \"value2\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"create_time\" < ? GROUP BY t.\"title\"", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(",(String),false(Boolean),2022-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public  void testJoining2(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft2<String, String>> list = entityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.createTime().lt(LocalDateTime.of(2022, 1, 1, 0, 0));
+                }).groupBy(t_blog -> GroupKeys.of(t_blog.title()))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.joining(x->x.content())
+                )).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.\"title\" AS \"value1\",STRING_AGG((t.\"content\")::TEXT, ?) AS \"value2\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"create_time\" < ? GROUP BY t.\"title\"", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(",(String),false(Boolean),2022-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public  void testJoining3(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        EntityQueryable<Draft2Proxy<String, String>, Draft2<String, String>> select = entityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.createTime().lt(LocalDateTime.of(2022, 1, 1, 0, 0));
+                }).groupBy(t_blog -> GroupKeys.of(t_blog.title()))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.joining(x -> x.content(),",")
+                ));
+
+        List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+                .leftJoin(select, (a, b) -> a.content().eq(b.value2()))
+                .where((a, b) -> {
+                    b.value1().eq("123");
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\" FROM \"t_blog\" t LEFT JOIN (SELECT t1.\"title\" AS \"value1\",STRING_AGG((t1.\"content\")::TEXT, ?) AS \"value2\" FROM \"t_blog\" t1 WHERE t1.\"deleted\" = ? AND t1.\"create_time\" < ? GROUP BY t1.\"title\") t3 ON t.\"content\" = t3.\"value2\" WHERE t.\"deleted\" = ? AND t3.\"value1\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(",(String),false(Boolean),2022-01-01T00:00(LocalDateTime),false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public  void testJoining4(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        MapKey<String> column1 = MapKeys.stringKey("column1");
+        MapKey<String> column2 = MapKeys.stringKey("column2");
+        EntityQueryable<MapTypeProxy, Map<String, Object>> select = entityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.createTime().lt(LocalDateTime.of(2022, 1, 1, 0, 0));
+                }).groupBy(t_blog -> GroupKeys.of(t_blog.title()))
+                .select(group -> new MapTypeProxy()
+                        .put(column1, group.key1())
+                        .put(column2, group.joining(x -> x.content(), ","))
+                );
+
+        List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+                .leftJoin(select, (a, b) -> a.content().eq(b.get(column1)))
+                .where((a, b) -> {
+                    b.get(column2).eq("123");
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.\"id\",t.\"create_time\",t.\"update_time\",t.\"create_by\",t.\"update_by\",t.\"deleted\",t.\"title\",t.\"content\",t.\"url\",t.\"star\",t.\"publish_time\",t.\"score\",t.\"status\",t.\"order\",t.\"is_top\",t.\"top\" FROM \"t_blog\" t LEFT JOIN (SELECT t1.\"title\" AS \"column1\",STRING_AGG((t1.\"content\")::TEXT, ?) AS \"column2\" FROM \"t_blog\" t1 WHERE t1.\"deleted\" = ? AND t1.\"create_time\" < ? GROUP BY t1.\"title\") t3 ON t.\"content\" = t3.\"column1\" WHERE t.\"deleted\" = ? AND t3.\"column2\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(",(String),false(Boolean),2022-01-01T00:00(LocalDateTime),false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+     public void testChunk(){
+        entityQuery.queryable(BlogEntity.class)
+                .toChunk(100,s->{
+                });
+    }
+    @Test
+     public void testMapChain(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Map<String, Object>> list = entityQuery.queryable(BlogEntity.class)
+                .select(t_blog -> new MapProxy()
+                        .put("aaa", t_blog.score())
+                        .put("bbb", t_blog.star())
+                ).where(o -> {
+                    o.get("aaa").eq(123);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.\"aaa\" AS \"aaa\",t1.\"bbb\" AS \"bbb\" FROM (SELECT t.\"score\" AS \"aaa\",t.\"star\" AS \"bbb\" FROM \"t_blog\" t WHERE t.\"deleted\" = ?) t1 WHERE t1.\"aaa\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),123(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+     public void testMapChain2(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Map<String, Object>> list = entityQuery.queryable(BlogEntity.class)
+                .select(t_blog -> new MapProxy()
+                        .put("aaa", t_blog.score().multiply(100))
+                        .put("bbb", t_blog.star())
+                ).where(o -> {
+                    o.get("aaa").eq(123);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.\"aaa\" AS \"aaa\",t1.\"bbb\" AS \"bbb\" FROM (SELECT (t.\"score\" * ?) AS \"aaa\",t.\"star\" AS \"bbb\" FROM \"t_blog\" t WHERE t.\"deleted\" = ?) t1 WHERE t1.\"aaa\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("100(Integer),false(Boolean),123(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+
+
+    @Test
+    public void testToTreeList3() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<MyCategory> treeList = entityQuery.queryable(MyCategory.class)
+                .where(m -> {
+                    m.id().eq("1");
+                }).asTreeCTE(op->{
+                    op.setChildFilter(child->{
+                        child.name().like("123");
+                    });
+                })
+                .toTreeList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("WITH RECURSIVE \"as_tree_cte\" AS ( (SELECT 0 AS \"cte_deep\",t1.\"id\",t1.\"parent_id\",t1.\"name\" FROM \"category\" t1 WHERE t1.\"id\" = ?)  UNION ALL  (SELECT t2.\"cte_deep\" + 1 AS \"cte_deep\",t3.\"id\",t3.\"parent_id\",t3.\"name\" FROM \"as_tree_cte\" t2 INNER JOIN \"category\" t3 ON t3.\"parent_id\" = t2.\"id\" WHERE t2.\"name\" LIKE ?) )  SELECT t.\"id\",t.\"parent_id\",t.\"name\" FROM \"as_tree_cte\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        System.out.println("123");
+//        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS ( (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL)  UNION ALL  (SELECT t2.`cte_deep` + 1 AS `cte_deep`,t3.`id`,t3.`stars`,t3.`title`,t3.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t3.`stars` = t2.`id`) )  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t WHERE t.`cte_deep` <= ?", sql);
+        LocalDateTime localDateTime = entityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.content().like("123");
+                }).maxOrNull(t -> t.createTime());
+        List<Draft2<Long, LocalDateTime>> list = entityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.content().like("123");
+                })
+                .select(t_blog -> Select.DRAFT.of(
+                        t_blog.id().count(),
+                        t_blog.createTime().max()
+                )).toList();
+        List<Grouping1<Integer>> list1 = entityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.content().like("123");
+                    t_blog.content().max();//你觉得这段代码在干嘛
+                    //他只是定义了一个content字段的max函数片段即没有比较也没有干嘛你觉得eq应该怎么给你生成
+                })
+                .groupBy(t_blog -> GroupKeys.of(t_blog.star()))
+                .having(x -> x.groupTable().createTime().max().lt(localDateTime.now()))
+                .toList();
+
+
+//        entityQuery.queryable(BlogEntity.class)
+//                .where(t_blog -> {
+//                    t_blog.content().eq(
+//                            entityQuery.queryable(BlogEntity.class)
+//                                    .where(t_blog1 -> {
+//                                        t_blog1.star().gt(1);
+//                                    }).selectColumn(t_blog1 -> t_blog1.content().max())
+//                    );
+//                })
+    }
+
+
+
 }

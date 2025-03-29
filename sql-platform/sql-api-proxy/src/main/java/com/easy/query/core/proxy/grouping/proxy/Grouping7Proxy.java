@@ -5,6 +5,9 @@ import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.grouping.Grouping7;
 import com.easy.query.core.util.EasyObjectUtil;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * create time 2023/12/28 21:19
  * 文件说明
@@ -20,7 +23,7 @@ public class Grouping7Proxy<TKey1Proxy extends PropTypeColumn<TKey1>, TKey1,
         TKey7Proxy extends PropTypeColumn<TKey7>, TKey7,
         TSourceProxy>
         extends AbstractGroupingProxy<Grouping7Proxy<TKey1Proxy, TKey1, TKey2Proxy, TKey2, TKey3Proxy, TKey3, TKey4Proxy, TKey4, TKey5Proxy, TKey5, TKey6Proxy, TKey6, TKey7Proxy, TKey7, TSourceProxy>,
-                Grouping7<TKey1, TKey2, TKey3, TKey4, TKey5, TKey6, TKey7>, TSourceProxy> {
+        Grouping7<TKey1, TKey2, TKey3, TKey4, TKey5, TKey6, TKey7>, TSourceProxy> {
 
     private static final Class<Grouping7> entityClass = Grouping7.class;
     private final TKey1Proxy k1;
@@ -73,6 +76,11 @@ public class Grouping7Proxy<TKey1Proxy extends PropTypeColumn<TKey1>, TKey1,
 
     public TKey7Proxy key7() {
         return k7;
+    }
+
+    @Override
+    public List<PropTypeColumn<?>> getKeys() {
+        return Arrays.asList(k1, k2, k3, k4, k5, k6, k7);
     }
 
     @Override

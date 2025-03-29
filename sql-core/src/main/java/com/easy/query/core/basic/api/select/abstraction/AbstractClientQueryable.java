@@ -581,11 +581,22 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public void toChunk(int size, Predicate<List<T1>> chunk) {
+    public void toChunkIf(int size, Predicate<List<T1>> chunk) {
         int offset = 0;
         while (true) {
 
             ClientQueryable<T1> cloneQueryable = this.cloneQueryable();
+            if (!cloneQueryable.getSQLEntityExpressionBuilder().hasOrder()) {
+                cloneQueryable.orderByAsc(o -> {
+                    Collection<String> keyProperties = o.getEntityMetadata().getKeyProperties();
+                    if (EasyCollectionUtil.isEmpty(keyProperties)) {
+                        throw new EasyQueryInvalidOperationException("No primary key detected. Provide an ordering clause for sequence determination in the chunk function.");
+                    }
+                    for (String keyProperty : keyProperties) {
+                        o.column(keyProperty);
+                    }
+                });
+            }
             List<T1> list = cloneQueryable.limit(offset, size).toList();
             offset += size;
             if (EasyCollectionUtil.isEmpty(list)) {
@@ -1412,9 +1423,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             ManyColumn manyColumn = manyPropColumnExpression.apply(new ManyJoinSelectorImpl<>(table.getEntityTable()));
             EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
             TableAvailable leftTable = tableOrRelationalTable.table;
-            NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(tableOrRelationalTable.property);
-            DefaultRelationTableKey relationTableKey = new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), manyColumn.getNavValue());
-            entityQueryExpressionBuilder.addManyJoinConfiguration(relationTableKey);
+            String property = tableOrRelationalTable.property;
+            entityQueryExpressionBuilder.addManyJoinConfiguration(new DefaultRelationTableKey(leftTable,property));
         }
         return this;
     }
@@ -1426,8 +1436,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             ManyColumn manyColumn = manyPropColumnExpression.apply(new ManyJoinSelectorImpl<>(table.getEntityTable()));
             EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
             TableAvailable leftTable = tableOrRelationalTable.table;
-            NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(tableOrRelationalTable.property);
-            entityQueryExpressionBuilder.addManyConfiguration(new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), manyColumn.getNavValue()), new ManyConfiguration(adapterExpression));
+            String property = tableOrRelationalTable.property;
+            entityQueryExpressionBuilder.addManyConfiguration(new DefaultRelationTableKey(leftTable,property), new ManyConfiguration(adapterExpression));
         }
         return this;
     }
@@ -1496,7 +1506,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public ClientQueryable<T1> asTreeCTE(SQLExpression1<TreeCTEConfigurer> treeExpression) {
+    public ClientQueryable<T1> asTreeCTE(SQLExpression1<TreeCTEConfigurer> treeCteConfigurerExpression) {
         //将当前表达式的expression builder放入新表达式的声明里面新表达式还是当前的T类型
 
         Class<T1> thisQueryClass = queryClass();
@@ -1509,20 +1519,21 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (treeNavigateMetadata == null) {
             throw new EasyQueryInvalidOperationException(treeNavigateMetadataTuple2.t2);
         }
-        return asTreeCTECustom(treeNavigateMetadata.getSelfPropertiesOrPrimary(), treeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), treeExpression);
+        return asTreeCTECustom(treeNavigateMetadata.getSelfPropertiesOrPrimary(), treeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), treeCteConfigurerExpression);
     }
 
-    private ClientQueryable<T1> asTreeCTECustom(String[] codeProperties, String[] parentCodeProperties, SQLExpression1<TreeCTEConfigurer> treeExpression) {
+    private ClientQueryable<T1> asTreeCTECustom(String[] codeProperties, String[] parentCodeProperties, SQLExpression1<TreeCTEConfigurer> treeCteConfigurerExpression) {
 
         //将当前表达式的expression builder放入新表达式的声明里面新表达式还是当前的T类型
 
         TreeCTEOption treeCTEOption = new TreeCTEOption();
         TreeCTEConfigurerImpl treeCTEConfigurer = new TreeCTEConfigurerImpl(treeCTEOption);
-        treeExpression.apply(treeCTEConfigurer);
+        treeCteConfigurerExpression.apply(treeCTEConfigurer);
         String cteTableName = treeCTEOption.getCTETableName();
         String deepColumnName = treeCTEOption.getDeepColumnName();
         int limitDeep = treeCTEOption.getLimitDeep();
         boolean up = treeCTEOption.isUp();
+        SQLExpression1<WherePredicate<?>> childFilter = treeCTEOption.getChildFilter();
         Class<T1> thisQueryClass = queryClass();
 
         ClientQueryable<T1> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(thisQueryClass, runtimeContext);
@@ -1536,6 +1547,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     } else {
                         t1.multiEq(true, t, parentCodeProperties, codeProperties);
                     }
+                })
+                .where(childFilter != null, (child, parent) -> {
+                    childFilter.apply(child);
                 })
                 .select(thisQueryClass, (t, t1) -> {
                     t.sqlNativeSegment("{0} + 1", c -> c.columnName(deepColumnName).setAlias(deepColumnName));

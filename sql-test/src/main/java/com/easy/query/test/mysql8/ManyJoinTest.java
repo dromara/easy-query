@@ -3,6 +3,7 @@ package com.easy.query.test.mysql8;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.Select;
@@ -27,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,13 +38,13 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class ManyJoinTest extends BaseTest{
+public class ManyJoinTest extends BaseTest {
     @Before
-    public void before(){
+    public void before() {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
-        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBankCard.class, DocBank.class, DocUser.class, DocUserBook.class,SchoolClass.class, SchoolTeacher.class, SchoolClassTeacher.class, M8User.class, M8Role.class, M8UserRole.class, M8User2.class, M8Role2.class, M8UserRole2.class, M8UserBook.class));
-        codeFirstCommand.executeWithTransaction(s->s.commit());
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBankCard.class, DocBank.class, DocUser.class, DocUserBook.class, SchoolClass.class, SchoolTeacher.class, SchoolClassTeacher.class, M8User.class, M8Role.class, M8UserRole.class, M8User2.class, M8Role2.class, M8UserRole2.class, M8UserBook.class));
+        codeFirstCommand.executeWithTransaction(s -> s.commit());
         {
             easyEntityQuery.deletable(DocBankCard.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
             easyEntityQuery.deletable(DocBank.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
@@ -59,10 +61,29 @@ public class ManyJoinTest extends BaseTest{
             easyEntityQuery.deletable(M8UserRole2.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
             easyEntityQuery.deletable(M8UserBook.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
         }
+
+        {
+            M8User2 m8User2 = new M8User2();
+            m8User2.setUserId("123");
+            m8User2.setUserAge(123);
+            m8User2.setUserName("123");
+            m8User2.setCreateTime(LocalDateTime.of(2020, 1, 1, 1, 1));
+            M8UserRole2 m8UserRole2 = new M8UserRole2();
+            m8UserRole2.setUserRoleId("1");
+            m8UserRole2.setUserId("123");
+            m8UserRole2.setRoleId("456");
+
+            M8Role2 m8Role2 = new M8Role2();
+            m8Role2.setRoleId("456");
+            m8Role2.setRoleName("456role");
+            easyEntityQuery.insertable(m8User2).executeRows();
+            easyEntityQuery.insertable(m8UserRole2).executeRows();
+            easyEntityQuery.insertable(m8Role2).executeRows();
+        }
     }
 
     @Test
-    public void manyGroupTest1(){
+    public void manyGroupTest1() {
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
                 .where(user -> {
                     user.bankCards().any();
@@ -71,7 +92,7 @@ public class ManyJoinTest extends BaseTest{
 
 
     @Test
-    public void testElement4(){
+    public void testElement4() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -93,7 +114,7 @@ public class ManyJoinTest extends BaseTest{
     }
 
     @Test
-    public void testElement5(){
+    public void testElement5() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -101,7 +122,7 @@ public class ManyJoinTest extends BaseTest{
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
                 .where(user -> {
-                    user.bankCards().orderBy(x->{
+                    user.bankCards().orderBy(x -> {
                         x.code().nullOrDefault("x").desc();
                     }).element(2).type().eq("123");
                 }).toList();
@@ -113,8 +134,9 @@ public class ManyJoinTest extends BaseTest{
         Assert.assertEquals("x(String),3(Integer),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testElement6(){
+    public void testElement6() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -122,11 +144,11 @@ public class ManyJoinTest extends BaseTest{
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
                 .where(user -> {
-                    user.bankCards().orderBy(x->{
+                    user.bankCards().orderBy(x -> {
                         x.code().nullOrDefault("x").desc();
                     }).element(2).type().eq("123");
                 }).orderBy(user -> {
-                    user.bankCards().orderBy(x->{
+                    user.bankCards().orderBy(x -> {
                         x.code().nullOrDefault("x").desc();
                     }).element(2).type().asc();
                 }).toList();
@@ -138,8 +160,9 @@ public class ManyJoinTest extends BaseTest{
         Assert.assertEquals("x(String),3(Integer),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testElement7(){
+    public void testElement7() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -179,12 +202,12 @@ public class ManyJoinTest extends BaseTest{
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-            List<Draft2<String, String>> list = easyEntityQuery.queryable(DocUser.class)
-                    .manyJoin(x -> x.bankCards())
-                    .select(user -> Select.DRAFT.of(
-                            user.bankCards().where(o -> o.type().eq("123")).max(x -> x.code()),
-                            user.bankCards().where(o -> o.type().eq("123")).element(0).type()
-                    )).toList();
+        List<Draft2<String, String>> list = easyEntityQuery.queryable(DocUser.class)
+                .manyJoin(x -> x.bankCards())
+                .select(user -> Select.DRAFT.of(
+                        user.bankCards().where(o -> o.type().eq("123")).max(x -> x.code()),
+                        user.bankCards().where(o -> o.type().eq("123")).element(0).type()
+                )).toList();
 
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -193,6 +216,7 @@ public class ManyJoinTest extends BaseTest{
         Assert.assertEquals("123(String),null(null),123(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void testElement8() {
 
@@ -204,7 +228,7 @@ public class ManyJoinTest extends BaseTest{
             List<Draft2<String, String>> list = easyEntityQuery.queryable(DocUser.class)
                     .manyJoin(x -> x.bankCards())
                     .select(user -> Select.DRAFT.of(
-                            user.bankCards().where(o -> o.type().eq("123")).elements(3,5).max(x -> x.code()),
+                            user.bankCards().where(o -> o.type().eq("123")).elements(3, 5).max(x -> x.code()),
                             user.bankCards().where(o -> o.type().eq("123")).element(0).type()
                     )).toList();
         } catch (Exception ex) {
@@ -218,6 +242,7 @@ public class ManyJoinTest extends BaseTest{
         Assert.assertEquals("123(String),123(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void manyJoinMany2Many2() {
 
@@ -228,7 +253,7 @@ public class ManyJoinTest extends BaseTest{
         List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
                 .manyJoin(x -> x.schoolTeachers())
                 .where(s -> {
-                    s.schoolTeachers().where(x -> x.name().like("小明")).orderBy(x->{
+                    s.schoolTeachers().where(x -> x.name().like("小明")).orderBy(x -> {
                         x.name().asc();
                     }).firstElement().name().like("123123");
                 }).toList();
@@ -240,6 +265,7 @@ public class ManyJoinTest extends BaseTest{
         Assert.assertEquals("%小明%(String),1(Integer),%123123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void manyJoinMany2Many3() {
 
@@ -260,6 +286,7 @@ public class ManyJoinTest extends BaseTest{
         Assert.assertEquals("%小明角色%(String),1(Integer),null(null),123(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void manyJoinMany2Many3_1() {
 
@@ -280,6 +307,7 @@ public class ManyJoinTest extends BaseTest{
         Assert.assertEquals("%小明角色%(String),1(Integer),null(null),123(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void manyJoinMany2Many3_2() {
 
@@ -290,7 +318,7 @@ public class ManyJoinTest extends BaseTest{
         List<M8User2> list = easyEntityQuery.queryable(M8User2.class)
                 .manyJoin(x -> x.roles())
                 .where(s -> {
-                    s.roles().where(x -> x.roleName().like("小明角色")).sum(x->x.roleName().toNumber(Long.class)).eq(123L);
+                    s.roles().where(x -> x.roleName().like("小明角色")).sum(x -> x.roleName().toNumber(Long.class)).eq(123L);
                 }).toList();
 
         listenerContextManager.clear();
@@ -300,6 +328,7 @@ public class ManyJoinTest extends BaseTest{
         Assert.assertEquals("%小明角色%(String),0(Integer),123(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void manyJoinMany2Many4() {
 
@@ -310,7 +339,7 @@ public class ManyJoinTest extends BaseTest{
         List<M8User> list = easyEntityQuery.queryable(M8User.class)
                 .manyJoin(x -> x.roles())
                 .where(s -> {
-                    s.roles().where(x -> x.name().like("小明角色")).orderBy(x->{
+                    s.roles().where(x -> x.name().like("小明角色")).orderBy(x -> {
                         x.name().asc();
                     }).firstElement().name().eq("123123");
                 }).toList();
@@ -322,6 +351,7 @@ public class ManyJoinTest extends BaseTest{
         Assert.assertEquals("%小明角色%(String),1(Integer),123123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void manyJoinMany2Many4_1() {
 
@@ -332,7 +362,7 @@ public class ManyJoinTest extends BaseTest{
         List<M8User2> list = easyEntityQuery.queryable(M8User2.class)
                 .manyJoin(x -> x.roles())
                 .where(s -> {
-                    s.roles().where(x -> x.roleName().like("小明角色")).orderBy(x->{
+                    s.roles().where(x -> x.roleName().like("小明角色")).orderBy(x -> {
                         x.roleName().asc();
                     }).firstElement().roleName().eq("123123");
                 }).toList();
@@ -344,6 +374,7 @@ public class ManyJoinTest extends BaseTest{
         Assert.assertEquals("%小明角色%(String),1(Integer),123123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void manyJoinMany2Many9() {
 
@@ -353,7 +384,7 @@ public class ManyJoinTest extends BaseTest{
 
         List<M8User2> list = easyEntityQuery.queryable(M8User2.class)
                 .where(s -> {
-                    s.books().where(x -> x.bookPrice().gt(BigDecimal.valueOf(100))).orderBy(x->{
+                    s.books().where(x -> x.bookPrice().gt(BigDecimal.valueOf(100))).orderBy(x -> {
                         x.bookPrice().desc(OrderByModeEnum.NULLS_LAST);
                     }).firstElement().bookPrice().eq(BigDecimal.ONE);
                 }).toList();
@@ -364,6 +395,7 @@ public class ManyJoinTest extends BaseTest{
         Assert.assertEquals("SELECT t.`user_id`,t.`user_name`,t.`user_age`,t.`create_time` FROM `m8_user2` t LEFT JOIN (SELECT t2.`book_id` AS `book_id`,t2.`user_id` AS `user_id`,t2.`book_name` AS `book_name`,t2.`book_price` AS `book_price` FROM (SELECT t1.`book_id`,t1.`user_id`,t1.`book_name`,t1.`book_price`,(ROW_NUMBER() OVER (PARTITION BY t1.`user_id` ORDER BY CASE WHEN t1.`book_price` IS NULL THEN 1 ELSE 0 END ASC,t1.`book_price` DESC)) AS `__row__` FROM `m8_user_book` t1 WHERE t1.`book_price` > ?) t2 WHERE t2.`__row__` = ?) t4 ON t4.`user_id` = t.`user_id` WHERE t4.`book_price` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("100(BigDecimal),1(Integer),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
     public void manyJoinMany2Many10() {
 
@@ -374,7 +406,7 @@ public class ManyJoinTest extends BaseTest{
         List<M8User2> list = easyEntityQuery.queryable(M8User2.class)
                 .manyJoin(x -> x.books())
                 .where(s -> {
-                    s.books().where(x -> x.bookPrice().gt(BigDecimal.valueOf(100))).sum(x->x.bookPrice()).eq(BigDecimal.ONE);
+                    s.books().where(x -> x.bookPrice().gt(BigDecimal.valueOf(100))).sum(x -> x.bookPrice()).eq(BigDecimal.ONE);
                 }).toList();
 
         listenerContextManager.clear();
@@ -385,12 +417,37 @@ public class ManyJoinTest extends BaseTest{
     }
 
     @Test
-    public void groupPartition(){
+    public void testManyJoinGroup() {
+        List<M8User2> list = easyEntityQuery.queryable(M8User2.class)
+                .manyJoin(x -> x.books())
+                .where(m -> {
+                    m.books().joining(x -> x.bookName(), ",").like("123");
+                }).toList();
 //        easyEntityQuery.queryable(M8UserBook.class)
 //                .groupBy(m -> GroupKeys.of(m.userId()))
 //                .select(group -> {
 //                    group.where().element(1).bookPrice();
 //                })
+
+    }
+
+    @Test
+    public void testManyJoinGroup1() {
+
+
+        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
+        try {
+            trackManager.begin();
+
+
+            List<M8User2> list = easyEntityQuery.queryable(M8User2.class)
+                    .includes(x -> x.roles()).toList();
+            Assert.assertNotEquals(0, list.size());
+            Assert.assertNotEquals(0, list.get(0).getRoles().size());
+
+        } finally {
+            trackManager.release();
+        }
 
     }
 }

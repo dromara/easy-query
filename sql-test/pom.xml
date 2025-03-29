@@ -5,7 +5,7 @@
     <parent>
         <artifactId>easy-query-all</artifactId>
         <groupId>com.easy-query</groupId>
-        <version>2.7.19</version>
+        <version>2.7.35</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -96,7 +96,7 @@
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-api4kt</artifactId>
-            <version>2.7.19</version>
+            <version>2.7.35</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -210,7 +210,12 @@
             <artifactId>spring-jdbc</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
+        <!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.49.1.0</version>
+        </dependency>
     </dependencies>
 
 </project>

@@ -56,6 +56,7 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
             return new EmptySQLQueryable<>(subqueryContext.getEntitySQLContext(), propertyProxy);
         }
         NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
+        RelationTableKey defaultRelationTableKey = new DefaultRelationTableKey(leftTable,property);
 
         EntityRelationPredicateProvider entityRelationPredicateProvider = navigateMetadata.getEntityRelationPredicateProvider();
         RelationTableKey defaultRelationTableKey = new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName);
@@ -77,10 +78,8 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
             clientQueryable.where(x -> {
                 x.and(() -> {
                     ClientQueryable<?> subMappingQueryable = mappingQueryable.where(m -> {
-                        entityRelationPredicateProvider.targetTargetMappingPropertyPredicate(x.getTable(), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext),m, navigateMetadata.getTargetMappingProperties());
-
-                        entityRelationPredicateProvider.selfSelfMappingPropertyPredicate(leftTable,navigateMetadata.getSelfPropertiesOrPrimary(),m,navigateMetadata.getSelfMappingProperties());
-
+                        m.multiEq(true, x, navigateMetadata.getTargetMappingProperties(), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
+                        m.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getSelfMappingProperties(), navigateMetadata.getSelfPropertiesOrPrimary());
                         navigateMetadata.predicateMappingClassFilterApply(m);
                     }).limit(1);
                     x.exists(subMappingQueryable);
@@ -90,8 +89,7 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
         } else {
             clientQueryable.where(t -> {
                 t.and(() -> {
-                    entityRelationPredicateProvider.selfTargetPropertyPredicate(leftTable,navigateMetadata.getSelfPropertiesOrPrimary(), t, navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
-//                    t.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), navigateMetadata.getSelfPropertiesOrPrimary());
+                    t.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), navigateMetadata.getSelfPropertiesOrPrimary());
                     navigateMetadata.predicateFilterApply(t);
                 });
             });
@@ -117,7 +115,7 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
         //获取导航元信息
         NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
         //获取表达式配置信息
-        ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName));
+        ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(new DefaultRelationTableKey(leftTable,property));
         //创建分区分组查询表达式
         ClientQueryable<?> clientQueryable = createPartitionQueryable(subQueryContext, navigateMetadata, manyConfiguration);
         ToSQLResult sqlResult = clientQueryable.toSQLResult();

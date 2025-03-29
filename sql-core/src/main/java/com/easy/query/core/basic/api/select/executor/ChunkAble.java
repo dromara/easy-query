@@ -20,7 +20,7 @@ public interface ChunkAble<T> extends QueryAvailable<T> {
      * @param size  每个批次大小
      * @param chunk 如何处理,返回true表示继续返回false表示中断
      */
-    void toChunk(int size, Predicate<List<T>> chunk);
+    void toChunkIf(int size, Predicate<List<T>> chunk);
 
     /**
      * 分批处理 支持include
@@ -28,7 +28,7 @@ public interface ChunkAble<T> extends QueryAvailable<T> {
      * @param chunk 如何处理
      */
     default void toChunk(int size, Consumer<List<T>> chunk) {
-        toChunk(size, list -> {
+        toChunkIf(size, list -> {
             chunk.accept(list);
             return list.size() <= size;
         });

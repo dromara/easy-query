@@ -34,6 +34,10 @@ public class SolonEasyQueryProperties {
     private final static ShardingQueryInTransactionEnum shardingQueryInTransaction = ShardingQueryInTransactionEnum.SERIALIZABLE;
     private final static EntityMappingStrategyEnum mappingStrategy = EntityMappingStrategyEnum.COLUMN_ONLY;
     /**
+     * 建议19
+     */
+    private final static int mssqlMinBigDecimalScale = 0;
+    /**
      * 仅分片时有效默认同时5个线程5
      */
     private final static int maxShardingQueryLimit = 5;
@@ -281,6 +285,9 @@ public class SolonEasyQueryProperties {
             }
             return ShardingQueryInTransactionEnum.SERIALIZABLE;
         });
+    }
+    public int getMssqlMinBigDecimalScale() {
+        return this.props.getInt("mssql-min-big-decimal-scale",mssqlMinBigDecimalScale);
     }
 
     public int getMaxShardingQueryLimit() {

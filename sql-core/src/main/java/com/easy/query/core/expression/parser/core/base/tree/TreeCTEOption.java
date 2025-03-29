@@ -1,6 +1,8 @@
 package com.easy.query.core.expression.parser.core.base.tree;
 
 import com.easy.query.core.enums.SQLUnionEnum;
+import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
 /**
  * create time 2023/10/23 21:16
@@ -14,6 +16,7 @@ public class TreeCTEOption {
     private boolean unionAll = true;
     private String cteTableName = "as_tree_cte";
     private String deepColumnName = "cte_deep";
+    private SQLExpression1<WherePredicate<?>> whereExpression;
 
     public int getLimitDeep() {
         return limitDeep;
@@ -53,6 +56,14 @@ public class TreeCTEOption {
 
     public void setDeepColumnName(String deepColumnName) {
         this.deepColumnName = deepColumnName;
+    }
+
+    public void setChildFilter(SQLExpression1<WherePredicate<?>> whereExpression) {
+        this.whereExpression = whereExpression;
+    }
+
+    public SQLExpression1<WherePredicate<?>> getChildFilter() {
+        return whereExpression;
     }
 
     public SQLUnionEnum sqlUnion() {

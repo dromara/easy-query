@@ -36,6 +36,10 @@ public class EasyQueryProperties {
     private PropertyModeEnum propertyMode = PropertyModeEnum.FIRST_LOWER;
     private ShardingQueryInTransactionEnum shardingQueryInTransaction = ShardingQueryInTransactionEnum.SERIALIZABLE;
     /**
+     * 建议19
+     */
+    private int mssqlMinBigDecimalScale = 0;
+    /**
      * 仅分片时有效默认同时5个线程5
      */
     private int maxShardingQueryLimit = 5;
@@ -477,6 +481,14 @@ public class EasyQueryProperties {
 
     public void setBuild(Boolean build) {
         this.build = build;
+    }
+
+    public int getMssqlMinBigDecimalScale() {
+        return mssqlMinBigDecimalScale;
+    }
+
+    public void setMssqlMinBigDecimalScale(int mssqlMinBigDecimalScale) {
+        this.mssqlMinBigDecimalScale = mssqlMinBigDecimalScale;
     }
 
     public EasyQueryProperties() {

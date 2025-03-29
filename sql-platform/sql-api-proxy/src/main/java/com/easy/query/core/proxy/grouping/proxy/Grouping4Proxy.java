@@ -5,6 +5,9 @@ import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.grouping.Grouping4;
 import com.easy.query.core.util.EasyObjectUtil;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * create time 2023/12/28 21:17
  * 文件说明
@@ -52,6 +55,11 @@ public class Grouping4Proxy<TKey1Proxy extends PropTypeColumn<TKey1>, TKey1,
 
     public TKey4Proxy key4() {
         return k4;
+    }
+
+    @Override
+    public List<PropTypeColumn<?>> getKeys() {
+        return Arrays.asList(k1,k2,k3,k4);
     }
 
     @Override

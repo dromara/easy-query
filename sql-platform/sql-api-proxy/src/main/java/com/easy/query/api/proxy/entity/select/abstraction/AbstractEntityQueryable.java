@@ -6,6 +6,8 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable2;
 import com.easy.query.api.proxy.entity.select.impl.EasySelectFlatQueryable;
+import com.easy.query.api.proxy.extension.tree.EntityTreeCTEConfigurer;
+import com.easy.query.api.proxy.extension.tree.EntityTreeCTEConfigurerImpl;
 import com.easy.query.api.proxy.util.EasyProxyUtil;
 import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
@@ -207,8 +209,8 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public void toChunk(int size, Predicate<List<T1>> chunk) {
-        clientQueryable.toChunk(size, chunk);
+    public void toChunkIf(int size, Predicate<List<T1>> chunk) {
+        clientQueryable.toChunkIf(size, chunk);
     }
 
     @Override
@@ -468,7 +470,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
             });
             TableAvailable table = valueHolder.getValue().getOriginalTable();
             String value = valueHolder.getValue().getNavValue();
-            getClientQueryable().manyConfigure(manyJoinSelector -> manyJoinSelector.manyColumn(table, value), cq->{
+            getClientQueryable().manyConfigure(manyJoinSelector -> manyJoinSelector.manyColumn(table, value), cq -> {
                 ClientQueryable<T2> innerClientQueryable = EasyObjectUtil.typeCastNullable(cq);
                 T2Proxy tPropertyProxy = EntityQueryProxyManager.create(innerClientQueryable.queryClass());
                 EasyEntityQueryable<T2Proxy, T2> entityQueryable = new EasyEntityQueryable<>(tPropertyProxy, innerClientQueryable);
@@ -527,8 +529,10 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 //    }
 
     @Override
-    public EntityQueryable<T1Proxy, T1> asTreeCTE(SQLExpression1<TreeCTEConfigurer> treeExpression) {
-        ClientQueryable<T1> clientQueryable = getClientQueryable().asTreeCTE(treeExpression);
+    public EntityQueryable<T1Proxy, T1> asTreeCTE(SQLExpression1<EntityTreeCTEConfigurer<T1Proxy, T1>> treeExpression) {
+        ClientQueryable<T1> clientQueryable = getClientQueryable().asTreeCTE(treeConfigurer -> {
+            treeExpression.apply(new EntityTreeCTEConfigurerImpl<>(t1Proxy, treeConfigurer));
+        });
         return new EasyEntityQueryable<>(get1Proxy(), clientQueryable);
     }
 

@@ -174,6 +174,7 @@ public class DbManager {
                     builder.setDefaultSchema(solonEasyQueryProperties.getDefaultSchema());
                     builder.setResultSizeLimit(solonEasyQueryProperties.getResultSizeLimit());
                     builder.setShardingQueryInTransaction(solonEasyQueryProperties.getShardingQueryInTransaction());
+                    builder.setMssqlMinBigDecimalScale(solonEasyQueryProperties.getMssqlMinBigDecimalScale());
                 });
         DatabaseConfiguration databaseConfigure = getDatabaseConfigure(solonEasyQueryProperties);
         if (databaseConfigure != null) {

@@ -8,6 +8,7 @@ import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.migration.DatabaseMigrationProvider;
 import com.easy.query.sqlite.expression.SQLiteExpressionFactory;
 import com.easy.query.sqlite.func.SQLiteFuncImpl;
+import com.easy.query.sqlite.migration.SQLiteDatabaseMigrationProvider;
 
 /**
  * create time 2023/5/10 13:40

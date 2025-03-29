@@ -1,10 +1,14 @@
 package com.easy.query.core.expression.segment.impl;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SelectCountDistinctSegment;
+import com.easy.query.core.expression.visitor.TableVisitor;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -43,5 +47,22 @@ public class SelectCountDistinctSegmentImpl implements SelectCountDistinctSegmen
             return o.toSQL(toSQLContext);
         }).collect(Collectors.joining(","));
         return "COUNT(DISTINCT " + distinctColumns + ")";
+    }
+
+    @Override
+    public TableAvailable getTable() {
+        return null;
+    }
+
+    @Override
+    public void accept(TableVisitor visitor) {
+        for (SQLSegment sqlSegment : sqlSegments) {
+            EasySQLSegmentUtil.sqlSegmentTableVisit(sqlSegment,visitor);
+        }
+    }
+
+    @Override
+    public CloneableSQLSegment cloneSQLColumnSegment() {
+        return new SelectCountDistinctSegmentImpl(sqlSegments);
     }
 }

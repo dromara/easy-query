@@ -1,5 +1,7 @@
 package com.easy.query.core.expression;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+
 import java.util.Objects;
 
 /**
@@ -9,35 +11,24 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public class DefaultRelationTableKey implements RelationTableKey {
-    private final Class<?> sourceClass;
-    private final Class<?> targetClass;
-    private final String fullName;
 
-    public DefaultRelationTableKey(Class<?> sourceClass, Class<?> targetClass, String fullName){
+    private final TableAvailable table;
+    private final String property;
 
-        this.sourceClass = sourceClass;
-        this.targetClass = targetClass;
-        this.fullName = fullName;
+    public DefaultRelationTableKey(TableAvailable table, String property){
+        this.table = table;
+        this.property = property;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         DefaultRelationTableKey that = (DefaultRelationTableKey) o;
-        return Objects.equals(sourceClass, that.sourceClass) && Objects.equals(targetClass, that.targetClass) && Objects.equals(fullName, that.fullName);
+        return Objects.equals(table, that.table) && Objects.equals(property, that.property);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sourceClass, targetClass, fullName);
-    }
-
-    @Override
-    public String toString() {
-        return "DefaultRelationTableKey{" +
-                "sourceClass=" + sourceClass +
-                ", targetClass=" + targetClass +
-                ", fullName='" + fullName + '\'' +
-                '}';
+        return Objects.hash(table, property);
     }
 }

@@ -62,11 +62,12 @@ public abstract class MsSQLBaseTest {
                 .setDefaultDataSource(dataSource)
                 .optionConfigure(op -> {
                     op.setDeleteThrowError(false);
+                    op.setMssqlMinBigDecimalScale(19);
                 })
                 .useDatabaseConfigure(new MsSQLDatabaseConfiguration())
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
                 .replaceService(NameConversion.class, UpperCamelCaseNameConversion.class)
-                .replaceService(SQLCaseWhenBuilderFactory.class, MyMsSQLCaseWhenBuilderFactory.class)
+//                .replaceService(SQLCaseWhenBuilderFactory.class, MyMsSQLCaseWhenBuilderFactory.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
         easyQuery = new DefaultEasyQuery(easyQueryClient);
