@@ -1423,8 +1423,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             ManyColumn manyColumn = manyPropColumnExpression.apply(new ManyJoinSelectorImpl<>(table.getEntityTable()));
             EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
             TableAvailable leftTable = tableOrRelationalTable.table;
-            NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(tableOrRelationalTable.property);
-            entityQueryExpressionBuilder.addManyJoinConfiguration(new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), manyColumn.getNavValue()));
+            String property = tableOrRelationalTable.property;
+            entityQueryExpressionBuilder.addManyJoinConfiguration(new DefaultRelationTableKey(leftTable,property));
         }
         return this;
     }
@@ -1436,8 +1436,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             ManyColumn manyColumn = manyPropColumnExpression.apply(new ManyJoinSelectorImpl<>(table.getEntityTable()));
             EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
             TableAvailable leftTable = tableOrRelationalTable.table;
-            NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(tableOrRelationalTable.property);
-            entityQueryExpressionBuilder.addManyConfiguration(new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), manyColumn.getNavValue()), new ManyConfiguration(adapterExpression));
+            String property = tableOrRelationalTable.property;
+            entityQueryExpressionBuilder.addManyConfiguration(new DefaultRelationTableKey(leftTable,property), new ManyConfiguration(adapterExpression));
         }
         return this;
     }

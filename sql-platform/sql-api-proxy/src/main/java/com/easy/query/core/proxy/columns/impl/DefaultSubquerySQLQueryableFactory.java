@@ -57,12 +57,12 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
             return new EmptySQLQueryable<>(subqueryContext.getEntitySQLContext(), propertyProxy);
         }
         NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
-        RelationTableKey defaultRelationTableKey = new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName);
+        RelationTableKey defaultRelationTableKey = new DefaultRelationTableKey(leftTable,property);
         if (subqueryContext.getConfigureExpression() == null && subqueryContext.getOrderByExpression() == null && !subqueryContext.hasElements()) {
 
             if (entityExpressionBuilder.hasManyJoinConfiguration(defaultRelationTableKey)) {
                 ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(defaultRelationTableKey);
-                AnonymousManyJoinEntityTableExpressionBuilder anonymousManyJoinEntityTableExpressionBuilder = EasyRelationalUtil.getManyJoinRelationTable(entityExpressionBuilder, leftTable, navigateMetadata, fullName, Optional.ofNullable(manyConfiguration).map(x -> x.getConfigureExpression()).orElse(null));
+                AnonymousManyJoinEntityTableExpressionBuilder anonymousManyJoinEntityTableExpressionBuilder = EasyRelationalUtil.getManyJoinRelationTable(entityExpressionBuilder, leftTable, navigateMetadata, Optional.ofNullable(manyConfiguration).map(x -> x.getConfigureExpression()).orElse(null));
 
                 EntityTableExpressionBuilder manyJoinTableExpressionBuilder = anonymousManyJoinEntityTableExpressionBuilder.getEntityQueryExpressionBuilder().getTable(0);
                 T1Proxy manyJoinPropertyProxy = propertyProxy.create(manyJoinTableExpressionBuilder.getEntityTable(), anonymousManyJoinEntityTableExpressionBuilder.getEntityQueryExpressionBuilder(), runtimeContext);
@@ -113,7 +113,7 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
         //获取导航元信息
         NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
         //获取表达式配置信息
-        ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName));
+        ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(new DefaultRelationTableKey(leftTable,property));
         //创建分区分组查询表达式
         ClientQueryable<?> clientQueryable = createPartitionQueryable(subqueryContext, navigateMetadata, manyConfiguration);
         ToSQLResult sqlResult = clientQueryable.toSQLResult();
