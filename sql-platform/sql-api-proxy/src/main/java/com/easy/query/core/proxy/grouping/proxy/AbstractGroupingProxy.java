@@ -18,6 +18,7 @@ import com.easy.query.core.proxy.grouping.SQLGroupQueryable;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -43,6 +44,7 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
     public TSourceProxy groupTable() {
         return tSourceProxy;
     }
+    public abstract List<PropTypeColumn<?>> getKeys();
     public ColumnFunctionCompareComparableNumberChainExpression<Long> count() {
         return where(null).count();
     }
