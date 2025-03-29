@@ -8,6 +8,12 @@ import com.easy.query.core.expression.DefaultRelationTableKey;
 import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.PartitionByRelationTableKey;
 import com.easy.query.core.expression.RelationTableKey;
+import com.easy.query.core.expression.include.getter.EqualsDirectToOneGetter;
+import com.easy.query.core.expression.include.getter.EqualsManyToManyGetter;
+import com.easy.query.core.expression.include.getter.EqualsManyToOneGetter;
+import com.easy.query.core.expression.include.getter.EqualsOneToManyGetter;
+import com.easy.query.core.expression.include.getter.EqualsOneToOneGetter;
+import com.easy.query.core.expression.include.getter.RelationIncludeGetter;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -17,6 +23,7 @@ import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.include.RelationExtraEntity;
 import com.easy.query.core.func.def.PartitionBySQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -25,6 +32,7 @@ import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasySQLUtil;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -164,5 +172,31 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
     @Override
     public void relationMultiIdFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<Object> relationIds) {
         targetWherePredicate.multiEq(true, targetProps, relationIds);
+    }
+
+
+    @Override
+    public RelationIncludeGetter getOneToOneGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] selfRelationColumn, Collection<RelationExtraEntity> entities) {
+        return new EqualsOneToOneGetter(selfRelationColumn, entities);
+    }
+
+    @Override
+    public RelationIncludeGetter getDirectToOneGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, List<RelationExtraEntity> includes, List<Object> mappingRow) {
+        return new EqualsDirectToOneGetter(runtimeContext, navigateMetadata, includes, mappingRow);
+    }
+
+    @Override
+    public RelationIncludeGetter getManyToOneGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes) {
+        return new EqualsManyToOneGetter(targetPropertyNames, includes);
+    }
+
+    @Override
+    public RelationIncludeGetter getOneToManyGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes) {
+        return new EqualsOneToManyGetter(navigateMetadata, targetPropertyNames, includes);
+    }
+
+    @Override
+    public RelationIncludeGetter getManyToManyGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes, List<Object> mappingRows) {
+        return new EqualsManyToManyGetter(runtimeContext, navigateMetadata, targetPropertyNames, includes, mappingRows);
     }
 }
