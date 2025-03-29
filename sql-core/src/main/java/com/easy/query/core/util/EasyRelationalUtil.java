@@ -163,14 +163,14 @@ public class EasyRelationalUtil {
 
     }
 
-    public static AnonymousManyJoinEntityTableExpressionBuilder getManyJoinRelationTable(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata,ManyConfiguration manyConfiguration) {
+    public static AnonymousManyJoinEntityTableExpressionBuilder getManyJoinRelationTable(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata,RelationTableKey relationTableKey,ManyConfiguration manyConfiguration) {
         QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
 
         if (navigateMetadata.getRelationType() != RelationTypeEnum.OneToMany && navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
             throw new EasyQueryInvalidOperationException("navigate relation table should [OneToMany or ManyToMany],now is " + navigateMetadata.getRelationType());
         }
 
-        EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(new DefaultRelationTableKey(leftTable,navigateMetadata.getPropertyName()), key -> {
+        EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(relationTableKey, key -> {
 //            TableAvailable leftTable = getTable();
 
             String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);

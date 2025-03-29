@@ -3,10 +3,8 @@ package com.easy.query.mysql.config;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
-import com.easy.query.core.expression.RelationTableKey;
-import com.easy.query.core.expression.implicit.EntityRelationPredicateProvider;
+import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -17,13 +15,9 @@ import com.easy.query.core.util.EasyObjectUtil;
  *
  * @author xuejiaming
  */
-public class FindInSetRelationToImplicitProvider implements EntityRelationPredicateProvider {
-    public static final EntityRelationPredicateProvider INSTANCE = new FindInSetRelationToImplicitProvider();
+public class FindInSetRelationToImplicitProvider implements EntityRelationPropertyProvider {
+    public static final EntityRelationPropertyProvider INSTANCE = new FindInSetRelationToImplicitProvider();
 
-    @Override
-    public AnonymousManyJoinEntityTableExpressionBuilder toImplicitGroup(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext, RelationTableKey relationTableKey) {
-        return null;
-    }
 
     @Override
     public String getName() {

@@ -7,18 +7,16 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.metadata.NavigateMetadata;
 
+import java.util.List;
+
 /**
  * create time 2025/3/19 16:14
  * 文件说明
  *
  * @author xuejiaming
  */
-public interface EntityRelationPredicateProvider {
+public interface EntityRelationPropertyProvider {
     String getName();
-
-    void selfTargetPropertyPredicate(TableAvailable selfTable, String[] selfProps, WherePredicate<?> targetWherePredicate,String[] targetProps);
-    void targetTargetMappingPropertyPredicate(TableAvailable targetTable, String[] targetProps, WherePredicate<?> mappingWherePredicate,String[] targetMappingProps);
-    void selfSelfMappingPropertyPredicate(TableAvailable selfTable, String[] selfProps, WherePredicate<?> mappingWherePredicate,String[] selfMappingProps);
 
     /**
      * 隐式子查询
@@ -39,4 +37,7 @@ public interface EntityRelationPredicateProvider {
      * @return
      */
     TableAvailable toImplicitJoin(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property, String fullName);
+
+    void relationMultiIdsFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<List<Object>> relationIds);
+    void relationMultiIdFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<Object> relationIds);
 }

@@ -24,7 +24,7 @@ import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.implicit.GenericEntityRelationToImplicitProvider;
-import com.easy.query.core.expression.implicit.EntityRelationPredicateProvider;
+import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.job.EasyTimeJobManager;
 import com.easy.query.core.job.TimeJob;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
@@ -71,7 +71,7 @@ public class QueryConfiguration {
     private Map<Class<? extends ColumnValueSQLConverter>, ColumnValueSQLConverter> columnValueSQLConverterMap = new ConcurrentHashMap<>();
     private Map<Class<? extends GeneratedKeySQLColumnGenerator>, GeneratedKeySQLColumnGenerator> generatedSQLColumnGeneratorMap = new ConcurrentHashMap<>();
     private Map<Class<? extends PrimaryKeyGenerator>, PrimaryKeyGenerator> primaryKeyGeneratorMap = new ConcurrentHashMap<>();
-    private Map<String, EntityRelationPredicateProvider> toManySubquerySQLStrategyMap = new ConcurrentHashMap<>();
+    private Map<String, EntityRelationPropertyProvider> toManySubquerySQLStrategyMap = new ConcurrentHashMap<>();
 
     //    public EasyQueryConfiguration(Dialect dialect, NameConversion nameConversion) {
 //       this(EasyQueryOption.defaultEasyQueryOption(),dialect,nameConversion);
@@ -318,14 +318,14 @@ public class QueryConfiguration {
     public PrimaryKeyGenerator getPrimaryKeyGenerator(Class<? extends PrimaryKeyGenerator> primaryKeyGenerator) {
         return primaryKeyGeneratorMap.get(primaryKeyGenerator);
     }
-    public void applyToManySubquerySQLStrategy(EntityRelationPredicateProvider toManySubquerySQLStrategy) {
+    public void applyToManySubquerySQLStrategy(EntityRelationPropertyProvider toManySubquerySQLStrategy) {
         if (toManySubquerySQLStrategyMap.containsKey(toManySubquerySQLStrategy.getName())) {
             throw new EasyQueryException("to many subquery sql strategy:" + toManySubquerySQLStrategy.getName() + ",repeat");
         }
         toManySubquerySQLStrategyMap.put(toManySubquerySQLStrategy.getName(), toManySubquerySQLStrategy);
     }
 
-    public EntityRelationPredicateProvider getToManySubquerySQLStrategy(String name) {
+    public EntityRelationPropertyProvider getToManySubquerySQLStrategy(String name) {
         return toManySubquerySQLStrategyMap.get(name);
     }
 }

@@ -75,7 +75,7 @@ import com.easy.query.core.exception.EasyQueryPropertyNotFoundException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.implicit.EntityRelationPredicateProvider;
+import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
@@ -337,9 +337,9 @@ public class EntityMetadata {
         return null;
     }
 
-    private @Nullable EntityRelationPredicateProvider getToManySubquerySQLStrategy(QueryConfiguration configuration, Navigate navigate) {
+    private @Nullable EntityRelationPropertyProvider getToManySubquerySQLStrategy(QueryConfiguration configuration, Navigate navigate) {
 
-        EntityRelationPredicateProvider toManySubquerySQLStrategy = configuration.getToManySubquerySQLStrategy(navigate.toManySubqueryName());
+        EntityRelationPropertyProvider toManySubquerySQLStrategy = configuration.getToManySubquerySQLStrategy(navigate.toManySubqueryName());
         if (toManySubquerySQLStrategy == null) {
             throw new EasyQueryInvalidOperationException("not found navigate to many subquery sql strategy:[" + navigate.toManySubqueryName()+ "]");
         }
@@ -384,7 +384,7 @@ public class EntityMetadata {
                 }
             }
 
-            EntityRelationPredicateProvider toManySubquerySQLStrategy = getToManySubquerySQLStrategy(configuration, navigate);
+            EntityRelationPropertyProvider toManySubquerySQLStrategy = getToManySubquerySQLStrategy(configuration, navigate);
             navigateOption.setToManySubquerySQLStrategy(toManySubquerySQLStrategy);
 
 

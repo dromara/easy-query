@@ -1,5 +1,7 @@
 package com.easy.query.core.expression;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+
 import java.util.Objects;
 
 /**
@@ -9,17 +11,15 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public class PartitionByRelationTableKey implements RelationTableKey {
-    private final Class<?> sourceClass;
-    private final Class<?> targetClass;
-    private final String fullName;
+    private final TableAvailable table;
+    private final String property;
     private final int rowNumber;
     private final String sqlKey;
 
-    public PartitionByRelationTableKey(Class<?> sourceClass, Class<?> targetClass, String fullName,int rowNumber,String sqlKey){
+    public PartitionByRelationTableKey(TableAvailable table, String property, int rowNumber, String sqlKey){
+        this.table = table;
+        this.property = property;
 
-        this.sourceClass = sourceClass;
-        this.targetClass = targetClass;
-        this.fullName = fullName;
         this.rowNumber = rowNumber;
         this.sqlKey = sqlKey;
     }
@@ -28,22 +28,11 @@ public class PartitionByRelationTableKey implements RelationTableKey {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         PartitionByRelationTableKey that = (PartitionByRelationTableKey) o;
-        return rowNumber == that.rowNumber && Objects.equals(sourceClass, that.sourceClass) && Objects.equals(targetClass, that.targetClass) && Objects.equals(fullName, that.fullName) && Objects.equals(sqlKey, that.sqlKey);
+        return rowNumber == that.rowNumber && Objects.equals(table, that.table) && Objects.equals(property, that.property) && Objects.equals(sqlKey, that.sqlKey);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sourceClass, targetClass, fullName, rowNumber, sqlKey);
-    }
-
-    @Override
-    public String toString() {
-        return "PartitionByRelationTableKey{" +
-                "sourceClass=" + sourceClass +
-                ", targetClass=" + targetClass +
-                ", fullName='" + fullName + '\'' +
-                ", rowNumber=" + rowNumber +
-                ", sqlKey='" + sqlKey + '\'' +
-                '}';
+        return Objects.hash(table, property, rowNumber, sqlKey);
     }
 }

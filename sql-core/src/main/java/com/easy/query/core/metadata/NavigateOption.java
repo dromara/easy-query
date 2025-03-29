@@ -2,7 +2,7 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.implicit.EntityRelationPredicateProvider;
+import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.util.EasyClassUtil;
 
@@ -32,7 +32,7 @@ public class NavigateOption {
     private String[] targetMappingProperties;
     private SQLExpression1<WherePredicate<?>> predicateFilterExpression;
     private SQLExpression1<WherePredicate<?>> predicateMappingClassFilterExpression;
-    private EntityRelationPredicateProvider toManySubquerySQLStrategy;
+    private EntityRelationPropertyProvider toManySubquerySQLStrategy;
 
     public NavigateOption(EntityMetadata entityMetadata,
                           String propertyName,
@@ -144,11 +144,11 @@ public class NavigateOption {
         return directMapping;
     }
 
-    public EntityRelationPredicateProvider getToManySubquerySQLStrategy() {
+    public EntityRelationPropertyProvider getToManySubquerySQLStrategy() {
         return toManySubquerySQLStrategy;
     }
 
-    public void setToManySubquerySQLStrategy(EntityRelationPredicateProvider toManySubquerySQLStrategy) {
+    public void setToManySubquerySQLStrategy(EntityRelationPropertyProvider toManySubquerySQLStrategy) {
         this.toManySubquerySQLStrategy = toManySubquerySQLStrategy;
     }
 }

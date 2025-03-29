@@ -8,6 +8,7 @@ import com.easy.query.core.basic.api.select.extension.queryable3.override.Abstra
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.DefaultRelationTableKey;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.lambda.SQLExpression4;
@@ -113,8 +114,8 @@ public abstract class AbstractClientQueryable3<T1, T2, T3> extends AbstractOverr
             ManyColumn manyColumn = manyPropColumnExpression.apply(new ManyJoinSelectorImpl<>(table1.getEntityTable()),new ManyJoinSelectorImpl<>(table2.getEntityTable()),new ManyJoinSelectorImpl<>(table3.getEntityTable()));
             EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
             TableAvailable leftTable = tableOrRelationalTable.table;
-            NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(tableOrRelationalTable.property);
-            EasyRelationalUtil.getManyJoinRelationTable(entityQueryExpressionBuilder, leftTable, navigateMetadata, adapterExpression);
+            String property = tableOrRelationalTable.property;
+            entityQueryExpressionBuilder.addManyJoinConfiguration(new DefaultRelationTableKey(leftTable, property));
         }
         return this;
     }

@@ -7,7 +7,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.implicit.EntityRelationPredicateProvider;
+import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyMapUtil;
@@ -60,7 +60,7 @@ public class NavigateMetadata {
     private final SQLExpression1<WherePredicate<?>> predicateMappingClassFilterExpression;
 
     private final Map<String, NavigateMetadata> directMappingMetadataMap;
-    private final EntityRelationPredicateProvider entityRelationPredicateProvider;
+    private final EntityRelationPropertyProvider entityRelationPropertyProvider;
 
     private final long offset;
     private final long limit;
@@ -80,7 +80,7 @@ public class NavigateMetadata {
         this.targetMappingProperties = navigateOption.getTargetMappingProperties();
         this.predicateFilterExpression = navigateOption.getPredicateFilterExpression();
         this.predicateMappingClassFilterExpression = navigateOption.getPredicateMappingClassFilterExpression();
-        this.entityRelationPredicateProvider = navigateOption.getToManySubquerySQLStrategy();
+        this.entityRelationPropertyProvider = navigateOption.getToManySubquerySQLStrategy();
         this.basicType = navigateOption.isBasicType();
         this.orderProps = navigateOption.getOrderProps();
         this.offset = navigateOption.getOffset();
@@ -297,7 +297,7 @@ public class NavigateMetadata {
         return directMapping;
     }
 
-    public EntityRelationPredicateProvider getEntityRelationPredicateProvider() {
-        return entityRelationPredicateProvider;
+    public EntityRelationPropertyProvider getEntityRelationPropertyProvider() {
+        return entityRelationPropertyProvider;
     }
 }

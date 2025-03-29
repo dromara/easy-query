@@ -370,11 +370,11 @@ public class QueryTest23 extends BaseTest {
 
     @Test
      public void testAdd(){
-        easyEntityQuery.queryable(DocBankCard.class)
-                .include(s->s.bank())
-                .where(bank_card -> {
-                    bank_card.bank()
-                })
+//        easyEntityQuery.queryable(DocBankCard.class)
+//                .include(s->s.bank())
+//                .where(bank_card -> {
+//                    bank_card.bank()
+//                })
 
     }
 

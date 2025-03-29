@@ -17,5 +17,5 @@ import com.easy.query.core.metadata.NavigateMetadata;
  */
 public interface EntityRelationToImplicitPartitionByProvider {
 
-    <T1> AnonymousManyJoinEntityTableExpressionBuilder toImplicitPartitionBy(Class<T1> entityClass, EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, String fullName, int index, QueryRuntimeContext runtimeContext, SQLExpression1<ClientQueryable<T1>> clientQueryableSQLExpression);
+    <T1> AnonymousManyJoinEntityTableExpressionBuilder toImplicitPartitionBy(Class<T1> entityClass, EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, int index, QueryRuntimeContext runtimeContext, SQLExpression1<ClientQueryable<T1>> clientQueryableSQLExpression);
 }

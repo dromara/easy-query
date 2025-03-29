@@ -5,6 +5,7 @@ import com.easy.query.core.common.DirectMappingIterator;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
@@ -156,7 +157,9 @@ public class NavigateIncludeImpl implements NavigateInclude {
                             s.setPrintSQL(printSQL);
                             s.setPrintNavSQL(printSQL);
                         }).where(t -> {
-                            t.relationIn(navigateMetadata.getDirectMappingSelfPropertiesOrPrimary(runtimeContext), includeNavigateParams.getRelationIds());
+                            EntityRelationPropertyProvider entityRelationPropertyProvider = navigateMetadata.getEntityRelationPropertyProvider();
+                            entityRelationPropertyProvider.relationMultiIdsFetcherPredicate(t, navigateMetadata.getDirectMappingSelfPropertiesOrPrimary(runtimeContext), includeNavigateParams.getRelationIds());
+//                            t.relationIn(navigateMetadata.getDirectMappingSelfPropertiesOrPrimary(runtimeContext), includeNavigateParams.getRelationIds());
                             propNavigateMetadata.predicateFilterApply(t);
                         })
                         .select(z -> {
@@ -174,7 +177,9 @@ public class NavigateIncludeImpl implements NavigateInclude {
                             s.setPrintSQL(printSQL);
                             s.setPrintNavSQL(printSQL);
                         }).where(t -> {
-                            t.relationIn(navigateMetadata.getSelfMappingProperties(), includeNavigateParams.getRelationIds());
+                            EntityRelationPropertyProvider entityRelationPropertyProvider = navigateMetadata.getEntityRelationPropertyProvider();
+                            entityRelationPropertyProvider.relationMultiIdsFetcherPredicate(t, navigateMetadata.getSelfMappingProperties(), includeNavigateParams.getRelationIds());
+//                            t.relationIn(navigateMetadata.getSelfMappingProperties(), includeNavigateParams.getRelationIds());
                             navigateMetadata.predicateMappingClassFilterApply(t);
                         })
                         .select(o -> {

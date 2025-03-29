@@ -5,12 +5,12 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.impl.NavigateIncludeImpl;
-import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
@@ -20,13 +20,10 @@ import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyOptionUtil;
-import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -94,10 +91,12 @@ public class DefaultIncludeProvider implements IncludeProvider {
             s.setPrintNavSQL(printNavSQL);
         }).where(o -> {
             o.and(() -> {
+                EntityRelationPropertyProvider relationPropertyProvider = navigateMetadata.getEntityRelationPropertyProvider();
+
                 if (directMapping) {
-                    o.relationIn(navigateMetadata.getDirectTargetPropertiesOrPrimary(runtimeContext), relationIds);
+                    relationPropertyProvider.relationMultiIdsFetcherPredicate(o,navigateMetadata.getDirectTargetPropertiesOrPrimary(runtimeContext),relationIds);
                 } else {
-                    o.relationIn(navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationIds);
+                    relationPropertyProvider.relationMultiIdsFetcherPredicate(o,navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext),relationIds);
                 }
                 navigateMetadata.predicateFilterApply(o);
 //                        navigateMetadata.predicateFilterApply(o);
@@ -111,10 +110,14 @@ public class DefaultIncludeProvider implements IncludeProvider {
         ClientQueryable<TProperty> firstQueryable = clientQueryable.cloneQueryable();
         firstQueryable.where(o -> {
             o.and(() -> {
+                EntityRelationPropertyProvider relationPropertyProvider = navigateMetadata.getEntityRelationPropertyProvider();
+
                 if (directMapping) {
-                    o.multiEq(true, navigateMetadata.getDirectTargetPropertiesOrPrimary(runtimeContext), relationId);
+                    relationPropertyProvider.relationMultiIdFetcherPredicate(o,navigateMetadata.getDirectTargetPropertiesOrPrimary(runtimeContext),relationId);
+//                    o.multiEq(true, navigateMetadata.getDirectTargetPropertiesOrPrimary(runtimeContext), relationId);
                 } else {
-                    o.multiEq(true, navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationId);
+                    relationPropertyProvider.relationMultiIdFetcherPredicate(o,navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext),relationId);
+
                 }
                 navigateMetadata.predicateFilterApply(o);
             });

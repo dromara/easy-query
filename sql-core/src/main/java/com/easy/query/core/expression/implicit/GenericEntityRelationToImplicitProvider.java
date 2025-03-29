@@ -25,6 +25,7 @@ import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasySQLUtil;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -34,9 +35,9 @@ import java.util.Optional;
  *
  * @author xuejiaming
  */
-public class GenericEntityRelationToImplicitProvider implements EntityRelationPredicateProvider, EntityRelationToImplicitGroupProvider, EntityRelationToImplicitPartitionByProvider {
+public class GenericEntityRelationToImplicitProvider implements EntityRelationPropertyProvider, EntityRelationToImplicitGroupProvider, EntityRelationToImplicitPartitionByProvider {
 
-    public static final EntityRelationPredicateProvider INSTANCE = new GenericEntityRelationToImplicitProvider();
+    public static final EntityRelationPropertyProvider INSTANCE = new GenericEntityRelationToImplicitProvider();
 
     @Override
     public TableAvailable toImplicitJoin(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property, String fullName) {
@@ -77,20 +78,6 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
         return "";
     }
 
-    @Override
-    public void selfTargetPropertyPredicate(TableAvailable selfTable, String[] selfProps, WherePredicate<?> targetWherePredicate, String[] targetProps) {
-        targetWherePredicate.multiEq(true, new SimpleEntitySQLTableOwner<>(selfTable), targetProps, selfProps);
-    }
-
-    @Override
-    public void targetTargetMappingPropertyPredicate(TableAvailable targetTable, String[] targetProps, WherePredicate<?> mappingWherePredicate, String[] targetMappingProps) {
-        mappingWherePredicate.multiEq(true, new SimpleEntitySQLTableOwner<>(targetTable), targetMappingProps, targetProps);
-    }
-
-    @Override
-    public void selfSelfMappingPropertyPredicate(TableAvailable selfTable, String[] selfProps, WherePredicate<?> mappingWherePredicate, String[] selfMappingProps) {
-        mappingWherePredicate.multiEq(true, new SimpleEntitySQLTableOwner<>(selfTable), selfMappingProps, selfProps);
-    }
 
     @Override
     public AnonymousManyJoinEntityTableExpressionBuilder toImplicitGroup(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext, RelationTableKey relationTableKey) {
@@ -99,9 +86,9 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
     }
 
     @Override
-    public <T1> AnonymousManyJoinEntityTableExpressionBuilder toImplicitPartitionBy(Class<T1> entityClass, EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, String fullName, int index, QueryRuntimeContext runtimeContext, SQLExpression1<ClientQueryable<T1>> clientQueryableSQLExpression) {
+    public <T1> AnonymousManyJoinEntityTableExpressionBuilder toImplicitPartitionBy(Class<T1> entityClass, EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, int index, QueryRuntimeContext runtimeContext, SQLExpression1<ClientQueryable<T1>> clientQueryableSQLExpression) {
         //获取表达式配置信息
-        ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName));
+        ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(new DefaultRelationTableKey(leftTable, navigateMetadata.getPropertyName()));
         //创建分区分组查询表达式
         ClientQueryable<?> clientQueryable = createPartitionQueryable(entityClass, entityExpressionBuilder.getRuntimeContext(), navigateMetadata, manyConfiguration, clientQueryableSQLExpression);
         ToSQLResult sqlResult = clientQueryable.toSQLResult();
@@ -109,7 +96,7 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
         //后续SQLParameter改成实现hashCode和equals
         String parameterString = EasySQLUtil.sqlParameterToString(sqlResult.getSqlContext().getParameters());
 
-        RelationTableKey partitionByRelationTableKey = new PartitionByRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), fullName, index, String.format("%s:%s", sql, parameterString));
+        RelationTableKey partitionByRelationTableKey = new PartitionByRelationTableKey(leftTable, navigateMetadata.getPropertyName(), index, String.format("%s:%s", sql, parameterString));
 
         return EasyRelationalUtil.getManySingleJoinRelationTable(partitionByRelationTableKey, entityExpressionBuilder, leftTable, navigateMetadata, index, clientQueryable);
 
@@ -167,5 +154,15 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
             x.sqlFuncAs(partitionBySQLFunction, "__row__");
 
         });
+    }
+
+    @Override
+    public void relationMultiIdsFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<List<Object>> relationIds) {
+        targetWherePredicate.relationIn(targetProps, relationIds);
+    }
+
+    @Override
+    public void relationMultiIdFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<Object> relationIds) {
+        targetWherePredicate.multiEq(true, targetProps, relationIds);
     }
 }

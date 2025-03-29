@@ -3,7 +3,7 @@ package com.easy.query.core.proxy;
 import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.context.EmptyQueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.implicit.EntityRelationPredicateProvider;
+import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.metadata.NavigateMetadata;
@@ -59,7 +59,6 @@ import com.easy.query.core.proxy.columns.types.impl.SQLUUIDTypeColumnImpl;
 import com.easy.query.core.proxy.columns.types.impl.SQLUtilDateTypeColumnImpl;
 import com.easy.query.core.proxy.core.ColumnSelectSQLContext;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.impl.SQLColumnImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
 
@@ -296,7 +295,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
             }
             String fullName = getFullNavValue(property);
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
-            EntityRelationPredicateProvider entityRelationToImplicitProvider = navigateMetadata.getEntityRelationPredicateProvider();
+            EntityRelationPropertyProvider entityRelationToImplicitProvider = navigateMetadata.getEntityRelationPropertyProvider();
             TableAvailable relationTable = entityRelationToImplicitProvider.toImplicitJoin(entityExpressionBuilder, leftTable, property, fullName);
             TPropertyProxy tPropertyProxy = propertyProxy.create(relationTable, this.getEntitySQLContext());
             tPropertyProxy.setNavValue(fullName);
