@@ -3,10 +3,13 @@ package com.easy.query.mysql.config;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
-import com.easy.query.core.expression.many.ToManySubquerySQLStrategy;
+import com.easy.query.core.expression.RelationTableKey;
+import com.easy.query.core.expression.implicit.EntityRelationPredicateProvider;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner;
+import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.metadata.NavigateMetadata;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * create time 2025/3/19 16:17
@@ -14,8 +17,13 @@ import com.easy.query.core.metadata.NavigateMetadata;
  *
  * @author xuejiaming
  */
-public class ToManySubqueryMySQLColumnValuesSQLStrategy implements ToManySubquerySQLStrategy {
-    public static final ToManySubquerySQLStrategy INSTANCE = new ToManySubqueryMySQLColumnValuesSQLStrategy();
+public class FindInSetRelationToImplicitProvider implements EntityRelationPredicateProvider {
+    public static final EntityRelationPredicateProvider INSTANCE = new FindInSetRelationToImplicitProvider();
+
+    @Override
+    public AnonymousManyJoinEntityTableExpressionBuilder toImplicitGroup(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext, RelationTableKey relationTableKey) {
+        return null;
+    }
 
     @Override
     public String getName() {
@@ -23,20 +31,11 @@ public class ToManySubqueryMySQLColumnValuesSQLStrategy implements ToManySubquer
     }
 
     @Override
-    public <T> ClientQueryable<T> toManySubquery(ClientQueryable<T> clientQueryable, TableAvailable leftTable, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext) {
+    public <T> ClientQueryable<T> toImplicitSubQuery(TableAvailable leftTable, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext) {
+
+        ClientQueryable<?> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getNavigatePropertyType(), runtimeContext);
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
-            ClientQueryable<?> mappingQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
-            clientQueryable.where(x -> {
-                x.and(() -> {
-                    ClientQueryable<?> subMappingQueryable = mappingQueryable.where(m -> {
-                        m.multiEq(true, x, navigateMetadata.getTargetMappingProperties(), navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
-                        m.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), navigateMetadata.getSelfMappingProperties(), navigateMetadata.getSelfPropertiesOrPrimary());
-                        navigateMetadata.predicateMappingClassFilterApply(m);
-                    }).limit(1);
-                    x.exists(subMappingQueryable);
-                    navigateMetadata.predicateFilterApply(x);
-                });
-            });
+            throw new UnsupportedOperationException("many to many not support find_in_set");
         } else {
             clientQueryable.where(t -> {
                 String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
@@ -55,6 +54,11 @@ public class ToManySubqueryMySQLColumnValuesSQLStrategy implements ToManySubquer
                 });
             });
         }
-        return clientQueryable;
+        return EasyObjectUtil.typeCastNullable(clientQueryable);
+    }
+
+    @Override
+    public TableAvailable toImplicitJoin(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property, String fullName) {
+        return null;
     }
 }

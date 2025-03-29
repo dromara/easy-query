@@ -6,7 +6,6 @@ import com.easy.query.core.annotation.ColumnSQLExpression;
 import com.easy.query.core.annotation.EasyAssertMessage;
 import com.easy.query.core.annotation.EasyTree;
 import com.easy.query.core.annotation.Encryption;
-import com.easy.query.core.annotation.ExpressionArg;
 import com.easy.query.core.annotation.InsertIgnore;
 import com.easy.query.core.annotation.LogicDelete;
 import com.easy.query.core.annotation.Navigate;
@@ -76,7 +75,7 @@ import com.easy.query.core.exception.EasyQueryPropertyNotFoundException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.many.ToManySubquerySQLStrategy;
+import com.easy.query.core.expression.implicit.EntityRelationPredicateProvider;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
@@ -338,9 +337,9 @@ public class EntityMetadata {
         return null;
     }
 
-    private @Nullable ToManySubquerySQLStrategy getToManySubquerySQLStrategy(QueryConfiguration configuration, Navigate navigate) {
+    private @Nullable EntityRelationPredicateProvider getToManySubquerySQLStrategy(QueryConfiguration configuration, Navigate navigate) {
 
-        ToManySubquerySQLStrategy toManySubquerySQLStrategy = configuration.getToManySubquerySQLStrategy(navigate.toManySubqueryName());
+        EntityRelationPredicateProvider toManySubquerySQLStrategy = configuration.getToManySubquerySQLStrategy(navigate.toManySubqueryName());
         if (toManySubquerySQLStrategy == null) {
             throw new EasyQueryInvalidOperationException("not found navigate to many subquery sql strategy:[" + navigate.toManySubqueryName()+ "]");
         }
@@ -382,7 +381,7 @@ public class EntityMetadata {
                 }
             }
 
-            ToManySubquerySQLStrategy toManySubquerySQLStrategy = getToManySubquerySQLStrategy(configuration, navigate);
+            EntityRelationPredicateProvider toManySubquerySQLStrategy = getToManySubquerySQLStrategy(configuration, navigate);
             navigateOption.setToManySubquerySQLStrategy(toManySubquerySQLStrategy);
 
 

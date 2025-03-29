@@ -117,7 +117,8 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractOverrideC
             EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
             TableAvailable leftTable = tableOrRelationalTable.table;
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(tableOrRelationalTable.property);
-            entityQueryExpressionBuilder.addManyJoinConfiguration(new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), manyColumn.getNavValue()));
+            DefaultRelationTableKey relationTableKey = new DefaultRelationTableKey(leftTable.getEntityClass(), navigateMetadata.getNavigatePropertyType(), manyColumn.getNavValue());
+            entityQueryExpressionBuilder.addManyJoinConfiguration(relationTableKey);
         }
         return this;
     }

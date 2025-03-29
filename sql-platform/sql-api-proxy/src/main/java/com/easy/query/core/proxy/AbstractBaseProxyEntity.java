@@ -1,18 +1,11 @@
 package com.easy.query.core.proxy;
 
-import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.annotation.Nullable;
-import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.EmptyQueryRuntimeContext;
-import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.DefaultRelationTableKey;
+import com.easy.query.core.expression.implicit.EntityRelationPredicateProvider;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner;
-import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.columns.SubQueryContext;
@@ -302,7 +295,9 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                 throw new EasyQueryInvalidOperationException(String.format("getNavigate %s cant not found table", property));
             }
             String fullName = getFullNavValue(property);
-            TableAvailable relationTable = EasyRelationalUtil.getRelationTable(entityExpressionBuilder, leftTable, property, fullName);
+            NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
+            EntityRelationPredicateProvider entityRelationToImplicitProvider = navigateMetadata.getEntityRelationPredicateProvider();
+            TableAvailable relationTable = entityRelationToImplicitProvider.toImplicitJoin(entityExpressionBuilder, leftTable, property, fullName);
             TPropertyProxy tPropertyProxy = propertyProxy.create(relationTable, this.getEntitySQLContext());
             tPropertyProxy.setNavValue(fullName);
             return tPropertyProxy;

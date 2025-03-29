@@ -9,6 +9,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
+import com.easy.query.core.expression.parser.core.base.impl.NavigateIncludeImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -46,7 +47,7 @@ public class DefaultIncludeProvider implements IncludeProvider {
         EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
         int relationGroupSize = groupSize != null ? groupSize : easyQueryOption.getRelationGroupSize();
         includeNavigateParams.setRelationGroupSize(relationGroupSize);
-        NavigateInclude navigateInclude = getNavigateInclude(table, entityMetadata, includeNavigateParams, expressionContext);
+        NavigateInclude navigateInclude = new NavigateIncludeImpl(table,entityMetadata, expressionContext.getRuntimeContext(), includeNavigateParams, expressionContext);
         ClientQueryable<TProperty> clientQueryable = navigateIncludeSQLExpression.apply(navigateInclude);
         boolean hasLimit = clientQueryable.getSQLEntityExpressionBuilder().hasLimit();
         includeNavigateParams.setLimit(hasLimit);

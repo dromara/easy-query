@@ -6,7 +6,6 @@ import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
 import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
-import com.easy.query.core.basic.extension.generated.UnsupportPrimaryKeyGenerator;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
@@ -24,8 +23,8 @@ import com.easy.query.core.basic.extension.version.VersionUUIDStrategy;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.many.ToManySubqueryEqualSQLStrategy;
-import com.easy.query.core.expression.many.ToManySubquerySQLStrategy;
+import com.easy.query.core.expression.implicit.GenericEntityRelationToImplicitProvider;
+import com.easy.query.core.expression.implicit.EntityRelationPredicateProvider;
 import com.easy.query.core.job.EasyTimeJobManager;
 import com.easy.query.core.job.TimeJob;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
@@ -72,7 +71,7 @@ public class QueryConfiguration {
     private Map<Class<? extends ColumnValueSQLConverter>, ColumnValueSQLConverter> columnValueSQLConverterMap = new ConcurrentHashMap<>();
     private Map<Class<? extends GeneratedKeySQLColumnGenerator>, GeneratedKeySQLColumnGenerator> generatedSQLColumnGeneratorMap = new ConcurrentHashMap<>();
     private Map<Class<? extends PrimaryKeyGenerator>, PrimaryKeyGenerator> primaryKeyGeneratorMap = new ConcurrentHashMap<>();
-    private Map<String, ToManySubquerySQLStrategy> toManySubquerySQLStrategyMap = new ConcurrentHashMap<>();
+    private Map<String, EntityRelationPredicateProvider> toManySubquerySQLStrategyMap = new ConcurrentHashMap<>();
 
     //    public EasyQueryConfiguration(Dialect dialect, NameConversion nameConversion) {
 //       this(EasyQueryOption.defaultEasyQueryOption(),dialect,nameConversion);
@@ -87,7 +86,7 @@ public class QueryConfiguration {
         easyVersionStrategyMap.put(VersionUUIDStrategy.class, new VersionUUIDStrategy());
         easyVersionStrategyMap.put(VersionTimestampStrategy.class, new VersionTimestampStrategy());
         shardingInitializerMap.put(UnShardingInitializer.class, UnShardingInitializer.INSTANCE);
-        toManySubquerySQLStrategyMap.put("", ToManySubqueryEqualSQLStrategy.INSTANCE);
+        toManySubquerySQLStrategyMap.put("", GenericEntityRelationToImplicitProvider.INSTANCE);
 //        primaryKeyGeneratorMap.put(UnsupportPrimaryKeyGenerator.class, UnsupportPrimaryKeyGenerator.INSTANCE);
     }
 
@@ -319,14 +318,14 @@ public class QueryConfiguration {
     public PrimaryKeyGenerator getPrimaryKeyGenerator(Class<? extends PrimaryKeyGenerator> primaryKeyGenerator) {
         return primaryKeyGeneratorMap.get(primaryKeyGenerator);
     }
-    public void applyToManySubquerySQLStrategy(ToManySubquerySQLStrategy toManySubquerySQLStrategy) {
+    public void applyToManySubquerySQLStrategy(EntityRelationPredicateProvider toManySubquerySQLStrategy) {
         if (toManySubquerySQLStrategyMap.containsKey(toManySubquerySQLStrategy.getName())) {
             throw new EasyQueryException("to many subquery sql strategy:" + toManySubquerySQLStrategy.getName() + ",repeat");
         }
         toManySubquerySQLStrategyMap.put(toManySubquerySQLStrategy.getName(), toManySubquerySQLStrategy);
     }
 
-    public ToManySubquerySQLStrategy getToManySubquerySQLStrategy(String name) {
+    public EntityRelationPredicateProvider getToManySubquerySQLStrategy(String name) {
         return toManySubquerySQLStrategyMap.get(name);
     }
 }

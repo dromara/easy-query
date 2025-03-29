@@ -29,8 +29,5 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public interface IncludeProvider{
-    default NavigateInclude getNavigateInclude(@Nullable TableAvailable table, EntityMetadata entityMetadata, IncludeNavigateParams includeNavigateParams, ExpressionContext expressionContext) {
-        return new NavigateIncludeImpl(table,entityMetadata, expressionContext.getRuntimeContext(), includeNavigateParams, expressionContext);
-    }
     <TProperty> void include(@Nullable TableAvailable table,EntityMetadata entityMetadata, ExpressionContext expressionContext, SQLFuncExpression1<NavigateInclude, ClientQueryable<TProperty>> navigateIncludeSQLExpression);
 }

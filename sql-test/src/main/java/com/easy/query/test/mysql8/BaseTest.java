@@ -11,7 +11,7 @@ import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.QueryConfiguration;
-import com.easy.query.mysql.config.ToManySubqueryMySQLColumnValuesSQLStrategy;
+import com.easy.query.mysql.config.FindInSetRelationToImplicitProvider;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.common.MyQueryConfiguration;
@@ -80,7 +80,7 @@ public class BaseTest {
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
         QueryConfiguration queryConfiguration = easyQueryClient.getRuntimeContext().getQueryConfiguration();
-        queryConfiguration.applyToManySubquerySQLStrategy(ToManySubqueryMySQLColumnValuesSQLStrategy.INSTANCE);
+        queryConfiguration.applyToManySubquerySQLStrategy(FindInSetRelationToImplicitProvider.INSTANCE);
         easyQuery = new DefaultEasyQuery(easyQueryClient);
         easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
 

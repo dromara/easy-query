@@ -2,12 +2,19 @@ package com.easy.query.test;
 
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.proxy.SQLMathExpression;
+import com.easy.query.core.proxy.columns.types.SQLIntegerTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.grouping.proxy.Grouping2Proxy;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.doc.entity.DocBankCard;
 import com.easy.query.test.doc.entity.DocUser;
+import com.easy.query.test.entity.BaseEntity;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
@@ -151,10 +158,12 @@ public class QueryTest23 extends BaseTest {
 
     @Test
      public void testAdd(){
-        List<Draft1<BigDecimal>> list = easyEntityQuery.queryable(BlogEntity.class)
-                .select(t_blog -> Select.DRAFT.of(
-                        t_blog.star().add(t_blog.score()).multiply(t_blog.order())
-                )).toList();
+        easyEntityQuery.queryable(DocBankCard.class)
+                .include(s->s.bank())
+                .where(bank_card -> {
+                    bank_card.bank()
+                })
+
     }
 
 }
