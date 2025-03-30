@@ -37,7 +37,7 @@ public interface DSLColumnSet<TProxy, TProperty> extends PropTypeColumn<TPropert
 
     default TProxy set(boolean condition, TProperty val) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLColumnSetValueImpl(getTable(), getValue(), val));
+            getCurrentEntitySQLContext().accept(new SQLColumnSetValueImpl(getTable(), getValue(), val));
         }
         return castChain();
     }
@@ -48,7 +48,7 @@ public interface DSLColumnSet<TProxy, TProperty> extends PropTypeColumn<TPropert
 
     default TProxy setNull(boolean condition) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLColumnSetValueImpl(getTable(), getValue(), null));
+            getCurrentEntitySQLContext().accept(new SQLColumnSetValueImpl(getTable(), getValue(), null));
         }
         return castChain();
     }
@@ -59,7 +59,7 @@ public interface DSLColumnSet<TProxy, TProperty> extends PropTypeColumn<TPropert
 //
 //    default void set(boolean condition, SQLColumn<?, TProperty> column) {
 //        if (condition) {
-//            getEntitySQLContext().accept(new SQLColumnSetColumnImpl(getTable(), getValue(), column));
+//            getCurrentEntitySQLContext().accept(new SQLColumnSetColumnImpl(getTable(), getValue(), column));
 //        }
 //    }
 //
@@ -74,7 +74,7 @@ public interface DSLColumnSet<TProxy, TProperty> extends PropTypeColumn<TPropert
 //
 //    default <TResult extends DSLSQLFunctionAvailable & PropTypeColumn<TProperty>> void set(boolean condition, TResult val) {
 //        if (condition) {
-//            getEntitySQLContext().accept(new SQLColumnSetSQLFunctionValueImpl(getTable(), getValue(), val));
+//            getCurrentEntitySQLContext().accept(new SQLColumnSetSQLFunctionValueImpl(getTable(), getValue(), val));
 //        }
 //    }
 
@@ -109,7 +109,7 @@ public interface DSLColumnSet<TProxy, TProperty> extends PropTypeColumn<TPropert
 
     default <TResult extends PropTypeColumn<TProperty>> TProxy set(boolean condition, TResult val) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLColumnSetPropColumnImpl(getTable(), getValue(), val));
+            getCurrentEntitySQLContext().accept(new SQLColumnSetPropColumnImpl(getTable(), getValue(), val));
         }
         return castChain();
     }
@@ -126,7 +126,7 @@ public interface DSLColumnSet<TProxy, TProperty> extends PropTypeColumn<TPropert
 
     default TProxy setSQL(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLColumnSetNativeSQLImpl(getTable(), getValue(), sqlSegment, contextConsume));
+            getCurrentEntitySQLContext().accept(new SQLColumnSetNativeSQLImpl(getTable(), getValue(), sqlSegment, contextConsume));
         }
         return castChain();
     }
@@ -152,7 +152,7 @@ public interface DSLColumnSet<TProxy, TProperty> extends PropTypeColumn<TPropert
      */
     default TProxy setSubQuery(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLColumnSetSubQueryImpl(getTable(), getValue(), subQuery));
+            getCurrentEntitySQLContext().accept(new SQLColumnSetSubQueryImpl(getTable(), getValue(), subQuery));
         }
         return castChain();
     }
@@ -179,7 +179,7 @@ public interface DSLColumnSet<TProxy, TProperty> extends PropTypeColumn<TPropert
      */
     default TProxy setExpression(boolean condition, SQLSelectExpression sqlSelectExpression) {
         if (condition) {
-            getEntitySQLContext().accept(sqlSelectExpression.as(getValue()));
+            getCurrentEntitySQLContext().accept(sqlSelectExpression.as(getValue()));
         }
         return castChain();
     }
@@ -227,7 +227,7 @@ public interface DSLColumnSet<TProxy, TProperty> extends PropTypeColumn<TPropert
             , SQLFuncExpression1<TSourcePropertyProxy, TPropertyProxy> navigateSelectExpression) {
         Class<TSourceProperty> propertyType = EasyObjectUtil.typeCastNullable(column.getPropertyType());
         TSourcePropertyProxy tSourcePropertyProxy = EntityQueryProxyManager.create(propertyType);
-        getEntitySQLContext().accept(new SQLColumnIncludeColumnImpl<>(column.getTable(), column.getValue(), getValue(), tSourcePropertyProxy, navigateSelectExpression));
+        getCurrentEntitySQLContext().accept(new SQLColumnIncludeColumnImpl<>(column.getTable(), column.getValue(), getValue(), tSourcePropertyProxy, navigateSelectExpression));
         return castChain();
     }
 //
@@ -237,7 +237,7 @@ public interface DSLColumnSet<TProxy, TProperty> extends PropTypeColumn<TPropert
 //
 //    default <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>> void setNavigate(boolean condition, TPropertyProxy columnProxy) {
 //        if (condition) {
-//            getEntitySQLContext().accept(new SQLColumnSetColumnImpl(getTable(), getValue(), column));
+//            getCurrentEntitySQLContext().accept(new SQLColumnSetColumnImpl(getTable(), getValue(), column));
 //        }
 //    }
 
@@ -305,10 +305,10 @@ public interface DSLColumnSet<TProxy, TProperty> extends PropTypeColumn<TPropert
      */
     default <T extends Number> TProxy increment(boolean condition, Number val) {
         if (condition) {
-//            getEntitySQLContext().accept(new SQLColumnSetImpl(x -> {
+//            getCurrentEntitySQLContext().accept(new SQLColumnSetImpl(x -> {
 //                x.setIncrementNumber(true, getTable(), getValue(), val);
 //            }));
-            getEntitySQLContext().accept(new SQLColumnIncrementImpl(getTable(), getValue(), val));
+            getCurrentEntitySQLContext().accept(new SQLColumnIncrementImpl(getTable(), getValue(), val));
         }
         return castChain();
     }
@@ -334,7 +334,7 @@ public interface DSLColumnSet<TProxy, TProperty> extends PropTypeColumn<TPropert
      */
     default <T extends Number> TProxy decrement(boolean condition, Number val) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLColumnDecrementImpl(getTable(), getValue(), val));
+            getCurrentEntitySQLContext().accept(new SQLColumnDecrementImpl(getTable(), getValue(), val));
         }
         return castChain();
     }

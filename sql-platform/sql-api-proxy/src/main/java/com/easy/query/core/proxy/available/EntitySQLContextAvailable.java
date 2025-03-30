@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.available;
 
+import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 
 /**
@@ -10,5 +11,10 @@ import com.easy.query.core.proxy.core.EntitySQLContext;
  */
 public interface EntitySQLContextAvailable {
     EntitySQLContext getEntitySQLContext();
+    default @NotNull EntitySQLContext getCurrentEntitySQLContext(){
+        return getEntitySQLContext().getCurrentEntitySQLContext();
+    }
+
+
 
 }

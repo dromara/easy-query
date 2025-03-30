@@ -13,6 +13,6 @@ public interface ColumnFunctionCompareComparableObjectChainExpression<T> extends
 
     default ColumnFunctionCompareComparableAnyChainExpression<T> asAny() {
         Class<?> propertyType = getPropertyType();
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), this.func(), propertyType);
+        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), this.func(), propertyType);
     }
 }

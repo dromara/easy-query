@@ -30,7 +30,7 @@ public interface DSLValuesPredicate<TProperty> extends TablePropColumn, EntitySQ
      */
     default void in(boolean condition, Collection<? extends TProperty> collections){
         if(condition){
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.in(this.getTable(), this.getValue(), collections)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.in(this.getTable(), this.getValue(), collections)));
         }
     }
 
@@ -51,7 +51,7 @@ public interface DSLValuesPredicate<TProperty> extends TablePropColumn, EntitySQ
      */
     default void in(boolean condition, TProperty[] arrays){
         if(condition){
-           getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.in(this.getTable(), this.getValue(), arrays)));
+           getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.in(this.getTable(), this.getValue(), arrays)));
         }
     }
 
@@ -72,7 +72,7 @@ public interface DSLValuesPredicate<TProperty> extends TablePropColumn, EntitySQ
      */
     default void notIn(boolean condition, Collection<? extends TProperty> collections){
         if(condition){
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.getValue(), collections)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.getValue(), collections)));
         }
     }
 
@@ -93,7 +93,7 @@ public interface DSLValuesPredicate<TProperty> extends TablePropColumn, EntitySQ
      */
     default void notIn(boolean condition, TProperty[] arrays){
         if(condition){
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.getValue(), arrays)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.getValue(), arrays)));
         }
     }
 }

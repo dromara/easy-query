@@ -20,7 +20,7 @@ public interface DSLStringAssertPredicate<TProperty> extends TablePropColumn, En
 
     default void isEmpty(boolean condition){
         if(condition){
-           getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+           getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                SQLFunc fx = f.getRuntimeContext().fx();
                SQLFunction bank = fx.empty(getValue());
                f.sqlNativeSegment(bank.sqlSegment(getTable()),c->{
@@ -35,7 +35,7 @@ public interface DSLStringAssertPredicate<TProperty> extends TablePropColumn, En
 
     default void isNotEmpty(boolean condition){
         if(condition){
-           getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                SQLFunc fx = f.getRuntimeContext().fx();
                SQLFunction bank = fx.notEmpty(getValue());
                f.sqlNativeSegment(bank.sqlSegment(getTable()),c->{
@@ -50,7 +50,7 @@ public interface DSLStringAssertPredicate<TProperty> extends TablePropColumn, En
 
     default void isBlank(boolean condition){
         if(condition){
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 SQLFunction bank = fx.bank(getValue());
                 f.sqlNativeSegment(bank.sqlSegment(getTable()),c->{
@@ -65,7 +65,7 @@ public interface DSLStringAssertPredicate<TProperty> extends TablePropColumn, En
 
     default void isNotBlank(boolean condition){
         if(condition){
-           getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                SQLFunc fx = f.getRuntimeContext().fx();
                SQLFunction bank = fx.notBank(getValue());
                f.sqlNativeSegment(bank.sqlSegment(getTable()),c->{

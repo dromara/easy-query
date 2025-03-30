@@ -22,7 +22,7 @@ public interface DSLLikeColumnAggregatePredicate<TProperty> extends DSLLikeColum
     @Override
     default <TProxy> void likeMatchLeft(boolean condition, SQLColumn<TProxy, String> column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.like(this.getTable(), func().apply(fx), column.getTable(),column.getValue(),true, SQLLikeEnum.LIKE_PERCENT_RIGHT);
             }, f -> {
@@ -41,7 +41,7 @@ public interface DSLLikeColumnAggregatePredicate<TProperty> extends DSLLikeColum
     @Override
     default <TProxy> void likeMatchRight(boolean condition, SQLColumn<TProxy, String> column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.like(this.getTable(), func().apply(fx), column.getTable(),column.getValue(),true, SQLLikeEnum.LIKE_PERCENT_LEFT);
             }, f -> {
@@ -54,7 +54,7 @@ public interface DSLLikeColumnAggregatePredicate<TProperty> extends DSLLikeColum
     @Override
     default <TProxy> void like(boolean condition, SQLColumn<TProxy, String> column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.like(this.getTable(), func().apply(fx), column.getTable(),column.getValue(),true, SQLLikeEnum.LIKE_PERCENT_ALL);
             }, f -> {
@@ -67,7 +67,7 @@ public interface DSLLikeColumnAggregatePredicate<TProperty> extends DSLLikeColum
     @Override
     default <TProxy> void notLikeMatchLeft(boolean condition, SQLColumn<TProxy, String> column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.like(this.getTable(), func().apply(fx), column.getTable(),column.getValue(),false, SQLLikeEnum.LIKE_PERCENT_RIGHT);
             }, f -> {
@@ -80,7 +80,7 @@ public interface DSLLikeColumnAggregatePredicate<TProperty> extends DSLLikeColum
     @Override
     default <TProxy> void notLikeMatchRight(boolean condition, SQLColumn<TProxy, String> column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.like(this.getTable(), func().apply(fx), column.getTable(),column.getValue(),false, SQLLikeEnum.LIKE_PERCENT_LEFT);
             }, f -> {
@@ -93,7 +93,7 @@ public interface DSLLikeColumnAggregatePredicate<TProperty> extends DSLLikeColum
     @Override
     default <TProxy> void notLike(boolean condition, SQLColumn<TProxy, String> column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.like(this.getTable(), func().apply(fx), column.getTable(),column.getValue(),false, SQLLikeEnum.LIKE_PERCENT_ALL);
             }, f -> {

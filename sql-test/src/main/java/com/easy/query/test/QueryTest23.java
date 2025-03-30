@@ -340,36 +340,36 @@ public class QueryTest23 extends BaseTest {
             throw new RuntimeException(e);
         }
 
-        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
-                .where(t_blog -> {
-                    Expression expression = t_blog.expression();
-
-//                    expression.exists(() -> {
-//                        return expression.subQueryable(Topic.class)
-//                                .where(t_topic -> {
-//                                    t_blog.id().eq(t_topic.id().nullOrDefault("1"));
-//                                });
-//                    });
-
-                })
-//                .select(t_blog -> {
-//
-//                    ColumnFunctionCompareComparableAnyChainExpression<Number> subQuery = t_blog.expression().subQuery(() -> {
-//                                return easyEntityQuery.queryable(Topic.class)
-//                                        .where(t_topic -> {
-//                                            t_topic.id().eq(t_blog.id());
-//                                        }).selectColumn(s -> s.stars().sum());
-//                            }
-//                    );
-//                    return Select.DRAFT.of(
-//                            t_blog.star().subtract(subQuery)
-//                    );
-//                })
-                .toList();
     }
 
     @Test
-     public void testAdd(){
+    public void testAdd() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    Expression expression = t_blog.expression();
+                    t_blog.id().eq("123");
+                    expression.exists(() -> {
+                        return expression.subQueryable(Topic.class)
+                                .where(t_topic -> {
+                                    t_blog.id().eq(t_topic.id().nullOrDefault("1"));
+                                }).groupBy(t_topic -> GroupKeys.of(t_topic.id()))
+                                .having(group -> t_blog.id().count().gt(1L)).orderBy(t_topic -> {
+                                    t_blog.id().asc();
+                                });
+                    });
+
+                })
+                .toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND EXISTS (SELECT 1 FROM `t_topic` t1 WHERE  t.`id` = IFNULL(t1.`id`,?) GROUP BY t1.`id` HAVING COUNT(t.`id`) > ? ORDER BY t.`id` ASC)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),123(String),1(String),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
 //        easyEntityQuery.queryable(DocBankCard.class)
 //                .include(s->s.bank())

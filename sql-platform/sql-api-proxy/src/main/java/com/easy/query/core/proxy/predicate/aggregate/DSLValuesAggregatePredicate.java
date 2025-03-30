@@ -20,7 +20,7 @@ public interface DSLValuesAggregatePredicate<TProperty> extends DSLValuesPredica
     default void in(boolean condition, Collection<? extends TProperty> collections) {
         if (condition) {
             Collection<?> collect = _toFunctionSerializeValues(collections);
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.funcInFilter(this.getTable(), func().apply(fx),collect , SQLPredicateCompareEnum.IN);
             }, f -> {
@@ -43,7 +43,7 @@ public interface DSLValuesAggregatePredicate<TProperty> extends DSLValuesPredica
     default void notIn(boolean condition, Collection<? extends TProperty> collections) {
         if (condition) {
             Collection<?> collect = _toFunctionSerializeValues(collections);
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.funcInFilter(this.getTable(), func().apply(fx), collect,SQLPredicateCompareEnum.NOT_IN);
             }, f -> {

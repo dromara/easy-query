@@ -23,13 +23,14 @@ public interface EntityRelationPropertyProvider {
 
     /**
      * 隐式子查询
+     * @param entityExpressionBuilder
      * @param leftTable
      * @param navigateMetadata
      * @param runtimeContext
      * @return
      * @param <T>
      */
-    <T> ClientQueryable<T> toImplicitSubQuery(TableAvailable leftTable, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext);
+    <T> ClientQueryable<T> toImplicitSubQuery(EntityExpressionBuilder entityExpressionBuilder,TableAvailable leftTable, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext);
 
     /**
      * 隐式join

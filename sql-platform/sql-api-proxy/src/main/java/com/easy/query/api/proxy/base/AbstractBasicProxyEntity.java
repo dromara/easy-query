@@ -14,9 +14,9 @@ import com.easy.query.core.proxy.impl.SQLColumnSetValueImpl;
  */
 public abstract class AbstractBasicProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> extends AbstractBaseProxyEntity<TProxy,TEntity> {
     protected void set(TEntity val) {
-        getEntitySQLContext().accept(new SQLColumnSetValueImpl(null, null, val));
+        getCurrentEntitySQLContext().accept(new SQLColumnSetValueImpl(null, null, val));
     }
     protected void set(PropTypeColumn<TEntity> val) {
-        getEntitySQLContext().accept(new SQLColumnSetPropColumnImpl(null, null, val));
+        getCurrentEntitySQLContext().accept(new SQLColumnSetPropColumnImpl(null, null, val));
     }
 }

@@ -60,7 +60,7 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
             }
         }
 
-        ClientQueryable<T1> implicitSubQuery = entityRelationPredicateProvider.toImplicitSubQuery(leftTable, navigateMetadata, runtimeContext);
+        ClientQueryable<T1> implicitSubQuery = entityRelationPredicateProvider.toImplicitSubQuery(entityExpressionBuilder,leftTable, navigateMetadata, runtimeContext);
 
         ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(defaultRelationTableKey);
 

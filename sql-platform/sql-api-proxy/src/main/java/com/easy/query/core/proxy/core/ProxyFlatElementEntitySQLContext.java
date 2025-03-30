@@ -38,6 +38,11 @@ public class ProxyFlatElementEntitySQLContext implements FlatEntitySQLContext {
     }
 
     @Override
+    public EntitySQLContext getCurrentEntitySQLContext() {
+        return this;
+    }
+
+    @Override
     public void accept(EntityExpressionAccept accept, SQLActionExpression sqlActionExpression) {
         sqlActionExpression.apply();
     }

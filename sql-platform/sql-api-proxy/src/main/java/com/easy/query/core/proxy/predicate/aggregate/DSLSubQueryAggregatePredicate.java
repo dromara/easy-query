@@ -17,7 +17,7 @@ public interface DSLSubQueryAggregatePredicate<TProperty> extends DSLSubQueryPre
     @Override
     default void ge(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.ge(this.getTable(), func().apply(fx), subQuery);
             }, f -> {
@@ -30,7 +30,7 @@ public interface DSLSubQueryAggregatePredicate<TProperty> extends DSLSubQueryPre
     @Override
     default void gt(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.gt(this.getTable(), func().apply(fx), subQuery);
             }, f -> {
@@ -43,7 +43,7 @@ public interface DSLSubQueryAggregatePredicate<TProperty> extends DSLSubQueryPre
     @Override
     default void eq(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.eq(this.getTable(), func().apply(fx), subQuery);
             }, f -> {
@@ -56,7 +56,7 @@ public interface DSLSubQueryAggregatePredicate<TProperty> extends DSLSubQueryPre
     @Override
     default void ne(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.ne(this.getTable(), func().apply(fx), subQuery);
             }, f -> {
@@ -69,7 +69,7 @@ public interface DSLSubQueryAggregatePredicate<TProperty> extends DSLSubQueryPre
     @Override
     default void le(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.le(this.getTable(), func().apply(fx), subQuery);
             }, f -> {
@@ -82,7 +82,7 @@ public interface DSLSubQueryAggregatePredicate<TProperty> extends DSLSubQueryPre
     @Override
     default void lt(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.lt(this.getTable(), func().apply(fx), subQuery);
             }, f -> {
@@ -95,7 +95,7 @@ public interface DSLSubQueryAggregatePredicate<TProperty> extends DSLSubQueryPre
     @Override
     default void in(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.funcSubQueryFilter(this.getTable(), func().apply(fx), subQuery,SQLPredicateCompareEnum.IN);
             }, f -> {
@@ -108,7 +108,7 @@ public interface DSLSubQueryAggregatePredicate<TProperty> extends DSLSubQueryPre
     @Override
     default void notIn(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.funcSubQueryFilter(this.getTable(), func().apply(fx), subQuery,SQLPredicateCompareEnum.NOT_IN);
             }, f -> {

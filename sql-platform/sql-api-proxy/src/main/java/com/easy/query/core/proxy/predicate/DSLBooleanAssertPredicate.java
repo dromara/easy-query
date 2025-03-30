@@ -20,7 +20,7 @@
 //
 //    default void isTrue(boolean condition){
 //        if(condition){
-//           getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+//           getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
 //               f.eq(getTable(),getValue(),true);
 //           }));
 //        }
@@ -31,7 +31,7 @@
 //
 //    default void isNotTrue(boolean condition){
 //        if(condition){
-//           getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+//           getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
 //               f.and(filter->{
 //                   f.eq(getTable(),getValue(),false).or()
 //                           .isNotNull(getTable(),getValue());
@@ -45,7 +45,7 @@
 //
 //    default void isBank(boolean condition){
 //        if(condition){
-//            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+//            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
 //                SQLFunc fx = f.getRuntimeContext().fx();
 //                SQLFunction bank = fx.bank(getValue());
 //                f.sqlNativeSegment(bank.sqlSegment(getTable()),c->{
@@ -60,7 +60,7 @@
 //
 //    default void isNotBank(boolean condition){
 //        if(condition){
-//           getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+//           getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
 //               SQLFunc fx = f.getRuntimeContext().fx();
 //               SQLFunction bank = fx.notBank(getValue());
 //               f.sqlNativeSegment(bank.sqlSegment(getTable()),c->{

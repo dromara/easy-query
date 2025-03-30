@@ -71,7 +71,7 @@ public interface SQLSelectExpression extends TablePropColumn {
      */
     default void asc(boolean condition, @Nullable OrderByModeEnum nullsModeEnum) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
+            getCurrentEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
                 s.setAsc(true);
                 if (nullsModeEnum != null) {
                     SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
@@ -83,20 +83,6 @@ public interface SQLSelectExpression extends TablePropColumn {
             }));
         }
     }
-//
-//    default void nullsLast() {
-//        nullsLast(true);
-//    }
-//
-//    default void nullsLast(boolean condition) {
-//        if (condition) {
-//           getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
-//               s.sqlNativeSegment("NULLS LAST",c->c.expression());
-//               s.setAsc(true);
-//               s.column(this.getTable(), this.getValue());
-//           }));
-//        }
-//    }
 
     default void desc() {
         desc(true);
@@ -118,7 +104,7 @@ public interface SQLSelectExpression extends TablePropColumn {
      */
     default void desc(boolean condition, OrderByModeEnum nullsModeEnum) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
+            getCurrentEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
                 s.setAsc(false);
 
                 if (nullsModeEnum != null) {

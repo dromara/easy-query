@@ -28,15 +28,15 @@ public class MapProxy extends AbstractProxyEntity<MapProxy, Map<String,Object>>{
 
 
     public void put(String key, Object val) {
-        getEntitySQLContext().accept(new SQLColumnSetValueImpl(null, key, val));
+        getCurrentEntitySQLContext().accept(new SQLColumnSetValueImpl(null, key, val));
     }
 
     public <TProperty> MapProxy put(String key,PropTypeColumn<TProperty> val) {
-        getEntitySQLContext().accept(new SQLColumnSetPropColumnImpl(null, key, val));
+        getCurrentEntitySQLContext().accept(new SQLColumnSetPropColumnImpl(null, key, val));
         return this;
     }
     public <TProperty> MapProxy put(PropTypeColumn<TProperty> val) {
-        getEntitySQLContext().accept(new SQLColumnSetPropColumnImpl(null, val.getValue(), val));
+        getCurrentEntitySQLContext().accept(new SQLColumnSetPropColumnImpl(null, val.getValue(), val));
         return this;
     }
 

@@ -126,7 +126,7 @@ public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
     @Override
     public void any() {
         queryableAcceptExpression();
-        getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(this.easyEntityQueryable.limit(1))));
+        getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(this.easyEntityQueryable.limit(1))));
     }
 
     @Override
@@ -137,7 +137,7 @@ public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
     @Override
     public void none() {
         queryableAcceptExpression();
-        getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.none(this.easyEntityQueryable.limit(1))));
+        getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.none(this.easyEntityQueryable.limit(1))));
     }
 
     @Override

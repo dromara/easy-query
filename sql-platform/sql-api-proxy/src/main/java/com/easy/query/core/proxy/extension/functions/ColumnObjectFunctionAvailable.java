@@ -31,7 +31,7 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
     }
 
 //    default <T extends Long> ColumnFunctionCompareComparableNumberChainExpression<T> count(boolean distinct) {
-//        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+//        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
 //            if (this instanceof DSLSQLFunctionAvailable) {
 //                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
 //                return fx.count(sqlFunction).distinct(distinct);
@@ -42,7 +42,7 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
 //    }
 
     default ColumnFunctionCompareComparableNumberFilterChainExpression<Long> count(boolean distinct) {
-        return new ColumnFunctionCompareComparableNumberFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return new ColumnFunctionCompareComparableNumberFilterChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
             return fx.count(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             }).distinct(distinct);
@@ -58,7 +58,7 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
     }
 
     default TChain max() {
-        return createChainExpression(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return createChainExpression(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.max(sqlFunction);
@@ -69,7 +69,7 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
     }
 
     default TChain min() {
-        return createChainExpression(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return createChainExpression(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.min(sqlFunction);
@@ -90,7 +90,7 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
     }
 
     default TChain nullOrDefault(SQLExpression1<ProxyColumnFuncSelector> selector) {
-        return createChainExpression(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return createChainExpression(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.nullOrDefault(o -> {
                 PropTypeColumn.columnFuncSelector(o, this);
                 selector.apply(new ProxyColumnFuncSelectorImpl(o));
@@ -110,7 +110,7 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
     }
 
     default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> equalsWith(SQLExpression1<ProxyColumnFuncSelector> selector) {
-        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.equalsWith(o -> {
                 PropTypeColumn.columnFuncSelector(o, this);
                 selector.apply(new ProxyColumnFuncSelectorImpl(o));

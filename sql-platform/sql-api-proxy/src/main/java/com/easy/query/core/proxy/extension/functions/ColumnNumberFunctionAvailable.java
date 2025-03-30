@@ -37,7 +37,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     @Override
     default ColumnFunctionCompareComparableNumberFilterChainExpression<TProperty> max() {
-        return createFilterChainExpression(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return createFilterChainExpression(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
             return fx.max(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             });
@@ -46,7 +46,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     @Override
     default ColumnFunctionCompareComparableNumberFilterChainExpression<TProperty> min() {
-        return createFilterChainExpression(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return createFilterChainExpression(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
             return fx.min(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             });
@@ -70,7 +70,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return 计算平均值返回 AVG(DISTINCT age)
      */
     default ColumnFunctionCompareComparableNumberFilterChainExpression<BigDecimal> avg(boolean distinct) {
-        return new ColumnFunctionCompareComparableNumberFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return new ColumnFunctionCompareComparableNumberFilterChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
             return fx.avg(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             }).distinct(distinct);
@@ -143,7 +143,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return 计算去重求和 SUM(DISTINCT age)
      */
     default <T extends Number> ColumnFunctionCompareComparableNumberFilterChainExpression<T> sum(boolean distinct) {
-        return new ColumnFunctionCompareComparableNumberSumFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return new ColumnFunctionCompareComparableNumberSumFilterChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
             return fx.sum(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             }).distinct(distinct);
@@ -158,7 +158,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return 计算去重求和 SUM(DISTINCT age)
      */
     default <T extends Number> ColumnFunctionCompareComparableNumberFilterChainExpression<T> sum(boolean distinct, Class<T> resultClass) {
-        return new ColumnFunctionCompareComparableNumberSumFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return new ColumnFunctionCompareComparableNumberSumFilterChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
             return fx.sum(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             }).distinct(distinct);
@@ -170,7 +170,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     default ColumnFunctionCompareComparableNumberFilterChainExpression<BigDecimal> sumBigDecimal(boolean distinct) {
-        return new ColumnFunctionCompareComparableNumberSumFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return new ColumnFunctionCompareComparableNumberSumFilterChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
             return fx.sum(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             }).distinct(distinct);
@@ -185,7 +185,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<TProperty> abs() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
 //            if (this instanceof DSLSQLFunctionAvailable) {
 //                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
 //                return fx.math(o -> {
@@ -207,7 +207,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<Integer> sign() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -226,7 +226,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> floor() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -245,7 +245,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> ceiling() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -264,7 +264,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> round() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -283,7 +283,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> round(int decimals) {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -302,7 +302,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> exp() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -321,7 +321,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> log() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -340,7 +340,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> log(BigDecimal newBase) {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -359,7 +359,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> log10() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -378,7 +378,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> pow() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -397,7 +397,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> pow(BigDecimal exponent) {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -417,7 +417,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sqrt() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -437,7 +437,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> cos() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -456,7 +456,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sin() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -475,7 +475,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> tan() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -494,7 +494,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> acos() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -513,7 +513,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> asin() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -532,7 +532,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> atan() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -551,7 +551,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> atan2() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -570,7 +570,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     @Deprecated
     default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> truncate() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -590,7 +590,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default <TOtherProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> add(PropTypeColumn<TOtherProperty> other) {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.numberCalc(o -> {
                 PropTypeColumn.columnFuncSelector(o, this);
                 PropTypeColumn.columnFuncSelector(o, other);
@@ -610,7 +610,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default <TOtherProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> subtract(PropTypeColumn<TOtherProperty> other) {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.numberCalc(o -> {
                 PropTypeColumn.columnFuncSelector(o, this);
                 PropTypeColumn.columnFuncSelector(o, other);
@@ -630,7 +630,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default <TOtherProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> multiply(PropTypeColumn<TOtherProperty> other) {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.numberCalc(o -> {
                 PropTypeColumn.columnFuncSelector(o, this);
                 PropTypeColumn.columnFuncSelector(o, other);
@@ -650,7 +650,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default <TOtherProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> divide(PropTypeColumn<TOtherProperty> other) {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.numberCalc(o -> {
                 PropTypeColumn.columnFuncSelector(o, this);
                 PropTypeColumn.columnFuncSelector(o, other);
@@ -664,11 +664,11 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     @Override
     default ColumnFunctionCompareComparableNumberChainExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
     }
 
     @Override
     default ColumnFunctionCompareComparableNumberFilterChainExpression<TProperty> createFilterChainExpression(EntitySQLContext entitySQLContext, PropTypeColumn<?> self, TableAvailable table, String property, SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new ColumnFunctionCompareComparableNumberFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), func, getPropertyType());
+        return new ColumnFunctionCompareComparableNumberFilterChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), func, getPropertyType());
     }
 }

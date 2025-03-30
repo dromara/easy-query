@@ -136,7 +136,7 @@ public interface DSLRangePredicate<TProperty> extends TablePropColumn, EntitySQL
     }
 
     static <TProp> void range0(EntitySQLContext entitySQLContext, TableAvailable table, String property, boolean conditionLeft, TProp valLeft, boolean conditionRight, TProp valRight, SQLRangeEnum sqlRange) {
-        entitySQLContext.accept(new SQLPredicateImpl(filter -> {
+        entitySQLContext.getCurrentEntitySQLContext().accept(new SQLPredicateImpl(filter -> {
             filter.range(table,property,conditionLeft,valLeft,conditionRight,valRight,sqlRange);
         }));
 //        if (conditionLeft && conditionRight) {

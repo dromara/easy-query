@@ -18,7 +18,7 @@ public interface DSLSubQueryPredicate<TProperty> extends TablePropColumn, Entity
 
     default void ge(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.ge(this.getTable(), this.getValue(), subQuery)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.ge(this.getTable(), this.getValue(), subQuery)));
         }
     }
 
@@ -28,7 +28,7 @@ public interface DSLSubQueryPredicate<TProperty> extends TablePropColumn, Entity
 
     default void gt(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.gt(this.getTable(), this.getValue(), subQuery)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.gt(this.getTable(), this.getValue(), subQuery)));
         }
     }
 
@@ -38,7 +38,7 @@ public interface DSLSubQueryPredicate<TProperty> extends TablePropColumn, Entity
 
     default void eq(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.eq(this.getTable(), this.getValue(), subQuery)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.eq(this.getTable(), this.getValue(), subQuery)));
         }
     }
 
@@ -48,7 +48,7 @@ public interface DSLSubQueryPredicate<TProperty> extends TablePropColumn, Entity
 
     default void ne(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.ne(this.getTable(), this.getValue(), subQuery)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.ne(this.getTable(), this.getValue(), subQuery)));
         }
     }
 
@@ -58,7 +58,7 @@ public interface DSLSubQueryPredicate<TProperty> extends TablePropColumn, Entity
 
     default void le(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.le(this.getTable(), this.getValue(), subQuery)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.le(this.getTable(), this.getValue(), subQuery)));
         }
     }
 
@@ -68,7 +68,7 @@ public interface DSLSubQueryPredicate<TProperty> extends TablePropColumn, Entity
 
     default void lt(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.lt(this.getTable(), this.getValue(), subQuery)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.lt(this.getTable(), this.getValue(), subQuery)));
         }
     }
 
@@ -78,7 +78,7 @@ public interface DSLSubQueryPredicate<TProperty> extends TablePropColumn, Entity
 
     default void in(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.in(this.getTable(), this.getValue(), subQuery)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.in(this.getTable(), this.getValue(), subQuery)));
         }
     }
 
@@ -88,7 +88,7 @@ public interface DSLSubQueryPredicate<TProperty> extends TablePropColumn, Entity
 
     default void notIn(boolean condition, Query<TProperty> subQuery) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.getValue(), subQuery)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notIn(this.getTable(), this.getValue(), subQuery)));
         }
     }
 }

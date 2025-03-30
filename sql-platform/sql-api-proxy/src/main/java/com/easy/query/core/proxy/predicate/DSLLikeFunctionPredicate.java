@@ -32,7 +32,7 @@ public interface DSLLikeFunctionPredicate<TProperty> extends TablePropColumn, En
      */
     default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void   likeMatchLeft(boolean condition, T column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.like(this.getTable(), this.getValue(),column.getTable(),column.func().apply(fx),true, SQLLikeEnum.LIKE_PERCENT_RIGHT);
             }));
@@ -56,7 +56,7 @@ public interface DSLLikeFunctionPredicate<TProperty> extends TablePropColumn, En
      */
     default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void  likeMatchRight(boolean condition, T column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.like(this.getTable(), this.getValue(), column.getTable(), column.func().apply(fx),true,SQLLikeEnum.LIKE_PERCENT_LEFT);
             }));
@@ -70,7 +70,7 @@ public interface DSLLikeFunctionPredicate<TProperty> extends TablePropColumn, En
 
     default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void  like(boolean condition, T column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.like(this.getTable(), this.getValue(), column.getTable(), column.func().apply(fx),true,SQLLikeEnum.LIKE_PERCENT_ALL);
             }));
@@ -84,7 +84,7 @@ public interface DSLLikeFunctionPredicate<TProperty> extends TablePropColumn, En
 
     default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void   notLikeMatchLeft(boolean condition, T column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.like(this.getTable(), this.getValue(),column.getTable(),column.func().apply(fx),false, SQLLikeEnum.LIKE_PERCENT_RIGHT);
             }));
@@ -96,7 +96,7 @@ public interface DSLLikeFunctionPredicate<TProperty> extends TablePropColumn, En
 
     default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void  notLikeMatchRight(boolean condition, T column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.like(this.getTable(), this.getValue(), column.getTable(), column.func().apply(fx),false,SQLLikeEnum.LIKE_PERCENT_LEFT);
             }));
@@ -110,7 +110,7 @@ public interface DSLLikeFunctionPredicate<TProperty> extends TablePropColumn, En
 
     default <T extends SQLTableOwner&DSLSQLFunctionAvailable> void  notLike(boolean condition, T column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.like(this.getTable(), this.getValue(), column.getTable(), column.func().apply(fx),false,SQLLikeEnum.LIKE_PERCENT_ALL);
             }));

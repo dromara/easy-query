@@ -140,7 +140,7 @@ public interface DSLRangeColumnFunctionPredicate<TProperty> extends TablePropCol
 
         if (conditionLeft && conditionRight) {
             entitySQLContext._whereAnd(() -> {
-                entitySQLContext.accept(new SQLPredicateImpl(filter -> {
+                entitySQLContext.getCurrentEntitySQLContext().accept(new SQLPredicateImpl(filter -> {
                     boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
                     rangeCompare(filter, table, property, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE, valLeft);
                     boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
@@ -149,13 +149,13 @@ public interface DSLRangeColumnFunctionPredicate<TProperty> extends TablePropCol
             });
         } else {
             if (conditionLeft) {
-                entitySQLContext.accept(new SQLPredicateImpl(filter -> {
+                entitySQLContext.getCurrentEntitySQLContext().accept(new SQLPredicateImpl(filter -> {
                     boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
                     rangeCompare(filter, table, property, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE, valLeft);
                 }));
             }
             if (conditionRight) {
-                entitySQLContext.accept(new SQLPredicateImpl(filter -> {
+                entitySQLContext.getCurrentEntitySQLContext().accept(new SQLPredicateImpl(filter -> {
                     boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
                     rangeCompare(filter, table, property, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE, valRight);
                 }));

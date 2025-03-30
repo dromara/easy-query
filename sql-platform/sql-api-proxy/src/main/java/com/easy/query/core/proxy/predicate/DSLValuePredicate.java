@@ -27,7 +27,7 @@ public interface DSLValuePredicate<TProperty> extends TablePropColumn, EntitySQL
      */
     default void ge(boolean condition, TProperty val) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.ge(this.getTable(), this.getValue(), val)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.ge(this.getTable(), this.getValue(), val)));
         }
     }
 
@@ -46,7 +46,7 @@ public interface DSLValuePredicate<TProperty> extends TablePropColumn, EntitySQL
      */
     default void gt(boolean condition, TProperty val) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.gt(this.getTable(), this.getValue(), val)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.gt(this.getTable(), this.getValue(), val)));
         }
     }
 
@@ -65,7 +65,7 @@ public interface DSLValuePredicate<TProperty> extends TablePropColumn, EntitySQL
      */
     default void eq(boolean condition, TProperty val) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.eq(this.getTable(), this.getValue(), val)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.eq(this.getTable(), this.getValue(), val)));
         }
     }
 
@@ -84,7 +84,7 @@ public interface DSLValuePredicate<TProperty> extends TablePropColumn, EntitySQL
      */
     default void ne(boolean condition, TProperty val) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.ne(this.getTable(), this.getValue(), val)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.ne(this.getTable(), this.getValue(), val)));
         }
     }
 
@@ -103,7 +103,7 @@ public interface DSLValuePredicate<TProperty> extends TablePropColumn, EntitySQL
      */
     default void le(boolean condition, TProperty val) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.le(this.getTable(), this.getValue(), val)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.le(this.getTable(), this.getValue(), val)));
         }
     }
 
@@ -122,7 +122,7 @@ public interface DSLValuePredicate<TProperty> extends TablePropColumn, EntitySQL
      */
     default void lt(boolean condition, TProperty val) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.lt(this.getTable(), this.getValue(), val)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.lt(this.getTable(), this.getValue(), val)));
         }
     }
 }

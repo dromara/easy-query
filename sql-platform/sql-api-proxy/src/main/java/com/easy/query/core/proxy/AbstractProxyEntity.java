@@ -372,7 +372,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     @Deprecated
     public void exists(boolean condition, Supplier<Query<?>> subQueryFunc) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(subQueryFunc.get())));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(subQueryFunc.get())));
         }
     }
 
@@ -398,7 +398,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     @Deprecated
     public void notExists(boolean condition, Supplier<Query<?>> subQueryFunc) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notExists(subQueryFunc.get())));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notExists(subQueryFunc.get())));
         }
     }
 
@@ -432,7 +432,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
     public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> void set(TPropertyProxy columnProxy, SQLFuncExpression1<TPropertyProxy, ProxyEntity<TProxy, TEntity>> navigateSelectExpression) {
-        getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(((RelationEntityTableAvailable) columnProxy.getTable()).getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy, navigateSelectExpression));
+        getCurrentEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(((RelationEntityTableAvailable) columnProxy.getTable()).getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy, navigateSelectExpression));
     }
 
     /**
@@ -487,7 +487,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
             Collection<ColumnMetadata> columns = tableAvailable.getEntityMetadata().getColumns();
             ColumnMetadata columnMetadata = EasyCollectionUtil.firstOrDefault(columns, c -> !c.isNullable(), null);
             if (columnMetadata != null) {
-                getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+                getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                     if (isNull) {
                         f.isNull(tableAvailable, columnMetadata.getPropertyName());
                     } else {
@@ -498,7 +498,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
             }
         } else {
             String key = EasyCollectionUtil.first(keyProperties);
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 if (isNull) {
                     f.isNull(tableAvailable, key);
                 } else {

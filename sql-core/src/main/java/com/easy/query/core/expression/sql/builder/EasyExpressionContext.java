@@ -22,6 +22,7 @@ import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.RelationExtraMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +47,7 @@ public class EasyExpressionContext implements ExpressionContext {
     protected final ExpressionContextInterceptor expressionContextInterceptor;
     protected final TableContext tableContext;
     private boolean deleteThrowException;
+    private Object contextHolder;
     private Object version;
     private ExecuteMethodEnum executeMethod = ExecuteMethodEnum.UNKNOWN;
     private SQLExecuteStrategyEnum sqlStrategy = SQLExecuteStrategyEnum.DEFAULT;
@@ -103,6 +105,16 @@ public class EasyExpressionContext implements ExpressionContext {
     @Override
     public ExpressionContextInterceptor getExpressionContextInterceptor() {
         return expressionContextInterceptor;
+    }
+
+    @Override
+    public <TProxySQLContext> void setSQLContext(TProxySQLContext tProxySQLContext) {
+        this.contextHolder = tProxySQLContext;
+    }
+
+    @Override
+    public <TProxySQLContext> TProxySQLContext getSQLContext() {
+        return EasyObjectUtil.typeCastNullable(contextHolder);
     }
 
     @Override
@@ -252,6 +264,9 @@ public class EasyExpressionContext implements ExpressionContext {
 
     @Override
     public void extract(ExpressionContext otherExpressionContext) {
+        if (this == otherExpressionContext) {
+            return;
+        }
         if (otherExpressionContext.isSharding()) {
             this.sharding = true;
         }
@@ -390,8 +405,8 @@ public class EasyExpressionContext implements ExpressionContext {
         easyExpressionContext.relationExtraMetadata = this.relationExtraMetadata;
         easyExpressionContext.printSQL = this.printSQL;
         easyExpressionContext.printNavSQL = this.printNavSQL;
-        easyExpressionContext.configureArgument=this.configureArgument;
-        easyExpressionContext.reverseOrder=this.reverseOrder;
+        easyExpressionContext.configureArgument = this.configureArgument;
+        easyExpressionContext.reverseOrder = this.reverseOrder;
         if (hasIncludes()) {
             easyExpressionContext.getIncludes().putAll(this.includes);
         }

@@ -34,12 +34,12 @@ public class MapTypeProxy extends AbstractProxyEntity<MapTypeProxy, Map<String,O
 
     public <TProperty> MapTypeProxy put(MapKey<TProperty> mapKey, Object val) {
         addPropType(mapKey.getPropType());
-        getEntitySQLContext().accept(new SQLColumnSetValueImpl(null, mapKey.getName(), val));
+        getCurrentEntitySQLContext().accept(new SQLColumnSetValueImpl(null, mapKey.getName(), val));
         return this;
     }
     public <TProperty> MapTypeProxy put(MapKey<TProperty> mapKey, PropTypeColumn<TProperty> val) {
         addPropType(mapKey.getPropType());
-        getEntitySQLContext().accept(new SQLColumnSetPropColumnImpl(null, mapKey.getName(), val));
+        getCurrentEntitySQLContext().accept(new SQLColumnSetPropColumnImpl(null, mapKey.getName(), val));
         return this;
     }
     public <TProperty> SQLAnyColumn<MapTypeProxy,TProperty> get(MapKey<TProperty> mapKey) {

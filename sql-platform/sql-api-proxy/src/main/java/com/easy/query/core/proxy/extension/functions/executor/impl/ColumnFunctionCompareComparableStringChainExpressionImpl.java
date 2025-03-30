@@ -72,7 +72,7 @@ public class ColumnFunctionCompareComparableStringChainExpressionImpl<TProperty>
 //    @Override
 //    public void asc(boolean condition) {
 //        if(condition){
-//            getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
+//            getCurrentEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
 //                SQLFunctionExpressionUtil.accept(s,getTable(),func,true);
 //            }));
 //        }
@@ -82,7 +82,7 @@ public class ColumnFunctionCompareComparableStringChainExpressionImpl<TProperty>
     public void asc(boolean condition, OrderByModeEnum nullsModeEnum) {
         if (condition) {
 
-            getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
+            getCurrentEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
                 s.setAsc(true);
                 SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
                 SQLFunction sqlFunction = func.apply(fx);
@@ -100,7 +100,7 @@ public class ColumnFunctionCompareComparableStringChainExpressionImpl<TProperty>
     public void desc(boolean condition, OrderByModeEnum nullsModeEnum) {
         if (condition) {
 
-            getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
+            getCurrentEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
                 s.setAsc(false);
                 SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
                 SQLFunction sqlFunction = func.apply(fx);

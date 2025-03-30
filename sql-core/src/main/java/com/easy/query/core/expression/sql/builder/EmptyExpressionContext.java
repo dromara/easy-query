@@ -46,6 +46,16 @@ public class EmptyExpressionContext implements ExpressionContext{
     }
 
     @Override
+    public <TProxySQLContext> void setSQLContext(TProxySQLContext tProxySQLContext) {
+
+    }
+
+    @Override
+    public <TProxySQLContext> TProxySQLContext getSQLContext() {
+        return null;
+    }
+
+    @Override
     public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }

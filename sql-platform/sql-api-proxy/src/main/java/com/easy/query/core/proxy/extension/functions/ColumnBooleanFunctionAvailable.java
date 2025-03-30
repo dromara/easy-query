@@ -32,7 +32,7 @@ public interface ColumnBooleanFunctionAvailable<TProperty> extends ColumnObjectF
 
     @Override
     default ColumnFunctionCompareComparableBooleanFilterChainExpression<TProperty> max() {
-        return createFilterChainExpression(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return createFilterChainExpression(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
             return fx.max(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             });
@@ -41,7 +41,7 @@ public interface ColumnBooleanFunctionAvailable<TProperty> extends ColumnObjectF
 
     @Override
     default ColumnFunctionCompareComparableBooleanFilterChainExpression<TProperty> min() {
-        return createFilterChainExpression(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return createFilterChainExpression(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
             return fx.min(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             });
@@ -49,7 +49,7 @@ public interface ColumnBooleanFunctionAvailable<TProperty> extends ColumnObjectF
     }
     @Override
     default ColumnFunctionCompareComparableBooleanChainExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
+        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
     }
 
     /**
@@ -57,7 +57,7 @@ public interface ColumnBooleanFunctionAvailable<TProperty> extends ColumnObjectF
      * @return NOT xxx
      */
     default ColumnFunctionCompareComparableBooleanChainExpression<TProperty> not() {
-        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.not(sqlFunction);
@@ -68,6 +68,6 @@ public interface ColumnBooleanFunctionAvailable<TProperty> extends ColumnObjectF
     }
     @Override
     default ColumnFunctionCompareComparableBooleanFilterChainExpression<TProperty> createFilterChainExpression(EntitySQLContext entitySQLContext, PropTypeColumn<?> self, TableAvailable table, String property, SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new ColumnFunctionCompareComparableBooleanFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), func, getPropertyType());
+        return new ColumnFunctionCompareComparableBooleanFilterChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), func, getPropertyType());
     }
 }

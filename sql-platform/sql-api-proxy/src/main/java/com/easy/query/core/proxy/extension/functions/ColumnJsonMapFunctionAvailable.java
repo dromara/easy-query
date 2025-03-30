@@ -29,7 +29,7 @@ public interface ColumnJsonMapFunctionAvailable<TProperty> extends ColumnObjectF
 
     @Override
     default ColumnFunctionCompareComparableAnyChainExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
+        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
     }
 
     default ColumnFunctionCompareComparableJsonMapChainExpression<String> getField(String jsonKey) {
@@ -37,7 +37,7 @@ public interface ColumnJsonMapFunctionAvailable<TProperty> extends ColumnObjectF
     }
     default <TP> ColumnFunctionCompareComparableJsonMapChainExpression<TP> getField(String jsonKey,Class<TP> valueType) {
         String key = getJsonKey(getEntitySQLContext().getRuntimeContext(), jsonKey);
-        return new ColumnFunctionCompareComparableJsonMapChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableJsonMapChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.jsonField(x->x.sqlFunc(sqlFunction).format(key));
@@ -48,7 +48,7 @@ public interface ColumnJsonMapFunctionAvailable<TProperty> extends ColumnObjectF
     }
     default ColumnFunctionCompareComparableBooleanChainExpression<TProperty> containsField(String jsonKey) {
         String key = getJsonKey(getEntitySQLContext().getRuntimeContext(), jsonKey);
-        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.containsField(x->x.sqlFunc(sqlFunction).format(key));

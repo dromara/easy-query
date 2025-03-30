@@ -42,7 +42,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
 
     @Override
     default ColumnFunctionCompareComparableStringFilterChainExpression<TProperty> max() {
-        return createFilterChainExpression(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return createFilterChainExpression(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
             return fx.max(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             });
@@ -51,7 +51,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
 
     @Override
     default ColumnFunctionCompareComparableStringFilterChainExpression<TProperty> min() {
-        return createFilterChainExpression(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return createFilterChainExpression(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
             return fx.min(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             });
@@ -85,7 +85,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         SQLExpression1<ColumnFuncSelector> selector= o->{
             stringExpressions.apply(new ConcatExpressionSelectorImpl(getEntitySQLContext().getRuntimeContext().fx(),o));
         };
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.concat(o -> {
                 PropTypeColumn.columnFuncSelector(o,this);
                 selector.apply(o);
@@ -107,7 +107,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
 
 //    @Override
 //    default <T> ColumnFunctionComparableStringChainExpression<TProperty> nullDefault(SQLExpression1<ProxyColumnFuncSelector> selector) {
-//        return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+//        return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
 //            if (this instanceof DSLSQLFunctionAvailable) {
 //                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
 //                return fx.valueOrDefault(o -> {
@@ -128,7 +128,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default ColumnFunctionCompareComparableStringChainExpression<String> toLower() {
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.toLower(sqlFunction);
@@ -143,7 +143,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default ColumnFunctionCompareComparableStringChainExpression<String> toUpper() {
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.toUpper(sqlFunction);
@@ -166,7 +166,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         if(length<0){
             throw new IllegalArgumentException("length must be greater than 0");
         }
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.subString(sqlFunction, begin, length);
@@ -179,7 +179,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         if(length<0){
             throw new IllegalArgumentException("length must be greater than 0");
         }
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.subString(selector->{
                 PropTypeColumn.columnFuncSelector(selector,this);
                 PropTypeColumn.columnFuncSelector(selector,begin);
@@ -188,7 +188,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         }, String.class);
     }
     default <T1 extends Number,T2 extends Number> ColumnFunctionCompareComparableStringChainExpression<String> subString(PropTypeColumn<T1> begin, PropTypeColumn<T2>  length) {
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.subString(selector->{
                 PropTypeColumn.columnFuncSelector(selector,this);
                 PropTypeColumn.columnFuncSelector(selector,begin);
@@ -197,7 +197,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         }, String.class);
     }
     default <T extends Number> ColumnFunctionCompareComparableStringChainExpression<String> subString(int begin, PropTypeColumn<T>  length) {
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.subString(selector->{
                 PropTypeColumn.columnFuncSelector(selector,this);
                 selector.format(begin);
@@ -211,7 +211,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default ColumnFunctionCompareComparableStringChainExpression<String> trim() {
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.trim(sqlFunction);
@@ -225,7 +225,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default ColumnFunctionCompareComparableStringChainExpression<String> trimStart() {
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.trimStart(sqlFunction);
@@ -239,7 +239,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default ColumnFunctionCompareComparableStringChainExpression<String> trimEnd() {
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.trimEnd(sqlFunction);
@@ -249,7 +249,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         }, String.class);
     }
     default ColumnFunctionCompareComparableStringChainExpression<String> replace(String oldValue, String newValue) {
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.replace(sqlFunction,oldValue,newValue);
@@ -265,7 +265,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default ColumnFunctionCompareComparableStringChainExpression<String> leftPad(int totalWidth) {
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.leftPad(sqlFunction,totalWidth);
@@ -275,7 +275,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         }, String.class);
     }
     default ColumnFunctionCompareComparableStringChainExpression<String> leftPad(int totalWidth, char paddingChar) {
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.leftPad(sqlFunction,totalWidth,paddingChar);
@@ -291,7 +291,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default ColumnFunctionCompareComparableStringChainExpression<String> rightPad(int totalWidth) {
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.rightPad(sqlFunction,totalWidth);
@@ -301,7 +301,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         }, String.class);
     }
     default ColumnFunctionCompareComparableStringChainExpression<String> rightPad(int totalWidth, char paddingChar) {
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.rightPad(sqlFunction,totalWidth,paddingChar);
@@ -335,7 +335,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         return joining(delimiter,false);
     }
     default ColumnFunctionCompareComparableStringChainExpression<String> joining(String delimiter, boolean distinct) {
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.joining(x->{
                 x.value(delimiter);
                 PropTypeColumn.columnFuncSelector(x,this);
@@ -348,7 +348,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default ColumnFunctionCompareComparableNumberChainExpression<Integer> length() {
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.length(sqlFunction);
@@ -360,7 +360,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
 
     @Override
     default ColumnFunctionCompareComparableStringChainExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(),func, getPropertyType());
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(),func, getPropertyType());
     }
 
     /**
@@ -369,7 +369,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default ColumnFuncComparableExpression<Integer> compareTo(String comparedValue) {
-        return new SQLColumnFunctionCompareComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new SQLColumnFunctionCompareComparableExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.stringCompareTo(sqlFunction, comparedValue);
@@ -380,7 +380,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     default ColumnFuncComparableExpression<Integer> compareTo(ColumnStringFunctionAvailable<TProperty> otherColumn) {
-        return new SQLColumnFunctionCompareComparableExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new SQLColumnFunctionCompareComparableExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 if(otherColumn instanceof DSLSQLFunctionAvailable){
@@ -402,6 +402,6 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
 
     @Override
     default ColumnFunctionCompareComparableStringFilterChainExpression<TProperty> createFilterChainExpression(EntitySQLContext entitySQLContext, PropTypeColumn<?> self, TableAvailable table, String property, SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new ColumnFunctionCompareComparableStringFilterChainExpressionImpl<>(this.getEntitySQLContext(), this, this.getTable(), this.getValue(), func, getPropertyType());
+        return new ColumnFunctionCompareComparableStringFilterChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), func, getPropertyType());
     }
 }

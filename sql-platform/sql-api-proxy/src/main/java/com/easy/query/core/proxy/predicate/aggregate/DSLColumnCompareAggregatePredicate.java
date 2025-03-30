@@ -16,7 +16,7 @@ public interface DSLColumnCompareAggregatePredicate<TProperty> extends DSLColumn
     @Override
     default <TProxy, TProp> void ge(boolean condition, SQLColumn<TProxy, TProp> column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.ge(this.getTable(), func().apply(fx), column.getTable(),column.getValue());
             }, f -> {
@@ -29,7 +29,7 @@ public interface DSLColumnCompareAggregatePredicate<TProperty> extends DSLColumn
     @Override
     default <TProxy, TProp> void gt(boolean condition, SQLColumn<TProxy, TProp> column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.gt(this.getTable(), func().apply(fx), column.getTable(),column.getValue());
             }, f -> {
@@ -42,7 +42,7 @@ public interface DSLColumnCompareAggregatePredicate<TProperty> extends DSLColumn
     @Override
     default <TProxy, TProp> void eq(boolean condition, SQLColumn<TProxy, TProp> column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.eq(this.getTable(), func().apply(fx), column.getTable(),column.getValue());
             }, f -> {
@@ -55,7 +55,7 @@ public interface DSLColumnCompareAggregatePredicate<TProperty> extends DSLColumn
     @Override
     default <TProxy, TProp> void ne(boolean condition, SQLColumn<TProxy, TProp> column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.ne(this.getTable(), func().apply(fx), column.getTable(),column.getValue());
             }, f -> {
@@ -68,7 +68,7 @@ public interface DSLColumnCompareAggregatePredicate<TProperty> extends DSLColumn
     @Override
     default <TProxy, TProp> void le(boolean condition, SQLColumn<TProxy, TProp> column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.le(this.getTable(), func().apply(fx), column.getTable(),column.getValue());
             }, f -> {
@@ -81,7 +81,7 @@ public interface DSLColumnCompareAggregatePredicate<TProperty> extends DSLColumn
     @Override
     default <TProxy, TProp> void lt(boolean condition, SQLColumn<TProxy, TProp> column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.lt(this.getTable(), func().apply(fx), column.getTable(),column.getValue());
             }, f -> {

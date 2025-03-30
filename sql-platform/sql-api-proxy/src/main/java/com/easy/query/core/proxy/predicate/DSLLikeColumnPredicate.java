@@ -30,7 +30,7 @@ public interface DSLLikeColumnPredicate<TProperty> extends TablePropColumn, Enti
      */
     default <TProxy> void likeMatchLeft(boolean condition, SQLColumn<TProxy,String> column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), column.getTable(), column.getValue(),true, SQLLikeEnum.LIKE_PERCENT_RIGHT)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), column.getTable(), column.getValue(),true, SQLLikeEnum.LIKE_PERCENT_RIGHT)));
         }
         
     }
@@ -52,7 +52,7 @@ public interface DSLLikeColumnPredicate<TProperty> extends TablePropColumn, Enti
      */
     default <TProxy> void likeMatchRight(boolean condition, SQLColumn<TProxy,String> column) {
         if (condition) {
-            getEntitySQLContext().accept( new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), column.getTable(), column.getValue(),true,SQLLikeEnum.LIKE_PERCENT_LEFT)));
+            getCurrentEntitySQLContext().accept( new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), column.getTable(), column.getValue(),true,SQLLikeEnum.LIKE_PERCENT_LEFT)));
         }
         
     }
@@ -62,7 +62,7 @@ public interface DSLLikeColumnPredicate<TProperty> extends TablePropColumn, Enti
 
     default <TProxy> void like(boolean condition, SQLColumn<TProxy,String> column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), column.getTable(), column.getValue(),true, SQLLikeEnum.LIKE_PERCENT_ALL)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), column.getTable(), column.getValue(),true, SQLLikeEnum.LIKE_PERCENT_ALL)));
         }
     }
 
@@ -73,7 +73,7 @@ public interface DSLLikeColumnPredicate<TProperty> extends TablePropColumn, Enti
 
     default <TProxy> void notLikeMatchLeft(boolean condition, SQLColumn<TProxy,String> column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), column.getTable(), column.getValue(),false, SQLLikeEnum.LIKE_PERCENT_RIGHT)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), column.getTable(), column.getValue(),false, SQLLikeEnum.LIKE_PERCENT_RIGHT)));
         }
 
     }
@@ -83,7 +83,7 @@ public interface DSLLikeColumnPredicate<TProperty> extends TablePropColumn, Enti
 
     default <TProxy> void notLikeMatchRight(boolean condition, SQLColumn<TProxy,String> column) {
         if (condition) {
-            getEntitySQLContext().accept( new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), column.getTable(), column.getValue(),false,SQLLikeEnum.LIKE_PERCENT_LEFT)));
+            getCurrentEntitySQLContext().accept( new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), column.getTable(), column.getValue(),false,SQLLikeEnum.LIKE_PERCENT_LEFT)));
         }
 
     }
@@ -93,7 +93,7 @@ public interface DSLLikeColumnPredicate<TProperty> extends TablePropColumn, Enti
 
     default <TProxy> void notLike(boolean condition, SQLColumn<TProxy,String> column) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), column.getTable(), column.getValue(),false, SQLLikeEnum.LIKE_PERCENT_ALL)));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.like(this.getTable(), this.getValue(), column.getTable(), column.getValue(),false, SQLLikeEnum.LIKE_PERCENT_ALL)));
         }
     }
 

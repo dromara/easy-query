@@ -74,7 +74,7 @@ public class SQLColumnFunctionCompareComparableExpressionImpl<TProperty> impleme
     public void asc(boolean condition, OrderByModeEnum nullsModeEnum) {
         if (condition) {
 
-            getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
+            getCurrentEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
                 s.setAsc(true);
                 SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
                 SQLFunction sqlFunction = func.apply(fx);
@@ -92,7 +92,7 @@ public class SQLColumnFunctionCompareComparableExpressionImpl<TProperty> impleme
     public void desc(boolean condition, OrderByModeEnum nullsModeEnum) {
         if (condition) {
 
-            getEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
+            getCurrentEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
                 s.setAsc(false);
                 SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
                 SQLFunction sqlFunction = func.apply(fx);

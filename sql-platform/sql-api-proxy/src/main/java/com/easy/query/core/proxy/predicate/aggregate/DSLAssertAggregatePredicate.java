@@ -15,7 +15,7 @@ public interface DSLAssertAggregatePredicate<TProperty> extends DSLAssertPredica
     @Override
     default void isNull(boolean condition) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.isNull(this.getTable(), func().apply(fx));
             }, f -> {
@@ -28,7 +28,7 @@ public interface DSLAssertAggregatePredicate<TProperty> extends DSLAssertPredica
     @Override
     default void isNotNull(boolean condition) {
         if (condition) {
-            getEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregatePredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 f.isNotNull(this.getTable(), func().apply(fx));
             }, f -> {

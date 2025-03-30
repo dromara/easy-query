@@ -36,6 +36,11 @@ public class ProxyManyJoinFlatElementEntitySQLContext implements FlatEntitySQLCo
     }
 
     @Override
+    public EntitySQLContext getCurrentEntitySQLContext() {
+        return this;
+    }
+
+    @Override
     public void accept(EntityExpressionAccept accept, SQLActionExpression sqlActionExpression) {
         sqlActionExpression.apply();
     }

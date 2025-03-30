@@ -32,6 +32,8 @@ import java.util.function.Predicate;
  */
 public interface ExpressionContext extends RuntimeContextAvailable {
     ExpressionContextInterceptor getExpressionContextInterceptor();
+    <TProxySQLContext> void setSQLContext(TProxySQLContext context);
+    <TProxySQLContext> TProxySQLContext getSQLContext();
 
     String getQuoteName(String value);
     void deleteThrow(boolean ifDeleteThrowException);

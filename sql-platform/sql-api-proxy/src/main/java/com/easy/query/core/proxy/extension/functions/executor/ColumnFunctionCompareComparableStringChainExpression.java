@@ -29,7 +29,7 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
     @Override
     default void isBlank(boolean condition) {
         if(condition){
-            getEntitySQLContext().accept(new SQLAggregateNativeSQLPredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregateNativeSQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 SQLFunction bank = fx.bank(func().apply(fx));
                 f.sqlNativeSegment(bank.sqlSegment(getTable()), c -> {
@@ -42,7 +42,7 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
     @Override
     default void isNotBlank(boolean condition) {
         if(condition){
-            getEntitySQLContext().accept(new SQLAggregateNativeSQLPredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregateNativeSQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 SQLFunction notBank = fx.notBank(func().apply(fx));
                 f.sqlNativeSegment(notBank.sqlSegment(getTable()), c -> {
@@ -55,7 +55,7 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
     @Override
     default void isEmpty(boolean condition) {
         if(condition){
-            getEntitySQLContext().accept(new SQLAggregateNativeSQLPredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregateNativeSQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 SQLFunction empty = fx.empty(func().apply(fx));
                 f.sqlNativeSegment(empty.sqlSegment(getTable()), c -> {
@@ -68,7 +68,7 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
     @Override
     default void isNotEmpty(boolean condition) {
         if(condition){
-            getEntitySQLContext().accept(new SQLAggregateNativeSQLPredicateImpl(f -> {
+            getCurrentEntitySQLContext().accept(new SQLAggregateNativeSQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 SQLFunction notEmpty = fx.notEmpty(func().apply(fx));
                 f.sqlNativeSegment(notEmpty.sqlSegment(getTable()), c -> {

@@ -48,6 +48,34 @@ public class SubJoinTest extends BaseTest {
                 .orderBy(s -> {
                     s.expression().caseWhen(() -> {
                         s.books().flatElement().name().eq("123");
+//                        s.books().any(x->x.name().eq("123"));
+                    }).then(1).elseEnd(2).asc();
+                })
+                .select(s -> Select.DRAFT.of(
+                        s.books().sum(b -> b.author().age())
+                ))
+                .toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT IFNULL((SELECT SUM(t3.`age`) FROM `sub_join_book` t2 LEFT JOIN `sub_join_author` t3 ON t3.`id` = t2.`author_id` WHERE t2.`uid` = t.`id`),0) AS `value1` FROM `sub_join_user` t WHERE t.`id` = ? ORDER BY (CASE WHEN EXISTS (SELECT 1 FROM `sub_join_book` t1 WHERE t1.`uid` = t.`id` AND t1.`name` = ? LIMIT 1) THEN ? ELSE ? END) ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),123(String),1(Integer),2(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void testSubJoinCaseWhen1_1() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft1<Integer>> list = easyEntityQuery.queryable(SubJoinUser.class)
+                .where(s -> {
+                    s.id().eq("123");
+                })
+                .orderBy(s -> {
+                    s.expression().caseWhen(() -> {
+//                        s.books().flatElement().name().eq("123");
+                        s.books().any(x->x.name().eq("123"));
                     }).then(1).elseEnd(2).asc();
                 })
                 .select(s -> Select.DRAFT.of(

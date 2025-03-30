@@ -9,6 +9,7 @@ import com.easy.query.core.expression.builder.Setter;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 import com.easy.query.core.proxy.SQLColumnSetExpression;
 import com.easy.query.core.proxy.SQLOrderByExpression;
@@ -21,6 +22,7 @@ import com.easy.query.core.proxy.core.accpet.OrderByEntityExpressionAcceptImpl;
 import com.easy.query.core.proxy.core.accpet.PredicateEntityExpressionAcceptImpl;
 import com.easy.query.core.proxy.core.accpet.SetterEntityExpressionAcceptImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * create time 2023/12/8 14:56
@@ -32,43 +34,102 @@ public interface EntitySQLContext extends RuntimeContextAvailable {
 
     /**
      * 仅在where内可以获取否则为null
+     *
      * @return
      */
-    @Nullable Filter getFilter();
-    @Nullable EntityExpressionBuilder getEntityExpressionBuilder();
-    @Nullable AggregateFilter getAggregateFilter();
+    @Nullable
+    Filter getFilter();
+
+    @Nullable
+    EntityExpressionBuilder getEntityExpressionBuilder();
+
+    @Nullable
+    default ExpressionContext getExpressionContext() {
+        EntityExpressionBuilder entityExpressionBuilder = getEntityExpressionBuilder();
+        if (entityExpressionBuilder != null) {
+            return entityExpressionBuilder.getExpressionContext();
+        }
+        return null;
+    }
+
+    default EntitySQLContext getCurrentEntitySQLContext() {
+        ExpressionContext expressionContext = getExpressionContext();
+        if (expressionContext != null) {
+            Object sqlContext = expressionContext.getSQLContext();
+            if (sqlContext != null) {
+                return EasyObjectUtil.typeCastNullable(sqlContext);
+            }
+        }
+        return this;
+    }
+
+    default void _createScope(SQLActionExpression sqlActionExpression) {
+        ExpressionContext expressionContext = this.getExpressionContext();
+        EntitySQLContext entitySQLContext = this;
+        Object sqlContext = expressionContext.getSQLContext();
+        expressionContext.setSQLContext(entitySQLContext);
+        sqlActionExpression.apply();
+        expressionContext.setSQLContext(sqlContext);
+    }
+
+    @Nullable
+    AggregateFilter getAggregateFilter();
+
     boolean methodIsInclude();
-    @Nullable OrderSelector getOrderSelector();
+
+    @Nullable
+    OrderSelector getOrderSelector();
+
     @Nullable
     SQLSelectAsExpression getSelectAsExpression();
-    default void _include(SQLActionExpression sqlActionExpression){
-        accept(new IncludeEntityExpressionAcceptImpl(),sqlActionExpression);
+
+    default void _include(SQLActionExpression sqlActionExpression) {
+        accept(new IncludeEntityExpressionAcceptImpl(), sqlActionExpression);
     }
-    default void _where(Filter filter, SQLActionExpression sqlActionExpression){
-        accept(new PredicateEntityExpressionAcceptImpl(filter),sqlActionExpression);
+
+    default void _where(Filter filter, SQLActionExpression sqlActionExpression) {
+        accept(new PredicateEntityExpressionAcceptImpl(filter), () -> {
+            _createScope(sqlActionExpression);
+        });
     }
-    default void _whereOr(SQLActionExpression sqlActionExpression){
+
+    default void _whereOr(SQLActionExpression sqlActionExpression) {
         throw new UnsupportedOperationException();
     }
-    default void _whereAnd(SQLActionExpression sqlActionExpression){
+
+    default void _whereAnd(SQLActionExpression sqlActionExpression) {
         throw new UnsupportedOperationException();
     }
-    default void _executeNativeSql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
+
+    default void _executeNativeSql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         throw new UnsupportedOperationException();
     }
-    default void _having(AggregateFilter aggregateFilter, SQLActionExpression sqlActionExpression){
-        accept(new AggregatePredicateEntityExpressionAcceptImpl(aggregateFilter),sqlActionExpression);
+
+    default void _having(AggregateFilter aggregateFilter, SQLActionExpression sqlActionExpression) {
+        accept(new AggregatePredicateEntityExpressionAcceptImpl(aggregateFilter), () -> {
+            _createScope(sqlActionExpression);
+        });
     }
-    default void _orderBy(OrderSelector orderSelector, SQLActionExpression sqlActionExpression){
-        accept(new OrderByEntityExpressionAcceptImpl(orderSelector),sqlActionExpression);
+
+    default void _orderBy(OrderSelector orderSelector, SQLActionExpression sqlActionExpression) {
+        accept(new OrderByEntityExpressionAcceptImpl(orderSelector), () -> {
+            _createScope(sqlActionExpression);
+        });
     }
-    default void _set(Setter setter, SQLActionExpression sqlActionExpression){
-        accept(new SetterEntityExpressionAcceptImpl(setter),sqlActionExpression);
+
+    default void _set(Setter setter, SQLActionExpression sqlActionExpression) {
+        accept(new SetterEntityExpressionAcceptImpl(setter), sqlActionExpression);
     }
+
     void accept(EntityExpressionAccept accept, SQLActionExpression sqlActionExpression);
+
     void accept(SQLPredicateExpression sqlPredicateExpression);
+
     void accept(SQLAggregatePredicateExpression sqlAggregatePredicateExpression);
+
     void accept(SQLColumnSetExpression sqlColumnSetExpression);
+
     void accept(SQLOrderByExpression sqlOrderByExpression);
+
     void accept(SQLSelectAsExpression... selectAsExpressions);
 }

@@ -17,7 +17,7 @@ public interface DSLAssertPredicate<TProperty> extends TablePropColumn, EntitySQ
 
     default void isNull(boolean condition){
         if(condition){
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.isNull(this.getTable(), this.getValue())));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.isNull(this.getTable(), this.getValue())));
         }
     }
     default void isNotNull() {
@@ -26,7 +26,7 @@ public interface DSLAssertPredicate<TProperty> extends TablePropColumn, EntitySQ
 
     default void isNotNull(boolean condition){
         if(condition){
-            getEntitySQLContext().accept(new SQLPredicateImpl(f -> f.isNotNull(this.getTable(), this.getValue())));
+            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.isNotNull(this.getTable(), this.getValue())));
         }
     }
 }

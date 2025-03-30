@@ -275,7 +275,7 @@ public class Expression {
      */
     public void exists(boolean condition, Supplier<Query<?>> subQueryFunc) {
         if (condition) {
-            entitySQLContext.accept(new SQLPredicateImpl(f -> f.exists(subQueryFunc.get())));
+            entitySQLContext.getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(subQueryFunc.get())));
         }
     }
 
@@ -297,7 +297,7 @@ public class Expression {
      */
     public void notExists(boolean condition, Supplier<Query<?>> subQueryFunc) {
         if (condition) {
-            entitySQLContext.accept(new SQLPredicateImpl(f -> f.notExists(subQueryFunc.get())));
+            entitySQLContext.getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notExists(subQueryFunc.get())));
         }
     }
 
