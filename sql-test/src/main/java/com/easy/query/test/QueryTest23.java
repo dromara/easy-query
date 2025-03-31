@@ -379,4 +379,35 @@ public class QueryTest23 extends BaseTest {
 
     }
 
+    @Test
+    public  void anyTest(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft1<String>> list = easyEntityQuery.queryable(DocUser.class)
+                .where(user -> {
+                    user.phone().eq("123");
+                    user.userBooks().any(x -> {
+                        user.name().eq(x.name());
+                        user.phone().eq("123");
+                    });
+                    user.phone().eq("123");
+                }).select(user -> Select.DRAFT.of(
+                        user.bankCards().where(x -> {
+                            user.name().eq(x.code());
+                            user.phone().eq("123");
+                            x.code().eq("123");
+                        }).max(x -> x.type())
+                )).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT (SELECT MAX(t2.`type`) FROM `doc_bank_card` t2 WHERE t2.`uid` = t.`id` AND t.`name` = t2.`code` AND t.`phone` = ? AND t2.`code` = ?) AS `value1` FROM `doc_user` t WHERE t.`phone` = ? AND EXISTS (SELECT 1 FROM `doc_user_book` t1 WHERE t1.`uid` = t.`id` AND t.`name` = t1.`name` AND t.`phone` = ? LIMIT 1) AND t.`phone` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),123(String),123(String),123(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
 }

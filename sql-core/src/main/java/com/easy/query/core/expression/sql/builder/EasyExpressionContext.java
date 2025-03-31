@@ -47,7 +47,6 @@ public class EasyExpressionContext implements ExpressionContext {
     protected final ExpressionContextInterceptor expressionContextInterceptor;
     protected final TableContext tableContext;
     private boolean deleteThrowException;
-    private Object contextHolder;
     private Object version;
     private ExecuteMethodEnum executeMethod = ExecuteMethodEnum.UNKNOWN;
     private SQLExecuteStrategyEnum sqlStrategy = SQLExecuteStrategyEnum.DEFAULT;
@@ -107,15 +106,6 @@ public class EasyExpressionContext implements ExpressionContext {
         return expressionContextInterceptor;
     }
 
-    @Override
-    public <TProxySQLContext> void setSQLContext(TProxySQLContext tProxySQLContext) {
-        this.contextHolder = tProxySQLContext;
-    }
-
-    @Override
-    public <TProxySQLContext> TProxySQLContext getSQLContext() {
-        return EasyObjectUtil.typeCastNullable(contextHolder);
-    }
 
     @Override
     public QueryRuntimeContext getRuntimeContext() {

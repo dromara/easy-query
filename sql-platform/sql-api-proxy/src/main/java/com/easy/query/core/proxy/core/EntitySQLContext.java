@@ -1,6 +1,7 @@
 package com.easy.query.core.proxy.core;
 
 import com.easy.query.core.annotation.Nullable;
+import com.easy.query.core.common.ValueHolder;
 import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
@@ -22,7 +23,6 @@ import com.easy.query.core.proxy.core.accpet.OrderByEntityExpressionAcceptImpl;
 import com.easy.query.core.proxy.core.accpet.PredicateEntityExpressionAcceptImpl;
 import com.easy.query.core.proxy.core.accpet.SetterEntityExpressionAcceptImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
-import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * create time 2023/12/8 14:56
@@ -53,23 +53,25 @@ public interface EntitySQLContext extends RuntimeContextAvailable {
     }
 
     default EntitySQLContext getCurrentEntitySQLContext() {
-        ExpressionContext expressionContext = getExpressionContext();
-        if (expressionContext != null) {
-            Object sqlContext = expressionContext.getSQLContext();
-            if (sqlContext != null) {
-                return EasyObjectUtil.typeCastNullable(sqlContext);
+        ValueHolder<EntitySQLContext> contextHolder = this.getContextHolder();
+        if(contextHolder!=null){
+            EntitySQLContext value = contextHolder.getValue();
+            if(value!=null){
+                return value;
             }
         }
         return this;
     }
 
     default void _createScope(SQLActionExpression sqlActionExpression) {
-        ExpressionContext expressionContext = this.getExpressionContext();
+        ValueHolder<EntitySQLContext> contextHolder = this.getContextHolder();
+        
         EntitySQLContext entitySQLContext = this;
-        Object sqlContext = expressionContext.getSQLContext();
-        expressionContext.setSQLContext(entitySQLContext);
+
+        EntitySQLContext sqlContext = contextHolder.getValue();
+        contextHolder.setValue(entitySQLContext);
         sqlActionExpression.apply();
-        expressionContext.setSQLContext(sqlContext);
+        contextHolder.setValue(sqlContext);
     }
 
     @Nullable
@@ -132,4 +134,14 @@ public interface EntitySQLContext extends RuntimeContextAvailable {
     void accept(SQLOrderByExpression sqlOrderByExpression);
 
     void accept(SQLSelectAsExpression... selectAsExpressions);
+
+
+
+    default void setContextHolder(ValueHolder<EntitySQLContext> contextValueHolder){
+
+    }
+
+    default ValueHolder<EntitySQLContext> getContextHolder(){
+        return null;
+    }
 }

@@ -28,15 +28,17 @@ public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity>
 
     Class<TEntity> getEntityClass();
 
-   default TProxy create(TableAvailable table, EntityExpressionBuilder entityExpressionBuilder, QueryRuntimeContext runtimeContext){
-       EntitySQLContext entitySQLContext = getEntitySQLContext();
-       if(entitySQLContext instanceof ProxyEntitySQLContext&&entitySQLContext.getEntityExpressionBuilder()==entityExpressionBuilder){
-           return create(table,entitySQLContext);
-       }
-       return create(table,new ProxyEntitySQLContext(entityExpressionBuilder,runtimeContext));
-   }
-   default TProxy createEmpty(){
-       return create(EmptyTableAvailable.DEFAULT, EmptyEntityExpressionBuilder.DEFAULT, EmptyQueryRuntimeContext.DEFAULT);
-   }
+    default TProxy create(TableAvailable table, EntityExpressionBuilder entityExpressionBuilder, QueryRuntimeContext runtimeContext) {
+        EntitySQLContext entitySQLContext = getEntitySQLContext();
+        if (entitySQLContext instanceof ProxyEntitySQLContext && entitySQLContext.getEntityExpressionBuilder() == entityExpressionBuilder) {
+            return create(table, entitySQLContext);
+        }
+        return create(table, new ProxyEntitySQLContext(entityExpressionBuilder, runtimeContext));
+    }
+
+    default TProxy createEmpty() {
+        return create(EmptyTableAvailable.DEFAULT, EmptyEntityExpressionBuilder.DEFAULT, EmptyQueryRuntimeContext.DEFAULT);
+    }
+
     TProxy create(TableAvailable table, EntitySQLContext entitySQLContext);
 }

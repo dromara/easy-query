@@ -112,14 +112,15 @@ public class Expression {
         sql(sqlSegment, c -> {
         });
     }
+
     /**
      * 支持where having order
      *
-     * @param condition 是否执行
+     * @param condition  是否执行
      * @param sqlSegment
      */
-    public void sql(boolean condition,String sqlSegment) {
-        sql(condition,sqlSegment, c -> {
+    public void sql(boolean condition, String sqlSegment) {
+        sql(condition, sqlSegment, c -> {
         });
     }
 
@@ -136,7 +137,7 @@ public class Expression {
     /**
      * 支持where having order
      *
-     * @param condition 是否执行
+     * @param condition      是否执行
      * @param sqlSegment
      * @param contextConsume
      */
@@ -314,9 +315,10 @@ public class Expression {
         return new CaseWhenEntityBuilder(entitySQLContext).caseWhen(sqlActionExpression);
     }
 
-    public <TV,TProperty> ColumnFunctionCompareComparableAnyChainExpression<TProperty> ifElse(SQLActionExpression sqlActionExpression,TV thenValue,TV elseValue){
+    public <TV, TProperty> ColumnFunctionCompareComparableAnyChainExpression<TProperty> ifElse(SQLActionExpression sqlActionExpression, TV thenValue, TV elseValue) {
         return caseWhen(sqlActionExpression).then(thenValue).elseEnd(elseValue);
     }
+
     public ColumnFunctionCompareComparableStringChainExpression<String> concat(SQLExpression1<ConcatExpressionSelector> stringExpressions) {
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(entitySQLContext, null, null, fx -> {
             return fx.concat(o -> {
@@ -351,38 +353,44 @@ public class Expression {
     }
 
 
-    public RowNumberOverBuilder rowNumberOver(){
+    public RowNumberOverBuilder rowNumberOver() {
         return new RowNumberOverBuilder(entitySQLContext);
     }
 
-    public RankOverBuilder rankOver(){
+    public RankOverBuilder rankOver() {
         return new RankOverBuilder(entitySQLContext);
     }
 
-    public DenseRankOverBuilder denseRankOver(){
+    public DenseRankOverBuilder denseRankOver() {
         return new DenseRankOverBuilder(entitySQLContext);
     }
 
-    public <TProperty> CountOverBuilder countOver(PropTypeColumn<TProperty> countColumn){
-        return new CountOverBuilder(countColumn,entitySQLContext);
+    public <TProperty> CountOverBuilder countOver(PropTypeColumn<TProperty> countColumn) {
+        return new CountOverBuilder(countColumn, entitySQLContext);
     }
-    public <TProperty> SumOverBuilder<TProperty> sumOver(PropTypeColumn<TProperty> countColumn){
-        return new SumOverBuilder<>(countColumn,entitySQLContext);
+
+    public <TProperty> SumOverBuilder<TProperty> sumOver(PropTypeColumn<TProperty> countColumn) {
+        return new SumOverBuilder<>(countColumn, entitySQLContext);
     }
-    public <TProperty> AvgOverBuilder avgOver(PropTypeColumn<TProperty> countColumn){
-        return new AvgOverBuilder(countColumn,entitySQLContext);
+
+    public <TProperty> AvgOverBuilder avgOver(PropTypeColumn<TProperty> countColumn) {
+        return new AvgOverBuilder(countColumn, entitySQLContext);
     }
-    public <TProperty> MaxOverBuilder<TProperty> maxOver(PropTypeColumn<TProperty> countColumn){
-        return new MaxOverBuilder<>(countColumn,entitySQLContext);
+
+    public <TProperty> MaxOverBuilder<TProperty> maxOver(PropTypeColumn<TProperty> countColumn) {
+        return new MaxOverBuilder<>(countColumn, entitySQLContext);
     }
-    public <TProperty> MinOverBuilder<TProperty> minOver(PropTypeColumn<TProperty> countColumn){
-        return new MinOverBuilder<>(countColumn,entitySQLContext);
+
+    public <TProperty> MinOverBuilder<TProperty> minOver(PropTypeColumn<TProperty> countColumn) {
+        return new MinOverBuilder<>(countColumn, entitySQLContext);
     }
 
     public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityQueryable<TProxy, T> subQueryable(Class<T> entityClass) {
         SQLClientApiFactory sqlClientApiFactory = entitySQLContext.getRuntimeContext().getSQLClientApiFactory();
-        ClientQueryable<T> queryable = sqlClientApiFactory.createQueryable(entityClass, entitySQLContext.getRuntimeContext(), entitySQLContext.getEntityExpressionBuilder().getExpressionContext());
+        ClientQueryable<T> queryable = sqlClientApiFactory.createQueryable(entityClass, entitySQLContext.getRuntimeContext());
         TProxy tProxy = EntityQueryProxyManager.create(entityClass);
-        return new EasyEntityQueryable<>(tProxy, queryable);
+        EasyEntityQueryable<TProxy, T> tProxyTEasyEntityQueryable = new EasyEntityQueryable<>(tProxy, queryable);
+        tProxyTEasyEntityQueryable.get1Proxy().getEntitySQLContext().setContextHolder(this.entitySQLContext.getContextHolder());
+        return tProxyTEasyEntityQueryable;
     }
 }

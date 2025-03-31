@@ -138,7 +138,7 @@ public class RewritePredicteToSelectProvider<T1Proxy extends ProxyEntity<T1Proxy
 //            c.sqlFunc(f.booleanConstantSQLFunction(false));
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(any, "any");
-        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> f.anySQLFunction("{0}", c -> c.column(alias)), Boolean.class);
+        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> f.nullOrDefault(c->c.column(alias).value(false)), Boolean.class);
     }
 
     public ColumnFunctionCompareComparableBooleanChainExpression<Boolean> noneValue() {
@@ -151,7 +151,7 @@ public class RewritePredicteToSelectProvider<T1Proxy extends ProxyEntity<T1Proxy
 //            c.sqlFunc(f.booleanConstantSQLFunction(true));
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(none, "none");
-        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> f.anySQLFunction("{0}", c -> c.column(alias)), Boolean.class);
+        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> f.nullOrDefault(c->c.column(alias).value(true)), Boolean.class);
     }
 
 
@@ -165,6 +165,6 @@ public class RewritePredicteToSelectProvider<T1Proxy extends ProxyEntity<T1Proxy
 //            c.sqlFunc(f.booleanConstantSQLFunction(false));
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(any, "any");
-        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> f.anySQLFunction("{0}", c -> c.column(alias)), Boolean.class);
+        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> f.nullOrDefault(c->c.column(alias).value(false)), Boolean.class);
     }
 }

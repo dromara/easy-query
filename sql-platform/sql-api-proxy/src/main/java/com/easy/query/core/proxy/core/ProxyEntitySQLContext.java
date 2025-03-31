@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.core;
 
+import com.easy.query.core.common.ValueHolder;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
@@ -38,6 +39,7 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
     private final QueryRuntimeContext runtimeContext;
     private EntityExpressionAccept accept = EntityExpressionAccept.empty;
     private SQLSelectAsExpression sqlSelectAsExpression = null;
+    private ValueHolder<EntitySQLContext> contextValueHolder=new ValueHolder<>();
 
     public ProxyEntitySQLContext(EntityExpressionBuilder entityExpressionBuilder, QueryRuntimeContext runtimeContext) {
         this.entityExpressionBuilder = entityExpressionBuilder;
@@ -88,6 +90,15 @@ public class ProxyEntitySQLContext implements EntitySQLContext {
         return runtimeContext;
     }
 
+    @Override
+    public void setContextHolder(ValueHolder<EntitySQLContext> contextValueHolder) {
+        this.contextValueHolder = contextValueHolder;
+    }
+
+    @Override
+    public ValueHolder<EntitySQLContext> getContextHolder() {
+        return this.contextValueHolder;
+    }
 
     @Override
     public Filter getFilter() {

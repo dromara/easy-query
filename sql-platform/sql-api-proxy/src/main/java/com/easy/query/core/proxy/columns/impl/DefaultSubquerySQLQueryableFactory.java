@@ -31,23 +31,23 @@ import com.easy.query.core.util.EasyRelationalUtil;
 public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableFactory {
     public static final SubquerySQLQueryableFactory INSTANCE = new DefaultSubquerySQLQueryableFactory();
 
-    public <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> SQLQueryable<T1Proxy, T1> create(SubQueryContext<T1Proxy, T1> subqueryContext) {
+    public <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> SQLQueryable<T1Proxy, T1> create(SubQueryContext<T1Proxy, T1> subQueryContext) {
 
-        EntityExpressionBuilder entityExpressionBuilder = subqueryContext.getEntityExpressionBuilder();
+        EntityExpressionBuilder entityExpressionBuilder = subQueryContext.getEntityExpressionBuilder();
         QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
-        TableAvailable leftTable = subqueryContext.getLeftTable();
-        String property = subqueryContext.getProperty();
-        T1Proxy propertyProxy = subqueryContext.getPropertyProxy();
-        String fullName = subqueryContext.getFullName();
+        TableAvailable leftTable = subQueryContext.getLeftTable();
+        String property = subQueryContext.getProperty();
+        T1Proxy propertyProxy = subQueryContext.getPropertyProxy();
+        String fullName = subQueryContext.getFullName();
         if (leftTable == null || leftTable instanceof EmptyTableAvailable) {
             propertyProxy.setNavValue(fullName);
-            return new EmptySQLQueryable<>(subqueryContext.getEntitySQLContext(), propertyProxy);
+            return new EmptySQLQueryable<>(subQueryContext.getEntitySQLContext(), propertyProxy);
         }
         NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
-        RelationTableKey defaultRelationTableKey = new DefaultRelationTableKey(leftTable,property);
+        RelationTableKey defaultRelationTableKey = new DefaultRelationTableKey(leftTable, property);
 
         EntityRelationPropertyProvider entityRelationPredicateProvider = navigateMetadata.getEntityRelationPropertyProvider();
-        if (subqueryContext.getConfigureExpression() == null && subqueryContext.getOrderByExpression() == null && !subqueryContext.hasElements()) {
+        if (subQueryContext.getConfigureExpression() == null && subQueryContext.getOrderByExpression() == null && !subQueryContext.hasElements()) {
 
             if (entityExpressionBuilder.hasManyJoinConfiguration(defaultRelationTableKey)) {
                 ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(defaultRelationTableKey);
@@ -56,11 +56,12 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
                 EntityTableExpressionBuilder manyJoinTableExpressionBuilder = anonymousManyJoinEntityTableExpressionBuilder.getEntityQueryExpressionBuilder().getTable(0);
                 T1Proxy manyJoinPropertyProxy = propertyProxy.create(manyJoinTableExpressionBuilder.getEntityTable(), anonymousManyJoinEntityTableExpressionBuilder.getEntityQueryExpressionBuilder(), runtimeContext);
                 manyJoinPropertyProxy.setNavValue(fullName);
-                return new EasyManyJoinSQLManyQueryable<>(subqueryContext, anonymousManyJoinEntityTableExpressionBuilder, manyJoinPropertyProxy);
+                manyJoinPropertyProxy.getEntitySQLContext().setContextHolder(subQueryContext.getEntitySQLContext().getContextHolder());
+                return new EasyManyJoinSQLManyQueryable<>(subQueryContext, anonymousManyJoinEntityTableExpressionBuilder, manyJoinPropertyProxy);
             }
         }
 
-        ClientQueryable<T1> implicitSubQuery = entityRelationPredicateProvider.toImplicitSubQuery(entityExpressionBuilder,leftTable, navigateMetadata, runtimeContext);
+        ClientQueryable<T1> implicitSubQuery = entityRelationPredicateProvider.toImplicitSubQuery(entityExpressionBuilder, leftTable, navigateMetadata, runtimeContext);
 
         ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(defaultRelationTableKey);
 
@@ -69,7 +70,8 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
         }
         EasyEntityQueryable<T1Proxy, T1> queryable = new EasyEntityQueryable<>(propertyProxy, implicitSubQuery);
         queryable.get1Proxy().setNavValue(fullName);
-        return new EasySQLManyQueryable<>(subqueryContext, queryable);
+        queryable.get1Proxy().getEntitySQLContext().setContextHolder(subQueryContext.getEntitySQLContext().getContextHolder());
+        return new EasySQLManyQueryable<>(subQueryContext, queryable);
     }
 
     @Override
@@ -84,7 +86,7 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
         //获取表达式配置信息
 
         EntityRelationPropertyProvider entityRelationImplicitProvider = navigateMetadata.getEntityRelationPropertyProvider();
-        if(entityRelationImplicitProvider instanceof EntityRelationToImplicitPartitionByProvider){
+        if (entityRelationImplicitProvider instanceof EntityRelationToImplicitPartitionByProvider) {
             AnonymousManyJoinEntityTableExpressionBuilder implicitPartitionBy = ((EntityRelationToImplicitPartitionByProvider) entityRelationImplicitProvider)
                     .toImplicitPartitionBy(propertyProxy.getEntityClass(), subQueryContext.getEntityExpressionBuilder(), leftTable, navigateMetadata, index, subQueryContext.getRuntimeContext(), cq -> {
 
@@ -96,7 +98,9 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
                             queryable.orderBy(subQueryContext.getOrderByExpression());
                         }
                     });
-            return propertyProxy.create(implicitPartitionBy.getEntityTable(), subQueryContext.getEntitySQLContext());
+            T1Proxy t1Proxy = propertyProxy.create(implicitPartitionBy.getEntityTable(), subQueryContext.getEntitySQLContext());
+            t1Proxy.getEntitySQLContext().setContextHolder(subQueryContext.getEntitySQLContext().getContextHolder());
+            return t1Proxy;
         }
 
         throw new EasyQueryInvalidOperationException("not support");
