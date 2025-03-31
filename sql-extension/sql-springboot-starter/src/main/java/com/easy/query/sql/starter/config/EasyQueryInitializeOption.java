@@ -218,7 +218,7 @@ public final class EasyQueryInitializeOption {
             configuration.applyPrimaryKeyGenerator(primaryKeyGeneratorEntry.getValue());
         }
         for (Map.Entry<String, EntityRelationPropertyProvider> entityRelationPropertyProviderEntry : this.getEntityRelationPropertyProviderMap().entrySet()) {
-            configuration.applyRelationPropertyProvider();
+            configuration.applyRelationPropertyProvider(entityRelationPropertyProviderEntry.getValue());
         }
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         for (Map.Entry<String, TableRoute<?>> tableRouteEntry : this.getTableRouteMap().entrySet()) {
