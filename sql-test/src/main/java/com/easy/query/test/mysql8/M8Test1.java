@@ -216,7 +216,7 @@ public class M8Test1 extends BaseTest {
 
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
             Assert.assertEquals("SELECT t.`book_id`,t.`book_name`,t.`book_price` FROM `m8_user_book2` t WHERE FIND_IN_SET(t.`book_id`,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("1,2,3,2,2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("1,2,3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
         }
     }

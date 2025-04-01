@@ -12,9 +12,11 @@ import com.easy.query.core.expression.sql.include.RelationExtraEntity;
 import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.mysql8.entity.M8UserBook2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -70,7 +72,10 @@ public class FindInSetRelationToImplicitProvider implements EntityRelationProper
     public void relationMultiIdsFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<List<Object>> relationIds) {
         //仅支持单个属性多个属性自己去实现
         String targetProp = targetProps[0];
-        String collect = relationIds.stream().map(o -> o.get(0).toString()).distinct().collect(Collectors.joining(","));
+        String collect = relationIds.stream().filter(o -> o.get(0) != null && EasyStringUtil.isNotBlank(o.get(0).toString()))
+                .flatMap(o -> Arrays.stream(o.get(0).toString().split(",")))
+                .distinct()
+                .collect(Collectors.joining(","));
 
         targetWherePredicate.sqlNativeSegment("FIND_IN_SET({0},{1})", c -> {
             c.expression(targetProp).value(collect);
@@ -137,18 +142,19 @@ public class FindInSetRelationToImplicitProvider implements EntityRelationProper
         @Override
         public Object getIncludeValue(RelationValue relationValue) {
             ArrayList<Object> objects = new ArrayList<>();
-            if(relationValue.isNull()){
+            if (relationValue.isNull()) {
                 return objects;
             }
             for (RelationExtraEntity include : includes) {
                 //如果要通用自己去实现参考RelationIncludeGetter的equals实现我这边是给专用的直接强转
-                M8UserBook2 entity = (M8UserBook2)include.getEntity();
+                M8UserBook2 entity = (M8UserBook2) include.getEntity();
                 List<Object> values = relationValue.getValues();
                 Object o = values.get(0);
                 String[] split = o.toString().split(",");
                 for (String s : split) {
                     if (entity.getBookId().equals(s)) {
-                        objects.add(entity);;
+                        objects.add(entity);
+                        ;
                     }
                 }
             }
