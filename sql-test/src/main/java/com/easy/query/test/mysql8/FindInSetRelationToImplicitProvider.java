@@ -17,6 +17,7 @@ import com.easy.query.test.mysql8.entity.M8UserBook2;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * create time 2025/3/19 16:17
@@ -67,17 +68,23 @@ public class FindInSetRelationToImplicitProvider implements EntityRelationProper
 
     @Override
     public void relationMultiIdsFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<List<Object>> relationIds) {
+        //仅支持单个属性多个属性自己去实现
         String targetProp = targetProps[0];
-        targetWherePredicate.and(() -> {
+        String collect = relationIds.stream().map(o -> o.get(0).toString()).distinct().collect(Collectors.joining(","));
 
-            for (List<Object> relationId : relationIds) {
-                Object o = relationId.get(0);
-
-                targetWherePredicate.sqlNativeSegment("FIND_IN_SET({0},{1})", c -> {
-                    c.expression(targetProp).value(o);
-                }).or();
-            }
+        targetWherePredicate.sqlNativeSegment("FIND_IN_SET({0},{1})", c -> {
+            c.expression(targetProp).value(collect);
         });
+//        targetWherePredicate.and(() -> {
+//
+//            for (List<Object> relationId : relationIds) {
+//                Object o = relationId.get(0);
+//
+//                targetWherePredicate.sqlNativeSegment("FIND_IN_SET({0},{1})", c -> {
+//                    c.expression(targetProp).value(o);
+//                }).or();
+//            }
+//        });
     }
 
     @Override
@@ -134,6 +141,7 @@ public class FindInSetRelationToImplicitProvider implements EntityRelationProper
                 return objects;
             }
             for (RelationExtraEntity include : includes) {
+                //如果要通用自己去实现参考RelationIncludeGetter的equals实现我这边是给专用的直接强转
                 M8UserBook2 entity = (M8UserBook2)include.getEntity();
                 List<Object> values = relationValue.getValues();
                 Object o = values.get(0);
