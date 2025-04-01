@@ -1,4 +1,4 @@
-package com.easy.query.mysql.config;
+package com.easy.query.test.mysql8;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -9,9 +9,12 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.include.RelationExtraEntity;
+import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.test.mysql8.entity.M8UserBook2;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -31,7 +34,7 @@ public class FindInSetRelationToImplicitProvider implements EntityRelationProper
     }
 
     @Override
-    public <T> ClientQueryable<T> toImplicitSubQuery(EntityExpressionBuilder entityExpressionBuilder,TableAvailable leftTable, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext) {
+    public <T> ClientQueryable<T> toImplicitSubQuery(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext) {
 
         ClientQueryable<?> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getNavigatePropertyType(), runtimeContext);
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
@@ -64,12 +67,27 @@ public class FindInSetRelationToImplicitProvider implements EntityRelationProper
 
     @Override
     public void relationMultiIdsFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<List<Object>> relationIds) {
+        String targetProp = targetProps[0];
+        targetWherePredicate.and(() -> {
 
+            for (List<Object> relationId : relationIds) {
+                Object o = relationId.get(0);
+
+                targetWherePredicate.sqlNativeSegment("FIND_IN_SET({0},{1})", c -> {
+                    c.expression(targetProp).value(o);
+                }).or();
+            }
+        });
     }
 
     @Override
     public void relationMultiIdFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<Object> relationIds) {
 
+        String targetProp = targetProps[0];
+        Object o = relationIds.get(0);
+        targetWherePredicate.sqlNativeSegment("FIND_IN_SET({0},{1})", c -> {
+            c.expression(targetProp).value(o);
+        });
     }
 
     @Override
@@ -94,6 +112,39 @@ public class FindInSetRelationToImplicitProvider implements EntityRelationProper
 
     @Override
     public RelationIncludeGetter getManyToManyGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes, List<Object> mappingRows) {
-        return null;
+        return new MyFindInSetManyToMany(includes);
+    }
+
+    public static class MyFindInSetManyToMany implements RelationIncludeGetter {
+        private final List<RelationExtraEntity> includes;
+
+        public MyFindInSetManyToMany(List<RelationExtraEntity> includes) {
+            this.includes = includes;
+        }
+
+        @Override
+        public boolean include() {
+            return true;
+        }
+
+        @Override
+        public Object getIncludeValue(RelationValue relationValue) {
+            ArrayList<Object> objects = new ArrayList<>();
+            if(relationValue.isNull()){
+                return objects;
+            }
+            for (RelationExtraEntity include : includes) {
+                M8UserBook2 entity = (M8UserBook2)include.getEntity();
+                List<Object> values = relationValue.getValues();
+                Object o = values.get(0);
+                String[] split = o.toString().split(",");
+                for (String s : split) {
+                    if (entity.getBookId().equals(s)) {
+                        objects.add(entity);;
+                    }
+                }
+            }
+            return objects;
+        }
     }
 }

@@ -9,6 +9,16 @@ import com.easy.query.core.expression.sql.include.RelationValue;
  * @author xuejiaming
  */
 public interface RelationIncludeGetter {
+    /**
+     * 是否包含结果如果不包含则不会执行{@link #getIncludeValue(RelationValue)}
+     * @return
+     */
     boolean include();
+
+    /**
+     * 根据关系键获取include目标值
+     * @param relationValue
+     * @return
+     */
     Object getIncludeValue(RelationValue relationValue);
 }

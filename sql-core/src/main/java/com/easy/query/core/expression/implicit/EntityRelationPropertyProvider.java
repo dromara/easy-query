@@ -42,7 +42,20 @@ public interface EntityRelationPropertyProvider {
      */
     TableAvailable toImplicitJoin(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property, String fullName);
 
+    /**
+     * 拉取的条件
+     * @param targetWherePredicate
+     * @param targetProps
+     * @param relationIds
+     */
     void relationMultiIdsFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<List<Object>> relationIds);
+
+    /**
+     * 拉取带limit的条件
+     * @param targetWherePredicate
+     * @param targetProps
+     * @param relationIds
+     */
     void relationMultiIdFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<Object> relationIds);
 
 

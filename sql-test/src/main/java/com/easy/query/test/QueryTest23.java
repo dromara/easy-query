@@ -1,6 +1,10 @@
 package com.easy.query.test;
 
+import com.alibaba.fastjson2.annotation.JSONField;
+import com.easy.query.api.proxy.base.StringProxy;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.internal.command.JdbcCommand;
@@ -8,6 +12,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamRes
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.StreamIterable;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResult;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.SQLMathExpression;
 import com.easy.query.core.proxy.columns.types.SQLIntegerTypeColumn;
@@ -28,12 +33,14 @@ import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
+import lombok.Data;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -380,7 +387,7 @@ public class QueryTest23 extends BaseTest {
     }
 
     @Test
-    public  void anyTest(){
+    public void anyTest() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -409,5 +416,62 @@ public class QueryTest23 extends BaseTest {
         Assert.assertEquals("123(String),123(String),123(String),123(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
+    @Test
+    public void testaaa() {
+//        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+//                .where(t_blog -> {
+//                    t_blog.createTime().plusYears(1).plusMonths(6).plus(10, TimeUnitEnum.DAYS).eq(LocalDateTime.now());
+//                }).toList();
+
+//        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+//                .where(o -> {
+//                    Expression expression = o.expression();
+//
+//                    expression.exists(() -> {
+//                        return expression.subQueryable(BlogEntity.class).where(q -> {
+//                            q.id().eq("1" );
+//                            q.id().eq(o.id());
+//                        });
+//                    });
+//                }).toList();
+
+//
+//        EntityQueryable<BlogEntityProxy, BlogEntity> subQueryable = easyEntityQuery.queryable(BlogEntity.class)
+//                .where(o -> q.id().eq("1"));
+//
+//        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+//                .where(o -> {
+//                    Expression expression = o.expression();
+//                    expression.notExists(() -> {
+//                        return expression.subQueryable(BlogEntity.class).where(q -> {
+//                            q.id().eq("1");
+//                            q.id().eq(o.id());
+//                        });
+//                    });
+//                }).toList();
+
+
+        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                .where(o -> {
+                    Query<String> stringQuery = o.expression().subQueryable(BlogEntity.class)
+                            .where(x -> o.id().eq("123"))
+                            .selectColumn(x -> x.id());
+
+                    o.id().in(
+                            stringQuery
+                    );
+                }).toList();
+    }
+//
+//    @Data
+//    public static class AA{
+//        private String firstName;
+//        private String lastName;
+//
+//        public String getFullName(){
+//            return firstName+lastName;
+//        }
+//    }
 
 }
