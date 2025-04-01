@@ -656,7 +656,7 @@ public class QueryTest20 extends BaseTest {
 
     @Test
     public void test1() {
-        String format = EasyUtil.getQuarterStart(LocalDateTime.now()).format(DateTimeFormatter.ofPattern("yyyy'Q'Q"));
+        String format = EasyUtil.getQuarterStart(LocalDateTime.of(2025,2,3,0,1,2)).format(DateTimeFormatter.ofPattern("yyyy'Q'Q"));
         System.out.println(format);
         Assert.assertEquals("2025Q1", format);
 

@@ -17,8 +17,8 @@ public interface RelationIncludeGetter {
 
     /**
      * 根据关系键获取include目标值
-     * @param relationValue
-     * @return
+     * @param relationValue 简单理解为self属性值
+     * @return 需要返回self关联了哪些
      */
     Object getIncludeValue(RelationValue relationValue);
 }

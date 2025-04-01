@@ -10,6 +10,9 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.include.RelationExtraEntity;
 import com.easy.query.core.expression.sql.include.RelationValue;
+import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
@@ -124,6 +127,10 @@ public class FindInSetRelationToImplicitProvider implements EntityRelationProper
 
     @Override
     public RelationIncludeGetter getManyToManyGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes, List<Object> mappingRows) {
+//        EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
+//        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
+//        ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(targetPropertyNames[0]);
+//        Object apply = columnMetadata.getGetterCaller().apply(entity);
         return new MyFindInSetManyToMany(includes);
     }
 

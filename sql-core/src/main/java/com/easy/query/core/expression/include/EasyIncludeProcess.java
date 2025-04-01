@@ -8,7 +8,9 @@ import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.expression.sql.include.RelationExtraEntity;
 import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
@@ -31,6 +33,10 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
         String[] selfRelationColumn = getSelfRelationColumn();
 
         RelationIncludeGetter oneToOneGetter = selfNavigateMetadata.getEntityRelationPropertyProvider().getOneToOneGetter(runtimeContext, selfNavigateMetadata, selfRelationColumn, entities);
+        if (oneToOneGetter == null) {
+            throw new EasyQueryInvalidOperationException("Please implement the getOneToOneGetter method first.");
+        }
+
 
         if (!oneToOneGetter.include()) {
             return;
@@ -55,6 +61,10 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
     protected void DirectToOneProcess(List<RelationExtraEntity> includes) {
 
         RelationIncludeGetter directToOneGetter = selfNavigateMetadata.getEntityRelationPropertyProvider().getDirectToOneGetter(runtimeContext, selfNavigateMetadata, includes, includeParserResult.getMappingRows());
+        if (directToOneGetter == null) {
+            throw new EasyQueryInvalidOperationException("Please implement the getDirectToOneGetter method first.");
+        }
+
         if (!directToOneGetter.include()) {
             return;
         }
@@ -75,6 +85,10 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
     protected void ManyToOneProcess(List<RelationExtraEntity> includes) {
         String[] selfRelationColumn = getSelfRelationColumn();
         RelationIncludeGetter manyToOneGetter = selfNavigateMetadata.getEntityRelationPropertyProvider().getManyToOneGetter(runtimeContext, selfNavigateMetadata, targetColumnMetadataPropertyNames, includes);
+        if (manyToOneGetter == null) {
+            throw new EasyQueryInvalidOperationException("Please implement the getManyToOneGetter method first.");
+        }
+
         if (!manyToOneGetter.include()) {
             return;
         }
@@ -92,10 +106,18 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
 
     @Override
     protected void OneToManyProcess(List<RelationExtraEntity> includes) {
+        boolean single = singleEntityToManyProcess(includes);
+        if (single) {
+            return;
+        }
 
         //获取关联关系列的元信息
         String[] selfRelationColumn = getSelfRelationColumn();
+        //entities如果size只有1就不需要后续操作
         RelationIncludeGetter oneToManyGetter = selfNavigateMetadata.getEntityRelationPropertyProvider().getOneToManyGetter(runtimeContext, selfNavigateMetadata, targetColumnMetadataPropertyNames, includes);
+        if (oneToManyGetter == null) {
+            throw new EasyQueryInvalidOperationException("Please implement the getOneToManyGetter method first.");
+        }
 
         for (RelationExtraEntity entity : entities) {
             RelationValue selfRelationId = entity.getRelationExtraColumns(selfRelationColumn);
@@ -104,13 +126,34 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
         }
     }
 
+    private boolean singleEntityToManyProcess(List<RelationExtraEntity> includes) {
+        if (EasyCollectionUtil.isSingle(entities)) {
+            RelationExtraEntity first = EasyCollectionUtil.first(entities);
+            Collection<Object> manyCollection = EasyCollectionUtil.createManyCollection(selfNavigateMetadata);
+            for (RelationExtraEntity include : includes) {
+                manyCollection.add(include.getEntity());
+            }
+            setEntityValue(first.getEntity(), manyCollection);
+            return true;
+        }
+        return false;
+    }
 
     @Override
     protected void ManyToManyProcess(List<RelationExtraEntity> includes, List<Object> mappingRows) {
+        boolean single = singleEntityToManyProcess(includes);
+        if (single) {
+            return;
+        }
 
         EntityRelationPropertyProvider entityRelationPropertyProvider = selfNavigateMetadata.getEntityRelationPropertyProvider();
+        //entities如果size只有1就不需要后续操作
 
         RelationIncludeGetter manyToManyGetter = entityRelationPropertyProvider.getManyToManyGetter(runtimeContext, selfNavigateMetadata, targetColumnMetadataPropertyNames, includes, mappingRows);
+        if (manyToManyGetter == null) {
+            throw new EasyQueryInvalidOperationException("Please implement the getManyToManyGetter method first.");
+        }
+        // null
         if (includeParserResult.getMappingClass() == null) {
 
             String[] selfRelationColumn = getSelfRelationColumn();

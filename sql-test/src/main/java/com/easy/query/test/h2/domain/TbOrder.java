@@ -31,6 +31,7 @@ public class TbOrder implements ProxyEntityAvailable<TbOrder , TbOrderProxy> {
     private BigDecimal price;
     @Navigate(value = RelationTypeEnum.ManyToMany,selfProperty = "uid",targetProperty = "uid")
     private List<TbAccount> accounts;
+
     @Navigate(value = RelationTypeEnum.ManyToMany,selfProperty = "uid",targetProperty = "uid",extraFilter = NameXMTbAccountExtraFilter.class)
     private List<TbAccount> myAccounts;
 

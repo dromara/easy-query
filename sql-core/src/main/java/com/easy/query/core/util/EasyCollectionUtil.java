@@ -3,6 +3,7 @@ package com.easy.query.core.util;
 import com.easy.query.core.common.Consumer2;
 import com.easy.query.core.exception.EasyQueryResultSizeLimitException;
 import com.easy.query.core.expression.lambda.Selector;
+import com.easy.query.core.metadata.NavigateMetadata;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +29,10 @@ import java.util.function.Supplier;
  * @Date: 2023/2/26 14:07
  */
 public class EasyCollectionUtil {
+    public static  <TNavigateEntity> Collection<TNavigateEntity> createManyCollection(NavigateMetadata navigateMetadata){
+        Class<? extends Collection> collectionImplType = EasyClassUtil.getCollectionImplType(navigateMetadata.getNavigateOriginalPropertyType());
+        return EasyObjectUtil.typeCastNullable(EasyClassUtil.newInstance(collectionImplType));
+    }
     public static <T> List<T> emptyList() {
         return new ArrayList<>(0);
     }
