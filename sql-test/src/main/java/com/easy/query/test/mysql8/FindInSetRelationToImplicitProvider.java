@@ -67,7 +67,7 @@ public class FindInSetRelationToImplicitProvider implements EntityRelationProper
     }
 
     @Override
-    public TableAvailable toImplicitJoin(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property, String fullName) {
+    public TableAvailable toImplicitJoin(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property) {
         return null;
     }
 

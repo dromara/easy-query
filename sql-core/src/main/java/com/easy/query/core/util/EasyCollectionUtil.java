@@ -29,10 +29,11 @@ import java.util.function.Supplier;
  * @Date: 2023/2/26 14:07
  */
 public class EasyCollectionUtil {
-    public static  <TNavigateEntity> Collection<TNavigateEntity> createManyCollection(NavigateMetadata navigateMetadata){
+    public static <TNavigateEntity> Collection<TNavigateEntity> createManyCollection(NavigateMetadata navigateMetadata) {
         Class<? extends Collection> collectionImplType = EasyClassUtil.getCollectionImplType(navigateMetadata.getNavigateOriginalPropertyType());
         return EasyObjectUtil.typeCastNullable(EasyClassUtil.newInstance(collectionImplType));
     }
+
     public static <T> List<T> emptyList() {
         return new ArrayList<>(0);
     }
@@ -147,6 +148,18 @@ public class EasyCollectionUtil {
 
     public static <TSource> boolean all(Collection<TSource> sources, Predicate<TSource> predicate) {
         if (isEmpty(sources)) {
+            return false;
+        }
+        for (TSource source : sources) {
+            if (!predicate.test(source)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static <TSource> boolean all(TSource[] sources, Predicate<TSource> predicate) {
+        if (EasyArrayUtil.isEmpty(sources)) {
             return false;
         }
         for (TSource source : sources) {

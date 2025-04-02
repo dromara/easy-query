@@ -19,6 +19,7 @@ import com.easy.query.core.proxy.columns.types.SQLIntegerTypeColumn;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.grouping.proxy.Grouping2Proxy;
@@ -473,5 +474,46 @@ public class QueryTest23 extends BaseTest {
 //            return firstName+lastName;
 //        }
 //    }
+
+    @Test
+    public void testJoin(){
+        //查询银行卡
+        List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+                .where(bank_card -> {
+                    //条件银行卡的所属用户姓名叫小明
+                    bank_card.user().name().eq("小明");
+                }).toList();
+
+        List<DocBankCard> list1 = easyEntityQuery.queryable(DocBankCard.class)
+                .where(bank_card -> {
+                    bank_card.user().phone().like("1234");
+                    bank_card.bank().name().eq("工商银行");
+                }).toList();
+
+        List<Draft3<String, String, String>> list2 = easyEntityQuery.queryable(DocBankCard.class)
+                .where(bank_card -> {
+                    bank_card.user().name().eq("小明");
+                    bank_card.bank().name().eq("工商银行");
+                })
+                .orderBy(bank_card -> bank_card.code().asc())
+                .select(bank_card -> Select.DRAFT.of(
+                        bank_card.user().name(),
+                        bank_card.bank().name(),
+                        bank_card.code()
+                )).toList();
+    }
+    @Test
+    public void testJoin1(){
+
+        List<Draft2<String, String>> list2 = easyEntityQuery.queryable(DocBankCard.class)
+                .where(bank_card -> {
+                    bank_card.bank().name().eq("工商银行");
+                })
+                .orderBy(bank_card -> bank_card.code().asc())
+                .select(bank_card -> Select.DRAFT.of(
+                        bank_card.bank().name(),
+                        bank_card.code()
+                )).toList();
+    }
 
 }

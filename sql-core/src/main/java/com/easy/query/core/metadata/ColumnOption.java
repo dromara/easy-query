@@ -38,6 +38,7 @@ public final class ColumnOption {
 
 
     private boolean nullable = true;
+    private boolean foreignKey = false;
     private boolean version = false;
     private boolean insertIgnore = false;
     private boolean updateIgnore = false;
@@ -287,6 +288,13 @@ public final class ColumnOption {
         this.nullable = nullable;
     }
 
+    public boolean isForeignKey() {
+        return foreignKey;
+    }
+
+    public void setForeignKey(boolean foreignKey) {
+        this.foreignKey = foreignKey;
+    }
     //    public boolean isNullable() {
 //        return nullable;
 //    }

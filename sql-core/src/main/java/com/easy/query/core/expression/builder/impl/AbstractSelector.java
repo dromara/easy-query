@@ -186,11 +186,9 @@ public abstract class AbstractSelector<TChain> {
                 if (mappingPath.length < 2) {
                     throw new EasyQueryInvalidOperationException("navigate join mapping length < 2");
                 }
-                StringBuilder fullName = new StringBuilder();
                 for (int i = 0; i < mappingPath.length - 1; i++) {
                     String navigateEntityProperty = mappingPath[i];
-                    fullName.append(navigateEntityProperty).append(".");
-                    relationTable = EasyRelationalUtil.getRelationTable(sqlEntityExpressionBuilder, relationTable, navigateEntityProperty, fullName.substring(0, fullName.length() - 1));
+                    relationTable = EasyRelationalUtil.getRelationTable(sqlEntityExpressionBuilder, relationTable, navigateEntityProperty);
                 }
                 String navigateBasicTypeProperty = mappingPath[mappingPath.length - 1];
                 asSelector.columnAs(relationTable, navigateBasicTypeProperty, navigateJoinMetadata.getProperty());

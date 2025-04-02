@@ -97,11 +97,9 @@ public class EasyRelationalUtil {
         if (properties.length > 1) {
             TableAvailable relationTable = leftTable;
             boolean skip = false;
-            StringBuilder fullName = new StringBuilder();
             for (int i = 0; i < properties.length - 1 && !skip; i++) {
                 String navigateEntityProperty = properties[i];
-                fullName.append(navigateEntityProperty).append(".");
-                relationTable = EasyRelationalUtil.getRelationTable(entityExpressionBuilder, relationTable, navigateEntityProperty, fullName.substring(0, fullName.length() - 1), strictMode);
+                relationTable = EasyRelationalUtil.getRelationTable(entityExpressionBuilder, relationTable, navigateEntityProperty, strictMode);
                 if (relationTable == null) {
                     skip = true;
                 }
@@ -113,11 +111,11 @@ public class EasyRelationalUtil {
         }
     }
 
-    public static TableAvailable getRelationTable(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property, String fullName) {
-        return getRelationTable(entityExpressionBuilder, leftTable, property, fullName, true);
+    public static TableAvailable getRelationTable(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property) {
+        return getRelationTable(entityExpressionBuilder, leftTable, property, true);
     }
 
-    public static TableAvailable getRelationTable(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property, String fullName, boolean strictMode) {
+    public static TableAvailable getRelationTable(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property, boolean strictMode) {
         QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
 
         NavigateMetadata navigateMetadata = strictMode ? leftTable.getEntityMetadata().getNavigateNotNull(property) : leftTable.getEntityMetadata().getNavigateOrNull(property);
@@ -133,18 +131,24 @@ public class EasyRelationalUtil {
             DirectMappingIterator directMappingIterator = new DirectMappingIterator(directMapping);
             while (directMappingIterator.hasNext()) {
                 String prop = directMappingIterator.next();
-                myLeftTable = getRelationTable(entityExpressionBuilder, myLeftTable, prop, directMappingIterator.getFullName());
+                myLeftTable = getRelationTable(entityExpressionBuilder, myLeftTable, prop);
             }
             return myLeftTable;
         } else {
 
             Class<?> navigateEntityClass = navigateMetadata.getNavigatePropertyType();
-            EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(new DefaultRelationTableKey(leftTable,navigateMetadata.getPropertyName()), key -> {
+            EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(new DefaultRelationTableKey(leftTable, navigateMetadata.getPropertyName()), key -> {
                 EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateEntityClass);
 //            TableAvailable leftTable = getTable();
                 RelationEntityTableAvailable rightTable = new RelationEntityTableAvailable(key, leftTable, entityMetadata, false);
-                boolean query = entityExpressionBuilder.isQuery();
-                EntityTableExpressionBuilder tableExpressionBuilder = new DefaultTableExpressionBuilder(rightTable, query ? MultiTableTypeEnum.LEFT_JOIN : MultiTableTypeEnum.INNER_JOIN, runtimeContext);
+
+                MultiTableTypeEnum relationJoin = entityExpressionBuilder.isQuery() ? MultiTableTypeEnum.LEFT_JOIN : MultiTableTypeEnum.INNER_JOIN;
+                if (relationJoin == MultiTableTypeEnum.LEFT_JOIN) {
+                    if (EasyCollectionUtil.all(navigateMetadata.getSelfPropertiesOrPrimary(), o -> leftTable.getEntityMetadata().getColumnNotNull(o).isForeignKey())) {
+                        relationJoin = MultiTableTypeEnum.INNER_JOIN;
+                    }
+                }
+                EntityTableExpressionBuilder tableExpressionBuilder = new DefaultTableExpressionBuilder(rightTable, relationJoin, runtimeContext);
                 AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
 
                 SQLExpressionInvokeFactory easyQueryLambdaFactory = runtimeContext.getSQLExpressionInvokeFactory();
@@ -163,7 +167,7 @@ public class EasyRelationalUtil {
 
     }
 
-    public static AnonymousManyJoinEntityTableExpressionBuilder getManyJoinRelationTable(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata,RelationTableKey relationTableKey,ManyConfiguration manyConfiguration) {
+    public static AnonymousManyJoinEntityTableExpressionBuilder getManyJoinRelationTable(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, RelationTableKey relationTableKey, ManyConfiguration manyConfiguration) {
         QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
 
         if (navigateMetadata.getRelationType() != RelationTypeEnum.OneToMany && navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
@@ -297,7 +301,7 @@ public class EasyRelationalUtil {
         ClientQueryable<?> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getNavigatePropertyType(), runtimeContext);
         if (manyConfiguration != null) {
             SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> configureExpression = manyConfiguration.getConfigureExpression();
-            if(configureExpression!=null){
+            if (configureExpression != null) {
                 clientQueryable = configureExpression.apply(clientQueryable);
             }
         }

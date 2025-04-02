@@ -40,7 +40,7 @@ public interface EntityRelationPropertyProvider {
      * @param fullName
      * @return
      */
-    TableAvailable toImplicitJoin(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property, String fullName);
+    TableAvailable toImplicitJoin(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property);
 
     /**
      * 拉取的条件

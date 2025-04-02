@@ -293,11 +293,11 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
             if (leftTable == null) {
                 throw new EasyQueryInvalidOperationException(String.format("getNavigate %s cant not found table", property));
             }
-            String fullName = getFullNavValue(property);
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
             EntityRelationPropertyProvider entityRelationToImplicitProvider = navigateMetadata.getEntityRelationPropertyProvider();
-            TableAvailable relationTable = entityRelationToImplicitProvider.toImplicitJoin(entityExpressionBuilder, leftTable, property, fullName);
+            TableAvailable relationTable = entityRelationToImplicitProvider.toImplicitJoin(entityExpressionBuilder, leftTable, property);
             TPropertyProxy tPropertyProxy = propertyProxy.create(relationTable, this.getEntitySQLContext());
+            String fullName = getFullNavValue(property);
             tPropertyProxy.setNavValue(fullName);
             return tPropertyProxy;
         }

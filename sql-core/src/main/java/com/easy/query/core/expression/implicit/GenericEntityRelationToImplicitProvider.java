@@ -48,8 +48,8 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
     public static final EntityRelationPropertyProvider INSTANCE = new GenericEntityRelationToImplicitProvider();
 
     @Override
-    public TableAvailable toImplicitJoin(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property, String fullName) {
-        return EasyRelationalUtil.getRelationTable(entityExpressionBuilder, leftTable, property, fullName);
+    public TableAvailable toImplicitJoin(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property) {
+        return EasyRelationalUtil.getRelationTable(entityExpressionBuilder, leftTable, property);
     }
 
     @Override

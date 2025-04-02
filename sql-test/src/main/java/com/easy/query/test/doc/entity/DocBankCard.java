@@ -3,6 +3,7 @@ package com.easy.query.test.doc.entity;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EasyAlias;
 import com.easy.query.core.annotation.EntityProxy;
+import com.easy.query.core.annotation.ForeignKey;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.enums.RelationTypeEnum;
@@ -39,6 +40,7 @@ public class DocBankCard implements ProxyEntityAvailable<DocBankCard, DocBankCar
     /**
      * 所属银行
      */
+    @ForeignKey
     private String bankId;
 
     @Navigate(value = RelationTypeEnum.ManyToOne, selfProperty = Fields.uid)

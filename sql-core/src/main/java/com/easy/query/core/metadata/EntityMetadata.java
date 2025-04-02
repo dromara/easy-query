@@ -6,6 +6,7 @@ import com.easy.query.core.annotation.ColumnSQLExpression;
 import com.easy.query.core.annotation.EasyAssertMessage;
 import com.easy.query.core.annotation.EasyTree;
 import com.easy.query.core.annotation.Encryption;
+import com.easy.query.core.annotation.ForeignKey;
 import com.easy.query.core.annotation.InsertIgnore;
 import com.easy.query.core.annotation.LogicDelete;
 import com.easy.query.core.annotation.Navigate;
@@ -167,6 +168,7 @@ public class EntityMetadata {
     private final Map<String, NavigateFlatMetadata> property2NavigateFlatMap = new LinkedHashMap<>();
     private final Map<String, NavigateJoinMetadata> property2NavigateJoinMap = new LinkedHashMap<>();
     private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new LinkedHashMap<>();
+    private final List<String> foreignKeys = new ArrayList<>();
     private final List<String/*column name*/> generatedKeyColumns = new ArrayList<>(2);
     private final Map<String/*column name*/, ColumnMetadata> column2PropertyMap = new HashMap<>();
 
@@ -341,7 +343,7 @@ public class EntityMetadata {
 
         EntityRelationPropertyProvider entityRelationPropertyProvider = configuration.getRelationPropertyProvider(navigate.relationPropertyStrategy());
         if (entityRelationPropertyProvider == null) {
-            throw new EasyQueryInvalidOperationException("not found navigate to many subquery sql strategy:[" + navigate.relationPropertyStrategy()+ "]");
+            throw new EasyQueryInvalidOperationException("not found navigate to many subquery sql strategy:[" + navigate.relationPropertyStrategy() + "]");
         }
         return entityRelationPropertyProvider;
     }
@@ -526,6 +528,9 @@ public class EntityMetadata {
         columnOption.setFullPropertyName(propertyName);
         ColumnMetadata columnMetadata = new ColumnMetadata(columnOption);
         ColumnMetadata oldValue = property2ColumnMap.put(columnMetadata.getPropertyName(), columnMetadata);
+        if (columnOption.isForeignKey()) {
+            foreignKeys.add(propertyName);
+        }
         if (oldValue != null) {
             throw new EasyQueryInvalidOperationException("propertyName:" + propertyName + ", repeat.");
         }
@@ -658,6 +663,9 @@ public class EntityMetadata {
 
 
                 columnOption.setLarge(column.large());
+
+
+
 //                    columnMetadata.setSelect(column.select());
 //                    columnMetadata.setNullable(false);//如果为主键那么之前设置的nullable将无效
 
@@ -704,6 +712,10 @@ public class EntityMetadata {
                     EasyColumnValueSQLConverter easyColumnValueSQLConverter = new EasyColumnValueSQLConverter(columnSQLExpression.sql(), columnSQLExpression.realColumn(), expArgs);
                     columnOption.setColumnValueSQLConverter(easyColumnValueSQLConverter);
                 }
+            }
+            ForeignKey foreignKey = field.getAnnotation(ForeignKey.class);
+            if (foreignKey != null) {
+                columnOption.setForeignKey(true);
             }
             if (!exist) {
                 columnOption.setInsertIgnore(true);
