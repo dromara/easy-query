@@ -87,6 +87,18 @@ public class SubQueryContext<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
     public SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> getConfigureExpression() {
         return configureExpression;
     }
+
+    public void setWhereExpression(SQLExpression1<T1Proxy> whereExpression) {
+        this.whereExpression = whereExpression;
+    }
+
+    public void setOrderByExpression(SQLExpression1<T1Proxy> orderByExpression) {
+        this.orderByExpression = orderByExpression;
+    }
+
+    public void setConfigureExpression(SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression) {
+        this.configureExpression = configureExpression;
+    }
     //    public AnonymousManyJoinEntityTableExpressionBuilder getAnonymousManyJoinEntityTableExpressionBuilder() {
 //        return anonymousManyJoinEntityTableExpressionBuilder;
 //    }
@@ -156,5 +168,24 @@ public class SubQueryContext<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
 
     public boolean hasElements() {
         return fromIndex > -1 && toIndex > -1;
+    }
+
+//    public void cleanElements() {
+//        this.fromIndex = -1;
+//        this.toIndex = -1;
+//    }
+
+    public long getOffset() {
+        if (hasElements()) {
+            return fromIndex;
+        }
+        return 0;
+    }
+
+    public long getLimit() {
+        if (hasElements()) {
+            return (toIndex - fromIndex) + 1;
+        }
+        return 1;
     }
 }

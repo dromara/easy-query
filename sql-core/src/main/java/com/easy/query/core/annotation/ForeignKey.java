@@ -16,10 +16,15 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface ForeignKey {
-//
-//    /**
-//     * 逻辑外键 如果为逻辑外键则不会再code-first的时候生成外键
-//     * @return
-//     */
-//    boolean logic() default false;
+    /**
+     * 外键名称
+     * @return
+     */
+    String value() default "";
+
+    /**
+     * 逻辑外键 如果为逻辑外键则不会再code-first的时候生成外键
+     * @return
+     */
+    boolean logic() default false;
 }

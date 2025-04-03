@@ -1,4 +1,4 @@
-package com.easy.query.test.doc.entity;
+package com.easy.query.test.mysql8.entity.bank;
 
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EasyAlias;
@@ -8,25 +8,24 @@ import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
-import com.easy.query.test.doc.entity.proxy.DocBankCardProxy;
+import com.easy.query.test.mysql8.entity.bank.proxy.SysBankCardProxy;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
- * create time 2025/1/4 11:12
+ * create time 2025/4/3 20:05
  * 文件说明
  *
  * @author xuejiaming
  */
-@Table("doc_bank_card")
+@Table("t_bank_card")
 @EntityProxy
 @Data
 @FieldNameConstants
 @EasyAlias("bank_card")
-public class DocBankCard implements ProxyEntityAvailable<DocBankCard, DocBankCardProxy> {
+public class SysBankCard implements ProxyEntityAvailable<SysBankCard , SysBankCardProxy> {
     @Column(primaryKey = true)
     private String id;
     private String uid;
@@ -43,15 +42,20 @@ public class DocBankCard implements ProxyEntityAvailable<DocBankCard, DocBankCar
      */
     @ForeignKey
     private String bankId;
+    /**
+     * 用户开户时间
+     */
+    private LocalDateTime openTime;
 
-    @Navigate(value = RelationTypeEnum.ManyToOne, selfProperty = Fields.uid)
-    private DocUser user;
+    /**
+     * 所属银行
+     */
+    @Navigate(value = RelationTypeEnum.ManyToOne, selfProperty = {"bankId"}, targetProperty = {"id"})
+    private SysBank bank;
 
-
-    @Navigate(value = RelationTypeEnum.ManyToOne, selfProperty = Fields.bankId)
-    private DocBank bank;
-
-
-    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {DocBankCard.Fields.id}, targetProperty = {DocPart.Fields.cardId})
-    private List<DocPart> parts;
+    /**
+     * 所属用户
+     */
+    @Navigate(value = RelationTypeEnum.ManyToOne, selfProperty = {"uid"}, targetProperty = {"id"})
+    private SysUser user;
 }

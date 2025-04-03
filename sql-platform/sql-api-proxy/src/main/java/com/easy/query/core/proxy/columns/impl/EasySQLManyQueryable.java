@@ -1,7 +1,6 @@
 package com.easy.query.core.proxy.columns.impl;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.core.basic.api.internal.ExpressionConfigurable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
@@ -36,27 +35,27 @@ import java.math.BigDecimal;
  * @author xuejiaming
  */
 public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> implements SQLQueryable<T1Proxy, T1> {
-    private final SubQueryContext<T1Proxy, T1> subqueryContext;
-    private final EntityQueryable<T1Proxy, T1> easyEntityQueryable;
+    private final SubQueryContext<T1Proxy, T1> subQueryContext;
+    private EntityQueryable<T1Proxy, T1> easyEntityQueryable;
 
-    public EasySQLManyQueryable(SubQueryContext<T1Proxy, T1> subqueryContext, EntityQueryable<T1Proxy, T1> easyEntityQueryable) {
-        this.subqueryContext = subqueryContext;
+    public EasySQLManyQueryable(SubQueryContext<T1Proxy, T1> subQueryContext, EntityQueryable<T1Proxy, T1> easyEntityQueryable) {
+        this.subQueryContext = subQueryContext;
         this.easyEntityQueryable = easyEntityQueryable;
     }
 
     @Override
     public EntitySQLContext getEntitySQLContext() {
-        return subqueryContext.getEntitySQLContext();
+        return subQueryContext.getEntitySQLContext();
     }
 
     @Override
     public SubQueryContext<T1Proxy, T1> getSubQueryContext() {
-        return subqueryContext;
+        return subQueryContext;
     }
 
     @Override
     public TableAvailable getOriginalTable() {
-        return subqueryContext.getLeftTable();
+        return subQueryContext.getLeftTable();
     }
 
 //    @Override
@@ -68,12 +67,12 @@ public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
 
     @Override
     public String getNavValue() {
-        return subqueryContext.getFullName();
+        return subQueryContext.getFullName();
     }
 
     @Override
     public String getValue() {
-        return subqueryContext.getProperty();
+        return subQueryContext.getProperty();
     }
 
     @Override
@@ -105,22 +104,28 @@ public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
     }
 
     private void queryableAcceptExpression() {
-        if (this.subqueryContext.getConfigureExpression() != null) {
-            this.subqueryContext.getConfigureExpression().apply(this.easyEntityQueryable);
+        if (this.subQueryContext.hasElements()) {
+            if (this.subQueryContext.getWhereExpression() != null || this.subQueryContext.getOrderByExpression() != null) {
+                this.easyEntityQueryable = this.easyEntityQueryable.select(s -> s);
+                this.easyEntityQueryable.get1Proxy().getEntitySQLContext().setContextHolder(subQueryContext.getEntitySQLContext().getContextHolder());
+            }
         }
-        if (this.subqueryContext.getWhereExpression() != null) {
-            this.easyEntityQueryable.where(this.subqueryContext.getWhereExpression());
+        if (this.subQueryContext.getConfigureExpression() != null) {
+            this.subQueryContext.getConfigureExpression().apply(this.easyEntityQueryable);
         }
-        if (this.subqueryContext.getOrderByExpression() != null) {
-            this.easyEntityQueryable.orderBy(this.subqueryContext.getOrderByExpression());
+        if (this.subQueryContext.getWhereExpression() != null) {
+            this.easyEntityQueryable.where(this.subQueryContext.getWhereExpression());
         }
-        if (this.subqueryContext.hasElements()) {
-            this.easyEntityQueryable.limit(this.subqueryContext.getFromIndex(), this.subqueryContext.getToIndex() - this.subqueryContext.getFromIndex() + 1);
+        if (this.subQueryContext.getOrderByExpression() != null) {
+            this.easyEntityQueryable.orderBy(this.subQueryContext.getOrderByExpression());
         }
+//        if (this.subqueryContext.hasElements()) {
+//            this.easyEntityQueryable.limit(this.subqueryContext.getOffset(), this.subqueryContext.getLimit());
+//        }
     }
 
     private boolean isDistinct() {
-        return this.subqueryContext.isDistinct();
+        return this.subQueryContext.isDistinct();
     }
 
     @Override
@@ -227,7 +232,6 @@ public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
         tPropertyProxy.setNavValue(getNavValue());
         return tPropertyProxy;
     }
-
 
 
     /**

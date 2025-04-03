@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.columns.impl;
 
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -68,7 +69,25 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
         if (manyConfiguration != null) {
             implicitSubQuery = EasyObjectUtil.typeCastNullable(manyConfiguration.getConfigureExpression().apply(implicitSubQuery));
         }
-        EasyEntityQueryable<T1Proxy, T1> queryable = new EasyEntityQueryable<>(propertyProxy, implicitSubQuery);
+        EntityQueryable<T1Proxy, T1> queryable = new EasyEntityQueryable<>(propertyProxy, implicitSubQuery);
+
+        if (subQueryContext.hasElements()) {
+            if (subQueryContext.getConfigureExpression() != null) {
+                subQueryContext.getConfigureExpression().apply(queryable);
+                subQueryContext.setConfigureExpression(null);
+            }
+            if (subQueryContext.getWhereExpression() != null) {
+                queryable.where(subQueryContext.getWhereExpression());
+                subQueryContext.setWhereExpression(null);
+            }
+            if (subQueryContext.getOrderByExpression() != null) {
+                queryable.orderBy(subQueryContext.getOrderByExpression());
+                subQueryContext.setOrderByExpression(null);
+            }
+            queryable.limit(subQueryContext.getOffset(), subQueryContext.getLimit());
+//            subQueryContext.cleanElements();
+//            queryable = queryable.select(s -> s);
+        }
         queryable.get1Proxy().setNavValue(fullName);
         queryable.get1Proxy().getEntitySQLContext().setContextHolder(subQueryContext.getEntitySQLContext().getContextHolder());
         return new EasySQLManyQueryable<>(subQueryContext, queryable);

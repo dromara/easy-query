@@ -3,16 +3,27 @@ package com.easy.query.test;
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.core.annotation.Table;
+import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.basic.entity.EntityMappingRule;
+import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.internal.command.JdbcCommand;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.StreamIterable;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResult;
+import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.configuration.QueryConfiguration;
+import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
+import com.easy.query.core.configuration.bean.entity.EntityPropertyDescriptorMatcher;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
+import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.SQLMathExpression;
 import com.easy.query.core.proxy.columns.types.SQLIntegerTypeColumn;
@@ -26,6 +37,8 @@ import com.easy.query.core.proxy.grouping.proxy.Grouping2Proxy;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
+import com.easy.query.test.common.MyQueryConfiguration;
 import com.easy.query.test.doc.entity.DocBankCard;
 import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.entity.BaseEntity;
@@ -476,7 +489,7 @@ public class QueryTest23 extends BaseTest {
 //    }
 
     @Test
-    public void testJoin(){
+    public void testJoin() {
         //查询银行卡
         List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
                 .where(bank_card -> {
@@ -502,8 +515,9 @@ public class QueryTest23 extends BaseTest {
                         bank_card.code()
                 )).toList();
     }
+
     @Test
-    public void testJoin1(){
+    public void testJoin1() {
 
         List<Draft2<String, String>> list2 = easyEntityQuery.queryable(DocBankCard.class)
                 .where(bank_card -> {
@@ -514,6 +528,83 @@ public class QueryTest23 extends BaseTest {
                         bank_card.bank().name(),
                         bank_card.code()
                 )).toList();
+    }
+
+    @Test
+    public void testJoin2() {
+        List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
+                .where(user -> {
+                    user.bankCards().where(card -> {
+                        card.bank().name().eq("工商银行");
+                    }).count().gt(2L);
+
+                    user.bankCards().none(card -> {
+                        card.bank().name().eq("建设银行");
+                    });
+                }).toList();
+
+    }
+
+    @Test
+    public void testJoin3() {
+        List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
+                .manyJoin(u -> u.bankCards())
+                .where(user -> {
+                    user.bankCards().where(card -> {
+                        card.bank().name().eq("工商银行");
+                    }).count().gt(2L);
+
+                    user.bankCards().none(card -> {
+                        card.bank().name().eq("建设银行");
+                    });
+                }).toList();
+
+    }
+//    @Test
+//    public void testJoin5() {
+//        List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
+//                .where(user -> {
+//                    //筛选用户银行卡第二张开户的是工商银行的
+//                    user.bankCards().orderBy(s->s.createTime().asc()).element(1).bank().name().eq("工商银行");
+//                }).toList();
+//
+//    }
+
+    @Test
+    public void testJoin4() {
+        EasyQueryClient build = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(dataSource)
+                .optionConfigure(op -> {
+                    op.setDeleteThrowError(false);
+                    op.setExecutorCorePoolSize(1);
+                    op.setExecutorMaximumPoolSize(0);
+                    op.setMaxShardingQueryLimit(10);
+                    op.setDefaultDataSourceName("ds2020");
+                    op.setThrowIfRouteNotMatch(false);
+                    op.setMaxShardingRouteCount(512);
+                    op.setDefaultDataSourceMergePoolSize(20);
+                    op.setStartTimeJob(true);
+                    op.setReverseOffsetThreshold(10);
+                })
+//                .replaceService(Column2MapKeyConversion.class, UpperColumn2MapKeyConversion.class)
+                .useDatabaseConfigure(new MySQLDatabaseConfiguration())
+//                .replaceService(Dialect.class, DefaultDialect.class)
+//                .replaceService(EntityMappingRule.class, PropertyEntityMappingRule.class)
+                .replaceService(EntityMappingRule.class, PropertyFirstEntityMappingRule.class)
+                .replaceService(PropertyDescriptorMatcher.class, EntityPropertyDescriptorMatcher.class)
+//                .replaceService(EasyPageResultProvider.class,MyEasyPageResultProvider.class)
+//                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
+//                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
+                .build();
+        EntityMetadata entityMetadata = build.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(SpecialClass.class);
+        ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull("pi_m_id");
+
+    }
+
+    @Data
+    @Table("special_class")
+    public static class SpecialClass {
+        private String pi_m_id;
     }
 
 }

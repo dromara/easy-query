@@ -15,6 +15,8 @@ import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.ShardingDataSource;
+import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
+import com.easy.query.core.configuration.bean.entity.EntityPropertyDescriptorMatcher;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.router.manager.DataSourceRouteManager;
@@ -177,6 +179,7 @@ public abstract class BaseTest {
                 .replaceService(QueryConfiguration.class, MyQueryConfiguration.class)
 //                .replaceService(EntityMappingRule.class, PropertyEntityMappingRule.class)
                 .replaceService(EntityMappingRule.class, PropertyFirstEntityMappingRule.class)
+//                .replaceService(PropertyDescriptorMatcher.class, EntityPropertyDescriptorMatcher.class)
 //                .replaceService(EasyPageResultProvider.class,MyEasyPageResultProvider.class)
 //                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
