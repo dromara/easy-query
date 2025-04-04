@@ -238,7 +238,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT (SELECT MAX(t5.`code`) FROM `doc_bank_card` t5 WHERE t5.`uid` = t.`id` AND t5.`type` = ? LIMIT 3 OFFSET 3) AS `value1`,t4.`type` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t2.`id` AS `id`,t2.`uid` AS `uid`,t2.`code` AS `code`,t2.`type` AS `type`,t2.`bank_id` AS `bank_id` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,(ROW_NUMBER() OVER (PARTITION BY t1.`uid` ORDER BY 1 = 1)) AS `__row__` FROM `doc_bank_card` t1 WHERE t1.`type` = ?) t2 WHERE t2.`__row__` = ?) t4 ON t4.`uid` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t3.`__max2__` AS `value1`,t7.`type` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t2.`uid` AS `uid`,MAX(t2.`code`) AS `__max2__` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id` FROM `doc_bank_card` t1 WHERE t1.`type` = ? LIMIT 3 OFFSET 3) t2 GROUP BY t2.`uid`) t3 ON t3.`uid` = t.`id` LEFT JOIN (SELECT t5.`id` AS `id`,t5.`uid` AS `uid`,t5.`code` AS `code`,t5.`type` AS `type`,t5.`bank_id` AS `bank_id` FROM (SELECT t4.`id`,t4.`uid`,t4.`code`,t4.`type`,t4.`bank_id`,(ROW_NUMBER() OVER (PARTITION BY t4.`uid` ORDER BY 1 = 1)) AS `__row__` FROM `doc_bank_card` t4 WHERE t4.`type` = ?) t5 WHERE t5.`__row__` = ?) t7 ON t7.`uid` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),123(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }

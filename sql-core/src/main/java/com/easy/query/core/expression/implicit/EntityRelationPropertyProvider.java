@@ -2,9 +2,12 @@ package com.easy.query.core.expression.implicit;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.ManyConfiguration;
+import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.include.getter.RelationIncludeGetter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.include.RelationExtraEntity;
 import com.easy.query.core.metadata.NavigateMetadata;
@@ -37,7 +40,6 @@ public interface EntityRelationPropertyProvider {
      * @param entityExpressionBuilder
      * @param leftTable
      * @param property
-     * @param fullName
      * @return
      */
     TableAvailable toImplicitJoin(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property);

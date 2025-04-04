@@ -107,7 +107,6 @@ public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
         if (this.subQueryContext.hasElements()) {
             if (this.subQueryContext.getWhereExpression() != null || this.subQueryContext.getOrderByExpression() != null) {
                 this.easyEntityQueryable = this.easyEntityQueryable.select(s -> s);
-                this.easyEntityQueryable.get1Proxy().getEntitySQLContext().setContextHolder(subQueryContext.getEntitySQLContext().getContextHolder());
             }
         }
         if (this.subQueryContext.getConfigureExpression() != null) {

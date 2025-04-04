@@ -109,7 +109,7 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractOverrideC
     }
 
     @Override
-    public ClientQueryable2<T1, T2> manyJoin(boolean condition, SQLFuncExpression2<ManyJoinSelector<T1>, ManyJoinSelector<T2>, ManyColumn> manyPropColumnExpression) {
+    public ClientQueryable2<T1, T2> subQueryToGroupJoin(boolean condition, SQLFuncExpression2<ManyJoinSelector<T1>, ManyJoinSelector<T2>, ManyColumn> manyPropColumnExpression) {
         if (condition) {
             EntityTableExpressionBuilder table1 = entityQueryExpressionBuilder.getTable(0);
             EntityTableExpressionBuilder table2 = entityQueryExpressionBuilder.getTable(1);

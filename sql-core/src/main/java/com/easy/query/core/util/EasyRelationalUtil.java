@@ -7,7 +7,9 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.DefaultRelationTableKey;
+import com.easy.query.core.expression.ImplicitGroupRelationTableKey;
 import com.easy.query.core.expression.ManyConfiguration;
+import com.easy.query.core.expression.PartitionByRelationTableKey;
 import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
@@ -167,19 +169,21 @@ public class EasyRelationalUtil {
 
     }
 
-    public static AnonymousManyJoinEntityTableExpressionBuilder getManyJoinRelationTable(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, RelationTableKey relationTableKey, ManyConfiguration manyConfiguration) {
+    public static AnonymousManyJoinEntityTableExpressionBuilder getManyJoinRelationTable(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, ManyConfiguration manyConfiguration) {
         QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
 
         if (navigateMetadata.getRelationType() != RelationTypeEnum.OneToMany && navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
             throw new EasyQueryInvalidOperationException("navigate relation table should [OneToMany or ManyToMany],now is " + navigateMetadata.getRelationType());
         }
+        String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
+        EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(Map.class);
+        ClientQueryable<?> manyQueryable = createManyQueryable(runtimeContext, navigateMetadata, targetPropertiesOrPrimary, manyConfiguration);
 
-        EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(relationTableKey, key -> {
+        String queryableKey = EasySQLUtil.toQueryableKey(manyQueryable);
+
+        EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(new ImplicitGroupRelationTableKey(leftTable,navigateMetadata.getPropertyName(),queryableKey), key -> {
 //            TableAvailable leftTable = getTable();
 
-            String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
-            EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(Map.class);
-            ClientQueryable<?> manyQueryable = createManyQueryable(runtimeContext, navigateMetadata, targetPropertiesOrPrimary, manyConfiguration);
             RelationEntityTableAvailable rightTable = new RelationEntityTableAvailable(key, leftTable, entityMetadata, true);
             entityExpressionBuilder.getExpressionContext().extract(manyQueryable.getSQLEntityExpressionBuilder().getExpressionContext());
             ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();

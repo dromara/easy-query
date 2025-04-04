@@ -1417,7 +1417,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public ClientQueryable<T1> manyJoin(boolean condition, SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression) {
+    public ClientQueryable<T1> subQueryToGroupJoin(boolean condition, SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression) {
         if (condition) {
             EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
             ManyColumn manyColumn = manyPropColumnExpression.apply(new ManyJoinSelectorImpl<>(table.getEntityTable()));
@@ -1430,7 +1430,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public ClientQueryable<T1> manyConfigure(boolean condition, SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression, SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> adapterExpression) {
+    public ClientQueryable<T1> subQueryConfigure(boolean condition, SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression, SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> adapterExpression) {
         if (condition) {
             EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
             ManyColumn manyColumn = manyPropColumnExpression.apply(new ManyJoinSelectorImpl<>(table.getEntityTable()));

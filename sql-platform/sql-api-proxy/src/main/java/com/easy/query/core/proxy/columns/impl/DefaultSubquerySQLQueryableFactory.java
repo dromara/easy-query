@@ -9,6 +9,7 @@ import com.easy.query.core.expression.DefaultRelationTableKey;
 import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
+import com.easy.query.core.expression.implicit.EntityRelationToImplicitGroupProvider;
 import com.easy.query.core.expression.implicit.EntityRelationToImplicitPartitionByProvider;
 import com.easy.query.core.expression.parser.core.available.EmptyTableAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -22,6 +23,7 @@ import com.easy.query.core.proxy.columns.SubQueryContext;
 import com.easy.query.core.proxy.columns.SubquerySQLQueryableFactory;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 /**
  * create time 2025/3/12 15:55
@@ -48,17 +50,47 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
         RelationTableKey defaultRelationTableKey = new DefaultRelationTableKey(leftTable, property);
 
         EntityRelationPropertyProvider entityRelationPredicateProvider = navigateMetadata.getEntityRelationPropertyProvider();
-        if (subQueryContext.getConfigureExpression() == null && subQueryContext.getOrderByExpression() == null && !subQueryContext.hasElements()) {
 
-            if (entityExpressionBuilder.hasManyJoinConfiguration(defaultRelationTableKey)) {
+        if (entityExpressionBuilder.hasManyJoinConfiguration(defaultRelationTableKey)) {
+            EntityRelationPropertyProvider entityRelationPropertyProvider = navigateMetadata.getEntityRelationPropertyProvider();
+            if (entityRelationPropertyProvider instanceof EntityRelationToImplicitGroupProvider) {
+                EntityRelationToImplicitGroupProvider entityRelationToImplicitGroupProvider = (EntityRelationToImplicitGroupProvider) entityRelationPropertyProvider;
                 ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(defaultRelationTableKey);
-                AnonymousManyJoinEntityTableExpressionBuilder anonymousManyJoinEntityTableExpressionBuilder = EasyRelationalUtil.getManyJoinRelationTable(entityExpressionBuilder, leftTable, navigateMetadata, defaultRelationTableKey, manyConfiguration);
+                ManyConfiguration finalManyConfiguration = new ManyConfiguration(clientQueryable -> {
+                    if (manyConfiguration != null) {
+                        manyConfiguration.getConfigureExpression().apply(clientQueryable);
+                    }
+                    if(subQueryContext.hasElements()){
+
+                        EntityQueryable<T1Proxy, T1> entityQueryable = new EasyEntityQueryable<>(propertyProxy, EasyObjectUtil.typeCastNullable(clientQueryable));
+                        if (subQueryContext.getConfigureExpression() != null) {
+                            subQueryContext.getConfigureExpression().apply(entityQueryable);
+                            subQueryContext.setConfigureExpression(null);
+                        }
+                        if (subQueryContext.getWhereExpression() != null) {
+                            entityQueryable.where(subQueryContext.getWhereExpression());
+                            subQueryContext.setWhereExpression(null);
+                        }
+                        if (subQueryContext.getOrderByExpression() != null) {
+                            entityQueryable.orderBy(subQueryContext.getOrderByExpression());
+                            subQueryContext.setOrderByExpression(null);
+                        }
+                        if (subQueryContext.hasElements()) {
+                            entityQueryable.limit(subQueryContext.getOffset(), subQueryContext.getLimit());
+                            entityQueryable = entityQueryable.select(s -> s);
+                        }
+                        return entityQueryable.getClientQueryable();
+                    }
+                    return clientQueryable;
+                });
+                AnonymousManyJoinEntityTableExpressionBuilder anonymousManyJoinEntityTableExpressionBuilder = entityRelationToImplicitGroupProvider.toImplicitGroup(entityExpressionBuilder, leftTable, navigateMetadata, finalManyConfiguration);
 
                 EntityTableExpressionBuilder manyJoinTableExpressionBuilder = anonymousManyJoinEntityTableExpressionBuilder.getEntityQueryExpressionBuilder().getTable(0);
                 T1Proxy manyJoinPropertyProxy = propertyProxy.create(manyJoinTableExpressionBuilder.getEntityTable(), anonymousManyJoinEntityTableExpressionBuilder.getEntityQueryExpressionBuilder(), runtimeContext);
                 manyJoinPropertyProxy.setNavValue(fullName);
                 manyJoinPropertyProxy.getEntitySQLContext().setContextHolder(subQueryContext.getEntitySQLContext().getContextHolder());
                 return new EasyManyJoinSQLManyQueryable<>(subQueryContext, anonymousManyJoinEntityTableExpressionBuilder, manyJoinPropertyProxy);
+
             }
         }
 

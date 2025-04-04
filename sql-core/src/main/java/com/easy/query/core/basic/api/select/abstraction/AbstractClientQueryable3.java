@@ -106,7 +106,7 @@ public abstract class AbstractClientQueryable3<T1, T2, T3> extends AbstractOverr
     }
 
     @Override
-    public ClientQueryable3<T1, T2, T3> manyJoin(boolean condition, SQLFuncExpression3<ManyJoinSelector<T1>, ManyJoinSelector<T2>, ManyJoinSelector<T3>, ManyColumn> manyPropColumnExpression, SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> adapterExpression) {
+    public ClientQueryable3<T1, T2, T3> subQueryToGroupJoin(boolean condition, SQLFuncExpression3<ManyJoinSelector<T1>, ManyJoinSelector<T2>, ManyJoinSelector<T3>, ManyColumn> manyPropColumnExpression) {
         if(condition){
             EntityTableExpressionBuilder table1 = entityQueryExpressionBuilder.getTable(0);
             EntityTableExpressionBuilder table2 = entityQueryExpressionBuilder.getTable(1);

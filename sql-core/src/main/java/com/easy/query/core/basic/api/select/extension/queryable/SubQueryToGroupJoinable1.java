@@ -1,7 +1,6 @@
 package com.easy.query.core.basic.api.select.extension.queryable;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.base.many.ManyColumn;
 import com.easy.query.core.expression.parser.core.base.many.ManyJoinSelector;
@@ -12,10 +11,10 @@ import com.easy.query.core.expression.parser.core.base.many.ManyJoinSelector;
  *
  * @author xuejiaming
  */
-public interface ManyJoinable1<T1> {
-    default ClientQueryable<T1> manyJoin(SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression) {
-        return manyJoin(true, manyPropColumnExpression);
+public interface SubQueryToGroupJoinable1<T1> {
+    default ClientQueryable<T1> subQueryToGroupJoin(SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression) {
+        return subQueryToGroupJoin(true, manyPropColumnExpression);
     }
 
-    ClientQueryable<T1> manyJoin(boolean condition, SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression);
+    ClientQueryable<T1> subQueryToGroupJoin(boolean condition, SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression);
 }

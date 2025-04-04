@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -202,7 +203,7 @@ public class M8BankTest extends BaseTest {
                 }).select(user -> Select.DRAFT.of(
                         user.name(),
                         //用户的银行卡中前两个开户银行卡类型
-                        user.bankCards().orderBy(x -> x.openTime().asc()).elements(0, 1).joining(x -> x.type(),",")
+                        user.bankCards().orderBy(x -> x.openTime().asc()).elements(0, 1).joining(x -> x.type(), ",")
                 )).toList();
 
         listenerContextManager.clear();
@@ -212,6 +213,7 @@ public class M8BankTest extends BaseTest {
         Assert.assertEquals(",(String),%小明%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void test7_1() {
 
@@ -227,7 +229,7 @@ public class M8BankTest extends BaseTest {
                 }).select(user -> Select.DRAFT.of(
                         user.name(),
                         //用户的银行卡中前两个开户银行卡类型
-                        user.bankCards().where(x->x.type().eq("储蓄卡")).orderBy(x -> x.openTime().asc()).elements(0, 1).where(o->o.bank().name().eq("建设银行")).joining(x -> x.type(),",")
+                        user.bankCards().where(x -> x.type().eq("储蓄卡")).orderBy(x -> x.openTime().asc()).elements(0, 1).where(o -> o.bank().name().eq("建设银行")).joining(x -> x.type(), ",")
                 )).toList();
 
         listenerContextManager.clear();
@@ -237,6 +239,7 @@ public class M8BankTest extends BaseTest {
         Assert.assertEquals(",(String),储蓄卡(String),建设银行(String),%小明%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void test7_2() {
 
@@ -252,7 +255,7 @@ public class M8BankTest extends BaseTest {
                 }).select(user -> Select.DRAFT.of(
                         user.name(),
                         //用户的银行卡中前两个开户银行卡类型
-                        user.bankCards().where(x->x.type().eq("储蓄卡")).orderBy(x -> x.openTime().asc()).elements(0, 1).joining(x -> x.type(),",")
+                        user.bankCards().where(x -> x.type().eq("储蓄卡")).orderBy(x -> x.openTime().asc()).elements(0, 1).joining(x -> x.type(), ",")
                 )).toList();
 
         listenerContextManager.clear();
@@ -262,6 +265,7 @@ public class M8BankTest extends BaseTest {
         Assert.assertEquals(",(String),储蓄卡(String),%小明%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void test8() {
 
@@ -271,11 +275,11 @@ public class M8BankTest extends BaseTest {
         List<Draft2<String, String>> list = easyEntityQuery.queryable(SysUser.class)
                 .where(user -> {
                     user.name().like("小明");
-                    user.bankCards().orderBy(x -> x.openTime().asc()).elements(0, 1).none(x->x.bank().name().eq("杭州银行"));
+                    user.bankCards().orderBy(x -> x.openTime().asc()).elements(0, 1).none(x -> x.bank().name().eq("杭州银行"));
                 }).select(user -> Select.DRAFT.of(
                         user.name(),
                         //用户的银行卡中前两个开户银行卡类型
-                        user.bankCards().orderBy(x -> x.openTime().asc()).elements(0, 1).joining(x -> x.type(),",")
+                        user.bankCards().orderBy(x -> x.openTime().asc()).elements(0, 1).joining(x -> x.type(), ",")
                 )).toList();
 
         listenerContextManager.clear();
@@ -285,6 +289,7 @@ public class M8BankTest extends BaseTest {
         Assert.assertEquals(",(String),%小明%(String),杭州银行(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void test9() {
 
@@ -293,7 +298,7 @@ public class M8BankTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
 
-        String queryName=null;
+        String queryName = null;
         List<SysBankCard> xmCards = easyEntityQuery.queryable(SysBankCard.class)
                 //如果查询条件不符合那么将不会加入到条件中
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
@@ -308,6 +313,7 @@ public class M8BankTest extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time` FROM `t_bank_card` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 
     }
+
     @Test
     public void test10() {
 
@@ -318,7 +324,7 @@ public class M8BankTest extends BaseTest {
 
         List<Draft3<String, String, String>> result = easyEntityQuery.queryable(SysBankCard.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
-                .leftJoin(SysBank.class,(bank_card, bank) -> bank_card.bankId().eq(bank.id()))
+                .leftJoin(SysBank.class, (bank_card, bank) -> bank_card.bankId().eq(bank.id()))
                 .where((bank_card, bank) -> {
                     bank_card.user().name().eq("小明");
                 })
@@ -344,21 +350,21 @@ public class M8BankTest extends BaseTest {
 
 
         List<Draft2<String, String>> list = easyEntityQuery.queryable(SysUser.class)
-                .manyJoin(x->x.bankCards())
+                .subQueryToGroupJoin(x -> x.bankCards())
                 .where(user -> {
                     user.name().like("小明");
-                    user.bankCards().orderBy(x -> x.openTime().asc()).elements(0, 1).none(x->x.bank().name().eq("杭州银行"));
+                    user.bankCards().orderBy(x -> x.openTime().asc()).elements(0, 1).none(x -> x.bank().name().eq("杭州银行"));
                 }).select(user -> Select.DRAFT.of(
                         user.name(),
                         //用户的银行卡中前两个开户银行卡类型
-                        user.bankCards().orderBy(x -> x.openTime().asc()).elements(0, 1).joining(x -> x.type(),",")
+                        user.bankCards().orderBy(x -> x.openTime().asc()).elements(0, 1).joining(x -> x.type(), ",")
                 )).toList();
 
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`name` AS `value1`,(SELECT GROUP_CONCAT(t4.`type` SEPARATOR ?) FROM `t_bank_card` t4 WHERE t4.`uid` = t.`id` ORDER BY t4.`open_time` ASC LIMIT 2) AS `value2` FROM `t_sys_user` t WHERE t.`name` LIKE ? AND NOT ( EXISTS (SELECT 1 FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time` FROM `t_bank_card` t1 WHERE t1.`uid` = t.`id` ORDER BY t1.`open_time` ASC LIMIT 2) t2 INNER JOIN `t_bank` t3 ON t3.`id` = t2.`bank_id` WHERE t3.`name` = ? LIMIT 1))", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals(",(String),%小明%(String),杭州银行(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`name` AS `value1`,t3.`__joining3__` AS `value2` FROM `t_sys_user` t LEFT JOIN (SELECT t2.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t4.`name` = ? THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__none2__`,GROUP_CONCAT(t2.`type` SEPARATOR ?) AS `__joining3__` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time` FROM `t_bank_card` t1 ORDER BY t1.`open_time` ASC LIMIT 2) t2 INNER JOIN `t_bank` t4 ON t4.`id` = t2.`bank_id` GROUP BY t2.`uid`) t3 ON t3.`uid` = t.`id` WHERE t.`name` LIKE ? AND IFNULL(t3.`__none2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("杭州银行(String),1(Integer),null(null),false(Boolean),true(Boolean),,(String),%小明%(String),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 
@@ -371,17 +377,145 @@ public class M8BankTest extends BaseTest {
 
 
         easyEntityQuery.queryable(SysUser.class)
-//                .manyJoin(x->x.bankCards())
+                .subQueryToGroupJoin(x -> x.bankCards())
                 .where(user -> {
                     user.name().like("小明");
-                    user.bankCards().where(x->x.type().eq("123")).orderBy(x -> x.openTime().asc()).elements(0, 1).none(x->x.bank().name().eq("杭州银行"));
+                    user.bankCards().where(x -> x.type().eq("123")).orderBy(x -> x.openTime().asc()).elements(0, 1).none(x -> x.bank().name().eq("杭州银行"));
                 }).toList();
 
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time` FROM `t_sys_user` t WHERE t.`name` LIKE ? AND NOT ( EXISTS (SELECT 1 FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time` FROM `t_bank_card` t1 WHERE t1.`uid` = t.`id` AND t1.`type` = ? ORDER BY t1.`open_time` ASC LIMIT 2) t2 INNER JOIN `t_bank` t3 ON t3.`id` = t2.`bank_id` WHERE t3.`name` = ? LIMIT 1))", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("%小明%(String),123(String),杭州银行(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time` FROM `t_sys_user` t LEFT JOIN (SELECT t2.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t4.`name` = ? THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__none2__` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time` FROM `t_bank_card` t1 WHERE t1.`type` = ? ORDER BY t1.`open_time` ASC LIMIT 2) t2 INNER JOIN `t_bank` t4 ON t4.`id` = t2.`bank_id` GROUP BY t2.`uid`) t3 ON t3.`uid` = t.`id` WHERE t.`name` LIKE ? AND IFNULL(t3.`__none2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("杭州银行(String),1(Integer),null(null),false(Boolean),true(Boolean),123(String),%小明%(String),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
+    }
+
+    @Test
+    public void test13() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft2<String, String>> list = easyEntityQuery.queryable(SysUser.class)
+                .subQueryToGroupJoin(x -> x.bankCards())
+                .where(user -> {
+                    user.name().like("小明");
+                    user.bankCards().where(x -> x.type().eq("储蓄卡"))
+                            .orderBy(x -> x.openTime().asc())
+                            .elements(1, 2)
+                            .none(x -> x.bank().name().eq("杭州银行"));
+                }).select(user -> Select.DRAFT.of(
+                        user.name(),
+                        user.bankCards().where(x -> x.type().eq("储蓄卡"))
+                                .orderBy(x -> x.openTime().asc())
+                                .elements(1, 2).joining(x -> x.bank().id(),",")
+                )).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`name` AS `value1`,t3.`__joining3__` AS `value2` FROM `t_sys_user` t LEFT JOIN (SELECT t2.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t4.`name` = ? THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__none2__`,GROUP_CONCAT(t4.`id` SEPARATOR ?) AS `__joining3__` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time` FROM `t_bank_card` t1 WHERE t1.`type` = ? ORDER BY t1.`open_time` ASC LIMIT 2 OFFSET 1) t2 INNER JOIN `t_bank` t4 ON t4.`id` = t2.`bank_id` GROUP BY t2.`uid`) t3 ON t3.`uid` = t.`id` WHERE t.`name` LIKE ? AND IFNULL(t3.`__none2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("杭州银行(String),1(Integer),null(null),false(Boolean),true(Boolean),,(String),储蓄卡(String),%小明%(String),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+
+    @Test
+    public void test14() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft2<String, String>> list = easyEntityQuery.queryable(SysUser.class)
+                .subQueryToGroupJoin(x -> x.bankCards())
+                .subQueryConfigure(x->x.bankCards(),query->query.where(x -> x.type().eq("储蓄卡")).orderBy(x -> x.openTime().asc()))
+                .where(user -> {
+                    user.name().like("小明");
+                    user.bankCards().elements(1, 2).none(x -> x.bank().createTime().ge(LocalDateTime.of(2000,1,1,0,0)));
+                }).select(user -> Select.DRAFT.of(
+                        user.name(),
+                        user.bankCards().elements(1, 2).joining(x -> x.bank().name(),",")
+                )).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`name` AS `value1`,t3.`__joining3__` AS `value2` FROM `t_sys_user` t LEFT JOIN (SELECT t2.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t4.`create_time` >= ? THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__none2__`,GROUP_CONCAT(t4.`name` SEPARATOR ?) AS `__joining3__` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time` FROM `t_bank_card` t1 WHERE t1.`type` = ? ORDER BY t1.`open_time` ASC LIMIT 2 OFFSET 1) t2 INNER JOIN `t_bank` t4 ON t4.`id` = t2.`bank_id` GROUP BY t2.`uid`) t3 ON t3.`uid` = t.`id` WHERE t.`name` LIKE ? AND IFNULL(t3.`__none2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2000-01-01T00:00(LocalDateTime),1(Integer),null(null),false(Boolean),true(Boolean),,(String),储蓄卡(String),%小明%(String),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void test15() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft2<String, String>> list = easyEntityQuery.queryable(SysUser.class)
+                .subQueryToGroupJoin(x -> x.bankCards())
+                .where(user -> {
+                    user.name().like("小明");
+                    user.bankCards().where(x -> x.type().eq("储蓄卡")).orderBy(x -> x.openTime().asc()).elements(1, 2).none(x -> x.bank().createTime().ge(LocalDateTime.of(2000,1,1,0,0)));
+                }).select(user -> Select.DRAFT.of(
+                        user.name(),
+                        user.bankCards().where(x -> x.type().eq("储蓄卡")).orderBy(x -> x.openTime().asc()).elements(1, 2).joining(x -> x.bank().name(),",")
+                )).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`name` AS `value1`,t3.`__joining3__` AS `value2` FROM `t_sys_user` t LEFT JOIN (SELECT t2.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t4.`create_time` >= ? THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__none2__`,GROUP_CONCAT(t4.`name` SEPARATOR ?) AS `__joining3__` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time` FROM `t_bank_card` t1 WHERE t1.`type` = ? ORDER BY t1.`open_time` ASC LIMIT 2 OFFSET 1) t2 INNER JOIN `t_bank` t4 ON t4.`id` = t2.`bank_id` GROUP BY t2.`uid`) t3 ON t3.`uid` = t.`id` WHERE t.`name` LIKE ? AND IFNULL(t3.`__none2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2000-01-01T00:00(LocalDateTime),1(Integer),null(null),false(Boolean),true(Boolean),,(String),储蓄卡(String),%小明%(String),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void test16() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft2<String, String>> list = easyEntityQuery.queryable(SysUser.class)
+                .subQueryToGroupJoin(x -> x.bankCards())
+                .where(user -> {
+                    user.name().like("小明");
+                    user.bankCards().where(x -> x.type().eq("储蓄卡")).orderBy(x -> x.openTime().asc()).elements(0, 2).none(x -> x.bank().createTime().ge(LocalDateTime.of(2000,1,1,0,0)));
+                }).select(user -> Select.DRAFT.of(
+                        user.name(),
+                        user.bankCards().where(x -> x.type().eq("储蓄卡")).orderBy(x -> x.openTime().asc()).elements(0, 2).joining(x -> x.bank().name(),",")
+                )).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`name` AS `value1`,t3.`__joining3__` AS `value2` FROM `t_sys_user` t LEFT JOIN (SELECT t2.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t4.`create_time` >= ? THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__none2__`,GROUP_CONCAT(t4.`name` SEPARATOR ?) AS `__joining3__` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time` FROM `t_bank_card` t1 WHERE t1.`type` = ? ORDER BY t1.`open_time` ASC LIMIT 3) t2 INNER JOIN `t_bank` t4 ON t4.`id` = t2.`bank_id` GROUP BY t2.`uid`) t3 ON t3.`uid` = t.`id` WHERE t.`name` LIKE ? AND IFNULL(t3.`__none2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2000-01-01T00:00(LocalDateTime),1(Integer),null(null),false(Boolean),true(Boolean),,(String),储蓄卡(String),%小明%(String),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void test17() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        easyEntityQuery.queryable(SysUser.class)
+                .subQueryToGroupJoin(x -> x.bankCards())
+                .where(user -> {
+                    user.name().like("小明");
+                    user.bankCards().orderBy(x -> x.openTime().asc()).elements(0, 2).none(x -> {
+                        x.bank().createTime().ge(LocalDateTime.of(2000,1,1,0,0));
+                        x.type().eq("储蓄卡");
+                    });
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time` FROM `t_sys_user` t LEFT JOIN (SELECT t2.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t4.`create_time` >= ? AND t2.`type` = ? THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__none2__` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time` FROM `t_bank_card` t1 ORDER BY t1.`open_time` ASC LIMIT 3) t2 INNER JOIN `t_bank` t4 ON t4.`id` = t2.`bank_id` GROUP BY t2.`uid`) t3 ON t3.`uid` = t.`id` WHERE t.`name` LIKE ? AND IFNULL(t3.`__none2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2000-01-01T00:00(LocalDateTime),储蓄卡(String),1(Integer),null(null),false(Boolean),true(Boolean),%小明%(String),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 }

@@ -73,7 +73,7 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(o -> o.bankCards())
+                .subQueryToGroupJoin(o -> o.bankCards())
                 .where(user -> {
 
                     user.bankCards().where(x -> x.type().eq("123"))
@@ -88,8 +88,8 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum2__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE IFNULL(t2.`__sum2__`,0) = ? AND IFNULL((SELECT SUM(CAST(t3.`code` AS SIGNED)) FROM `doc_bank_card` t3 WHERE t3.`uid` = t.`id` AND t3.`type` = ?),0) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("123(String),0(Integer),123(Integer),123(String),123(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum2__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE IFNULL(t2.`__sum2__`,0) = ? AND IFNULL(t2.`__sum2__`,0) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),0(Integer),123(Integer),123(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 
@@ -127,8 +127,8 @@ public class QueryTest22 extends BaseTest {
 
 
         List<Draft3<String, Integer, String>> 银行 = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(o -> o.bankCards())
-                .manyConfigure(o -> o.bankCards(), bcq -> bcq.where(x -> {
+                .subQueryToGroupJoin(o -> o.bankCards())
+                .subQueryConfigure(o -> o.bankCards(), bcq -> bcq.where(x -> {
                     //支持隐式join和普通属性筛选
                     x.bank().name().eq("银行");
                     x.type().like("45678");
@@ -578,7 +578,7 @@ public class QueryTest22 extends BaseTest {
         Long c = 1L;
         List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
                 .leftJoin(DocUser.class, (t_blog, user) -> t_blog.id().eq(user.id()))
-                .manyJoin((t_blog, user) -> user.userBooks())
+                .subQueryToGroupJoin((t_blog, user) -> user.userBooks())
                 .where((t_blog, user) -> {
                     user.userBooks().where(x -> x.name().like("123")).max(x -> x.name()).eq("你好");
                 }).toList();

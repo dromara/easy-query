@@ -10,6 +10,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
  * @author xuejiaming
  */
 public class ManyConfiguration {
+    public static final ManyConfiguration EMPTY = new ManyConfiguration(x->x);
     private final SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> configureExpression;
 
     public ManyConfiguration(SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> configureExpression) {

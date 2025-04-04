@@ -1,10 +1,12 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLRawParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
@@ -26,6 +28,14 @@ import java.util.List;
  */
 public class EasySQLUtil {
     private EasySQLUtil() {
+    }
+
+    public static String toQueryableKey(ClientQueryable<?> clientQueryable) {
+        ToSQLResult sqlResult = clientQueryable.toSQLResult();
+        String sql = sqlResult.getSQL();
+        //后续SQLParameter改成实现hashCode和equals
+        String parameterString = EasySQLUtil.sqlParameterToString(sqlResult.getSqlContext().getParameters());
+        return String.format("%s:%s", sql, parameterString);
     }
 
 

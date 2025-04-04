@@ -88,9 +88,8 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
 
 
     @Override
-    public AnonymousManyJoinEntityTableExpressionBuilder toImplicitGroup(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext, RelationTableKey relationTableKey) {
-        ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(relationTableKey);
-        return EasyRelationalUtil.getManyJoinRelationTable(entityExpressionBuilder, leftTable, navigateMetadata, relationTableKey, manyConfiguration);
+    public AnonymousManyJoinEntityTableExpressionBuilder toImplicitGroup(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, ManyConfiguration manyConfiguration) {
+        return EasyRelationalUtil.getManyJoinRelationTable(entityExpressionBuilder, leftTable, navigateMetadata, manyConfiguration);
     }
 
     @Override
@@ -99,12 +98,9 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
         ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(new DefaultRelationTableKey(leftTable, navigateMetadata.getPropertyName()));
         //创建分区分组查询表达式
         ClientQueryable<?> clientQueryable = createPartitionQueryable(entityClass, entityExpressionBuilder.getRuntimeContext(), navigateMetadata, manyConfiguration, clientQueryableSQLExpression);
-        ToSQLResult sqlResult = clientQueryable.toSQLResult();
-        String sql = sqlResult.getSQL();
-        //后续SQLParameter改成实现hashCode和equals
-        String parameterString = EasySQLUtil.sqlParameterToString(sqlResult.getSqlContext().getParameters());
 
-        RelationTableKey partitionByRelationTableKey = new PartitionByRelationTableKey(leftTable, navigateMetadata.getPropertyName(), index, String.format("%s:%s", sql, parameterString));
+        String queryableKey = EasySQLUtil.toQueryableKey(clientQueryable);
+        RelationTableKey partitionByRelationTableKey = new PartitionByRelationTableKey(leftTable, navigateMetadata.getPropertyName(), index, queryableKey);
 
         return EasyRelationalUtil.getManySingleJoinRelationTable(partitionByRelationTableKey, entityExpressionBuilder, leftTable, navigateMetadata, index, clientQueryable);
 
