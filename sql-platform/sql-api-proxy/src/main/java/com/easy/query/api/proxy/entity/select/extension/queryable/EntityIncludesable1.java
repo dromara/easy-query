@@ -29,13 +29,11 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
      * @return
      */
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression) {
-        return includes(navigateIncludeSQLExpression, o -> {
-        }, null);
+        return includes(navigateIncludeSQLExpression, null, null);
     }
 
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(boolean condition, SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression) {
-        return includes(condition, navigateIncludeSQLExpression, o -> {
-        }, null);
+        return includes(condition, navigateIncludeSQLExpression, null, null);
     }
 
     /**
@@ -53,13 +51,11 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
      * @return
      */
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression, Integer groupSize) {
-        return includes(navigateIncludeSQLExpression, o -> {
-        }, groupSize);
+        return includes(navigateIncludeSQLExpression, null, groupSize);
     }
 
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(boolean condition, SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression, Integer groupSize) {
-        return includes(condition, navigateIncludeSQLExpression, o -> {
-        }, groupSize);
+        return includes(condition, navigateIncludeSQLExpression, null, groupSize);
     }
 
     /**

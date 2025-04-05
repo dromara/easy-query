@@ -434,10 +434,13 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
                     runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType()),
                     configureArgument,
                     runtimeContext);
-            TPropertyProxy tPropertyProxy = EntityQueryProxyManager.create(clientQueryable.queryClass());
-            EasyEntityQueryable<TPropertyProxy, TProperty> entityQueryable = new EasyEntityQueryable<>(tPropertyProxy, clientQueryable);
-            includeAdapterExpression.apply(entityQueryable);
-            return entityQueryable.getClientQueryable();
+            if (includeAdapterExpression != null) {
+                TPropertyProxy tPropertyProxy = EntityQueryProxyManager.create(clientQueryable.queryClass());
+                EasyEntityQueryable<TPropertyProxy, TProperty> entityQueryable = new EasyEntityQueryable<>(tPropertyProxy, clientQueryable);
+                includeAdapterExpression.apply(entityQueryable);
+                return entityQueryable.getClientQueryable();
+            }
+            return clientQueryable;
         });
 
         return getQueryable();

@@ -29,13 +29,11 @@ public interface EntityIncludeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
      * @return
      */
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> include(SQLFuncExpression1<T1Proxy, TPropertyProxy> navigateIncludeSQLExpression) {
-        return include(navigateIncludeSQLExpression, o -> {
-        }, null);
+        return include(navigateIncludeSQLExpression, null, null);
     }
 
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> include(boolean condition, SQLFuncExpression1<T1Proxy, TPropertyProxy> navigateIncludeSQLExpression) {
-        return include(condition, navigateIncludeSQLExpression, o -> {
-        }, null);
+        return include(condition, navigateIncludeSQLExpression, null, null);
     }
 
     /**
@@ -53,13 +51,11 @@ public interface EntityIncludeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
      * @return
      */
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> include(SQLFuncExpression1<T1Proxy, TPropertyProxy> navigateIncludeSQLExpression, Integer groupSize) {
-        return include(navigateIncludeSQLExpression, o -> {
-        }, groupSize);
+        return include(navigateIncludeSQLExpression, null, groupSize);
     }
 
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> include(boolean condition, SQLFuncExpression1<T1Proxy, TPropertyProxy> navigateIncludeSQLExpression, Integer groupSize) {
-        return include(condition, navigateIncludeSQLExpression, o -> {
-        }, groupSize);
+        return include(condition, navigateIncludeSQLExpression, null, groupSize);
     }
 
     /**

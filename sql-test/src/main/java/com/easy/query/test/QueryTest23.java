@@ -604,7 +604,9 @@ public class QueryTest23 extends BaseTest {
     @Data
     @Table("special_class")
     public static class SpecialClass {
-        private String pi_m_id;
+        private BigDecimal pi_m_id;
+        private BigDecimal pi_m_no;
+        private BigDecimal pi_m_h_id;
     }
 
 }

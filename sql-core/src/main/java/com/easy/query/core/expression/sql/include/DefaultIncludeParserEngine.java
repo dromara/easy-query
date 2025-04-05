@@ -118,7 +118,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         //如果存在映射关系 是否调用了columnInclude
         confirmNavigateProperty(aliasEntity, expressionContext, entityMetadata, includeNavigateParams, includeParseContext);
         if (EasyStringUtil.isBlank(includeParseContext.getNavigatePropertyName())) {
-            throw new EasyQueryInvalidOperationException("not found relation navigate property");
+            throw new EasyQueryInvalidOperationException("not found relation navigate property，plz confirm use selectAutoInclude");
         }
 
         List<List<Object>> relationIds = relationExtraEntities.stream().map(o -> o.getRelationExtraColumns(navigateMetadata.getSelfPropertiesOrPrimary()))
