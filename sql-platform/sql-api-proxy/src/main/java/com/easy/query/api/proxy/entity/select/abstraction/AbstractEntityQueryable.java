@@ -36,6 +36,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.ManyPropColumn;
 import com.easy.query.core.proxy.PropTypeColumn;
@@ -425,8 +426,11 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
         ConfigureArgument configureArgument = getQueryable().getSQLEntityExpressionBuilder().getExpressionContext().getConfigureArgument();
         getClientQueryable().include(navigateInclude -> {
+
+
             ClientQueryable<TProperty> queryable = navigateInclude.with(navValue, groupSize);
-            NavigateMetadata navigateMetadata = navigateInclude.getIncludeNavigateParams().getNavigateMetadata();
+            IncludeNavigateParams includeNavigateParams = navigateInclude.getIncludeNavigateParams();
+            NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
             ClientQueryable<TProperty> clientQueryable = EasyNavigateUtil.navigateOrderBy(
                     queryable,
                     new OffsetLimitEntry(navigateMetadata.getOffset(), navigateMetadata.getLimit()),
@@ -435,12 +439,17 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
                     configureArgument,
                     runtimeContext);
             if (includeAdapterExpression != null) {
-                TPropertyProxy tPropertyProxy = EntityQueryProxyManager.create(clientQueryable.queryClass());
-                EasyEntityQueryable<TPropertyProxy, TProperty> entityQueryable = new EasyEntityQueryable<>(tPropertyProxy, clientQueryable);
-                includeAdapterExpression.apply(entityQueryable);
-                return entityQueryable.getClientQueryable();
+                includeNavigateParams.setAdapterExpression(innerQueryable -> {
+                    ClientQueryable<TProperty> cq = EasyObjectUtil.typeCastNullable(innerQueryable);
+                    TPropertyProxy tPropertyProxy = EntityQueryProxyManager.create(cq.queryClass());
+                    EasyEntityQueryable<TPropertyProxy, TProperty> entityQueryable = new EasyEntityQueryable<>(tPropertyProxy, cq);
+                    includeAdapterExpression.apply(entityQueryable);
+                });
+                includeNavigateParams.getAdapterExpression().apply(clientQueryable);
+                return clientQueryable;
             }
-            return clientQueryable;
+
+            return queryable;
         });
 
         return getQueryable();

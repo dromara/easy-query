@@ -972,6 +972,15 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         EntityMetadata navigateEntityMetadata = entityMetadataManager.getEntityMetadata(resultNavigateMetadata.getNavigatePropertyType());
                         ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(t.with(resultNavigateMetadata.getPropertyName()), EasyNavigateUtil.getNavigateLimit(resultNavigateMetadata, t.getIncludeNavigateParams().getNavigateMetadata()), EasyNavigateUtil.getNavigateOrderProps(resultNavigateMetadata.getOrderProps(), t.getIncludeNavigateParams().getNavigateMetadata().getOrderProps()), navigateEntityMetadata, configureArgument, runtimeContext);
 
+                        IncludeNavigateExpression includeNavigateExpression = expressionContext.getIncludes().get(entityNavigateMetadata);
+                        if (includeNavigateExpression != null) {
+                            IncludeNavigateParams includeNavigateParams = includeNavigateExpression.getIncludeNavigateParams();
+                            if (includeNavigateParams.getAdapterExpression() != null) {
+                                includeNavigateParams.getAdapterExpression().apply(with);
+                            }
+                        }
+
+
                         selectAutoInclude0(entityMetadataManager, with, entityEntityMetadata, navigateEntityMetadata, circulateChecker, configureArgument, replace, deep + 1);
                         selectAutoIncludeFlat0(entityMetadataManager, with, entityEntityMetadata, navigateEntityMetadata);
 //                        selectAutoIncludeJoin0(with.queryClass(), with, navigateEntityMetadata);
@@ -1035,7 +1044,19 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                             t.getIncludeNavigateParams().setFlatQueryEntityMetadata(entityMetadata);
                         }
 //                        ClientQueryable<Object> with = t.with(navigatePropName);
-                        ClientQueryable<?> with = t.with(propertyName);
+
+
+                        ConfigureArgument configureArgument = this.entityQueryExpressionBuilder.getExpressionContext().getConfigureArgument();
+                        ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(t.with(propertyName), EasyNavigateUtil.getNavigateLimit(entityNavigateMetadata, t.getIncludeNavigateParams().getNavigateMetadata()), EasyNavigateUtil.getNavigateOrderProps(entityNavigateMetadata.getOrderProps(), t.getIncludeNavigateParams().getNavigateMetadata().getOrderProps()), entityMetadata, configureArgument, runtimeContext);
+
+                        IncludeNavigateExpression includeNavigateExpression = expressionContext.getIncludes().get(entityNavigateMetadata);
+                        if (includeNavigateExpression != null) {
+                            IncludeNavigateParams includeNavigateParams = includeNavigateExpression.getIncludeNavigateParams();
+                            if(includeNavigateParams.getAdapterExpression()!=null){
+                                includeNavigateParams.getAdapterExpression().apply(with);
+                            }
+                        }
+
                         EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
 
 //                        if(!entityEntityMetadata.getEntityClass().equals(entityNavigateMetadata.getNavigatePropertyType())){
