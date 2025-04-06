@@ -49,6 +49,7 @@ public interface EntityPageAble1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
             return easyPageResultProvider.createPageResult(pageIndex, pageSize, total, EasyCollectionUtil.emptyList());
         }
         EntityQueryable<T1Proxy, T1> select = entityQueryable.cloneQueryable().limit(offset, realTake).select(t -> t);
+        select.getSQLEntityExpressionBuilder().getExpressionContext().getRelationExtraMetadata().getRelationExtraColumnMap().clear();
         Query<TR> apply = selectExpression.apply(select);
         List<TR> list = apply.toList();
         return easyPageResultProvider.createPageResult(pageIndex, pageSize, total, list);

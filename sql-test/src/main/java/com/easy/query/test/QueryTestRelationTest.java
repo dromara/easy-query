@@ -447,6 +447,42 @@ public class QueryTestRelationTest extends BaseTest {
                 ListenerContext listenerContext = new ListenerContext(true);
                 listenerContextManager.startListen(listenerContext);
 
+                easyEntityQuery.queryable(MySignUp.class)
+                        .include(m -> m.comUser(),eq->eq.where(x->x.gw().eq("123")))
+                        .where(m -> {
+                            m.id().isNotNull();
+//                            m.comUser().id().isNotNull();
+                        })
+                       .toPageSelectResult(q -> {
+                           return q.selectAutoInclude(MySignUpDTOx.class);
+                       }, 1, 10);
+
+                {
+
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                    Assert.assertEquals("SELECT COUNT(*) FROM `my_sign_up` WHERE `id` IS NOT NULL", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                    Assert.assertEquals("SELECT t1.`id`,t1.`time`,t1.`content`,t1.`com_id` AS `__relation__comId`,t1.`user_id` AS `__relation__userId` FROM (SELECT t.`id`,t.`com_id`,t.`user_id`,t.`time`,t.`content` FROM `my_sign_up` t WHERE t.`id` IS NOT NULL LIMIT 4) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+                    Assert.assertEquals("SELECT `gw`,`com_id`,`user_id` FROM `my_com_user` WHERE `gw` = ? AND ((`com_id` =? AND `user_id` =?) OR (`com_id` =? AND `user_id` =?) OR (`com_id` =? AND `user_id` =?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("123(String),c1(String),u1(String),c1(String),u3(String),c2(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+
+                System.out.println("11");
+            }
+
+            {
+                System.out.println("1");
+                ListenerContext listenerContext = new ListenerContext(true);
+                listenerContextManager.startListen(listenerContext);
+
                easyEntityQuery.queryable(MySignUp.class)
                         .include(m -> m.comUser(),eq->eq.where(x->x.gw().eq("123")))
                         .where(m -> {
