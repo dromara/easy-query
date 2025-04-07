@@ -21,7 +21,7 @@ public class SchoolStudentDTOxxx {
     private String id;
     private String classId;
     private String name;
-    @NavigateFlat(mappingPath = {"schoolClass","name"})
+    @NavigateFlat(pathAlias = "schoolClass.name")
     private String schoolClassName;
     //    private Integer age;
     @Navigate(value = RelationTypeEnum.ManyToOne)

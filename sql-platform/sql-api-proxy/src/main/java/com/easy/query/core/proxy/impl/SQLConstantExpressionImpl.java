@@ -9,6 +9,7 @@ import com.easy.query.core.proxy.core.EntitySQLContext;
  *
  * @author xuejiaming
  */
+@Deprecated
 public class SQLConstantExpressionImpl implements SQLConstantExpression {
 
 

@@ -859,4 +859,39 @@ public class QueryTest21 extends BaseTest {
 //                }).toList();
     }
 
+    @Test
+    public  void testDistinctCount(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<Long> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.title().like("123");
+                }).selectColumn(t_blog -> t_blog.id().count(true)).toList();
+        listenerContextManager.clear();
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT COUNT(DISTINCT t.`id`) FROM `t_blog` t WHERE t.`deleted` = ? AND t.`title` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public  void testDistinctCount1(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        long count = easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.title().like("123");
+                }).selectColumn(t_blog -> t_blog.id()).distinct().count();
+        listenerContextManager.clear();
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+        Assert.assertEquals("SELECT COUNT(DISTINCT t.`id`) FROM `t_blog` t WHERE t.`deleted` = ? AND t.`title` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
 }

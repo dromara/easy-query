@@ -3,7 +3,6 @@ package com.easy.query.test.dto.autodto;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.NavigateFlat;
 import com.easy.query.core.annotation.NavigateJoin;
-import com.easy.query.core.enums.RelationMappingTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.test.entity.school.SchoolClass;
 import lombok.Data;
@@ -12,7 +11,7 @@ import java.util.List;
 
 /**
  * create time 2024/4/12 22:55
- * @see SchoolClass
+ * {@link SchoolClass}
  *
  * @author xuejiaming
  */
@@ -32,13 +31,10 @@ public class SchoolClassAOProp10 {
      * {@link  com.easy.query.test.entity.school.SchoolStudent}
      */
     @Data
-    public static class  SchoolStudentAO{
+    public static class SchoolStudentAO {
         private String id;
         private String name;
-        @NavigateJoin(mappingPath = {
-                "schoolStudentAddress",
-                "address"
-        })
+        @NavigateJoin(pathAlias = "schoolStudentAddress.address")
         private String stuAddress;
 
 //        @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {
@@ -47,9 +43,7 @@ public class SchoolClassAOProp10 {
 //        private List<String> stuNames;
 
 
-        @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {
-                "schoolClass","name"
-        })
+        @NavigateFlat(pathAlias = "schoolClass.name")
         private List<String> classNames;
     }
 }

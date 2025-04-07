@@ -1,7 +1,6 @@
 package com.easy.query.test.dto.autodto;
 
 import com.easy.query.core.annotation.NavigateFlat;
-import com.easy.query.core.enums.RelationMappingTypeEnum;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
@@ -11,7 +10,7 @@ import java.util.List;
 
 /**
  * create time 2024/4/12 22:55
- * @see SchoolClass
+ * {@link SchoolClass}
  *
  * @author xuejiaming
  */
@@ -37,9 +36,9 @@ public class SchoolClassAOProp11 {
 
 
 
-    @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolTeachers","schoolClasses","id"})
+    @NavigateFlat(pathAlias = "schoolTeachers.schoolClasses.id")
     private List<String> schoolTeachersClassIds;
-    @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolTeachers","schoolClasses","name"})
+    @NavigateFlat(pathAlias = "schoolTeachers.schoolClasses.name")
     private List<String> schoolTeachersClassId1s;
 
 //    @Data

@@ -1,6 +1,5 @@
 package com.easy.query.core.metadata;
 
-import com.easy.query.core.enums.RelationMappingTypeEnum;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 
 import java.util.List;
@@ -14,10 +13,10 @@ import java.util.List;
 public class NavigateFlatMetadata {
 
     private final EntityMetadata entityMetadata;
+    private final boolean toMany;
     /**
      * 关联关系
      */
-    private final RelationMappingTypeEnum relationMappingType;
     private final String[] mappingPath;
     private final Class<?> navigatePropertyType;
     private final boolean basicType;
@@ -25,14 +24,14 @@ public class NavigateFlatMetadata {
     private final String property;
 
     public NavigateFlatMetadata(EntityMetadata entityMetadata,
-                                RelationMappingTypeEnum relationMappingType,
+                                boolean toMany,
                                 String[] mappingPath,
                                 Class<?> navigatePropertyType,
                                 boolean basicType,
                                 PropertySetterCaller<Object> beanSetter,
                                 String property) {
         this.entityMetadata = entityMetadata;
-        this.relationMappingType = relationMappingType;
+        this.toMany = toMany;
         this.mappingPath = mappingPath;
         this.navigatePropertyType = navigatePropertyType;
         this.basicType=basicType;
@@ -48,8 +47,8 @@ public class NavigateFlatMetadata {
         return basicType;
     }
 
-    public RelationMappingTypeEnum getRelationMappingType() {
-        return relationMappingType;
+    public boolean isToMany() {
+        return toMany;
     }
 
     public String[] getMappingPath() {

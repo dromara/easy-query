@@ -3,7 +3,6 @@ package com.easy.query.test.dto.autodto;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.NavigateFlat;
 import com.easy.query.core.annotation.NavigateJoin;
-import com.easy.query.core.enums.RelationMappingTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.test.entity.school.SchoolClass;
 import lombok.Data;

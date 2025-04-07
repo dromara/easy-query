@@ -68,7 +68,6 @@ import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
 import com.easy.query.core.enums.OrderByPropertyModeEnum;
-import com.easy.query.core.enums.RelationMappingTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
@@ -427,10 +426,7 @@ public class EntityMetadata {
     }
 
     private String[] getFlatMappingPath0(NavigateFlat navigateFlat, Map<String, Field> staticFields) {
-        if (navigateFlat.mappingPath().length == 0) {
-            return getMappingPath(navigateFlat.pathAlias(), staticFields, navigateFlat.mappingPath());
-        }
-        return navigateFlat.mappingPath();
+        return getMappingPath(navigateFlat.pathAlias(), staticFields);
     }
 
     private String[] getJoinMappingPath(NavigateJoin navigateJoin, Map<String, Field> staticFields, String property) {
@@ -442,13 +438,10 @@ public class EntityMetadata {
     }
 
     private String[] getJoinMappingPath0(NavigateJoin navigateJoin, Map<String, Field> staticFields) {
-        if (navigateJoin.mappingPath().length == 0) {
-            return getMappingPath(navigateJoin.pathAlias(), staticFields, navigateJoin.mappingPath());
-        }
-        return navigateJoin.mappingPath();
+        return getMappingPath(navigateJoin.pathAlias(), staticFields);
     }
 
-    private String[] getMappingPath(String mapping, Map<String, Field> staticFields, String[] def) {
+    private String[] getMappingPath(String mapping, Map<String, Field> staticFields) {
         if (EasyStringUtil.isNotBlank(mapping)) {
             Field field = staticFields.get(mapping);
             if (field != null) {
@@ -462,9 +455,11 @@ public class EntityMetadata {
                 }
             } else if (mapping.contains(".")) {
                 return mapping.split("\\.");
+            }else{
+                return new String[]{mapping};
             }
         }
-        return def;
+        throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityClass) + " mapping path:[" + mapping + "] cant parse");
     }
 
     private void createNavigateFlatMappingMetadata(NavigateFlat navigateFlat, Map<String, Field> staticFields, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property, QueryConfiguration configuration) {
@@ -472,16 +467,8 @@ public class EntityMetadata {
         if (mappingPath.length <= 1) {
             throw new EasyQueryInvalidOperationException("navigate flat, mappingPath at least two path");
         }
-        RelationMappingTypeEnum relationMappingType = navigateFlat.value();
-        if (relationMappingType == RelationMappingTypeEnum.AUTO) {
-            Class<?> propertyType = fastBeanProperty.getPropertyType();
-            if (Collection.class.isAssignableFrom(propertyType)) {
-                relationMappingType = RelationMappingTypeEnum.ToMany;
-            } else {
-                relationMappingType = RelationMappingTypeEnum.ToOne;
-            }
-        }
-        boolean toMany = relationMappingType.equals(RelationMappingTypeEnum.ToMany);
+        Class<?> propertyType = fastBeanProperty.getPropertyType();
+        boolean toMany = Collection.class.isAssignableFrom(propertyType);
         Class<?> navigateType = getNavigateType(toMany, field, fastBeanProperty);
         if (navigateType == null) {
             throw new EasyQueryInvalidOperationException("not found navigate flat type, property:[" + property + "]");
@@ -489,7 +476,7 @@ public class EntityMetadata {
 //        Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
         PropertySetterCaller<Object> beanSetter = getBeanSetter(field, fastBean, fastBeanProperty, configuration);
 
-        NavigateFlatMetadata navigateFlatMetadata = new NavigateFlatMetadata(this, relationMappingType, mappingPath, navigateType, EasyClassUtil.isBasicTypeOrEnum(navigateType), beanSetter, property);
+        NavigateFlatMetadata navigateFlatMetadata = new NavigateFlatMetadata(this, toMany, mappingPath, navigateType, EasyClassUtil.isBasicTypeOrEnum(navigateType), beanSetter, property);
 
         property2NavigateFlatMap.put(property, navigateFlatMetadata);
     }
@@ -663,7 +650,6 @@ public class EntityMetadata {
 
 
                 columnOption.setLarge(column.large());
-
 
 
 //                    columnMetadata.setSelect(column.select());

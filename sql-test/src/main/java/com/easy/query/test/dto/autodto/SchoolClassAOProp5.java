@@ -1,7 +1,6 @@
 package com.easy.query.test.dto.autodto;
 
 import com.easy.query.core.annotation.NavigateFlat;
-import com.easy.query.core.enums.RelationMappingTypeEnum;
 import com.easy.query.test.entity.school.SchoolClass;
 import lombok.Data;
 
@@ -9,7 +8,7 @@ import java.util.List;
 
 /**
  * create time 2024/4/12 22:55
- * @see SchoolClass
+ * {@link SchoolClass}
  *
  * @author xuejiaming
  */
@@ -29,7 +28,7 @@ public class SchoolClassAOProp5 {
 //    private List<String> schoolTeachersClassIds;
 //    @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolTeachers","schoolClasses","name"})
 //    private List<String> schoolTeachersClassId1s;
-    @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolTeachers","schoolClasses"})
+    @NavigateFlat(pathAlias = "schoolTeachers.schoolClasses")
     private List<SchoolStudentAO> schoolTeachersClassList;
 
     @Data

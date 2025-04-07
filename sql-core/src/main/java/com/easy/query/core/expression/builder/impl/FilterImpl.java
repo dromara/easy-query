@@ -845,7 +845,7 @@ public class FilterImpl implements Filter {
             }
             if (conditionRight) {
                 boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
-                this.valueCompare(table, property, valLeft, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE);
+                this.valueCompare(table, property, valRight, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE);
             }
         }
         return this;

@@ -1447,6 +1447,126 @@ public class QueryTest18 extends BaseTest {
         }
     }
 
+    @Test
+    public void rangeTest1_1(){
+        LocalDateTime time1 = LocalDateTime.of(2021, 1, 1, 1, 1);
+        LocalDateTime time2 = LocalDateTime.of(2022, 1, 1, 1, 1);
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(b -> {
+//                    b.id().eq(b.id().nullOrDefault("1"));
+                    b.createTime().rangeClosed(null, time2);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `create_time` <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2022-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void rangeTest1_2(){
+        LocalDateTime time1 = LocalDateTime.of(2021, 1, 1, 1, 1);
+        LocalDateTime time2 = LocalDateTime.of(2022, 1, 1, 1, 1);
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(b -> {
+//                    b.id().eq(b.id().nullOrDefault("1"));
+                    b.createTime().rangeClosed(time1, null);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `create_time` >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2021-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void rangeTest1_3(){
+        LocalDateTime time1 = LocalDateTime.of(2021, 1, 1, 1, 1);
+        LocalDateTime time2 = LocalDateTime.of(2022, 1, 1, 1, 1);
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(b -> {
+//                    b.id().eq(b.id().nullOrDefault("1"));
+                    b.createTime().rangeClosed((LocalDateTime)null, (LocalDateTime)null);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+
+    @Test
+    public void rangeTest1_4(){
+        LocalDateTime time1 = LocalDateTime.of(2021, 1, 1, 1, 1);
+        LocalDateTime time2 = LocalDateTime.of(2022, 1, 1, 1, 1);
+        LocalDateTime def = LocalDateTime.of(2022, 5, 1, 1, 1);
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(b -> {
+//                    b.id().eq(b.id().nullOrDefault("1"));
+                    b.createTime().nullOrDefault(def).rangeClosed(null, time2);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND IFNULL(`create_time`,?) <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2022-05-01T01:01(LocalDateTime),2022-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void rangeTest1_5(){
+        LocalDateTime time1 = LocalDateTime.of(2021, 1, 1, 1, 1);
+        LocalDateTime time2 = LocalDateTime.of(2022, 1, 1, 1, 1);
+        LocalDateTime def = LocalDateTime.of(2022, 5, 1, 1, 1);
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(b -> {
+//                    b.id().eq(b.id().nullOrDefault("1"));
+                    b.createTime().nullOrDefault(def).rangeClosed(time1, null);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND IFNULL(`create_time`,?) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2022-05-01T01:01(LocalDateTime),2021-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void rangeTest1_6(){
+        LocalDateTime time1 = LocalDateTime.of(2021, 1, 1, 1, 1);
+        LocalDateTime time2 = LocalDateTime.of(2022, 1, 1, 1, 1);
+        LocalDateTime def = LocalDateTime.of(2022, 5, 1, 1, 1);
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(b -> {
+//                    b.id().eq(b.id().nullOrDefault("1"));
+                    b.createTime().nullOrDefault(def).rangeClosed((LocalDateTime)null, null);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 
     @Test
     public void rangeTest2() {

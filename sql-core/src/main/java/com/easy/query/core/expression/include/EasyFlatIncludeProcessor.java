@@ -1,7 +1,6 @@
 package com.easy.query.core.expression.include;
 
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.enums.RelationMappingTypeEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -100,10 +99,10 @@ public class EasyFlatIncludeProcessor extends EasyIncludeProcess {
             } else {
                 values = navigateFlatGetter.apply(value);
             }
-            if (navigateFlatMetadata.getRelationMappingType() == RelationMappingTypeEnum.ToOne) {
-                navigateFlatMetadata.getBeanSetter().call(entity, EasyCollectionUtil.firstOrNull(values));
-            } else {
+            if (navigateFlatMetadata.isToMany()) {
                 navigateFlatMetadata.getBeanSetter().call(entity, values);
+            } else {
+                navigateFlatMetadata.getBeanSetter().call(entity, EasyCollectionUtil.firstOrNull(values));
             }
         } else {
             super.setEntityValue(entity, value);

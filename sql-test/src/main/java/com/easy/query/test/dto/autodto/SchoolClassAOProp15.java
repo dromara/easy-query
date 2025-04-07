@@ -1,8 +1,6 @@
 package com.easy.query.test.dto.autodto;
 
 import com.easy.query.core.annotation.NavigateFlat;
-import com.easy.query.core.annotation.NavigateSetter;
-import com.easy.query.core.enums.RelationMappingTypeEnum;
 import com.easy.query.test.entity.school.SchoolClass;
 import lombok.Data;
 
@@ -10,7 +8,7 @@ import java.util.List;
 
 /**
  * create time 2024/4/12 22:55
- * @see SchoolClass
+ * {@link SchoolClass}
  *
  * @author xuejiaming
  */

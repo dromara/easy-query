@@ -1,6 +1,5 @@
 package com.easy.query.core.annotation;
 
-import com.easy.query.core.enums.RelationMappingTypeEnum;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -20,19 +19,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface NavigateFlat {
-    /**
-     * 无需再指定value值会自动推断如果无法推断在指定即可
-     * @return
-     */
-    @Deprecated
-    RelationMappingTypeEnum value() default RelationMappingTypeEnum.AUTO;
-
-    /**
-     * 建议使用 pathAlias
-     * @return
-     */
-    @Deprecated
-    String[] mappingPath() default {};
 
     /**
      * 使用静态属性MappingPath来制定路径,值为静态属性别名
