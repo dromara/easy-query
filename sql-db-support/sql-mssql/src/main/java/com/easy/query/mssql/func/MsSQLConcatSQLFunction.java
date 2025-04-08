@@ -9,6 +9,7 @@ import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * create time 2023/10/11 22:45
@@ -38,22 +39,22 @@ public class MsSQLConcatSQLFunction extends AbstractExpressionSQLFunction {
         for (ColumnExpression columnExpression : columnExpressions) {
             if (columnExpression instanceof ColumnPropertyExpression) {
                 ColumnPropertyExpression columnFuncExpression = (ColumnPropertyExpression) columnExpression;
-                TableAvailable table = getTableByExpression(defaultTable,columnFuncExpression);
+                TableAvailable table = getTableByExpression(defaultTable, columnFuncExpression);
                 ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(columnFuncExpression.getProperty());
                 Class<?> propertyType = columnMetadata.getPropertyType();
-                if (String.class == propertyType) {
-                    params[i]=String.format("{%s}",i);
+                if (Objects.equals(String.class, propertyType)) {
+                    params[i] = String.format("{%s}", i);
                 } else if (EasyClassUtil.isBasicType(propertyType)) {
-                    params[i]=String.format("CAST({%s} AS VARCHAR)", i);
-                }else {
-                    params[i]=String.format("CAST({%s} AS NVARCHAR(MAX))", i);
+                    params[i] = String.format("CAST({%s} AS VARCHAR)", i);
+                } else {
+                    params[i] = String.format("CAST({%s} AS NVARCHAR(MAX))", i);
                 }
             } else {
-                params[i]=String.format("{%s}",i);
+                params[i] = String.format("{%s}", i);
             }
             i++;
         }
-        return String.join(" + ",params);
+        return String.join(" + ", params);
     }
 
 

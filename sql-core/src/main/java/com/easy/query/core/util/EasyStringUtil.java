@@ -712,4 +712,6 @@ public class EasyStringUtil {
 //        System.out.println(addEscape("abc", '[', ']'));
 //        System.out.println(addEscape("abc.eft", '[', ']'));
 //    }
+
+
 }

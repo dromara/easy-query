@@ -18,7 +18,10 @@ import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author xuejiaming
@@ -171,4 +174,61 @@ public class EasySQLUtil {
         }
         return columnMetadata;
     }
+
+
+    private static final Pattern stringFormatPattern = Pattern.compile("\\{(\\d+)}|([^{]+)");
+    public static List<Object> parseFormat(String format, Object... args) {
+        List<Object> result = new ArrayList<>();
+        Matcher matcher = stringFormatPattern.matcher(format);
+
+        while (matcher.find()) {
+            String placeholder = matcher.group(1);
+            String text = matcher.group(2);
+            if (text != null) {
+                result.add(text);
+            } else if (placeholder != null) {
+                int index = Integer.parseInt(placeholder);
+                if (index >= args.length) {
+                    throw new EasyQueryInvalidOperationException(String.format("Mismatch: provided %d arguments, but the format string expects a different number.", args.length));
+                }
+                result.add(args[index]);
+            }
+        }
+        return result;
+    }
+//    public static List<Object> parseFormat(String formatString, Object... params) {
+//        List<Object> result = new ArrayList<>();
+//        List<String> staticParts = new ArrayList<>();
+//        int start = 0;
+//        int paramCount = 0;
+//
+//        while (true) {
+//            int index = formatString.indexOf("%s", start);
+//            if (index == -1) {
+//                // 添加最后一个静态部分
+//                staticParts.add(formatString.substring(start));
+//                break;
+//            }
+//            // 添加当前静态部分
+//            staticParts.add(formatString.substring(start, index));
+//            start = index + 2; // 跳过%s
+//            paramCount++;
+//        }
+//
+//        // 验证参数数量是否匹配
+//        if (params.length != paramCount) {
+//            throw new IllegalArgumentException("参数数量与占位符数量不匹配");
+//        }
+//
+//        // 交替合并静态部分和参数
+//        for (int i = 0; i < staticParts.size(); i++) {
+//            String part = staticParts.get(i);
+//            result.add(part);
+//            if (i < params.length) {
+//                result.add(params[i]);
+//            }
+//        }
+//
+//        return result;
+//    }
 }

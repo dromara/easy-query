@@ -42,13 +42,7 @@ public class ConcatExpressionSelectorImpl implements ConcatExpressionSelector{
 
     @Override
     public ConcatExpressionSelector expression(PropTypeColumn<String> propTypeColumn) {
-        if(propTypeColumn instanceof DSLSQLFunctionAvailable){
-            DSLSQLFunctionAvailable functionAvailable = (DSLSQLFunctionAvailable) propTypeColumn;
-            SQLFunction sqlFunction = functionAvailable.func().apply(sqlFunc);
-            columnFuncSelector.sqlFunc(propTypeColumn.getTable(),sqlFunction);
-        }else {
-            columnFuncSelector.column(propTypeColumn.getTable(), propTypeColumn.getValue());
-        }
+        PropTypeColumn.columnFuncSelector(columnFuncSelector, propTypeColumn);
         return this;
     }
 }

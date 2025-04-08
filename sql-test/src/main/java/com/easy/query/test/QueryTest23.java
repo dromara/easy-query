@@ -21,6 +21,7 @@ import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
 import com.easy.query.core.configuration.bean.entity.EntityPropertyDescriptorMatcher;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -607,6 +608,68 @@ public class QueryTest23 extends BaseTest {
         private BigDecimal pi_m_id;
         private BigDecimal pi_m_no;
         private BigDecimal pi_m_h_id;
+    }
+
+    @Test
+    public void testConcat() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.expression().stringFormat("你好:{0}我叫{1}你好吗?我今年{2}岁了,{0}你呢", t_blog.title(), t_blog.star(), 12)
+                            .eq("比较一下");
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND CONCAT(?,`title`,?,`star`,?,?,?,`title`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),你好:(String),我叫(String),你好吗?我今年(String),12(String),岁了,(String),你呢(String),比较一下(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void testConcat2() {
+        Exception ex = null;
+        try {
+
+            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                    .where(t_blog -> {
+                        t_blog.expression().stringFormat("你好:{0}我叫{1}你好吗?我今年{2}岁了,{3}你呢", t_blog.title(), t_blog.star(), 12)
+                                .eq("比较一下");
+                    }).toList();
+        } catch (Exception e) {
+            ex = e;
+        }
+        Assert.assertNotNull(ex);
+        Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
+        Assert.assertEquals("Mismatch: provided 3 arguments, but the format string expects a different number.",ex.getMessage());
+    }
+
+    @Test
+    public void testConcat3() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.expression().stringFormat("你好:{0}我叫{1}你好吗?我今年{1}岁了", t_blog.title(), t_blog.star(), 12)
+                            .eq("比较一下");
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND CONCAT(?,`title`,?,`star`,?,`star`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),你好:(String),我叫(String),你好吗?我今年(String),岁了(String),比较一下(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
     }
 
 }

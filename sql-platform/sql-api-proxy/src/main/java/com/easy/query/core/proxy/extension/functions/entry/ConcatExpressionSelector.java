@@ -38,4 +38,14 @@ public interface ConcatExpressionSelector {
      * @return 返回当前选择器
      */
     ConcatExpressionSelector expression(PropTypeColumn<String> propTypeColumn);
+
+    static void accept(ConcatExpressionSelector concatExpressionSelector,Object val){
+        if(val==null){
+            concatExpressionSelector.value(null);
+        } else if(val instanceof PropTypeColumn){
+            concatExpressionSelector.expression((PropTypeColumn<String>) val);
+        }else{
+            concatExpressionSelector.value(String.valueOf(val));
+        }
+    }
 }

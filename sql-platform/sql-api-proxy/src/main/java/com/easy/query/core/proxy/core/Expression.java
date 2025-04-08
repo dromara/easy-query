@@ -16,6 +16,7 @@ import com.easy.query.api.proxy.extension.partition.SumOverBuilder;
 import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
@@ -45,6 +46,8 @@ import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.core.util.EasyStringUtil;
 
 import java.math.BigDecimal;
 import java.sql.Time;
@@ -52,8 +55,13 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * create time 2024/2/17 22:21
@@ -327,6 +335,7 @@ public class Expression {
     }
 
     /**
+     * 请使用 {@link #stringFormat(String, Object...)}
      * <blockquote><pre>
      * {@code
      *  // CONCAT(?,CAST(`id_card` AS SIGNED),?) LIKE ?
@@ -342,10 +351,24 @@ public class Expression {
      * @param expressions 表达式
      * @return
      */
+    @Deprecated
     public ColumnFunctionCompareComparableStringChainExpression<String> concat(PropTypeColumn<?>... expressions) {
         return concat(x -> {
             for (PropTypeColumn<?> expression : expressions) {
                 x.expression(EasyObjectUtil.typeCastNullable(expression));
+            }
+        });
+    }
+    public ColumnFunctionCompareComparableStringChainExpression<String> stringFormat(String format,Object... args) {
+        if(format==null){
+            throw new EasyQueryInvalidOperationException("format is null");
+        }
+
+        List<Object> argList = EasySQLUtil.parseFormat(format, args);
+        return concat(x -> {
+            for (Object arg : argList) {
+
+                ConcatExpressionSelector.accept(x,arg);
             }
         });
     }
