@@ -2,6 +2,7 @@ package com.easy.query.mssql.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
+import com.easy.query.core.func.column.impl.ColumnFuncValueExpressionImpl;
 import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
 
 import java.util.ArrayList;
@@ -75,6 +76,7 @@ public class MsSQLDateTimeFormatSQLFunction extends AbstractExpressionSQLFunctio
         Matcher matcher = FORMAT_PATTERN.matcher(format);
 //        StringBuffer result = new StringBuffer();
         List<String> results = new ArrayList<>();
+        int i=1;
         while (matcher.find()) {
             String match = matcher.group(1);
             switch (match) {
@@ -137,7 +139,8 @@ public class MsSQLDateTimeFormatSQLFunction extends AbstractExpressionSQLFunctio
                     results.add("CASE WHEN cast(CASE WHEN SUBSTRING(CONVERT(CHAR(8), {0}, 24), 1, 1) = '0' THEN SUBSTRING(CONVERT(CHAR(8), {0}, 24), 2, 1) else SUBSTRING(CONVERT(CHAR(8), {0}, 24), 1, 2) END as int) >= 12 THEN 'P' else 'A' END");
                     break;
                 default:
-                    results.add("N'" + match + "'");
+                    columnExpressions.add(new ColumnFuncValueExpressionImpl(match));
+                    results.add("{" + i++ + "}");
                     break;
             }
         }

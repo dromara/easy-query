@@ -764,7 +764,7 @@ public class QueryTest15 extends BaseTest {
                 .where(m -> {
                     m.createTime().format("yyyy年MM月dd日").eq("2022年01月01日");
                 }).toSQL();
-        Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE to_char((\"create_time\")::TIMESTAMP,'YYYY年MM月DD日') = ?", sql);
+        Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE TO_CHAR((\"create_time\")::TIMESTAMP,'YYYY年MM月DD日') = ?", sql);
     }
 
 

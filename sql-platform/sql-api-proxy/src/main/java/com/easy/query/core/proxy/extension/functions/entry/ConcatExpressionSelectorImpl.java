@@ -22,6 +22,12 @@ public class ConcatExpressionSelectorImpl implements ConcatExpressionSelector{
 
         this.columnFuncSelector = columnFuncSelector;
     }
+
+    @Override
+    public ColumnFuncSelector getColumnFuncSelector() {
+        return this.columnFuncSelector;
+    }
+
     @Override
     public ConcatExpressionSelector value(String val) {
         columnFuncSelector.value(val);

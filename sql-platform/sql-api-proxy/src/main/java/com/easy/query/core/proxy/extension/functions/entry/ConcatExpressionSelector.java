@@ -1,6 +1,7 @@
 package com.easy.query.core.proxy.extension.functions.entry;
 
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.proxy.PropTypeColumn;
 
 /**
@@ -10,6 +11,7 @@ import com.easy.query.core.proxy.PropTypeColumn;
  * @author xuejiaming
  */
 public interface ConcatExpressionSelector {
+    ColumnFuncSelector getColumnFuncSelector();
     /**
      * 可以是值
      * @param val 值
@@ -43,9 +45,9 @@ public interface ConcatExpressionSelector {
         if(val==null){
             concatExpressionSelector.value(null);
         } else if(val instanceof PropTypeColumn){
-            concatExpressionSelector.expression((PropTypeColumn<String>) val);
+            PropTypeColumn.columnFuncSelector(concatExpressionSelector.getColumnFuncSelector(), (PropTypeColumn<?>) val);
         }else{
-            concatExpressionSelector.value(String.valueOf(val));
+            concatExpressionSelector.getColumnFuncSelector().value(val);
         }
     }
 }

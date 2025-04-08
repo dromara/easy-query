@@ -353,7 +353,7 @@ public void query10() {
                 .where(m -> {
                     m.createTime().format("yyyy年MM月dd日").eq("2022年01月01日");
                 }).toSQL();
-        Assert.assertEquals("SELECT \"id\",\"create_time\",\"update_time\",\"create_by\",\"update_by\",\"deleted\",\"title\",\"content\",\"url\",\"star\",\"publish_time\",\"score\",\"status\",\"order\",\"is_top\",\"top\" FROM \"t_blog\" WHERE \"deleted\" = ? AND TO_CHAR(((\"create_time\")::TIMESTAMP)::timestamp,'YYYY年MM月DD日') = ?",sql);
+        Assert.assertEquals("SELECT \"id\",\"create_time\",\"update_time\",\"create_by\",\"update_by\",\"deleted\",\"title\",\"content\",\"url\",\"star\",\"publish_time\",\"score\",\"status\",\"order\",\"is_top\",\"top\" FROM \"t_blog\" WHERE \"deleted\" = ? AND TO_CHAR((\"create_time\")::TIMESTAMP,'YYYY年MM月DD日') = ?",sql);
     }
     @Test
     public void testPartitionBy1(){

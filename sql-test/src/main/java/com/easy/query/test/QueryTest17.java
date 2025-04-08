@@ -647,7 +647,7 @@ public class QueryTest17 extends BaseTest {
                     Expression expression = m.expression();
                     expression.concat(x -> x.expression(m.id()).format("':'")).eq("123");
                 }).toSQL();
-        Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE to_char((\"create_time\")::TIMESTAMP,'YYYY年MM月DD日') = ? AND CONCAT(\"id\",':') = ?", sql);
+        Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE TO_CHAR((\"create_time\")::TIMESTAMP,'YYYY年MM月DD日') = ? AND CONCAT(\"id\",':') = ?", sql);
     }
 
     @Test

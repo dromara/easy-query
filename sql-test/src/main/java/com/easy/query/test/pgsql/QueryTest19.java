@@ -26,6 +26,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -467,5 +468,30 @@ public class QueryTest19 extends PgSQLBaseTest {
     }
 
 
+    @Test
+    public void datetimeformat(){
+
+        String formater="yyyy年MM-01 HH:mm分ss秒";
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Draft2<LocalDateTime,String>> list = entityQuery.queryable(BlogEntity.class)
+                .select(d -> Select.DRAFT.of(
+                        d.createTime(),
+                        d.createTime().format(formater)
+                )).toList();
+        Assert.assertFalse(list.isEmpty());
+        for (Draft2<LocalDateTime,String> timeAndFormat : list) {
+            LocalDateTime value1 = timeAndFormat.getValue1();
+            String format = value1.format(DateTimeFormatter.ofPattern(formater));
+            Assert.assertEquals(format, timeAndFormat.getValue2());
+        }
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.\"create_time\" AS \"value1\",TO_CHAR((t.\"create_time\")::TIMESTAMP,'YYYY年MM-01 HH24:MI分SS秒') AS \"value2\" FROM \"t_blog\" t WHERE t.\"deleted\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
 
 }
