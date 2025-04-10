@@ -21,14 +21,14 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface Navigate {
     /**
+     * 关联关系
+     */
+    RelationTypeEnum value();
+    /**
      * 当前对象的哪个属性关联目标对象,空表示使用当前对象的主键
      * @return
      */
     String[] selfProperty() default {};
-    /**
-     * 关联关系
-     */
-    RelationTypeEnum value();
     /**
      * 当前对象的{@param selfProperty}属性关联目标的哪个属性,空表示使用目标对象的主键
      */

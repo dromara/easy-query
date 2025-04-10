@@ -599,7 +599,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     default <TOtherProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> add(TOtherProperty constant) {
-        return add(Expression.of(getEntitySQLContext()).constant().valueOf(constant));
+        return add(Expression.of(getEntitySQLContext()).constant(constant));
     }
 
     /**
@@ -619,7 +619,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     default <TOtherProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> subtract(TOtherProperty constant) {
-        return subtract(Expression.of(getEntitySQLContext()).constant().valueOf(constant));
+        return subtract(Expression.of(getEntitySQLContext()).constant(constant));
     }
 
     /**
@@ -639,7 +639,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     default <TOtherProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> multiply(TOtherProperty constant) {
-        return multiply(Expression.of(getEntitySQLContext()).constant().valueOf(constant));
+        return multiply(Expression.of(getEntitySQLContext()).constant(constant));
     }
 
     /**
@@ -659,7 +659,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     default <TOtherProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> divide(TOtherProperty constant) {
-        return divide(Expression.of(getEntitySQLContext()).constant().valueOf(constant));
+        return divide(Expression.of(getEntitySQLContext()).constant(constant));
     }
 
     @Override

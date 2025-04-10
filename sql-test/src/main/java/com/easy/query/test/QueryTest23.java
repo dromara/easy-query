@@ -44,6 +44,7 @@ import com.easy.query.test.doc.entity.DocBankCard;
 import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.entity.BaseEntity;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.MyOrderDetail;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.school.SchoolClass;
@@ -649,7 +650,7 @@ public class QueryTest23 extends BaseTest {
         }
         Assert.assertNotNull(ex);
         Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
-        Assert.assertEquals("Mismatch: provided 3 arguments, but the format string expects a different number.",ex.getMessage());
+        Assert.assertEquals("Mismatch: provided 3 arguments, but the format string expects a different number.", ex.getMessage());
     }
 
     @Test
@@ -673,19 +674,43 @@ public class QueryTest23 extends BaseTest {
         Assert.assertEquals("false(Boolean),你好:(String),我叫(String),你好吗?我今年(String),岁了(String),比较一下(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
-    @Test
-    public void datetimeformat(){
 
-        String formater="yyyy年MM-01 HH:mm分ss秒";
+    @Test
+    public void datetimeformat() {
+
+//        List<BigDecimal> list1 = easyEntityQuery.queryable(BlogEntity.class)
+//                .innerJoin(Topic.class, (t_blog, t_topic) -> t_blog.id().eq(t_topic.id()))
+//                .where((t_blog, t_topic) -> {
+//
+//                })
+//                .selectColumn((t_blog, t_topic) -> t_topic.stars().sumBigDecimal()).toList();
+//
+//
+//        BigDecimal bigDecimal = easyEntityQuery.queryable(BlogEntity.class)
+//                .innerJoin(Topic.class, (t_blog, t_topic) -> t_blog.id().eq(t_topic.id()))
+//                .where((t_blog, t_topic) -> {
+//
+//                })
+//                .sumBigDecimalOrDefault((t_blog, t_topic) -> t_topic.stars(), BigDecimal.ZERO);
+//
+
+//        Long l = easyEntityQuery.queryable(MyOrderDetail.class)
+//                .where(m -> {
+//                    m.productId().eq("123");
+//                    m.order().status().eq(2);
+//                }).sumOrDefault(m -> m.orderNum(), 0L);
+
+
+        String formater = "yyyy年MM-01 HH:mm分ss秒";
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        List<Draft2<LocalDateTime,String>> list = easyEntityQuery.queryable(BlogEntity.class)
+        List<Draft2<LocalDateTime, String>> list = easyEntityQuery.queryable(BlogEntity.class)
                 .select(d -> Select.DRAFT.of(
                         d.createTime(),
                         d.createTime().format(formater)
                 )).toList();
         Assert.assertFalse(list.isEmpty());
-        for (Draft2<LocalDateTime,String> timeAndFormat : list) {
+        for (Draft2<LocalDateTime, String> timeAndFormat : list) {
             LocalDateTime value1 = timeAndFormat.getValue1();
             String format = value1.format(DateTimeFormatter.ofPattern(formater));
             Assert.assertEquals(format, timeAndFormat.getValue2());
@@ -696,6 +721,56 @@ public class QueryTest23 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`create_time` AS `value1`,DATE_FORMAT(t.`create_time`,'%Y年%m-01 %H:%i分%s秒') AS `value2` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void testOrderSQL() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .orderBy(t_blog -> {
+                    t_blog.expression().sql("{0} ASC", c -> {
+                        c.expression(t_blog.order());
+                    });
+                })
+                .toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? ORDER BY `order` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void testOrderSQL1() {
+
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .orderBy(t_blog -> {
+                    t_blog.expression().caseWhen(() -> {
+                                t_blog.title().eq("1");
+                            }).then(1).caseWhen(() -> {
+                                t_blog.title().eq("2");
+                            }).then(2)
+                            .elseEnd(3).asc();
+                })
+                .toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? ORDER BY (CASE WHEN `title` = ? THEN ? WHEN `title` = ? THEN ? ELSE ? END) ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),1(String),1(Integer),2(String),2(Integer),3(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 

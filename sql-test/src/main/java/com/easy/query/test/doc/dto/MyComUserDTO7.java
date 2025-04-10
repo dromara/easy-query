@@ -20,7 +20,7 @@ public class MyComUserDTO7 {
 
 
     private String gw;
-    @Navigate(value = RelationTypeEnum.OneToMany,offset = 1,limit = 2)
+    @Navigate(value = RelationTypeEnum.OneToMany, offset = 1, limit = 2)
     private List<InternalMySignUps> mySignUps;
 
 

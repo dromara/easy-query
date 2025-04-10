@@ -72,11 +72,13 @@ public @interface Column {
 
     /**
      * 值转换器 在内存中通过java代码进行转换
+     * 如果vo、dto也有当前属性那么需要标注该属性
      */
     Class<? extends ValueConverter<?, ?>> conversion() default DefaultValueConverter.class;
 
     /**
      * 数据库函数列增强器 比如ase(column) des(column)等加密函数或者geo函数在数据库中进行转换
+     * 如果vo、dto也有当前属性那么不需要标注该属性
      */
     Class<? extends ColumnValueSQLConverter> sqlConversion() default DefaultColumnValueSQLConverter.class;
 
@@ -96,7 +98,6 @@ public @interface Column {
     /**
      * 数据库生成键插入时生效比如 NEWID()  RAND()
      */
-
     Class<? extends GeneratedKeySQLColumnGenerator> generatedSQLColumnGenerator() default DefaultGeneratedKeySQLColumnGenerator.class;
 
     /**

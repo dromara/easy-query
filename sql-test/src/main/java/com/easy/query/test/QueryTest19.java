@@ -44,6 +44,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -189,6 +190,88 @@ public class QueryTest19 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t WHERE t.`name` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("小明(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void test1_1() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            List<SysUser> userInHz = easyEntityQuery.queryable(SysUser.class)
+                    .where(u -> {
+                        u.name().eq("小明");
+                        u.roles().any(role -> role.name().like("管理员"));
+                    }).toList();
+        } catch (Exception ignored) {
+
+        }
+
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t WHERE t.`name` = ? AND EXISTS (SELECT 1 FROM `t_role` t1 WHERE EXISTS (SELECT 1 FROM `t_user_role` t2 WHERE t2.`role_id` = t1.`id` AND t2.`user_id` = t.`id` LIMIT 1) AND t1.`name` LIKE ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("小明(String),%管理员%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void test1_2() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            List<SysUser> userInHz = easyEntityQuery.queryable(SysUser.class)
+                    .where(u -> {
+                        u.name().eq("小明");
+                        u.roles().none(role -> role.name().like("管理员"));
+                        u.roles().any(role -> role.name().like("普通员工"));
+                    }).toList();
+        } catch (Exception ignored) {
+
+        }
+
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t WHERE t.`name` = ? AND NOT ( EXISTS (SELECT 1 FROM `t_role` t1 WHERE EXISTS (SELECT 1 FROM `t_user_role` t2 WHERE t2.`role_id` = t1.`id` AND t2.`user_id` = t.`id` LIMIT 1) AND t1.`name` LIKE ? LIMIT 1)) AND EXISTS (SELECT 1 FROM `t_role` t3 WHERE EXISTS (SELECT 1 FROM `t_user_role` t4 WHERE t4.`role_id` = t3.`id` AND t4.`user_id` = t.`id` LIMIT 1) AND t3.`name` LIKE ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("小明(String),%管理员%(String),%普通员工%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void test1_3() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            List<SysUser> userInHz = easyEntityQuery.queryable(SysUser.class)
+                    .subQueryToGroupJoin(u->u.roles())
+                    .where(u -> {
+                        u.name().eq("小明");
+                        u.roles().none(role -> role.name().like("管理员"));
+                        u.roles().any(role -> role.name().like("普通员工"));
+                    }).toList();
+        } catch (Exception ignored) {
+
+        }
+
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN (SELECT t2.`user_id` AS `user_id`,(CASE WHEN COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__none2__`,(CASE WHEN COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__any3__` FROM `t_role` t1 INNER JOIN `t_user_role` t2 ON t1.`id` = t2.`role_id` GROUP BY t2.`user_id`) t4 ON t4.`user_id` = t.`id` WHERE t.`name` = ? AND IFNULL(t4.`__none2__`,?) = ? AND IFNULL(t4.`__any3__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%管理员%(String),1(Integer),null(null),false(Boolean),true(Boolean),%普通员工%(String),1(Integer),null(null),true(Boolean),false(Boolean),小明(String),true(Boolean),true(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 

@@ -45,7 +45,7 @@ public interface EntityRelationPropertyProvider {
     TableAvailable toImplicitJoin(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, String property);
 
     /**
-     * 拉取的条件
+     * 拉取时候的条件
      * @param targetWherePredicate
      * @param targetProps
      * @param relationIds
@@ -53,17 +53,61 @@ public interface EntityRelationPropertyProvider {
     void relationMultiIdsFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<List<Object>> relationIds);
 
     /**
-     * 拉取带limit的条件
+     * 拉取带limit时候的条件
      * @param targetWherePredicate
      * @param targetProps
      * @param relationIds
      */
     void relationMultiIdFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<Object> relationIds);
 
-
+    /**
+     * 一对一处理时遍历includes然后赋值给entities
+     * @param runtimeContext
+     * @param navigateMetadata
+     * @param selfRelationColumn
+     * @param entities
+     * @return
+     */
     RelationIncludeGetter getOneToOneGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] selfRelationColumn, Collection<RelationExtraEntity> entities);
+
+    /**
+     * 穿透对一是遍历entities筛选includes的值
+     * @param runtimeContext
+     * @param navigateMetadata
+     * @param includes
+     * @param mappingRow
+     * @return
+     */
     RelationIncludeGetter getDirectToOneGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, List<RelationExtraEntity> includes, List<Object> mappingRow);
+
+    /**
+     * 多对一是遍历entities筛选includes的值
+     * @param runtimeContext
+     * @param navigateMetadata
+     * @param targetPropertyNames
+     * @param includes
+     * @return
+     */
     RelationIncludeGetter getManyToOneGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes);
+
+    /**
+     * 一对多是遍历entities筛选includes的值
+     * @param runtimeContext
+     * @param navigateMetadata
+     * @param targetPropertyNames
+     * @param includes
+     * @return
+     */
     RelationIncludeGetter getOneToManyGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes);
+
+    /**
+     * 多对多是遍历entities筛选includes的值通过mappingRows
+     * @param runtimeContext
+     * @param navigateMetadata
+     * @param targetPropertyNames
+     * @param includes
+     * @param mappingRows
+     * @return
+     */
     RelationIncludeGetter getManyToManyGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes, List<Object> mappingRows);
 }
