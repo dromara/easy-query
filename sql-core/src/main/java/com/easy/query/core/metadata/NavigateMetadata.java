@@ -64,6 +64,7 @@ public class NavigateMetadata {
 
     private final long offset;
     private final long limit;
+    private final boolean foreignKey;
 
     public NavigateMetadata(NavigateOption navigateOption,
                             Property<Object, ?> getter,
@@ -88,6 +89,7 @@ public class NavigateMetadata {
         this.directMapping = navigateOption.getDirectMapping();
         this.getter = getter;
         this.setter = setter;
+        this.foreignKey = navigateOption.isForeignKey();
         if (EasyArrayUtil.isNotEmpty(directMapping)) {
             this.directMappingMetadataMap = new ConcurrentHashMap<>(2);
         } else {
@@ -299,5 +301,9 @@ public class NavigateMetadata {
 
     public EntityRelationPropertyProvider getEntityRelationPropertyProvider() {
         return entityRelationPropertyProvider;
+    }
+
+    public boolean isForeignKey() {
+        return foreignKey;
     }
 }

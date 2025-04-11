@@ -6,6 +6,8 @@ import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.dynamic.sort.ObjectSortBuilder;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.api.database.CodeFirstCommand;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.BeanDataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.DataReader;
@@ -1414,6 +1416,11 @@ public class QueryTest3 extends BaseTest {
 
     @Test
     public void userBookTest() {
+
+        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(UserBookEncrypt.class));
+        codeFirstCommand.executeWithTransaction(s->s.commit());
+
         easyQuery.deletable(SysUserEncrypt.class)
                 .whereByIds(Arrays.asList("1" , "2" ))
                 .disableLogicDelete().executeRows();

@@ -4,6 +4,8 @@ import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
+import com.easy.query.core.proxy.core.draft.Draft1;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.direct.Direct1;
 import com.easy.query.test.entity.direct.Direct2;
@@ -272,6 +274,26 @@ public class DirectRelationTest extends BaseTest {
         }
     }
 
+    @Test
+     public void testJoin1(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft1<String>> list = easyEntityQuery.queryable(Direct1.class)
+                .where(d -> {
+                    d.direct5().c22().eq("123");
+                }).select(d -> Select.DRAFT.of(
+                        d.direct4().c18()
+                )).toList();
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t3.`c18` AS `value1` FROM `direct1` t LEFT JOIN `direct2` t1 ON t1.`c7` = t.`c1` LEFT JOIN `direct3` t2 ON (t2.`c13` = t1.`c8` AND t2.`c14` = t1.`c9`) LEFT JOIN `direct4` t3 ON t3.`c20` = t2.`c15` LEFT JOIN `direct5` t4 ON (t4.`c22` = t3.`c16` AND t4.`c21` = t3.`c18`) WHERE t4.`c22` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
 
 //    @Test
 //    public void test4() {

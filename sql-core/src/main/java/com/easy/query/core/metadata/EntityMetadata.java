@@ -167,7 +167,6 @@ public class EntityMetadata {
     private final Map<String, NavigateFlatMetadata> property2NavigateFlatMap = new LinkedHashMap<>();
     private final Map<String, NavigateJoinMetadata> property2NavigateJoinMap = new LinkedHashMap<>();
     private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new LinkedHashMap<>();
-    private final List<String> foreignKeys = new ArrayList<>();
     private final List<String/*column name*/> generatedKeyColumns = new ArrayList<>(2);
     private final Map<String/*column name*/, ColumnMetadata> column2PropertyMap = new HashMap<>();
 
@@ -377,6 +376,11 @@ public class EntityMetadata {
         NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperties, targetProperties, orderProps, navigate.offset(), navigate.limit(), navigate.directMapping());
 
         if (tableEntity) {
+
+            ForeignKey foreignKey = field.getAnnotation(ForeignKey.class);
+            if (foreignKey != null) {
+                navigateOption.setForeignKey(true);
+            }
             NavigateExtraFilterStrategy navigateExtraFilterStrategy = getNavigateExtraFilterStrategy(configuration, navigate);
             if (navigateExtraFilterStrategy != null) {
                 SQLExpression1<WherePredicate<?>> predicateFilterExpression = navigateExtraFilterStrategy.getPredicateFilterExpression(new NavigateBuilder(navigateOption));
@@ -455,7 +459,7 @@ public class EntityMetadata {
                 }
             } else if (mapping.contains(".")) {
                 return mapping.split("\\.");
-            }else{
+            } else {
                 return new String[]{mapping};
             }
         }
@@ -515,9 +519,6 @@ public class EntityMetadata {
         columnOption.setFullPropertyName(propertyName);
         ColumnMetadata columnMetadata = new ColumnMetadata(columnOption);
         ColumnMetadata oldValue = property2ColumnMap.put(columnMetadata.getPropertyName(), columnMetadata);
-        if (columnOption.isForeignKey()) {
-            foreignKeys.add(propertyName);
-        }
         if (oldValue != null) {
             throw new EasyQueryInvalidOperationException("propertyName:" + propertyName + ", repeat.");
         }
@@ -698,10 +699,6 @@ public class EntityMetadata {
                     EasyColumnValueSQLConverter easyColumnValueSQLConverter = new EasyColumnValueSQLConverter(columnSQLExpression.sql(), columnSQLExpression.realColumn(), expArgs);
                     columnOption.setColumnValueSQLConverter(easyColumnValueSQLConverter);
                 }
-            }
-            ForeignKey foreignKey = field.getAnnotation(ForeignKey.class);
-            if (foreignKey != null) {
-                columnOption.setForeignKey(true);
             }
             if (!exist) {
                 columnOption.setInsertIgnore(true);

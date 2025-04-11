@@ -146,7 +146,7 @@ public class EasyRelationalUtil {
 
                 MultiTableTypeEnum relationJoin = entityExpressionBuilder.isQuery() ? MultiTableTypeEnum.LEFT_JOIN : MultiTableTypeEnum.INNER_JOIN;
                 if (relationJoin == MultiTableTypeEnum.LEFT_JOIN) {
-                    if (EasyCollectionUtil.all(navigateMetadata.getSelfPropertiesOrPrimary(), o -> leftTable.getEntityMetadata().getColumnNotNull(o).isForeignKey())) {
+                    if (navigateMetadata.isForeignKey()) {
                         relationJoin = MultiTableTypeEnum.INNER_JOIN;
                     }
                 }

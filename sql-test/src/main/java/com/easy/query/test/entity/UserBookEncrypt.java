@@ -11,7 +11,7 @@ import lombok.Data;
  * @author xuejiaming
  */
 @Data
-@Table("user_book")
+@Table("user_book_encrypt")
 public class UserBookEncrypt {
     @Column(primaryKey = true)
     private String id;

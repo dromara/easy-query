@@ -55,10 +55,6 @@ public class ColumnMetadata {
      */
     private final boolean primary;
     /**
-     * 是否是外键
-     */
-    private final boolean foreignKey;
-    /**
      * 是否是数据库生成列 比如自增键
      */
     private final boolean generatedKey;
@@ -151,7 +147,6 @@ public class ColumnMetadata {
         this.propertyName = columnOption.getFullPropertyName();
         this.fieldName = columnOption.getFieldName();
         this.primary = columnOption.isPrimary();
-        this.foreignKey = columnOption.isForeignKey();
         this.generatedKey = columnOption.isGeneratedKey();
         this.version = columnOption.isVersion();
         this.insertIgnore = columnOption.isInsertIgnore();
@@ -198,10 +193,6 @@ public class ColumnMetadata {
 
     public boolean isPrimary() {
         return primary;
-    }
-
-    public boolean isForeignKey() {
-        return foreignKey;
     }
 
     public boolean isGeneratedKey() {

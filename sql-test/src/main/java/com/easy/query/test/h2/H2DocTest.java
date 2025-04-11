@@ -126,6 +126,7 @@ public class H2DocTest extends H2BaseTest {
                         return r;
                     }).toList();
         } catch (Exception ex) {
+            System.out.println(ex);
         }
         listenerContextManager.clear();
 

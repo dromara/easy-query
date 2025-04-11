@@ -6,6 +6,8 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.api.database.CodeFirstCommand;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
@@ -46,12 +48,15 @@ import com.easy.query.test.entity.BaseEntity;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MyOrderDetail;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.m2m.UserAccount;
+import com.easy.query.test.entity.m2m.UserBook;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
 import lombok.Data;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -72,6 +77,12 @@ import java.util.Map;
  */
 public class QueryTest23 extends BaseTest {
 
+    @Before
+    public void before(){
+        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(UserAccount.class, UserBook.class));
+        codeFirstCommand.executeWithTransaction(s->s.commit());
+    }
 
     @Test
     public void testElement3() {
@@ -750,7 +761,6 @@ public class QueryTest23 extends BaseTest {
     public void testOrderSQL1() {
 
 
-
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
@@ -774,4 +784,54 @@ public class QueryTest23 extends BaseTest {
 
     }
 
+    @Test
+    public void testMany2Many() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+
+            List<Draft2<String, Long>> list = easyEntityQuery.queryable(UserAccount.class)
+                    .where(uc -> {
+                        uc.books().any(ub -> ub.name().eq("JAVA开发"));
+                    }).select(uc -> Select.DRAFT.of(
+                            uc.name(),
+                            uc.books().count()
+                    )).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`name` AS `value1`,(SELECT COUNT(*) FROM `t_user_book` t2 WHERE t2.`uid` = t.`uid`) AS `value2` FROM `t_user_account` t WHERE EXISTS (SELECT 1 FROM `t_user_book` t1 WHERE t1.`uid` = t.`uid` AND t1.`name` = ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("JAVA开发(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void testMany2Many2() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+
+            List<Draft2<String, Long>> list = easyEntityQuery.queryable(UserAccount.class)
+                    .subQueryToGroupJoin(uc->uc.books())
+                    .where(uc -> {
+                        uc.books().any(ub -> ub.name().eq("JAVA开发"));
+                    }).select(uc -> Select.DRAFT.of(
+                            uc.name(),
+                            uc.books().count()
+                    )).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`name` AS `value1`,IFNULL(t2.`__count3__`,0) AS `value2` FROM `t_user_account` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t1.`name` = ? THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__any2__`,COUNT(*) AS `__count3__` FROM `t_user_book` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`uid` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("JAVA开发(String),1(Integer),null(null),true(Boolean),false(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
 }

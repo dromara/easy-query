@@ -41,7 +41,6 @@ public class DocBankCard implements ProxyEntityAvailable<DocBankCard, DocBankCar
     /**
      * 所属银行
      */
-    @ForeignKey
     private String bankId;
 
     @Navigate(value = RelationTypeEnum.ManyToOne, selfProperty = Fields.uid)
@@ -49,6 +48,7 @@ public class DocBankCard implements ProxyEntityAvailable<DocBankCard, DocBankCar
 
 
     @Navigate(value = RelationTypeEnum.ManyToOne, selfProperty = Fields.bankId)
+    @ForeignKey
     private DocBank bank;
 
 
