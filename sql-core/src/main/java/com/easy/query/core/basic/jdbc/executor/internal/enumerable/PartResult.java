@@ -6,8 +6,8 @@ package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
  *
  * @author xuejiaming
  */
-public interface PartitionResult<TEntity> {
-    public static final String PARTITION_PREFIX ="__partition__";
+public interface PartResult<TEntity> {
+    public static final String PART_PREFIX ="__part__";
     TEntity getEntity();
     void setEntity(TEntity entity);
 }

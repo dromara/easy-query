@@ -9,10 +9,10 @@ import com.easy.query.core.metadata.ColumnOption;
  *
  * @author xuejiaming
  */
-public class PartitionColumnMetadata extends ColumnMetadata {
+public class PartColumnMetadata extends ColumnMetadata {
     private final String propertyName;
 
-    public PartitionColumnMetadata(ColumnOption columnOption, String propertyName) {
+    public PartColumnMetadata(ColumnOption columnOption, String propertyName) {
         super(columnOption);
         this.propertyName = propertyName;
     }

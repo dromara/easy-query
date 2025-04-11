@@ -7,7 +7,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.ColumnOption;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.proxy.partition.Partition1;
+import com.easy.query.core.proxy.partition.Part1;
 import com.easy.query.core.util.EasyClassUtil;
 
 /**
@@ -16,18 +16,18 @@ import com.easy.query.core.util.EasyClassUtil;
  *
  * @author xuejiaming
  */
-public class Partition1EntityMetadata extends EntityMetadata {
+public class Part1EntityMetadata extends EntityMetadata {
 
     private final EntityMetadata entityMetadata;
     private final JdbcTypeHandler jdbcTypeHandler;
 
-    public Partition1EntityMetadata(Class<?> entityClass, EntityMetadata entityMetadata, JdbcTypeHandler jdbcTypeHandler) {
+    public Part1EntityMetadata(Class<?> entityClass, EntityMetadata entityMetadata, JdbcTypeHandler jdbcTypeHandler) {
         super(entityClass);
         this.entityMetadata = entityMetadata;
         this.jdbcTypeHandler = jdbcTypeHandler;
         entityMetadataType = EntityMetadataTypeEnum.PARTITION_BY;
         beanConstructorCreator = () -> {
-            Partition1<Object, Object> r = new Partition1<>();
+            Part1<Object, Object> r = new Part1<>();
             Object entity = entityMetadata.getBeanConstructorCreator().get();
             r.setEntity(entity);
             return r;
@@ -57,23 +57,23 @@ public class Partition1EntityMetadata extends EntityMetadata {
         if (isPartitionByColumn(propertyName)) {
             ColumnOption columnOption = new ColumnOption(false, this, propertyName, propertyName, propertyName);
             columnOption.setGetterCaller(obj -> {
-                return ((Partition1) obj).getPartitionColumn1();
+                return ((Part1) obj).getPartColumn1();
             });
             columnOption.setSetterCaller((obj, value) -> {
-                ((Partition1) obj).setPartitionColumn1(value);
+                ((Part1) obj).setPartColumn1(value);
             });
             columnOption.setJdbcTypeHandler(getPartitionJdbcTypeHandler(propertyName));
-            return new PartitionColumnMetadata(columnOption, propertyName);
+            return new PartColumnMetadata(columnOption, propertyName);
         }
         return null;
     }
 
     protected boolean isPartitionByColumn(String propertyName) {
-        return Partition1.PARTITION_COLUMN1.equals(propertyName);
+        return Part1.PART_COLUMN1.equals(propertyName);
     }
 
     protected JdbcTypeHandler getPartitionJdbcTypeHandler(String propertyName) {
-        if (Partition1.PARTITION_COLUMN1.equals(propertyName)) {
+        if (Part1.PART_COLUMN1.equals(propertyName)) {
             return jdbcTypeHandler;
         }
         throw new EasyQueryInvalidOperationException("unknown propertyName:[" + propertyName + "]");

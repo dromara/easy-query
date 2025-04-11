@@ -10,7 +10,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResul
 import com.easy.query.core.basic.jdbc.executor.internal.reader.BeanDataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.DataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.EmptyDataReader;
-import com.easy.query.core.basic.jdbc.executor.internal.reader.PartitionByPropertyDataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.reader.PartByPropertyDataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.PropertyDataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.RelationExtraPropertyDataReader;
 import com.easy.query.core.common.KeywordTool;
@@ -117,8 +117,8 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
                 }
                 continue;
             }
-            if(PartitionResult.class.isAssignableFrom(resultMetadata.getResultClass())){
-                dataReader = new BeanDataReader(dataReader, new PartitionByPropertyDataReader(resultColumnMetadata));
+            if(PartResult.class.isAssignableFrom(resultMetadata.getResultClass())){
+                dataReader = new BeanDataReader(dataReader, new PartByPropertyDataReader(resultColumnMetadata));
             }else{
                 dataReader = new BeanDataReader(dataReader, new PropertyDataReader(resultColumnMetadata));
             }

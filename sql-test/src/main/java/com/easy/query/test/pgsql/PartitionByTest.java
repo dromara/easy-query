@@ -1,7 +1,6 @@
 package com.easy.query.test.pgsql;
 
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -12,7 +11,6 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Random;
 
 /**
  * create time 2024/8/6 11:32
@@ -36,11 +34,11 @@ public class PartitionByTest  extends PgSQLBaseTest{
                         b.expression().rowNumberOver().partitionBy(b.title()).orderBy(b.createTime())
                 )).where(partition -> {
                     partition.entityTable().star().gt(1);
-                    partition.partitionColumn1().lt(2L);
-                    partition.partitionColumn2().lt(2L);
+                    partition.partColumn1().lt(2L);
+                    partition.partColumn2().lt(2L);
                 }).select(p -> Select.DRAFT.of(
-                        p.partitionColumn1(),
-                        p.partitionColumn2(),
+                        p.partColumn1(),
+                        p.partColumn2(),
                         p.entityTable().id()
                 )).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -70,11 +68,11 @@ public class PartitionByTest  extends PgSQLBaseTest{
                         b.expression().rowNumberOver().partitionBy(b.title()).orderBy(false,b.createTime()).orderBy(b.createTime())
                 )).where(partition -> {
                     partition.entityTable().star().gt(1);
-                    partition.partitionColumn1().lt(2L);
-                    partition.partitionColumn2().lt(2L);
+                    partition.partColumn1().lt(2L);
+                    partition.partColumn2().lt(2L);
                 }).select(p -> Select.DRAFT.of(
-                        p.partitionColumn1(),
-                        p.partitionColumn2(),
+                        p.partColumn1(),
+                        p.partColumn2(),
                         p.entityTable().id()
                 )).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -104,11 +102,11 @@ public class PartitionByTest  extends PgSQLBaseTest{
                         b.expression().rowNumberOver().partitionBy(b.title()).orderBy(true,b.createTime()).orderBy(b.updateTime())
                 )).where(partition -> {
                     partition.entityTable().star().gt(1);
-                    partition.partitionColumn1().lt(2L);
-                    partition.partitionColumn2().lt(2L);
+                    partition.partColumn1().lt(2L);
+                    partition.partColumn2().lt(2L);
                 }).select(p -> Select.DRAFT.of(
-                        p.partitionColumn1(),
-                        p.partitionColumn2(),
+                        p.partColumn1(),
+                        p.partColumn2(),
                         p.entityTable().id()
                 )).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());

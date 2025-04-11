@@ -5,10 +5,8 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
-import com.easy.query.core.basic.jdbc.executor.impl.def.BasicResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.impl.def.TypeResultColumnMetadata;
-import com.easy.query.core.basic.jdbc.executor.internal.props.BasicJdbcProperty;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -21,7 +19,7 @@ import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.core.FlatEntitySQLContext;
 import com.easy.query.core.proxy.core.draft.proxy.DraftProxy;
-import com.easy.query.core.proxy.partition.proxy.PartitionProxy;
+import com.easy.query.core.proxy.partition.proxy.PartProxy;
 import com.easy.query.core.util.EasyArrayUtil;
 
 import java.util.Objects;
@@ -65,7 +63,12 @@ public class Select {
     }
 
     public static Draft DRAFT = new Draft();
-    public static SQLPartition PARTITION = new SQLPartition();
+    public static SQLPart PART = new SQLPart();
+    /**
+     * 请使用#{@link #PART}
+     */
+    @Deprecated
+    public static SQLPart PARTITION = new SQLPart();
 
 
     public static <TR, TRProxy> void setDraftPropTypes(ClientQueryable<TR> select, TRProxy trProxy) {
@@ -137,8 +140,8 @@ public class Select {
 //            }
             EntityMetadata resultEntityMetadata = getResultProxyEntityMetadata(resultProxy, runtimeContext);
             ClientQueryable<TR> select = queryable.select(resultProxy.getEntityClass(), resultEntityMetadata, columnAsSelector -> {
-                if (resultProxy instanceof PartitionProxy) {
-                    PartitionProxy resultProxy1 = (PartitionProxy) resultProxy;
+                if (resultProxy instanceof PartProxy) {
+                    PartProxy resultProxy1 = (PartProxy) resultProxy;
                     resultProxy1.accept(columnAsSelector.getAsSelector());
                 }
                 selectAsExpression.accept(columnAsSelector.getAsSelector());

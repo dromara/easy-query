@@ -1,12 +1,11 @@
 package com.easy.query.test.doc;
 
-import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.proxy.core.draft.Draft2;
-import com.easy.query.core.proxy.partition.Partition1;
-import com.easy.query.core.proxy.partition.Partition2;
+import com.easy.query.core.proxy.partition.Part1;
+import com.easy.query.core.proxy.partition.Part2;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.BaseTest;
@@ -106,7 +105,7 @@ public class DocTest1 extends BaseTest {
         Supplier<Exception> f = () -> {
             try {
 
-                List<Partition1<DocBlog, Long>> list = easyEntityQuery.queryable(DocBlog.class)
+                List<Part1<DocBlog, Long>> list = easyEntityQuery.queryable(DocBlog.class)
                         .where(d -> {
                             d.publishTime().gt(LocalDateTime.of(2024, 1, 1, 0, 0));
                         }).select(d -> Select.PARTITION.of(
@@ -149,8 +148,8 @@ public class DocTest1 extends BaseTest {
                                 d.expression().rowNumberOver().partitionBy(d.topic()).orderBy(d.star().nullOrDefault(0))
                         ))
                         .where(p2 -> {
-                            p2.partitionColumn1().le(3L);
-                            p2.partitionColumn2().le(5L);
+                            p2.partColumn1().le(3L);
+                            p2.partColumn2().le(5L);
                         }).select(p2 -> p2.entityTable()).toList();
             } catch (Exception ex) {
                 return ex;
@@ -177,7 +176,7 @@ public class DocTest1 extends BaseTest {
         Supplier<Exception> f = () -> {
             try {
 
-                List<Partition2<DocBlog, Long, Long>> list = easyEntityQuery.queryable(DocBlog.class)
+                List<Part2<DocBlog, Long, Long>> list = easyEntityQuery.queryable(DocBlog.class)
                         .where(d -> {
                             d.publishTime().gt(LocalDateTime.of(2024, 1, 1, 0, 0));
                         }).select(d -> Select.PARTITION.of(
@@ -186,8 +185,8 @@ public class DocTest1 extends BaseTest {
                                 d.expression().rowNumberOver().partitionBy(d.topic()).orderBy(d.star().nullOrDefault(0))
                         ))
                         .where(p2 -> {
-                            p2.partitionColumn1().le(3L);
-                            p2.partitionColumn2().le(5L);
+                            p2.partColumn1().le(3L);
+                            p2.partColumn2().le(5L);
                         }).toList();
             } catch (Exception ex) {
                 return ex;

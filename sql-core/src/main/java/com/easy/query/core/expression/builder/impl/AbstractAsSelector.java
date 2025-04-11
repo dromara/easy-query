@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.basic.entity.EntityMappingRule;
-import com.easy.query.core.basic.jdbc.executor.internal.enumerable.PartitionResult;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.PartResult;
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.segment.ColumnSegment;
@@ -34,7 +34,7 @@ public abstract class AbstractAsSelector<TChain> extends AbstractSelector<TChain
 
     @Override
     protected TChain columnAnonymousAll(AnonymousEntityTableExpressionBuilder table) {
-        if (PartitionResult.class.isAssignableFrom(resultEntityMetadata.getEntityClass())) {
+        if (PartResult.class.isAssignableFrom(resultEntityMetadata.getEntityClass())) {
             return super.columnAnonymousAll(table);
         } else {
 

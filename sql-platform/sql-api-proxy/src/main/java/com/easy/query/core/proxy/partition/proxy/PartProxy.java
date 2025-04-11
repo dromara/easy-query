@@ -11,7 +11,7 @@ import com.easy.query.core.proxy.TablePropColumn;
  *
  * @author xuejiaming
  */
-public interface PartitionProxy extends SQLSelectAsExpression {
+public interface PartProxy extends SQLSelectAsExpression {
     <TProperty> void fetch(int index, PropTypeColumn<TProperty> column, TablePropColumn tablePropColumn);
-    ResultColumnMetadata[] getPartitionByPropTypes();
+    ResultColumnMetadata[] getPartByPropTypes();
 }

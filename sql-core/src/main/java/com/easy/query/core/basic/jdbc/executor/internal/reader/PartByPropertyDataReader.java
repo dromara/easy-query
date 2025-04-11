@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.jdbc.executor.internal.reader;
 
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
-import com.easy.query.core.basic.jdbc.executor.internal.enumerable.PartitionResult;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.PartResult;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
@@ -17,11 +17,11 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public class PartitionByPropertyDataReader implements DataReader {
+public class PartByPropertyDataReader implements DataReader {
 
     private final ResultColumnMetadata resultColumnMetadata;
 
-    public PartitionByPropertyDataReader(ResultColumnMetadata resultColumnMetadata) {
+    public PartByPropertyDataReader(ResultColumnMetadata resultColumnMetadata) {
         Objects.requireNonNull(resultColumnMetadata, "resultColumnMetadata can not be null.");
         this.resultColumnMetadata = resultColumnMetadata;
     }
@@ -31,11 +31,11 @@ public class PartitionByPropertyDataReader implements DataReader {
         JdbcTypeHandler handler = resultColumnMetadata.getJdbcTypeHandler();
         JdbcProperty jdbcProperty = resultColumnMetadata.getJdbcProperty();
         Object value = EasyJdbcExecutorUtil.fromValue(resultColumnMetadata, handler.getValue(jdbcProperty, streamResultSet));
-        if(EasyStringUtil.startsWith(resultColumnMetadata.getPropertyName(), PartitionResult.PARTITION_PREFIX)){
+        if(EasyStringUtil.startsWith(resultColumnMetadata.getPropertyName(), PartResult.PART_PREFIX)){
             resultColumnMetadata.setValue(entity, value);
         }else{
-            PartitionResult<?> partitionResult = (PartitionResult<?>) entity;
-            resultColumnMetadata.setValue(partitionResult.getEntity(), value);
+            PartResult<?> partResult = (PartResult<?>) entity;
+            resultColumnMetadata.setValue(partResult.getEntity(), value);
         }
 
     }

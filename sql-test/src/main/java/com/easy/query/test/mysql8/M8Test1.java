@@ -1,19 +1,20 @@
 package com.easy.query.test.mysql8;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.partition.Part1;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.doc.entity.DocUser;
-import com.easy.query.test.dto.autodto.SchoolClassAO;
-import com.easy.query.test.entity.school.SchoolClass;
+import com.easy.query.test.entity.m2m.UserAccount;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.M8User2;
 import com.easy.query.test.mysql8.entity.M8UserBook2;
 import com.easy.query.test.mysql8.entity.M8UserBookIds;
 import com.easy.query.test.mysql8.entity.TableNoKey;
-import com.easy.query.test.mysql8.entity.proxy.M8User2Proxy;
+import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -193,10 +194,10 @@ public class M8Test1 extends BaseTest {
                     Assert.assertTrue("3".equals(book.getBookId()) || "2".equals(book.getBookId()));
                 }
             }
-            if ("3".equals(m8UserBookIds.getUserId())||"4".equals(m8UserBookIds.getUserId())) {
+            if ("3".equals(m8UserBookIds.getUserId()) || "4".equals(m8UserBookIds.getUserId())) {
                 Assert.assertEquals(1, m8UserBookIds.getBooks().size());
                 for (M8UserBook2 book : m8UserBookIds.getBooks()) {
-                    Assert.assertEquals("2",book.getBookId());
+                    Assert.assertEquals("2", book.getBookId());
                 }
             }
             if ("5".equals(m8UserBookIds.getUserId())) {
@@ -218,6 +219,64 @@ public class M8Test1 extends BaseTest {
             Assert.assertEquals("SELECT t.`book_id`,t.`book_name`,t.`book_price` FROM `m8_user_book2` t WHERE FIND_IN_SET(t.`book_id`,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1,2,3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
+        }
+    }
+
+
+    @Test
+    public void testQuery() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+
+        List<Part1<SysBankCard, String>> list1 = easyEntityQuery.queryable(SysBankCard.class)
+                .where(bank_card -> {
+                    bank_card.id().isNotNull();
+                }).select(bank_card -> Select.PART.of(
+                        bank_card.selectIgnores(bank_card.id()),
+                        bank_card.bank().name()
+                )).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time`,t1.`name` AS `__part__column1` FROM `t_bank_card` t INNER JOIN `t_bank` t1 ON t1.`id` = t.`bank_id` WHERE t.`id` IS NOT NULL", jdbcExecuteAfterArg.getBeforeArg().getSql());
+
+        for (Part1<SysBankCard, String> part1 : list1) {
+            SysBankCard entity = part1.getEntity();
+            String partitionColumn1 = part1.getPartColumn1();
+            System.out.println(JSONUtils.toJSONString(entity) + ":" + partitionColumn1);
+        }
+    }
+    @Test
+    public void testQuery2() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+
+        List<Part1<SysBankCard, String>> list1 = easyEntityQuery.queryable(SysBankCard.class)
+                .where(bank_card -> {
+                    bank_card.id().isNotNull();
+                }).select(bank_card -> Select.PART.of(
+                        bank_card,
+                        bank_card.bank().name()
+                )).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time`,t1.`name` AS `__part__column1` FROM `t_bank_card` t INNER JOIN `t_bank` t1 ON t1.`id` = t.`bank_id` WHERE t.`id` IS NOT NULL", jdbcExecuteAfterArg.getBeforeArg().getSql());
+
+        for (Part1<SysBankCard, String> part1 : list1) {
+            SysBankCard entity = part1.getEntity();
+            String partitionColumn1 = part1.getPartColumn1();
+            System.out.println(JSONUtils.toJSONString(entity) + ":" + partitionColumn1);
         }
     }
 }

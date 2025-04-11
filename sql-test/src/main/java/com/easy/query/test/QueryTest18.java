@@ -19,7 +19,7 @@ import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
-import com.easy.query.core.proxy.partition.Partition1;
+import com.easy.query.core.proxy.partition.Part1;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyArrayUtil;
@@ -815,7 +815,7 @@ public class QueryTest18 extends BaseTest {
 
         try {
 
-            List<Partition1<Topic, Integer>> list1 = easyEntityQuery.queryable(Topic.class)
+            List<Part1<Topic, Integer>> list1 = easyEntityQuery.queryable(Topic.class)
                     .select(t -> Select.PARTITION.of(
                             t,
                             t.expression().rowNumberOver().partitionBy(t.id()).orderBy(t.id())
@@ -823,7 +823,7 @@ public class QueryTest18 extends BaseTest {
                     ))
                     .where(p -> {
                         p.entityTable().stars().gt(1);
-                        p.partitionColumn1().gt(1);
+                        p.partColumn1().gt(1);
                     }).toList();
         } catch (Exception ex) {
 
@@ -844,7 +844,7 @@ public class QueryTest18 extends BaseTest {
 
         try {
 
-            List<Partition1<Topic, Integer>> list1 = easyEntityQuery.queryable(Topic.class)
+            List<Part1<Topic, Integer>> list1 = easyEntityQuery.queryable(Topic.class)
                     .select(t -> Select.PARTITION.of(
                             t,
                             t.expression().rowNumberOver().partitionBy(t.id(), t.title()).orderBy(t.id())
@@ -852,7 +852,7 @@ public class QueryTest18 extends BaseTest {
                     ))
                     .where(p -> {
                         p.entityTable().stars().gt(1);
-                        p.partitionColumn1().gt(1);
+                        p.partColumn1().gt(1);
                     }).toList();
         } catch (Exception ex) {
             System.out.println(ex);
