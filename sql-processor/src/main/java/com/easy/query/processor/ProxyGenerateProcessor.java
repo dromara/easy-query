@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -450,7 +451,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 ProxyProperty proxyProperty = fieldElement.getAnnotation(ProxyProperty.class);
                 String proxyPropertyName = proxyProperty != null ? proxyProperty.value() : propertyName;
                 Boolean anyType = proxyProperty == null ? null : proxyProperty.generateAnyType();
-//                if(Objects.equals("aaa",propertyName)){
+//                if(Objects.equals("bank123",propertyName)){
 //                    System.out.println("111");
 //                }
                 TypeMirror type = fieldElement.asType();
@@ -584,9 +585,18 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
         if (includeProperty) {
             if (type instanceof DeclaredType) {
-                List<? extends TypeMirror> typeArguments = ((DeclaredType) type).getTypeArguments();
+                DeclaredType declaredType = (DeclaredType) type;
+                List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
                 if (typeArguments != null && typeArguments.size() == 1) {
                     return typeArguments.get(0).toString().trim();
+                }
+
+                Element element = declaredType.asElement();
+                if (element != null) {
+                    TypeMirror elementType = element.asType();
+                    if (elementType != null) {
+                        return elementType.toString();
+                    }
                 }
             }
             String trim = type.toString().trim();

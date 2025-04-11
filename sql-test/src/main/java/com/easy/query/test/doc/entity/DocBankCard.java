@@ -12,6 +12,8 @@ import com.easy.query.test.doc.entity.proxy.DocBankCardProxy;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -46,7 +48,8 @@ public class DocBankCard implements ProxyEntityAvailable<DocBankCard, DocBankCar
     @Navigate(value = RelationTypeEnum.ManyToOne, selfProperty = Fields.uid)
     private DocUser user;
 
-
+    @NotNull
+    @Valid
     @Navigate(value = RelationTypeEnum.ManyToOne, selfProperty = Fields.bankId)
     @ForeignKey
     private DocBank bank;

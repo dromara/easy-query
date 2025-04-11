@@ -10,6 +10,8 @@ import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.entity.m2m.proxy.UserAccountProxy;
 import lombok.Data;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,6 +32,8 @@ public class UserAccount implements ProxyEntityAvailable<UserAccount , UserAccou
     private String name;
     private LocalDateTime createTime;
 
+    @NotNull
+    @Valid
     @Navigate(value = RelationTypeEnum.ManyToMany,
             selfProperty = "uid",
             targetProperty = "uid")
