@@ -19,6 +19,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
@@ -30,6 +31,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasySQLUtil;
 
 import java.util.Collection;
@@ -154,7 +156,9 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
                     s.column(column);
                 }
             });
-            partitionBySQLFunction.addOrder(orderBySQLBuilderSegment);
+            if(EasySQLSegmentUtil.isNotEmpty(orderBySQLBuilderSegment)){
+                partitionBySQLFunction.addOrder(orderBySQLBuilderSegment);
+            }
             x.sqlFuncAs(partitionBySQLFunction, "__row__");
 
         });

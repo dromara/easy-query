@@ -34,10 +34,13 @@ import java.math.BigDecimal;
  */
 public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> implements SQLQueryable<T1Proxy, T1> {
 
-    private final RewritePredicteToSelectProvider<T1Proxy,T1> rewritePredicteToSelectProvider;
+    private final RewritePredicteToSelectProvider<T1Proxy, T1> rewritePredicteToSelectProvider;
+    private final boolean required;
 
     public EasyManyJoinSQLManyQueryable(SubQueryContext<T1Proxy, T1> subQueryContext, AnonymousManyJoinEntityTableExpressionBuilder manyGroupJoinEntityTableExpressionBuilder, T1Proxy propertyProxy) {
-        this.rewritePredicteToSelectProvider = new RewritePredicteToSelectProvider<>(subQueryContext, manyGroupJoinEntityTableExpressionBuilder, propertyProxy);
+        String property = subQueryContext.getProperty();
+        this.required = subQueryContext.getLeftTable().getEntityMetadata().getNavigateNotNull(property).isRequired();
+        this.rewritePredicteToSelectProvider = new RewritePredicteToSelectProvider<>(subQueryContext, manyGroupJoinEntityTableExpressionBuilder, propertyProxy,required);
     }
 
     @Override
@@ -49,7 +52,7 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
     @Override
     public SQLQueryable<T1Proxy, T1> orderBy(boolean condition, SQLExpression1<T1Proxy> orderExpression) {
         rewritePredicteToSelectProvider.getSubQueryContext().appendOrderByExpression(orderExpression);
-       return this;
+        return this;
     }
 
     @Override
@@ -125,7 +128,13 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
     public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Long> count(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
         ColumnFunctionCompareComparableNumberChainExpression<Long> count = new DefaultSQLGroupQueryable<>(rewritePredicteToSelectProvider.getPropertyProxy(), rewritePredicteToSelectProvider.getPropertyProxy().getEntitySQLContext(), rewritePredicteToSelectProvider.getSubQueryContext().getWhereExpression()).distinct(rewritePredicteToSelectProvider.getSubQueryContext().isDistinct()).count(columnSelector);
         String alias = rewritePredicteToSelectProvider.getOrAppendGroupProjects(count, "count");
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), rewritePredicteToSelectProvider.getManyGroupJoinTable(), alias, f -> f.nullOrDefault(c->c.column(alias).format(0)), Long.class);
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), rewritePredicteToSelectProvider.getManyGroupJoinTable(), alias, f -> {
+            if (required) {
+                return f.anySQLFunction("{0}", c -> c.column(alias));
+            } else {
+                return f.nullOrDefault(c -> c.column(alias).format(0));
+            }
+        }, Long.class);
     }
 
 
@@ -133,7 +142,13 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
     public ColumnFunctionCompareComparableNumberChainExpression<Long> count() {
         ColumnFunctionCompareComparableNumberChainExpression<Long> count = new DefaultSQLGroupQueryable<>(rewritePredicteToSelectProvider.getPropertyProxy(), rewritePredicteToSelectProvider.getPropertyProxy().getEntitySQLContext(), rewritePredicteToSelectProvider.getSubQueryContext().getWhereExpression()).distinct(rewritePredicteToSelectProvider.getSubQueryContext().isDistinct()).count();
         String alias = rewritePredicteToSelectProvider.getOrAppendGroupProjects(count, "count");
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), rewritePredicteToSelectProvider.getManyGroupJoinTable(), alias, f -> f.nullOrDefault(c->c.column(alias).format(0)), Long.class);
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), rewritePredicteToSelectProvider.getManyGroupJoinTable(), alias, f -> {
+            if (required) {
+                return f.anySQLFunction("{0}", c -> c.column(alias));
+            } else {
+                return f.nullOrDefault(c -> c.column(alias).format(0));
+            }
+        }, Long.class);
     }
 
     @Override
@@ -150,7 +165,13 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
     public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<TMember> sum(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
         ColumnFunctionCompareComparableNumberChainExpression<TMember> sum = new DefaultSQLGroupQueryable<>(rewritePredicteToSelectProvider.getPropertyProxy(), rewritePredicteToSelectProvider.getPropertyProxy().getEntitySQLContext(), rewritePredicteToSelectProvider.getSubQueryContext().getWhereExpression()).distinct(rewritePredicteToSelectProvider.getSubQueryContext().isDistinct()).sum(columnSelector);
         String alias = rewritePredicteToSelectProvider.getOrAppendGroupProjects(sum, "sum");
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), rewritePredicteToSelectProvider.getManyGroupJoinTable(), alias, f -> f.nullOrDefault(c->c.column(alias).format(0)), BigDecimal.class);
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), rewritePredicteToSelectProvider.getManyGroupJoinTable(), alias, f -> {
+            if (required) {
+                return f.anySQLFunction("{0}", c -> c.column(alias));
+            } else {
+                return f.nullOrDefault(c -> c.column(alias).format(0));
+            }
+        }, BigDecimal.class);
 
     }
 
@@ -163,7 +184,13 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
     public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
         ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg = new DefaultSQLGroupQueryable<>(rewritePredicteToSelectProvider.getPropertyProxy(), rewritePredicteToSelectProvider.getPropertyProxy().getEntitySQLContext(), rewritePredicteToSelectProvider.getSubQueryContext().getWhereExpression()).distinct(rewritePredicteToSelectProvider.getSubQueryContext().isDistinct()).avg(columnSelector);
         String alias = rewritePredicteToSelectProvider.getOrAppendGroupProjects(avg, "avg");
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), rewritePredicteToSelectProvider.getManyGroupJoinTable(), alias, f -> f.nullOrDefault(c->c.column(alias).format(0)), BigDecimal.class);
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), rewritePredicteToSelectProvider.getManyGroupJoinTable(), alias, f -> {
+            if (required) {
+                return f.anySQLFunction("{0}", c -> c.column(alias));
+            } else {
+                return f.nullOrDefault(c -> c.column(alias).format(0));
+            }
+        }, BigDecimal.class);
 
     }
 
@@ -183,7 +210,7 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
 
     @Override
     public ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<T1Proxy, PropTypeColumn<String>> columnSelector, String delimiter) {
-        ColumnFunctionCompareComparableStringChainExpression<String> joining = new DefaultSQLGroupQueryable<>(rewritePredicteToSelectProvider.getPropertyProxy(), rewritePredicteToSelectProvider.getPropertyProxy().getEntitySQLContext(), rewritePredicteToSelectProvider.getSubQueryContext().getWhereExpression()).distinct(rewritePredicteToSelectProvider.getSubQueryContext().isDistinct()).joining(columnSelector,delimiter);
+        ColumnFunctionCompareComparableStringChainExpression<String> joining = new DefaultSQLGroupQueryable<>(rewritePredicteToSelectProvider.getPropertyProxy(), rewritePredicteToSelectProvider.getPropertyProxy().getEntitySQLContext(), rewritePredicteToSelectProvider.getSubQueryContext().getWhereExpression()).distinct(rewritePredicteToSelectProvider.getSubQueryContext().isDistinct()).joining(columnSelector, delimiter);
         String alias = rewritePredicteToSelectProvider.getOrAppendGroupProjects(joining, "joining");
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), rewritePredicteToSelectProvider.getManyGroupJoinTable(), alias, f -> f.anySQLFunction("{0}", c -> c.column(alias)), String.class);
     }

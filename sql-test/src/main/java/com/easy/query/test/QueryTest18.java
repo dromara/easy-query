@@ -830,7 +830,7 @@ public class QueryTest18 extends BaseTest {
         }
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time`,t1.`__partition__column1` AS `__partition__column1` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,(ROW_NUMBER() OVER (PARTITION BY t.`id` ORDER BY t.`id` ASC, t.`create_time` DESC)) AS `__partition__column1` FROM `t_topic` t) t1 WHERE t1.`stars` > ? AND t1.`__partition__column1` > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time`,t1.`__part__column1` AS `__part__column1` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,(ROW_NUMBER() OVER (PARTITION BY t.`id` ORDER BY t.`id` ASC, t.`create_time` DESC)) AS `__part__column1` FROM `t_topic` t) t1 WHERE t1.`stars` > ? AND t1.`__part__column1` > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -859,7 +859,7 @@ public class QueryTest18 extends BaseTest {
         }
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time`,t1.`__partition__column1` AS `__partition__column1` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,(ROW_NUMBER() OVER (PARTITION BY t.`id`, t.`title` ORDER BY t.`id` ASC, t.`create_time` DESC)) AS `__partition__column1` FROM `t_topic` t) t1 WHERE t1.`stars` > ? AND t1.`__partition__column1` > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t1.`id`,t1.`stars`,t1.`title`,t1.`create_time`,t1.`__part__column1` AS `__part__column1` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,(ROW_NUMBER() OVER (PARTITION BY t.`id`, t.`title` ORDER BY t.`id` ASC, t.`create_time` DESC)) AS `__part__column1` FROM `t_topic` t) t1 WHERE t1.`stars` > ? AND t1.`__part__column1` > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }

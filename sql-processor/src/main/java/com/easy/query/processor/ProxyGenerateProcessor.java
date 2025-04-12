@@ -236,7 +236,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         Writer writer = null;
         try {
             JavaFileObject sourceFile = filer.createSourceFile(genPackageName + "." + className);
-            if (basePath == null || basePath.trim().length() == 0) {
+            if (basePath == null || basePath.trim().isEmpty()) {
                 writer = sourceFile.openWriter();
                 writer.write(genContent);
                 writer.flush();
@@ -451,7 +451,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 ProxyProperty proxyProperty = fieldElement.getAnnotation(ProxyProperty.class);
                 String proxyPropertyName = proxyProperty != null ? proxyProperty.value() : propertyName;
                 Boolean anyType = proxyProperty == null ? null : proxyProperty.generateAnyType();
-//                if(Objects.equals("bank123",propertyName)){
+//                if(Objects.equals("roles",propertyName)){
 //                    System.out.println("111");
 //                }
                 TypeMirror type = fieldElement.asType();

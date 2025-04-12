@@ -106,4 +106,12 @@ public @interface Navigate {
      * @return
      */
     String relationPropertyStrategy() default "";
+
+    /**
+     * 表示目标对象是否必须存在
+     * 作用如果你是ManyToOne或者OneToOne则隐式join会变成inner join
+     * 如果你是OneToMany或者ManyToMany那么隐式group将会以inner join进行连表 但是隐式partition by依然是left join
+     * @return
+     */
+    boolean required() default false;
 }

@@ -146,7 +146,7 @@ public class EasyRelationalUtil {
 
                 MultiTableTypeEnum relationJoin = entityExpressionBuilder.isQuery() ? MultiTableTypeEnum.LEFT_JOIN : MultiTableTypeEnum.INNER_JOIN;
                 if (relationJoin == MultiTableTypeEnum.LEFT_JOIN) {
-                    if (navigateMetadata.isForeignKey()) {
+                    if (navigateMetadata.isForeignKey() || navigateMetadata.isRequired()) {
                         relationJoin = MultiTableTypeEnum.INNER_JOIN;
                     }
                 }
@@ -187,7 +187,12 @@ public class EasyRelationalUtil {
             RelationEntityTableAvailable rightTable = new RelationEntityTableAvailable(key, leftTable, entityMetadata, true);
             entityExpressionBuilder.getExpressionContext().extract(manyQueryable.getSQLEntityExpressionBuilder().getExpressionContext());
             ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();
-            EntityTableExpressionBuilder tableExpressionBuilder = expressionBuilderFactory.createAnonymousManyGroupEntityTableExpressionBuilder(rightTable, MultiTableTypeEnum.LEFT_JOIN, manyQueryable.getSQLEntityExpressionBuilder(), targetPropertiesOrPrimary);
+            MultiTableTypeEnum joinType = MultiTableTypeEnum.LEFT_JOIN;
+            if(navigateMetadata.isRequired()){
+                joinType = MultiTableTypeEnum.INNER_JOIN;
+            }
+
+            EntityTableExpressionBuilder tableExpressionBuilder = expressionBuilderFactory.createAnonymousManyGroupEntityTableExpressionBuilder(rightTable, joinType, manyQueryable.getSQLEntityExpressionBuilder(), targetPropertiesOrPrimary);
 
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
 

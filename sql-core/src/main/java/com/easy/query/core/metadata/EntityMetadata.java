@@ -357,6 +357,8 @@ public class EntityMetadata {
                 throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityClass) + " navigate directMapping must have a length of at least 2, property:[" + property + "]");
             }
         }
+        boolean required = navigate.required();
+
         String[] selfProperties = tableEntity && !hasDirectMapping ? navigate.selfProperty() : EasyArrayUtil.EMPTY;
         String[] targetProperties = tableEntity && !hasDirectMapping ? navigate.targetProperty() : EasyArrayUtil.EMPTY;
         String[] selfMappingProperties = tableEntity && !hasDirectMapping ? navigate.selfMappingProperty() : EasyArrayUtil.EMPTY;
@@ -379,8 +381,12 @@ public class EntityMetadata {
 
             ForeignKey foreignKey = field.getAnnotation(ForeignKey.class);
             if (foreignKey != null) {
+                if (toMany) {
+                    throw new EasyQueryInvalidOperationException(String.format("[%s.%s] The @ForeignKey annotation cannot be used for one-to-many or many-to-many relationships.", EasyClassUtil.getSimpleName(entityClass), property));
+                }
                 navigateOption.setForeignKey(true);
             }
+            navigateOption.setRequired(required);
             NavigateExtraFilterStrategy navigateExtraFilterStrategy = getNavigateExtraFilterStrategy(configuration, navigate);
             if (navigateExtraFilterStrategy != null) {
                 SQLExpression1<WherePredicate<?>> predicateFilterExpression = navigateExtraFilterStrategy.getPredicateFilterExpression(new NavigateBuilder(navigateOption));

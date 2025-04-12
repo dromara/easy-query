@@ -4,8 +4,10 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.api.internal.ExpressionConfigurable;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.parser.core.available.EmptyTableAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 

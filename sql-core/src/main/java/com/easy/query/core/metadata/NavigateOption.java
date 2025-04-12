@@ -34,6 +34,7 @@ public class NavigateOption {
     private SQLExpression1<WherePredicate<?>> predicateMappingClassFilterExpression;
     private EntityRelationPropertyProvider entityRelationPropertyProvider;
     private boolean foreignKey = false;
+    private boolean required = false;
 
     public NavigateOption(EntityMetadata entityMetadata,
                           String propertyName,
@@ -159,5 +160,13 @@ public class NavigateOption {
 
     public void setForeignKey(boolean foreignKey) {
         this.foreignKey = foreignKey;
+    }
+
+    public boolean isRequired() {
+        return required;
+    }
+
+    public void setRequired(boolean required) {
+        this.required = required;
     }
 }

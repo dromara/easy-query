@@ -40,13 +40,15 @@ public class RewritePredicteToSelectProvider<T1Proxy extends ProxyEntity<T1Proxy
     private final AnonymousManyJoinEntityTableExpressionBuilder manyGroupJoinEntityTableExpressionBuilder;
     private final T1Proxy propertyProxy;
     private final TableAvailable manyGroupJoinTable;
+    private final boolean required;
 
 
-    public RewritePredicteToSelectProvider(SubQueryContext<T1Proxy, T1> subQueryContext, AnonymousManyJoinEntityTableExpressionBuilder manyGroupJoinEntityTableExpressionBuilder, T1Proxy propertyProxy) {
+    public RewritePredicteToSelectProvider(SubQueryContext<T1Proxy, T1> subQueryContext, AnonymousManyJoinEntityTableExpressionBuilder manyGroupJoinEntityTableExpressionBuilder, T1Proxy propertyProxy,boolean required) {
         this.subQueryContext = subQueryContext;
         this.manyGroupJoinEntityTableExpressionBuilder = manyGroupJoinEntityTableExpressionBuilder;
         this.propertyProxy = propertyProxy;
         this.manyGroupJoinTable = manyGroupJoinEntityTableExpressionBuilder.getEntityTable();
+        this.required = required;
     }
 
 //    public void appendWhere(SQLExpression1<T1Proxy> whereExpression) {
@@ -138,7 +140,13 @@ public class RewritePredicteToSelectProvider<T1Proxy extends ProxyEntity<T1Proxy
 //            c.sqlFunc(f.booleanConstantSQLFunction(false));
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(any, "any");
-        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> f.nullOrDefault(c->c.column(alias).value(false)), Boolean.class);
+        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f ->  {
+            if(required){
+                return  f.anySQLFunction("{0}",c->c.column(alias));
+            }else{
+                return  f.nullOrDefault(c->c.column(alias).value(false));
+            }
+        }, Boolean.class);
     }
 
     public ColumnFunctionCompareComparableBooleanChainExpression<Boolean> noneValue() {
@@ -151,7 +159,13 @@ public class RewritePredicteToSelectProvider<T1Proxy extends ProxyEntity<T1Proxy
 //            c.sqlFunc(f.booleanConstantSQLFunction(true));
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(none, "none");
-        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> f.nullOrDefault(c->c.column(alias).value(true)), Boolean.class);
+        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> {
+            if(required){
+                return  f.anySQLFunction("{0}",c->c.column(alias));
+            }else{
+                return f.nullOrDefault(c->c.column(alias).value(true));
+            }
+        }, Boolean.class);
     }
 
 
@@ -165,6 +179,12 @@ public class RewritePredicteToSelectProvider<T1Proxy extends ProxyEntity<T1Proxy
 //            c.sqlFunc(f.booleanConstantSQLFunction(false));
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(any, "any");
-        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> f.nullOrDefault(c->c.column(alias).value(false)), Boolean.class);
+        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> {
+            if(required){
+                return  f.anySQLFunction("{0}",c->c.column(alias));
+            }else{
+                return f.nullOrDefault(c->c.column(alias).value(false));
+            }
+        }, Boolean.class);
     }
 }
