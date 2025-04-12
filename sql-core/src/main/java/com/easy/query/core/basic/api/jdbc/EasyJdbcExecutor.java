@@ -7,6 +7,7 @@ import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
+import com.easy.query.core.expression.sql.builder.EasyExpressionContext;
 import com.easy.query.core.expression.sql.builder.EmptyExpressionContext;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -30,7 +31,7 @@ public class EasyJdbcExecutor implements JdbcExecutor {
     @Override
     public <T> List<T> sqlQuery(String sql, Class<T> clazz, List<SQLParameter> sqlParameters) {
         EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
-        ExecutorContext executorContext = ExecutorContext.create(new EmptyExpressionContext(runtimeContext), true, ExecuteMethodEnum.LIST);
+        ExecutorContext executorContext = ExecutorContext.create(new EasyExpressionContext(runtimeContext), true, ExecuteMethodEnum.LIST);
         executorContext.setMapToBeanStrict(false);
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         return entityExpressionExecutor.querySQL(executorContext, new EntityResultMetadata<>(entityMetadata), sql, sqlParameters);
@@ -40,6 +41,6 @@ public class EasyJdbcExecutor implements JdbcExecutor {
     public long sqlExecute(String sql, List<Object> parameters) {
         List<SQLParameter> sqlParameters = EasyCollectionUtil.map(parameters, o -> new EasyConstSQLParameter(null, null, o));
         EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
-        return entityExpressionExecutor.executeSQLRows(ExecutorContext.create(new EmptyExpressionContext(runtimeContext),false,ExecuteMethodEnum.UNKNOWN), sql, sqlParameters);
+        return entityExpressionExecutor.executeSQLRows(ExecutorContext.create(new EasyExpressionContext(runtimeContext),false,ExecuteMethodEnum.UNKNOWN), sql, sqlParameters);
     }
 }

@@ -145,10 +145,11 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
     public <TR> TR singleNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
         return entityQueryable.singleNotNull(resultClass, throwFunc);
     }
+
     @NotNull
     @Override
     public T1 findNotNull(Object id, Supplier<RuntimeException> throwFunc) {
-        return entityQueryable.findNotNull(id,throwFunc);
+        return entityQueryable.findNotNull(id, throwFunc);
     }
 
     @Override
@@ -168,7 +169,7 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
 
     @Override
     public <TR> List<TR> toList(Class<TR> resultClass, EntityMetadata resultEntityMetadata) {
-        return entityQueryable.toList(resultClass,resultEntityMetadata);
+        return entityQueryable.toList(resultClass, resultEntityMetadata);
     }
 
     @Override
@@ -178,7 +179,7 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
 
     @Override
     public <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass, SQLConsumer<Statement> configurer) {
-        return entityQueryable.toStreamResult(resultClass,configurer);
+        return entityQueryable.toStreamResult(resultClass, configurer);
     }
 
     @Override
@@ -188,7 +189,7 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
 
     @Override
     public <TR> TR streamBy(Function<Stream<T1>, TR> fetcher, SQLConsumer<Statement> configurer) {
-        return entityQueryable.streamBy(fetcher,configurer);
+        return entityQueryable.streamBy(fetcher, configurer);
     }
 
     @Override
@@ -330,12 +331,12 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
 
     @Override
     public <TResult> EasyPageResult<TResult> toPageResult(Class<TResult> tResultClass, long pageIndex, long pageSize, long pageTotal) {
-        return entityQueryable.toPageResult(tResultClass,pageIndex, pageSize, pageTotal);
+        return entityQueryable.toPageResult(tResultClass, pageIndex, pageSize, pageTotal);
     }
 
     @Override
     public <TResult> EasyPageResult<TResult> toShardingPageResult(Class<TResult> tResultClass, long pageIndex, long pageSize, List<Long> totalLines) {
-        return entityQueryable.toShardingPageResult(tResultClass,pageIndex, pageSize, totalLines);
+        return entityQueryable.toShardingPageResult(tResultClass, pageIndex, pageSize, totalLines);
     }
 
     @Override

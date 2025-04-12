@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,6 +39,7 @@ import java.util.stream.Stream;
  * @Date: 2023/3/4 13:12
  */
 public class EasyUtil {
+
 
     public static final String NOT_NULL = "query no element in result set.";
     public static final String FIND_NOT_NULL = "find not null query no element in result set.";
@@ -98,7 +101,7 @@ public class EasyUtil {
     public static String getAnonymousPropertyNameByPropertyFirst(SQLEntityAliasSegment sqlEntityProject, TableAvailable anonymousTable) {
         String propertyName = sqlEntityProject.getPropertyName();
         if (propertyName != null) {
-            if(sqlEntityProject instanceof FuncColumnSegment){
+            if (sqlEntityProject instanceof FuncColumnSegment) {
                 String alias = sqlEntityProject.getAlias();
                 if (EasyStringUtil.isNotBlank(alias)) {
                     return anonymousTable.getEntityMetadata().getPropertyNameOrNull(alias, null);
@@ -168,31 +171,32 @@ public class EasyUtil {
                 ExpArg expArg = new ExpArg(ExpArgTypeEnum.PROPERTY, arg.prop(), null);
                 expArgs.add(expArg);
             } else if (!Objects.equals(arg.ignoreVal(), arg.val())) {
-                Object parseVal = parseVal(arg.val(),arg.valType());
+                Object parseVal = parseVal(arg.val(), arg.valType());
                 ExpArg expArg = new ExpArg(ExpArgTypeEnum.VALUE, null, parseVal);
                 expArgs.add(expArg);
             }
         }
         return expArgs;
     }
+
     private static Object parseVal(String val, Class<?> valType) {
         if (valType == String.class) {
             return val;
         }
-        if (valType == Integer.class||valType == int.class) {
+        if (valType == Integer.class || valType == int.class) {
             return Integer.valueOf(val);
         }
-        if (valType == Long.class||valType == long.class) {
+        if (valType == Long.class || valType == long.class) {
             return Long.valueOf(val);
         }
         if (valType == BigDecimal.class) {
             return new BigDecimal(val);
         }
         if (valType == Boolean.class) {
-            if("0".equals(val)){
+            if ("0".equals(val)) {
                 return false;
             }
-            if("1".equals(val)){
+            if ("1".equals(val)) {
                 return true;
             }
             return Boolean.valueOf(val);
@@ -204,10 +208,10 @@ public class EasyUtil {
         if (valType == Date.class) {
             return Date.valueOf(val);
         }
-        if (valType == Double.class||valType == double.class) {
+        if (valType == Double.class || valType == double.class) {
             return Double.valueOf(val);
         }
-        if (valType == Float.class||valType == float.class) {
+        if (valType == Float.class || valType == float.class) {
             return Float.valueOf(val);
         }
         if (valType == LocalDateTime.class) {
@@ -219,7 +223,7 @@ public class EasyUtil {
         if (valType == LocalTime.class) {
             return LocalTime.parse(val);
         }
-        if (valType == Short.class||valType == short.class) {
+        if (valType == Short.class || valType == short.class) {
             return Short.valueOf(val);
         }
         if (valType == UUID.class) {

@@ -93,7 +93,7 @@ public class QueryTest23 extends BaseTest {
         try {
 
             List<Draft2<String, String>> list = easyEntityQuery.queryable(DocUser.class)
-                    .manyJoin(x -> x.bankCards())
+                    .subQueryToGroupJoin(x -> x.bankCards())
                     .select(user -> Select.DRAFT.of(
                             user.bankCards().where(o -> o.type().eq("123")).max(x -> x.code()),
                             user.bankCards().where(o -> o.type().eq("123")).element(0).type()
@@ -118,7 +118,7 @@ public class QueryTest23 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
-                .manyJoin(x -> x.schoolTeachers())
+                .subQueryToGroupJoin(x -> x.schoolTeachers())
                 .where(s -> {
                     s.schoolTeachers().where(x -> x.name().like("小明")).count().eq(1L);
                 }).toList();
@@ -563,7 +563,7 @@ public class QueryTest23 extends BaseTest {
     @Test
     public void testJoin3() {
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(u -> u.bankCards())
+                .subQueryToGroupJoin(u -> u.bankCards())
                 .where(user -> {
                     user.bankCards().where(card -> {
                         card.bank().name().eq("工商银行");
@@ -834,4 +834,24 @@ public class QueryTest23 extends BaseTest {
         Assert.assertEquals("JAVA开发(String),1(Integer),null(null),true(Boolean),false(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+    @Test
+     public void testQueryConcat(){
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    Expression expression = t_blog.expression();
+                    t_blog.title().eq(
+                            expression.concat(s -> {
+                                s.expression(t_blog.id());
+                                s.value("*");
+                                s.expression(t_blog.content());
+                            })
+                    );
+
+                    t_blog.title().eq(
+                            expression.stringFormat("{0}*{1}", t_blog.id(), t_blog.content())
+                    );
+                }).toList();
+
+    }
+
 }

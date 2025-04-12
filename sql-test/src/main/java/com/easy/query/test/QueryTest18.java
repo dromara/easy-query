@@ -816,7 +816,7 @@ public class QueryTest18 extends BaseTest {
         try {
 
             List<Part1<Topic, Integer>> list1 = easyEntityQuery.queryable(Topic.class)
-                    .select(t -> Select.PARTITION.of(
+                    .select(t -> Select.PART.of(
                             t,
                             t.expression().rowNumberOver().partitionBy(t.id()).orderBy(t.id())
                                     .orderByDescending(t.createTime()).asAnyType(Integer.class)
@@ -845,7 +845,7 @@ public class QueryTest18 extends BaseTest {
         try {
 
             List<Part1<Topic, Integer>> list1 = easyEntityQuery.queryable(Topic.class)
-                    .select(t -> Select.PARTITION.of(
+                    .select(t -> Select.PART.of(
                             t,
                             t.expression().rowNumberOver().partitionBy(t.id(), t.title()).orderBy(t.id())
                                     .orderByDescending(t.createTime()).asAnyType(Integer.class)
@@ -1436,8 +1436,8 @@ public class QueryTest18 extends BaseTest {
             List<BlogEntity> list3 = easyEntityQuery.queryable(BlogEntity.class)
                     .where(b -> {
 //                    b.id().eq(b.id().nullOrDefault("1"));
-                        b.expression().constant().valueOf(time1).rangeClosed(b.createTime(), b.updateTime());
-                        b.expression().constant().valueOf(time1).rangeClosed(b.createTime(), b.updateTime().nullOrDefault(time2));
+                        b.expression().constant(time1).rangeClosed(b.createTime(), b.updateTime());
+                        b.expression().constant(time1).rangeClosed(b.createTime(), b.updateTime().nullOrDefault(time2));
                     }).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -1584,8 +1584,8 @@ public class QueryTest18 extends BaseTest {
 //                    b.id().eq(b.id().nullOrDefault("1"));
                         b.or(() -> {
 
-                            b.expression().constant().valueOf(time1).rangeClosed(b.createTime(), b.updateTime());
-                            b.expression().constant().valueOf(time1).rangeClosed(b.createTime(), b.updateTime().nullOrDefault(time2));
+                            b.expression().constant(time1).rangeClosed(b.createTime(), b.updateTime());
+                            b.expression().constant(time1).rangeClosed(b.createTime(), b.updateTime().nullOrDefault(time2));
                         });
                     }).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());

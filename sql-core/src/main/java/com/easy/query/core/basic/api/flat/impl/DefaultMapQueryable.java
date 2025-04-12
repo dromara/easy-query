@@ -25,7 +25,6 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -35,7 +34,6 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.sql.Statement;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -403,7 +401,7 @@ public class DefaultMapQueryable implements MapQueryable {
 
     @Override
     public List<Map<String, Object>> toTreeList(boolean ignore) {
-        if(!ignore){
+        if (!ignore) {
             throw new EasyQueryInvalidOperationException("Unable to find a Navigate property where children is a reference to itself:[" + EasyClassUtil.getSimpleName(this.queryClass()) + "].");
         }
         return toList();

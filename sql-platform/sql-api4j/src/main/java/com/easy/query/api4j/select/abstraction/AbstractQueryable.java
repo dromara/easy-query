@@ -74,6 +74,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public ClientQueryable<T1> getClientQueryable() {
         return entityQueryable;
     }
+
     @Override
     public Queryable<T1> getQueryable() {
         return this;
@@ -95,6 +96,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public boolean any() {
         return entityQueryable.any();
     }
+
     @Override
     public Queryable<Long> selectCount() {
         return this.selectCount(Long.class);
@@ -121,6 +123,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public <TR> TR singleOrNull(Class<TR> resultClass) {
         return entityQueryable.singleOrNull(resultClass);
     }
+
     @Override
     public T1 findOrNull(Object id) {
         return entityQueryable.findOrNull(id);
@@ -135,18 +138,19 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     @NotNull
     @Override
     public <TR> TR firstNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
-        return entityQueryable.firstNotNull(resultClass,throwFunc);
+        return entityQueryable.firstNotNull(resultClass, throwFunc);
     }
 
     @NotNull
     @Override
     public <TR> TR singleNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
-        return entityQueryable.singleNotNull(resultClass,throwFunc);
+        return entityQueryable.singleNotNull(resultClass, throwFunc);
     }
+
     @NotNull
     @Override
     public T1 findNotNull(Object id, Supplier<RuntimeException> throwFunc) {
-        return entityQueryable.findNotNull(id,throwFunc);
+        return entityQueryable.findNotNull(id, throwFunc);
     }
 
 
@@ -167,8 +171,9 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public <TR> List<TR> toList(Class<TR> resultClass, EntityMetadata resultEntityMetadata) {
-        return entityQueryable.toList(resultClass,resultEntityMetadata);
+        return entityQueryable.toList(resultClass, resultEntityMetadata);
     }
+
     @Override
     public List<T1> toTreeList(boolean ignore) {
         return entityQueryable.toTreeList(ignore);
@@ -176,7 +181,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass, SQLConsumer<Statement> configurer) {
-        return entityQueryable.toStreamResult(resultClass,configurer);
+        return entityQueryable.toStreamResult(resultClass, configurer);
     }
 
     @Override
@@ -186,7 +191,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public <TR> TR streamBy(Function<Stream<T1>, TR> fetcher, SQLConsumer<Statement> configurer) {
-        return entityQueryable.streamBy(fetcher,configurer);
+        return entityQueryable.streamBy(fetcher, configurer);
     }
 
     @Override
@@ -328,12 +333,12 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
 
     @Override
     public <TResult> EasyPageResult<TResult> toPageResult(Class<TResult> tResultClass, long pageIndex, long pageSize, long pageTotal) {
-        return entityQueryable.toPageResult(tResultClass,pageIndex, pageSize, pageTotal);
+        return entityQueryable.toPageResult(tResultClass, pageIndex, pageSize, pageTotal);
     }
 
     @Override
     public <TResult> EasyPageResult<TResult> toShardingPageResult(Class<TResult> tResultClass, long pageIndex, long pageSize, List<Long> totalLines) {
-        return entityQueryable.toShardingPageResult(tResultClass,pageIndex, pageSize, totalLines);
+        return entityQueryable.toShardingPageResult(tResultClass, pageIndex, pageSize, totalLines);
     }
 
     @Override
@@ -412,6 +417,7 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
         entityQueryable.useLogicDelete(enable);
         return this;
     }
+
     @Override
     public Queryable<T1> configure(SQLExpression1<ContextConfigurer> configurer) {
         entityQueryable.configure(configurer);
