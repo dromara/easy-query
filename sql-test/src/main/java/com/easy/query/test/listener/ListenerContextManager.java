@@ -14,6 +14,10 @@ public class ListenerContextManager {
         threadTx.set(listenerContext);
     }
 
+    public void startCreateListen(){
+        threadTx.set(new ListenerContext());
+    }
+
     public ListenerContext getListenContext(){
         return threadTx.get();
     }

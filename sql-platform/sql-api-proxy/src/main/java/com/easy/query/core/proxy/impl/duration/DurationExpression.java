@@ -20,13 +20,7 @@ import java.time.LocalDateTime;
  */
 public class DurationExpression {
     private final ColumnDateTimeFunctionAvailable<?> before;
-    private LocalDateTime afterConstant;
     private ColumnDateTimeFunctionAvailable<?> afterColumn;
-
-    public DurationExpression(ColumnDateTimeFunctionAvailable<?> before, LocalDateTime afterConstant) {
-        this.before = before;
-        this.afterConstant = afterConstant;
-    }
 
     public DurationExpression(ColumnDateTimeFunctionAvailable<?> before, ColumnDateTimeFunctionAvailable<?> afterColumn) {
         this.before = before;
@@ -34,24 +28,13 @@ public class DurationExpression {
     }
 
     private ColumnFunctionCompareComparableNumberChainExpression<Long> duration(DateTimeDurationEnum durationEnum) {
-        if (afterConstant != null) {
-            return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(before.getEntitySQLContext(), before.getTable(), before.getValue(), fx -> {
-                return fx.duration2(s -> {
-                    PropTypeColumn.columnFuncSelector(s,before);
-                    s.value(afterConstant);
-                }, durationEnum);
-            }, Long.class);
-        } else if (afterColumn != null) {
 
-            return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(before.getEntitySQLContext(), before.getTable(), before.getValue(), fx -> {
-                return fx.duration2(s -> {
-                    PropTypeColumn.columnFuncSelector(s,before);
-                    PropTypeColumn.columnFuncSelector(s,afterColumn);
-                }, durationEnum);
-            }, Long.class);
-        } else {
-            throw new EasyQueryInvalidOperationException("duration error,after constant and after column all null");
-        }
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(before.getEntitySQLContext(), before.getTable(), before.getValue(), fx -> {
+            return fx.duration2(s -> {
+                PropTypeColumn.columnFuncSelector(s,before);
+                PropTypeColumn.columnFuncSelector(s,afterColumn);
+            }, durationEnum);
+        }, Long.class);
     }
 
     public ColumnFunctionCompareComparableNumberChainExpression<Long> toDays() {

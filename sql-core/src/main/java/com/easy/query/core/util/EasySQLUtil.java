@@ -177,23 +177,29 @@ public class EasySQLUtil {
 
 
     private static final Pattern stringFormatPattern = Pattern.compile("\\{(\\d+)}|([^{]+)");
+
     public static List<Object> parseFormat(String format, Object... args) {
         List<Object> result = new ArrayList<>();
         Matcher matcher = stringFormatPattern.matcher(format);
 
+//        int maxIndex = 0;
         while (matcher.find()) {
             String placeholder = matcher.group(1);
             String text = matcher.group(2);
             if (text != null) {
                 result.add(text);
             } else if (placeholder != null) {
-                int index = Integer.parseInt(placeholder);
-                if (index >= args.length) {
+                int currentIndex = Integer.parseInt(placeholder);
+                if (currentIndex >= args.length) {
                     throw new EasyQueryInvalidOperationException(String.format("Mismatch: provided %d arguments, but the format string expects a different number.", args.length));
                 }
-                result.add(args[index]);
+                result.add(args[currentIndex]);
+//                maxIndex = Math.max(maxIndex, currentIndex);
             }
         }
+//        if (args.length != (maxIndex + 1)) {
+//            throw new EasyQueryInvalidOperationException(String.format("Invalid concat format: expected %d arguments, but got %d.", maxIndex + 1, args.length));
+//        }
         return result;
     }
 //    public static List<Object> parseFormat(String formatString, Object... params) {

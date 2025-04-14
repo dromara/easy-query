@@ -30,17 +30,6 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
         return count(false);
     }
 
-//    default <T extends Long> ColumnFunctionCompareComparableNumberChainExpression<T> count(boolean distinct) {
-//        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-//            if (this instanceof DSLSQLFunctionAvailable) {
-//                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-//                return fx.count(sqlFunction).distinct(distinct);
-//            } else {
-//                return fx.count(this.getValue()).distinct(distinct);
-//            }
-//        }, Long.class);
-//    }
-
     default ColumnFunctionCompareComparableNumberFilterChainExpression<Long> count(boolean distinct) {
         return new ColumnFunctionCompareComparableNumberFilterChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
             return fx.count(x -> {

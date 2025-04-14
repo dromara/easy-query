@@ -32,6 +32,7 @@ public class ClickHouseDateTimePropertySQLFunction extends AbstractExpressionSQL
         switch (dateTimeUnitEnum){
             case DayOfYear:return "toDayOfYear({0})";
             case DayOfWeek:return "(toDayOfWeek({0})-1)";
+            case DayOfWeekSunDayEndDay:return "(CASE WHEN (toDayOfWeek({0})-1) = 0 THEN 7 ELSE (toDayOfWeek({0})-1) END)";
             case Year:return "toYear({0})";
             case Month:return "toMonth({0})";
             case Day:return "toDayOfMonth({0})";

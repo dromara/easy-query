@@ -359,6 +359,13 @@ public class Expression {
             }
         });
     }
+
+    /**
+     * 格式化字符串
+     * @param format
+     * @param args
+     * @return
+     */
     public ColumnFunctionCompareComparableStringChainExpression<String> stringFormat(String format,Object... args) {
         if(format==null){
             throw new EasyQueryInvalidOperationException("format is null");
@@ -372,7 +379,6 @@ public class Expression {
             }
         });
     }
-
 
     public RowNumberOverBuilder rowNumberOver() {
         return new RowNumberOverBuilder(entitySQLContext);

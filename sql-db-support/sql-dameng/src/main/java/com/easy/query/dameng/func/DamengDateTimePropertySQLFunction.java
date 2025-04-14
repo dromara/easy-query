@@ -26,20 +26,30 @@ public class DamengDateTimePropertySQLFunction extends AbstractExpressionSQLFunc
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        if(EasyCollectionUtil.isEmpty(columnExpressions)){
+        if (EasyCollectionUtil.isEmpty(columnExpressions)) {
             throw new IllegalArgumentException("columnExpressions is empty");
         }
-        switch (dateTimeUnitEnum){
-            case DayOfYear:return "cast(to_char({0},'DDD') as number)";
-            case DayOfWeek:return "case when to_char({0},'D')='7' then 0 else cast(to_char({0},'D') as number) end";
-            case Year:return "cast(to_char({0},'YYYY') as number)";
-            case Month:return "cast(to_char({0},'MM') as number)";
-            case Day:return "cast(to_char({0},'DD') as number)";
-            case Hour:return "cast(to_char({0},'HH24') as number)";
-            case Minute:return "cast(to_char({0},'MI') as number)";
-            case Second:return "cast(to_char({0},'SS') as number)";
+        switch (dateTimeUnitEnum) {
+            case DayOfYear:
+                return "cast(to_char({0},'DDD') as number)";
+            case DayOfWeek:
+                return "(case when to_char({0},'D')='7' then 0 else cast(to_char({0},'D') as number) end)";
+            case DayOfWeekSunDayEndDay:
+                return "cast(to_char({0},'D') as number)";
+            case Year:
+                return "cast(to_char({0},'YYYY') as number)";
+            case Month:
+                return "cast(to_char({0},'MM') as number)";
+            case Day:
+                return "cast(to_char({0},'DD') as number)";
+            case Hour:
+                return "cast(to_char({0},'HH24') as number)";
+            case Minute:
+                return "cast(to_char({0},'MI') as number)";
+            case Second:
+                return "cast(to_char({0},'SS') as number)";
         }
-        throw new UnsupportedOperationException("不支持当前属性获取:"+ dateTimeUnitEnum);
+        throw new UnsupportedOperationException("不支持当前属性获取:" + dateTimeUnitEnum);
     }
 
     @Override

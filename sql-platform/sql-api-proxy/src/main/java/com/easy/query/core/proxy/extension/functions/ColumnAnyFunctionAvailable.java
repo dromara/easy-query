@@ -142,11 +142,15 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     /**
-     * 去头部空格
+     * 去头部空格请使用{@link #ltrim()}
      *
      * @return
      */
+    @Deprecated
     default ColumnFunctionCompareComparableAnyChainExpression<String> trimStart() {
+        return ltrim();
+    }
+    default ColumnFunctionCompareComparableAnyChainExpression<String> ltrim() {
         return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
@@ -159,10 +163,20 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
 
     /**
      * 去尾部空格
+     * 请使用{@link #rtrim()}
      *
      * @return
      */
+    @Deprecated
     default ColumnFunctionCompareComparableAnyChainExpression<String> trimEnd() {
+        return rtrim();
+    }
+    /**
+     * 去尾部空格
+     *
+     * @return
+     */
+    default ColumnFunctionCompareComparableAnyChainExpression<String> rtrim() {
         return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);

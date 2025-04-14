@@ -8,6 +8,7 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastBooleanAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastDateTimeAvailable;
@@ -24,8 +25,10 @@ import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctio
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableStringChainExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLColumnFunctionCompareComparableExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
+import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -57,52 +60,65 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
             });
         }, getPropertyType());
     }
+
     /**
      * 链接表列
-     * 调整顺序可以使用{@link com.easy.query.core.proxy.core.Expression#concat(PropTypeColumn[])}
+     * 调整顺序可以使用{@link com.easy.query.core.proxy.core.Expression#stringFormat(String, Object...)}
+     *
      * @param propTypeColumn
      * @return
      */
     default ColumnFunctionCompareComparableStringChainExpression<TProperty> concat(PropTypeColumn<String> propTypeColumn) {
-        return concat(x->x.expression(propTypeColumn));
+        return concat(x -> x.expression(propTypeColumn));
     }
+
     /**
      * 链接常量
-     * 调整顺序可以使用{@link com.easy.query.core.proxy.core.Expression#concat(PropTypeColumn[])}
+     * 调整顺序可以使用{@link com.easy.query.core.proxy.core.Expression#stringFormat(String, Object...)}
+     *
      * @param value
      * @return
      */
     default ColumnFunctionCompareComparableStringChainExpression<TProperty> concat(String value) {
-        return concat(x->x.value(value));
+        return concat(x -> x.value(value));
     }
+
     /**
      * 链接多个片段可以是表列,函数,片段,常量
-     * 调整顺序可以使用{@link com.easy.query.core.proxy.core.Expression#concat(PropTypeColumn[])}
+     * 调整顺序可以使用{@link com.easy.query.core.proxy.core.Expression#stringFormat(String, Object...)}
+     *
      * @param stringExpressions
      * @return
      */
     default ColumnFunctionCompareComparableStringChainExpression<TProperty> concat(SQLExpression1<ConcatExpressionSelector> stringExpressions) {
-        SQLExpression1<ColumnFuncSelector> selector= o->{
-            stringExpressions.apply(new ConcatExpressionSelectorImpl(getEntitySQLContext().getRuntimeContext().fx(),o));
+        SQLExpression1<ColumnFuncSelector> selector = o -> {
+            stringExpressions.apply(new ConcatExpressionSelectorImpl(getEntitySQLContext().getRuntimeContext().fx(), o));
         };
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.concat(o -> {
-                PropTypeColumn.columnFuncSelector(o,this);
+                PropTypeColumn.columnFuncSelector(o, this);
                 selector.apply(o);
             });
         }, String.class);
     }
+//
+//    default ColumnFunctionCompareComparableStringChainExpression<String> appendFormat(String format, Object... args) {
+//        Object[] newArgs = EasyArrayUtil.concat(args, new Object[]{this});
+//        return Expression.of(getEntitySQLContext()).stringFormat(String.format("{%s}" + format, args.length), newArgs);
+//    }
 
     /**
      * 请使用 nullOrEmpty
+     *
      * @return
      */
     @Deprecated
     default ColumnFunctionCompareComparableStringChainExpression<TProperty> nullEmpty() {
-        return nullOrDefault(o->o.value(EasyStringUtil.EMPTY));
+        return nullOrDefault(o -> o.value(EasyStringUtil.EMPTY));
     }
+
     default ColumnFunctionCompareComparableStringChainExpression<TProperty> nullOrEmpty() {
-        return nullOrDefault(o->o.value(EasyStringUtil.EMPTY));
+        return nullOrDefault(o -> o.value(EasyStringUtil.EMPTY));
     }
 
 //    @Override
@@ -125,6 +141,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 转成小写
+     *
      * @return
      */
     default ColumnFunctionCompareComparableStringChainExpression<String> toLower() {
@@ -140,6 +157,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 转成小写
+     *
      * @return
      */
     default ColumnFunctionCompareComparableStringChainExpression<String> toUpper() {
@@ -155,15 +173,16 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
 
     /**
      * 字符串截取[column.subString(0,2)] 如果column值为"abcdefg"返回"ab"
-     * @param begin 开始索引默认0
+     *
+     * @param begin  开始索引默认0
      * @param length 截取长度
      * @return 支持比较操作的字符串方法表达式
      */
     default ColumnFunctionCompareComparableStringChainExpression<String> subString(int begin, int length) {
-        if(begin<0){
+        if (begin < 0) {
             throw new IllegalArgumentException("begin must be greater than 0");
         }
-        if(length<0){
+        if (length < 0) {
             throw new IllegalArgumentException("length must be greater than 0");
         }
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
@@ -175,39 +194,43 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
             }
         }, String.class);
     }
+
     default <T extends Number> ColumnFunctionCompareComparableStringChainExpression<String> subString(PropTypeColumn<T> begin, int length) {
-        if(length<0){
+        if (length < 0) {
             throw new IllegalArgumentException("length must be greater than 0");
         }
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.subString(selector->{
-                PropTypeColumn.columnFuncSelector(selector,this);
-                PropTypeColumn.columnFuncSelector(selector,begin);
+            return fx.subString(selector -> {
+                PropTypeColumn.columnFuncSelector(selector, this);
+                PropTypeColumn.columnFuncSelector(selector, begin);
                 selector.format(length);
             });
         }, String.class);
     }
-    default <T1 extends Number,T2 extends Number> ColumnFunctionCompareComparableStringChainExpression<String> subString(PropTypeColumn<T1> begin, PropTypeColumn<T2>  length) {
+
+    default <T1 extends Number, T2 extends Number> ColumnFunctionCompareComparableStringChainExpression<String> subString(PropTypeColumn<T1> begin, PropTypeColumn<T2> length) {
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.subString(selector->{
-                PropTypeColumn.columnFuncSelector(selector,this);
-                PropTypeColumn.columnFuncSelector(selector,begin);
-                PropTypeColumn.columnFuncSelector(selector,length);
+            return fx.subString(selector -> {
+                PropTypeColumn.columnFuncSelector(selector, this);
+                PropTypeColumn.columnFuncSelector(selector, begin);
+                PropTypeColumn.columnFuncSelector(selector, length);
             });
         }, String.class);
     }
-    default <T extends Number> ColumnFunctionCompareComparableStringChainExpression<String> subString(int begin, PropTypeColumn<T>  length) {
+
+    default <T extends Number> ColumnFunctionCompareComparableStringChainExpression<String> subString(int begin, PropTypeColumn<T> length) {
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.subString(selector->{
-                PropTypeColumn.columnFuncSelector(selector,this);
+            return fx.subString(selector -> {
+                PropTypeColumn.columnFuncSelector(selector, this);
                 selector.format(begin);
-                PropTypeColumn.columnFuncSelector(selector,length);
+                PropTypeColumn.columnFuncSelector(selector, length);
             });
         }, String.class);
     }
 
     /**
      * 去空格
+     *
      * @return
      */
     default ColumnFunctionCompareComparableStringChainExpression<String> trim() {
@@ -220,11 +243,23 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
             }
         }, String.class);
     }
+
     /**
      * 去头部空格
+     * {@link #ltrim()}
+     *
      * @return
      */
+    @Deprecated
     default ColumnFunctionCompareComparableStringChainExpression<String> trimStart() {
+        return ltrim();
+    }
+    /**
+     * 去头部空格
+     *
+     * @return
+     */
+    default ColumnFunctionCompareComparableStringChainExpression<String> ltrim() {
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
@@ -234,11 +269,23 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
             }
         }, String.class);
     }
+
     /**
      * 去尾部空格
+     * {@link #rtrim()}
+     *
      * @return
      */
+    @Deprecated
     default ColumnFunctionCompareComparableStringChainExpression<String> trimEnd() {
+        return rtrim();
+    }
+    /**
+     * 去尾部空格
+     *
+     * @return
+     */
+    default ColumnFunctionCompareComparableStringChainExpression<String> rtrim() {
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
@@ -248,19 +295,21 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
             }
         }, String.class);
     }
+
     default ColumnFunctionCompareComparableStringChainExpression<String> replace(String oldValue, String newValue) {
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.replace(sqlFunction,oldValue,newValue);
+                return fx.replace(sqlFunction, oldValue, newValue);
             } else {
-                return fx.replace(this.getValue(),oldValue,newValue);
+                return fx.replace(this.getValue(), oldValue, newValue);
             }
         }, String.class);
     }
 
     /**
      * 左侧补齐totalWidth位数用空格补齐
+     *
      * @param totalWidth
      * @return
      */
@@ -268,25 +317,27 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.leftPad(sqlFunction,totalWidth);
+                return fx.leftPad(sqlFunction, totalWidth);
             } else {
-                return fx.leftPad(this.getValue(),totalWidth);
+                return fx.leftPad(this.getValue(), totalWidth);
             }
         }, String.class);
     }
+
     default ColumnFunctionCompareComparableStringChainExpression<String> leftPad(int totalWidth, char paddingChar) {
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.leftPad(sqlFunction,totalWidth,paddingChar);
+                return fx.leftPad(sqlFunction, totalWidth, paddingChar);
             } else {
-                return fx.leftPad(this.getValue(),totalWidth,paddingChar);
+                return fx.leftPad(this.getValue(), totalWidth, paddingChar);
             }
         }, String.class);
     }
 
     /**
      * 右侧补齐totalWidth位数用空格补齐
+     *
      * @param totalWidth
      * @return
      */
@@ -294,57 +345,65 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.rightPad(sqlFunction,totalWidth);
+                return fx.rightPad(sqlFunction, totalWidth);
             } else {
-                return fx.rightPad(this.getValue(),totalWidth);
+                return fx.rightPad(this.getValue(), totalWidth);
             }
         }, String.class);
     }
+
     default ColumnFunctionCompareComparableStringChainExpression<String> rightPad(int totalWidth, char paddingChar) {
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.rightPad(sqlFunction,totalWidth,paddingChar);
+                return fx.rightPad(sqlFunction, totalWidth, paddingChar);
             } else {
-                return fx.rightPad(this.getValue(),totalWidth,paddingChar);
+                return fx.rightPad(this.getValue(), totalWidth, paddingChar);
             }
         }, String.class);
     }
 
     /**
      * 请使用{@link #joining(String)}
+     *
      * @param delimiter
      * @return
      */
     @Deprecated
-    default ColumnFunctionCompareComparableStringChainExpression<String> join(String delimiter) {
-        return joining(delimiter,false);
+    default ColumnFunctionCompareComparableStringFilterChainExpression<TProperty> join(String delimiter) {
+        return joining(delimiter, false);
     }
 
     /**
      * 请使用 {@link #joining(String, boolean)}
+     *
      * @param delimiter
      * @param distinct
      * @return
      */
     @Deprecated
-    default ColumnFunctionCompareComparableStringChainExpression<String> join(String delimiter, boolean distinct) {
-        return joining(delimiter,distinct);
+    default ColumnFunctionCompareComparableStringFilterChainExpression<TProperty> join(String delimiter, boolean distinct) {
+        return joining(delimiter, distinct);
     }
-    default ColumnFunctionCompareComparableStringChainExpression<String> joining(String delimiter) {
-        return joining(delimiter,false);
+
+    default ColumnFunctionCompareComparableStringFilterChainExpression<TProperty> joining(String delimiter) {
+        return joining(delimiter, false);
     }
-    default ColumnFunctionCompareComparableStringChainExpression<String> joining(String delimiter, boolean distinct) {
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            return fx.joining(x->{
+
+    default ColumnFunctionCompareComparableStringFilterChainExpression<TProperty> joining(String delimiter, boolean distinct) {
+        return createFilterChainExpression(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+            return fx.joining(x -> {
                 x.value(delimiter);
-                PropTypeColumn.columnFuncSelector(x,this);
-            },distinct);
+                PropTypeColumn.columnFuncSelector(x, self);
+            }, distinct);
         }, String.class);
+
+
     }
 
     /**
      * 长度函数返回当前列的长度值
+     *
      * @return
      */
     default ColumnFunctionCompareComparableNumberChainExpression<Integer> length() {
@@ -360,11 +419,12 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
 
     @Override
     default ColumnFunctionCompareComparableStringChainExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(),func, getPropertyType());
+        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
     }
 
     /**
      * 比较两个字符串 一样返回0 前一个比后一个大返回1 前一个比后一个小返回-1
+     *
      * @param comparedValue
      * @return
      */
@@ -379,22 +439,22 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         }, Integer.class);
     }
 
-    default ColumnFuncComparableExpression<Integer> compareTo(ColumnStringFunctionAvailable<TProperty> otherColumn) {
+    default ColumnFuncComparableExpression<Integer> compareTo(PropTypeColumn<TProperty> otherColumn) {
         return new SQLColumnFunctionCompareComparableExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                if(otherColumn instanceof DSLSQLFunctionAvailable){
+                if (otherColumn instanceof DSLSQLFunctionAvailable) {
                     SQLFunction columnFunction = ((DSLSQLFunctionAvailable) otherColumn).func().apply(fx);
                     return fx.stringCompareTo(sqlFunction, columnFunction);
-                }else{
-                    return fx.stringCompareTo(sqlFunction, otherColumn,otherColumn.getValue());
+                } else {
+                    return fx.stringCompareTo(sqlFunction, otherColumn, otherColumn.getValue());
                 }
             } else {
-                if(otherColumn instanceof DSLSQLFunctionAvailable){
+                if (otherColumn instanceof DSLSQLFunctionAvailable) {
                     SQLFunction columnFunction = ((DSLSQLFunctionAvailable) otherColumn).func().apply(fx);
                     return fx.stringCompareTo(this.getValue(), columnFunction);
-                }else{
-                    return fx.stringCompareTo(this.getValue(), otherColumn,otherColumn.getValue());
+                } else {
+                    return fx.stringCompareTo(this.getValue(), otherColumn, otherColumn.getValue());
                 }
             }
         }, Integer.class);

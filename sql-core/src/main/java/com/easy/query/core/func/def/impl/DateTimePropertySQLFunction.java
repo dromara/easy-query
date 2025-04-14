@@ -26,20 +26,30 @@ public class DateTimePropertySQLFunction extends AbstractExpressionSQLFunction {
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        if(EasyCollectionUtil.isEmpty(columnExpressions)){
+        if (EasyCollectionUtil.isEmpty(columnExpressions)) {
             throw new IllegalArgumentException("columnExpressions is empty");
         }
-        switch (dateTimeUnitEnum){
-            case DayOfYear:return "DAYOFYEAR({0})";
-            case DayOfWeek:return "(DAYOFWEEK({0})-1)";
-            case Year:return "YEAR({0})";
-            case Month:return "MONTH({0})";
-            case Day:return "DAYOFMONTH({0})";
-            case Hour:return "HOUR({0})";
-            case Minute:return "MINUTE({0})";
-            case Second:return "SECOND({0})";
+        switch (dateTimeUnitEnum) {
+            case DayOfYear:
+                return "DAYOFYEAR({0})";
+            case DayOfWeek:
+                return "(DAYOFWEEK({0})-1)";
+            case DayOfWeekSunDayEndDay:
+                return "(WEEKDAY({0})+1)";
+            case Year:
+                return "YEAR({0})";
+            case Month:
+                return "MONTH({0})";
+            case Day:
+                return "DAYOFMONTH({0})";
+            case Hour:
+                return "HOUR({0})";
+            case Minute:
+                return "MINUTE({0})";
+            case Second:
+                return "SECOND({0})";
         }
-        throw new UnsupportedOperationException("不支持当前属性获取:"+ dateTimeUnitEnum);
+        throw new UnsupportedOperationException("不支持当前属性获取:" + dateTimeUnitEnum);
     }
 
     @Override

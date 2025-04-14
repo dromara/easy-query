@@ -2,6 +2,7 @@ package com.easy.query.test;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.easy.query.api.proxy.base.StringProxy;
+import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -34,6 +35,7 @@ import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
+import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.grouping.proxy.Grouping2Proxy;
@@ -53,6 +55,7 @@ import com.easy.query.test.entity.m2m.UserBook;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
 import lombok.Data;
 import org.junit.Assert;
@@ -78,10 +81,10 @@ import java.util.Map;
 public class QueryTest23 extends BaseTest {
 
     @Before
-    public void before(){
+    public void before() {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(UserAccount.class, UserBook.class));
-        codeFirstCommand.executeWithTransaction(s->s.commit());
+        codeFirstCommand.executeWithTransaction(s -> s.commit());
     }
 
     @Test
@@ -560,8 +563,15 @@ public class QueryTest23 extends BaseTest {
 
     }
 
+    public static class MyParameter {
+        public Map<String,String> getParameters(){
+            return null;
+        }
+    }
+
     @Test
     public void testJoin3() {
+        MyParameter myParameter = new MyParameter();
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
                 .subQueryToGroupJoin(u -> u.bankCards())
                 .where(user -> {
@@ -572,6 +582,8 @@ public class QueryTest23 extends BaseTest {
                     user.bankCards().none(card -> {
                         card.bank().name().eq("建设银行");
                     });
+                }).orderBy(myParameter.getParameters() != null, user -> {
+                    user.name().asc();
                 }).toList();
 
     }
@@ -674,7 +686,7 @@ public class QueryTest23 extends BaseTest {
 
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(t_blog -> {
-                    t_blog.expression().stringFormat("你好:{0}我叫{1}你好吗?我今年{1}岁了", t_blog.title(), t_blog.star(), 12)
+                    t_blog.expression().stringFormat("你好:{0}我叫{1}你好吗?我今年{1}岁了", t_blog.title(), t_blog.star())
                             .eq("比较一下");
                 }).toList();
 
@@ -792,14 +804,13 @@ public class QueryTest23 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
 
-
-            List<Draft2<String, Long>> list = easyEntityQuery.queryable(UserAccount.class)
-                    .where(uc -> {
-                        uc.books().any(ub -> ub.name().eq("JAVA开发"));
-                    }).select(uc -> Select.DRAFT.of(
-                            uc.name(),
-                            uc.books().count()
-                    )).toList();
+        List<Draft2<String, Long>> list = easyEntityQuery.queryable(UserAccount.class)
+                .where(uc -> {
+                    uc.books().any(ub -> ub.name().eq("JAVA开发"));
+                }).select(uc -> Select.DRAFT.of(
+                        uc.name(),
+                        uc.books().count()
+                )).toList();
 
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -817,15 +828,14 @@ public class QueryTest23 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
 
-
-            List<Draft2<String, Long>> list = easyEntityQuery.queryable(UserAccount.class)
-                    .subQueryToGroupJoin(uc->uc.books())
-                    .where(uc -> {
-                        uc.books().any(ub -> ub.name().eq("JAVA开发"));
-                    }).select(uc -> Select.DRAFT.of(
-                            uc.name(),
-                            uc.books().count()
-                    )).toList();
+        List<Draft2<String, Long>> list = easyEntityQuery.queryable(UserAccount.class)
+                .subQueryToGroupJoin(uc -> uc.books())
+                .where(uc -> {
+                    uc.books().any(ub -> ub.name().eq("JAVA开发"));
+                }).select(uc -> Select.DRAFT.of(
+                        uc.name(),
+                        uc.books().count()
+                )).toList();
 
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -834,8 +844,9 @@ public class QueryTest23 extends BaseTest {
         Assert.assertEquals("JAVA开发(String),1(Integer),null(null),true(Boolean),false(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-     public void testQueryConcat(){
+    public void testQueryConcat() {
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(t_blog -> {
                     Expression expression = t_blog.expression();
@@ -851,6 +862,42 @@ public class QueryTest23 extends BaseTest {
                             expression.stringFormat("{0}*{1}", t_blog.id(), t_blog.content())
                     );
                 }).toList();
+
+    }
+
+
+    @Test
+    public void formatMySQL() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        String format1="yyyy年MM-01 HH:mm分ss秒";
+        String format2="yyyy-MM-dd HH:mm:ss";
+        String format3="yyyy/MM-/01 HH时mm分ss秒";
+        List<Draft4<LocalDateTime, String, String, String>> list = easyEntityQuery.queryable(BlogEntity.class)
+                .select(t_blog -> Select.DRAFT.of(
+                        t_blog.createTime(),
+                        t_blog.createTime().format(format1),
+                        t_blog.createTime().format(format2),
+                        t_blog.createTime().format(format3)
+                )).toList();
+        Assert.assertFalse(list.isEmpty());
+        for (Draft4<LocalDateTime, String, String, String> timeAndFormat : list) {
+            LocalDateTime value1 = timeAndFormat.getValue1();
+            String formatv1 = value1.format(DateTimeFormatter.ofPattern(format1));
+            Assert.assertEquals(formatv1, timeAndFormat.getValue2());
+            String formatv2 = value1.format(DateTimeFormatter.ofPattern(format2));
+            Assert.assertEquals(formatv2, timeAndFormat.getValue3());
+            String formatv3 = value1.format(DateTimeFormatter.ofPattern(format3));
+            Assert.assertEquals(formatv3, timeAndFormat.getValue4());
+        }
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`create_time` AS `value1`,DATE_FORMAT(t.`create_time`,'%Y年%m-01 %H:%i分%s秒') AS `value2`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') AS `value3`,DATE_FORMAT(t.`create_time`,'%Y/%m-/01 %H时%i分%s秒') AS `value4` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 

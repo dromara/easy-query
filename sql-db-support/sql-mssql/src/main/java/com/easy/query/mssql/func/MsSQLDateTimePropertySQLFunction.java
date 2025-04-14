@@ -32,6 +32,7 @@ public class MsSQLDateTimePropertySQLFunction extends AbstractExpressionSQLFunct
         switch (dateTimeUnitEnum){
             case DayOfYear:return "datepart(dayofyear, {0})";
             case DayOfWeek:return "(datepart(weekday, {0})-1)";
+            case DayOfWeekSunDayEndDay:return "(CASE WHEN (datepart(weekday, {0})-1) = 0 THEN 7 ELSE (datepart(weekday, {0})-1) END)";
             case Year:return "datepart(year, {0})";
             case Month:return "datepart(month, {0})";
             case Day:return "datepart(day, {0})";

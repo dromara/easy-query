@@ -26,20 +26,30 @@ public class GaussDBDateTimePropertySQLFunction extends AbstractExpressionSQLFun
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        if(EasyCollectionUtil.isEmpty(columnExpressions)){
+        if (EasyCollectionUtil.isEmpty(columnExpressions)) {
             throw new IllegalArgumentException("columnExpressions is empty");
         }
-        switch (dateTimeUnitEnum){
-            case DayOfYear:return "extract(doy from ({0})::timestamp)";
-            case DayOfWeek:return "extract(dow from ({0})::timestamp)";
-            case Year:return "extract(year from ({0})::timestamp)";
-            case Month:return "extract(month from ({0})::timestamp)";
-            case Day:return "extract(day from ({0})::timestamp)";
-            case Hour:return "extract(hour from ({0})::timestamp)";
-            case Minute:return "extract(minute from ({0})::timestamp)";
-            case Second:return "extract(second from ({0})::timestamp)";
+        switch (dateTimeUnitEnum) {
+            case DayOfYear:
+                return "extract(doy from ({0})::timestamp)";
+            case DayOfWeek:
+                return "extract(dow from ({0})::timestamp)";
+            case DayOfWeekSunDayEndDay:
+                return "(CASE WHEN extract(dow from ({0})::timestamp) = 0 THEN 7 ELSE extract(dow from ({0})::timestamp) END)";
+            case Year:
+                return "extract(year from ({0})::timestamp)";
+            case Month:
+                return "extract(month from ({0})::timestamp)";
+            case Day:
+                return "extract(day from ({0})::timestamp)";
+            case Hour:
+                return "extract(hour from ({0})::timestamp)";
+            case Minute:
+                return "extract(minute from ({0})::timestamp)";
+            case Second:
+                return "extract(second from ({0})::timestamp)";
         }
-        throw new UnsupportedOperationException("不支持当前属性获取:"+ dateTimeUnitEnum);
+        throw new UnsupportedOperationException("不支持当前属性获取:" + dateTimeUnitEnum);
     }
 
     @Override

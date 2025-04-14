@@ -112,8 +112,7 @@ public class AbstractAggregateFilterExpression<TProperty> implements EntitySQLCo
 
     public Function<SQLFunc, SQLFunction> func() {
         return fx -> {
-            SQLFunction sqlFunction = func.apply(getSelf(), fx);
-            return sqlFunction;
+            return func.apply(getSelf(), fx);
         };
     }
 

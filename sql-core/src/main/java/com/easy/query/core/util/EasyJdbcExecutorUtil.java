@@ -239,7 +239,7 @@ public class EasyJdbcExecutorUtil {
             }
         } finally {
             if (listen) {
-                jdbcExecutorListener.onExecuteAfter(new JdbcExecuteAfterArg(jdbcListenBeforeArg, 0, exception));
+                jdbcExecutorListener.onExecuteAfter(new JdbcExecuteAfterArg(jdbcListenBeforeArg, sr, 0, exception));
             }
         }
         return sr;
@@ -330,7 +330,7 @@ public class EasyJdbcExecutorUtil {
         } finally {
             clear(ps);
             if (listen) {
-                jdbcExecutorListener.onExecuteAfter(new JdbcExecuteAfterArg(jdbcListenBeforeArg, r, exception));
+                jdbcExecutorListener.onExecuteAfter(new JdbcExecuteAfterArg(jdbcListenBeforeArg, null, r, exception));
             }
         }
         return r;
@@ -391,7 +391,7 @@ public class EasyJdbcExecutorUtil {
         } finally {
             clear(ps);
             if (listen) {
-                jdbcExecutorListener.onExecuteAfter(new JdbcExecuteAfterArg(jdbcListenBeforeArg, r, exception));
+                jdbcExecutorListener.onExecuteAfter(new JdbcExecuteAfterArg(jdbcListenBeforeArg, null, r, exception));
             }
 
             if (EasyCollectionUtil.isNotEmpty(entities)) {
@@ -448,7 +448,7 @@ public class EasyJdbcExecutorUtil {
         } finally {
             clear(ps);
             if (listen) {
-                jdbcExecutorListener.onExecuteAfter(new JdbcExecuteAfterArg(jdbcListenBeforeArg, r, exception));
+                jdbcExecutorListener.onExecuteAfter(new JdbcExecuteAfterArg(jdbcListenBeforeArg, null, r, exception));
             }
         }
         return r;
@@ -490,7 +490,7 @@ public class EasyJdbcExecutorUtil {
         Class<?> entityClass = resultColumnMetadata.getEntityClass();
         Object fromValue = fromValue0(entityClass, resultColumnMetadata, value);
         ValueConverter<?, ?> valueConverter = resultColumnMetadata.getValueConverter();
-        if(valueConverter!=null){
+        if (valueConverter != null) {
             return valueConverter.deserialize(EasyObjectUtil.typeCast(fromValue), resultColumnMetadata.getColumnMetadata());
         }
         return fromValue;

@@ -32,6 +32,7 @@ public class PgSQLDateTimePropertySQLFunction extends AbstractExpressionSQLFunct
         switch (dateTimeUnitEnum){
             case DayOfYear:return "extract(doy from ({0})::timestamp)";
             case DayOfWeek:return "extract(dow from ({0})::timestamp)";
+            case DayOfWeekSunDayEndDay:return "(CASE WHEN extract(dow from ({0})::timestamp) = 0 THEN 7 ELSE extract(dow from ({0})::timestamp) END)";
             case Year:return "extract(year from ({0})::timestamp)";
             case Month:return "extract(month from ({0})::timestamp)";
             case Day:return "extract(day from ({0})::timestamp)";

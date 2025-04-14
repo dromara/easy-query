@@ -1,5 +1,7 @@
 package com.easy.query.core.basic.extension.listener;
 
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
+
 /**
  * create time 2023/11/10 23:25
  * 文件说明
@@ -11,6 +13,7 @@ public class JdbcExecuteAfterArg {
      * 执行前的参数信息
      */
     private final JdbcExecuteBeforeArg beforeArg;
+    private final StreamResultSet streamResultSet;
     /**
      * 受影响行数当为查询时为0
      */
@@ -24,9 +27,10 @@ public class JdbcExecuteAfterArg {
      */
     private final long end;
 
-    public JdbcExecuteAfterArg(JdbcExecuteBeforeArg beforeArg, int rows, Exception exception){
+    public JdbcExecuteAfterArg(JdbcExecuteBeforeArg beforeArg, StreamResultSet streamResultSet, int rows, Exception exception) {
 
         this.beforeArg = beforeArg;
+        this.streamResultSet = streamResultSet;
         this.rows = rows;
         this.exception = exception;
         this.end = System.currentTimeMillis();
@@ -46,5 +50,13 @@ public class JdbcExecuteAfterArg {
 
     public long getEnd() {
         return end;
+    }
+
+    /**
+     * 费查询模式为空
+     * @return
+     */
+    public StreamResultSet getStreamResultSet() {
+        return streamResultSet;
     }
 }

@@ -24,7 +24,7 @@ public class MsSQLNullDefaultSQLFunction extends AbstractExpressionSQLFunction {
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         Iterable<String> params = EasyCollectionUtil.select(columnExpressions, (t, i) -> "{" + i + "}");
-        return String.format("IsNull(%s)", String.join(",", params));
+        return String.format("ISNULL(%s)", String.join(",", params));
     }
 
     @Override

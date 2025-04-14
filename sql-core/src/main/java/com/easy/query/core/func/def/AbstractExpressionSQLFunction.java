@@ -61,8 +61,8 @@ public abstract class AbstractExpressionSQLFunction extends AbstractSQLFunction 
             ColumnMultiValueExpression columnMultiValueExpression = (ColumnMultiValueExpression) columnExpression;
             context.collection(columnMultiValueExpression.getValues());
         } else if (columnExpression instanceof ColumnFuncFormatExpression) {
-            ColumnFuncFormatExpression concatFormatExpression = (ColumnFuncFormatExpression) columnExpression;
-            context.format(concatFormatExpression.getFormat());
+            ColumnFuncFormatExpression stringFormatExpression = (ColumnFuncFormatExpression) columnExpression;
+            context.format(stringFormatExpression.getFormat());
         } else if (columnExpression instanceof ColumSQLExpression) {
             ColumSQLExpression columSQLExpression = (ColumSQLExpression) columnExpression;
             context.sql(columSQLExpression.getSQLSegment());
