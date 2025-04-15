@@ -1,14 +1,14 @@
-package com.easy.query.core.proxy.partition.metadata;
+package com.easy.query.core.proxy.part.metadata;
 
-import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.ColumnOption;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.proxy.partition.Part1;
 import com.easy.query.core.util.EasyClassUtil;
+
+import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * create time 2024/8/5 09:24
@@ -16,22 +16,23 @@ import com.easy.query.core.util.EasyClassUtil;
  *
  * @author xuejiaming
  */
-public class Part1EntityMetadata extends EntityMetadata {
+public class PartEntityMetadata extends EntityMetadata {
 
     private final EntityMetadata entityMetadata;
-    private final JdbcTypeHandler jdbcTypeHandler;
+    private final Map<String, PartColumn> partColumnMap;
 
-    public Part1EntityMetadata(Class<?> entityClass, EntityMetadata entityMetadata, JdbcTypeHandler jdbcTypeHandler) {
+    public PartEntityMetadata(Class<?> entityClass, EntityMetadata entityMetadata, Supplier<Object> beanConstructorCreator, Map<String, PartColumn> partColumnMap) {
         super(entityClass);
         this.entityMetadata = entityMetadata;
-        this.jdbcTypeHandler = jdbcTypeHandler;
-        entityMetadataType = EntityMetadataTypeEnum.PARTITION_BY;
-        beanConstructorCreator = () -> {
-            Part1<Object, Object> r = new Part1<>();
-            Object entity = entityMetadata.getBeanConstructorCreator().get();
-            r.setEntity(entity);
-            return r;
-        };
+        this.partColumnMap = partColumnMap;
+        entityMetadataType = EntityMetadataTypeEnum.PART;
+        this.beanConstructorCreator = beanConstructorCreator;
+//        beanConstructorCreator = () -> {
+//            Part1<Object, Object> r = new Part1<>();
+//            Object entity = entityMetadata.getBeanConstructorCreator().get();
+//            r.setEntity(entity);
+//            return r;
+//        };
     }
 
     @Override
@@ -53,30 +54,21 @@ public class Part1EntityMetadata extends EntityMetadata {
     }
 
     protected ColumnMetadata getPartitionByColumn(String propertyName) {
-
-        if (isPartitionByColumn(propertyName)) {
+        PartColumn partColumn = partColumnMap.get(propertyName);
+        if (partColumn != null) {
             ColumnOption columnOption = new ColumnOption(false, this, propertyName, propertyName, propertyName);
-            columnOption.setGetterCaller(obj -> {
-                return ((Part1) obj).getPartColumn1();
-            });
-            columnOption.setSetterCaller((obj, value) -> {
-                ((Part1) obj).setPartColumn1(value);
-            });
-            columnOption.setJdbcTypeHandler(getPartitionJdbcTypeHandler(propertyName));
+            columnOption.setGetterCaller(partColumn.getGetterCaller());
+            columnOption.setSetterCaller(partColumn.getSetterCaller());
+//            columnOption.setGetterCaller(obj -> {
+//                return ((Part1) obj).getPartColumn1();
+//            });
+//            columnOption.setSetterCaller((obj, value) -> {
+//                ((Part1) obj).setPartColumn1(value);
+//            });
+            columnOption.setJdbcTypeHandler(partColumn.getJdbcTypeHandler());
             return new PartColumnMetadata(columnOption, propertyName);
         }
         return null;
-    }
-
-    protected boolean isPartitionByColumn(String propertyName) {
-        return Part1.PART_COLUMN1.equals(propertyName);
-    }
-
-    protected JdbcTypeHandler getPartitionJdbcTypeHandler(String propertyName) {
-        if (Part1.PART_COLUMN1.equals(propertyName)) {
-            return jdbcTypeHandler;
-        }
-        throw new EasyQueryInvalidOperationException("unknown propertyName:[" + propertyName + "]");
     }
 
     public String getPropertyNameOrNull(String columnName, String def) {

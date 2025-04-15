@@ -1,4 +1,4 @@
-package com.easy.query.core.proxy.partition.proxy;
+package com.easy.query.core.proxy.part.proxy;
 
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
@@ -10,10 +10,13 @@ import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.partition.Part3;
-import com.easy.query.core.proxy.partition.metadata.Part3EntityMetadata;
+import com.easy.query.core.proxy.part.Part3;
+import com.easy.query.core.proxy.part.metadata.PartColumn;
+import com.easy.query.core.proxy.part.metadata.PartEntityMetadata;
 import com.easy.query.core.util.EasyObjectUtil;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -50,8 +53,8 @@ public class Part3Proxy<TKey1Proxy extends PropTypeColumn<TKey1>, TKey1,
     /**
      * {@link Part3#getPartColumn3()}
      */
-    public SQLAnyTypeColumn<Part3Proxy<TKey1Proxy, TKey1, TKey2Proxy, TKey2, TKey3Proxy, TKey3, TSourceProxy, TSource>, TKey2> partColumn3() {
-        return getAnyTypeColumn(Part3.PART_COLUMN2, EasyObjectUtil.typeCastNullable(Optional.ofNullable(getPartByPropTypes()[2]).map(o -> o.getPropertyType()).orElse(null)));
+    public SQLAnyTypeColumn<Part3Proxy<TKey1Proxy, TKey1, TKey2Proxy, TKey2, TKey3Proxy, TKey3, TSourceProxy, TSource>, TKey3> partColumn3() {
+        return getAnyTypeColumn(Part3.PART_COLUMN3, EasyObjectUtil.typeCastNullable(Optional.ofNullable(getPartByPropTypes()[2]).map(o -> o.getPropertyType()).orElse(null)));
     }
 
     @Override
@@ -87,6 +90,15 @@ public class Part3Proxy<TKey1Proxy extends PropTypeColumn<TKey1>, TKey1,
         JdbcTypeHandler jdbcTypeHandler1 = jdbcTypeHandlerManager.getHandler(key1Class);
         JdbcTypeHandler jdbcTypeHandler2 = jdbcTypeHandlerManager.getHandler(key2Class);
         JdbcTypeHandler jdbcTypeHandler3 = jdbcTypeHandlerManager.getHandler(key3Class);
-        return new Part3EntityMetadata(entityClass, entityMetadata, jdbcTypeHandler1, jdbcTypeHandler2, jdbcTypeHandler3);
+        Map<String, PartColumn> partColumnMap = new HashMap<>();
+        partColumnMap.put(Part3.PART_COLUMN1, new PartColumn(jdbcTypeHandler1, obj -> ((Part3) obj).getPartColumn1(), (obj, value) -> ((Part3) obj).setPartColumn1(value)));
+        partColumnMap.put(Part3.PART_COLUMN2, new PartColumn(jdbcTypeHandler2, obj -> ((Part3) obj).getPartColumn2(), (obj, value) -> ((Part3) obj).setPartColumn2(value)));
+        partColumnMap.put(Part3.PART_COLUMN3, new PartColumn(jdbcTypeHandler3, obj -> ((Part3) obj).getPartColumn3(), (obj, value) -> ((Part3) obj).setPartColumn3(value)));
+        return new PartEntityMetadata(entityClass, entityMetadata, () -> {
+            Part3<Object, Object, Object, Object> r = new Part3<>();
+            Object entity = entityMetadata.getBeanConstructorCreator().get();
+            r.setEntity(entity);
+            return r;
+        }, partColumnMap);
     }
 }

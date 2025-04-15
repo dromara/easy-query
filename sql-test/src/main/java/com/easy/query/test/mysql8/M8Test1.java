@@ -4,11 +4,9 @@ import com.alibaba.druid.support.json.JSONUtils;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.proxy.core.draft.Draft2;
-import com.easy.query.core.proxy.partition.Part1;
+import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.entity.m2m.UserAccount;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.M8User2;
 import com.easy.query.test.mysql8.entity.M8UserBook2;
@@ -248,7 +246,7 @@ public class M8Test1 extends BaseTest {
         for (Part1<SysBankCard, String> part1 : list1) {
             SysBankCard entity = part1.getEntity();
             String partitionColumn1 = part1.getPartColumn1();
-            System.out.println(JSONUtils.toJSONString(entity) + ":" + partitionColumn1);
+            System.out.println(entity + ":" + partitionColumn1);
         }
     }
     @Test
@@ -276,7 +274,7 @@ public class M8Test1 extends BaseTest {
         for (Part1<SysBankCard, String> part1 : list1) {
             SysBankCard entity = part1.getEntity();
             String partitionColumn1 = part1.getPartColumn1();
-            System.out.println(JSONUtils.toJSONString(entity) + ":" + partitionColumn1);
+            System.out.println(entity + ":" + partitionColumn1);
         }
     }
 }

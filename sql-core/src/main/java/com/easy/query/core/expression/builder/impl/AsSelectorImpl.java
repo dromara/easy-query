@@ -113,7 +113,7 @@ public class AsSelectorImpl extends AbstractAsSelector<AsSelector> implements As
     @Override
     public AsSelector columnAll(TableAvailable table) {
 
-        if (table.getEntityClass().equals(resultClass) || resultEntityMetadata.getEntityMetadataType() == EntityMetadataTypeEnum.MAP || resultEntityMetadata.getEntityMetadataType() == EntityMetadataTypeEnum.PARTITION_BY) {
+        if (table.getEntityClass().equals(resultClass) || resultEntityMetadata.getEntityMetadataType() == EntityMetadataTypeEnum.MAP || resultEntityMetadata.getEntityMetadataType() == EntityMetadataTypeEnum.PART) {
             super.columnAll(table);
             return this;
         } else {

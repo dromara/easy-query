@@ -1,4 +1,4 @@
-package com.easy.query.core.proxy.partition.proxy;
+package com.easy.query.core.proxy.part.proxy;
 
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.proxy.PropTypeColumn;

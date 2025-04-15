@@ -1,4 +1,4 @@
-package com.easy.query.core.proxy.partition;
+package com.easy.query.core.proxy.part;
 
 
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.PartResult;

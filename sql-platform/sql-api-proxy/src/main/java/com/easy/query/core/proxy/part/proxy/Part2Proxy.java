@@ -1,4 +1,4 @@
-package com.easy.query.core.proxy.partition.proxy;
+package com.easy.query.core.proxy.part.proxy;
 
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
@@ -10,10 +10,13 @@ import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.partition.Part2;
-import com.easy.query.core.proxy.partition.metadata.Part2EntityMetadata;
+import com.easy.query.core.proxy.part.Part2;
+import com.easy.query.core.proxy.part.metadata.PartColumn;
+import com.easy.query.core.proxy.part.metadata.PartEntityMetadata;
 import com.easy.query.core.util.EasyObjectUtil;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -35,19 +38,19 @@ public class Part2Proxy<TKey1Proxy extends PropTypeColumn<TKey1>, TKey1,
     /**
      * {@link Part2#getPartColumn1()}
      */
-    public SQLAnyTypeColumn<Part2Proxy<TKey1Proxy, TKey1,TKey2Proxy, TKey2, TSourceProxy, TSource>, TKey1> partColumn1() {
+    public SQLAnyTypeColumn<Part2Proxy<TKey1Proxy, TKey1, TKey2Proxy, TKey2, TSourceProxy, TSource>, TKey1> partColumn1() {
         return getAnyTypeColumn(Part2.PART_COLUMN1, EasyObjectUtil.typeCastNullable(Optional.ofNullable(getPartByPropTypes()[0]).map(o -> o.getPropertyType()).orElse(null)));
     }
 
     /**
      * {@link Part2#getPartColumn2()}
      */
-    public SQLAnyTypeColumn<Part2Proxy<TKey1Proxy, TKey1,TKey2Proxy, TKey2, TSourceProxy, TSource>, TKey2> partColumn2() {
+    public SQLAnyTypeColumn<Part2Proxy<TKey1Proxy, TKey1, TKey2Proxy, TKey2, TSourceProxy, TSource>, TKey2> partColumn2() {
         return getAnyTypeColumn(Part2.PART_COLUMN2, EasyObjectUtil.typeCastNullable(Optional.ofNullable(getPartByPropTypes()[1]).map(o -> o.getPropertyType()).orElse(null)));
     }
 
     @Override
-    public Class<Part2<TSource, TKey1,TKey2>> getEntityClass() {
+    public Class<Part2<TSource, TKey1, TKey2>> getEntityClass() {
         return EasyObjectUtil.typeCastNullable(entityClass);
     }
 
@@ -56,14 +59,14 @@ public class Part2Proxy<TKey1Proxy extends PropTypeColumn<TKey1>, TKey1,
         TSourceProxy partTable = entityTable();
         s.columnAll(partTable.getTable());
         SQLSelectAsExpression selectAsExpression = partTable.getEntitySQLContext().getSelectAsExpression();
-        if(selectAsExpression!=null){
+        if (selectAsExpression != null) {
             selectAsExpression.accept(s);
         }
 //        selectTable.
     }
 
     @Override
-    public Part2Proxy<TKey1Proxy, TKey1,TKey2Proxy, TKey2, TSourceProxy, TSource> create(TableAvailable table, EntitySQLContext entitySQLContext) {
+    public Part2Proxy<TKey1Proxy, TKey1, TKey2Proxy, TKey2, TSourceProxy, TSource> create(TableAvailable table, EntitySQLContext entitySQLContext) {
         TSourceProxy tSourceProxy = entityTable().create(table, entitySQLContext);
         setEntityTable(tSourceProxy);
         return super.create(table, entitySQLContext);
@@ -77,6 +80,14 @@ public class Part2Proxy<TKey1Proxy extends PropTypeColumn<TKey1>, TKey1,
         JdbcTypeHandlerManager jdbcTypeHandlerManager = entityTable().getEntitySQLContext().getRuntimeContext().getJdbcTypeHandlerManager();
         JdbcTypeHandler jdbcTypeHandler1 = jdbcTypeHandlerManager.getHandler(key1Class);
         JdbcTypeHandler jdbcTypeHandler2 = jdbcTypeHandlerManager.getHandler(key2Class);
-        return new Part2EntityMetadata(entityClass, entityMetadata, jdbcTypeHandler1,jdbcTypeHandler2);
+        Map<String, PartColumn> partColumnMap = new HashMap<>();
+        partColumnMap.put(Part2.PART_COLUMN1, new PartColumn(jdbcTypeHandler1, obj -> ((Part2) obj).getPartColumn1(), (obj, value) -> ((Part2) obj).setPartColumn1(value)));
+        partColumnMap.put(Part2.PART_COLUMN2, new PartColumn(jdbcTypeHandler2, obj -> ((Part2) obj).getPartColumn2(), (obj, value) -> ((Part2) obj).setPartColumn2(value)));
+        return new PartEntityMetadata(entityClass, entityMetadata, () -> {
+            Part2<Object, Object, Object> r = new Part2<>();
+            Object entity = entityMetadata.getBeanConstructorCreator().get();
+            r.setEntity(entity);
+            return r;
+        }, partColumnMap);
     }
 }

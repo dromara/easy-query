@@ -12,6 +12,7 @@ import com.easy.query.test.mysql8.entity.bank.proxy.SysBankCardProxy;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -25,7 +26,7 @@ import java.time.LocalDateTime;
 @Data
 @FieldNameConstants
 @EasyAlias("bank_card")
-public class SysBankCard implements ProxyEntityAvailable<SysBankCard , SysBankCardProxy> {
+public class SysBankCard implements ProxyEntityAvailable<SysBankCard , SysBankCardProxy>, Serializable {
     @Column(primaryKey = true)
     private String id;
     private String uid;

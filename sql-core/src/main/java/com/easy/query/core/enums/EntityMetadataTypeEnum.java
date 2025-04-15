@@ -10,6 +10,6 @@ public enum EntityMetadataTypeEnum {
     BEAN,
     BASIC_TYPE,
     MAP,
-    PARTITION_BY
+    PART
 //    DRAFT
 }

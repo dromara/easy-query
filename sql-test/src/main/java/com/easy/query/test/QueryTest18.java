@@ -19,7 +19,7 @@ import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
-import com.easy.query.core.proxy.partition.Part1;
+import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyArrayUtil;

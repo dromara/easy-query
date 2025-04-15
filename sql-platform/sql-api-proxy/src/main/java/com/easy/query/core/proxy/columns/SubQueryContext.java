@@ -25,6 +25,7 @@ public class SubQueryContext<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
     private final String property;
     private final String fullName;
     private final T1Proxy propertyProxy;
+    private final Object leftTableProxy;
     private SQLExpression1<T1Proxy> whereExpression;
     private SQLExpression1<T1Proxy> orderByExpression;
     private SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression;
@@ -32,13 +33,14 @@ public class SubQueryContext<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
     private int fromIndex;
     private int toIndex;
 
-    public SubQueryContext(EntityExpressionBuilder entityExpressionBuilder, EntitySQLContext entitySQLContext, TableAvailable leftTable, String property, String fullName, T1Proxy propertyProxy) {
+    public SubQueryContext(EntityExpressionBuilder entityExpressionBuilder, EntitySQLContext entitySQLContext, TableAvailable leftTable, String property, String fullName, T1Proxy propertyProxy,Object leftTableProxy) {
         this.entityExpressionBuilder = entityExpressionBuilder;
         this.entitySQLContext = entitySQLContext;
         this.leftTable = leftTable;
         this.property = property;
         this.fullName = fullName;
         this.propertyProxy = propertyProxy;
+        this.leftTableProxy = leftTableProxy;
         this.distinct = false;
         this.fromIndex = -1;
         this.toIndex = -1;
@@ -57,6 +59,11 @@ public class SubQueryContext<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
 //    public EntitySQLContext getManyJoinEntitySQLContext() {
 //        return manyJoinEntitySQLContext;
 //    }
+
+
+    public Object getLeftTableProxy() {
+        return leftTableProxy;
+    }
 
     public QueryRuntimeContext getRuntimeContext() {
         return entityExpressionBuilder.getRuntimeContext();

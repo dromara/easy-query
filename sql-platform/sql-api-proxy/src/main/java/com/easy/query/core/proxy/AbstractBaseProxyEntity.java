@@ -308,7 +308,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
 //        QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
         String fullName = getFullNavValue(property);
-        return new PropertySQLManyQueryable<>(new SubQueryContext<TPropertyProxy, TProperty>(entityExpressionBuilder, this.getEntitySQLContext(), getTable(), property, fullName, propertyProxy));
+        return new PropertySQLManyQueryable<>(new SubQueryContext<TPropertyProxy, TProperty>(entityExpressionBuilder, this.getEntitySQLContext(), getTable(), property, fullName, propertyProxy,this));
     }
 
     private String getFullNavValue(String navValue) {

@@ -1,11 +1,10 @@
-package com.easy.query.core.proxy.partition.proxy;
+package com.easy.query.core.proxy.part.proxy;
 
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.impl.def.BasicResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.props.BasicJdbcProperty;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.AbstractProxyEntity;
@@ -15,7 +14,7 @@ import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.ValueObjectProxyEntity;
-import com.easy.query.core.proxy.partition.Part1;
+import com.easy.query.core.proxy.part.Part1;
 
 /**
  * create time 2024/8/4 19:53

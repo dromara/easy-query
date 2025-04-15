@@ -3,11 +3,15 @@ package com.easy.query.core.proxy.impl;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.builder.Setter;
+import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumnSetExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
  * create time 2023/12/27 21:11
@@ -20,13 +24,15 @@ public class SQLColumnIncludeColumn2Impl<TPropertyProxy extends ProxyEntity<TPro
     private final String selfProperty;
     private final String aliasProperty;
     private final ProxyEntity<TPropertyProxy, TProperty> columnProxy;
-    private final SQLFuncExpression1<TPropertyProxy, ProxyEntity<TProxy, TEntity>> navigateSelectExpression;
+    private final TProxy tProxy;
+    private final SQLExpression2<TProxy,TPropertyProxy> navigateSelectExpression;
 
-    public  SQLColumnIncludeColumn2Impl(TableAvailable table, String selfProperty, String aliasProperty,ProxyEntity<TPropertyProxy, TProperty> columnProxy, SQLFuncExpression1<TPropertyProxy, ProxyEntity<TProxy, TEntity>> navigateSelectExpression) {
+    public  SQLColumnIncludeColumn2Impl(TableAvailable table, String selfProperty, String aliasProperty,ProxyEntity<TPropertyProxy, TProperty> columnProxy,TProxy tProxy, SQLExpression2<TProxy,TPropertyProxy> navigateSelectExpression) {
         this.table = table;
         this.selfProperty = selfProperty;
         this.aliasProperty = aliasProperty;
         this.columnProxy = columnProxy;
+        this.tProxy = tProxy;
         this.navigateSelectExpression = navigateSelectExpression;
     }
 
@@ -43,31 +49,13 @@ public class SQLColumnIncludeColumn2Impl<TPropertyProxy extends ProxyEntity<TPro
     @Override
     public void accept(AsSelector s) {
 
-//        if(navigateSelectExpression!=null){
-//
-//            for (IncludeNavigateExpression includeNavigateExpression : expressionContext.getIncludes()) {
-//                IncludeNavigateParams includeNavigateParams = includeNavigateExpression.getIncludeNavigateParams();
-//                if (includeNavigateParams.getTable() == table) {
-//                    NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
-//                    String navigateAutoMappingPropertyName = navigateMetadata.getPropertyName();
-//                    if(targetEntityMetadata.getNavigateOrNull(navigateAutoMappingPropertyName)!=null){
-//                        columnInclude(table,navigateAutoMappingPropertyName,navigateAutoMappingPropertyName,s->{
-//                            TableAvailable entityTable = s.getEntityQueryExpressionBuilder().getTable(0).getEntityTable();
-//                            s.columnAll(entityTable);
-//                        });
-//                    }
-//                }
-//            }
-//            s.columnInclude(table)
-//        }
-
         s.columnInclude(table, selfProperty, aliasProperty, is -> {
             TableAvailable entityTable = is.getEntityQueryExpressionBuilder().getTable(0).getEntityTable();
 
             if(navigateSelectExpression!=null){
                 TPropertyProxy newEntityProxy = columnProxy.create(entityTable, is.getEntityQueryExpressionBuilder(), is.getRuntimeContext());
-                ProxyEntity<TProxy, TEntity> apply = navigateSelectExpression.apply(newEntityProxy);
-                SQLSelectAsExpression selectAsExpression = apply.getEntitySQLContext().getSelectAsExpression();
+                navigateSelectExpression.apply(tProxy,newEntityProxy);
+                SQLSelectAsExpression selectAsExpression = newEntityProxy.getEntitySQLContext().getSelectAsExpression();
                 if (selectAsExpression == null) {//全属性映射
                     is.columnAll(entityTable);
                 } else {
@@ -82,5 +70,8 @@ public class SQLColumnIncludeColumn2Impl<TPropertyProxy extends ProxyEntity<TPro
 //                selectAsExpression.accept(is);
 //            }
         });
+
+
+        EasySQLExpressionUtil.appendSelfExtraTargetProperty(s.getEntityQueryExpressionBuilder(), EasyObjectUtil.typeCastNullable(s), table);
     }
 }

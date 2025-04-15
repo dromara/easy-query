@@ -6,6 +6,7 @@ import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
@@ -431,8 +432,9 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         set(columnProxy, null);
     }
 
-    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> void set(TPropertyProxy columnProxy, SQLFuncExpression1<TPropertyProxy, ProxyEntity<TProxy, TEntity>> navigateSelectExpression) {
-        getCurrentEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(((RelationEntityTableAvailable) columnProxy.getTable()).getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy, navigateSelectExpression));
+    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> void set(TPropertyProxy columnProxy, SQLExpression2<TProxy, TPropertyProxy> navigateSelectExpression) {
+        TProxy tProxy = create(null, this.getEntitySQLContext());
+        getCurrentEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(((RelationEntityTableAvailable) columnProxy.getTable()).getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy, tProxy, navigateSelectExpression));
     }
 
     /**

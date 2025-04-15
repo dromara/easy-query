@@ -1,4 +1,4 @@
-package com.easy.query.core.proxy.partition.metadata;
+package com.easy.query.core.proxy.part.metadata;
 
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.ColumnOption;

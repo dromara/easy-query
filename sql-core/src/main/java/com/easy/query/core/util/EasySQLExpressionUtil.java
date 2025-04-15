@@ -442,11 +442,11 @@ public class EasySQLExpressionUtil {
             }
             SQLBuilderSegment sqlBuilderSegment = entityQueryExpressionBuilder.getProjects().cloneSQLBuilder();
             entityQueryExpressionBuilder.getProjects().getSQLSegments().clear();
-            if(EasyCollectionUtil.isSingle(sqlBuilderSegment.getSQLSegments())){
+            if (EasyCollectionUtil.isSingle(sqlBuilderSegment.getSQLSegments())) {
                 SQLSegment sqlSegment = sqlSegmentFactory.createSelectCountDistinctSegment(sqlBuilderSegment.getSQLSegments());
                 entityQueryExpressionBuilder.getProjects().append(sqlSegment);
                 entityQueryExpressionBuilder.setDistinct(false);
-            }else{
+            } else {
                 return null;
             }
 
@@ -598,7 +598,11 @@ public class EasySQLExpressionUtil {
                     if (columnSegment.getTable() == table) {
                         RelationColumnResult columnResult = EasyCollectionUtil.firstOrDefault(relationColumnResults, relationColumnResult -> Objects.equals(relationColumnResult.getProperty(), columnSegment.getPropertyName()), null);
                         if (columnResult != null) {
-                            columnResult.setExists(true);
+                            ColumnMetadata columnMetadata = columnSegment.getColumnMetadata();
+                            String alias = columnSegment.getAlias();
+                            if (alias == null || Objects.equals(columnMetadata.getName(), alias)) {
+                                columnResult.setExists(true);
+                            }
                         }
                     }
                 }

@@ -1,4 +1,4 @@
-package com.easy.query.core.proxy.partition;
+package com.easy.query.core.proxy.part;
 
 
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.PartResult;
@@ -9,12 +9,14 @@ import com.easy.query.core.basic.jdbc.executor.internal.enumerable.PartResult;
  *
  * @author xuejiaming
  */
-public class Part2<TEntity, TValue1, TValue2> implements PartResult<TEntity> {
+public class Part3<TEntity, TValue1, TValue2, TValue3> implements PartResult<TEntity> {
     public static final String PART_COLUMN1 = PartResult.PART_PREFIX + "column1";
     public static final String PART_COLUMN2 = PartResult.PART_PREFIX + "column2";
+    public static final String PART_COLUMN3 = PartResult.PART_PREFIX + "column3";
     private TEntity entity;
     private TValue1 partColumn1;
     private TValue2 partColumn2;
+    private TValue3 partColumn3;
 
     public TEntity getEntity() {
         return entity;
@@ -37,5 +39,13 @@ public class Part2<TEntity, TValue1, TValue2> implements PartResult<TEntity> {
 
     public void setPartColumn2(TValue2 column2) {
         this.partColumn2 = column2;
+    }
+
+    public TValue3 getPartColumn3() {
+        return partColumn3;
+    }
+
+    public void setPartColumn3(TValue3 partColumn3) {
+        this.partColumn3 = partColumn3;
     }
 }

@@ -19,7 +19,7 @@ import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.core.FlatEntitySQLContext;
 import com.easy.query.core.proxy.core.draft.proxy.DraftProxy;
-import com.easy.query.core.proxy.partition.proxy.PartProxy;
+import com.easy.query.core.proxy.part.proxy.PartProxy;
 import com.easy.query.core.util.EasyArrayUtil;
 
 import java.util.Objects;
