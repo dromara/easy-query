@@ -1253,15 +1253,10 @@ public class M8BankTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<MyUserVO> list = easyEntityQuery.queryable(SysUser.class)
-//                .includes(user -> user.bankCards())
-                .where(user -> {
-//                    user.name().like("123");
-                })
                 .select(user -> new MyUserVOProxy()
                                 .vo1().set(user.name())
                                 .vo2().set(user.id())
                                 .vo3().set(user.phone())
-//                        .bankCardCount().set(user.bankCards().count()) // 银行卡数量
                                 .cards().set(user.bankCards().where(bc -> bc.type().eq("储蓄卡")), (self, target) -> {
                                     self.type().set(target.code());
                                     self.code().set(target.bank().name());
@@ -1281,6 +1276,39 @@ public class M8BankTest extends BaseTest {
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
             Assert.assertEquals("SELECT t.`code` AS `type`,t1.`name` AS `code`,t.`uid` AS `__relation__uid` FROM `t_bank_card` t INNER JOIN `t_bank` t1 ON t1.`id` = t.`bank_id` WHERE t.`type` = ? AND t.`uid` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("储蓄卡(String),u1(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+
+    }
+    @Test
+    public void includeSubQuery4() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<MyUserVO> list = easyEntityQuery.queryable(SysUser.class)
+                .select(user -> new MyUserVOProxy()
+                                .vo1().set(user.name())
+                                .vo2().set(user.id())
+                                .vo3().set(user.phone())
+                                .cards().set(user.bankCards().where(bc -> bc.type().eq("储蓄卡")), (self, target) -> {
+                                    self.type().set(target.code());
+                                    self.code().set(target.bank().bankCards().max(x->x.openTime().format("yyyy-MM-dd")));
+                                })
+                ).toList();
+
+        listenerContextManager.clear();
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`name` AS `vo1`,t.`id` AS `vo2`,t.`phone` AS `vo3`,t.`id` AS `__relation__id` FROM `t_sys_user` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`code` AS `type`,(SELECT MAX(DATE_FORMAT(t2.`open_time`,'%Y-%m-%d')) FROM `t_bank_card` t2 WHERE t2.`bank_id` = t1.`id`) AS `code`,t.`uid` AS `__relation__uid` FROM `t_bank_card` t INNER JOIN `t_bank` t1 ON t1.`id` = t.`bank_id` WHERE t.`type` = ? AND t.`uid` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("储蓄卡(String),u1(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
 
