@@ -67,4 +67,16 @@ public abstract class AbstractSQLNativeSegmentImpl {
         }
         return sqlSegment;
     }
+
+    public ExpressionContext getExpressionContext() {
+        return expressionContext;
+    }
+
+    public String getSqlSegment() {
+        return sqlSegment;
+    }
+
+    public SQLNativeExpression getSqlNativeExpression() {
+        return sqlNativeExpression;
+    }
 }

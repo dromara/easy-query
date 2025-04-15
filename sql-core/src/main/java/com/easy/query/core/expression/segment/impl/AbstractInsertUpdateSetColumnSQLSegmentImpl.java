@@ -34,4 +34,12 @@ public abstract class AbstractInsertUpdateSetColumnSQLSegmentImpl {
         this.column2Segment = column2Segment;
         this.columnValue2Segment = columnValue2Segment;
     }
+
+    public Column2Segment getColumn2Segment() {
+        return column2Segment;
+    }
+
+    public ColumnValue2Segment getColumnValue2Segment() {
+        return columnValue2Segment;
+    }
 }

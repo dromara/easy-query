@@ -13,6 +13,8 @@ import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.proxy.columns.SQLQueryable;
+import com.easy.query.core.proxy.columns.impl.DefaultSubquerySQLQueryableFactory;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.impl.SQLColumnIncludeColumn2Impl;
 import com.easy.query.core.proxy.impl.SQLConstantExpressionImpl;
@@ -432,8 +434,27 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         set(columnProxy, null);
     }
 
+    /**
+     * <blockquote><pre>
+     * {@code
+     *     new MyUserVOProxy()
+     *        .vo1().set(user.name())
+     *        .vo2().set(user.id())
+     *        .vo3().set(user.phone())
+     *        .cards().set(user.bankCards().where(bc -> bc.type().eq("储蓄卡")), (self, target) -> {
+     *            self.type().set(target.code());
+     *            self.code().set(target.bank().name());
+     *        })
+     * }
+     * </pre></blockquote>
+     * @param columnProxy
+     * @param navigateSelectExpression
+     * @param <TPropertyProxy>
+     * @param <TProperty>
+     */
     public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> void set(TPropertyProxy columnProxy, SQLExpression2<TProxy, TPropertyProxy> navigateSelectExpression) {
-        TProxy tProxy = create(null, this.getEntitySQLContext());
+        DefaultSubquerySQLQueryableFactory.dslNavigateSet(columnProxy);
+        TProxy tProxy = create(null, null);
         getCurrentEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(((RelationEntityTableAvailable) columnProxy.getTable()).getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy, tProxy, navigateSelectExpression));
     }
 

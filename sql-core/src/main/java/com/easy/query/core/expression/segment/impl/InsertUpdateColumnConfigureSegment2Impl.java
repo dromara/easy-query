@@ -14,6 +14,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
  * @author xuejiaming
  */
 public class InsertUpdateColumnConfigureSegment2Impl extends AbstractSQLNativeSegment2Impl implements InsertUpdateSetColumnSQLSegment {
+
     private final InsertUpdateSetColumnSQLSegment insertUpdateSetColumnSQLSegment;
 
     public InsertUpdateColumnConfigureSegment2Impl(InsertUpdateSetColumnSQLSegment insertUpdateSetColumnSQLSegment, ExpressionContext expressionContext, SQLSegment sqlSegment, SQLNativeExpression sqlNativeExpression) {

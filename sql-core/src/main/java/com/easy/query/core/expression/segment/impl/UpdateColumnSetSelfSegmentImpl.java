@@ -48,4 +48,12 @@ public class UpdateColumnSetSelfSegmentImpl implements InsertUpdateSetColumnSQLS
     public TableAvailable getTable() {
         return leftColumn2Segment.getTable();
     }
+
+    public Column2Segment getLeftColumn2Segment() {
+        return leftColumn2Segment;
+    }
+
+    public Column2Segment getRightColumn2Segment() {
+        return rightColumn2Segment;
+    }
 }

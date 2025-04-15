@@ -51,4 +51,16 @@ public class InsertMapColumnSegmentImpl implements InsertUpdateSetColumnSQLSegme
     public TableAvailable getTable() {
         throw new UnsupportedOperationException();
     }
+
+    public String getColumnName() {
+        return columnName;
+    }
+
+    public String getMapKey() {
+        return mapKey;
+    }
+
+    public QueryRuntimeContext getRuntimeContext() {
+        return runtimeContext;
+    }
 }

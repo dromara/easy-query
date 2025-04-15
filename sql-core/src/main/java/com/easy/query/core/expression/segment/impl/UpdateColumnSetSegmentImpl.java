@@ -18,7 +18,6 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  */
 public class UpdateColumnSetSegmentImpl extends AbstractInsertUpdateSetColumnSQLSegmentImpl implements InsertUpdateSetColumnSQLSegment {
 
-
     public UpdateColumnSetSegmentImpl(Column2Segment column2Segment, ColumnValue2Segment columnValue2Segment){
         super(column2Segment,columnValue2Segment);
     }

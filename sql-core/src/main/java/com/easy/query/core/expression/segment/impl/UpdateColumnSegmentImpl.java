@@ -11,12 +11,11 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
 /**
- * @FileName: ColumnPropertyPredicate.java
- * @Description: column和某个bean的值的断言节点
- * @Date: 2023/2/13 15:18
+ * 2023/2/13 15:18
  * @author xuejiaming
  */
 public class UpdateColumnSegmentImpl extends AbstractInsertUpdateSetColumnSQLSegmentImpl implements InsertUpdateSetColumnSQLSegment {
+
 
     public UpdateColumnSegmentImpl(Column2Segment column2Segment, ColumnValue2Segment columnValue2Segment){
         super(column2Segment,columnValue2Segment);

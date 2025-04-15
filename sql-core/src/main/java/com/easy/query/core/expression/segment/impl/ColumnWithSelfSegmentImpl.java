@@ -59,4 +59,16 @@ public class ColumnWithSelfSegmentImpl implements InsertUpdateSetColumnSQLSegmen
     public InsertUpdateSetColumnSQLSegment cloneSQLColumnSegment() {
         return new ColumnWithSelfSegmentImpl(increment, column2Segment, val);
     }
+
+    public Object getVal() {
+        return val;
+    }
+
+    public Column2Segment getColumn2Segment() {
+        return column2Segment;
+    }
+
+    public boolean isIncrement() {
+        return increment;
+    }
 }

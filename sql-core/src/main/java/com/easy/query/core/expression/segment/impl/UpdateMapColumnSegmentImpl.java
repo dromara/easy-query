@@ -54,4 +54,16 @@ public class UpdateMapColumnSegmentImpl implements InsertUpdateSetColumnSQLSegme
     public InsertUpdateSetColumnSQLSegment cloneSQLColumnSegment() {
         return new UpdateMapColumnSegmentImpl(table, columnName, mapKey, runtimeContext);
     }
+
+    public String getColumnName() {
+        return columnName;
+    }
+
+    public String getMapKey() {
+        return mapKey;
+    }
+
+    public QueryRuntimeContext getRuntimeContext() {
+        return runtimeContext;
+    }
 }

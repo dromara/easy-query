@@ -10,6 +10,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumnSetExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.core.ColumnSelectSQLContext;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 
@@ -54,8 +55,9 @@ public class SQLColumnIncludeColumn2Impl<TPropertyProxy extends ProxyEntity<TPro
 
             if(navigateSelectExpression!=null){
                 TPropertyProxy newEntityProxy = columnProxy.create(entityTable, is.getEntityQueryExpressionBuilder(), is.getRuntimeContext());
-                navigateSelectExpression.apply(tProxy,newEntityProxy);
-                SQLSelectAsExpression selectAsExpression = newEntityProxy.getEntitySQLContext().getSelectAsExpression();
+                TProxy tProxy1 = tProxy.create(null, new ColumnSelectSQLContext());
+                navigateSelectExpression.apply(tProxy1,newEntityProxy);
+                SQLSelectAsExpression selectAsExpression = tProxy1.getEntitySQLContext().getSelectAsExpression();
                 if (selectAsExpression == null) {//全属性映射
                     is.columnAll(entityTable);
                 } else {
