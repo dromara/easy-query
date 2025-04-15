@@ -34,7 +34,7 @@ public class SQLiteDateTimePropertySQLFunction extends AbstractExpressionSQLFunc
                 return "CAST(strftime('%j',{0}) AS INTEGER)";
             case DayOfWeek:
                 return "CAST(strftime('%w',{0}) AS INTEGER)";
-            case DayOfWeekSunDayEndDay:
+            case DayOfWeekSunDayLastDay:
                 return "(CASE WHEN CAST(strftime('%w',{0}) AS INTEGER) = 0 THEN 7 ELSE CAST(strftime('%w',{0}) AS INTEGER) END)";
             case Year:
                 return "CAST(strftime('%Y',{0}) AS INTEGER)";

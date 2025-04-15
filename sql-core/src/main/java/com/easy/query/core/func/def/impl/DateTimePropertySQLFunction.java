@@ -34,7 +34,7 @@ public class DateTimePropertySQLFunction extends AbstractExpressionSQLFunction {
                 return "DAYOFYEAR({0})";
             case DayOfWeek:
                 return "(DAYOFWEEK({0})-1)";
-            case DayOfWeekSunDayEndDay:
+            case DayOfWeekSunDayLastDay:
                 return "(WEEKDAY({0})+1)";
             case Year:
                 return "YEAR({0})";

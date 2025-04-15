@@ -9,7 +9,7 @@ package com.easy.query.core.func.def.enums;
 public enum DateTimeUnitEnum {
     DayOfYear,
     DayOfWeek,
-    DayOfWeekSunDayEndDay,
+    DayOfWeekSunDayLastDay,
     Year,
     Month,
     Day,

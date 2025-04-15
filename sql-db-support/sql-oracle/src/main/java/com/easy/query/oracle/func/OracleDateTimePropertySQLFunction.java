@@ -32,7 +32,7 @@ public class OracleDateTimePropertySQLFunction extends AbstractExpressionSQLFunc
         switch (dateTimeUnitEnum){
             case DayOfYear:return "cast(to_char({0},'DDD') as number)";
             case DayOfWeek:return "(case when to_char({0},'D')='7' then 0 else cast(to_char({0},'D') as number) end)";
-            case DayOfWeekSunDayEndDay:return "cast(to_char({0},'D') as number)";
+            case DayOfWeekSunDayLastDay:return "cast(to_char({0},'D') as number)";
             case Year:return "cast(to_char({0},'YYYY') as number)";
             case Month:return "cast(to_char({0},'MM') as number)";
             case Day:return "cast(to_char({0},'DD') as number)";

@@ -34,7 +34,7 @@ public class DamengDateTimePropertySQLFunction extends AbstractExpressionSQLFunc
                 return "cast(to_char({0},'DDD') as number)";
             case DayOfWeek:
                 return "(case when to_char({0},'D')='7' then 0 else cast(to_char({0},'D') as number) end)";
-            case DayOfWeekSunDayEndDay:
+            case DayOfWeekSunDayLastDay:
                 return "cast(to_char({0},'D') as number)";
             case Year:
                 return "cast(to_char({0},'YYYY') as number)";

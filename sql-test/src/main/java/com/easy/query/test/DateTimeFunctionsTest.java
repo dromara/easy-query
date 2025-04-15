@@ -1,44 +1,24 @@
 package com.easy.query.test;
 
-import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
-import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
-import com.easy.query.core.bootstrapper.DatabaseConfiguration;
-import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
-import com.easy.query.core.func.def.enums.TimeUnitEnum;
-import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.proxy.core.draft.Draft2;
-import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.core.draft.Draft6;
 import com.easy.query.core.proxy.core.draft.Draft7;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
-import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
-import com.easy.query.oracle.config.OracleDatabaseConfiguration;
-import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
-import com.easy.query.test.common.EmptyDataSource;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.listener.ListenerContext;
-import com.easy.query.test.listener.ListenerContextManager;
-import com.easy.query.test.listener.MyJdbcListener;
-import com.easy.query.test.mssql.entity.MsSQLMyTopic;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * create time 2025/4/13 22:56
@@ -114,7 +94,7 @@ public class DateTimeFunctionsTest extends BaseTest {
         List<Draft2<LocalDateTime, Integer>> list = easyEntityQuery.queryable(BlogEntity.class)
                 .select(t_blog -> Select.DRAFT.of(
                         t_blog.createTime(),
-                        t_blog.createTime().dayOfWeekSunDayIsEndDay()
+                        t_blog.createTime().dayOfWeekSunDayIsLastDay()
                 )).toList();
         Assert.assertFalse(list.isEmpty());
         for (Draft2<LocalDateTime, Integer> item : list) {

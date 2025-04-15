@@ -17,9 +17,7 @@ import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComp
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.filter.ColumnFunctionCompareComparableDateTimeFilterChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.filter.ColumnFunctionCompareComparableNumberFilterChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.filter.impl.ColumnFunctionCompareComparableDateTimeFilterChainExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.filter.impl.ColumnFunctionCompareComparableNumberFilterChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableDateTimeChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableStringChainExpressionImpl;
@@ -254,8 +252,8 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
      *
      * @return 返回指定日期
      */
-    default ColumnFunctionCompareComparableNumberChainExpression<Integer> dayOfWeekSunDayIsEndDay() {
-        return dateTimeProp(DateTimeUnitEnum.DayOfWeekSunDayEndDay);
+    default ColumnFunctionCompareComparableNumberChainExpression<Integer> dayOfWeekSunDayIsLastDay() {
+        return dateTimeProp(DateTimeUnitEnum.DayOfWeekSunDayLastDay);
     }
 
     /**

@@ -34,7 +34,7 @@ public class GaussDBDateTimePropertySQLFunction extends AbstractExpressionSQLFun
                 return "extract(doy from ({0})::timestamp)";
             case DayOfWeek:
                 return "extract(dow from ({0})::timestamp)";
-            case DayOfWeekSunDayEndDay:
+            case DayOfWeekSunDayLastDay:
                 return "(CASE WHEN extract(dow from ({0})::timestamp) = 0 THEN 7 ELSE extract(dow from ({0})::timestamp) END)";
             case Year:
                 return "extract(year from ({0})::timestamp)";
