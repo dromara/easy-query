@@ -91,7 +91,8 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     @Override
     public ClientExpressionDeletable<T> where(boolean condition, SQLExpression1<WherePredicate<T>> whereExpression) {
         if (condition) {
-            WherePredicateImpl<T> sqlPredicate = new WherePredicateImpl<>(table.getEntityTable(), new FilterContext(new FilterImpl(entityDeleteExpressionBuilder.getRuntimeContext(), entityDeleteExpressionBuilder.getExpressionContext(), entityDeleteExpressionBuilder.getWhere(), false, AnyValueFilter.DEFAULT)));
+            FilterImpl filter = new FilterImpl(entityDeleteExpressionBuilder.getRuntimeContext(), entityDeleteExpressionBuilder.getExpressionContext(), entityDeleteExpressionBuilder.getWhere(), false, AnyValueFilter.DEFAULT);
+            WherePredicateImpl<T> sqlPredicate = new WherePredicateImpl<>(table.getEntityTable(), new FilterContext(filter, entityDeleteExpressionBuilder));
             whereExpression.apply(sqlPredicate);
         }
         return this;
@@ -142,7 +143,7 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
             ColumnMetadata columnMetadata = table.getEntityTable().getEntityMetadata().getColumnNotNull(keyProperty);
             Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table.getEntityTable(), columnMetadata, getExpressionContext());
-            List<ColumnValue2Segment> columnValue2Segments =  EasyCollectionUtil.select(ids,(o,i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table.getEntityTable(), columnMetadata, getExpressionContext(), o));
+            List<ColumnValue2Segment> columnValue2Segments = EasyCollectionUtil.select(ids, (o, i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table.getEntityTable(), columnMetadata, getExpressionContext(), o));
             andPredicateSegment
                     .setPredicate(new ColumnCollectionPredicate(column2Segment, columnValue2Segments, SQLPredicateCompareEnum.IN, entityDeleteExpressionBuilder.getExpressionContext()));
             where.addPredicateSegment(andPredicateSegment);
@@ -194,7 +195,7 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
 
     @Override
     public ClientExpressionDeletable<T> configure(SQLExpression1<ContextConfigurer> configurer) {
-        if(configurer!=null){
+        if (configurer != null) {
             configurer.apply(new ContextConfigurerImpl(entityDeleteExpressionBuilder.getExpressionContext()));
         }
         return this;

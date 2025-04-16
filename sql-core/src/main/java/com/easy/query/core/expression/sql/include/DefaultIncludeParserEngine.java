@@ -1,23 +1,20 @@
 package com.easy.query.core.expression.sql.include;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
-import com.easy.query.core.expression.segment.ColumnSegment;
-import com.easy.query.core.expression.segment.SQLSegment;
-import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
+import com.easy.query.core.expression.parser.core.extra.ExtraAutoIncludeConfigure;
+import com.easy.query.core.expression.parser.core.extra.ExtraSelect;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadata;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
@@ -31,7 +28,6 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -72,11 +68,11 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 //            RelationExtraEntity relationExtraEntity = new RelationExtraEntityImpl(entity, extraColumns, extraColumnMetadata, expressionContext.getRuntimeContext().getRelationValueFactory());
 //            relationExtraEntities.add(relationExtraEntity);
             //普通include走这边
-            if(EasyCollectionUtil.isNotEmpty(relationExtraMetadata.getRelationExtraColumnList())){
+            if (EasyCollectionUtil.isNotEmpty(relationExtraMetadata.getRelationExtraColumnList())) {
                 Map<String, Object> extraColumns = relationExtraMetadata.getRelationExtraColumnList().get(i);
                 RelationExtraEntity relationExtraEntity = new RelationExtraEntityImpl(entity, extraColumns, extraColumnMetadata, expressionContext.getRuntimeContext().getRelationValueFactory());
                 relationExtraEntities.add(relationExtraEntity);
-            }else{//eq.loadInclude走这边
+            } else {//eq.loadInclude走这边
                 RelationEntityImpl relationEntity = new RelationEntityImpl(entity, entityMetadata, expressionContext.getRuntimeContext().getRelationValueFactory());
                 relationExtraEntities.add(relationEntity);
             }
@@ -156,7 +152,6 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
             RelationValueColumnMetadata relationValueColumnMetadata = runtimeContext.getRelationValueColumnMetadataFactory().createDirect(navigateMetadata, navigateMetadata.getDirectMappingTargetPropertiesOrPrimary(runtimeContext));
 
 
-
             List<List<Object>> targetIds = includeParseContext.getMappingRows().stream()
                     .map(relationValueColumnMetadata::getRelationValue).filter(o -> !o.isNull())
                     .distinct()
@@ -194,7 +189,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 
         IncludeNavigateParams includeNavigateParams = includeParseContext.getIncludeNavigateParams();
 
-        List<?> mappingRows = EasyIncludeUtil.queryableExpressionGroupExecute(queryRelationGroupSize, includeNavigateParams.getMappingQueryableFunction(), includeNavigateParams, relationIds, o->o.asNoTracking().toList());
+        List<?> mappingRows = EasyIncludeUtil.queryableExpressionGroupExecute(queryRelationGroupSize, includeNavigateParams.getMappingQueryableFunction(), includeNavigateParams, relationIds, o -> o.asNoTracking().toList());
         includeParseContext.setMappingRows(EasyObjectUtil.typeCastNullable(mappingRows));
     }
 
@@ -224,6 +219,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                     includeParseContext.setNavigatePropertySetter(aliasNavigateMetadata.getSetter());
                     includeParseContext.setNavigatePropertyGetter(aliasNavigateMetadata.getGetter());
                     SQLFuncExpression<ClientQueryable<?>> includeQueryableExpression = includeParseContext.getIncludeQueryableExpression();
+                    EntityMetadataManager entityMetadataManager = expressionContext.getRuntimeContext().getEntityMetadataManager();
                     if (columnIncludeExpression.getIncludeSelectorExpression() == null) {
 
                         includeParseContext.setIncludeQueryableExpression(() -> {
@@ -232,6 +228,9 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                             Class<?> aliasClassType = includeParseContext.getIncludeNavigateParams().getFlatClassType() == null ? aliasNavigateMetadata.getNavigatePropertyType() : includeParseContext.getIncludeNavigateParams().getFlatClassType();
                             includeQueryable.select(aliasClassType, t -> {
                                 t.columnAll();
+                                if (includeParseContext.getIncludeNavigateParams().getFlatClassType() == null) {
+                                    processorExtraSelect(entityMetadataManager, aliasClassType, t);
+                                }
                                 EasySQLExpressionUtil.appendTargetExtraTargetProperty(selfNavigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
                             });
                             return includeQueryable;
@@ -244,6 +243,9 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 
                             return includeQueryable.select(aliasClassType, t -> {
                                 columnIncludeExpression.getIncludeSelectorExpression().apply(t.getAsSelector());
+                                if (includeParseContext.getIncludeNavigateParams().getFlatClassType() == null) {
+                                    processorExtraSelect(entityMetadataManager, aliasClassType, t);
+                                }
                                 EasySQLExpressionUtil.appendSelfExtraTargetProperty(sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
                                 EasySQLExpressionUtil.appendTargetExtraTargetProperty(selfNavigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
                             });
@@ -285,6 +287,17 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
             includeParseContext.setNavigatePropertyType(navigateMetadata.getNavigatePropertyType());
             includeParseContext.setNavigatePropertySetter(navigateMetadata.getSetter());
             includeParseContext.setNavigatePropertyGetter(navigateMetadata.getGetter());
+        }
+    }
+
+    private void processorExtraSelect(EntityMetadataManager entityMetadataManager, Class<?> resultClassType, ColumnAsSelector<?, ?> columnAsSelector) {
+        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(resultClassType);
+        ExtraAutoIncludeConfigure extraAutoIncludeConfigure = entityMetadata.getExtraAutoIncludeConfigure();
+        if(extraAutoIncludeConfigure !=null){
+            ExtraSelect extraSelect = extraAutoIncludeConfigure.getExtraSelect();
+            if (extraSelect != null) {
+                extraSelect.select(columnAsSelector);
+            }
         }
     }
 }

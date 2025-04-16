@@ -35,11 +35,11 @@ public interface EntityExpressionBuilder extends ExpressionBuilder, RuntimeConte
     EntityTableExpressionBuilder addRelationEntityTableExpression(RelationTableKey relationTableKey, Function<RelationTableKey, EntityTableExpressionBuilder> tableExpressionSupplier);
 
     boolean hasManyJoinTable(RelationTableKey relationTableKey);
-    ManyConfiguration addManyConfiguration(RelationTableKey relationTableKey, ManyConfiguration manyConfiguration);
+    ManyConfiguration putManyConfiguration(RelationTableKey relationTableKey, ManyConfiguration manyConfiguration);
     ManyConfiguration getManyConfiguration(RelationTableKey relationTableKey);
 
-    void addManyJoinConfiguration(RelationTableKey relationTableKey);
-    boolean hasManyJoinConfiguration(RelationTableKey relationTableKey);
+    void addSubQueryToGroupJoinJoin(RelationTableKey relationTableKey);
+    boolean hasSubQueryToGroupJoin(RelationTableKey relationTableKey);
 
     //    EntityTableExpressionBuilder removeRelationEntityTableExpression(RelationTableKey relationTableKey);
     Map<RelationTableKey, EntityTableExpressionBuilder> getRelationTables();

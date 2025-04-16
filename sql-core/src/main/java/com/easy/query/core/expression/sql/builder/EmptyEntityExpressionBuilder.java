@@ -50,7 +50,7 @@ public class EmptyEntityExpressionBuilder implements EntityExpressionBuilder{
     }
 
     @Override
-    public ManyConfiguration addManyConfiguration(RelationTableKey relationTableKey, ManyConfiguration manyConfiguration) {
+    public ManyConfiguration putManyConfiguration(RelationTableKey relationTableKey, ManyConfiguration manyConfiguration) {
         return null;
     }
 
@@ -60,12 +60,12 @@ public class EmptyEntityExpressionBuilder implements EntityExpressionBuilder{
     }
 
     @Override
-    public void addManyJoinConfiguration(RelationTableKey relationTableKey) {
+    public void addSubQueryToGroupJoinJoin(RelationTableKey relationTableKey) {
 
     }
 
     @Override
-    public boolean hasManyJoinConfiguration(RelationTableKey relationTableKey) {
+    public boolean hasSubQueryToGroupJoin(RelationTableKey relationTableKey) {
         return false;
     }
 

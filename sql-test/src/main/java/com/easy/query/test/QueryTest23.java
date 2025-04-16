@@ -38,6 +38,7 @@ import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.core.draft.Draft6;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
+import com.easy.query.core.proxy.grouping.Grouping1;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.grouping.proxy.Grouping2Proxy;
 import com.easy.query.core.proxy.sql.GroupKeys;
@@ -926,6 +927,22 @@ public class QueryTest23 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`score` AS `value1`,ABS(t.`score`) AS `value2`,SIN(t.`score`) AS `value3`,FLOOR(t.`score`) AS `value4`,CEILING(t.`score`) AS `value5`,LOG(t.`score`) AS `value6` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+
+    @Test
+    public  void testaaa1(){
+        List<Grouping1<String>> list = easyEntityQuery.queryable(BlogEntity.class)
+                .groupBy(t_blog -> GroupKeys.of(t_blog.title()))
+                .having(group -> group.groupTable().star().count(true).gt(1L))
+                .toList();
+
+//        List<Grouping1<String>> list2 = easyEntityQuery.queryable(BlogEntity.class)
+//                .groupBy(t_blog -> GroupKeys.of(t_blog.title()))
+//                .having(group -> group.where().distinct())
+//                .toList();
+
 
     }
 

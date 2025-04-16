@@ -30,21 +30,21 @@ public class CaseWhen4JBuilder2<T1,T2,TR> {
     }
     public CaseWhen4JBuilder2<T1,T2,TR> caseWhen(SQLExpression2<SQLWherePredicate<T1>,SQLWherePredicate<T2>> predicateExpression, Object then){
         caseWhenBuilder.caseWhen(filter->{
-            FilterContext filterContext = new FilterContext(filter);
+            FilterContext filterContext = new FilterContext(filter,sqlColumnAsSelector1.getColumnAsSelector().getAsSelector().getEntityQueryExpressionBuilder());
             predicateExpression.apply(new SQLWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector1.getTable(),filterContext)),new SQLWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector2.getTable(),filterContext)));
         },then);
         return this;
     }
     public CaseWhen4JBuilder2<T1,T2,TR> caseWhen(SQLExpression2<SQLWherePredicate<T1>,SQLWherePredicate<T2>> predicateExpression, Property<T1, ?> thenProperty){
         caseWhenBuilder.caseWhenColumn(filter->{
-            FilterContext filterContext = new FilterContext(filter);
+            FilterContext filterContext = new FilterContext(filter,sqlColumnAsSelector1.getColumnAsSelector().getAsSelector().getEntityQueryExpressionBuilder());
             predicateExpression.apply(new SQLWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector1.getTable(),filterContext)),new SQLWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector2.getTable(),filterContext)));
         },sqlColumnAsSelector1.getTable(), EasyLambdaUtil.getPropertyName(thenProperty));
         return this;
     }
     public <T3> CaseWhen4JBuilder2<T1,T2,TR> caseWhen(SQLExpression2<SQLWherePredicate<T1>,SQLWherePredicate<T2>> predicateExpression, EntitySQLTableOwner<T3> sqlTableOwner, Property<T3, ?> thenProperty){
         caseWhenBuilder.caseWhenColumn(filter->{
-            FilterContext filterContext = new FilterContext(filter);
+            FilterContext filterContext = new FilterContext(filter,sqlColumnAsSelector1.getColumnAsSelector().getAsSelector().getEntityQueryExpressionBuilder());
             predicateExpression.apply(new SQLWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector1.getTable(),filterContext)),new SQLWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector2.getTable(),filterContext)));
         },sqlTableOwner.getTable(), EasyLambdaUtil.getPropertyName(thenProperty));
         return this;

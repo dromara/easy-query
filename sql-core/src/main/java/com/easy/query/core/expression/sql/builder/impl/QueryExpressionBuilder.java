@@ -346,12 +346,12 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         }
         if(super.manyConfigurationMaps!=null){
             for (Map.Entry<RelationTableKey, ManyConfiguration> manyJoinConfigurationEntry : super.manyConfigurationMaps.entrySet()) {
-                queryExpressionBuilder.addManyConfiguration(manyJoinConfigurationEntry.getKey(),manyJoinConfigurationEntry.getValue());
+                queryExpressionBuilder.putManyConfiguration(manyJoinConfigurationEntry.getKey(),manyJoinConfigurationEntry.getValue());
             }
         }
         if(super.manyJoinConfigurationSets!=null){
             for (RelationTableKey manyJoinConfigurationSet : super.manyJoinConfigurationSets) {
-                queryExpressionBuilder.addManyJoinConfiguration(manyJoinConfigurationSet);
+                queryExpressionBuilder.addSubQueryToGroupJoinJoin(manyJoinConfigurationSet);
             }
         }
         return queryExpressionBuilder;

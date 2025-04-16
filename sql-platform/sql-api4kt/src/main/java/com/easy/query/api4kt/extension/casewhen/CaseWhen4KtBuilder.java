@@ -28,19 +28,19 @@ public class CaseWhen4KtBuilder<T1,TR> {
     }
     public CaseWhen4KtBuilder<T1,TR> caseWhen(SQLExpression1<SQLKtWherePredicate<T1>> predicateExpression, Object then){
         caseWhenBuilder.caseWhen(filter->{
-            predicateExpression.apply(new SQLKtWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector.getTable(),new FilterContext(filter))));
+            predicateExpression.apply(new SQLKtWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector.getTable(),new FilterContext(filter,sqlColumnAsSelector.getColumnAsSelector().getAsSelector().getEntityQueryExpressionBuilder()))));
         },then);
         return this;
     }
     public CaseWhen4KtBuilder<T1,TR> caseWhen(SQLExpression1<SQLKtWherePredicate<T1>> predicateExpression, KProperty1<? super T1,?> thenProperty){
         caseWhenBuilder.caseWhenColumn(filter->{
-            predicateExpression.apply(new SQLKtWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector.getTable(),new FilterContext(filter))));
+            predicateExpression.apply(new SQLKtWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector.getTable(),new FilterContext(filter,sqlColumnAsSelector.getColumnAsSelector().getAsSelector().getEntityQueryExpressionBuilder()))));
         },sqlColumnAsSelector.getTable(), EasyKtLambdaUtil.getPropertyName(thenProperty));
         return this;
     }
     public <T2> CaseWhen4KtBuilder<T1,TR> caseWhen(SQLExpression1<SQLKtWherePredicate<T1>> predicateExpression, EntitySQLTableOwner<T2> sqlTableOwner, KProperty1<? super T2,?> thenProperty){
         caseWhenBuilder.caseWhenColumn(filter->{
-            predicateExpression.apply(new SQLKtWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector.getTable(),new FilterContext(filter))));
+            predicateExpression.apply(new SQLKtWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector.getTable(),new FilterContext(filter,sqlColumnAsSelector.getColumnAsSelector().getAsSelector().getEntityQueryExpressionBuilder()))));
         },sqlTableOwner.getTable(), EasyKtLambdaUtil.getPropertyName(thenProperty));
         return this;
     }

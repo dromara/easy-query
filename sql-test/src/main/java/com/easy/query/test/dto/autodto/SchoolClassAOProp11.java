@@ -1,9 +1,10 @@
 package com.easy.query.test.dto.autodto;
 
 import com.easy.query.core.annotation.NavigateFlat;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
-import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.expression.parser.core.extra.ExtraSelect;
+import com.easy.query.core.expression.parser.core.extra.ExtraFilter;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
 import lombok.Data;
@@ -31,12 +32,10 @@ public class SchoolClassAOProp11 {
 //    @NavigateFlat(value = RelationMappingTypeEnum.ToMany, mapping = "schoolStudentsIdsFlat")
 //    @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mapping = "schoolStudentsIdsPath")
 
-    private static final MappingPath SCHOOL_STUDENT_ID_PATH= SchoolClassProxy.TABLE.schoolStudents().flatElement().id();
-    private static final SQLFuncExpression1<SchoolClassProxy, PropTypeColumn<Long>> aaaa= schoolClass->schoolClass.schoolStudents().count();
+    private static final MappingPath SCHOOL_STUDENT_ID_PATH = SchoolClassProxy.TABLE.schoolStudents().flatElement().id();
 
     @NavigateFlat(pathAlias = "SCHOOL_STUDENT_ID_PATH")
     private List<String> schoolStudentsIds;
-
 
 
     @NavigateFlat(pathAlias = "schoolTeachers.schoolClasses.id")

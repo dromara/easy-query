@@ -10,6 +10,7 @@ import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.MultiCollection;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.func.SQLFunction;
 
 import java.util.Arrays;

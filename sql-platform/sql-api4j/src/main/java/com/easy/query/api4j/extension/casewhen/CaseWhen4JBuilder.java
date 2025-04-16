@@ -10,6 +10,7 @@ import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.extension.casewhen.CaseWhenBuilder;
 
 /**
@@ -29,21 +30,21 @@ public class CaseWhen4JBuilder<T1, TR> {
 
     public CaseWhen4JBuilder<T1, TR> caseWhen(SQLExpression1<SQLWherePredicate<T1>> predicateExpression, Object then) {
         caseWhenBuilder.caseWhen(filter -> {
-            predicateExpression.apply(new SQLWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector.getTable(), new FilterContext(filter))));
+            predicateExpression.apply(new SQLWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector.getTable(), new FilterContext(filter,sqlColumnAsSelector.getColumnAsSelector().getAsSelector().getEntityQueryExpressionBuilder()))));
         }, then);
         return this;
     }
 
     public CaseWhen4JBuilder<T1, TR> caseWhen(SQLExpression1<SQLWherePredicate<T1>> predicateExpression, Property<T1, ?> thenProperty) {
         caseWhenBuilder.caseWhenColumn(filter -> {
-            predicateExpression.apply(new SQLWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector.getTable(), new FilterContext(filter))));
+            predicateExpression.apply(new SQLWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector.getTable(), new FilterContext(filter,sqlColumnAsSelector.getColumnAsSelector().getAsSelector().getEntityQueryExpressionBuilder()))));
         }, sqlColumnAsSelector.getTable(), EasyLambdaUtil.getPropertyName(thenProperty));
         return this;
     }
 
     public <T2> CaseWhen4JBuilder<T1, TR> caseWhen(SQLExpression1<SQLWherePredicate<T1>> predicateExpression, EntitySQLTableOwner<T2> tableOwner, Property<T2, ?> thenProperty) {
         caseWhenBuilder.caseWhenColumn(filter -> {
-            predicateExpression.apply(new SQLWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector.getTable(), new FilterContext(filter))));
+            predicateExpression.apply(new SQLWherePredicateImpl<>(new WherePredicateImpl<>(sqlColumnAsSelector.getTable(), new FilterContext(filter,sqlColumnAsSelector.getColumnAsSelector().getAsSelector().getEntityQueryExpressionBuilder()))));
         }, tableOwner.getTable(), EasyLambdaUtil.getPropertyName(thenProperty));
         return this;
     }

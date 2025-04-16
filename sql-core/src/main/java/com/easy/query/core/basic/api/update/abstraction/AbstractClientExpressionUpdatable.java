@@ -133,7 +133,8 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     @Override
     public ClientExpressionUpdatable<T> where(boolean condition, SQLExpression1<WherePredicate<T>> whereExpression) {
         if (condition) {
-            WherePredicateImpl<T> sqlPredicate = new WherePredicateImpl<>(table, new FilterContext(new FilterImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getExpressionContext(), entityUpdateExpressionBuilder.getWhere(), false, AnyValueFilter.DEFAULT)));
+            FilterImpl filter = new FilterImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getExpressionContext(), entityUpdateExpressionBuilder.getWhere(), false, AnyValueFilter.DEFAULT);
+            WherePredicateImpl<T> sqlPredicate = new WherePredicateImpl<>(table, new FilterContext(filter, entityUpdateExpressionBuilder));
             whereExpression.apply(sqlPredicate);
         }
         return this;
@@ -171,7 +172,7 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
             Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
 //            List<ColumnValue2Segment> columnValue2Segments = ids.stream().map(o -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o)).collect(Collectors.toList());
 
-            List<ColumnValue2Segment> columnValue2Segments =  EasyCollectionUtil.select(ids,(o, i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o));
+            List<ColumnValue2Segment> columnValue2Segments = EasyCollectionUtil.select(ids, (o, i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o));
             andPredicateSegment
                     .setPredicate(new ColumnCollectionPredicate(column2Segment, columnValue2Segments, SQLPredicateCompareEnum.IN, entityUpdateExpressionBuilder.getExpressionContext()));
             where.addPredicateSegment(andPredicateSegment);
@@ -216,11 +217,12 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
 
     @Override
     public ClientExpressionUpdatable<T> configure(SQLExpression1<ContextConfigurer> configurer) {
-        if(configurer!=null){
+        if (configurer != null) {
             configurer.apply(new ContextConfigurerImpl(entityUpdateExpressionBuilder.getExpressionContext()));
         }
         return this;
     }
+
     @Override
     public ClientExpressionUpdatable<T> ignoreVersion(boolean ignored) {
 

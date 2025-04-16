@@ -4,6 +4,7 @@ import com.alibaba.druid.support.json.JSONUtils;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -13,6 +14,7 @@ import com.easy.query.test.mysql8.entity.M8UserBook2;
 import com.easy.query.test.mysql8.entity.M8UserBookIds;
 import com.easy.query.test.mysql8.entity.TableNoKey;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
+import com.easy.query.test.mysql8.entity.bank.SysUser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -277,4 +279,15 @@ public class M8Test1 extends BaseTest {
             System.out.println(entity + ":" + partitionColumn1);
         }
     }
+
+
+//    @Test
+//    public void testUpdate(){
+//        List<Draft1<String>> list = easyEntityQuery.queryable(SysUser.class)
+//                .subQueryToGroupJoin(user -> user.bankCards())
+//                .select(user -> Select.DRAFT.of(
+//                        user.bankCards().max(card -> card.bank().name())
+//                )).toList();
+//
+//    }
 }

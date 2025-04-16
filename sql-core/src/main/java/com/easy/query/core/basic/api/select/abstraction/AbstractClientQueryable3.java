@@ -12,7 +12,6 @@ import com.easy.query.core.expression.DefaultRelationTableKey;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLExpression3;
 import com.easy.query.core.expression.lambda.SQLExpression4;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression3;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
@@ -30,7 +29,6 @@ import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
@@ -115,7 +113,7 @@ public abstract class AbstractClientQueryable3<T1, T2, T3> extends AbstractOverr
             EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
             TableAvailable leftTable = tableOrRelationalTable.table;
             String property = tableOrRelationalTable.property;
-            entityQueryExpressionBuilder.addManyJoinConfiguration(new DefaultRelationTableKey(leftTable, property));
+            entityQueryExpressionBuilder.addSubQueryToGroupJoinJoin(new DefaultRelationTableKey(leftTable, property));
         }
         return this;
     }

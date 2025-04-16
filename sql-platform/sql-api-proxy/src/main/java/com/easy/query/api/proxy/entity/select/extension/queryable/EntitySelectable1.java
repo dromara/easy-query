@@ -162,7 +162,7 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * </pre></blockquote>
      *
      * @param resultClass           返回的结构化dto
-     * @param extraSelectExpression 额外select表达式增强,默认会执行映射allFields所以不再需要执行主表得allFields
+     * @param extraSelectExpression 额外select表达式增强,默认会执行映射allFields所以不再需要执行主表的allFields
      * @param <TR>
      * @return
      */
@@ -185,7 +185,7 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * </pre></blockquote>
      *
      * @param resultClass           返回的结构化dto
-     * @param extraSelectExpression 额外select表达式增强,默认会执行映射allFields所以不再需要执行主表得allFields
+     * @param extraSelectExpression 额外select表达式增强,默认会执行映射allFields所以不再需要执行主表的allFields
      * @param replace               false:表示当前的selectAutoInclude里面的东西不去替换前面的include,如果false表示以表达式前面的include为准,true:表示以selectAutoInclude里面的为准
      * @param <TR>
      * @return

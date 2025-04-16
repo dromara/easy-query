@@ -27,8 +27,6 @@ import com.easy.query.core.proxy.columns.SubQueryContext;
 import com.easy.query.core.proxy.columns.SubquerySQLQueryableFactory;
 import com.easy.query.core.util.EasyNavigateUtil;
 import com.easy.query.core.util.EasyObjectUtil;
-import com.easy.query.core.util.EasyRelationalUtil;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 /**
  * create time 2025/3/12 15:55
@@ -56,7 +54,7 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
 
         EntityRelationPropertyProvider entityRelationPredicateProvider = navigateMetadata.getEntityRelationPropertyProvider();
 
-        if (entityExpressionBuilder.hasManyJoinConfiguration(defaultRelationTableKey)) {
+        if (entityExpressionBuilder.hasSubQueryToGroupJoin(defaultRelationTableKey)) {
             EntityRelationPropertyProvider entityRelationPropertyProvider = navigateMetadata.getEntityRelationPropertyProvider();
             if (entityRelationPropertyProvider instanceof EntityRelationToImplicitGroupProvider) {
                 EntityRelationToImplicitGroupProvider entityRelationToImplicitGroupProvider = (EntityRelationToImplicitGroupProvider) entityRelationPropertyProvider;

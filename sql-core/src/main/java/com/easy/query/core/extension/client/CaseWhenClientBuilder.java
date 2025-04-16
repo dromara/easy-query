@@ -26,7 +26,7 @@ public class CaseWhenClientBuilder<T1,TR> {
     }
     public CaseWhenClientBuilder<T1,TR> caseWhen(SQLExpression1<WherePredicate<T1>> predicateExpression, Object then){
         caseWhenBuilder.caseWhen(filter->{
-            predicateExpression.apply(new WherePredicateImpl<>(columnAsSelector.getTable(),new FilterContext(filter)));
+            predicateExpression.apply(new WherePredicateImpl<>(columnAsSelector.getTable(),new FilterContext(filter,columnAsSelector.getAsSelector().getEntityQueryExpressionBuilder())));
         },then);
         return this;
     }

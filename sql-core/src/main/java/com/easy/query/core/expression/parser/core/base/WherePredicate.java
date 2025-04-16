@@ -20,6 +20,7 @@ import com.easy.query.core.expression.parser.core.base.core.filter.SubQueryPredi
 import com.easy.query.core.expression.parser.core.base.core.filter.ValuePredicate;
 import com.easy.query.core.expression.parser.core.base.core.filter.ValuesPredicate;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.func.SQLFunction;
 
 /**
@@ -40,6 +41,7 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
         , AssertPredicate<T1, WherePredicate<T1>>
         , SubQueryPredicate<T1, WherePredicate<T1>> {
 
+    EntityExpressionBuilder getEntityExpressionBuilder();
 
     default QueryRuntimeContext getRuntimeContext() {
         return getFilter().getRuntimeContext();

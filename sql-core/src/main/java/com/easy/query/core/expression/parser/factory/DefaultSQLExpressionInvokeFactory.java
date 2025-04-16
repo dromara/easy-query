@@ -24,7 +24,8 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 public class DefaultSQLExpressionInvokeFactory implements SQLExpressionInvokeFactory {
     @Override
     public <T1> WherePredicate<T1> createWherePredicate(TableAvailable table, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment) {
-        return new WherePredicateImpl<>(table, new FilterContext(new FilterImpl(sqlEntityExpression.getRuntimeContext(), sqlEntityExpression.getExpressionContext(), predicateSegment, false, AnyValueFilter.DEFAULT)));
+        FilterImpl filter = new FilterImpl(sqlEntityExpression.getRuntimeContext(), sqlEntityExpression.getExpressionContext(), predicateSegment, false, AnyValueFilter.DEFAULT);
+        return new WherePredicateImpl<>(table, new FilterContext(filter,sqlEntityExpression));
 //        return new SQLWherePredicateImpl<>(index,sqlEntityExpression,predicateSegment);
     }
 

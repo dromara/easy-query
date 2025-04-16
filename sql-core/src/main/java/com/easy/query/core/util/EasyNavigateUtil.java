@@ -8,6 +8,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.extra.ExtraAutoIncludeConfigure;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
@@ -17,7 +18,6 @@ import com.easy.query.core.metadata.NavigateOrderProp;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * create time 2024/10/14 11:19
@@ -34,7 +34,7 @@ public class EasyNavigateUtil {
         if (targetProperties == null) {
             throw new IllegalArgumentException("targetProperties is null");
         }
-        if (mappingClass == null || Objects.equals(Object.class,mappingClass)) {
+        if (mappingClass == null || Objects.equals(Object.class, mappingClass)) {
             checkSameLength(entityClass, property, selfProperties, targetProperties);
         } else {
             if (selfMappingProperties == null) {
@@ -65,6 +65,16 @@ public class EasyNavigateUtil {
                 return configureQueryable;
             }
             return navigateOrderBy0(configureQueryable, offsetLimit, navigateOrderProps, runtimeContext);
+        } else if (navigateEntityMetadata.getExtraAutoIncludeConfigure() != null) {
+            ExtraAutoIncludeConfigure extraAutoIncludeConfigure = navigateEntityMetadata.getExtraAutoIncludeConfigure();
+            if (extraAutoIncludeConfigure.getExtraConfigure() != null) {
+                extraAutoIncludeConfigure.getExtraConfigure().configure(clientQueryable);
+            }
+            if (extraAutoIncludeConfigure.getExtraFilter() != null) {
+                return navigateOrderBy0(
+                        clientQueryable.where(extraAutoIncludeConfigure.getExtraFilter()::filter)
+                        , offsetLimit, navigateOrderProps, runtimeContext);
+            }
         }
         return navigateOrderBy0(clientQueryable, offsetLimit, navigateOrderProps, runtimeContext);
     }

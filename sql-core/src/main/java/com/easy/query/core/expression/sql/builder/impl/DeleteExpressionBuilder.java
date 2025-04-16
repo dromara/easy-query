@@ -268,12 +268,12 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
         }
         if(super.manyConfigurationMaps!=null){
             for (Map.Entry<RelationTableKey, ManyConfiguration> manyJoinConfigurationEntry : super.manyConfigurationMaps.entrySet()) {
-                deleteExpressionBuilder.addManyConfiguration(manyJoinConfigurationEntry.getKey(),manyJoinConfigurationEntry.getValue());
+                deleteExpressionBuilder.putManyConfiguration(manyJoinConfigurationEntry.getKey(),manyJoinConfigurationEntry.getValue());
             }
         }
         if(super.manyJoinConfigurationSets!=null){
             for (RelationTableKey manyJoinConfigurationSet : super.manyJoinConfigurationSets) {
-                deleteExpressionBuilder.addManyJoinConfiguration(manyJoinConfigurationSet);
+                deleteExpressionBuilder.addSubQueryToGroupJoinJoin(manyJoinConfigurationSet);
             }
         }
 

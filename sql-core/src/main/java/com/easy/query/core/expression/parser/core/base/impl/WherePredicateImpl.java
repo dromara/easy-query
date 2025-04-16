@@ -14,6 +14,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.MultiCollection;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -47,6 +48,11 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public WherePredicate<T1> castChain() {
         return this;
+    }
+
+    @Override
+    public EntityExpressionBuilder getEntityExpressionBuilder() {
+        return filterContext.getEntityExpressionBuilder();
     }
 
     @Override

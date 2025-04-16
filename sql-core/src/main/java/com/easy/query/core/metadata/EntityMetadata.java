@@ -78,6 +78,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.core.extra.ExtraAutoIncludeConfigure;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.logging.Log;
@@ -133,6 +134,7 @@ public class EntityMetadata {
     private String oldTableName;
     private String treeName;
     private String schema;
+    private ExtraAutoIncludeConfigure extraAutoIncludeConfigure;
     private ErrorMessage errorMessage;
 
     public boolean isMultiTableMapping() {
@@ -239,13 +241,29 @@ public class EntityMetadata {
         }
         HashSet<String> ignoreProperties = table != null ? new HashSet<>(Arrays.asList(table.ignoreProperties())) : new HashSet<>();
         Map<String, Field> staticFields = new HashMap<>();
+
         Collection<Field> allFields = EasyClassUtil.getAllFields(this.entityClass, staticFields);
+
         PropertyDescriptor[] ps = EasyClassUtil.propertyDescriptors(entityClass);
         EasyMatcher easyMatcher = propertyDescriptorMatcher.create(ps);
 //        PropertyDescriptorFinder propertyDescriptorFinder = new PropertyDescriptorFinder(ps);
         FastBean fastBean = EasyBeanUtil.getFastBean(entityClass);
         this.beanConstructorCreator = fastBean.getBeanConstructorCreator();
         boolean tableEntity = EasyStringUtil.isNotBlank(tableName);
+
+        //dto、vo支持额外的selectAutoInclude的配置
+        if (!tableEntity) {
+            Field extra_auto_include_configure = staticFields.get("EXTRA_AUTO_INCLUDE_CONFIGURE");
+            if (extra_auto_include_configure != null) {
+                Object extra_auto_include_configure_value = EasyClassUtil.getStaticFieldValue(extra_auto_include_configure);
+                if (extra_auto_include_configure_value instanceof ExtraAutoIncludeConfigure) {
+                    this.extraAutoIncludeConfigure = (ExtraAutoIncludeConfigure) extra_auto_include_configure_value;
+                } else {
+                    throw new EasyQueryInvalidOperationException(String.format("[%s] static field [EXTRA_AUTO_INCLUDE_CONFIGURE] not ExtraAutoIncludeConfigure.class", EasyClassUtil.getSimpleName(entityClass)));
+                }
+            }
+        }
+
         this.dataReader = tableEntity ? EmptyDataReader.EMPTY : null;
         ColumnAllIndex columnAllIndex = new ColumnAllIndex();
         for (Field field : allFields) {
@@ -1262,5 +1280,14 @@ public class EntityMetadata {
 
     public boolean isHasPrimaryKeyGenerator() {
         return hasPrimaryKeyGenerator;
+    }
+
+    /**
+     * 额外查询配置
+     *
+     * @return
+     */
+    public ExtraAutoIncludeConfigure getExtraAutoIncludeConfigure() {
+        return extraAutoIncludeConfigure;
     }
 }

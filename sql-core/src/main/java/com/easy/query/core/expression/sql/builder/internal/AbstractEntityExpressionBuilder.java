@@ -111,7 +111,7 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
     }
 
     @Override
-    public ManyConfiguration addManyConfiguration(RelationTableKey relationTableKey, ManyConfiguration manyConfiguration) {
+    public ManyConfiguration putManyConfiguration(RelationTableKey relationTableKey, ManyConfiguration manyConfiguration) {
         if (manyConfigurationMaps == null) {
             this.manyConfigurationMaps = new HashMap<>();
         }
@@ -119,7 +119,7 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
     }
 
     @Override
-    public void addManyJoinConfiguration(RelationTableKey relationTableKey) {
+    public void addSubQueryToGroupJoinJoin(RelationTableKey relationTableKey) {
         if (manyJoinConfigurationSets == null) {
             this.manyJoinConfigurationSets = new HashSet<>();
         }
@@ -127,7 +127,7 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
     }
 
     @Override
-    public boolean hasManyJoinConfiguration(RelationTableKey relationTableKey) {
+    public boolean hasSubQueryToGroupJoin(RelationTableKey relationTableKey) {
         if (manyJoinConfigurationSets == null) {
             return false;
         }

@@ -1,6 +1,7 @@
 package com.easy.query.test.mysql8;
 
 
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -11,16 +12,14 @@ import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.part.Part2;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.doc.entity.DocBank;
-import com.easy.query.test.doc.entity.DocBankCard;
-import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysUserProxy;
 import com.easy.query.test.mysql8.vo.MyUserVO;
-import com.easy.query.test.mysql8.vo.proxy.MyUserCardVOProxy;
+import com.easy.query.test.mysql8.vo.SysUserDTO;
+import com.easy.query.test.mysql8.vo.SysUserDTO2;
 import com.easy.query.test.mysql8.vo.proxy.MyUserVOProxy;
 import org.junit.Assert;
 import org.junit.Before;
@@ -1349,5 +1348,69 @@ public class M8BankTest extends BaseTest {
             Assert.assertEquals("1(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
 
+    }
+
+    @Test
+     public void testExtraFilter(){
+
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysUserDTO> list = easyEntityQuery.queryable(SysUser.class)
+                .selectAutoInclude(SysUserDTO.class)
+                .toList();
+
+        listenerContextManager.clear();
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time` FROM `t_sys_user` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time` FROM `t_bank_card` t WHERE t.`type` = ? AND t.`uid` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("储蓄卡(String),u1(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+
+    @Test
+     public void testExtraFilter2(){
+
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysUserDTO2> list = easyEntityQuery.queryable(SysUser.class)
+                .selectAutoInclude(SysUserDTO2.class)
+                .toList();
+
+        listenerContextManager.clear();
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time` FROM `t_sys_user` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time`,DATE_FORMAT(t1.`create_time`,'%Y-%m-%d') AS `bank_name_or123` FROM `t_bank_card` t INNER JOIN `t_bank` t1 ON t1.`id` = t.`bank_id` WHERE t.`type` = ? AND t.`uid` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("储蓄卡(String),u1(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
     }
 }

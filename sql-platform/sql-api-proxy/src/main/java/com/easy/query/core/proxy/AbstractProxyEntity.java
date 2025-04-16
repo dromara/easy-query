@@ -8,14 +8,14 @@ import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
-import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.columns.impl.DefaultSubquerySQLQueryableFactory;
 import com.easy.query.core.proxy.core.Expression;
+import com.easy.query.core.proxy.extra.EntityExtraAutoIncludeConfigure;
+import com.easy.query.core.proxy.extra.EntityExtraAutoIncludeConfigureImpl;
 import com.easy.query.core.proxy.impl.SQLColumnIncludeColumn2Impl;
 import com.easy.query.core.proxy.impl.SQLConstantExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLDraftAsSelectImpl;
@@ -24,7 +24,6 @@ import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAsEntryImpl;
 import com.easy.query.core.proxy.impl.SQLSelectIgnoreImpl;
 import com.easy.query.core.proxy.impl.SQLSelectKeysImpl;
-import com.easy.query.core.proxy.sql.include.IncludeManyAvailable;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -531,5 +530,9 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
             return true;
         }
         return false;
+    }
+
+    public EntityExtraAutoIncludeConfigure<TProxy,TEntity> EXTRA_AUTO_INCLUDE_CONFIGURE(){
+        return new EntityExtraAutoIncludeConfigureImpl<>();
     }
 }

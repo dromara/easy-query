@@ -34,6 +34,7 @@ import com.easy.query.core.expression.segment.condition.predicate.SQLNativePredi
 import com.easy.query.core.expression.segment.condition.predicate.SQLNativesPredicateImpl;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.func.SQLFunction;
@@ -65,6 +66,7 @@ public class FilterImpl implements Filter {
     private PredicateSegment nextPredicateSegment;
 
     public FilterImpl(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, PredicateSegment predicateSegment, boolean reverse, ValueFilter conditionAcceptAssert) {
+
 
         this.runtimeContext = runtimeContext;
         this.expressionContext = expressionContext;

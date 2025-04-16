@@ -35,7 +35,6 @@ import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.common.IncludeCirculateChecker;
 import com.easy.query.core.common.IncludePath;
 import com.easy.query.core.common.tuple.MergeTuple2;
-import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
@@ -112,14 +111,12 @@ import com.easy.query.core.metadata.NavigateFlatMetadata;
 import com.easy.query.core.metadata.NavigateJoinMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
-import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyColumnSegmentUtil;
 import com.easy.query.core.util.EasyJdbcExecutorUtil;
 import com.easy.query.core.util.EasyNavigateUtil;
 import com.easy.query.core.util.EasyObjectUtil;
-import com.easy.query.core.util.EasyOptionUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
@@ -1052,7 +1049,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         IncludeNavigateExpression includeNavigateExpression = expressionContext.getIncludes().get(entityNavigateMetadata);
                         if (includeNavigateExpression != null) {
                             IncludeNavigateParams includeNavigateParams = includeNavigateExpression.getIncludeNavigateParams();
-                            if(includeNavigateParams.getAdapterExpression()!=null){
+                            if (includeNavigateParams.getAdapterExpression() != null) {
                                 includeNavigateParams.getAdapterExpression().apply(with);
                             }
                         }
@@ -1444,7 +1441,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
             TableAvailable leftTable = tableOrRelationalTable.table;
             String property = tableOrRelationalTable.property;
-            entityQueryExpressionBuilder.addManyJoinConfiguration(new DefaultRelationTableKey(leftTable, property));
+            entityQueryExpressionBuilder.addSubQueryToGroupJoinJoin(new DefaultRelationTableKey(leftTable, property));
         }
         return this;
     }
@@ -1457,7 +1454,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
             TableAvailable leftTable = tableOrRelationalTable.table;
             String property = tableOrRelationalTable.property;
-            entityQueryExpressionBuilder.addManyConfiguration(new DefaultRelationTableKey(leftTable, property), new ManyConfiguration(adapterExpression));
+            entityQueryExpressionBuilder.putManyConfiguration(new DefaultRelationTableKey(leftTable, property), new ManyConfiguration(adapterExpression));
         }
         return this;
     }
