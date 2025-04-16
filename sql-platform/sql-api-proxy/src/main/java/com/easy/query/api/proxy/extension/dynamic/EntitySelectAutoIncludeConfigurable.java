@@ -16,6 +16,7 @@ import com.easy.query.core.util.EasyObjectUtil;
  *
  * @author xuejiaming
  */
+@Deprecated
 public interface EntitySelectAutoIncludeConfigurable<TEntity extends ProxyEntityAvailable<TEntity, TProxy>, TProxy extends ProxyEntity<TProxy, TEntity>> extends SelectAutoIncludeConfigurable {
 
     EntityQueryable<TProxy, TEntity> entityConfigure(EntityQueryable<TProxy, TEntity> queryable, ConfigureArgument configureArgument);

@@ -8,6 +8,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
  *
  * @author xuejiaming
  */
+@Deprecated
 public interface SelectAutoIncludeConfigurable {
     /**
      * 标识该行为是否继承自实体的行为譬如order by limit等

@@ -454,7 +454,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      */
     public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> void set(TPropertyProxy columnProxy, SQLExpression2<TProxy, TPropertyProxy> navigateSelectExpression) {
         DefaultSubquerySQLQueryableFactory.dslNavigateSet(columnProxy);
-        TProxy tProxy = create(null, null);
+        TProxy tProxy = create(null, this.getEntitySQLContext());
         getCurrentEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(((RelationEntityTableAvailable) columnProxy.getTable()).getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy, tProxy, navigateSelectExpression));
     }
 

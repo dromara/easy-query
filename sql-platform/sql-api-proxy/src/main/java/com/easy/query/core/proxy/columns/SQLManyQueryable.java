@@ -97,7 +97,7 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
         DefaultSubquerySQLQueryableFactory.dslNavigatesSet(columnProxy);
 
         T1Proxy propertyProxy = this.getSubQueryContext().getPropertyProxy();
-        T1Proxy t1Proxy = propertyProxy.create(null, null);
+        T1Proxy t1Proxy = propertyProxy.create(null, this.getEntitySQLContext());
         getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(columnProxy.getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy.getProxy(), t1Proxy, navigateSelectExpression));
         return (TProxy) this.getSubQueryContext().getLeftTableProxy();
     }

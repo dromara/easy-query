@@ -9,6 +9,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.DefaultRelationTableKey;
 import com.easy.query.core.expression.ManyConfiguration;
+import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.implicit.EntityRelationToImplicitGroupProvider;
@@ -214,7 +215,7 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
     }
     public static <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> void dslNavigateSet(TPropertyProxy columnProxy){
         EntityExpressionBuilder entityExpressionBuilder = columnProxy.getEntitySQLContext().getEntityExpressionBuilder();
-        TableAvailable leftTable = columnProxy.getTable();
+        TableAvailable leftTable = ((RelationEntityTableAvailable) columnProxy.getTable()).getOriginalTable();
         String property = columnProxy.getValue();
 //            ExpressionContext expressionContext = entityQueryExpressionBuilder.getExpressionContext();
         QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
