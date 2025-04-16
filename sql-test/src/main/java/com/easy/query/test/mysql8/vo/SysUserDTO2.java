@@ -72,6 +72,9 @@ public class SysUserDTO2 {
                 ));
 
 
+        @SuppressWarnings("EasyQueryFieldMissMatch")
+        private String bankNameOr123;
+
         private String id;
         private String uid;
         /**
@@ -91,9 +94,6 @@ public class SysUserDTO2 {
          */
         private LocalDateTime openTime;
 
-
-        @SuppressWarnings("EasyQueryFieldMissMatch")
-        private String bankNameOr123;
         /**
          * 所属银行
          */
