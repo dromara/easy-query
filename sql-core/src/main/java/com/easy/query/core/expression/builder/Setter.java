@@ -4,6 +4,7 @@ import com.easy.query.core.expression.builder.core.SQLSetNative;
 import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.func.SQLFunction;
 
 /**
@@ -13,6 +14,7 @@ import com.easy.query.core.func.SQLFunction;
  * @author xuejiaming
  */
 public interface Setter extends SQLSetNative<Setter>, RuntimeContextAvailable {
+    EntityExpressionBuilder getEntityExpressionBuilder();
     SQLBuilderSegment getSQLBuilderSegment();
     /**
      * set column=val

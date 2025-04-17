@@ -11,9 +11,6 @@ import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.segment.impl.InsertUpdateColumnConfigureSegment2Impl;
 import com.easy.query.core.expression.segment.impl.InsertUpdateColumnConfigureSegmentImpl;
-import com.easy.query.core.expression.segment.impl.UpdateColumnSegmentImpl;
-import com.easy.query.core.expression.segment.impl.UpdateColumnSetSegmentImpl;
-import com.easy.query.core.expression.segment.impl.UpdateColumnSetSelfSegmentImpl;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
@@ -40,6 +37,11 @@ public class SetterImpl implements Setter {
         this.runtimeContext = entityExpressionBuilder.getRuntimeContext();
         this.sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
         this.sqlBuilderSegment = sqlBuilderSegment;
+    }
+
+    @Override
+    public EntityExpressionBuilder getEntityExpressionBuilder() {
+        return entityExpressionBuilder;
     }
 
     @Override
