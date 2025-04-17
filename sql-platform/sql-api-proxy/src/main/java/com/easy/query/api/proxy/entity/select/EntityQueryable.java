@@ -81,8 +81,6 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
     @Override
     EntityQueryable<T1Proxy, T1> toCteAs(String tableName);
 
-    long countDistinct(SQLFuncExpression1<T1Proxy, SQLColumn<?, ?>> selectExpression);
-
     /**
      * 设置column所有join表都会生效
      *

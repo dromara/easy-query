@@ -933,6 +933,12 @@ public class QueryTest23 extends BaseTest {
 
     @Test
     public  void testaaa1(){
+
+//        long count = easyEntityQuery.queryable(BlogEntity.class)
+//                .select(t_blog -> t_blog.score())
+//                .distinct().count();
+
+
         List<Grouping1<String>> list = easyEntityQuery.queryable(BlogEntity.class)
                 .groupBy(t_blog -> GroupKeys.of(t_blog.title()))
                 .having(group -> group.groupTable().star().count(true).gt(1L))

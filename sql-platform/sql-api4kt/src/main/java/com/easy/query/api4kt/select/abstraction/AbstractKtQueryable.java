@@ -86,13 +86,6 @@ public abstract class AbstractKtQueryable<T1> implements KtQueryable<T1> {
     }
 
     @Override
-    public long countDistinct(SQLExpression1<SQLKtColumnSelector<T1>> selectExpression) {
-        return entityQueryable.countDistinct(columnSelector -> {
-            selectExpression.apply(new SQLKtColumnSelectorImpl<>(columnSelector));
-        });
-    }
-
-    @Override
     public boolean any() {
         return entityQueryable.any();
     }

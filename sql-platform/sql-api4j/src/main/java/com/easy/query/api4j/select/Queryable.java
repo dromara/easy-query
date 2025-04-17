@@ -60,9 +60,6 @@ public interface Queryable<T1> extends Query<T1>,
      */
     @Override
     Queryable<T1> cloneQueryable();
-
-    long countDistinct(SQLExpression1<SQLColumnSelector<T1>> selectExpression);
-
     /**
      * 设置column所有join表都会生效
      *

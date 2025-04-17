@@ -126,15 +126,6 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public long countDistinct(SQLFuncExpression1<T1Proxy, SQLColumn<?, ?>> selectExpression) {
-        return getClientQueryable().countDistinct(selector -> {
-            SQLColumn<?, ?> sqlColumn = selectExpression.apply(get1Proxy());
-            Objects.requireNonNull(sqlColumn, "countDistinct cant get column");
-            sqlColumn.accept(selector.getSelector());
-        });
-    }
-
-    @Override
     public boolean any() {
         return getClientQueryable().any();
     }

@@ -569,8 +569,6 @@ public class Main {
 
             long count = easyQuery.queryable(SysUserLogbyMonth.class)
                     .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).count();
-            long count1 = easyQuery.queryable(SysUserLogbyMonth.class)
-                    .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).countDistinct(o -> o.column(SysUserLogbyMonth::getId).column(SysUserLogbyMonth::getTime));
 
             boolean any = easyQuery.queryable(SysUserLogbyMonth.class)
                     .where(o -> o.eq(SysUserLogbyMonth::getId, "119")).any();

@@ -74,14 +74,6 @@ public interface ClientQueryable<T1> extends Query<T1>,
     ClientQueryable<T1> toCteAs(String tableName);
 
     /**
-     * select count(distinct column) from table
-     *
-     * @param selectExpression 指定去重列名
-     * @return 具体长度
-     */
-    long countDistinct(SQLExpression1<ColumnSelector<T1>> selectExpression);
-
-    /**
      * 设置column所有join表都会生效
      *
      * @param columns

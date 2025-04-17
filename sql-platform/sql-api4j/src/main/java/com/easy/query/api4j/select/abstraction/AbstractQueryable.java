@@ -84,14 +84,6 @@ public abstract class AbstractQueryable<T1> implements Queryable<T1> {
     public long count() {
         return entityQueryable.count();
     }
-
-    @Override
-    public long countDistinct(SQLExpression1<SQLColumnSelector<T1>> selectExpression) {
-        return entityQueryable.countDistinct(columnSelector -> {
-            selectExpression.apply(new SQLColumnSelectorImpl<>(columnSelector));
-        });
-    }
-
     @Override
     public boolean any() {
         return entityQueryable.any();

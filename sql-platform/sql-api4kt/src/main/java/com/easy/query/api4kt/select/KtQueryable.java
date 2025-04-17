@@ -60,9 +60,6 @@ public interface KtQueryable<T1> extends Query<T1>,
      */
     @Override
     KtQueryable<T1> cloneQueryable();
-
-    long countDistinct(SQLExpression1<SQLKtColumnSelector<T1>> selectExpression);
-
     /**
      * 设置column所有join表都会生效
      *

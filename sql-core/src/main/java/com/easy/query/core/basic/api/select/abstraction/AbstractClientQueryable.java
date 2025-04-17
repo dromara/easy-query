@@ -267,26 +267,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public long countDistinct(SQLExpression1<ColumnSelector<T1>> selectExpression) {
-        ProjectSQLBuilderSegmentImpl sqlSegmentBuilder = new ProjectSQLBuilderSegmentImpl();
-        ColumnSelector<T1> sqlColumnSelector = getSQLExpressionProvider1().getColumnSelector(sqlSegmentBuilder);
-        selectExpression.apply(sqlColumnSelector);
-
-        setExecuteMethod(ExecuteMethodEnum.COUNT_DISTINCT);
-        ColumnFunction countFunction = runtimeContext.getColumnFunctionFactory().createCountFunction(true);
-        List<Long> result = cloneQueryable().select(countFunction.getFuncColumn(sqlSegmentBuilder.toSQL(null))).toList(Long.class);
-
-        if (result.isEmpty()) {
-            return 0L;
-        }
-        Long r = result.get(0);
-        if (r == null) {
-            return 0L;
-        }
-        return r;
-    }
-
-    @Override
     public boolean any() {
         setExecuteMethod(ExecuteMethodEnum.ANY);
         List<Long> result = cloneQueryable().limit(1).select(" 1 ").toList(Long.class);
