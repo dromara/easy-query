@@ -8,7 +8,7 @@ package com.easy.query.core.expression.parser.core.extra;
  * @author xuejiaming
  */
 public interface ExtraAutoIncludeConfigure {
-    ExtraFilter getExtraFilter();
+    ExtraWhere getExtraWhere();
     ExtraSelect getExtraSelect();
     ExtraConfigure getExtraConfigure();
 }

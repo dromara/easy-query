@@ -8,6 +8,6 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
  *
  * @author xuejiaming
  */
-public interface ExtraFilter {
+public interface ExtraWhere {
     void filter(WherePredicate<?> wherePredicate);
 }

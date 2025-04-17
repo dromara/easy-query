@@ -4,7 +4,7 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.extra.ExtraConfigure;
-import com.easy.query.core.expression.parser.core.extra.ExtraFilter;
+import com.easy.query.core.expression.parser.core.extra.ExtraWhere;
 import com.easy.query.core.expression.parser.core.extra.ExtraSelect;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
@@ -16,7 +16,7 @@ import com.easy.query.core.proxy.SQLSelectAsExpression;
  * @author xuejiaming
  */
 public class EntityExtraAutoIncludeConfigureImpl<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> implements EntityExtraAutoIncludeConfigure<TProxy, TEntity> {
-    private ExtraFilter extraFilter;
+    private ExtraWhere extraWhere;
     private ExtraConfigure extraConfigure;
     private ExtraSelect extraSelect;
 
@@ -27,8 +27,8 @@ public class EntityExtraAutoIncludeConfigureImpl<TProxy extends ProxyEntity<TPro
     }
 
     @Override
-    public EntityExtraAutoIncludeConfigure<TProxy, TEntity> filter(SQLExpression1<TProxy> whereExpression) {
-        this.extraFilter = new EntityExtraFilter<>(whereExpression);
+    public EntityExtraAutoIncludeConfigure<TProxy, TEntity> where(SQLExpression1<TProxy> whereExpression) {
+        this.extraWhere = new EntityExtraWhere<>(whereExpression);
         return this;
     }
 
@@ -39,8 +39,8 @@ public class EntityExtraAutoIncludeConfigureImpl<TProxy extends ProxyEntity<TPro
     }
 
     @Override
-    public ExtraFilter getExtraFilter() {
-        return extraFilter;
+    public ExtraWhere getExtraWhere() {
+        return extraWhere;
     }
 
     @Override

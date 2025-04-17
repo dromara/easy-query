@@ -70,9 +70,9 @@ public class EasyNavigateUtil {
             if (extraAutoIncludeConfigure.getExtraConfigure() != null) {
                 extraAutoIncludeConfigure.getExtraConfigure().configure(clientQueryable);
             }
-            if (extraAutoIncludeConfigure.getExtraFilter() != null) {
+            if (extraAutoIncludeConfigure.getExtraWhere() != null) {
                 return navigateOrderBy0(
-                        clientQueryable.where(extraAutoIncludeConfigure.getExtraFilter()::filter)
+                        clientQueryable.where(extraAutoIncludeConfigure.getExtraWhere()::filter)
                         , offsetLimit, navigateOrderProps, runtimeContext);
             }
         }

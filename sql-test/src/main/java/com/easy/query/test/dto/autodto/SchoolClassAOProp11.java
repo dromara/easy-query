@@ -2,9 +2,6 @@ package com.easy.query.test.dto.autodto;
 
 import com.easy.query.core.annotation.NavigateFlat;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
-import com.easy.query.core.expression.parser.core.extra.ExtraSelect;
-import com.easy.query.core.expression.parser.core.extra.ExtraFilter;
-import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
 import lombok.Data;

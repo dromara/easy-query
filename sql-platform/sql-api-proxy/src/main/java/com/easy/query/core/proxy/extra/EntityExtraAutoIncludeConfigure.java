@@ -27,7 +27,7 @@ public interface EntityExtraAutoIncludeConfigure<TProxy extends ProxyEntity<TPro
      * @param whereExpression
      * @return
      */
-    EntityExtraAutoIncludeConfigure<TProxy,TEntity> filter(SQLExpression1<TProxy> whereExpression);
+    EntityExtraAutoIncludeConfigure<TProxy,TEntity> where(SQLExpression1<TProxy> whereExpression);
 
     /**
      * 额外的查询

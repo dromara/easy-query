@@ -8,8 +8,10 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
+import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
 import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.part.Part2;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.listener.ListenerContext;
@@ -1254,13 +1256,13 @@ public class M8BankTest extends BaseTest {
 
         List<MyUserVO> list = easyEntityQuery.queryable(SysUser.class)
                 .select(user -> new MyUserVOProxy()
-                                .vo1().set(user.name())
-                                .vo2().set(user.id())
-                                .vo3().set(user.phone())
-                                .cards().set(user.bankCards().where(bc -> bc.type().eq("储蓄卡")), (self, target) -> {
-                                    self.type().set(target.code());
-                                    self.code().set(target.bank().name());
-                                })
+                        .vo1().set(user.name())
+                        .vo2().set(user.id())
+                        .vo3().set(user.phone())
+                        .cards().set(user.bankCards().where(bc -> bc.type().eq("储蓄卡")), (self, target) -> {
+                            self.type().set(target.code());
+                            self.code().set(target.bank().name());
+                        })
                 ).toList();
 
         listenerContextManager.clear();
@@ -1280,6 +1282,7 @@ public class M8BankTest extends BaseTest {
         }
 
     }
+
     @Test
     public void includeSubQuery4() {
 
@@ -1288,13 +1291,13 @@ public class M8BankTest extends BaseTest {
 
         List<MyUserVO> list = easyEntityQuery.queryable(SysUser.class)
                 .select(user -> new MyUserVOProxy()
-                                .vo1().set(user.name())
-                                .vo2().set(user.id())
-                                .vo3().set(user.phone())
-                                .cards().set(user.bankCards().where(bc -> bc.type().eq("储蓄卡")), (self, target) -> {
-                                    self.type().set(target.code());
-                                    self.code().set(target.bank().bankCards().max(x->x.openTime().format("yyyy-MM-dd")));
-                                })
+                        .vo1().set(user.name())
+                        .vo2().set(user.id())
+                        .vo3().set(user.phone())
+                        .cards().set(user.bankCards().where(bc -> bc.type().eq("储蓄卡")), (self, target) -> {
+                            self.type().set(target.code());
+                            self.code().set(target.bank().bankCards().max(x -> x.openTime().format("yyyy-MM-dd")));
+                        })
                 ).toList();
 
         listenerContextManager.clear();
@@ -1313,6 +1316,7 @@ public class M8BankTest extends BaseTest {
         }
 
     }
+
     @Test
     public void includeSubQuery5() {
 
@@ -1322,7 +1326,7 @@ public class M8BankTest extends BaseTest {
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .select(user -> new SysUserProxy()
                         .selectAll(user)
-                        .bankCards().set(user.bankCards(),(self,target)->{
+                        .bankCards().set(user.bankCards(), (self, target) -> {
                             self.selectAll(target);
                             self.bank().set(target.bank());
                         })
@@ -1351,7 +1355,7 @@ public class M8BankTest extends BaseTest {
     }
 
     @Test
-     public void testExtraFilter(){
+    public void testExtraFilter() {
 
 
         ListenerContext listenerContext = new ListenerContext(true);
@@ -1383,7 +1387,7 @@ public class M8BankTest extends BaseTest {
     }
 
     @Test
-     public void testExtraFilter2(){
+    public void testExtraFilter2() {
 
 
         ListenerContext listenerContext = new ListenerContext(true);
@@ -1411,6 +1415,92 @@ public class M8BankTest extends BaseTest {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
             Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+
+    @Test
+    public void testExtraFilter3() {
+
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        EntityQueryable<Draft2Proxy<String, Long>, Draft2<String, Long>> groupBankCardCountQuery = easyEntityQuery.queryable(SysBankCard.class)
+                .groupBy(bank_card -> GroupKeys.of(bank_card.bankId()))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),//value1
+                        group.count()//value2
+                ));
+
+        List<Draft2<String, Long>> list1 = easyEntityQuery.queryable(SysBank.class)
+                .leftJoin(groupBankCardCountQuery, (bank, cardGroup) -> bank.id().eq(cardGroup.value1()))
+                .select((bank, cardGroup) -> Select.DRAFT.of(
+                        bank.name(),
+                        cardGroup.value2()
+                )).toList();
+
+        listenerContextManager.clear();
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`name` AS `value1`,t3.`value2` AS `value2` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `value1`,COUNT(*) AS `value2` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t3 ON t.`id` = t3.`value1`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+
+    @Test
+    public void testExtraFilter4() {
+
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        EntityQueryable<Draft2Proxy<String, Long>, Draft2<String, Long>> groupBankCardCountQuery = easyEntityQuery.queryable(SysBankCard.class)
+                .groupBy(bank_card -> GroupKeys.of(bank_card.bankId()))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),//value1
+                        group.count()//value2
+                )).toCteAs();
+
+        List<Draft2<String, Long>> list1 = easyEntityQuery.queryable(SysBank.class)
+                .leftJoin(groupBankCardCountQuery, (bank, cardGroup) -> bank.id().eq(cardGroup.value1()))
+                .select((bank, cardGroup) -> Select.DRAFT.of(
+                        bank.name(),
+                        cardGroup.value2()
+                )).toList();
+
+        listenerContextManager.clear();
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`name` AS `value1`,t3.`value2` AS `value2` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `value1`,COUNT(*) AS `value2` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t3 ON t.`id` = t3.`value1`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+
+    @Test
+    public void testExtraFilter5() {
+
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<Draft2<String, Long>> list1 =   easyEntityQuery.queryable(SysBank.class)
+                .subQueryToGroupJoin(bank -> bank.bankCards())
+                .select(bank -> Select.DRAFT.of(
+                        bank.name(),
+                        bank.bankCards().count()
+                )).toList();
+
+        listenerContextManager.clear();
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`name` AS `value1`,IFNULL(t2.`__count2__`,0) AS `value2` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,COUNT(*) AS `__count2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
     }
 }

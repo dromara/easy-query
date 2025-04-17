@@ -62,7 +62,7 @@ public class SysUserDTO {
     @Data
     public static class InternalBankCards {
 
-        private static final ExtraAutoIncludeConfigure EXTRA_AUTO_INCLUDE_CONFIGURE= SysBankCardProxy.TABLE.EXTRA_AUTO_INCLUDE_CONFIGURE().filter(card->{
+        private static final ExtraAutoIncludeConfigure EXTRA_AUTO_INCLUDE_CONFIGURE= SysBankCardProxy.TABLE.EXTRA_AUTO_INCLUDE_CONFIGURE().where(card->{
             card.type().eq("储蓄卡");
         });
 

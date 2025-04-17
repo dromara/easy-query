@@ -66,7 +66,7 @@ public class SysUserDTO2 {
     public static class InternalBankCards {
 
         private static final ExtraAutoIncludeConfigure EXTRA_AUTO_INCLUDE_CONFIGURE = SysBankCardProxy.TABLE.EXTRA_AUTO_INCLUDE_CONFIGURE()
-                .filter(card -> card.type().eq("储蓄卡"))
+                .where(card -> card.type().eq("储蓄卡"))
                 .select(card -> Select.of(
                         card.bank().createTime().format("yyyy-MM-dd").as("bankNameOr123")
                 ));
