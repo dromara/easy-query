@@ -20,7 +20,7 @@ public class EntityExtraWhere<TProxy> implements ExtraWhere {
         this.whereExpression = whereExpression;
     }
     @Override
-    public void filter(WherePredicate<?> wherePredicate) {
+    public void where(WherePredicate<?> wherePredicate) {
         TableAvailable table = wherePredicate.getTable();
 
         ProxyEntity tEntityProxy = EntityQueryProxyManager.create(EasyObjectUtil.typeCastNullable(table.getEntityClass()));

@@ -76,13 +76,13 @@ import com.easy.query.core.expression.parser.core.base.many.ManyJoinSelectorImpl
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurerImpl;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEOption;
+import com.easy.query.core.expression.parser.core.extra.ExtraAutoIncludeConfigure;
 import com.easy.query.core.expression.segment.Column2Segment;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.ColumnValue2Segment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
-import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate;
@@ -864,6 +864,19 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
         EntityMetadata entityMetadata = entityTable.getEntityMetadata();
         ConfigureArgument configureArgument = getSQLEntityExpressionBuilder().getExpressionContext().getConfigureArgument();
+        ExtraAutoIncludeConfigure extraAutoIncludeConfigure = resultEntityMetadata.getExtraAutoIncludeConfigure();
+        if (extraAutoIncludeConfigure != null) {
+            if (extraAutoIncludeConfigure.getExtraConfigure() != null) {
+                extraAutoIncludeConfigure.getExtraConfigure().configure(this);
+            }
+            if (extraAutoIncludeConfigure.getExtraWhere() != null) {
+                this.where(extraAutoIncludeConfigure.getExtraWhere()::where);
+            }
+            if (extraAutoIncludeConfigure.getExtraSelect() != null) {
+                ColumnAsSelector<T1, TR> sqlColumnSelector = getSQLExpressionProvider1().getColumnAsSelector(entityQueryExpressionBuilder.getProjects(), resultClass);
+                extraAutoIncludeConfigure.getExtraSelect().select(sqlColumnSelector);
+            }
+        }
 
         selectAutoInclude0(entityMetadataManager, this, entityMetadata, resultEntityMetadata, null, configureArgument, replace, 0);
         selectAutoIncludeFlat0(entityMetadataManager, this, entityMetadata, resultEntityMetadata);

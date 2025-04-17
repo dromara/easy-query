@@ -7,6 +7,7 @@ import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.parser.core.extra.ExtraAutoIncludeConfigure;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysBankCardProxy;
+import com.easy.query.test.mysql8.entity.bank.proxy.SysUserProxy;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -22,7 +23,11 @@ import java.util.List;
  */
 @Data
 public class SysUserDTO2 {
-
+    private static final ExtraAutoIncludeConfigure EXTRA_AUTO_INCLUDE_CONFIGURE = SysUserProxy.TABLE.EXTRA_AUTO_INCLUDE_CONFIGURE()
+            .configure(query->query.subQueryToGroupJoin(u->u.bankCards()))
+            .select(o->Select.of(
+                    o.bankCards().count().as("cardCount")
+            ));
 
     private String id;
     private String name;

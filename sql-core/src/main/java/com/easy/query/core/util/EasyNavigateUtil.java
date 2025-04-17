@@ -72,7 +72,7 @@ public class EasyNavigateUtil {
             }
             if (extraAutoIncludeConfigure.getExtraWhere() != null) {
                 return navigateOrderBy0(
-                        clientQueryable.where(extraAutoIncludeConfigure.getExtraWhere()::filter)
+                        clientQueryable.where(extraAutoIncludeConfigure.getExtraWhere()::where)
                         , offsetLimit, navigateOrderProps, runtimeContext);
             }
         }

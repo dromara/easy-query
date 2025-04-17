@@ -532,6 +532,10 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         return false;
     }
 
+    /**
+     * 仅selectAutoInclude这个api会生效用于增强查询结果
+     * @return
+     */
     public EntityExtraAutoIncludeConfigure<TProxy,TEntity> EXTRA_AUTO_INCLUDE_CONFIGURE(){
         return new EntityExtraAutoIncludeConfigureImpl<>();
     }

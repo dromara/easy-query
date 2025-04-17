@@ -9,5 +9,5 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
  * @author xuejiaming
  */
 public interface ExtraWhere {
-    void filter(WherePredicate<?> wherePredicate);
+    void where(WherePredicate<?> wherePredicate);
 }
