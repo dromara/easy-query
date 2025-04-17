@@ -57,6 +57,7 @@ public class EasyNavigateUtil {
     }
 
     public static <T> ClientQueryable<T> navigateOrderBy(ClientQueryable<T> clientQueryable, OffsetLimitEntry offsetLimit, List<NavigateOrderProp> navigateOrderProps, EntityMetadata navigateEntityMetadata, ConfigureArgument configureArgument, QueryRuntimeContext runtimeContext) {
+        clientQueryable.configure(o->o.setConfigureArgument(configureArgument.getArg()));
         if (SelectAutoIncludeConfigurable.class.isAssignableFrom(navigateEntityMetadata.getEntityClass())) {
             SelectAutoIncludeConfigurable selectAutoIncludeConfigurable = (SelectAutoIncludeConfigurable) navigateEntityMetadata.getBeanConstructorCreator().get();
 

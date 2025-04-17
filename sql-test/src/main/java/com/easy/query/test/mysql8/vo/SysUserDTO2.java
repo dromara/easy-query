@@ -3,6 +3,7 @@ package com.easy.query.test.mysql8.vo;
 
 import com.easy.query.core.annotation.ForeignKey;
 import com.easy.query.core.annotation.Navigate;
+import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.parser.core.extra.ExtraAutoIncludeConfigure;
 import com.easy.query.core.proxy.sql.Select;
@@ -71,7 +72,12 @@ public class SysUserDTO2 {
     public static class InternalBankCards {
 
         private static final ExtraAutoIncludeConfigure EXTRA_AUTO_INCLUDE_CONFIGURE = SysBankCardProxy.TABLE.EXTRA_AUTO_INCLUDE_CONFIGURE()
-                .where(card -> card.type().eq("储蓄卡"))
+                .where(card -> {
+                    card.type().eq("储蓄卡");
+                    ConfigureArgument configureArgument = card.getEntitySQLContext().getEntityExpressionBuilder().getExpressionContext().getConfigureArgument();
+                    Object arg = configureArgument.getArg();
+                    System.out.println("InternalBankCards:"+arg);
+                })
                 .select(card -> Select.of(
                         card.bank().createTime().format("yyyy-MM-dd").as("bankNameOr123")
                 ));

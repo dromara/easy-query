@@ -30,7 +30,9 @@ import org.junit.Test;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * create time 2025/4/3 20:18
@@ -1393,7 +1395,13 @@ public class M8BankTest extends BaseTest {
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
 
+
+        UUID uuid = UUID.randomUUID();
+        System.out.println("uuid:"+uuid);
         List<SysUserDTO2> list = easyEntityQuery.queryable(SysUser.class)
+                .configure(o->{
+                    o.setConfigureArgument(uuid);
+                })
                 .selectAutoInclude(SysUserDTO2.class)
                 .toList();
 
