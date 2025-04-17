@@ -941,8 +941,26 @@ public class QueryTest23 extends BaseTest {
 
         List<Grouping1<String>> list = easyEntityQuery.queryable(BlogEntity.class)
                 .groupBy(t_blog -> GroupKeys.of(t_blog.title()))
-                .having(group -> group.groupTable().star().count(true).gt(1L))
+//                .having(group -> group.groupTable().star().count(true).gt(1L))
+                .having(group -> group.distinct().count(s->s.star()).gt(1L))
                 .toList();
+
+
+        List<Draft2<String, Long>> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                .leftJoin(Topic.class, (t_blog, t_topic) -> t_topic.id().eq(t_topic.id()))
+                .groupBy((t_blog, t_topic) -> GroupKeys.of(t_blog.title()))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.groupTable().t2.title().count(true)
+                )).toList();
+
+        easyEntityQuery.queryable(BlogEntity.class)
+                .leftJoin(Topic.class, (t_blog, t_topic) -> t_topic.id().eq(t_topic.id()))
+                .groupBy((t_blog, t_topic) -> GroupKeys.of(t_blog.title()))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.distinct().count(s->s.t1.star())
+                )).toList();
 
 //        List<Grouping1<String>> list2 = easyEntityQuery.queryable(BlogEntity.class)
 //                .groupBy(t_blog -> GroupKeys.of(t_blog.title()))

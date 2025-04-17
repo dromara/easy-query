@@ -49,8 +49,12 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
         return where(null).count();
     }
 
-    public ColumnFunctionCompareComparableNumberChainExpression<Long> count(boolean distinct) {
-        return where(null).distinct(distinct).count();
+
+    public SQLGroupQueryable<TSourceProxy> distinct() {
+        return where(null).distinct();
+    }
+    public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Long> count(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TMember>> columnSelector) {
+        return where(null).count(columnSelector);
     }
 
 
@@ -61,9 +65,6 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
         return where(null).intCount();
     }
 
-    public ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount(boolean distinct) {
-        return where(null).distinct(distinct).intCount();
-    }
 
     protected <TKey extends PropTypeColumn<TKey1>, TKey1> void acceptGroupSelector(TKey key, GroupSelector s) {
 
