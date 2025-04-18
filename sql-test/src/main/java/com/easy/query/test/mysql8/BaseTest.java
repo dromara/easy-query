@@ -9,15 +9,22 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
+import com.easy.query.core.basic.jdbc.executor.DefaultEntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
+import com.easy.query.test.common.M8Interceptor;
+import com.easy.query.test.common.MockEntityExpressionExecutor;
 import com.easy.query.test.common.MyQueryConfiguration;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
+import com.easy.query.test.mypage.MyEasyPageResultProvider;
 import com.easy.query.test.parser.MyLambdaParser;
 import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * create time 2025/3/4 08:28
@@ -75,12 +82,13 @@ public class BaseTest {
                 .replaceService(QueryConfiguration.class, MyQueryConfiguration.class)
 //                .replaceService(EntityMappingRule.class, PropertyEntityMappingRule.class)
                 .replaceService(EntityMappingRule.class, PropertyFirstEntityMappingRule.class)
-//                .replaceService(EasyPageResultProvider.class,MyEasyPageResultProvider.class)
+                .replaceService(EntityExpressionExecutor.class, MockEntityExpressionExecutor.class)
 //                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
         QueryConfiguration queryConfiguration = easyQueryClient.getRuntimeContext().getQueryConfiguration();
         queryConfiguration.applyRelationPropertyProvider(FindInSetRelationToImplicitProvider.INSTANCE);
+        queryConfiguration.applyInterceptor(new M8Interceptor());
         easyQuery = new DefaultEasyQuery(easyQueryClient);
         easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
 

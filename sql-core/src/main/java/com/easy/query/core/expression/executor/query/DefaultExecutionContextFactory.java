@@ -66,7 +66,7 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
         //无需分片的情况下
         if (!prepareParseResult.isSharding()) {
             if (prepareParseResult instanceof PredicatePrepareParseResult) {
-                return new PredicateExecutionCreator(easyDataSource.getDefaultDataSourceName(), prepareParseResult.getEntityExpressionBuilder().toExpression()).create();
+                return new PredicateExecutionCreator(easyDataSource.getDefaultDataSourceName(), ((PredicatePrepareParseResult) prepareParseResult).getEntityPredicateSQLExpression()).create();
             }
             if (prepareParseResult instanceof InsertPrepareParseResult) {
                 return new InsertExecutionCreator(easyDataSource.getDefaultDataSourceName(), (InsertPrepareParseResult) prepareParseResult).create();

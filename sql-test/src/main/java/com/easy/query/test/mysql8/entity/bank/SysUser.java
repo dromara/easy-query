@@ -38,4 +38,8 @@ public class SysUser implements ProxyEntityAvailable<SysUser , SysUserProxy> {
      */
     @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"uid"})
     private List<SysBankCard> bankCards;
+
+
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"uid"})
+    private List<SysUserBook> userBooks;
 }

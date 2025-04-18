@@ -29,7 +29,7 @@ public class EasyPredicatePrepareParseResult implements PredicatePrepareParseRes
         this.tablePredicateParseDescriptor = tablePredicateParseDescriptor;
 
         this.entityPredicateExpressionBuilder = predicatePrepareParseContext.getEntityExpressionBuilder();
-        this.entityPredicateSQLExpression = entityPredicateExpressionBuilder.toExpression();
+        this.entityPredicateSQLExpression = predicatePrepareParseContext.getEntityPredicateSQLExpression();
         this.sharding = EasyCollectionUtil.isNotEmpty(tablePredicateParseDescriptor.getTables());
     }
 

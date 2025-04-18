@@ -18,8 +18,10 @@ import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
+import com.easy.query.test.mysql8.entity.bank.SysUserBook;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysUserProxy;
 import com.easy.query.test.mysql8.vo.MyUserVO;
+import com.easy.query.test.mysql8.vo.SysBankDTO;
 import com.easy.query.test.mysql8.vo.SysUserDTO;
 import com.easy.query.test.mysql8.vo.SysUserDTO2;
 import com.easy.query.test.mysql8.vo.proxy.MyUserVOProxy;
@@ -45,7 +47,7 @@ public class M8BankTest extends BaseTest {
     public void before() {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
-        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class, SysBankCard.class, SysBank.class));
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class, SysBankCard.class, SysBank.class, SysUserBook.class));
         codeFirstCommand.executeWithTransaction(s -> s.commit());
         easyEntityQuery.deletable(SysBank.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(SysBankCard.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
@@ -1510,5 +1512,55 @@ public class M8BankTest extends BaseTest {
             Assert.assertEquals("SELECT t.`name` AS `value1`,IFNULL(t2.`__count2__`,0) AS `value2` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,COUNT(*) AS `__count2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
+    }
+
+    @Test
+    public  void testExtraDTO(){
+
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysBankDTO> list = easyEntityQuery.queryable(SysBank.class)
+                .selectAutoInclude(SysBankDTO.class)
+                .toList();
+
+        listenerContextManager.clear();
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time` FROM `t_bank_card` t WHERE t.`bank_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time`,IFNULL(t2.`__count2__`,0) AS `book_count`,t6.`name` AS `book_name`,t6.`price` AS `book_price` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,COUNT(*) AS `__count2__` FROM `t_sys_user_book` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` LEFT JOIN (SELECT t4.`id` AS `id`,t4.`name` AS `name`,t4.`uid` AS `uid`,t4.`price` AS `price` FROM (SELECT t3.`id`,t3.`name`,t3.`uid`,t3.`price`,(ROW_NUMBER() OVER (PARTITION BY t3.`uid` ORDER BY t3.`price` DESC)) AS `__row__` FROM `t_sys_user_book` t3) t4 WHERE t4.`__row__` = ?) t6 ON t6.`uid` = t.`id` WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer),u1(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+
+    @Test
+    public void testaa1(){
+//        List<SysBankCard> list = easyEntityQuery.queryable(SysBankCard.class).where(bank_card -> bank_card.id().isNotNull()).toList();
+        easyEntityQuery.updatable(SysBankCard.class)
+                .setColumns(bank_card -> bank_card.id().set("123123"))
+                .where(bank_card -> {
+                    bank_card.id().eq("1");
+                    bank_card.id().isNull();
+                }).executeRows();
+
+
+        easyEntityQuery.deletable(SysBankCard.class)
+                .where(bank_card -> {
+                    bank_card.id().eq("1");
+                    bank_card.id().isNull();
+                }).executeRows();
     }
 }
