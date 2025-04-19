@@ -16,6 +16,7 @@ import com.easy.query.core.proxy.part.Part2;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.common.M8Interceptor;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
@@ -38,6 +39,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * create time 2025/4/3 20:18
@@ -1585,18 +1587,24 @@ public class M8BankTest extends BaseTest {
     @Test
     public void testaa1() {
 //        List<SysBankCard> list = easyEntityQuery.queryable(SysBankCard.class).where(bank_card -> bank_card.id().isNotNull()).toList();
+        AtomicInteger atomicInteger = M8Interceptor.count.get();
+        atomicInteger.set(0);
         easyEntityQuery.updatable(SysBankCard.class)
                 .setColumns(bank_card -> bank_card.id().set("123123"))
                 .where(bank_card -> {
                     bank_card.id().eq("1");
                     bank_card.id().isNull();
                 }).executeRows();
-
+        int i = atomicInteger.get();
+        Assert.assertEquals(1,i);
+        atomicInteger.set(0);
 
         easyEntityQuery.deletable(SysBankCard.class)
                 .where(bank_card -> {
                     bank_card.id().eq("1");
                     bank_card.id().isNull();
                 }).executeRows();
+        int i1 = atomicInteger.get();
+        Assert.assertEquals(1,i1);
     }
 }

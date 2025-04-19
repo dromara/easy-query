@@ -6,6 +6,8 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * create time 2025/4/18 10:37
  * 文件说明
@@ -13,8 +15,11 @@ import com.easy.query.test.mysql8.entity.bank.SysBankCard;
  * @author xuejiaming
  */
 public class M8Interceptor implements PredicateFilterInterceptor {
+    public static final ThreadLocal<AtomicInteger> count = ThreadLocal.withInitial(() -> new AtomicInteger(0));
+
     @Override
     public void configure(Class<?> entityClass, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, WherePredicate<Object> wherePredicate) {
+        count.get().incrementAndGet();
         System.out.println(lambdaEntityExpressionBuilder);
 
     }
