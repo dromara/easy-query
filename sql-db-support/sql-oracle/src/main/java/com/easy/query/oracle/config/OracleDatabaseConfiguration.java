@@ -2,7 +2,6 @@ package com.easy.query.oracle.config;
 
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
-import com.easy.query.core.common.SubQueryToGroupJoinTrueFalseProvider;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.func.SQLFunc;
@@ -27,6 +26,5 @@ public class OracleDatabaseConfiguration  implements DatabaseConfiguration {
         services.addService(SQLFunc.class, OracleSQLFuncImpl.class);
         services.addService(DatabaseMigrationProvider.class, OracleDatabaseMigrationProvider.class);
         services.addService(DatabaseCodeFirst.class, OracleDatabaseCodeFirst.class);
-        services.addService(SubQueryToGroupJoinTrueFalseProvider.class, OracleSubQueryToGroupJoinTrueFalseProvider.class);
     }
 }

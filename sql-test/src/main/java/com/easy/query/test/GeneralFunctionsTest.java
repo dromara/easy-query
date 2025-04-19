@@ -517,8 +517,8 @@ public class GeneralFunctionsTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT COUNT(t.`id`) AS `value1`,COUNT(DISTINCT t.`title`) AS `value2`,COUNT((CASE WHEN t.`title` <> ? THEN t.`title` ELSE ? END)) AS `value3` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`content` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("恐怖(String),null(null),false(Boolean),%abc%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT COUNT(t.`id`) AS `value1`,COUNT(DISTINCT t.`title`) AS `value2`,COUNT((CASE WHEN t.`title` <> ? THEN t.`title` ELSE NULL END)) AS `value3` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`content` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("恐怖(String),false(Boolean),%abc%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
     @Test
@@ -545,8 +545,8 @@ public class GeneralFunctionsTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT MAX(t.`score`) AS `value1`,MAX((CASE WHEN t.`title` <> ? THEN t.`score` ELSE ? END)) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`content` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("恐怖(String),null(null),false(Boolean),%abc%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT MAX(t.`score`) AS `value1`,MAX((CASE WHEN t.`title` <> ? THEN t.`score` ELSE NULL END)) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`content` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("恐怖(String),false(Boolean),%abc%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 }

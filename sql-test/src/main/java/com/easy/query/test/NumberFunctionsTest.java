@@ -83,8 +83,8 @@ public class NumberFunctionsTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT AVG(t.`score`) AS `value1`,AVG(DISTINCT t.`score`) AS `value2`,AVG(DISTINCT (CASE WHEN t.`title` LIKE ? THEN t.`score` ELSE ? END)) AS `value3` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("%小说%(String),null(null),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT AVG(t.`score`) AS `value1`,AVG(DISTINCT t.`score`) AS `value2`,AVG(DISTINCT (CASE WHEN t.`title` LIKE ? THEN t.`score` ELSE NULL END)) AS `value3` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%小说%(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 
@@ -112,8 +112,8 @@ public class NumberFunctionsTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT AVG(t.[score]) AS [value1],AVG(DISTINCT t.[score]) AS [value2],AVG(DISTINCT (CASE WHEN t.[title] LIKE ? THEN t.[score] ELSE ? END)) AS [value3] FROM [t_blog] t WHERE t.[deleted] = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("%小说%(String),null(null),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT AVG(t.[score]) AS [value1],AVG(DISTINCT t.[score]) AS [value2],AVG(DISTINCT (CASE WHEN t.[title] LIKE ? THEN t.[score] ELSE NULL END)) AS [value3] FROM [t_blog] t WHERE t.[deleted] = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%小说%(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 
@@ -141,8 +141,8 @@ public class NumberFunctionsTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT AVG(t.\"score\") AS \"value1\",AVG(DISTINCT t.\"score\") AS \"value2\",AVG(DISTINCT (CASE WHEN t.\"title\" LIKE ? THEN t.\"score\" ELSE ? END)) AS \"value3\" FROM \"t_blog\" t WHERE t.\"deleted\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("%小说%(String),null(null),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT AVG(t.\"score\") AS \"value1\",AVG(DISTINCT t.\"score\") AS \"value2\",AVG(DISTINCT (CASE WHEN t.\"title\" LIKE ? THEN t.\"score\" ELSE NULL END)) AS \"value3\" FROM \"t_blog\" t WHERE t.\"deleted\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%小说%(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 
@@ -171,8 +171,8 @@ public class NumberFunctionsTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT AVG(t.\"score\") AS \"value1\",AVG(DISTINCT t.\"score\") AS \"value2\",AVG(DISTINCT (CASE WHEN t.\"title\" LIKE ? THEN t.\"score\" ELSE ? END)) AS \"value3\" FROM \"t_blog\" t WHERE t.\"deleted\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("%小说%(String),null(null),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT AVG(t.\"score\") AS \"value1\",AVG(DISTINCT t.\"score\") AS \"value2\",AVG(DISTINCT (CASE WHEN t.\"title\" LIKE ? THEN t.\"score\" ELSE NULL END)) AS \"value3\" FROM \"t_blog\" t WHERE t.\"deleted\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%小说%(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 
@@ -761,8 +761,8 @@ public class NumberFunctionsTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT NVL(t2.\"__any7__\",0) AS \"value1\" FROM \"t_sys_user\" t LEFT JOIN (SELECT t1.\"uid\" AS \"uid\",COUNT(t1.\"id\") AS \"__count2__\",(CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END) AS \"__any3__\",(CASE WHEN COUNT((CASE WHEN t1.\"uid\" IS NULL THEN ? ELSE ? END)) > 0 THEN 1 ELSE 0 END) AS \"__any4__\",(CASE WHEN COUNT(*) > 0 THEN 0 ELSE 1 END) AS \"__none5__\",(CASE WHEN COUNT((CASE WHEN t1.\"uid\" IS NULL THEN ? ELSE ? END)) > 0 THEN 0 ELSE 1 END) AS \"__none6__\",(CASE WHEN COUNT((CASE WHEN t1.\"id\" <> ? THEN ? ELSE ? END)) > 0 THEN 1 ELSE 0 END) AS \"__any7__\" FROM \"t_bank_card\" t1 GROUP BY t1.\"uid\") t2 ON t2.\"uid\" = t.\"id\" WHERE NVL(t2.\"__count2__\",0) > ? AND NVL(t2.\"__any3__\",0) = ? AND NVL(t2.\"__any4__\",0) = ? AND NVL(t2.\"__any4__\",0) = ? AND NVL(t2.\"__none5__\",1) = ? AND NVL(t2.\"__none6__\",1) = ? AND NVL(t2.\"__none6__\",1) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("1(Integer),null(null),1(Integer),null(null),1(String),1(Integer),null(null),1(Long),true(Boolean),true(Boolean),true(Boolean),true(Boolean),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT NVL(t2.\"__any7__\",?) AS \"value1\" FROM \"t_sys_user\" t LEFT JOIN (SELECT t1.\"uid\" AS \"uid\",COUNT(t1.\"id\") AS \"__count2__\",(CASE WHEN COUNT(*) > 0 THEN ? ELSE ? END) AS \"__any3__\",(CASE WHEN COUNT((CASE WHEN t1.\"uid\" IS NULL THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS \"__any4__\",(CASE WHEN COUNT(*) > 0 THEN ? ELSE ? END) AS \"__none5__\",(CASE WHEN COUNT((CASE WHEN t1.\"uid\" IS NULL THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS \"__none6__\",(CASE WHEN COUNT((CASE WHEN t1.\"id\" <> ? THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS \"__any7__\" FROM \"t_bank_card\" t1 GROUP BY t1.\"uid\") t2 ON t2.\"uid\" = t.\"id\" WHERE NVL(t2.\"__count2__\",0) > ? AND NVL(t2.\"__any3__\",?) = ? AND NVL(t2.\"__any4__\",?) = ? AND NVL(t2.\"__any4__\",?) = ? AND NVL(t2.\"__none5__\",?) = ? AND NVL(t2.\"__none6__\",?) = ? AND NVL(t2.\"__none6__\",?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),true(Boolean),false(Boolean),1(Integer),true(Boolean),false(Boolean),false(Boolean),true(Boolean),1(Integer),false(Boolean),true(Boolean),1(String),1(Integer),true(Boolean),false(Boolean),1(Long),false(Boolean),true(Boolean),false(Boolean),true(Boolean),false(Boolean),true(Boolean),true(Boolean),true(Boolean),true(Boolean),true(Boolean),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
     @Test
@@ -795,8 +795,8 @@ public class NumberFunctionsTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT IFNULL(t2.`__any7__`,?) AS `value1` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,COUNT(t1.`id`) AS `__count2__`,(CASE WHEN COUNT(*) > 0 THEN ? ELSE ? END) AS `__any3__`,(CASE WHEN COUNT((CASE WHEN t1.`uid` IS NULL THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__any4__`,(CASE WHEN COUNT(*) > 0 THEN ? ELSE ? END) AS `__none5__`,(CASE WHEN COUNT((CASE WHEN t1.`uid` IS NULL THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__none6__`,(CASE WHEN COUNT((CASE WHEN t1.`id` <> ? THEN ? ELSE ? END)) > 0 THEN ? ELSE ? END) AS `__any7__` FROM `t_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE IFNULL(t2.`__count2__`,0) > ? AND IFNULL(t2.`__any3__`,?) = ? AND IFNULL(t2.`__any4__`,?) = ? AND IFNULL(t2.`__any4__`,?) = ? AND IFNULL(t2.`__none5__`,?) = ? AND IFNULL(t2.`__none6__`,?) = ? AND IFNULL(t2.`__none6__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("false(Boolean),true(Boolean),false(Boolean),1(Integer),null(null),true(Boolean),false(Boolean),false(Boolean),true(Boolean),1(Integer),null(null),false(Boolean),true(Boolean),1(String),1(Integer),null(null),true(Boolean),false(Boolean),1(Long),false(Boolean),true(Boolean),false(Boolean),true(Boolean),false(Boolean),true(Boolean),true(Boolean),true(Boolean),true(Boolean),true(Boolean),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT IFNULL(t2.`__any7__`,?) AS `value1` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,COUNT(t1.`id`) AS `__count2__`,(CASE WHEN COUNT(*) > 0 THEN ? ELSE ? END) AS `__any3__`,(CASE WHEN COUNT((CASE WHEN t1.`uid` IS NULL THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any4__`,(CASE WHEN COUNT(*) > 0 THEN ? ELSE ? END) AS `__none5__`,(CASE WHEN COUNT((CASE WHEN t1.`uid` IS NULL THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__none6__`,(CASE WHEN COUNT((CASE WHEN t1.`id` <> ? THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any7__` FROM `t_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE IFNULL(t2.`__count2__`,0) > ? AND IFNULL(t2.`__any3__`,?) = ? AND IFNULL(t2.`__any4__`,?) = ? AND IFNULL(t2.`__any4__`,?) = ? AND IFNULL(t2.`__none5__`,?) = ? AND IFNULL(t2.`__none6__`,?) = ? AND IFNULL(t2.`__none6__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),true(Boolean),false(Boolean),1(Integer),true(Boolean),false(Boolean),false(Boolean),true(Boolean),1(Integer),false(Boolean),true(Boolean),1(String),1(Integer),true(Boolean),false(Boolean),1(Long),false(Boolean),true(Boolean),false(Boolean),true(Boolean),false(Boolean),true(Boolean),true(Boolean),true(Boolean),true(Boolean),true(Boolean),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 }

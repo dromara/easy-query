@@ -29,7 +29,7 @@ public class CaseWhenThenEntityBuilder {
     public <TV> FlatElementCaseWhenEntityBuilder then(TV then) {
         sqlCaseWhenBuilder.caseWhen(filter -> {
             sqlPredicateExpression.accept(filter);
-        }, EasyParamExpressionUtil.getParamExpression(entitySQLContext,then));
+        }, EasyParamExpressionUtil.getParamExpressionNullOrFormat(entitySQLContext,then));
         return caseWhenEntityBuilder;
     }
 

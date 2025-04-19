@@ -46,7 +46,7 @@ public class CaseWhenEntityBuilder {
     }
 
     public <TV, TProperty> ColumnFunctionCompareComparableAnyChainExpression<TProperty> elseEnd(TV elseValue, Class<TProperty> resultClass) {
-        ParamExpression paramExpression = EasyParamExpressionUtil.getParamExpression(entitySQLContext, elseValue);
+        ParamExpression paramExpression = EasyParamExpressionUtil.getParamExpressionNullOrFormat(entitySQLContext, elseValue);
         SQLFunction sqlFunction = caseWhenBuilder.elseEnd(paramExpression);
         return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(entitySQLContext, null, null, f -> sqlFunction, resultClass);
     }

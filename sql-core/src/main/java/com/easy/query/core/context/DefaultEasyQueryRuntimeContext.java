@@ -18,7 +18,6 @@ import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
 import com.easy.query.core.common.MapColumnNameChecker;
-import com.easy.query.core.common.SubQueryToGroupJoinTrueFalseProvider;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
 import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
@@ -105,7 +104,6 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final IncludeProvider includeProvider;
     private final RelationNullValueValidator relationNullValueValidator;
     private final SQLCaseWhenBuilderFactory sqlCaseWhenBuilderFactory;
-    private final SubQueryToGroupJoinTrueFalseProvider subQueryToGroupJoinTrueFalseProvider;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -153,8 +151,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           DatabaseCodeFirst databaseCodeFirst,
                                           IncludeProvider includeProvider,
                                           RelationNullValueValidator relationNullValueValidator,
-                                          SQLCaseWhenBuilderFactory sqlCaseWhenBuilderFactory,
-                                          SubQueryToGroupJoinTrueFalseProvider subQueryToGroupJoinTrueFalseProvider) {
+                                          SQLCaseWhenBuilderFactory sqlCaseWhenBuilderFactory) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -202,7 +199,6 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.includeProvider = includeProvider;
         this.relationNullValueValidator = relationNullValueValidator;
         this.sqlCaseWhenBuilderFactory = sqlCaseWhenBuilderFactory;
-        this.subQueryToGroupJoinTrueFalseProvider = subQueryToGroupJoinTrueFalseProvider;
     }
 
     @Override
@@ -439,10 +435,5 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public SQLCaseWhenBuilderFactory getSQLCaseWhenBuilderFactory() {
         return sqlCaseWhenBuilderFactory;
-    }
-
-    @Override
-    public SubQueryToGroupJoinTrueFalseProvider getSubQueryToGroupJoinTrueFalseProvider() {
-        return subQueryToGroupJoinTrueFalseProvider;
     }
 }

@@ -2,7 +2,6 @@ package com.easy.query.core.proxy.columns.impl;
 
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.common.SubQueryToGroupJoinTrueFalseProvider;
 import com.easy.query.core.expression.builder.impl.AsSelectorImpl;
 import com.easy.query.core.expression.many2group.ManyGroupJoinProjectKey;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -34,7 +33,6 @@ import com.easy.query.core.util.EasySQLUtil;
 public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
     private final SubQueryContext<T1Proxy, T1> subQueryContext;
     private final AnonymousManyJoinEntityTableExpressionBuilder manyGroupJoinEntityTableExpressionBuilder;
-    private final SubQueryToGroupJoinTrueFalseProvider sp;
     private final T1Proxy propertyProxy;
     private final TableAvailable manyGroupJoinTable;
     private final boolean required;
@@ -42,7 +40,6 @@ public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Prox
 
     public RewritePredicateToSelectProvider(SubQueryContext<T1Proxy, T1> subQueryContext, AnonymousManyJoinEntityTableExpressionBuilder manyGroupJoinEntityTableExpressionBuilder, T1Proxy propertyProxy, boolean required) {
         this.subQueryContext = subQueryContext;
-        this.sp = subQueryContext.getRuntimeContext().getSubQueryToGroupJoinTrueFalseProvider();
         this.manyGroupJoinEntityTableExpressionBuilder = manyGroupJoinEntityTableExpressionBuilder;
         this.propertyProxy = propertyProxy;
         this.manyGroupJoinTable = manyGroupJoinEntityTableExpressionBuilder.getEntityTable();
@@ -132,10 +129,8 @@ public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Prox
         ColumnFunctionCompareComparableNumberChainExpression<Long> count = new DefaultSQLGroupQueryable<>(getPropertyProxy(), getPropertyProxy().getEntitySQLContext(), getSubQueryContext().getWhereExpression()).count();
         ColumnFunctionCompareComparableBooleanChainExpressionImpl<Boolean> any = new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("(CASE WHEN {0} > 0 THEN {1} ELSE {2} END)", c -> {
             PropTypeColumn.columnFuncSelector(c, count);
-            sp.acceptValue(c,true);
-            sp.acceptValue(c,false);
-//            c.value(true);
-//            c.value(false);
+            c.value(true);
+            c.value(false);
 //            c.sqlFunc(f.booleanConstantSQLFunction(true));
 //            c.sqlFunc(f.booleanConstantSQLFunction(false));
         }), Boolean.class);
@@ -144,11 +139,7 @@ public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Prox
             if(required){
                 return  f.anySQLFunction("{0}",c->c.column(alias));
             }else{
-                return  f.nullOrDefault(c->{
-                    c.column(alias);
-                    sp.acceptValue(c,false);
-//                    c.value(false);
-                });
+                return  f.nullOrDefault(c->c.column(alias).value(false));
             }
         }, Boolean.class);
     }
@@ -157,10 +148,8 @@ public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Prox
         ColumnFunctionCompareComparableNumberChainExpression<Long> count = new DefaultSQLGroupQueryable<>(getPropertyProxy(), getPropertyProxy().getEntitySQLContext(), getSubQueryContext().getWhereExpression()).count();
         ColumnFunctionCompareComparableBooleanChainExpressionImpl<Boolean> none = new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("(CASE WHEN {0} > 0 THEN {1} ELSE {2} END)", c -> {
             PropTypeColumn.columnFuncSelector(c, count);
-            sp.acceptValue(c,false);
-            sp.acceptValue(c,true);
-//            c.value(false);
-//            c.value(true);
+            c.value(false);
+            c.value(true);
 //            c.sqlFunc(f.booleanConstantSQLFunction(false));
 //            c.sqlFunc(f.booleanConstantSQLFunction(true));
         }), Boolean.class);
@@ -169,11 +158,7 @@ public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Prox
             if(required){
                 return  f.anySQLFunction("{0}",c->c.column(alias));
             }else{
-                return f.nullOrDefault(c->{
-                    c.column(alias);
-                    sp.acceptValue(c,true);
-//                    c.value(true);
-                });
+                return f.nullOrDefault(c->c.column(alias).value(true));
             }
         }, Boolean.class);
     }
@@ -183,10 +168,8 @@ public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Prox
         ColumnFunctionCompareComparableNumberChainExpression<Long> count = new FlatElementSQLAnyQueryable(getPropertyProxy().getEntitySQLContext(), sqlPredicateExpression).count();
         ColumnFunctionCompareComparableBooleanChainExpressionImpl<Boolean> any = new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("(CASE WHEN {0} > 0 THEN {1} ELSE {2} END)", c -> {
             PropTypeColumn.columnFuncSelector(c, count);
-            sp.acceptValue(c,true);
-            sp.acceptValue(c,false);
-//            c.value(true);
-//            c.value(false);
+            c.value(true);
+            c.value(false);
 //            c.sqlFunc(f.booleanConstantSQLFunction(true));
 //            c.sqlFunc(f.booleanConstantSQLFunction(false));
         }), Boolean.class);
@@ -195,11 +178,7 @@ public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Prox
             if(required){
                 return  f.anySQLFunction("{0}",c->c.column(alias));
             }else{
-                return f.nullOrDefault(c->{
-                    c.column(alias);
-                    sp.acceptValue(c,false);
-//                    c.value(false);
-                });
+                return f.nullOrDefault(c->c.column(alias).value(false));
             }
         }, Boolean.class);
     }

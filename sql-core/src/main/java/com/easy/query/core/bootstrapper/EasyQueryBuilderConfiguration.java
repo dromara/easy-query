@@ -37,9 +37,7 @@ import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.thread.DefaultEasyShardingExecutorService;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
 import com.easy.query.core.common.DefaultMapColumnNameChecker;
-import com.easy.query.core.common.DefaultSubQueryToGroupJoinTrueFalseProvider;
 import com.easy.query.core.common.MapColumnNameChecker;
-import com.easy.query.core.common.SubQueryToGroupJoinTrueFalseProvider;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.EasyQueryOptionBuilder;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -200,7 +198,6 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(IncludeProcessorFactory.class, EasyIncludeProcessorFactory.class)
                 .replaceService(IncludeParserEngine.class, DefaultIncludeParserEngine.class)
                 .replaceService(MapColumnNameChecker.class, DefaultMapColumnNameChecker.class)
-                .replaceService(SubQueryToGroupJoinTrueFalseProvider.class, DefaultSubQueryToGroupJoinTrueFalseProvider.class)
                 //whereObject的默认实现
                 .replaceService(WhereObjectQueryExecutor.class, DefaultWhereObjectQueryExecutor.class)
                 //orderByObject的默认实现
