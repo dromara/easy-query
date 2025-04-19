@@ -452,6 +452,14 @@ public class DamengQueryTest extends DamengBaseTest {
         Assert.assertEquals("SELECT t.\"CREATE_TIME\" AS \"VALUE1\",TO_CHAR(t.\"CREATE_TIME\",'YYYY\"年\"MM-\"01\" HH24:MI\"分\"SS\"秒\"') AS \"VALUE2\" FROM \"MY_TOPIC\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 
     }
+    @Test
+    public void subQueryTest1(){
+        List<DamengMyTopic> list = entityQuery.queryable(DamengMyTopic.class)
+                .subQueryToGroupJoin(s->s.myTopics())
+                .where(d -> {
+                    d.myTopics().any();
+                }).toList();
+    }
 
 //    @Data
 //    @FieldNameConstants
