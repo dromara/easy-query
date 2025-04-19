@@ -1,6 +1,7 @@
 package com.easy.query.test.mysql8.vo;
 
 
+import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.expression.parser.core.extra.ExtraAutoIncludeConfigure;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysUserProxy;
@@ -87,12 +88,17 @@ public class SysBankDTO {
     @Data
     @FieldNameConstants
     public static class InternalUser {
-        private static final ExtraAutoIncludeConfigure EXTRA_AUTO_INCLUDE_CONFIGURE= SysUserProxy.TABLE.EXTRA_AUTO_INCLUDE_CONFIGURE()
-                .configure(query->query.subQueryToGroupJoin(u->u.userBooks()))
-                .select(u-> Select.of(
+        private static final ExtraAutoIncludeConfigure EXTRA_AUTO_INCLUDE_CONFIGURE = SysUserProxy.TABLE.EXTRA_AUTO_INCLUDE_CONFIGURE()
+                .configure(query -> query.subQueryToGroupJoin(u -> u.userBooks()))
+                .where(o -> {
+                    ConfigureArgument configureArgument = o.getEntitySQLContext().getExpressionContext().getConfigureArgument();
+                    String arg = configureArgument.getTypeArg();
+                    o.name().ne(arg);
+                })
+                .select(u -> Select.of(
                         u.userBooks().count().as(Fields.bookCount),
-                        u.userBooks().orderBy(book->book.price().desc()).firstElement().name().as(Fields.bookName),
-                        u.userBooks().orderBy(book->book.price().desc()).firstElement().price().as(Fields.bookPrice)
+                        u.userBooks().orderBy(book -> book.price().desc()).firstElement().name().as(Fields.bookName),
+                        u.userBooks().orderBy(book -> book.price().desc()).firstElement().price().as(Fields.bookPrice)
                 ));
 
         private String id;

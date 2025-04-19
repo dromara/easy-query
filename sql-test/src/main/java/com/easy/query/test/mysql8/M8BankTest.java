@@ -1,6 +1,8 @@
 package com.easy.query.test.mysql8;
 
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONWriter;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
@@ -29,6 +31,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,6 +58,7 @@ public class M8BankTest extends BaseTest {
         ArrayList<SysBank> banks = new ArrayList<>();
         ArrayList<SysBankCard> bankCards = new ArrayList<>();
         ArrayList<SysUser> users = new ArrayList<>();
+        ArrayList<SysUserBook> userBooks = new ArrayList<>();
         {
             SysBank sysBank = new SysBank();
             sysBank.setId("1");
@@ -144,9 +148,34 @@ public class M8BankTest extends BaseTest {
             sysUser.setCreateTime(LocalDateTime.of(2012, 1, 1, 0, 0));
             users.add(sysUser);
         }
+        {
+            SysUserBook sysUserBook = new SysUserBook();
+            sysUserBook.setId("b1");
+            sysUserBook.setName("b1book");
+            sysUserBook.setUid("u1");
+            sysUserBook.setPrice(BigDecimal.valueOf(10));
+            userBooks.add(sysUserBook);
+        }
+        {
+            SysUserBook sysUserBook = new SysUserBook();
+            sysUserBook.setId("b2");
+            sysUserBook.setName("b2book");
+            sysUserBook.setUid("u1");
+            sysUserBook.setPrice(BigDecimal.valueOf(11));
+            userBooks.add(sysUserBook);
+        }
+        {
+            SysUserBook sysUserBook = new SysUserBook();
+            sysUserBook.setId("b3");
+            sysUserBook.setName("b3book");
+            sysUserBook.setUid("u2");
+            sysUserBook.setPrice(BigDecimal.valueOf(9.9));
+            userBooks.add(sysUserBook);
+        }
         easyEntityQuery.insertable(banks).executeRows();
         easyEntityQuery.insertable(bankCards).executeRows();
         easyEntityQuery.insertable(users).executeRows();
+        easyEntityQuery.insertable(userBooks).executeRows();
 
     }
 
@@ -1399,9 +1428,9 @@ public class M8BankTest extends BaseTest {
 
 
         UUID uuid = UUID.randomUUID();
-        System.out.println("uuid:"+uuid);
+        System.out.println("uuid:" + uuid);
         List<SysUserDTO2> list = easyEntityQuery.queryable(SysUser.class)
-                .configure(o->{
+                .configure(o -> {
                     o.setConfigureArgument(uuid);
                 })
                 .selectAutoInclude(SysUserDTO2.class)
@@ -1496,7 +1525,7 @@ public class M8BankTest extends BaseTest {
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
-        List<Draft2<String, Long>> list1 =   easyEntityQuery.queryable(SysBank.class)
+        List<Draft2<String, Long>> list1 = easyEntityQuery.queryable(SysBank.class)
                 .subQueryToGroupJoin(bank -> bank.bankCards())
                 .select(bank -> Select.DRAFT.of(
                         bank.name(),
@@ -1515,15 +1544,21 @@ public class M8BankTest extends BaseTest {
     }
 
     @Test
-    public  void testExtraDTO(){
+    public void testExtraDTO() {
 
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
 
+        String arg = "myArg";
         List<SysBankDTO> list = easyEntityQuery.queryable(SysBank.class)
+                .configure(o -> {
+                    o.setConfigureArgument(arg);
+                })
                 .selectAutoInclude(SysBankDTO.class)
                 .toList();
+        String jsonString = JSON.toJSONString(list, JSONWriter.Feature.WriteMapNullValue, JSONWriter.Feature.WriteNullListAsEmpty, JSONWriter.Feature.WriteNullStringAsEmpty);
+        System.out.println(jsonString);
 
         listenerContextManager.clear();
 
@@ -1541,13 +1576,14 @@ public class M8BankTest extends BaseTest {
         }
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time`,IFNULL(t2.`__count2__`,0) AS `book_count`,t6.`name` AS `book_name`,t6.`price` AS `book_price` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,COUNT(*) AS `__count2__` FROM `t_sys_user_book` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` LEFT JOIN (SELECT t4.`id` AS `id`,t4.`name` AS `name`,t4.`uid` AS `uid`,t4.`price` AS `price` FROM (SELECT t3.`id`,t3.`name`,t3.`uid`,t3.`price`,(ROW_NUMBER() OVER (PARTITION BY t3.`uid` ORDER BY t3.`price` DESC)) AS `__row__` FROM `t_sys_user_book` t3) t4 WHERE t4.`__row__` = ?) t6 ON t6.`uid` = t.`id` WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("1(Integer),u1(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time`,IFNULL(t2.`__count2__`,0) AS `book_count`,t6.`name` AS `book_name`,t6.`price` AS `book_price` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,COUNT(*) AS `__count2__` FROM `t_sys_user_book` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` LEFT JOIN (SELECT t4.`id` AS `id`,t4.`name` AS `name`,t4.`uid` AS `uid`,t4.`price` AS `price` FROM (SELECT t3.`id`,t3.`name`,t3.`uid`,t3.`price`,(ROW_NUMBER() OVER (PARTITION BY t3.`uid` ORDER BY t3.`price` DESC)) AS `__row__` FROM `t_sys_user_book` t3) t4 WHERE t4.`__row__` = ?) t6 ON t6.`uid` = t.`id` WHERE t.`name` <> ? AND t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer),myArg(String),u1(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
     }
 
+
     @Test
-    public void testaa1(){
+    public void testaa1() {
 //        List<SysBankCard> list = easyEntityQuery.queryable(SysBankCard.class).where(bank_card -> bank_card.id().isNotNull()).toList();
         easyEntityQuery.updatable(SysBankCard.class)
                 .setColumns(bank_card -> bank_card.id().set("123123"))
