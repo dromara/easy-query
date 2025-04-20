@@ -9,6 +9,7 @@ import com.easy.query.core.expression.visitor.TableVisitor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -37,10 +38,10 @@ public interface EntityExpressionBuilder extends ExpressionBuilder, RuntimeConte
     boolean hasManyJoinTable(RelationTableKey relationTableKey);
     ManyConfiguration putManyConfiguration(RelationTableKey relationTableKey, ManyConfiguration manyConfiguration);
     ManyConfiguration getManyConfiguration(RelationTableKey relationTableKey);
-
+    Map<RelationTableKey, ManyConfiguration> getManyConfigurations();
     void addSubQueryToGroupJoinJoin(RelationTableKey relationTableKey);
     boolean hasSubQueryToGroupJoin(RelationTableKey relationTableKey);
-
+    Set<RelationTableKey> getManyJoinConfigurationSets();
     //    EntityTableExpressionBuilder removeRelationEntityTableExpression(RelationTableKey relationTableKey);
     Map<RelationTableKey, EntityTableExpressionBuilder> getRelationTables();
 

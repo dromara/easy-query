@@ -1,10 +1,12 @@
 package com.easy.query.core.proxy.core;
 
+import com.easy.query.core.common.ValueHolder;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
+import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
@@ -26,13 +28,17 @@ public class ProxyManyJoinFlatElementEntitySQLContext implements FlatEntitySQLCo
     private final EntityExpressionBuilder entityExpressionBuilder;
     private final QueryRuntimeContext runtimeContext;
     private final SQLFuncExpression1<?, SQLSelectAsExpression> sqlSelectAsExpressionFunction;
+    private final SQLExpression1<SQLPredicateExpression> sqlPredicateExpressionFunction;
+    private ValueHolder<EntitySQLContext> contextValueHolder;
 
-    public ProxyManyJoinFlatElementEntitySQLContext(RewritePredicateToSelectProvider<?, ?> rewritePredicateToSelectProvider, EntityExpressionBuilder entityExpressionBuilder, QueryRuntimeContext runtimeContext, SQLFuncExpression1<?, SQLSelectAsExpression> sqlSelectAsExpressionFunction) {
+    public ProxyManyJoinFlatElementEntitySQLContext(RewritePredicateToSelectProvider<?, ?> rewritePredicateToSelectProvider, EntityExpressionBuilder entityExpressionBuilder, ValueHolder<EntitySQLContext> contextValueHolder, QueryRuntimeContext runtimeContext, SQLFuncExpression1<?, SQLSelectAsExpression> sqlSelectAsExpressionFunction, SQLExpression1<SQLPredicateExpression> sqlPredicateExpressionFunction) {
         this.rewritePredicateToSelectProvider = rewritePredicateToSelectProvider;
         this.entityExpressionBuilder = entityExpressionBuilder;
+        this.contextValueHolder = contextValueHolder;
 
         this.runtimeContext = runtimeContext;
         this.sqlSelectAsExpressionFunction = sqlSelectAsExpressionFunction;
+        this.sqlPredicateExpressionFunction = sqlPredicateExpressionFunction;
     }
 
     @Override
@@ -47,6 +53,7 @@ public class ProxyManyJoinFlatElementEntitySQLContext implements FlatEntitySQLCo
 
     @Override
     public void accept(SQLPredicateExpression sqlPredicateExpression) {
+//        sqlPredicateExpressionFunction.apply(sqlPredicateExpression);
         rewritePredicateToSelectProvider.flatElementFilterValue(sqlPredicateExpression).eq(true);
     }
 
@@ -110,6 +117,16 @@ public class ProxyManyJoinFlatElementEntitySQLContext implements FlatEntitySQLCo
     @Override
     public SQLFuncExpression1<?, SQLSelectAsExpression> getSelectAsExpressionFunction() {
         return sqlSelectAsExpressionFunction;
+    }
+
+    @Override
+    public void setContextHolder(ValueHolder<EntitySQLContext> contextValueHolder) {
+        this.contextValueHolder = contextValueHolder;
+    }
+
+    @Override
+    public ValueHolder<EntitySQLContext> getContextHolder() {
+        return this.contextValueHolder;
     }
     //    @Override
 //    public void _nativeSqlSegment(SQLActionExpression sqlActionExpression) {

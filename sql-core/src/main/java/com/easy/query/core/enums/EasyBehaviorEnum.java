@@ -39,7 +39,11 @@ public enum EasyBehaviorEnum {
     /**
      * 本次执行是否使用jdbc监听器
      */
-    JDBC_LISTEN(1<<10);
+    JDBC_LISTEN(1<<10),
+    /**
+     * 所有的子查询转GroupJoin
+     */
+    ALL_SUB_QUERY_GROUP_JOIN(1<<11);
 
     private final int code;
 

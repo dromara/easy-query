@@ -6,6 +6,7 @@ import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.common.OffsetLimitEntry;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.DefaultRelationTableKey;
 import com.easy.query.core.expression.ManyConfiguration;
@@ -19,6 +20,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -40,6 +42,7 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
     public <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> SQLQueryable<T1Proxy, T1> create(SubQueryContext<T1Proxy, T1> subQueryContext) {
 
         EntityExpressionBuilder entityExpressionBuilder = subQueryContext.getEntityExpressionBuilder();
+        ExpressionContext expressionContext = entityExpressionBuilder.getExpressionContext();
         QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
         TableAvailable leftTable = subQueryContext.getLeftTable();
         String property = subQueryContext.getProperty();
@@ -53,8 +56,8 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
         RelationTableKey defaultRelationTableKey = new DefaultRelationTableKey(leftTable, property);
 
         EntityRelationPropertyProvider entityRelationPredicateProvider = navigateMetadata.getEntityRelationPropertyProvider();
-
-        if (entityExpressionBuilder.hasSubQueryToGroupJoin(defaultRelationTableKey)) {
+        boolean hasBehavior = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN);
+        if (hasBehavior || entityExpressionBuilder.hasSubQueryToGroupJoin(defaultRelationTableKey)) {
             EntityRelationPropertyProvider entityRelationPropertyProvider = navigateMetadata.getEntityRelationPropertyProvider();
             if (entityRelationPropertyProvider instanceof EntityRelationToImplicitGroupProvider) {
                 EntityRelationToImplicitGroupProvider entityRelationToImplicitGroupProvider = (EntityRelationToImplicitGroupProvider) entityRelationPropertyProvider;
@@ -63,7 +66,12 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
                     if (manyConfiguration != null) {
                         manyConfiguration.getConfigureExpression().apply(clientQueryable);
                     }
-                    if(subQueryContext.hasElements()){
+                    if (hasBehavior) {
+                        clientQueryable.configure(op -> {
+                            op.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN);
+                        });
+                    }
+                    if (subQueryContext.hasElements()) {
 
                         EntityQueryable<T1Proxy, T1> entityQueryable = new EasyEntityQueryable<>(propertyProxy, EasyObjectUtil.typeCastNullable(clientQueryable));
                         if (subQueryContext.getConfigureExpression() != null) {
@@ -161,9 +169,7 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
     }
 
 
-
-
-    public static <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> void dslNavigatesSet(SQLQueryable<TPropertyProxy, TProperty> columnProxy){
+    public static <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> void dslNavigatesSet(SQLQueryable<TPropertyProxy, TProperty> columnProxy) {
         SubQueryContext<TPropertyProxy, TProperty> subQueryContext = columnProxy.getSubQueryContext();
         EntityExpressionBuilder entityExpressionBuilder = subQueryContext.getEntityExpressionBuilder();
         TableAvailable leftTable = subQueryContext.getLeftTable();
@@ -211,7 +217,8 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
         });
 
     }
-    public static <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> void dslNavigateSet(TPropertyProxy columnProxy){
+
+    public static <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> void dslNavigateSet(TPropertyProxy columnProxy) {
         EntityExpressionBuilder entityExpressionBuilder = columnProxy.getEntitySQLContext().getEntityExpressionBuilder();
         TableAvailable leftTable = ((RelationEntityTableAvailable) columnProxy.getTable()).getOriginalTable();
         String property = columnProxy.getValue();

@@ -12,6 +12,7 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -111,6 +112,11 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
     }
 
     @Override
+    public Map<RelationTableKey, ManyConfiguration> getManyConfigurations() {
+        return manyConfigurationMaps;
+    }
+
+    @Override
     public ManyConfiguration putManyConfiguration(RelationTableKey relationTableKey, ManyConfiguration manyConfiguration) {
         if (manyConfigurationMaps == null) {
             this.manyConfigurationMaps = new HashMap<>();
@@ -132,6 +138,10 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
             return false;
         }
         return manyJoinConfigurationSets.contains(relationTableKey);
+    }
+    @Override
+    public Set<RelationTableKey> getManyJoinConfigurationSets() {
+        return manyJoinConfigurationSets;
     }
     //
 //    @Override

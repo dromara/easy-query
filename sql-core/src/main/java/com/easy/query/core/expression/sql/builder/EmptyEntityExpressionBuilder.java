@@ -9,6 +9,7 @@ import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -60,6 +61,11 @@ public class EmptyEntityExpressionBuilder implements EntityExpressionBuilder{
     }
 
     @Override
+    public Map<RelationTableKey, ManyConfiguration> getManyConfigurations() {
+        return null;
+    }
+
+    @Override
     public void addSubQueryToGroupJoinJoin(RelationTableKey relationTableKey) {
 
     }
@@ -67,6 +73,11 @@ public class EmptyEntityExpressionBuilder implements EntityExpressionBuilder{
     @Override
     public boolean hasSubQueryToGroupJoin(RelationTableKey relationTableKey) {
         return false;
+    }
+
+    @Override
+    public Set<RelationTableKey> getManyJoinConfigurationSets() {
+        return null;
     }
 
     @Override

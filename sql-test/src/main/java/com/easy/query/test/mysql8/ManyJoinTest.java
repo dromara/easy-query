@@ -4,6 +4,7 @@ import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.track.TrackManager;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.Select;
@@ -16,8 +17,10 @@ import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.SchoolClassTeacher;
 import com.easy.query.test.entity.school.SchoolTeacher;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.entity.M8Menu;
 import com.easy.query.test.mysql8.entity.M8Role;
 import com.easy.query.test.mysql8.entity.M8Role2;
+import com.easy.query.test.mysql8.entity.M8RoleMenu;
 import com.easy.query.test.mysql8.entity.M8User;
 import com.easy.query.test.mysql8.entity.M8User2;
 import com.easy.query.test.mysql8.entity.M8UserBook;
@@ -43,7 +46,7 @@ public class ManyJoinTest extends BaseTest {
     public void before() {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
-        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBankCard.class, DocBank.class, DocUser.class, DocUserBook.class, SchoolClass.class, SchoolTeacher.class, SchoolClassTeacher.class, M8User.class, M8Role.class, M8UserRole.class, M8User2.class, M8Role2.class, M8UserRole2.class, M8UserBook.class));
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBankCard.class, DocBank.class, DocUser.class, DocUserBook.class, SchoolClass.class, SchoolTeacher.class, SchoolClassTeacher.class, M8User.class, M8Role.class, M8UserRole.class, M8User2.class, M8Role2.class, M8UserRole2.class, M8UserBook.class, M8RoleMenu.class, M8Menu.class));
         codeFirstCommand.executeWithTransaction(s -> s.commit());
         {
             easyEntityQuery.deletable(DocBankCard.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
@@ -60,6 +63,8 @@ public class ManyJoinTest extends BaseTest {
             easyEntityQuery.deletable(M8Role2.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
             easyEntityQuery.deletable(M8UserRole2.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
             easyEntityQuery.deletable(M8UserBook.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
+            easyEntityQuery.deletable(M8RoleMenu.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
+            easyEntityQuery.deletable(M8Menu.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
         }
 
         {
@@ -448,6 +453,77 @@ public class ManyJoinTest extends BaseTest {
         } finally {
             trackManager.release();
         }
+
+    }
+
+    @Test
+    public void testMany2Many2GroupJoin() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<M8User> admin = easyEntityQuery.queryable(M8User.class)
+                .subQueryToGroupJoin(s->s.roles())
+                .subQueryConfigure(s->s.roles(),s->s.subQueryToGroupJoin(r->r.menus()))
+                .where(m -> {
+                    m.roles().any(r -> {
+                        r.menus().any(menu -> menu.name().eq("admin"));
+                    });
+                }).toList();
+
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`age`,t.`create_time` FROM `m8_user` t LEFT JOIN (SELECT t2.`user_id` AS `user_id`,(CASE WHEN COUNT((CASE WHEN IFNULL(t8.`__any2__`,?) = ? THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `m8_role` t1 INNER JOIN `m8_user_role` t2 ON t1.`id` = t2.`role_id` LEFT JOIN (SELECT t6.`role_id` AS `role_id`,(CASE WHEN COUNT((CASE WHEN t5.`name` = ? THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `m8_menu` t5 INNER JOIN `m8_role_menu` t6 ON t5.`id` = t6.`menu_id` GROUP BY t6.`role_id`) t8 ON t8.`role_id` = t1.`id` GROUP BY t2.`user_id`) t4 ON t4.`user_id` = t.`id` WHERE IFNULL(t4.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),true(Boolean),1(Integer),true(Boolean),false(Boolean),admin(String),1(Integer),true(Boolean),false(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
+    }
+    @Test
+    public void testMany2Many2GroupJoin2() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<M8User> admin = easyEntityQuery.queryable(M8User.class)
+                .subQueryToGroupJoin(s->s.roles())
+                .subQueryConfigure(s->s.roles(),s->s.subQueryToGroupJoin(r->r.menus()))
+                .where(m -> {
+
+                    m.roles().flatElement().menus().any(menu -> menu.name().eq("admin"));
+                }).toList();
+
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`age`,t.`create_time` FROM `m8_user` t LEFT JOIN (SELECT t2.`user_id` AS `user_id`,(CASE WHEN COUNT((CASE WHEN IFNULL(t8.`__any2__`,?) = ? THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `m8_role` t1 INNER JOIN `m8_user_role` t2 ON t1.`id` = t2.`role_id` LEFT JOIN (SELECT t6.`role_id` AS `role_id`,(CASE WHEN COUNT((CASE WHEN t5.`name` = ? THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `m8_menu` t5 INNER JOIN `m8_role_menu` t6 ON t5.`id` = t6.`menu_id` GROUP BY t6.`role_id`) t8 ON t8.`role_id` = t1.`id` GROUP BY t2.`user_id`) t4 ON t4.`user_id` = t.`id` WHERE IFNULL(t4.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),true(Boolean),1(Integer),true(Boolean),false(Boolean),admin(String),1(Integer),true(Boolean),false(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
+    }
+    @Test
+    public void testMany2Many2GroupJoin3() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<M8User> admin = easyEntityQuery.queryable(M8User.class)
+                .configure(o->{
+                    o.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN);
+                })
+                .where(m -> {
+
+                    m.roles().any(r -> {
+                        r.menus().any(menu -> menu.name().eq("admin"));
+                    });
+                }).toList();
+
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`age`,t.`create_time` FROM `m8_user` t LEFT JOIN (SELECT t2.`user_id` AS `user_id`,(CASE WHEN COUNT((CASE WHEN IFNULL(t8.`__any2__`,?) = ? THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `m8_role` t1 INNER JOIN `m8_user_role` t2 ON t1.`id` = t2.`role_id` LEFT JOIN (SELECT t6.`role_id` AS `role_id`,(CASE WHEN COUNT((CASE WHEN t5.`name` = ? THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `m8_menu` t5 INNER JOIN `m8_role_menu` t6 ON t5.`id` = t6.`menu_id` GROUP BY t6.`role_id`) t8 ON t8.`role_id` = t1.`id` GROUP BY t2.`user_id`) t4 ON t4.`user_id` = t.`id` WHERE IFNULL(t4.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),true(Boolean),1(Integer),true(Boolean),false(Boolean),admin(String),1(Integer),true(Boolean),false(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
 
     }
 }
