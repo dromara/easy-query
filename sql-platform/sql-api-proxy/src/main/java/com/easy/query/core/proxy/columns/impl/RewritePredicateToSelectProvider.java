@@ -13,6 +13,7 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SubQueryContext;
@@ -21,6 +22,7 @@ import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComp
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableBooleanChainExpressionImpl;
 import com.easy.query.core.proxy.grouping.DefaultSQLGroupQueryable;
+import com.easy.query.core.proxy.grouping.FlatElementJoinSQLAnyQueryable;
 import com.easy.query.core.proxy.grouping.FlatElementSQLAnyQueryable;
 import com.easy.query.core.util.EasySQLUtil;
 
@@ -166,6 +168,24 @@ public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Prox
 
     public ColumnFunctionCompareComparableBooleanChainExpression<Boolean> flatElementFilterValue(SQLPredicateExpression sqlPredicateExpression) {
         ColumnFunctionCompareComparableNumberChainExpression<Long> count = new FlatElementSQLAnyQueryable(getPropertyProxy().getEntitySQLContext(), sqlPredicateExpression).count();
+        ColumnFunctionCompareComparableBooleanChainExpressionImpl<Boolean> any = new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("(CASE WHEN {0} > 0 THEN {1} ELSE {2} END)", c -> {
+            PropTypeColumn.columnFuncSelector(c, count);
+            c.value(true);
+            c.value(false);
+//            c.sqlFunc(f.booleanConstantSQLFunction(true));
+//            c.sqlFunc(f.booleanConstantSQLFunction(false));
+        }), Boolean.class);
+        String alias = getOrAppendGroupProjects(any, "any");
+        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> {
+            if(required){
+                return  f.anySQLFunction("{0}",c->c.column(alias));
+            }else{
+                return f.nullOrDefault(c->c.column(alias).value(false));
+            }
+        }, Boolean.class);
+    }
+    public ColumnFunctionCompareComparableBooleanChainExpression<Boolean> flatElementAggregateFilterValue(SQLAggregatePredicateExpression sqlAggregatePredicateExpression) {
+        ColumnFunctionCompareComparableNumberChainExpression<Long> count = new FlatElementJoinSQLAnyQueryable(getPropertyProxy().getEntitySQLContext(), sqlAggregatePredicateExpression).count();
         ColumnFunctionCompareComparableBooleanChainExpressionImpl<Boolean> any = new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("(CASE WHEN {0} > 0 THEN {1} ELSE {2} END)", c -> {
             PropTypeColumn.columnFuncSelector(c, count);
             c.value(true);

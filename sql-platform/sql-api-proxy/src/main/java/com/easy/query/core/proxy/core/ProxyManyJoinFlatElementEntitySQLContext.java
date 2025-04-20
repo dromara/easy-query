@@ -28,17 +28,16 @@ public class ProxyManyJoinFlatElementEntitySQLContext implements FlatEntitySQLCo
     private final EntityExpressionBuilder entityExpressionBuilder;
     private final QueryRuntimeContext runtimeContext;
     private final SQLFuncExpression1<?, SQLSelectAsExpression> sqlSelectAsExpressionFunction;
-    private final SQLExpression1<SQLPredicateExpression> sqlPredicateExpressionFunction;
     private ValueHolder<EntitySQLContext> contextValueHolder;
+    private EntityExpressionAccept accept = EntityExpressionAccept.empty;
 
-    public ProxyManyJoinFlatElementEntitySQLContext(RewritePredicateToSelectProvider<?, ?> rewritePredicateToSelectProvider, EntityExpressionBuilder entityExpressionBuilder, ValueHolder<EntitySQLContext> contextValueHolder, QueryRuntimeContext runtimeContext, SQLFuncExpression1<?, SQLSelectAsExpression> sqlSelectAsExpressionFunction, SQLExpression1<SQLPredicateExpression> sqlPredicateExpressionFunction) {
+    public ProxyManyJoinFlatElementEntitySQLContext(RewritePredicateToSelectProvider<?, ?> rewritePredicateToSelectProvider, EntityExpressionBuilder entityExpressionBuilder, ValueHolder<EntitySQLContext> contextValueHolder, QueryRuntimeContext runtimeContext, SQLFuncExpression1<?, SQLSelectAsExpression> sqlSelectAsExpressionFunction) {
         this.rewritePredicateToSelectProvider = rewritePredicateToSelectProvider;
         this.entityExpressionBuilder = entityExpressionBuilder;
         this.contextValueHolder = contextValueHolder;
 
         this.runtimeContext = runtimeContext;
         this.sqlSelectAsExpressionFunction = sqlSelectAsExpressionFunction;
-        this.sqlPredicateExpressionFunction = sqlPredicateExpressionFunction;
     }
 
     @Override
@@ -48,18 +47,17 @@ public class ProxyManyJoinFlatElementEntitySQLContext implements FlatEntitySQLCo
 
     @Override
     public void accept(EntityExpressionAccept accept, SQLActionExpression sqlActionExpression) {
-        sqlActionExpression.apply();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void accept(SQLPredicateExpression sqlPredicateExpression) {
-//        sqlPredicateExpressionFunction.apply(sqlPredicateExpression);
         rewritePredicateToSelectProvider.flatElementFilterValue(sqlPredicateExpression).eq(true);
     }
 
     @Override
     public void accept(SQLAggregatePredicateExpression sqlAggregatePredicateExpression) {
-        throw new UnsupportedOperationException();
+        rewritePredicateToSelectProvider.flatElementAggregateFilterValue(sqlAggregatePredicateExpression).eq(true);
 
     }
 

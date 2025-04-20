@@ -4,7 +4,6 @@ import com.easy.query.api.proxy.util.EasyParamExpressionUtil;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.extension.casewhen.CaseWhenBuilderExpression;
 import com.easy.query.core.extension.casewhen.SQLCaseWhenBuilder;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.core.EntitySQLContext;
@@ -46,7 +45,7 @@ public class CaseWhenEntityBuilder {
     }
 
     public <TV, TProperty> ColumnFunctionCompareComparableAnyChainExpression<TProperty> elseEnd(TV elseValue, Class<TProperty> resultClass) {
-        ParamExpression paramExpression = EasyParamExpressionUtil.getParamExpressionNullOrFormat(entitySQLContext, elseValue);
+        ParamExpression paramExpression = EasyParamExpressionUtil.getParamExpression(entitySQLContext, elseValue);
         SQLFunction sqlFunction = caseWhenBuilder.elseEnd(paramExpression);
         return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(entitySQLContext, null, null, f -> sqlFunction, resultClass);
     }

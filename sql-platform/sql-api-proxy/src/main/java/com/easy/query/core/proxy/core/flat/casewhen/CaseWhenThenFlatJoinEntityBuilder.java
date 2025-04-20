@@ -1,6 +1,7 @@
 package com.easy.query.core.proxy.core.flat.casewhen;
 
 import com.easy.query.api.proxy.util.EasyParamExpressionUtil;
+import com.easy.query.core.expression.builder.impl.AggregateFilterImpl;
 import com.easy.query.core.extension.casewhen.SQLCaseWhenBuilder;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 import com.easy.query.core.proxy.SQLPredicateExpression;
@@ -12,22 +13,22 @@ import com.easy.query.core.proxy.core.EntitySQLContext;
  *
  * @author xuejiaming
  */
-public class CaseWhenThenEntityBuilder {
+public class CaseWhenThenFlatJoinEntityBuilder {
 
     private final FlatElementCaseWhenEntityBuilder caseWhenEntityBuilder;
     private final EntitySQLContext entitySQLContext;
     private final SQLCaseWhenBuilder sqlCaseWhenBuilder;
-    private final SQLPredicateExpression sqlPredicateExpression;
+    private final SQLAggregatePredicateExpression sqlAggregatePredicateExpression;
 
-    public CaseWhenThenEntityBuilder(FlatElementCaseWhenEntityBuilder caseWhenEntityBuilder, EntitySQLContext entitySQLContext, SQLCaseWhenBuilder sqlCaseWhenBuilder, SQLPredicateExpression sqlPredicateExpression) {
+    public CaseWhenThenFlatJoinEntityBuilder(FlatElementCaseWhenEntityBuilder caseWhenEntityBuilder, EntitySQLContext entitySQLContext, SQLCaseWhenBuilder sqlCaseWhenBuilder, SQLAggregatePredicateExpression sqlAggregatePredicateExpression) {
         this.caseWhenEntityBuilder = caseWhenEntityBuilder;
         this.entitySQLContext = entitySQLContext;
         this.sqlCaseWhenBuilder = sqlCaseWhenBuilder;
-        this.sqlPredicateExpression = sqlPredicateExpression;
+        this.sqlAggregatePredicateExpression = sqlAggregatePredicateExpression;
     }
     public <TV> FlatElementCaseWhenEntityBuilder then(TV then) {
         sqlCaseWhenBuilder.caseWhen(filter -> {
-                sqlPredicateExpression.accept(filter);
+            sqlAggregatePredicateExpression.accept(new AggregateFilterImpl(filter.getExpressionContext(),filter.getRootPredicateSegment()));
         }, EasyParamExpressionUtil.getParamExpression(entitySQLContext,then));
         return caseWhenEntityBuilder;
     }

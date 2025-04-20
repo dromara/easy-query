@@ -41,14 +41,12 @@ public class AggregateFilterImpl implements AggregateFilter {
     private final QueryRuntimeContext runtimeContext;
     private final ExpressionContext expressionContext;
     protected final PredicateSegment rootPredicateSegment;
-    private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     protected PredicateSegment nextPredicateSegment;
 
-    public AggregateFilterImpl(EntityQueryExpressionBuilder entityQueryExpressionBuilder, PredicateSegment predicateSegment) {
-        this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
+    public AggregateFilterImpl(ExpressionContext expressionContext, PredicateSegment predicateSegment) {
 
-        this.runtimeContext = entityQueryExpressionBuilder.getRuntimeContext();
-        this.expressionContext = entityQueryExpressionBuilder.getExpressionContext();
+        this.expressionContext = expressionContext;
+        this.runtimeContext = expressionContext.getRuntimeContext();
         this.rootPredicateSegment = predicateSegment;
         this.nextPredicateSegment = new AndPredicateSegment();
     }
@@ -75,7 +73,7 @@ public class AggregateFilterImpl implements AggregateFilter {
 
     @Override
     public AggregateFilter func(TableAvailable table, SQLFunction sqlFunction, SQLPredicateCompare compare, Object val) {
-        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityQueryExpressionBuilder.getExpressionContext(), runtimeContext);
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
         sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
         String sqlSegment = sqlFunction.sqlSegment(table);
         sqlNativeExpressionContext.value(val);
@@ -86,11 +84,11 @@ public class AggregateFilterImpl implements AggregateFilter {
 
     @Override
     public AggregateFilter func(TableAvailable table1, SQLFunction sqlFunction1, SQLPredicateCompare compare, TableAvailable table2,SQLFunction sqlFunction2) {
-        SQLNativeExpressionContextImpl sqlNativeExpressionContextLeft = new SQLNativeExpressionContextImpl(entityQueryExpressionBuilder.getExpressionContext(), runtimeContext);
+        SQLNativeExpressionContextImpl sqlNativeExpressionContextLeft = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
         sqlFunction1.consume(new SQLNativeChainExpressionContextImpl(table1, sqlNativeExpressionContextLeft));
         String sqlSegmentLeft = sqlFunction1.sqlSegment(table1);
         SQLNativePredicateImpl sqlNativePredicateLeft = new SQLNativePredicateImpl(expressionContext, sqlSegmentLeft, sqlNativeExpressionContextLeft);
-        SQLNativeExpressionContextImpl sqlNativeExpressionContextRight = new SQLNativeExpressionContextImpl(entityQueryExpressionBuilder.getExpressionContext(), runtimeContext);
+        SQLNativeExpressionContextImpl sqlNativeExpressionContextRight = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
         sqlFunction2.consume(new SQLNativeChainExpressionContextImpl(table2, sqlNativeExpressionContextRight));
         String sqlSegmentRight = sqlFunction2.sqlSegment(table2);
         SQLNativePredicateImpl sqlNativePredicateRight = new SQLNativePredicateImpl(expressionContext, sqlSegmentRight, sqlNativeExpressionContextRight);
@@ -102,7 +100,7 @@ public class AggregateFilterImpl implements AggregateFilter {
 
     @Override
     public AggregateFilter func(TableAvailable table, SQLFunction sqlFunction, SQLPredicateCompare compare, TableAvailable table2, String property) {
-        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityQueryExpressionBuilder.getExpressionContext(), runtimeContext);
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
         sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
         String sqlSegment = sqlFunction.sqlSegment(table);
         sqlNativeExpressionContext.expression(table2, property);
@@ -113,7 +111,7 @@ public class AggregateFilterImpl implements AggregateFilter {
 
     @Override
     public AggregateFilter func(TableAvailable table, SQLFunction sqlFunction, SQLPredicateCompare sqlPredicateAssert) {
-        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityQueryExpressionBuilder.getExpressionContext(),runtimeContext);
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext,runtimeContext);
         sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table,sqlNativeExpressionContext));
         String sqlSegment = sqlFunction.sqlSegment(table);
         nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment+" "+sqlPredicateAssert.getSQL(), sqlNativeExpressionContext));
@@ -123,7 +121,7 @@ public class AggregateFilterImpl implements AggregateFilter {
 
     @Override
     public <TProperty> AggregateFilter func(TableAvailable table, SQLFunction sqlFunction, SQLPredicateCompare compare, Query<TProperty> subQuery) {
-        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityQueryExpressionBuilder.getExpressionContext(), runtimeContext);
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
         sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
         String sqlSegment = sqlFunction.sqlSegment(table);
         sqlNativeExpressionContext.expression(subQuery);
@@ -148,7 +146,7 @@ public class AggregateFilterImpl implements AggregateFilter {
                 throw new UnsupportedOperationException();
             }
         }
-        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityQueryExpressionBuilder.getExpressionContext(), runtimeContext);
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
         sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
         String sqlSegment = sqlFunction.sqlSegment(table);
         sqlNativeExpressionContext.collection(collections);
@@ -237,7 +235,7 @@ public class AggregateFilterImpl implements AggregateFilter {
     @Override
     public AggregateFilter sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
         Objects.requireNonNull(contextConsume, "sql native context consume cannot be null");
-        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityQueryExpressionBuilder.getExpressionContext(), runtimeContext);
+        SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
         contextConsume.apply(sqlNativeExpressionContext);
         nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment, sqlNativeExpressionContext));
         nextAnd();
@@ -253,7 +251,7 @@ public class AggregateFilterImpl implements AggregateFilter {
     @Override
     public AggregateFilter and(SQLExpression1<AggregateFilter> aggregateFilterSQLExpression) {
         this.rootPredicateSegment.addPredicateSegment(this.nextPredicateSegment);
-        AggregateFilterImpl aggregateFilter = new AggregateFilterImpl(entityQueryExpressionBuilder, this.nextPredicateSegment);
+        AggregateFilterImpl aggregateFilter = new AggregateFilterImpl(expressionContext, this.nextPredicateSegment);
         aggregateFilterSQLExpression.apply(aggregateFilter);
         return this;
     }
@@ -268,7 +266,7 @@ public class AggregateFilterImpl implements AggregateFilter {
     public AggregateFilter or(SQLExpression1<AggregateFilter> aggregateFilterSQLExpression) {
         this.nextPredicateSegment = new OrPredicateSegment();
         this.rootPredicateSegment.addPredicateSegment(this.nextPredicateSegment);
-        AggregateFilterImpl aggregateFilter = new AggregateFilterImpl(entityQueryExpressionBuilder, this.nextPredicateSegment);
+        AggregateFilterImpl aggregateFilter = new AggregateFilterImpl(expressionContext, this.nextPredicateSegment);
         aggregateFilterSQLExpression.apply(aggregateFilter);
         return this;
     }

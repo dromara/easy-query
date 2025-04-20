@@ -142,6 +142,16 @@ public class FilterImpl implements Filter {
     }
 
     @Override
+    public ExpressionContext getExpressionContext() {
+        return expressionContext;
+    }
+
+    @Override
+    public PredicateSegment getRootPredicateSegment() {
+        return rootPredicateSegment;
+    }
+
+    @Override
     public boolean getReverse() {
         return reverse;
     }

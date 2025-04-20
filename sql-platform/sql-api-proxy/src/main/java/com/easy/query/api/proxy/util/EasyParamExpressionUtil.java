@@ -22,6 +22,9 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 public class EasyParamExpressionUtil {
 
     public static ParamExpression getParamExpression(EntitySQLContext entitySQLContext, Object value) {
+        if (value == null) {
+            return new FormatValueParamExpressionImpl("NULL");
+        }
         if (value instanceof SQLColumn) {
             SQLColumn<?, ?> sqlColumn = (SQLColumn<?, ?>) value;
             return new ColumnPropertyExpressionImpl(sqlColumn.getTable(), sqlColumn.getValue(), entitySQLContext.getEntityExpressionBuilder().getExpressionContext());
@@ -36,12 +39,5 @@ public class EasyParamExpressionUtil {
         } else {
             return new ColumnConstParameterExpressionImpl(value);
         }
-    }
-
-    public static ParamExpression getParamExpressionNullOrFormat(EntitySQLContext entitySQLContext, Object value) {
-        if (value == null) {
-            return new FormatValueParamExpressionImpl("NULL");
-        }
-        return getParamExpression(entitySQLContext, value);
     }
 }

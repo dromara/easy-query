@@ -20,6 +20,6 @@ public class MapHavingImpl extends AbstractMapTable implements MapHaving {
 
     @Override
     public WhereAggregatePredicate<?> getHavingPredicate(int tableIndex) {
-        return new WhereAggregatePredicateImpl<>(getTable(tableIndex), new AggregateFilterImpl(entityQueryExpressionBuilder, entityQueryExpressionBuilder.getHaving()));
+        return new WhereAggregatePredicateImpl<>(getTable(tableIndex), new AggregateFilterImpl(entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getHaving()));
     }
 }

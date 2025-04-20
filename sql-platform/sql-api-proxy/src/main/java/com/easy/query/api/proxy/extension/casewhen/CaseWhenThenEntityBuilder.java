@@ -2,7 +2,6 @@ package com.easy.query.api.proxy.extension.casewhen;
 
 import com.easy.query.api.proxy.util.EasyParamExpressionUtil;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
-import com.easy.query.core.extension.casewhen.CaseWhenBuilderExpression;
 import com.easy.query.core.extension.casewhen.SQLCaseWhenBuilder;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 
@@ -29,7 +28,7 @@ public class CaseWhenThenEntityBuilder {
     public <TV> CaseWhenEntityBuilder then(TV then) {
         sqlCaseWhenBuilder.caseWhen(filter -> {
             entitySQLContext._where(filter, sqlActionExpression);
-        }, EasyParamExpressionUtil.getParamExpressionNullOrFormat(entitySQLContext,then));
+        }, EasyParamExpressionUtil.getParamExpression(entitySQLContext,then));
         return caseWhenEntityBuilder;
     }
 }

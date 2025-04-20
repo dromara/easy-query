@@ -7,6 +7,7 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
@@ -1606,5 +1607,36 @@ public class M8BankTest extends BaseTest {
                 }).executeRows();
         int i1 = atomicInteger.get();
         Assert.assertEquals(1, i1);
+    }
+
+
+    @Test
+    public void testFlatTest(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        easyEntityQuery.queryable(SysBank.class)
+                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(bank -> {
+
+                    bank.bankCards().flatElement().code().eq("123");
+                    bank.bankCards().flatElement().type().eq("储蓄卡");
+
+                    //在隐式group上下两个是一样的功能
+//                    bank.bankCards().any(card->{
+//                        card.code().eq("123");
+//                        card.type().eq("储蓄卡");
+//                    });
+                })
+                .toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,(CASE WHEN COUNT((CASE WHEN t1.`code` = ? THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any2__`,(CASE WHEN COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any3__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ? AND IFNULL(t2.`__any3__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(Integer),true(Boolean),false(Boolean),储蓄卡(String),1(Integer),true(Boolean),false(Boolean),false(Boolean),true(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
     }
 }

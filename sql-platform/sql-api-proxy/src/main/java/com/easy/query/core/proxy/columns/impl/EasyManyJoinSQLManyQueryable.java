@@ -225,14 +225,13 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
     @Override
     public T1Proxy flatElement(SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> flatAdapterExpression) {
         T1Proxy propertyProxy = rewritePredicateToSelectProvider.getPropertyProxy();
-//        EntityQueryExpressionBuilder entityQueryExpressionBuilder = this.rewritePredicateToSelectProvider.getManyGroupJoinEntityTableExpressionBuilder().getEntityQueryExpressionBuilder();
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = this.rewritePredicateToSelectProvider.getManyGroupJoinEntityTableExpressionBuilder().getEntityQueryExpressionBuilder();
 //        EntityTableExpressionBuilder tableExpressionBuilder = entityQueryExpressionBuilder.getTable(0);
 //        return propertyProxy.create(rewritePredicateToSelectProvider.getManyGroupJoinTable(),this.rewritePredicateToSelectProvider.getEntitySQLContext());
 //        return ;
         QueryRuntimeContext runtimeContext = this.getEntitySQLContext().getRuntimeContext();
-        EntityQueryExpressionBuilder entityQueryExpressionBuilder = this.rewritePredicateToSelectProvider.getManyGroupJoinEntityTableExpressionBuilder().getEntityQueryExpressionBuilder();
 //        Map<RelationTableKey, ManyConfiguration> manyConfigurations = entityQueryExpressionBuilder.getManyConfigurations();
-        EntityExpressionBuilder entityExpressionBuilder = this.getEntitySQLContext().getEntityExpressionBuilder();
+//        EntityExpressionBuilder entityExpressionBuilder = this.getEntitySQLContext().getEntityExpressionBuilder();
 //        if(manyConfigurations!=null){
 //            for (Map.Entry<RelationTableKey, ManyConfiguration> kv : manyConfigurations.entrySet()) {
 //                entityExpressionBuilder.putManyConfiguration(kv.getKey(), kv.getValue());
@@ -246,13 +245,7 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
 //        }
 //
 ////        T1Proxy tPropertyProxy = propertyProxy.create(propertyProxy.getTable(), new ProxyFlatElementEntitySQLContext(this, this.easyEntityQueryable.getClientQueryable(), runtimeContext, flatAdapterExpression));
-        ProxyManyJoinFlatElementEntitySQLContext proxyManyJoinFlatElementEntitySQLContext = new ProxyManyJoinFlatElementEntitySQLContext(rewritePredicateToSelectProvider, entityExpressionBuilder, this.getEntitySQLContext().getContextHolder(), runtimeContext, flatAdapterExpression,sqlPredicateExpression->{
-
-            this.rewritePredicateToSelectProvider.getSubQueryContext().appendWhereExpression(s->{
-                sqlPredicateExpression.accept(this.rewritePredicateToSelectProvider.getSubQueryContext().getEntitySQLContext().getFilter());
-            });
-            this.rewritePredicateToSelectProvider.anyValue().eq(true);
-        });
+        ProxyManyJoinFlatElementEntitySQLContext proxyManyJoinFlatElementEntitySQLContext = new ProxyManyJoinFlatElementEntitySQLContext(rewritePredicateToSelectProvider, entityQueryExpressionBuilder, this.getEntitySQLContext().getContextHolder(), runtimeContext, flatAdapterExpression);
         T1Proxy tPropertyProxy = propertyProxy.create(propertyProxy.getTable(), proxyManyJoinFlatElementEntitySQLContext);
         tPropertyProxy.setNavValue(getNavValue());
         return tPropertyProxy;
