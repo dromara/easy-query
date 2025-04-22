@@ -85,7 +85,7 @@ public class M8OrderTest extends BaseTest{
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`no`,t.`price`,t.`create_time` FROM `t_order` t LEFT JOIN (SELECT t2.`id` AS `id`,t2.`order_id` AS `order_id`,t2.`price` AS `price`,t2.`create_time` AS `create_time` FROM (SELECT t1.`id`,t1.`order_id`,t1.`price`,t1.`create_time`,(ROW_NUMBER() OVER (PARTITION BY t1.`order_id`)) AS `__row__` FROM `t_order_item` t1) t2 WHERE t2.`__row__` = ?) t4 ON t4.`order_id` = t.`id` WHERE t4.`price` > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`no`,t.`price`,t.`create_time` FROM `t_order` t INNER JOIN (SELECT t2.`id` AS `id`,t2.`order_id` AS `order_id`,t2.`price` AS `price`,t2.`create_time` AS `create_time` FROM (SELECT t1.`id`,t1.`order_id`,t1.`price`,t1.`create_time`,(ROW_NUMBER() OVER (PARTITION BY t1.`order_id`)) AS `__row__` FROM `t_order_item` t1) t2 WHERE t2.`__row__` = ?) t4 ON t4.`order_id` = t.`id` WHERE t4.`price` > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
