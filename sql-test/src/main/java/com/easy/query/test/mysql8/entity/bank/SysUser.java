@@ -44,6 +44,11 @@ public class SysUser implements ProxyEntityAvailable<SysUser, SysUserProxy> {
      */
     @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"uid"}, subQueryToGroupJoin = true)
     private List<SysBankCard> bankCards2;
+    /**
+     * 用户拥有的银行卡数
+     */
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"uid"}, subQueryToGroupJoin = true, required = true)
+    private List<SysBankCard> bankCards3;
 
 
     @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"uid"})

@@ -1669,12 +1669,11 @@ public class M8BankTest extends BaseTest {
                 )).toList();
 
 
-
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
 
         List<SysBankCardDTO> list1 = easyEntityQuery.queryable(SysBankCard.class)
-                .configure(o->o.setGroupSize(1))
+                .configure(o -> o.setGroupSize(1))
                 .selectAutoInclude(SysBankCardDTO.class)
                 .toList();
         String jsonString = JSON.toJSONString(list, JSONWriter.Feature.WriteMapNullValue, JSONWriter.Feature.WriteNullListAsEmpty, JSONWriter.Feature.WriteNullStringAsEmpty);
@@ -1700,20 +1699,55 @@ public class M8BankTest extends BaseTest {
             Assert.assertEquals("u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
     }
+
+    @Test
+    public void testFirstElementInnerJoin() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SysUser> list1 = easyEntityQuery.queryable(SysUser.class)
+                .where(user -> {
+
+                    user.bankCards3()
+                            .orderBy(o -> o.openTime().asc())
+                            .firstElement().type().eq("储蓄卡");
+                }).toList();
+
+        listenerContextManager.clear();
+
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time` FROM `t_sys_user` t INNER JOIN (SELECT t2.`id` AS `id`,t2.`uid` AS `uid`,t2.`code` AS `code`,t2.`type` AS `type`,t2.`bank_id` AS `bank_id`,t2.`open_time` AS `open_time` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time`,(ROW_NUMBER() OVER (PARTITION BY t1.`uid` ORDER BY t1.`open_time` ASC)) AS `__row__` FROM `t_bank_card` t1) t2 WHERE t2.`__row__` = ?) t4 ON t4.`uid` = t.`id` WHERE t4.`type` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),储蓄卡(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+
     @Test
     public void testUserAutoSubQueryToGroupJoin() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
         List<Part1<SysUser, Long>> list = easyEntityQuery.queryable(SysUser.class)
                 .select(user -> Select.PART.of(
                         user,
-                        user.bankCards2().where(s->s.type().eq("储蓄卡")).count()
+                        user.bankCards2().where(s -> s.type().eq("储蓄卡")).count()
                 )).toList();
 
+        listenerContextManager.clear();
 
 
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time`,IFNULL(t2.`__count2__`,0) AS `__part__column1` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE NULL END)) AS `__count2__` FROM `t_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("储蓄卡(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
+    }
+    @Test
+    public void testUserAutoSubQueryToGroupJoin2() {
 
-
-
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
 
 
 
@@ -1725,11 +1759,19 @@ public class M8BankTest extends BaseTest {
                             .firstElement().type().eq("储蓄卡");
 
 
-
                     user.bankCards2()
                             .orderBy(o -> o.openTime().asc())
                             .firstElement().bank().name().eq("工商银行");
                 }).toList();
+
+        listenerContextManager.clear();
+
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time` FROM `t_sys_user` t LEFT JOIN (SELECT t2.`id` AS `id`,t2.`uid` AS `uid`,t2.`code` AS `code`,t2.`type` AS `type`,t2.`bank_id` AS `bank_id`,t2.`open_time` AS `open_time` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time`,(ROW_NUMBER() OVER (PARTITION BY t1.`uid` ORDER BY t1.`open_time` ASC)) AS `__row__` FROM `t_bank_card` t1) t2 WHERE t2.`__row__` = ?) t4 ON t4.`uid` = t.`id` INNER JOIN `t_bank` t5 ON t5.`id` = t4.`bank_id` WHERE t4.`type` = ? AND t5.`name` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),储蓄卡(String),工商银行(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
     }
 
 //    @Test

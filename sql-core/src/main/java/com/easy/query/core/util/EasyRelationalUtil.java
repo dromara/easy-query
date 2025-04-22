@@ -181,14 +181,14 @@ public class EasyRelationalUtil {
 
         String queryableKey = EasySQLUtil.toQueryableKey(manyQueryable);
 
-        EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(new ImplicitGroupRelationTableKey(leftTable,navigateMetadata.getPropertyName(),queryableKey), key -> {
+        EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(new ImplicitGroupRelationTableKey(leftTable, navigateMetadata.getPropertyName(), queryableKey), key -> {
 //            TableAvailable leftTable = getTable();
 
             RelationEntityTableAvailable rightTable = new RelationEntityTableAvailable(key, leftTable, entityMetadata, true);
             entityExpressionBuilder.getExpressionContext().extract(manyQueryable.getSQLEntityExpressionBuilder().getExpressionContext());
             ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();
             MultiTableTypeEnum joinType = MultiTableTypeEnum.LEFT_JOIN;
-            if(navigateMetadata.isRequired()){
+            if (navigateMetadata.isRequired()) {
                 joinType = MultiTableTypeEnum.INNER_JOIN;
             }
 
@@ -267,7 +267,11 @@ public class EasyRelationalUtil {
             RelationEntityTableAvailable rightTable = new RelationEntityTableAvailable(key, leftTable, partitionByEntityMetadata, true);
             entityExpressionBuilder.getExpressionContext().extract(select.getSQLEntityExpressionBuilder().getExpressionContext());
             ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();
-            EntityTableExpressionBuilder tableExpressionBuilder = expressionBuilderFactory.createAnonymousManyGroupEntityTableExpressionBuilder(rightTable, MultiTableTypeEnum.LEFT_JOIN, clientQueryable.getSQLEntityExpressionBuilder(), targetPropertiesOrPrimary);
+            MultiTableTypeEnum joinType = MultiTableTypeEnum.LEFT_JOIN;
+            if (index == 0 && navigateMetadata.isRequired()) {
+                joinType = MultiTableTypeEnum.INNER_JOIN;
+            }
+            EntityTableExpressionBuilder tableExpressionBuilder = expressionBuilderFactory.createAnonymousManyGroupEntityTableExpressionBuilder(rightTable, joinType, clientQueryable.getSQLEntityExpressionBuilder(), targetPropertiesOrPrimary);
 
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
 

@@ -124,11 +124,17 @@ public @interface Navigate {
     /**
      * 表示目标对象是否必须存在
      * 作用如果你是ManyToOne或者OneToOne则隐式join会变成inner join
-     * 如果你是OneToMany或者ManyToMany那么隐式group将会以inner join进行连表 但是隐式partition by依然是left join
+     * 如果你是OneToMany或者ManyToMany那么隐式group将会以inner join进行连表 如果是隐式partition by那么index=0也就是firstElement也是inner join
+     * 其余情况使用left join
      *
      * @return
      */
     boolean required() default false;
 
+    /**
+     * 子查询转groupJoin 仅toMany生效
+     * 建议数据量大于20-50w后或者系统明显出现子查询缓慢的情况下开启这个
+     * @return
+     */
     boolean subQueryToGroupJoin() default false;
 }
