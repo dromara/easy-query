@@ -461,6 +461,18 @@ public class DamengQueryTest extends DamengBaseTest {
                 }).toList();
     }
 
+    @Test
+    public void testEasyQuery(){
+        List<DamengMyTopic> list = easyQuery.queryable(DamengMyTopic.class)
+                .where(d -> {
+                    d.isNull(DamengMyTopic::getId);
+                })
+                .groupBy(d -> d.column(DamengMyTopic::getTitle))
+                .select(DamengMyTopic.class, o -> {
+                    o.columnAs(DamengMyTopic::getTitle, DamengMyTopic::getTitle);
+                }).limit(0, 9).toList();
+    }
+
 //    @Data
 //    @FieldNameConstants
 //    public static class TestVO {

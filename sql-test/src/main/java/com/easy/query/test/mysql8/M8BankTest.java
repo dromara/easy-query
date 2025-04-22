@@ -12,11 +12,13 @@ import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
+import com.easy.query.core.proxy.core.draft.proxy.Draft3Proxy;
 import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.part.Part2;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.common.M8Interceptor;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
@@ -25,6 +27,7 @@ import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.bank.SysUserBook;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysUserProxy;
 import com.easy.query.test.mysql8.vo.MyUserVO;
+import com.easy.query.test.mysql8.vo.SysBankCardDTO;
 import com.easy.query.test.mysql8.vo.SysBankDTO;
 import com.easy.query.test.mysql8.vo.SysUserDTO;
 import com.easy.query.test.mysql8.vo.SysUserDTO2;
@@ -211,7 +214,7 @@ public class M8BankTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
 
-        List<SysBankCard> list1 = easyEntityQuery.queryable(SysBankCard.class)
+        List<SysBankCard> bankCards = easyEntityQuery.queryable(SysBankCard.class)
                 .where(bank_card -> {
                     bank_card.user().phone().like("1234");
                     bank_card.bank().name().eq("工商银行");
@@ -1611,14 +1614,14 @@ public class M8BankTest extends BaseTest {
 
 
     @Test
-    public void testFlatTest(){
+    public void testFlatTest() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         easyEntityQuery.queryable(SysBank.class)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(bank -> {
 
                     bank.bankCards().flatElement().code().eq("123");
@@ -1639,4 +1642,83 @@ public class M8BankTest extends BaseTest {
         Assert.assertEquals("123(String),1(Integer),true(Boolean),false(Boolean),储蓄卡(String),1(Integer),true(Boolean),false(Boolean),false(Boolean),true(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
+    @Test
+    public void dynamicPartition() {
+        boolean likeICBC = false;
+        String name = "小明";
+        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                .where(user -> {
+                    if (EasyStringUtil.isNotBlank(name)) {
+                        user.name().like(name);
+                    }
+                    if (likeICBC) {
+                        //用户的银行卡中第一个开户银行卡是工商银行的
+                        user.bankCards().orderBy(x -> x.openTime().asc()).firstElement().bank().name().eq("工商银行");
+                    }
+                }).toList();
+    }
+
+
+    @Test
+    public void partitionBy() {
+        List<Part1<SysUser, String>> list = easyEntityQuery.queryable(SysUser.class)
+                .select(user -> Select.PART.of(
+                        user,
+                        user.bankCards().orderBy(card -> card.openTime().asc()).firstElement().code()
+                )).toList();
+
+        List<SysBankCardDTO> list1 = easyEntityQuery.queryable(SysBankCard.class)
+                .selectAutoInclude(SysBankCardDTO.class)
+                .toList();
+    }
+    @Test
+    public void testUserAutoSubQueryToGroupJoin() {
+        List<Part1<SysUser, Long>> list = easyEntityQuery.queryable(SysUser.class)
+                .select(user -> Select.PART.of(
+                        user,
+                        user.bankCards2().where(s->s.type().eq("储蓄卡")).count()
+                )).toList();
+
+
+
+
+
+
+
+
+
+
+        List<SysUser> users = easyEntityQuery.queryable(SysUser.class)
+                .where(user -> {
+
+                    user.bankCards2()
+                            .orderBy(o -> o.openTime().asc())
+                            .firstElement().type().eq("储蓄卡");
+
+
+
+                    user.bankCards2()
+                            .orderBy(o -> o.openTime().asc())
+                            .firstElement().bank().name().eq("工商银行");
+                }).toList();
+    }
+
+//    @Test
+//    public void partitionBy2() {
+//        EntityQueryable<Draft3Proxy<String, String, Long>, Draft3<String, String, Long>> cteAs = easyEntityQuery.queryable(SysBankCard.class)
+//                .select(bank_card -> Select.DRAFT.of(
+//                        bank_card.uid(),
+//                        bank_card.code(),
+//                        bank_card.expression().rowNumberOver().partitionBy(bank_card.uid()).orderBy(bank_card.openTime())
+//                )).toCteAs();
+//
+//        List<Part1<SysUser, String>> list = easyEntityQuery.queryable(SysUser.class)
+//                .leftJoin(cteAs, (user, cte) -> user.id().eq(cte.value1()))
+//                .where((user, cte) -> cte.value3().eq(1L))
+//                .select((user, cte) -> Select.PART.of(
+//                        user,
+//                        cte.value2()
+//                )).toList();
+//    }
 }

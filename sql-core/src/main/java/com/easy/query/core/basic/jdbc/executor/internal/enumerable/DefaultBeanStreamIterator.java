@@ -47,8 +47,9 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
     @Override
     protected void init0() throws SQLException {
         ResultSetMetaData rsmd = streamResultSet.getMetaData();
-        if(context.getExpressionContext().hasRelationExtraMetadata()){
-            relationExtraMetadata =context.getExpressionContext().getRelationExtraMetadata();
+        if (context.getExpressionContext().hasRelationExtraMetadata()) {
+            relationExtraMetadata = context.getExpressionContext().getRelationExtraMetadata();
+            relationExtraMetadata.clearRow();
         }
         this.dataReader = getColumnDataReader(rsmd);
         this.trackBean = EasyTrackUtil.trackBean(context, resultMetadata.getResultClass());
@@ -58,7 +59,7 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
     @Override
     protected T next0() throws SQLException {
         T bean = mapTo();
-        if(hasForEach){
+        if (hasForEach) {
             context.getExpressionContext().getForEachConfigurer().accept(bean);
         }
         if (trackBean && bean != null) {
@@ -74,13 +75,14 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
 
     /**
      * 映射到bean
+     *
      * @return
      * @throws SQLException
      */
     @Override
     protected T mapTo() throws SQLException {
         T bean = resultMetadata.newBean();
-        if(relationExtraMetadata!=null){
+        if (relationExtraMetadata != null) {
             this.relationExtraMetadata.createRow();
         }
         dataReader.readTo(bean, streamResultSet);
@@ -102,24 +104,24 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
             }
             ResultColumnMetadata resultColumnMetadata = getMapColumnMetadata(i, colName, mapToBeanStrict);
             if (resultColumnMetadata == null) {
-                if(relationExtraMetadata!=null){
+                if (relationExtraMetadata != null) {
                     Map<String, RelationExtraColumn> relationExtraColumnMap = relationExtraMetadata.getRelationExtraColumnMap();
                     RelationExtraColumn relationExtraColumn = relationExtraColumnMap.get(colName);
-                    if(relationExtraColumn!=null){
+                    if (relationExtraColumn != null) {
                         RelationExtraResultColumnMetadata relationExtraResultColumnMetadata = new RelationExtraResultColumnMetadata(i, relationExtraMetadata, relationExtraColumn);
                         dataReader = new BeanDataReader(dataReader, new RelationExtraPropertyDataReader(relationExtraResultColumnMetadata));
                         continue;
-                    } else if(easyQueryOption.isWarningColumnMiss()){
-                        log.warn("!!!sql result column name:["+colName+"] mapping miss in class:["+ EasyClassUtil.getSimpleName(resultMetadata.getResultClass()) +"]");
+                    } else if (easyQueryOption.isWarningColumnMiss()) {
+                        log.warn("!!!sql result column name:[" + colName + "] mapping miss in class:[" + EasyClassUtil.getSimpleName(resultMetadata.getResultClass()) + "]");
                     }
-                } else if(easyQueryOption.isWarningColumnMiss()){
-                    log.warn("!!!sql result column name:["+colName+"] mapping miss in class:["+ EasyClassUtil.getSimpleName(resultMetadata.getResultClass()) +"]");
+                } else if (easyQueryOption.isWarningColumnMiss()) {
+                    log.warn("!!!sql result column name:[" + colName + "] mapping miss in class:[" + EasyClassUtil.getSimpleName(resultMetadata.getResultClass()) + "]");
                 }
                 continue;
             }
-            if(PartResult.class.isAssignableFrom(resultMetadata.getResultClass())){
+            if (PartResult.class.isAssignableFrom(resultMetadata.getResultClass())) {
                 dataReader = new BeanDataReader(dataReader, new PartByPropertyDataReader(resultColumnMetadata));
-            }else{
+            } else {
                 dataReader = new BeanDataReader(dataReader, new PropertyDataReader(resultColumnMetadata));
             }
         }

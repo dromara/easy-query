@@ -404,6 +404,7 @@ public class EntityMetadata {
                 }
                 navigateOption.setForeignKey(true);
             }
+            navigateOption.setSubQueryToGroupJoin(toMany && navigate.subQueryToGroupJoin());
             navigateOption.setRequired(required);
             NavigateExtraFilterStrategy navigateExtraFilterStrategy = getNavigateExtraFilterStrategy(configuration, navigate);
             if (navigateExtraFilterStrategy != null) {

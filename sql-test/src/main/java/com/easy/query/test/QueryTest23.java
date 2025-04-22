@@ -91,6 +91,9 @@ public class QueryTest23 extends BaseTest {
 
     @Test
     public void testElement3() {
+        List<DocUser> list1 = easyEntityQuery.queryable(DocUser.class)
+                .orderBy(user -> user.age())
+                .toList();
 
 
         ListenerContext listenerContext = new ListenerContext();

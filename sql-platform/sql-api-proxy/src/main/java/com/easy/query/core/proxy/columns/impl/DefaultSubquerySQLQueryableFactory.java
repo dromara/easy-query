@@ -57,7 +57,7 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
 
         EntityRelationPropertyProvider entityRelationPredicateProvider = navigateMetadata.getEntityRelationPropertyProvider();
         boolean hasBehavior = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN);
-        if (hasBehavior || entityExpressionBuilder.hasSubQueryToGroupJoin(defaultRelationTableKey)) {
+        if (navigateMetadata.isSubQueryToGroupJoin() || hasBehavior || entityExpressionBuilder.hasSubQueryToGroupJoin(defaultRelationTableKey)) {
             EntityRelationPropertyProvider entityRelationPropertyProvider = navigateMetadata.getEntityRelationPropertyProvider();
             if (entityRelationPropertyProvider instanceof EntityRelationToImplicitGroupProvider) {
                 EntityRelationToImplicitGroupProvider entityRelationToImplicitGroupProvider = (EntityRelationToImplicitGroupProvider) entityRelationPropertyProvider;

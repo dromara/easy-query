@@ -26,6 +26,7 @@ import com.easy.query.test.mysql8.entity.M8User2;
 import com.easy.query.test.mysql8.entity.M8UserBook;
 import com.easy.query.test.mysql8.entity.M8UserRole;
 import com.easy.query.test.mysql8.entity.M8UserRole2;
+import com.easy.query.test.mysql8.entity.bank.SysUser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

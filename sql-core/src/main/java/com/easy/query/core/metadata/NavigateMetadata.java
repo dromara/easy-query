@@ -66,6 +66,7 @@ public class NavigateMetadata {
     private final long limit;
     private final boolean foreignKey;
     private final boolean required;
+    private final boolean subQueryToGroupJoin;
 
     public NavigateMetadata(NavigateOption navigateOption,
                             Property<Object, ?> getter,
@@ -92,6 +93,7 @@ public class NavigateMetadata {
         this.setter = setter;
         this.foreignKey = navigateOption.isForeignKey();
         this.required = navigateOption.isRequired();
+        this.subQueryToGroupJoin = navigateOption.isSubQueryToGroupJoin();
         if (EasyArrayUtil.isNotEmpty(directMapping)) {
             this.directMappingMetadataMap = new ConcurrentHashMap<>(2);
         } else {
@@ -305,11 +307,27 @@ public class NavigateMetadata {
         return entityRelationPropertyProvider;
     }
 
+    /**
+     * 是否外键 如果是则使用inner join
+     * @return
+     */
     public boolean isForeignKey() {
         return foreignKey;
     }
 
+    /**
+     * 用来描述是否存在 存在则使用inner join
+     * @return
+     */
     public boolean isRequired() {
         return required;
+    }
+
+    /**
+     * 默认不使用子查询而是将子查询转成group by
+     * @return
+     */
+    public boolean isSubQueryToGroupJoin() {
+        return subQueryToGroupJoin;
     }
 }

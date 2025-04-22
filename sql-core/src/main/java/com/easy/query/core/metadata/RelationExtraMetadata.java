@@ -37,7 +37,9 @@ public class RelationExtraMetadata {
     }
     public void clearRow(){
         this.currentIndex=-1;
-        this.relationExtraColumnList.clear();
+        if(!this.relationExtraColumnList.isEmpty()){
+            this.relationExtraColumnList.clear();
+        }
     }
 
     public Map<String, Object> currentRow() {

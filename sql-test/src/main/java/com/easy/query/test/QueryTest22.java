@@ -1185,6 +1185,7 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void testManyJoinNone() {
 
@@ -1196,9 +1197,9 @@ public class QueryTest22 extends BaseTest {
                 .manyJoin(x -> x.bankCards())
                 .where(user -> {
                     user.bankCards().any();
-                    user.bankCards().where(x->x.type().eq("123")).any();
+                    user.bankCards().where(x -> x.type().eq("123")).any();
                     user.bankCards().none();
-                    user.bankCards().where(x->x.type().eq("123")).none();
+                    user.bankCards().where(x -> x.type().eq("123")).none();
                 }).toList();
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1207,6 +1208,7 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("true(Boolean),false(Boolean),123(String),1(Integer),true(Boolean),false(Boolean),false(Boolean),true(Boolean),123(String),1(Integer),false(Boolean),true(Boolean),false(Boolean),true(Boolean),false(Boolean),true(Boolean),true(Boolean),true(Boolean),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void testManyJoinCount() {
 
@@ -1218,7 +1220,7 @@ public class QueryTest22 extends BaseTest {
                 .manyJoin(x -> x.bankCards())
                 .where(user -> {
                     user.bankCards().count().eq(0L);
-                    user.bankCards().where(x->x.type().eq("123")).count().gt(0L);
+                    user.bankCards().where(x -> x.type().eq("123")).count().gt(0L);
                 }).toList();
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1227,5 +1229,30 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("123(String),1(Integer),0(Long),0(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+@Test
+    public void testaa() {
+        boolean useOrder=false;
+    List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+            .where(t_blog -> {
+                t_blog.or(()->{
+                    t_blog.title().like("123");
+                    t_blog.id().like("123");
+                    t_blog.star().eq(1);
+                });
+            })
+            .orderBy(useOrder,t_blog -> {
+
+                t_blog.expression().caseWhen(() -> {
+                            t_blog.title().eq("123");
+                        }).then(1)
+                        .caseWhen(() -> {
+                            t_blog.title().eq("456");
+                        }).then(2)
+                        .elseEnd(3)
+                        .asc();
+            })
+            .orderBy(useOrder,t_blog -> t_blog.star().asc())
+            .toList();
+}
 
 }

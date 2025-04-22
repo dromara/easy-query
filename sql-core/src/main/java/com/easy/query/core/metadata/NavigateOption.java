@@ -35,6 +35,7 @@ public class NavigateOption {
     private EntityRelationPropertyProvider entityRelationPropertyProvider;
     private boolean foreignKey = false;
     private boolean required = false;
+    private boolean subQueryToGroupJoin = false;
 
     public NavigateOption(EntityMetadata entityMetadata,
                           String propertyName,
@@ -168,5 +169,13 @@ public class NavigateOption {
 
     public void setRequired(boolean required) {
         this.required = required;
+    }
+
+    public boolean isSubQueryToGroupJoin() {
+        return subQueryToGroupJoin;
+    }
+
+    public void setSubQueryToGroupJoin(boolean subQueryToGroupJoin) {
+        this.subQueryToGroupJoin = subQueryToGroupJoin;
     }
 }

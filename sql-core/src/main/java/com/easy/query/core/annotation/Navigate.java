@@ -14,6 +14,7 @@ import java.lang.annotation.Target;
  * create time 2023/6/17 19:21
  * 导航属性 关联查询
  * 如果用到非数据库对象譬如VO对象上面,那么只需要定义RelationType即可,其余属性定义了也会被忽略
+ *
  * @author xuejiaming
  */
 @Documented
@@ -24,11 +25,14 @@ public @interface Navigate {
      * 关联关系
      */
     RelationTypeEnum value();
+
     /**
      * 当前对象的哪个属性关联目标对象,空表示使用当前对象的主键
+     *
      * @return
      */
     String[] selfProperty() default {};
+
     /**
      * 当前对象的{@param selfProperty}属性关联目标的哪个属性,空表示使用目标对象的主键
      */
@@ -37,6 +41,7 @@ public @interface Navigate {
     /**
      * 多对多填写
      * 多对多中间表 中间表必须是表对象 多对多不能为空
+     *
      * @return
      */
     Class<?> mappingClass() default Object.class;
@@ -44,6 +49,7 @@ public @interface Navigate {
     /**
      * 多对多填写
      * 当前对象的{@param selfProperty}属性对应中间表的哪个属性,多对多不能为空
+     *
      * @return
      */
     String[] selfMappingProperty() default {};
@@ -51,12 +57,14 @@ public @interface Navigate {
     /**
      * 多对多填写
      * 目标对象的{@param targetProperty}属性对应中间表的哪个属性,多对多不能为空
+     *
      * @return
      */
     String[] targetMappingProperty() default {};
 
     /**
      * 属性是否是代理对象
+     *
      * @return
      */
     boolean propIsProxy() default true;
@@ -71,18 +79,21 @@ public @interface Navigate {
      *          })
      *      }
      * </pre></blockquote>
+     *
      * @return
      */
     OrderByProperty[] orderByProps() default {};
 
     /**
      * 偏移量
+     *
      * @return
      */
     long offset() default 0;
 
     /**
      * 拉取数量
+     *
      * @return
      */
     long limit() default 0;
@@ -90,6 +101,7 @@ public @interface Navigate {
 
     /**
      * 仅entity生效
+     *
      * @return
      */
 
@@ -97,12 +109,14 @@ public @interface Navigate {
 
     /**
      * xToOne中间表
+     *
      * @return
      */
     String[] directMapping() default {};
 
     /**
      * 属性关联策略
+     *
      * @return
      */
     String relationPropertyStrategy() default "";
@@ -111,7 +125,10 @@ public @interface Navigate {
      * 表示目标对象是否必须存在
      * 作用如果你是ManyToOne或者OneToOne则隐式join会变成inner join
      * 如果你是OneToMany或者ManyToMany那么隐式group将会以inner join进行连表 但是隐式partition by依然是left join
+     *
      * @return
      */
     boolean required() default false;
+
+    boolean subQueryToGroupJoin() default false;
 }

@@ -3,6 +3,7 @@ package com.easy.query.test.mysql8.entity.bank;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EasyAlias;
 import com.easy.query.core.annotation.EntityProxy;
+import com.easy.query.core.annotation.ForeignKey;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.enums.RelationTypeEnum;
@@ -25,7 +26,7 @@ import java.util.List;
 @Data
 @FieldNameConstants
 @EasyAlias("user")
-public class SysUser implements ProxyEntityAvailable<SysUser , SysUserProxy> {
+public class SysUser implements ProxyEntityAvailable<SysUser, SysUserProxy> {
     @Column(primaryKey = true)
     private String id;
     private String name;
@@ -38,6 +39,11 @@ public class SysUser implements ProxyEntityAvailable<SysUser , SysUserProxy> {
      */
     @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"uid"})
     private List<SysBankCard> bankCards;
+    /**
+     * 用户拥有的银行卡数
+     */
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"uid"}, subQueryToGroupJoin = true)
+    private List<SysBankCard> bankCards2;
 
 
     @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"uid"})
