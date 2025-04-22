@@ -1668,9 +1668,37 @@ public class M8BankTest extends BaseTest {
                         user.bankCards().orderBy(card -> card.openTime().asc()).firstElement().code()
                 )).toList();
 
+
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
         List<SysBankCardDTO> list1 = easyEntityQuery.queryable(SysBankCard.class)
+                .configure(o->o.setGroupSize(1))
                 .selectAutoInclude(SysBankCardDTO.class)
                 .toList();
+        String jsonString = JSON.toJSONString(list, JSONWriter.Feature.WriteMapNullValue, JSONWriter.Feature.WriteNullListAsEmpty, JSONWriter.Feature.WriteNullStringAsEmpty);
+        System.out.println(jsonString);
+
+        listenerContextManager.clear();
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time` FROM `t_bank_card` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `phone`,`name`,`id` AS `__relation__id` FROM `t_sys_user` WHERE `id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("u1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `phone`,`name`,`id` AS `__relation__id` FROM `t_sys_user` WHERE `id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
     }
     @Test
     public void testUserAutoSubQueryToGroupJoin() {

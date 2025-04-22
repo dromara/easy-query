@@ -74,7 +74,6 @@ public class BaseTest {
                 .optionConfigure(op -> {
                     op.setDeleteThrowError(false);
                     op.setDefaultTrack(true);
-                    op.setRelationGroupSize(1);
                 })
 //                .replaceService(Column2MapKeyConversion.class, UpperColumn2MapKeyConversion.class)
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())

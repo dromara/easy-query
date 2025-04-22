@@ -131,7 +131,12 @@ public class NavigateIncludeImpl implements NavigateInclude {
         includeNavigateParams.setNavigateMetadata(navigateMetadata);
         includeNavigateParams.setTable(this.entityTable);
         if (groupSize == null) {
-            includeNavigateParams.setRelationGroupSize(runtimeContext.getQueryConfiguration().getEasyQueryOption().getRelationGroupSize());
+            Integer expressionContextGroupSize = expressionContext.getGroupSize();
+            if (expressionContextGroupSize == null) {
+                includeNavigateParams.setRelationGroupSize(runtimeContext.getQueryConfiguration().getEasyQueryOption().getRelationGroupSize());
+            } else {
+                includeNavigateParams.setRelationGroupSize(expressionContextGroupSize);
+            }
         } else {
             includeNavigateParams.setRelationGroupSize(groupSize);
         }
