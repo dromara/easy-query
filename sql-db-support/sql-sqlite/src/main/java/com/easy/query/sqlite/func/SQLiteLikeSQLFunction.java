@@ -5,6 +5,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncValueExpression;
 import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
+import com.easy.query.core.func.def.impl.AbstractLikeSQLFunction;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class SQLiteLikeSQLFunction extends AbstractExpressionSQLFunction {
+public class SQLiteLikeSQLFunction extends AbstractLikeSQLFunction {
     private final List<ColumnExpression> columnExpressions;
     private final SQLLikeEnum sqlLikeEnum;
 
@@ -30,19 +31,19 @@ public class SQLiteLikeSQLFunction extends AbstractExpressionSQLFunction {
             throw new IllegalArgumentException("bank arguments != 1");
         }
         ColumnExpression columnExpression = columnExpressions.get(1);
-        if (columnExpression instanceof ColumnFuncValueExpression) {
-            ColumnFuncValueExpression columnFuncValueExpression = (ColumnFuncValueExpression) columnExpression;
+        ColumnFuncValueExpression columnFuncValueExpression = getColumnFuncValueExpression(columnExpression);
+        if (columnFuncValueExpression != null) {
             Object value = columnFuncValueExpression.getValue();
-            if (value != null) {
-                String valueString = value.toString();
+            if (value instanceof String) {
+                String valueString = (String) value;
                 if (valueString.contains("%")) {
                     if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_RIGHT) {
-                        return "INSTR({1},{0}) = 1";
+                        return "INSTR({0},{1}) = 1";
                     }
                     if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_LEFT) {
-                        return "INSTR({1},{0}) = LENGTH({0})";
+                        return "INSTR({0},{1}) = (LENGTH({0}) - LENGTH({1}) + 1)";
                     }
-                    return "INSTR({1},{0}) > 0";
+                    return "INSTR({0},{1}) > 0";
                 }
             }
         }

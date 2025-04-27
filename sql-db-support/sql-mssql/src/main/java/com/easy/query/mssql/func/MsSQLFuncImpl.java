@@ -155,4 +155,9 @@ public class MsSQLFuncImpl extends SQLFuncImpl {
     public SQLFunction booleanConstantSQLFunction(boolean trueOrFalse) {
         return new MsSQLBooleanConstantSQLFunction(trueOrFalse);
     }
+
+    @Override
+    public SQLFunction indexOf(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MsSQLIndexOfSQLFunction(getColumnExpressions(sqlExpression));
+    }
 }

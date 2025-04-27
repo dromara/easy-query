@@ -84,8 +84,8 @@ public class OracleSQLFuncImpl extends SQLFuncImpl {
     }
 
     @Override
-    public SQLFunction joining(SQLExpression1<ColumnFuncSelector> sqlExpression,boolean distinct) {
-        return new OracleJoiningSQLFunction(getColumnExpressions(sqlExpression),distinct);
+    public SQLFunction joining(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean distinct) {
+        return new OracleJoiningSQLFunction(getColumnExpressions(sqlExpression), distinct);
     }
 
     @Override
@@ -155,5 +155,10 @@ public class OracleSQLFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction booleanConstantSQLFunction(boolean trueOrFalse) {
         return new OracleBooleanConstantSQLFunction(trueOrFalse);
+    }
+
+    @Override
+    public SQLFunction indexOf(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new OracleIndexOfSQLFunction(getColumnExpressions(sqlExpression));
     }
 }

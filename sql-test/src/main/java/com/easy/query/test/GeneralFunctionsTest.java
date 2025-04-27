@@ -22,6 +22,7 @@ import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.oracle.config.OracleDatabaseConfiguration;
 import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
+import com.easy.query.sqlite.config.SQLiteDatabaseConfiguration;
 import com.easy.query.test.common.EmptyDataSource;
 import com.easy.query.test.common.LowerUnderlinedNameConversion;
 import com.easy.query.test.common.MyQueryConfiguration;
@@ -547,6 +548,246 @@ public class GeneralFunctionsTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT MAX(t.`score`) AS `value1`,MAX((CASE WHEN t.`title` <> ? THEN t.`score` ELSE NULL END)) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`content` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("恐怖(String),false(Boolean),%abc%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void likeSQLite() {
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        EasyEntityQuery easyEntityQuery = create(listenerContextManager, new SQLiteDatabaseConfiguration());
+        listenerContextManager.startCreateListen();
+
+
+        try {
+
+            List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+                    .where(bank_card -> {
+                        bank_card.type().like(bank_card.expression().constant("30%"));
+                    }).toList();
+        } catch (Exception ignored) {
+
+        }
+        ListenerContext listenerContext = listenerContextManager.getListenContext();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT \"id\",\"uid\",\"code\",\"type\",\"bank_id\" FROM \"doc_bank_card\" WHERE INSTR(\"type\",?) > 0", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("30%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void likeSQLite2() {
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        EasyEntityQuery easyEntityQuery = create(listenerContextManager, new SQLiteDatabaseConfiguration());
+        listenerContextManager.startCreateListen();
+
+
+        try {
+
+            List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+                    .where(bank_card -> {
+                        bank_card.type().likeMatchLeft(bank_card.expression().constant("30%"));
+                    }).toList();
+        } catch (Exception ignored) {
+
+        }
+        ListenerContext listenerContext = listenerContextManager.getListenContext();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT \"id\",\"uid\",\"code\",\"type\",\"bank_id\" FROM \"doc_bank_card\" WHERE INSTR(\"type\",?) = 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("30%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void likeSQLite3() {
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        EasyEntityQuery easyEntityQuery = create(listenerContextManager, new SQLiteDatabaseConfiguration());
+        listenerContextManager.startCreateListen();
+
+
+        try {
+
+            List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+                    .where(bank_card -> {
+                        bank_card.type().likeMatchRight(bank_card.expression().constant("30%"));
+                    }).toList();
+        } catch (Exception ignored) {
+
+        }
+        ListenerContext listenerContext = listenerContextManager.getListenContext();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT \"id\",\"uid\",\"code\",\"type\",\"bank_id\" FROM \"doc_bank_card\" WHERE INSTR(\"type\",?) = (LENGTH(\"type\") - LENGTH(?) + 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("30%(String),30%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    
+    
+    
+    
+    
+    
+    //...............
+
+    @Test
+    public void likePgSQL() {
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        EasyEntityQuery easyEntityQuery = create(listenerContextManager, new PgSQLDatabaseConfiguration());
+        listenerContextManager.startCreateListen();
+
+
+        try {
+
+            List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+                    .where(bank_card -> {
+                        bank_card.type().like(bank_card.expression().constant("30%"));
+                    }).toList();
+        } catch (Exception ignored) {
+
+        }
+        ListenerContext listenerContext = listenerContextManager.getListenContext();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT \"id\",\"uid\",\"code\",\"type\",\"bank_id\" FROM \"doc_bank_card\" WHERE STRPOS(\"type\",?) > 0", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("30%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void likePgSQL2() {
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        EasyEntityQuery easyEntityQuery = create(listenerContextManager, new PgSQLDatabaseConfiguration());
+        listenerContextManager.startCreateListen();
+
+
+        try {
+
+            List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+                    .where(bank_card -> {
+                        bank_card.type().likeMatchLeft(bank_card.expression().constant("30%"));
+                    }).toList();
+        } catch (Exception ignored) {
+
+        }
+        ListenerContext listenerContext = listenerContextManager.getListenContext();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT \"id\",\"uid\",\"code\",\"type\",\"bank_id\" FROM \"doc_bank_card\" WHERE STRPOS(\"type\",?) = 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("30%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void likePgSQL3() {
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        EasyEntityQuery easyEntityQuery = create(listenerContextManager, new PgSQLDatabaseConfiguration());
+        listenerContextManager.startCreateListen();
+
+
+        try {
+
+            List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+                    .where(bank_card -> {
+                        bank_card.type().likeMatchRight(bank_card.expression().constant("30%"));
+                    }).toList();
+        } catch (Exception ignored) {
+
+        }
+        ListenerContext listenerContext = listenerContextManager.getListenContext();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT \"id\",\"uid\",\"code\",\"type\",\"bank_id\" FROM \"doc_bank_card\" WHERE STRPOS(\"type\",?) = (CHAR_LENGTH(\"type\") - CHAR_LENGTH(?) + 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("30%(String),30%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+
+
+
+    //...............
+
+    @Test
+    public void likeOracle() {
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        EasyEntityQuery easyEntityQuery = create(listenerContextManager, new OracleDatabaseConfiguration());
+        listenerContextManager.startCreateListen();
+
+
+        try {
+
+            List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+                    .where(bank_card -> {
+                        bank_card.type().like(bank_card.expression().constant("30%"));
+                    }).toList();
+        } catch (Exception ignored) {
+
+        }
+        ListenerContext listenerContext = listenerContextManager.getListenContext();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT \"id\",\"uid\",\"code\",\"type\",\"bank_id\" FROM \"doc_bank_card\" WHERE INSTR(\"type\",?,1,1) > 0", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("30%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void likeOracle2() {
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        EasyEntityQuery easyEntityQuery = create(listenerContextManager, new OracleDatabaseConfiguration());
+        listenerContextManager.startCreateListen();
+
+
+        try {
+
+            List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+                    .where(bank_card -> {
+                        bank_card.type().likeMatchLeft(bank_card.expression().constant("30%"));
+                    }).toList();
+        } catch (Exception ignored) {
+
+        }
+        ListenerContext listenerContext = listenerContextManager.getListenContext();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT \"id\",\"uid\",\"code\",\"type\",\"bank_id\" FROM \"doc_bank_card\" WHERE INSTR(\"type\",?,1,1) = 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("30%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void likeOracle3() {
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        EasyEntityQuery easyEntityQuery = create(listenerContextManager, new OracleDatabaseConfiguration());
+        listenerContextManager.startCreateListen();
+
+
+        try {
+
+            List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+                    .where(bank_card -> {
+                        bank_card.type().likeMatchRight(bank_card.expression().constant("30%"));
+                    }).toList();
+        } catch (Exception ignored) {
+
+        }
+        ListenerContext listenerContext = listenerContextManager.getListenContext();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT \"id\",\"uid\",\"code\",\"type\",\"bank_id\" FROM \"doc_bank_card\" WHERE INSTR(\"type\",?,1,1) = (LENGTH(\"type\") - LENGTH(?) + 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("30%(String),30%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 }

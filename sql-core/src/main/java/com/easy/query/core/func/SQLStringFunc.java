@@ -202,6 +202,7 @@ public interface SQLStringFunc {
      * @return 截取字符串函数
      */
     SQLFunction subString(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction indexOf(SQLExpression1<ColumnFuncSelector> sqlExpression);
 
     /**
      * 截取字符串

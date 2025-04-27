@@ -5,6 +5,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncValueExpression;
 import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
+import com.easy.query.core.func.def.impl.AbstractLikeSQLFunction;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class OracleLikeSQLFunction extends AbstractExpressionSQLFunction {
+public class OracleLikeSQLFunction extends AbstractLikeSQLFunction {
     private final List<ColumnExpression> columnExpressions;
     private final SQLLikeEnum sqlLikeEnum;
 
@@ -26,30 +27,30 @@ public class OracleLikeSQLFunction extends AbstractExpressionSQLFunction {
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        if(columnExpressions.size()!=2){
+        if (columnExpressions.size() != 2) {
             throw new IllegalArgumentException("bank arguments != 1");
         }
         ColumnExpression columnExpression = columnExpressions.get(1);
-        if(columnExpression instanceof ColumnFuncValueExpression){
-            ColumnFuncValueExpression columnFuncValueExpression = (ColumnFuncValueExpression) columnExpression;
+        ColumnFuncValueExpression columnFuncValueExpression = getColumnFuncValueExpression(columnExpression);
+        if (columnFuncValueExpression != null) {
             Object value = columnFuncValueExpression.getValue();
-            if(value!=null){
-                String valueString = value.toString();
-                if(valueString.contains("%")){
-                    if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_RIGHT){
-                        return "INSTR({1},{0}) = 1";
+            if (value instanceof String) {
+                String valueString = (String) value;
+                if (valueString.contains("%")) {
+                    if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_RIGHT) {
+                        return "INSTR({0},{1},1,1) = 1";
                     }
-                    if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_LEFT){
-                        return "INSTR({1},{0}) = LENGTH({0})";
+                    if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_LEFT) {
+                        return "INSTR({0},{1},1,1) = (LENGTH({0}) - LENGTH({1}) + 1)";
                     }
-                    return "INSTR({1},{0}) > 0";
+                    return "INSTR({0},{1},1,1) > 0";
                 }
             }
         }
-        if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_RIGHT){
+        if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_RIGHT) {
             return "{0} LIKE (TO_CHAR({1})||'%')";
         }
-        if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_LEFT){
+        if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_LEFT) {
             return "{0} LIKE ('%'||TO_CHAR({1}))";
         }
         return "{0} LIKE ('%'||TO_CHAR({1})||'%')";

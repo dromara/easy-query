@@ -569,7 +569,7 @@ public class QueryTest23 extends BaseTest {
     }
 
     public static class MyParameter {
-        public Map<String,String> getParameters(){
+        public Map<String, String> getParameters() {
             return null;
         }
     }
@@ -877,9 +877,9 @@ public class QueryTest23 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
 
-        String format1="yyyy年MM-01 HH:mm分ss秒";
-        String format2="yyyy-MM-dd HH:mm:ss";
-        String format3="yyyy/MM-/01 HH时mm分ss秒";
+        String format1 = "yyyy年MM-01 HH:mm分ss秒";
+        String format2 = "yyyy-MM-dd HH:mm:ss";
+        String format3 = "yyyy/MM-/01 HH时mm分ss秒";
         List<Draft4<LocalDateTime, String, String, String>> list = easyEntityQuery.queryable(BlogEntity.class)
                 .select(t_blog -> Select.DRAFT.of(
                         t_blog.createTime(),
@@ -908,7 +908,7 @@ public class QueryTest23 extends BaseTest {
 
 
     @Test
-    public  void testMath(){
+    public void testMath() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -935,7 +935,7 @@ public class QueryTest23 extends BaseTest {
 
 
     @Test
-    public  void testaaa1(){
+    public void testaaa1() {
 
 //        long count = easyEntityQuery.queryable(BlogEntity.class)
 //                .select(t_blog -> t_blog.score())
@@ -945,7 +945,7 @@ public class QueryTest23 extends BaseTest {
         List<Grouping1<String>> list = easyEntityQuery.queryable(BlogEntity.class)
                 .groupBy(t_blog -> GroupKeys.of(t_blog.title()))
 //                .having(group -> group.groupTable().star().count(true).gt(1L))
-                .having(group -> group.distinct().count(s->s.star()).gt(1L))
+                .having(group -> group.distinct().count(s -> s.star()).gt(1L))
                 .toList();
 
 
@@ -962,7 +962,7 @@ public class QueryTest23 extends BaseTest {
                 .groupBy((t_blog, t_topic) -> GroupKeys.of(t_blog.title()))
                 .select(group -> Select.DRAFT.of(
                         group.key1(),
-                        group.distinct().count(s->s.t1.star())
+                        group.distinct().count(s -> s.t1.star())
                 )).toList();
 
 //        List<Grouping1<String>> list2 = easyEntityQuery.queryable(BlogEntity.class)
@@ -972,5 +972,71 @@ public class QueryTest23 extends BaseTest {
 
 
     }
+
+    @Test
+    public void testLt() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.title().like(t_blog.expression().constant("30%"));
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND LOCATE(?,`title`) > 0", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),30%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
+    }
+
+    @Test
+    public void testIndexOf() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.title().indexOf("30%").gt(-1);
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (LOCATE(?,`title`) - 1) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),30%(String),-1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
+    }
+    @Test
+    public void testContains() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.title().contains("30%");
+                    t_blog.title().contains(t_blog.expression().constant("30%"));
+                    t_blog.title().contains(t_blog.content());
+                    t_blog.title().contains(t_blog.content().nullOrDefault(""));
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND LOCATE(?,`title`) > 0 AND LOCATE(?,`title`) > 0 AND `title` LIKE CONCAT('%',`content`,'%') AND `title` LIKE CONCAT('%',IFNULL(`content`,?),'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),30%(String),30%(String),(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
+    }
+
 
 }

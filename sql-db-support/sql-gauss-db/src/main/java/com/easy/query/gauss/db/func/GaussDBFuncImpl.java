@@ -76,7 +76,7 @@ public class GaussDBFuncImpl extends SQLFuncImpl {
 
     @Override
     public SQLFunction joining(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean distinct) {
-        return new GaussDBJoiningSQLFunction(getColumnExpressions(sqlExpression),distinct);
+        return new GaussDBJoiningSQLFunction(getColumnExpressions(sqlExpression), distinct);
     }
 
     @Override
@@ -131,5 +131,10 @@ public class GaussDBFuncImpl extends SQLFuncImpl {
             return not(x -> x.sqlFunc(likeSQLFunction));
         }
         return likeSQLFunction;
+    }
+
+    @Override
+    public SQLFunction indexOf(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new GaussDBIndexOfSQLFunction(getColumnExpressions(sqlExpression));
     }
 }

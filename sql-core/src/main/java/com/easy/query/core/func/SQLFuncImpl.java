@@ -39,6 +39,7 @@ import com.easy.query.core.func.def.impl.DateTimePropertySQLFunction;
 import com.easy.query.core.func.def.impl.DateTimeSQLFormatSQLFunction;
 import com.easy.query.core.func.def.impl.EmptySQLFunction;
 import com.easy.query.core.func.def.impl.EqualsWithSQLFunction;
+import com.easy.query.core.func.def.impl.IndexOfSQLFunction;
 import com.easy.query.core.func.def.impl.JoiningSQLFunction;
 import com.easy.query.core.func.def.impl.JsonFieldSQLFunction;
 import com.easy.query.core.func.def.impl.LeftPadSQLFunction;
@@ -129,6 +130,11 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction subString(SQLExpression1<ColumnFuncSelector> sqlExpression) {
         return new SubStringSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction indexOf(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new IndexOfSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
@@ -319,7 +325,7 @@ public class SQLFuncImpl implements SQLFunc {
     }
 
     @Override
-    public SQLFunction orderByNullsMode(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean asc,@NotNull OrderByModeEnum orderByModeEnum) {
+    public SQLFunction orderByNullsMode(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean asc, @NotNull OrderByModeEnum orderByModeEnum) {
         return new OrderByNullsModeSQLFunction(getColumnExpressions(sqlExpression), asc, orderByModeEnum);
     }
 

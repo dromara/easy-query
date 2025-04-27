@@ -254,6 +254,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
     default ColumnFunctionCompareComparableStringChainExpression<String> trimStart() {
         return ltrim();
     }
+
     /**
      * 去头部空格
      *
@@ -280,6 +281,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
     default ColumnFunctionCompareComparableStringChainExpression<String> trimEnd() {
         return rtrim();
     }
+
     /**
      * 去尾部空格
      *
@@ -457,6 +459,37 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
                     return fx.stringCompareTo(this.getValue(), otherColumn, otherColumn.getValue());
                 }
             }
+        }, Integer.class);
+    }
+
+    /**
+     * 字符串P按断是否包含某个字符串返回索引大于等于0表示包含
+     *
+     * @param val 开始索引默认0
+     * @return 字符串在字符串中第一次出现的索引值，如果字符串中不包含该字符则返回-1
+     */
+    default ColumnFunctionCompareComparableNumberChainExpression<Integer> indexOf(String val) {
+        String property = this.getValue();
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), property, fx -> {
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.indexOf(s -> {
+                    s.sqlFunc(sqlFunction).value(val);
+                });
+            } else {
+                return fx.indexOf(s -> {
+                    s.column(property).value(val);
+                });
+            }
+        }, Integer.class);
+    }
+    default ColumnFunctionCompareComparableNumberChainExpression<Integer> indexOf(PropTypeColumn<TProperty> stringSegment) {
+        String property = this.getValue();
+        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), property, fx -> {
+            return fx.indexOf(s -> {
+                PropTypeColumn.columnFuncSelector(s, this);
+                PropTypeColumn.columnFuncSelector(s, stringSegment);
+            });
         }, Integer.class);
     }
 

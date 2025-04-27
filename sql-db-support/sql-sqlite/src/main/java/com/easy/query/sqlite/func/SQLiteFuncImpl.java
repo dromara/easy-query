@@ -1,5 +1,6 @@
 package com.easy.query.sqlite.func;
 
+import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.SQLFuncImpl;
@@ -10,6 +11,7 @@ import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
+import com.easy.query.core.func.def.impl.LikeSQLFunction;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -130,5 +132,19 @@ public class SQLiteFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction booleanConstantSQLFunction(boolean trueOrFalse) {
         return new SQLiteBooleanConstantSQLFunction(trueOrFalse);
+    }
+
+    @Override
+    public SQLFunction indexOf(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new SQLiteIndexOfSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction like(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean like, SQLLikeEnum sqlLike) {
+        SQLiteLikeSQLFunction likeSQLFunction = new SQLiteLikeSQLFunction(getColumnExpressions(sqlExpression), sqlLike);
+        if (!like) {
+            return not(x -> x.sqlFunc(likeSQLFunction));
+        }
+        return likeSQLFunction;
     }
 }

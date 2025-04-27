@@ -2,9 +2,12 @@ package com.easy.query.core.func.def.impl;
 
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncValueExpression;
+import com.easy.query.core.func.column.ColumnFunctionExpression;
 import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.List;
 
@@ -14,7 +17,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class LikeSQLFunction   extends AbstractExpressionSQLFunction {
+public class LikeSQLFunction extends AbstractLikeSQLFunction {
     private final List<ColumnExpression> columnExpressions;
     private final SQLLikeEnum sqlLikeEnum;
 
@@ -26,30 +29,30 @@ public class LikeSQLFunction   extends AbstractExpressionSQLFunction {
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        if(columnExpressions.size()!=2){
+        if (columnExpressions.size() != 2) {
             throw new IllegalArgumentException("bank arguments != 1");
         }
         ColumnExpression columnExpression = columnExpressions.get(1);
-        if(columnExpression instanceof ColumnFuncValueExpression){
-            ColumnFuncValueExpression columnFuncValueExpression = (ColumnFuncValueExpression) columnExpression;
+        ColumnFuncValueExpression columnFuncValueExpression = getColumnFuncValueExpression(columnExpression);
+        if (columnFuncValueExpression != null) {
             Object value = columnFuncValueExpression.getValue();
-            if(value!=null){
-                String valueString = value.toString();
-                if(valueString.contains("%")){
-                    if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_RIGHT){
+            if (value instanceof String) {
+                String valueString = (String) value;
+                if (valueString.contains("%")) {
+                    if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_RIGHT) {
                         return "LOCATE({1},{0}) = 1";
                     }
-                    if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_LEFT){
+                    if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_LEFT) {
                         return "LOCATE({1},{0}) = CHAR_LENGTH({0})";
                     }
                     return "LOCATE({1},{0}) > 0";
                 }
             }
         }
-        if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_RIGHT){
+        if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_RIGHT) {
             return "{0} LIKE CONCAT({1},'%')";
         }
-        if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_LEFT){
+        if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_LEFT) {
             return "{0} LIKE CONCAT('%',{1})";
         }
         return "{0} LIKE CONCAT('%',{1},'%')";

@@ -73,8 +73,8 @@ public class KingbaseESSQLFuncImpl extends SQLFuncImpl {
     }
 
     @Override
-    public SQLFunction joining(SQLExpression1<ColumnFuncSelector> sqlExpression,boolean distinct) {
-        return new KingbaseESJoiningSQLFunction(getColumnExpressions(sqlExpression),distinct);
+    public SQLFunction joining(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean distinct) {
+        return new KingbaseESJoiningSQLFunction(getColumnExpressions(sqlExpression), distinct);
     }
 
     @Override
@@ -111,6 +111,7 @@ public class KingbaseESSQLFuncImpl extends SQLFuncImpl {
     public SQLFunction duration(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum) {
         return new KingbaseESDateTimeDurationSQLFunction(getColumnExpressions(sqlExpression), durationEnum);
     }
+
     @Override
     public SQLFunction duration2(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum) {
         return new KingbaseESDateTimeDuration2SQLFunction(getColumnExpressions(sqlExpression), durationEnum);
@@ -128,5 +129,10 @@ public class KingbaseESSQLFuncImpl extends SQLFuncImpl {
             return not(x -> x.sqlFunc(likeSQLFunction));
         }
         return likeSQLFunction;
+    }
+
+    @Override
+    public SQLFunction indexOf(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new KingbaseESIndexOfSQLFunction(getColumnExpressions(sqlExpression));
     }
 }

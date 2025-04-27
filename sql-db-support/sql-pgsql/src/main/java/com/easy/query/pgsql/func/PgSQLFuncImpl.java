@@ -129,4 +129,9 @@ public class PgSQLFuncImpl extends SQLFuncImpl {
         }
         return likeSQLFunction;
     }
+
+    @Override
+    public SQLFunction indexOf(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+        return new PgSQLIndexOfSQLFunction(getColumnExpressions(sqlExpression));
+    }
 }
