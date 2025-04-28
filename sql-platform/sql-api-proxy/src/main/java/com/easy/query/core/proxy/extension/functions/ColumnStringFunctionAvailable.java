@@ -24,6 +24,9 @@ import com.easy.query.core.proxy.extension.functions.executor.filter.impl.Column
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableStringChainExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLColumnFunctionCompareComparableExpressionImpl;
+import com.easy.query.core.proxy.predicate.DSLContainsColumnPredicate;
+import com.easy.query.core.proxy.predicate.DSLContainsFunctionPredicate;
+import com.easy.query.core.proxy.predicate.DSLContainsPredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyStringUtil;
@@ -41,7 +44,10 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         ColumnAggregateFilterFunctionAvailable<TProperty, ColumnFunctionCompareComparableStringFilterChainExpression<TProperty>>,
         ColumnFunctionCastNumberAvailable<TProperty>,
         ColumnFunctionCastDateTimeAvailable<TProperty>,
-        ColumnFunctionCastBooleanAvailable<TProperty> {
+        ColumnFunctionCastBooleanAvailable<TProperty>
+        , DSLContainsPredicate
+        , DSLContainsColumnPredicate
+        , DSLContainsFunctionPredicate {
 
     @Override
     default ColumnFunctionCompareComparableStringFilterChainExpression<TProperty> max() {
@@ -483,6 +489,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
             }
         }, Integer.class);
     }
+
     default ColumnFunctionCompareComparableNumberChainExpression<Integer> indexOf(PropTypeColumn<TProperty> stringSegment) {
         String property = this.getValue();
         return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), property, fx -> {

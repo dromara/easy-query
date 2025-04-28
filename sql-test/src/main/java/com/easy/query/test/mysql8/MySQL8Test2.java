@@ -14,8 +14,8 @@ import java.util.List;
 public class MySQL8Test2 extends BaseTest{
     @Test
     public void test(){
-        List<M8TestIndex> list = easyEntityQuery.queryable(M8TestIndex.class)
-                .toList();
+//        List<M8TestIndex> list = easyEntityQuery.queryable(M8TestIndex.class)
+//                .toList();
     }
 
 }

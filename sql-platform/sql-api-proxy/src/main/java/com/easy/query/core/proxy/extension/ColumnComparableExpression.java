@@ -27,15 +27,12 @@ public interface ColumnComparableExpression<T> extends SQLSelectAsExpression
         , DSLValuePredicate<T>
         , DSLAssertPredicate<T>
         , DSLLikePredicate<T>
-        , DSLContainsPredicate
         , DSLValuesPredicate<T>
         , DSLSubQueryPredicate<T>
         , DSLRangePredicate<T>
         , DSLRangeColumnFunctionPredicate<T>
         , DSLColumnComparePredicate<T>
         , DSLLikeColumnPredicate<T>
-        , DSLContainsColumnPredicate
         , DSLFunctionComparePredicate<T>
-        , DSLLikeFunctionPredicate<T>
-        , DSLContainsFunctionPredicate {
+        , DSLLikeFunctionPredicate<T>{
 }

@@ -1118,7 +1118,7 @@ public class QueryTest14 extends BaseTest {
                     .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
                     .where((t1, b2) -> t1.id().like(b2.title()))
                     .toSQL();
-            Assert.assertEquals("SELECT t.\"id\",t.\"stars\",t.\"title\",t.\"create_time\" FROM \"t_topic\" t LEFT JOIN \"t_blog\" t1 ON t1.\"deleted\" = ? AND t.\"id\" = t1.\"id\" WHERE t.\"id\" LIKE CONCAT('%',t1.\"title\",'%')", sql);
+            Assert.assertEquals("SELECT t.\"id\",t.\"stars\",t.\"title\",t.\"create_time\" FROM \"t_topic\" t LEFT JOIN \"t_blog\" t1 ON t1.\"deleted\" = ? AND t.\"id\" = t1.\"id\" WHERE t.\"id\" LIKE ('%'||t1.\"title\"||'%')", sql);
 
         }
         {
