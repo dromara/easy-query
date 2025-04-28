@@ -9,7 +9,7 @@ import com.easy.query.api.proxy.entity.update.ExpressionUpdatable;
 import com.easy.query.core.configuration.LoadIncludeConfiguration;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.proxy.PropColumn;
+import com.easy.query.core.expression.parser.core.PropColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.Collection;

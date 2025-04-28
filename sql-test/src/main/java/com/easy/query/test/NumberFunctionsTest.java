@@ -309,8 +309,8 @@ public class NumberFunctionsTest {
             List<Draft4<BigDecimal, Integer, Long, BigDecimal>> list = easyEntityQuery.queryable(BlogEntity.class)
                     .select(t_blog -> Select.DRAFT.of(
                             t_blog.score().add(1),
-                            t_blog.score().add(1).asInteger(),
-                            t_blog.score().add(1).asLong(),
+                            t_blog.score().add(1).asNumber(Integer.class),
+                            t_blog.score().add(1).asNumber(Long.class),
                             t_blog.score().add(t_blog.score())
                     )).toList();
         } catch (Exception ignored) {
@@ -337,8 +337,8 @@ public class NumberFunctionsTest {
             List<Draft4<BigDecimal, Integer, Long, BigDecimal>> list = easyEntityQuery.queryable(BlogEntity.class)
                     .select(t_blog -> Select.DRAFT.of(
                             t_blog.score().add(1),
-                            t_blog.score().add(1).asInteger(),
-                            t_blog.score().add(1).asLong(),
+                            t_blog.score().add(1).asNumber(Integer.class),
+                            t_blog.score().add(1).asNumber(Long.class),
                             t_blog.score().add(t_blog.score())
                     )).toList();
         } catch (Exception ignored) {
@@ -365,8 +365,8 @@ public class NumberFunctionsTest {
             List<Draft4<BigDecimal, Integer, Long, BigDecimal>> list = easyEntityQuery.queryable(BlogEntity.class)
                     .select(t_blog -> Select.DRAFT.of(
                             t_blog.score().add(1),
-                            t_blog.score().add(1).asInteger(),
-                            t_blog.score().add(1).asLong(),
+                            t_blog.score().add(1).asNumber(Integer.class),
+                            t_blog.score().add(1).asNumber(Long.class),
                             t_blog.score().add(t_blog.score())
                     )).toList();
         } catch (Exception ignored) {
@@ -393,8 +393,8 @@ public class NumberFunctionsTest {
             List<Draft4<BigDecimal, Integer, Long, BigDecimal>> list = easyEntityQuery.queryable(BlogEntity.class)
                     .select(t_blog -> Select.DRAFT.of(
                             t_blog.score().add(1),
-                            t_blog.score().add(1).asInteger(),
-                            t_blog.score().add(1).asLong(),
+                            t_blog.score().add(1).asNumber(Integer.class),
+                            t_blog.score().add(1).asNumber(Long.class),
                             t_blog.score().add(t_blog.score())
                     )).toList();
         } catch (Exception ignored) {
@@ -421,8 +421,8 @@ public class NumberFunctionsTest {
             List<Draft4<BigDecimal, Integer, Long, BigDecimal>> list = easyEntityQuery.queryable(BlogEntity.class)
                     .select(t_blog -> Select.DRAFT.of(
                             t_blog.score().subtract(1),
-                            t_blog.score().subtract(1).asInteger(),
-                            t_blog.score().subtract(1).asLong(),
+                            t_blog.score().subtract(1).asNumber(Integer.class),
+                            t_blog.score().subtract(1).asNumber(Long.class),
                             t_blog.score().subtract(t_blog.score())
                     )).toList();
         } catch (Exception ignored) {
@@ -449,8 +449,8 @@ public class NumberFunctionsTest {
             List<Draft4<BigDecimal, Integer, Long, BigDecimal>> list = easyEntityQuery.queryable(BlogEntity.class)
                     .select(t_blog -> Select.DRAFT.of(
                             t_blog.score().subtract(1),
-                            t_blog.score().subtract(1).asInteger(),
-                            t_blog.score().subtract(1).asLong(),
+                            t_blog.score().subtract(1).asNumber(Integer.class),
+                            t_blog.score().subtract(1).asNumber(Long.class),
                             t_blog.score().subtract(t_blog.score())
                     )).toList();
         } catch (Exception ignored) {
@@ -477,8 +477,8 @@ public class NumberFunctionsTest {
             List<Draft4<BigDecimal, Integer, Long, BigDecimal>> list = easyEntityQuery.queryable(BlogEntity.class)
                     .select(t_blog -> Select.DRAFT.of(
                             t_blog.score().subtract(1),
-                            t_blog.score().subtract(1).asInteger(),
-                            t_blog.score().subtract(1).asLong(),
+                            t_blog.score().subtract(1).asNumber(Integer.class),
+                            t_blog.score().subtract(1).asNumber(Long.class),
                             t_blog.score().subtract(t_blog.score())
                     )).toList();
         } catch (Exception ignored) {
@@ -505,8 +505,8 @@ public class NumberFunctionsTest {
             List<Draft4<BigDecimal, Integer, Long, BigDecimal>> list = easyEntityQuery.queryable(BlogEntity.class)
                     .select(t_blog -> Select.DRAFT.of(
                             t_blog.score().subtract(1),
-                            t_blog.score().subtract(1).asInteger(),
-                            t_blog.score().subtract(1).asLong(),
+                            t_blog.score().subtract(1).asNumber(Integer.class),
+                            t_blog.score().subtract(1).asNumber(Long.class),
                             t_blog.score().subtract(t_blog.score())
                     )).toList();
         } catch (Exception ignored) {

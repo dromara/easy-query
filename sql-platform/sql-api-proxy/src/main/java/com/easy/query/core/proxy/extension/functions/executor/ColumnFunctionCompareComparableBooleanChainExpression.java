@@ -16,4 +16,7 @@ public interface ColumnFunctionCompareComparableBooleanChainExpression<T> extend
         ColumnFunctionCompareComparableObjectChainExpression.super.asAnyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }
+    default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> asBoolean() {
+        return asAnyType(Boolean.class);
+    }
 }

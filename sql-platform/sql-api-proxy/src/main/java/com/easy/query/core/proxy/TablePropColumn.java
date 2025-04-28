@@ -1,6 +1,7 @@
 package com.easy.query.core.proxy;
 
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
+import com.easy.query.core.expression.parser.core.PropColumn;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.ColumnMetadata;

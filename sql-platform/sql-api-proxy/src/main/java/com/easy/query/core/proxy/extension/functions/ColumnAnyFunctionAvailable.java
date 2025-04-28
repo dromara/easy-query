@@ -7,7 +7,7 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
 import com.easy.query.core.func.def.enums.MathMethodEnum;
-import com.easy.query.core.proxy.PropColumn;
+import com.easy.query.core.expression.parser.core.PropColumn;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.TablePropColumn;

@@ -1,7 +1,7 @@
 package com.easy.query.core.proxy.fetcher;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.proxy.PropColumn;
+import com.easy.query.core.expression.parser.core.PropColumn;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -18,13 +18,4 @@ public interface ColumnFunctionCompareComparableNumberChainExpression<T> extends
         ColumnFunctionCompareComparableObjectChainExpression.super.asAnyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }
-    default ColumnFunctionCompareComparableNumberChainExpression<Integer> asInteger() {
-        return asAnyType(Integer.class);
-    }
-    default ColumnFunctionCompareComparableNumberChainExpression<Long> asLong() {
-        return asAnyType(Long.class);
-    }
-    default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> asBIgDecimal() {
-        return asAnyType(BigDecimal.class);
-    }
 }

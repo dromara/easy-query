@@ -6,7 +6,6 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
-import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 
 /**
@@ -15,7 +14,7 @@ import com.easy.query.core.proxy.impl.SQLPredicateImpl;
  *
  * @author xuejiaming
  */
-public interface DSLColumnPropTypeContainsPredicate extends TablePropColumn, EntitySQLContextAvailable {
+public interface DSLContainsPropPredicate extends TablePropColumn, EntitySQLContextAvailable {
     /**
      * column like 'value%'
      *
@@ -35,11 +34,11 @@ public interface DSLColumnPropTypeContainsPredicate extends TablePropColumn, Ent
         if (condition) {
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                SQLFunction likeSQLFunction = fx.like(s->{
-                    s.column(this.getTable(),this.getValue());
-                    PropTypeColumn.columnFuncSelector(s,val);
-                },true, SQLLikeEnum.LIKE_PERCENT_RIGHT);
-                f.sqlFunctionExecute(getTable(),likeSQLFunction);
+                SQLFunction likeSQLFunction = fx.like(s -> {
+                    s.column(this);
+                    PropTypeColumn.columnFuncSelector(s, val);
+                }, true, SQLLikeEnum.LIKE_PERCENT_RIGHT);
+                f.sqlFunctionExecute(getTable(), likeSQLFunction);
             }));
         }
     }
@@ -64,11 +63,11 @@ public interface DSLColumnPropTypeContainsPredicate extends TablePropColumn, Ent
 
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                SQLFunction likeSQLFunction = fx.like(s->{
-                    s.column(this.getTable(),this.getValue());
-                    PropTypeColumn.columnFuncSelector(s,val);
-                },true, SQLLikeEnum.LIKE_PERCENT_LEFT);
-                f.sqlFunctionExecute(getTable(),likeSQLFunction);
+                SQLFunction likeSQLFunction = fx.like(s -> {
+                    s.column(this);
+                    PropTypeColumn.columnFuncSelector(s, val);
+                }, true, SQLLikeEnum.LIKE_PERCENT_LEFT);
+                f.sqlFunctionExecute(getTable(), likeSQLFunction);
             }));
         }
     }
@@ -81,11 +80,11 @@ public interface DSLColumnPropTypeContainsPredicate extends TablePropColumn, Ent
         if (condition) {
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                SQLFunction likeSQLFunction = fx.like(s->{
-                    s.column(this.getTable(),this.getValue());
-                    PropTypeColumn.columnFuncSelector(s,val);
-                },true, SQLLikeEnum.LIKE_PERCENT_ALL);
-                f.sqlFunctionExecute(getTable(),likeSQLFunction);
+                SQLFunction likeSQLFunction = fx.like(s -> {
+                    s.column(this);
+                    PropTypeColumn.columnFuncSelector(s, val);
+                }, true, SQLLikeEnum.LIKE_PERCENT_ALL);
+                f.sqlFunctionExecute(getTable(), likeSQLFunction);
             }));
         }
     }
@@ -98,11 +97,11 @@ public interface DSLColumnPropTypeContainsPredicate extends TablePropColumn, Ent
         if (condition) {
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                SQLFunction likeSQLFunction = fx.like(s->{
-                    s.column(this.getTable(),this.getValue());
-                    PropTypeColumn.columnFuncSelector(s,val);
-                },false, SQLLikeEnum.LIKE_PERCENT_RIGHT);
-                f.sqlFunctionExecute(getTable(),likeSQLFunction);
+                SQLFunction likeSQLFunction = fx.like(s -> {
+                    s.column(this);
+                    PropTypeColumn.columnFuncSelector(s, val);
+                }, false, SQLLikeEnum.LIKE_PERCENT_RIGHT);
+                f.sqlFunctionExecute(getTable(), likeSQLFunction);
             }));
         }
     }
@@ -115,28 +114,37 @@ public interface DSLColumnPropTypeContainsPredicate extends TablePropColumn, Ent
         if (condition) {
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                SQLFunction likeSQLFunction = fx.like(s->{
-                    s.column(this.getTable(),this.getValue());
-                    PropTypeColumn.columnFuncSelector(s,val);
-                },false, SQLLikeEnum.LIKE_PERCENT_LEFT);
-                f.sqlFunctionExecute(getTable(),likeSQLFunction);
+                SQLFunction likeSQLFunction = fx.like(s -> {
+                    s.column(this);
+                    PropTypeColumn.columnFuncSelector(s, val);
+                }, false, SQLLikeEnum.LIKE_PERCENT_LEFT);
+                f.sqlFunctionExecute(getTable(), likeSQLFunction);
             }));
         }
     }
 
+    /**
+     * 不包含生成not like
+     * @param val 被比较的表达式列
+     */
     default void notContains(PropTypeColumn<String> val) {
         notContains(true, val);
     }
 
+    /**
+     * 不包含 生成not like
+     * @param condition true表示该函数会被执行
+     * @param val
+     */
     default void notContains(boolean condition, PropTypeColumn<String> val) {
         if (condition) {
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                SQLFunction likeSQLFunction = fx.like(s->{
-                    s.column(this.getTable(),this.getValue());
-                    PropTypeColumn.columnFuncSelector(s,val);
-                },false, SQLLikeEnum.LIKE_PERCENT_ALL);
-                f.sqlFunctionExecute(getTable(),likeSQLFunction);
+                SQLFunction likeSQLFunction = fx.like(s -> {
+                    s.column(this);
+                    PropTypeColumn.columnFuncSelector(s, val);
+                }, false, SQLLikeEnum.LIKE_PERCENT_ALL);
+                f.sqlFunctionExecute(getTable(), likeSQLFunction);
             }));
         }
     }

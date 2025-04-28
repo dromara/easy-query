@@ -1,6 +1,7 @@
 package com.easy.query.core.func.column;
 
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.expression.parser.core.PropColumn;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLSegment;
@@ -28,6 +29,9 @@ public interface ColumnFuncSelector {
     @Deprecated
     ColumnFuncSelector column(SQLTableOwner tableOwner, String property);
     ColumnFuncSelector column(TableAvailable table, String property);
+    default <T extends SQLTableOwner& PropColumn> ColumnFuncSelector column(T tablePropColumn){
+        return column(tablePropColumn.getTable(),tablePropColumn.getValue());
+    }
     ColumnFuncSelector value(Object val);
     ColumnFuncSelector keepStyle();
     <T>ColumnFuncSelector collection(Collection<T> collections);

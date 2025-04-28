@@ -1,6 +1,7 @@
 package com.easy.query.core.proxy;
 
 import com.easy.query.api.proxy.util.EasyProxyUtil;
+import com.easy.query.core.expression.parser.core.PropColumn;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 

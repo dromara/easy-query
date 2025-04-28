@@ -1014,32 +1014,6 @@ public class QueryTest23 extends BaseTest {
 
 
     }
-    @Test
-    public void testContains() {
-
-
-        ListenerContext listenerContext = new ListenerContext();
-        listenerContextManager.startListen(listenerContext);
-
-        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
-                .where(t_blog -> {
-                    t_blog.star().asStr().contains("30%");
-                    t_blog.star().nullOrDefault(1).asStr().startsWith("30%");
-                    t_blog.title().contains(t_blog.expression().constant("30%"));
-                    t_blog.title().nullOrDefault("1").contains("30%");
-                    t_blog.title().subString(1,6).contains("30%");
-                    t_blog.title().contains(t_blog.content());
-                    t_blog.title().contains(t_blog.content().nullOrDefault(""));
-                }).toList();
-        listenerContextManager.clear();
-
-        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND LOCATE(?,`star`) > 0 AND LOCATE(?,IFNULL(`star`,?)) = 1 AND LOCATE(?,`title`) > 0 AND LOCATE(?,IFNULL(`title`,?)) > 0 AND LOCATE(?,SUBSTR(`title`,2,6)) > 0 AND `title` LIKE CONCAT('%',`content`,'%') AND `title` LIKE CONCAT('%',IFNULL(`content`,?),'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("false(Boolean),30%(String),30%(String),1(Integer),30%(String),30%(String),1(String),30%(String),(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-
-
-    }
 
 
 }

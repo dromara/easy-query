@@ -1,7 +1,6 @@
 package com.easy.query.core.proxy.extension.functions.executor;
 
 import com.easy.query.core.enums.SQLLikeEnum;
-import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
@@ -9,8 +8,8 @@ import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extension.functions.ColumnStringFunctionAvailable;
 import com.easy.query.core.proxy.impl.SQLAggregateNativeSQLPredicateImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
-import com.easy.query.core.proxy.predicate.DSLColumnContainsPredicate;
-import com.easy.query.core.proxy.predicate.DSLColumnPropTypeContainsPredicate;
+import com.easy.query.core.proxy.predicate.DSLContainsStringPredicate;
+import com.easy.query.core.proxy.predicate.DSLContainsPropPredicate;
 import com.easy.query.core.proxy.predicate.DSLStringAssertPredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -25,13 +24,16 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
         ColumnStringFunctionAvailable<T>,
         DSLStringAssertPredicate<T>,
         DSLSQLFunctionAvailable,
-        DSLColumnContainsPredicate,
-        DSLColumnPropTypeContainsPredicate {
+        DSLContainsStringPredicate,
+        DSLContainsPropPredicate {
 
     @Override
     default <TR> ColumnFunctionCompareComparableStringChainExpression<TR> asAnyType(Class<TR> clazz) {
         ColumnFunctionCompareComparableObjectChainExpression.super.asAnyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
+    }
+    default ColumnFunctionCompareComparableStringChainExpression<String> asStr() {
+        return asAnyType(String.class);
     }
 
     @Override
@@ -40,7 +42,7 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
             getCurrentEntitySQLContext().accept(new SQLAggregateNativeSQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 SQLFunction bank = fx.bank(func().apply(fx));
-                f.sqlFunctionExecute(getTable(),bank);
+                f.sqlFunctionExecute(getTable(), bank);
             }));
         }
     }
@@ -51,7 +53,7 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
             getCurrentEntitySQLContext().accept(new SQLAggregateNativeSQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 SQLFunction notBank = fx.notBank(func().apply(fx));
-                f.sqlFunctionExecute(getTable(),notBank);
+                f.sqlFunctionExecute(getTable(), notBank);
             }));
         }
     }
@@ -62,7 +64,7 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
             getCurrentEntitySQLContext().accept(new SQLAggregateNativeSQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 SQLFunction empty = fx.empty(func().apply(fx));
-                f.sqlFunctionExecute(getTable(),empty);
+                f.sqlFunctionExecute(getTable(), empty);
             }));
         }
     }
@@ -73,7 +75,7 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
             getCurrentEntitySQLContext().accept(new SQLAggregateNativeSQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 SQLFunction notEmpty = fx.notEmpty(func().apply(fx));
-                f.sqlFunctionExecute(getTable(),notEmpty);
+                f.sqlFunctionExecute(getTable(), notEmpty);
             }));
         }
     }
@@ -81,14 +83,15 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
     @Override
     default void startsWith(boolean condition, String val) {
         if (condition) {
-            SQLFunction sqlFunction = Expression.of(getEntitySQLContext()).constant(val).func().apply(getEntitySQLContext().getRuntimeContext().fx());
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
-                SQLFunc fx = f.getRuntimeContext().fx();
-                SQLFunction likeSQLFunction = fx.like(s->{
-                    s.sqlFunc(func().apply(fx));
-                    s.sqlFunc(sqlFunction);
-                },true, SQLLikeEnum.LIKE_PERCENT_RIGHT);
-                f.sqlFunctionExecute(getTable(),likeSQLFunction);
+                if (f.conditionAppend(this, val)) {
+                    SQLFunc fx = f.getRuntimeContext().fx();
+                    SQLFunction likeSQLFunction = fx.like(s -> {
+                        s.sqlFunc(func().apply(fx));
+                        s.value(val);
+                    }, true, SQLLikeEnum.LIKE_PERCENT_RIGHT);
+                    f.sqlFunctionExecute(getTable(), likeSQLFunction);
+                }
             }));
         }
     }
@@ -96,15 +99,16 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
     @Override
     default void endsWith(boolean condition, String val) {
         if (condition) {
-            SQLFunction sqlFunction = Expression.of(getEntitySQLContext()).constant(val).func().apply(getEntitySQLContext().getRuntimeContext().fx());
 
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
-                SQLFunc fx = f.getRuntimeContext().fx();
-                SQLFunction likeSQLFunction = fx.like(s->{
-                    s.sqlFunc(func().apply(fx));
-                    s.sqlFunc(sqlFunction);
-                },true, SQLLikeEnum.LIKE_PERCENT_LEFT);
-                f.sqlFunctionExecute(getTable(),likeSQLFunction);
+                if (f.conditionAppend(this, val)) {
+                    SQLFunc fx = f.getRuntimeContext().fx();
+                    SQLFunction likeSQLFunction = fx.like(s -> {
+                        s.sqlFunc(func().apply(fx));
+                        s.value(val);
+                    }, true, SQLLikeEnum.LIKE_PERCENT_LEFT);
+                    f.sqlFunctionExecute(getTable(), likeSQLFunction);
+                }
             }));
         }
     }
@@ -112,15 +116,16 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
     @Override
     default void contains(boolean condition, String val) {
         if (condition) {
-            SQLFunction sqlFunction = Expression.of(getEntitySQLContext()).constant(val).func().apply(getEntitySQLContext().getRuntimeContext().fx());
 
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
-                SQLFunc fx = f.getRuntimeContext().fx();
-                SQLFunction likeSQLFunction = fx.like(s->{
-                    s.sqlFunc(func().apply(fx));
-                    s.sqlFunc(sqlFunction);
-                },true, SQLLikeEnum.LIKE_PERCENT_ALL);
-                f.sqlFunctionExecute(getTable(),likeSQLFunction);
+                if (f.conditionAppend(this, val)) {
+                    SQLFunc fx = f.getRuntimeContext().fx();
+                    SQLFunction likeSQLFunction = fx.like(s -> {
+                        s.sqlFunc(func().apply(fx));
+                        s.value(val);
+                    }, true, SQLLikeEnum.LIKE_PERCENT_ALL);
+                    f.sqlFunctionExecute(getTable(), likeSQLFunction);
+                }
             }));
         }
     }
@@ -128,15 +133,16 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
     @Override
     default void notStartsWith(boolean condition, String val) {
         if (condition) {
-            SQLFunction sqlFunction = Expression.of(getEntitySQLContext()).constant(val).func().apply(getEntitySQLContext().getRuntimeContext().fx());
 
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
-                SQLFunc fx = f.getRuntimeContext().fx();
-                SQLFunction likeSQLFunction = fx.like(s->{
-                    s.sqlFunc(func().apply(fx));
-                    s.sqlFunc(sqlFunction);
-                },false, SQLLikeEnum.LIKE_PERCENT_RIGHT);
-                f.sqlFunctionExecute(getTable(),likeSQLFunction);
+                if (f.conditionAppend(this, val)) {
+                    SQLFunc fx = f.getRuntimeContext().fx();
+                    SQLFunction likeSQLFunction = fx.like(s -> {
+                        s.sqlFunc(func().apply(fx));
+                        s.value(val);
+                    }, false, SQLLikeEnum.LIKE_PERCENT_RIGHT);
+                    f.sqlFunctionExecute(getTable(), likeSQLFunction);
+                }
             }));
         }
     }
@@ -144,15 +150,16 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
     @Override
     default void notEndsWith(boolean condition, String val) {
         if (condition) {
-            SQLFunction sqlFunction = Expression.of(getEntitySQLContext()).constant(val).func().apply(getEntitySQLContext().getRuntimeContext().fx());
 
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
-                SQLFunc fx = f.getRuntimeContext().fx();
-                SQLFunction likeSQLFunction = fx.like(s->{
-                    s.sqlFunc(func().apply(fx));
-                    s.sqlFunc(sqlFunction);
-                },false, SQLLikeEnum.LIKE_PERCENT_LEFT);
-                f.sqlFunctionExecute(getTable(),likeSQLFunction);
+                if (f.conditionAppend(this, val)) {
+                    SQLFunc fx = f.getRuntimeContext().fx();
+                    SQLFunction likeSQLFunction = fx.like(s -> {
+                        s.sqlFunc(func().apply(fx));
+                        s.value(val);
+                    }, false, SQLLikeEnum.LIKE_PERCENT_LEFT);
+                    f.sqlFunctionExecute(getTable(), likeSQLFunction);
+                }
             }));
         }
     }
@@ -160,14 +167,15 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
     @Override
     default void notContains(boolean condition, String val) {
         if (condition) {
-            SQLFunction sqlFunction = Expression.of(getEntitySQLContext()).constant(val).func().apply(getEntitySQLContext().getRuntimeContext().fx());
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
-                SQLFunc fx = f.getRuntimeContext().fx();
-                SQLFunction likeSQLFunction = fx.like(s->{
-                    s.sqlFunc(func().apply(fx));
-                    s.sqlFunc(sqlFunction);
-                },false, SQLLikeEnum.LIKE_PERCENT_ALL);
-                f.sqlFunctionExecute(getTable(),likeSQLFunction);
+                if (f.conditionAppend(this, val)) {
+                    SQLFunc fx = f.getRuntimeContext().fx();
+                    SQLFunction likeSQLFunction = fx.like(s -> {
+                        s.sqlFunc(func().apply(fx));
+                        s.value(val);
+                    }, false, SQLLikeEnum.LIKE_PERCENT_ALL);
+                    f.sqlFunctionExecute(getTable(), likeSQLFunction);
+                }
             }));
         }
     }
@@ -177,11 +185,11 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
         if (condition) {
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                SQLFunction likeSQLFunction = fx.like(s->{
+                SQLFunction likeSQLFunction = fx.like(s -> {
                     s.sqlFunc(func().apply(fx));
-                    PropTypeColumn.columnFuncSelector(s,val);
-                },true, SQLLikeEnum.LIKE_PERCENT_RIGHT);
-                f.sqlFunctionExecute(getTable(),likeSQLFunction);
+                    PropTypeColumn.columnFuncSelector(s, val);
+                }, true, SQLLikeEnum.LIKE_PERCENT_RIGHT);
+                f.sqlFunctionExecute(getTable(), likeSQLFunction);
             }));
         }
     }
@@ -192,11 +200,11 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
 
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                SQLFunction likeSQLFunction = fx.like(s->{
+                SQLFunction likeSQLFunction = fx.like(s -> {
                     s.sqlFunc(func().apply(fx));
-                    PropTypeColumn.columnFuncSelector(s,val);
-                },true, SQLLikeEnum.LIKE_PERCENT_LEFT);
-                f.sqlFunctionExecute(getTable(),likeSQLFunction);
+                    PropTypeColumn.columnFuncSelector(s, val);
+                }, true, SQLLikeEnum.LIKE_PERCENT_LEFT);
+                f.sqlFunctionExecute(getTable(), likeSQLFunction);
             }));
         }
     }
@@ -206,11 +214,11 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
         if (condition) {
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                SQLFunction likeSQLFunction = fx.like(s->{
+                SQLFunction likeSQLFunction = fx.like(s -> {
                     s.sqlFunc(func().apply(fx));
-                    PropTypeColumn.columnFuncSelector(s,val);
-                },true, SQLLikeEnum.LIKE_PERCENT_ALL);
-                f.sqlFunctionExecute(getTable(),likeSQLFunction);
+                    PropTypeColumn.columnFuncSelector(s, val);
+                }, true, SQLLikeEnum.LIKE_PERCENT_ALL);
+                f.sqlFunctionExecute(getTable(), likeSQLFunction);
             }));
         }
     }
@@ -220,11 +228,11 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
         if (condition) {
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                SQLFunction likeSQLFunction = fx.like(s->{
+                SQLFunction likeSQLFunction = fx.like(s -> {
                     s.sqlFunc(func().apply(fx));
-                    PropTypeColumn.columnFuncSelector(s,val);
-                },false, SQLLikeEnum.LIKE_PERCENT_RIGHT);
-                f.sqlFunctionExecute(getTable(),likeSQLFunction);
+                    PropTypeColumn.columnFuncSelector(s, val);
+                }, false, SQLLikeEnum.LIKE_PERCENT_RIGHT);
+                f.sqlFunctionExecute(getTable(), likeSQLFunction);
             }));
         }
     }
@@ -234,11 +242,11 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
         if (condition) {
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                SQLFunction likeSQLFunction = fx.like(s->{
+                SQLFunction likeSQLFunction = fx.like(s -> {
                     s.sqlFunc(func().apply(fx));
-                    PropTypeColumn.columnFuncSelector(s,val);
-                },false, SQLLikeEnum.LIKE_PERCENT_LEFT);
-                f.sqlFunctionExecute(getTable(),likeSQLFunction);
+                    PropTypeColumn.columnFuncSelector(s, val);
+                }, false, SQLLikeEnum.LIKE_PERCENT_LEFT);
+                f.sqlFunctionExecute(getTable(), likeSQLFunction);
             }));
         }
     }
@@ -248,11 +256,11 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
         if (condition) {
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
-                SQLFunction likeSQLFunction = fx.like(s->{
+                SQLFunction likeSQLFunction = fx.like(s -> {
                     s.sqlFunc(func().apply(fx));
-                    PropTypeColumn.columnFuncSelector(s,val);
-                },false, SQLLikeEnum.LIKE_PERCENT_ALL);
-                f.sqlFunctionExecute(getTable(),likeSQLFunction);
+                    PropTypeColumn.columnFuncSelector(s, val);
+                }, false, SQLLikeEnum.LIKE_PERCENT_ALL);
+                f.sqlFunctionExecute(getTable(), likeSQLFunction);
             }));
         }
     }

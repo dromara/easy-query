@@ -1,4 +1,4 @@
-package com.easy.query.core.proxy;
+package com.easy.query.core.expression.parser.core;
 
 /**
  * create time 2023/7/13 08:46

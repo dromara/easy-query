@@ -114,10 +114,6 @@ public class FilterImpl implements Filter {
 //        }
 //    }
 
-    private boolean conditionAppend(TableAvailable table, String property, Object value) {
-        return this.conditionAcceptAssert.accept(table, property, value);
-    }
-
     protected SQLPredicateCompare getReallyPredicateCompare(SQLPredicateCompare sqlPredicateCompare) {
         return reverse ? sqlPredicateCompare.toReverse() : sqlPredicateCompare;
     }
@@ -144,6 +140,11 @@ public class FilterImpl implements Filter {
     @Override
     public ExpressionContext getExpressionContext() {
         return expressionContext;
+    }
+
+    @Override
+    public ValueFilter getValueFilter() {
+        return this.conditionAcceptAssert;
     }
 
     @Override

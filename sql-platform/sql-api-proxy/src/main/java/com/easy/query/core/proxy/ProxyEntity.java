@@ -1,6 +1,7 @@
 package com.easy.query.core.proxy;
 
 import com.easy.query.core.annotation.Nullable;
+import com.easy.query.core.expression.parser.core.PropColumn;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**

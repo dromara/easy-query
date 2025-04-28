@@ -1,8 +1,8 @@
 package com.easy.query.core.proxy.columns;
 
 import com.easy.query.core.proxy.extension.functions.ColumnStringFunctionAvailable;
-import com.easy.query.core.proxy.predicate.DSLColumnContainsPredicate;
-import com.easy.query.core.proxy.predicate.DSLColumnPropTypeContainsPredicate;
+import com.easy.query.core.proxy.predicate.DSLContainsStringPredicate;
+import com.easy.query.core.proxy.predicate.DSLContainsPropPredicate;
 import com.easy.query.core.proxy.predicate.DSLStringAssertPredicate;
 
 /**
@@ -13,7 +13,7 @@ import com.easy.query.core.proxy.predicate.DSLStringAssertPredicate;
  */
 public interface SQLStringColumn<TProxy, TProperty> extends SQLObjectColumn<TProxy,TProperty>,
         DSLStringAssertPredicate<TProperty>,
-        DSLColumnContainsPredicate,
-        DSLColumnPropTypeContainsPredicate,
+        DSLContainsStringPredicate,
+        DSLContainsPropPredicate,
         ColumnStringFunctionAvailable<TProperty> {
 }

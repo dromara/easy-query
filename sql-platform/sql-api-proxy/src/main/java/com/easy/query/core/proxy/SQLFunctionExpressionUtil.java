@@ -20,10 +20,7 @@ public class SQLFunctionExpressionUtil {
     public static <T extends SQLNative<T>& RuntimeContextAvailable> void accept(T sqlNative, TableAvailable table, Function<SQLFunc, SQLFunction> sqlFunc){
 
         SQLFunction sqlFunction = sqlFunc.apply(sqlNative.getRuntimeContext().fx());
-        String sqlSegment = sqlFunction.sqlSegment(table);
-        sqlNative.sqlNativeSegment(sqlSegment,context->{
-            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table,context));
-        });
+        sqlNative.sqlFunctionExecute(table,sqlFunction);
     }
     public static <T extends SQLNative<T>& RuntimeContextAvailable> void accept(T sqlNative, TableAvailable table, Function<SQLFunc, SQLFunction> sqlFunc,boolean asc){
 

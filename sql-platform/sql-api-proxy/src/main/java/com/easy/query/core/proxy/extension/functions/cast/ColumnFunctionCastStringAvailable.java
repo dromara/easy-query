@@ -37,8 +37,7 @@ public interface ColumnFunctionCastStringAvailable<TProperty> extends SQLSelectA
     default ColumnFunctionCompareComparableStringChainExpression<String> asStr(){
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return sqlFunction;
+                return ((DSLSQLFunctionAvailable) this).func().apply(fx);
             } else {
                 return fx.anySQLFunction("{0}",c->c.column(this.getTable(),this.getValue()));
             }
