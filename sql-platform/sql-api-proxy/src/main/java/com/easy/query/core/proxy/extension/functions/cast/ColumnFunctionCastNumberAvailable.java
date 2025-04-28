@@ -48,4 +48,30 @@ public interface ColumnFunctionCastNumberAvailable<TProperty> extends SQLSelectA
         }, clazz);
     }
 
+    /**
+     * 编译层面欺骗编译器将其视作Integer
+     * @return
+     */
+    default ColumnFunctionCompareComparableNumberChainExpression<Integer> asInteger() {
+        return asNumber(Integer.class);
+    }
+
+
+    /**
+     * 编译层面欺骗编译器将其视作Long
+     * @return
+     */
+    default ColumnFunctionCompareComparableNumberChainExpression<Long> asLong() {
+        return asNumber(Long.class);
+    }
+
+
+    /**
+     * 编译层面欺骗编译器将其视作BigDecimal
+     * @return
+     */
+    default ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> asBigDecimal() {
+        return asNumber(BigDecimal.class);
+    }
+
 }

@@ -30,6 +30,29 @@ public interface ColumnFunctionCastDateTimeAvailable<TProperty> extends SQLSelec
             }
         }, clazz);
     }
+    /**
+     * 编译层面欺骗编译器将其视作LocalDateTime
+     * @return
+     */
+    default ColumnFunctionCompareComparableDateTimeChainExpression<LocalDateTime> asLocalDateTime() {
+        return asDateTime(LocalDateTime.class);
+    }
+
+    /**
+     * 编译层面欺骗编译器将其视作LocalDate
+     * @return
+     */
+    default ColumnFunctionCompareComparableDateTimeChainExpression<LocalDate> asLocalDate() {
+        return asDateTime(LocalDate.class);
+    }
+
+    /**
+     * 编译层面欺骗编译器将其视作Date
+     * @return
+     */
+    default ColumnFunctionCompareComparableDateTimeChainExpression<Date> asUtilDate() {
+        return asDateTime(Date.class);
+    }
     default <TR> ColumnFunctionCompareComparableDateTimeChainExpression<TR> asDateTime(Class<TR> clazz) {
         return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
