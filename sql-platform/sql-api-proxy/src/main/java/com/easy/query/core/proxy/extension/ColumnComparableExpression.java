@@ -2,9 +2,6 @@ package com.easy.query.core.proxy.extension;
 
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.predicate.DSLAssertPredicate;
-import com.easy.query.core.proxy.predicate.DSLContainsColumnPredicate;
-import com.easy.query.core.proxy.predicate.DSLContainsFunctionPredicate;
-import com.easy.query.core.proxy.predicate.DSLContainsPredicate;
 import com.easy.query.core.proxy.predicate.DSLFunctionComparePredicate;
 import com.easy.query.core.proxy.predicate.DSLLikeColumnPredicate;
 import com.easy.query.core.proxy.predicate.DSLLikeFunctionPredicate;

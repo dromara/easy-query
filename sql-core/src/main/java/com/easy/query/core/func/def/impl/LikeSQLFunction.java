@@ -30,7 +30,7 @@ public class LikeSQLFunction extends AbstractLikeSQLFunction {
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         if (columnExpressions.size() != 2) {
-            throw new IllegalArgumentException("bank arguments != 1");
+            throw new IllegalArgumentException("like arguments != 2");
         }
         ColumnExpression columnExpression = columnExpressions.get(1);
         ColumnFuncValueExpression columnFuncValueExpression = getColumnFuncValueExpression(columnExpression);

@@ -8,7 +8,6 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastBooleanAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastDateTimeAvailable;
@@ -17,21 +16,14 @@ import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelec
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelectorImpl;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.filter.ColumnFunctionCompareComparableNumberFilterChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.filter.ColumnFunctionCompareComparableStringFilterChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.filter.impl.ColumnFunctionCompareComparableNumberFilterChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.filter.impl.ColumnFunctionCompareComparableStringFilterChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableStringChainExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLColumnFunctionCompareComparableExpressionImpl;
-import com.easy.query.core.proxy.predicate.DSLContainsColumnPredicate;
-import com.easy.query.core.proxy.predicate.DSLContainsFunctionPredicate;
-import com.easy.query.core.proxy.predicate.DSLContainsPredicate;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
-import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
-import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -44,10 +36,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         ColumnAggregateFilterFunctionAvailable<TProperty, ColumnFunctionCompareComparableStringFilterChainExpression<TProperty>>,
         ColumnFunctionCastNumberAvailable<TProperty>,
         ColumnFunctionCastDateTimeAvailable<TProperty>,
-        ColumnFunctionCastBooleanAvailable<TProperty>
-        , DSLContainsPredicate
-        , DSLContainsColumnPredicate
-        , DSLContainsFunctionPredicate {
+        ColumnFunctionCastBooleanAvailable<TProperty> {
 
     @Override
     default ColumnFunctionCompareComparableStringFilterChainExpression<TProperty> max() {

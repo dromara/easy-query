@@ -23,9 +23,8 @@ public interface DSLStringAssertPredicate<TProperty> extends TablePropColumn, En
            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                SQLFunc fx = f.getRuntimeContext().fx();
                SQLFunction bank = fx.empty(getValue());
-               f.sqlNativeSegment(bank.sqlSegment(getTable()),c->{
-                   bank.consume(new SQLNativeChainExpressionContextImpl(getTable(),c));
-               });
+
+               f.sqlFunctionExecute(getTable(),bank);
            }));
         }
     }
@@ -38,9 +37,7 @@ public interface DSLStringAssertPredicate<TProperty> extends TablePropColumn, En
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                SQLFunc fx = f.getRuntimeContext().fx();
                SQLFunction bank = fx.notEmpty(getValue());
-               f.sqlNativeSegment(bank.sqlSegment(getTable()),c->{
-                   bank.consume(new SQLNativeChainExpressionContextImpl(getTable(),c));
-               });
+                f.sqlFunctionExecute(getTable(),bank);
            }));
         }
     }
@@ -53,9 +50,7 @@ public interface DSLStringAssertPredicate<TProperty> extends TablePropColumn, En
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                 SQLFunc fx = f.getRuntimeContext().fx();
                 SQLFunction bank = fx.bank(getValue());
-                f.sqlNativeSegment(bank.sqlSegment(getTable()),c->{
-                    bank.consume(new SQLNativeChainExpressionContextImpl(getTable(),c));
-                });
+                f.sqlFunctionExecute(getTable(),bank);
             }));
         }
     }
@@ -68,9 +63,7 @@ public interface DSLStringAssertPredicate<TProperty> extends TablePropColumn, En
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
                SQLFunc fx = f.getRuntimeContext().fx();
                SQLFunction bank = fx.notBank(getValue());
-               f.sqlNativeSegment(bank.sqlSegment(getTable()),c->{
-                   bank.consume(new SQLNativeChainExpressionContextImpl(getTable(),c));
-               });
+                f.sqlFunctionExecute(getTable(), bank);
            }));
         }
     }

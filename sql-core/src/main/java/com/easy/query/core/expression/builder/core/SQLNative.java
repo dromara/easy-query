@@ -1,8 +1,10 @@
 package com.easy.query.core.expression.builder.core;
 
 import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.parser.core.available.ChainCast;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
+import com.easy.query.core.func.SQLFunction;
 
 /**
  * create time 2023/7/31 13:20
@@ -20,4 +22,16 @@ public interface SQLNative<TChain> extends SQLNativeAble {
      */
     @Override
     TChain sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume);
+
+    /**
+     * 执行sql函数片段
+     * @param defaultTable
+     * @param sqlFunction
+     * @return
+     */
+    default TChain sqlFunctionExecute(TableAvailable defaultTable, SQLFunction sqlFunction){
+        return sqlNativeSegment(sqlFunction.sqlSegment(defaultTable),c->{
+            sqlFunction.consume(new SQLNativeChainExpressionContextImpl(defaultTable,c));
+        });
+    }
 }
