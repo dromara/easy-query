@@ -4,6 +4,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,7 +20,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class QueryTest24 extends BaseTest{
+public class QueryTest24 extends BaseTest {
     @Test
     public void testContains() {
 
@@ -33,7 +34,7 @@ public class QueryTest24 extends BaseTest{
                     t_blog.star().nullOrDefault(1).asStr().startsWith("30%");
                     t_blog.title().contains(t_blog.expression().constant("30%"));
                     t_blog.title().nullOrDefault("1").contains("30%");
-                    t_blog.title().subString(1,6).contains("30%");
+                    t_blog.title().subString(1, 6).contains("30%");
                     t_blog.title().contains(t_blog.content());
                     t_blog.title().contains(t_blog.content().nullOrDefault(""));
                 }).toList();
@@ -46,6 +47,7 @@ public class QueryTest24 extends BaseTest{
 
 
     }
+
     @Test
     public void testContains2() {
 
@@ -71,6 +73,7 @@ public class QueryTest24 extends BaseTest{
         Assert.assertEquals("false(Boolean),1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void testContains3() {
 
@@ -95,6 +98,27 @@ public class QueryTest24 extends BaseTest{
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `star` LIKE CONCAT('%',?,'%') AND `star` LIKE CONCAT(?,'%') AND `star` LIKE CONCAT('%',?) AND `title` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),1(String),2(String),3(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void testContains4() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .select(t_blog -> new BlogEntityProxy()
+                        .title().set(t_blog.title()) // 标题
+                        .content().set(t_blog.content().nullOrDefault("")) // 内容
+                ).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`title` AS `title`,IFNULL(t.`content`,?) AS `content` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 }

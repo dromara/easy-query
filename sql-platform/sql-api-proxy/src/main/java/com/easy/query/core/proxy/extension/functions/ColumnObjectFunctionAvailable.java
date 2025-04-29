@@ -14,6 +14,7 @@ import com.easy.query.core.proxy.extension.functions.executor.filter.impl.Column
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.function.Function;
 

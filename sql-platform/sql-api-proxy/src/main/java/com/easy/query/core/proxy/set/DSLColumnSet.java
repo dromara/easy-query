@@ -24,6 +24,8 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.util.EasyObjectUtil;
 
+import java.util.function.Consumer;
+
 /**
  * create time 2023/12/8 10:46
  * 文件说明
@@ -130,6 +132,11 @@ public interface DSLColumnSet<TProxy, TProperty> extends PropTypeColumn<TPropert
         }
         return castChain();
     }
+//
+//    default TProxy setConverter(Consumer<DSLColumnSet<TProxy,TProperty>> setConsumer) {
+//        setConsumer.accept(this);
+//        return castChain();
+//    }
 
     /**
      * 设置子查询

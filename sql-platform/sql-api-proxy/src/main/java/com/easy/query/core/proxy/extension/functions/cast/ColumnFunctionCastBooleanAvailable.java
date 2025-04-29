@@ -17,6 +17,10 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
  */
 public interface ColumnFunctionCastBooleanAvailable<TProperty> extends SQLSelectAsExpression, PropTypeColumn<TProperty> {
 
+    /**
+     * 使用数据库函数将其转成boolean类型
+     * @return
+     */
     default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> toBoolean(){
         Class<Boolean> clazz = Boolean.class;
         return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
@@ -28,6 +32,11 @@ public interface ColumnFunctionCastBooleanAvailable<TProperty> extends SQLSelect
             }
         }, clazz);
     }
+
+    /**
+     * 编译层面欺骗编译器将其视作Boolean
+     * @return
+     */
     default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> asBoolean() {
         Class<Boolean> clazz = Boolean.class;
         return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
