@@ -93,7 +93,25 @@ public class EasyDatabaseUtil {
         } catch (Exception e) {
             log.error("get columns error:" + e.getMessage(), e);
         }
-        return new HashSet<>(); // 未能获取数据库名称
+        return new HashSet<>(); // 未能获取数据库列信息
+
+    }
+    public static Set<String> getTableIndexes(DataSource dataSource,String tableName) {
+        try (Connection connection = dataSource.getConnection()) {
+            DatabaseMetaData databaseMetaData = connection.getMetaData();
+            ResultSet resultSet = databaseMetaData.getIndexInfo(null, null, tableName, false, false);
+            // 获取元数据
+            HashSet<String> indexes = new HashSet<>();
+            while (resultSet.next()) {
+                String indexName = resultSet.getString("INDEX_NAME");
+                indexes.add(indexName);
+
+            }
+            return indexes;
+        } catch (Exception e) {
+            log.error("get indexes error:" + e.getMessage(), e);
+        }
+        return new HashSet<>(); // 未能获取数据库索引信息
 
     }
 

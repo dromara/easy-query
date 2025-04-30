@@ -6,8 +6,11 @@ import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.migration.DatabaseMigrationProvider;
+import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.gauss.db.expression.GaussDBExpressionFactory;
 import com.easy.query.gauss.db.func.GaussDBFuncImpl;
+import com.easy.query.gauss.db.migration.GaussDBDatabaseMigrationProvider;
+import com.easy.query.gauss.db.migration.GaussDBMigrationEntityParser;
 
 /**
  * create time 2024/1/19 22:36
@@ -23,5 +26,6 @@ public class GaussDBDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(ExpressionFactory.class, GaussDBExpressionFactory.class);
         services.addService(SQLFunc.class, GaussDBFuncImpl.class);
         services.addService(DatabaseMigrationProvider.class, GaussDBDatabaseMigrationProvider.class);
+        services.addService(MigrationEntityParser.class, GaussDBMigrationEntityParser.class);
     }
 }

@@ -6,9 +6,11 @@ import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.migration.DatabaseMigrationProvider;
+import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.sqlite.expression.SQLiteExpressionFactory;
 import com.easy.query.sqlite.func.SQLiteFuncImpl;
 import com.easy.query.sqlite.migration.SQLiteDatabaseMigrationProvider;
+import com.easy.query.sqlite.migration.SQLiteMigrationEntityParser;
 
 /**
  * create time 2023/5/10 13:40
@@ -23,5 +25,6 @@ public class SQLiteDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(ExpressionFactory.class, SQLiteExpressionFactory.class);
         services.addService(SQLFunc.class, SQLiteFuncImpl.class);
         services.addService(DatabaseMigrationProvider.class, SQLiteDatabaseMigrationProvider.class);
+        services.addService(MigrationEntityParser.class, SQLiteMigrationEntityParser.class);
     }
 }

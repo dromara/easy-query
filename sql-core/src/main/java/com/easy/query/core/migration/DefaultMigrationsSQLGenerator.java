@@ -59,35 +59,50 @@ public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
 //            String oldTableName = EasyStringUtil.isBlank(entityMetadata.getOldTableName()) ? null : EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getOldTableName(), null, null);
             boolean tableExists = databaseMigrationProvider.tableExists(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName());
             if (!tableExists) {
+                //如果新旧表名不一致
                 if (!Objects.equals(entityMetadata.getTableName(), entityMetadata.getOldTableName())) {
+                    //判断旧表是否存在
                     boolean oldTableExists = databaseMigrationProvider.tableExists(entityMetadata.getSchemaOrNull(), entityMetadata.getOldTableName());
                     if (oldTableExists) {
+                        //存在就要修改表名
                         MigrationCommand migrationCommand = databaseMigrationProvider.renameTable(entityMigrationMetadata);
                         if (migrationCommand != null) {
                             migrationCommands.add(migrationCommand);
                         }
-
-                        List<MigrationCommand> columns = databaseMigrationProvider.syncTable(entityMigrationMetadata, true);
+                        //新增修改删除表信息
+                        List<MigrationCommand> columns = databaseMigrationProvider.syncTable(entityMigrationMetadata, false);
                         if (columns != null) {
                             migrationCommands.addAll(columns);
                         }
+                        //判断是否要创建索引
                     } else {
+                        //表不存在就创建表
                         MigrationCommand migrationCommand = databaseMigrationProvider.createTable(entityMigrationMetadata);
                         if (migrationCommand != null) {
                             migrationCommands.add(migrationCommand);
                         }
+                        //创建索引
+                        List<MigrationCommand> tableIndexCommands = databaseMigrationProvider.createTableIndex(entityMigrationMetadata);
+                        migrationCommands.addAll(tableIndexCommands);
                     }
                 } else {
+                    //表不存在就创建表
                     MigrationCommand migrationCommand = databaseMigrationProvider.createTable(entityMigrationMetadata);
                     if (migrationCommand != null) {
                         migrationCommands.add(migrationCommand);
                     }
+                    //创建索引
+                    List<MigrationCommand> tableIndexCommands = databaseMigrationProvider.createTableIndex(entityMigrationMetadata);
+                    migrationCommands.addAll(tableIndexCommands);
                 }
             } else {
                 List<MigrationCommand> columns = databaseMigrationProvider.syncTable(entityMigrationMetadata, false);
                 if (columns != null) {
                     migrationCommands.addAll(columns);
                 }
+                //创建索引
+                List<MigrationCommand> tableIndexCommands = databaseMigrationProvider.syncTableIndex(entityMigrationMetadata,false);
+                migrationCommands.addAll(tableIndexCommands);
             }
 
 //            for (ColumnMetadata column : entityMetadata.getColumns()) {
@@ -116,10 +131,13 @@ public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
         ArrayList<MigrationCommand> migrationCommands = new ArrayList<>(migrationContext.getEntities().size());
         for (Class<?> entity : migrationContext.getEntities()) {
             EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entity);
-            MigrationCommand migrationCommand = databaseMigrationProvider.createTable(new EntityMigrationMetadata(entityMetadata));
+            EntityMigrationMetadata entityMigrationMetadata = new EntityMigrationMetadata(entityMetadata);
+            MigrationCommand migrationCommand = databaseMigrationProvider.createTable(entityMigrationMetadata);
             if (migrationCommand != null) {
                 migrationCommands.add(migrationCommand);
             }
+            List<MigrationCommand> tableIndexCommands = databaseMigrationProvider.createTableIndex(entityMigrationMetadata);
+            migrationCommands.addAll(tableIndexCommands);
         }
         return migrationCommands;
     }

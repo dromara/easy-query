@@ -1,7 +1,8 @@
-package com.easy.query.mysql.config;
+package com.easy.query.mysql.migration;
 
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.migration.DefaultDatabaseMigrationProvider;
+import com.easy.query.core.migration.MigrationEntityParser;
 
 import javax.sql.DataSource;
 
@@ -12,7 +13,7 @@ import javax.sql.DataSource;
  * @author xuejiaming
  */
 public class MySQLDatabaseMigrationProvider extends DefaultDatabaseMigrationProvider {
-    public MySQLDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword) {
-        super(dataSource, sqlKeyword);
+    public MySQLDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword, MigrationEntityParser migrationEntityParser) {
+        super(dataSource, sqlKeyword,migrationEntityParser);
     }
 }

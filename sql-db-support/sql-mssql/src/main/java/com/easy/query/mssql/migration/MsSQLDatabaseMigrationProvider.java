@@ -7,6 +7,8 @@ import com.easy.query.core.migration.AbstractDatabaseMigrationProvider;
 import com.easy.query.core.migration.ColumnDbTypeResult;
 import com.easy.query.core.migration.EntityMigrationMetadata;
 import com.easy.query.core.migration.MigrationCommand;
+import com.easy.query.core.migration.MigrationEntityParser;
+import com.easy.query.core.migration.TableIndexResult;
 import com.easy.query.core.migration.commands.DefaultMigrationCommand;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyDatabaseUtil;
@@ -19,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.UUID;
 
 /**
@@ -28,31 +31,9 @@ import java.util.UUID;
  * @author xuejiaming
  */
 public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationProvider {
-    private static final Map<Class<?>, ColumnDbTypeResult> columnTypeMap = new HashMap<>();
 
-    static {
-        columnTypeMap.put(boolean.class, new ColumnDbTypeResult("BIT", false));
-        columnTypeMap.put(Boolean.class, new ColumnDbTypeResult("BIT", null));
-        columnTypeMap.put(float.class, new ColumnDbTypeResult("REAL", 0f));
-        columnTypeMap.put(Float.class, new ColumnDbTypeResult("REAL", null));
-        columnTypeMap.put(double.class, new ColumnDbTypeResult("FLOAT", 0d));
-        columnTypeMap.put(Double.class, new ColumnDbTypeResult("FLOAT", null));
-        columnTypeMap.put(short.class, new ColumnDbTypeResult("SMALLINT", 0));
-        columnTypeMap.put(Short.class, new ColumnDbTypeResult("SMALLINT", null));
-        columnTypeMap.put(int.class, new ColumnDbTypeResult("INT", 0));
-        columnTypeMap.put(Integer.class, new ColumnDbTypeResult("INT", null));
-        columnTypeMap.put(long.class, new ColumnDbTypeResult("BIGINT", 0L));
-        columnTypeMap.put(Long.class, new ColumnDbTypeResult("BIGINT", null));
-        columnTypeMap.put(byte.class, new ColumnDbTypeResult("TINYINT", 0));
-        columnTypeMap.put(Byte.class, new ColumnDbTypeResult("TINYINT", null));
-        columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("DECIMAL(16,2)", null));
-        columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("DATETIME", null));
-        columnTypeMap.put(String.class, new ColumnDbTypeResult("NVARCHAR(255)", ""));
-        columnTypeMap.put(UUID.class, new ColumnDbTypeResult("uniqueidentifier", null));
-    }
-
-    public MsSQLDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword) {
-        super(dataSource, sqlKeyword);
+    public MsSQLDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword, MigrationEntityParser migrationEntityParser) {
+        super(dataSource, sqlKeyword, migrationEntityParser);
     }
 
 //    @Override
@@ -128,7 +109,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
                     .append(" ");
             ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
             sql.append(columnDbTypeResult.columnType);
-            boolean nullable = isNullable(entityMigrationMetadata, column);
+            boolean nullable = migrationEntityParser.isNullable(entityMigrationMetadata, column);
             if (nullable) {
                 sql.append(" NULL ");
             } else {
@@ -206,7 +187,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
 
         ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
         sql.append(columnDbTypeResult.columnType);
-        if (isNullable(entityMigrationMetadata, column)) {
+        if (migrationEntityParser.isNullable(entityMigrationMetadata, column)) {
             sql.append(" NULL");
         } else {
             sql.append(" NOT NULL");
@@ -235,9 +216,27 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";");
     }
-
     @Override
-    protected ColumnDbTypeResult getColumnDbType0(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
-        return columnTypeMap.get(columnMetadata.getPropertyType());
+    protected MigrationCommand createIndex(EntityMigrationMetadata entityMigrationMetadata, TableIndexResult tableIndex) {
+        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
+        StringBuilder sql = new StringBuilder();
+        sql.append("CREATE ");
+        if (tableIndex.unique) {
+            sql.append("UNIQUE INDEX ");
+        } else {
+            sql.append("INDEX ");
+        }
+        sql.append(tableIndex.indexName);
+        sql.append(" ON ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()));
+        sql.append(" (");
+        StringJoiner joiner = new StringJoiner(",");
+        for (int i = 0; i < tableIndex.fields.size(); i++) {
+            TableIndexResult.EntityField entityField = tableIndex.fields.get(i);
+            String column = getQuoteSQLName(entityField.columnName) + " " + (entityField.asc ? "ASC" : "DESC");
+            joiner.add(column);
+        }
+        sql.append(joiner);
+        sql.append(");");
+        return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
 }

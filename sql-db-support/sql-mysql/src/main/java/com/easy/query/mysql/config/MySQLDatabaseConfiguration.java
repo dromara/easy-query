@@ -6,8 +6,11 @@ import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.migration.DatabaseMigrationProvider;
+import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.mysql.expression.MySQLExpressionFactory;
 import com.easy.query.mysql.func.MySQLFuncImpl;
+import com.easy.query.mysql.migration.MySQLDatabaseMigrationProvider;
+import com.easy.query.mysql.migration.MySQLMigrationEntityParser;
 
 /**
  * create time 2023/5/10 13:40
@@ -22,5 +25,6 @@ public class MySQLDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(ExpressionFactory.class, MySQLExpressionFactory.class);
         services.addService(SQLFunc.class, MySQLFuncImpl.class);
         services.addService(DatabaseMigrationProvider.class, MySQLDatabaseMigrationProvider.class);
+        services.addService(MigrationEntityParser.class, MySQLMigrationEntityParser.class);
     }
 }

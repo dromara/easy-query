@@ -1,4 +1,4 @@
-package com.easy.query.pgsql.config;
+package com.easy.query.gauss.db.migration;
 
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -7,22 +7,22 @@ import com.easy.query.core.migration.AbstractDatabaseMigrationProvider;
 import com.easy.query.core.migration.ColumnDbTypeResult;
 import com.easy.query.core.migration.EntityMigrationMetadata;
 import com.easy.query.core.migration.MigrationCommand;
+import com.easy.query.core.migration.MigrationEntityParser;
+import com.easy.query.core.migration.TableIndexResult;
 import com.easy.query.core.migration.commands.DefaultMigrationCommand;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.core.util.EasyStringUtil;
-import com.easy.query.core.util.EasyToSQLUtil;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.StringJoiner;
 import java.util.UUID;
 
 /**
@@ -31,37 +31,29 @@ import java.util.UUID;
  *
  * @author xuejiaming
  */
-public class PgSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationProvider {
-    private static final Map<Class<?>, ColumnDbTypeResult> columnTypeMap = new HashMap<>();
+public class GaussDBDatabaseMigrationProvider extends AbstractDatabaseMigrationProvider {
 
-    static {
-        columnTypeMap.put(boolean.class, new ColumnDbTypeResult("BOOL", false));
-        columnTypeMap.put(Boolean.class, new ColumnDbTypeResult("BOOL", null));
-        columnTypeMap.put(float.class, new ColumnDbTypeResult("FLOAT4", 0f));
-        columnTypeMap.put(Float.class, new ColumnDbTypeResult("FLOAT4", null));
-        columnTypeMap.put(double.class, new ColumnDbTypeResult("FLOAT8", 0d));
-        columnTypeMap.put(Double.class, new ColumnDbTypeResult("FLOAT8", null));
-        columnTypeMap.put(short.class, new ColumnDbTypeResult("INT2", 0));
-        columnTypeMap.put(Short.class, new ColumnDbTypeResult("INT2", null));
-        columnTypeMap.put(int.class, new ColumnDbTypeResult("INT4", 0));
-        columnTypeMap.put(Integer.class, new ColumnDbTypeResult("INT4", null));
-        columnTypeMap.put(long.class, new ColumnDbTypeResult("INT8", 0L));
-        columnTypeMap.put(Long.class, new ColumnDbTypeResult("INT8", null));
-        columnTypeMap.put(byte.class, new ColumnDbTypeResult("INT2", 0));
-        columnTypeMap.put(Byte.class, new ColumnDbTypeResult("INT2", null));
-        columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("numeric(16,2)", null));
-        columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("TIMESTAMP", null));
-        columnTypeMap.put(String.class, new ColumnDbTypeResult("VARCHAR(255)", ""));
-        columnTypeMap.put(UUID.class, new ColumnDbTypeResult("UUID", null));
+    public GaussDBDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword, MigrationEntityParser migrationEntityParser) {
+        super(dataSource, sqlKeyword, migrationEntityParser);
     }
 
-    public PgSQLDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword) {
-        super(dataSource, sqlKeyword);
-    }
+//    @Override
+//    public boolean databaseExists() {
+//        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from pg_namespace where nspname = ?", Collections.singletonList(getDatabaseName()));
+//        return EasyCollectionUtil.isNotEmpty(maps);
+//    }
+//
+//    @Override
+//    public MigrationCommand createDatabaseCommand() {
+//        String databaseSQL = "CREATE SCHEMA IF NOT EXISTS " + getQuoteSQLName(databaseName) + ";";
+//        return new DefaultMigrationCommand(null, databaseSQL);
+//    }
+
     @Override
     public String databaseExistSQL(String databaseName) {
         return String.format("select 1 from pg_namespace where nspname = '%s'", databaseName);
     }
+
     @Override
     public String createDatabaseSQL(String databaseName) {
         return "CREATE SCHEMA IF NOT EXISTS " + getQuoteSQLName(databaseName) + ";";
@@ -95,7 +87,7 @@ public class PgSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
         StringBuilder columnCommentSQL = new StringBuilder();
 
 
-        String tableComment = getTableComment(entityMigrationMetadata,"'");
+        String tableComment = getTableComment(entityMigrationMetadata, "'");
         if (EasyStringUtil.isNotBlank(tableComment)) {
             columnCommentSQL.append(newLine)
                     .append("COMMENT ON TABLE ")
@@ -109,7 +101,7 @@ public class PgSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
                     .append(" ");
             ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
             sql.append(columnDbTypeResult.columnType);
-            boolean nullable = isNullable(entityMigrationMetadata, column);
+            boolean nullable = migrationEntityParser.isNullable(entityMigrationMetadata, column);
             if (nullable) {
                 sql.append(" NULL ");
             } else {
@@ -118,7 +110,7 @@ public class PgSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
             if (column.isGeneratedKey()) {
                 sql.append(" GENERATED BY DEFAULT AS IDENTITY");
             }
-            String columnComment = getColumnComment(entityMigrationMetadata, column,"'");
+            String columnComment = getColumnComment(entityMigrationMetadata, column, "'");
             if (EasyStringUtil.isNotBlank(columnComment)) {
                 columnCommentSQL.append(newLine)
                         .append("COMMENT ON COLUMN ")
@@ -141,7 +133,7 @@ public class PgSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
                     sql.append(")");
                 }
             }
-        }else{
+        } else {
             sql.deleteCharAt(sql.length() - 1);
         }
         sql.append(newLine).append(");");
@@ -169,7 +161,7 @@ public class PgSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
 //            sql.append(" NOT NULL");
 //        }
 
-        String columnComment = getColumnComment(entityMigrationMetadata, column,"'");
+        String columnComment = getColumnComment(entityMigrationMetadata, column, "'");
         if (EasyStringUtil.isNotBlank(columnComment)) {
             sql.append(newLine);
             sql.append(" COMMENT ON COLUMN ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName())).append(" IS ").append(columnComment);
@@ -187,14 +179,14 @@ public class PgSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
 
         ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
         sql.append(columnDbTypeResult.columnType);
-        if (isNullable(entityMigrationMetadata, column)) {
+        if (migrationEntityParser.isNullable(entityMigrationMetadata, column)) {
             sql.append(" NULL");
         } else {
             sql.append(" NOT NULL");
         }
         sql.append(";");
 
-        String columnComment = getColumnComment(entityMigrationMetadata, column,"'");
+        String columnComment = getColumnComment(entityMigrationMetadata, column, "'");
         if (EasyStringUtil.isNotBlank(columnComment)) {
             sql.append(newLine);
             sql.append(" COMMENT ON COLUMN ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName())).append(" IS ").append(columnComment);
@@ -209,9 +201,27 @@ public class PgSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";");
     }
-
     @Override
-    protected ColumnDbTypeResult getColumnDbType0(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
-        return columnTypeMap.get(columnMetadata.getPropertyType());
+    protected MigrationCommand createIndex(EntityMigrationMetadata entityMigrationMetadata, TableIndexResult tableIndex) {
+        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
+        StringBuilder sql = new StringBuilder();
+        sql.append("CREATE ");
+        if (tableIndex.unique) {
+            sql.append("UNIQUE INDEX ");
+        } else {
+            sql.append("INDEX ");
+        }
+        sql.append(tableIndex.indexName);
+        sql.append(" ON ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()));
+        sql.append(" (");
+        StringJoiner joiner = new StringJoiner(",");
+        for (int i = 0; i < tableIndex.fields.size(); i++) {
+            TableIndexResult.EntityField entityField = tableIndex.fields.get(i);
+            String column = getQuoteSQLName(entityField.columnName) + " " + (entityField.asc ? "ASC" : "DESC");
+            joiner.add(column);
+        }
+        sql.append(joiner);
+        sql.append(");");
+        return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
 }

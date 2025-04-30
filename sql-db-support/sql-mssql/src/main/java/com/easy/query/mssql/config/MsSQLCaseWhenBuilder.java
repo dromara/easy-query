@@ -39,6 +39,11 @@ public class MsSQLCaseWhenBuilder extends DefaultCaseWhenBuilder {
         return super.caseWhen(predicate, processorConstBigDecimal(paramExpression));
     }
 
+    /**
+     * 处理sqlserver下的case when当第二个参数是BigDecimal.ZERO时,会丢失精度,所以需要处理为指定精度的BigDecimal
+     * @param paramExpression 表达式
+     * @return
+     */
     protected ParamExpression processorConstBigDecimal(ParamExpression paramExpression) {
         if (paramExpression instanceof ColumnConstParamExpression) {
             ColumnConstParamExpression columnConstParamExpression = (ColumnConstParamExpression) paramExpression;

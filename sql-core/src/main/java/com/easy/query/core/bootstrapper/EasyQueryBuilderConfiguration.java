@@ -101,7 +101,9 @@ import com.easy.query.core.metadata.DefaultEntityMetadataManager;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.migration.DatabaseMigrationProvider;
 import com.easy.query.core.migration.DefaultDatabaseMigrationProvider;
+import com.easy.query.core.migration.DefaultMigrationEntityParser;
 import com.easy.query.core.migration.DefaultMigrationsSQLGenerator;
+import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.migration.MigrationsSQLGenerator;
 import com.easy.query.core.sharding.DefaultEasyQueryDataSource;
 import com.easy.query.core.sharding.EasyQueryDataSource;
@@ -218,6 +220,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(EntityMappingRule.class, ColumnEntityMappingRule.class)
                 .replaceService(MigrationsSQLGenerator.class, DefaultMigrationsSQLGenerator.class)
                 .replaceService(DatabaseMigrationProvider.class, DefaultDatabaseMigrationProvider.class)
+                .replaceService(MigrationEntityParser.class, DefaultMigrationEntityParser.class)
                 .replaceService(CteTableNamedProvider.class, DefaultCteTableNamedProvider.class)
                 .replaceService(MapKeyNameConversion.class, DefaultMapKeyNameConversion.class)
                 .replaceService(DatabaseCodeFirst.class, DefaultDatabaseCodeFirst.class)

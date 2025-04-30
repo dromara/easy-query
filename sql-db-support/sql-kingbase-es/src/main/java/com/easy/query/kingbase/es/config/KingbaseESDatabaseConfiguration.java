@@ -6,8 +6,12 @@ import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.migration.DatabaseMigrationProvider;
+import com.easy.query.core.migration.DefaultMigrationEntityParser;
+import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.kingbase.es.expression.KingbaseESExpressionFactory;
 import com.easy.query.kingbase.es.func.KingbaseESSQLFuncImpl;
+import com.easy.query.kingbase.es.migration.KingbaseESDatabaseMigrationProvider;
+import com.easy.query.kingbase.es.migration.KingbaseESMigrationEntityParser;
 
 /**
  * create time 2023/7/28 21:11
@@ -23,5 +27,6 @@ public class KingbaseESDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(ExpressionFactory.class, KingbaseESExpressionFactory.class);
         services.addService(SQLFunc.class, KingbaseESSQLFuncImpl.class);
         services.addService(DatabaseMigrationProvider.class, KingbaseESDatabaseMigrationProvider.class);
+        services.addService(MigrationEntityParser.class, KingbaseESMigrationEntityParser.class);
     }
 }

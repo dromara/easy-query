@@ -7,10 +7,12 @@ import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.migration.DatabaseMigrationProvider;
+import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.oracle.expression.OracleExpressionFactory;
 import com.easy.query.oracle.func.OracleSQLFuncImpl;
 import com.easy.query.oracle.migration.OracleDatabaseCodeFirst;
 import com.easy.query.oracle.migration.OracleDatabaseMigrationProvider;
+import com.easy.query.oracle.migration.OracleMigrationEntityParser;
 
 /**
  * create time 2023/8/15 17:17
@@ -25,6 +27,7 @@ public class OracleDatabaseConfiguration  implements DatabaseConfiguration {
         services.addService(ExpressionFactory.class, OracleExpressionFactory.class);
         services.addService(SQLFunc.class, OracleSQLFuncImpl.class);
         services.addService(DatabaseMigrationProvider.class, OracleDatabaseMigrationProvider.class);
+        services.addService(MigrationEntityParser.class, OracleMigrationEntityParser.class);
         services.addService(DatabaseCodeFirst.class, OracleDatabaseCodeFirst.class);
     }
 }

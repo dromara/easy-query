@@ -1,10 +1,16 @@
 package com.easy.query.core.migration;
 
+import com.easy.query.core.annotation.TableIndex;
+import com.easy.query.core.annotation.TableIndexes;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyStringUtil;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,7 +33,14 @@ public class EntityMigrationMetadata {
         return entityMetadata;
     }
 
-    public Field getFieldByName(ColumnMetadata columnMetadata) {
-        return allFieldsMap.get(columnMetadata.getFieldName());
+    public Field getFieldByColumnMetadata(ColumnMetadata columnMetadata) {
+        return getFieldByName(columnMetadata.getFieldName());
+    }
+    public Field getFieldByName(String fieldName) {
+        return allFieldsMap.get(fieldName);
+    }
+
+    public Map<String, Field> getAllFieldsMap() {
+        return allFieldsMap;
     }
 }

@@ -7,9 +7,11 @@ import com.easy.query.core.extension.casewhen.SQLCaseWhenBuilderFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.migration.DatabaseMigrationProvider;
+import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.mssql.expression.MsSQLExpressionFactory;
 import com.easy.query.mssql.func.MsSQLFuncImpl;
 import com.easy.query.mssql.migration.MsSQLDatabaseMigrationProvider;
+import com.easy.query.mssql.migration.MsSQLMigrationEntityParser;
 
 /**
  * create time 2023/5/10 13:40
@@ -24,6 +26,7 @@ public class MsSQLDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(ExpressionFactory.class, MsSQLExpressionFactory.class);
         services.addService(SQLFunc.class, MsSQLFuncImpl.class);
         services.addService(DatabaseMigrationProvider.class, MsSQLDatabaseMigrationProvider.class);
+        services.addService(MigrationEntityParser.class, MsSQLMigrationEntityParser.class);
         services.addService(SQLCaseWhenBuilderFactory.class, MsSQLCaseWhenBuilderFactory.class);
     }
 }
