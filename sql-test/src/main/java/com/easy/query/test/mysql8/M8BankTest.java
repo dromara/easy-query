@@ -1774,6 +1774,58 @@ public class M8BankTest extends BaseTest {
 
     }
 
+    @Test
+    public void testFirst(){
+
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<Part1<SysUser, String>> userParts = easyEntityQuery.queryable(SysUser.class)
+                .where(user -> user.age().gt(18))
+                .select(user -> Select.PART.of(
+                        user,
+                        user.bankCards().orderBy(card -> card.openTime().asc()).firstElement().code()
+                )).toList();
+
+        for (Part1<SysUser, String> userPart : userParts) {
+            SysUser user = userPart.getEntity();
+            String firstCardCode = userPart.getPartColumn1();
+        }
+
+        listenerContextManager.clear();
+
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time`,t4.`code` AS `__part__column1` FROM `t_sys_user` t LEFT JOIN (SELECT t2.`id` AS `id`,t2.`uid` AS `uid`,t2.`code` AS `code`,t2.`type` AS `type`,t2.`bank_id` AS `bank_id`,t2.`open_time` AS `open_time` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time`,(ROW_NUMBER() OVER (PARTITION BY t1.`uid` ORDER BY t1.`open_time` ASC)) AS `__row__` FROM `t_bank_card` t1) t2 WHERE t2.`__row__` = ?) t4 ON t4.`uid` = t.`id` WHERE t.`age` > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),18(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void testFirst2(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft2<String, String>> userNameAndFirstCardCodes = easyEntityQuery.queryable(SysUser.class)
+                .where(user -> user.age().gt(18))
+                .select(user -> Select.DRAFT.of(
+                        user.name(),
+                        user.bankCards().orderBy(card -> card.openTime().asc()).firstElement().code()
+                )).toList();
+        for (Draft2<String, String> userNameAndFirstCardCode : userNameAndFirstCardCodes) {
+            String userName = userNameAndFirstCardCode.getValue1();
+            String firstCardCode = userNameAndFirstCardCode.getValue2();
+        }
+        listenerContextManager.clear();
+
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`name` AS `value1`,t4.`code` AS `value2` FROM `t_sys_user` t LEFT JOIN (SELECT t2.`id` AS `id`,t2.`uid` AS `uid`,t2.`code` AS `code`,t2.`type` AS `type`,t2.`bank_id` AS `bank_id`,t2.`open_time` AS `open_time` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time`,(ROW_NUMBER() OVER (PARTITION BY t1.`uid` ORDER BY t1.`open_time` ASC)) AS `__row__` FROM `t_bank_card` t1) t2 WHERE t2.`__row__` = ?) t4 ON t4.`uid` = t.`id` WHERE t.`age` > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),18(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+
 //    @Test
 //    public void partitionBy2() {
 //        EntityQueryable<Draft3Proxy<String, String, Long>, Draft3<String, String, Long>> cteAs = easyEntityQuery.queryable(SysBankCard.class)

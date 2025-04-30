@@ -4,6 +4,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
@@ -103,6 +104,18 @@ public class QueryTest24 extends BaseTest {
 
     @Test
     public void testContains4() {
+//
+//        easyEntityQuery.updatable(BlogEntity.class)
+//                .setColumns(t_blog -> {
+//                    t_blog.title().set("123");
+//                }).whereById("12345")
+//                .executeRows();
+//
+//        BlogEntity blogEntity = new BlogEntity();
+//        easyEntityQuery.updatable(blogEntity)
+//                .setColumns(t_blog -> t_blog.FETCHER.title().score())
+//                .whereColumns(t_blog -> t_blog.FETCHER.columnKeys())
+//                .executeRows();
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -119,6 +132,25 @@ public class QueryTest24 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`title` AS `title`,IFNULL(t.`content`,?) AS `content` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public  void aaa(){
+        LocalDateTime localDateTime = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t_topic, t_blog) -> t_topic.id().eq(t_blog.id()))
+                .selectColumn((t_topic, t_blog) -> t_blog.createTime().max())
+                .singleOrNull();
+
+        LocalDateTime localDateTime1 = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t_topic, t_blog) -> t_topic.id().eq(t_blog.id()))
+                .maxOrNull((a, b) -> b.createTime());
+
+        LocalDateTime localDateTime2 = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t_topic, t_blog) -> t_topic.id().eq(t_blog.id()))
+                .orderBy((t_topic, t_blog) -> t_blog.createTime().desc())
+                .selectColumn((t_topic, t_blog) -> t_blog.createTime())
+                .firstOrNull();
 
     }
 }

@@ -2,6 +2,7 @@ package com.easy.query.test.mysql8.vo;
 
 
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.parser.core.extra.ExtraAutoIncludeConfigure;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysUserProxy;
@@ -90,6 +91,7 @@ public class SysBankDTO {
     public static class InternalUser {
         private static final ExtraAutoIncludeConfigure EXTRA_AUTO_INCLUDE_CONFIGURE = SysUserProxy.TABLE.EXTRA_AUTO_INCLUDE_CONFIGURE()
                 .configure(query -> query.subQueryToGroupJoin(u -> u.userBooks()))
+//                .configure(query -> query.configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN)))
                 .where(o -> {
                     ConfigureArgument configureArgument = o.getEntitySQLContext().getExpressionContext().getConfigureArgument();
                     String arg = configureArgument.getTypeArg();
