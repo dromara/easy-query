@@ -114,6 +114,24 @@ public class EasyDatabaseUtil {
         return new HashSet<>(); // 未能获取数据库索引信息
 
     }
+    public static Set<String> getTableForeignKeys(DataSource dataSource,String tableName) {
+        try (Connection connection = dataSource.getConnection()) {
+            DatabaseMetaData databaseMetaData = connection.getMetaData();
+            ResultSet resultSet = databaseMetaData.getImportedKeys(null, null, tableName);
+            // 获取元数据
+            HashSet<String> foreignKeys = new HashSet<>();
+            while (resultSet.next()) {
+                String fkName = resultSet.getString("FK_NAME");
+                foreignKeys.add(fkName);
+
+            }
+            return foreignKeys;
+        } catch (Exception e) {
+            log.error("get indexes error:" + e.getMessage(), e);
+        }
+        return new HashSet<>(); // 未能获取数据库索引信息
+
+    }
 
     public static List<Map<String, Object>> sqlQuery(DataSource dataSource, String sql, List<Object> parameters) {
 

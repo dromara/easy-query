@@ -1,7 +1,9 @@
 package com.easy.query.core.migration;
 
 import com.easy.query.core.annotation.Nullable;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadataManager;
 
 import java.util.List;
 
@@ -61,4 +63,5 @@ public interface MigrationEntityParser {
     String getColumnRenameFrom(EntityMigrationMetadata entityMigrationMetadata,ColumnMetadata columnMetadata);
 
     List<TableIndexResult> getTableIndexes(EntityMigrationMetadata entityMigrationMetadata);
+    List<TableForeignKeyResult> getTableForeignKeys(EntityMigrationMetadata entityMigrationMetadata, QueryRuntimeContext runtimeContext);
 }

@@ -4,8 +4,11 @@ import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.TableIndex;
 import com.easy.query.core.annotation.TableIndexes;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadataManager;
+import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -145,9 +148,8 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
             if (tableIndexResult != null) {
                 tableIndexResults.add(tableIndexResult);
             }
-        }
-        else{
-            if(EasyArrayUtil.isNotEmpty(tableIndexes.value())){
+        } else {
+            if (EasyArrayUtil.isNotEmpty(tableIndexes.value())) {
                 for (TableIndex tableIndex : tableIndexes.value()) {
                     TableIndexResult tableIndexResult = parseTableIndex(tableIndex, entityMetadata.getTableName(), entityMetadata);
                     if (tableIndexResult != null) {
@@ -188,8 +190,29 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
                     entityFields.add(new TableIndexResult.EntityField(field, columnName, !descFields.contains(field)));
                 }
             }
-            return new TableIndexResult(indexName,tableIndex.unique(), entityFields);
+            return new TableIndexResult(indexName, tableIndex.unique(), entityFields);
         }
         return null;
+    }
+
+    @Override
+    public List<TableForeignKeyResult> getTableForeignKeys(EntityMigrationMetadata entityMigrationMetadata, QueryRuntimeContext runtimeContext) {
+        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
+        ArrayList<TableForeignKeyResult> tableForeignKeyResults = new ArrayList<>();
+        EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
+        for (NavigateMetadata navigateMetadata : entityMetadata.getNavigateMetadatas()) {
+            if (navigateMetadata.isForeignKey()) {
+                String selfTable = entityMetadata.getTableName();
+                EntityMetadata targetEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
+                String targetTable = targetEntityMetadata.getTableName();
+                String[] selfPropertiesOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
+                String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
+                String[] selfColumns = Arrays.stream(selfPropertiesOrPrimary).map(selfProp -> entityMetadata.getColumnNotNull(selfProp).getName()).toArray(String[]::new);
+                String[] targetColumns = Arrays.stream(targetPropertiesOrPrimary).map(targetProp -> targetEntityMetadata.getColumnNotNull(targetProp).getName()).toArray(String[]::new);
+                String name = String.format("%s_%s_%s_fk", selfTable, targetTable, String.join("_", targetColumns));
+                tableForeignKeyResults.add(new TableForeignKeyResult(name, selfTable, targetTable, selfColumns, targetColumns));
+            }
+        }
+        return tableForeignKeyResults;
     }
 }

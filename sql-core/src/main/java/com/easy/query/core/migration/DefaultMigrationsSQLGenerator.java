@@ -2,7 +2,9 @@ package com.easy.query.core.migration;
 
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -31,10 +33,12 @@ import java.util.Set;
 public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
     private final EntityMetadataManager entityMetadataManager;
     private final DatabaseMigrationProvider databaseMigrationProvider;
+    private final ServiceProvider serviceProvider;
 
-    public DefaultMigrationsSQLGenerator(EntityMetadataManager entityMetadataManager, DatabaseMigrationProvider databaseMigrationProvider) {
+    public DefaultMigrationsSQLGenerator(EntityMetadataManager entityMetadataManager, DatabaseMigrationProvider databaseMigrationProvider, ServiceProvider serviceProvider) {
         this.entityMetadataManager = entityMetadataManager;
         this.databaseMigrationProvider = databaseMigrationProvider;
+        this.serviceProvider = serviceProvider;
     }
 
     @Override
@@ -46,6 +50,7 @@ public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
 //                migrationCommands.add(databaseCommand);
 //            }
 //        }
+        QueryRuntimeContext runtimeContext = serviceProvider.getService(QueryRuntimeContext.class);
         for (Class<?> entity : migrationContext.getEntities()) {
             EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entity);
             EntityMigrationMetadata entityMigrationMetadata = databaseMigrationProvider.createEntityMigrationMetadata(entityMetadata);
@@ -91,6 +96,9 @@ public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
                     if (migrationCommand != null) {
                         migrationCommands.add(migrationCommand);
                     }
+                    //创建外键
+                    List<MigrationCommand> tableForeignKeyCommands = databaseMigrationProvider.createTableForeignKey(entityMigrationMetadata, runtimeContext);
+                    migrationCommands.addAll(tableForeignKeyCommands);
                     //创建索引
                     List<MigrationCommand> tableIndexCommands = databaseMigrationProvider.createTableIndex(entityMigrationMetadata);
                     migrationCommands.addAll(tableIndexCommands);
@@ -100,8 +108,11 @@ public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
                 if (columns != null) {
                     migrationCommands.addAll(columns);
                 }
+                //创建外键
+                List<MigrationCommand> tableForeignKeyCommands = databaseMigrationProvider.syncTableForeignKey(entityMigrationMetadata, runtimeContext, false);
+                migrationCommands.addAll(tableForeignKeyCommands);
                 //创建索引
-                List<MigrationCommand> tableIndexCommands = databaseMigrationProvider.syncTableIndex(entityMigrationMetadata,false);
+                List<MigrationCommand> tableIndexCommands = databaseMigrationProvider.syncTableIndex(entityMigrationMetadata, false);
                 migrationCommands.addAll(tableIndexCommands);
             }
 
