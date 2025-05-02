@@ -13,14 +13,12 @@ import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyStringUtil;
-import com.easy.query.core.util.EasyToSQLUtil;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -203,6 +201,7 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
         for (NavigateMetadata navigateMetadata : entityMetadata.getNavigateMetadatas()) {
             if (navigateMetadata.isForeignKey()) {
                 String selfTable = entityMetadata.getTableName();
+                String action = navigateMetadata.getAction();
                 EntityMetadata targetEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
                 String targetTable = targetEntityMetadata.getTableName();
                 String[] selfPropertiesOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
@@ -210,7 +209,7 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
                 String[] selfColumns = Arrays.stream(selfPropertiesOrPrimary).map(selfProp -> entityMetadata.getColumnNotNull(selfProp).getName()).toArray(String[]::new);
                 String[] targetColumns = Arrays.stream(targetPropertiesOrPrimary).map(targetProp -> targetEntityMetadata.getColumnNotNull(targetProp).getName()).toArray(String[]::new);
                 String name = String.format("%s_%s_%s_fk", selfTable, targetTable, String.join("_", targetColumns));
-                tableForeignKeyResults.add(new TableForeignKeyResult(name, selfTable, targetTable, selfColumns, targetColumns));
+                tableForeignKeyResults.add(new TableForeignKeyResult(name, action, selfTable, targetTable, selfColumns, targetColumns));
             }
         }
         return tableForeignKeyResults;

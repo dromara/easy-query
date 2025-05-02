@@ -1,6 +1,8 @@
 package com.easy.query.sqlite.migration;
 
 import com.easy.query.core.configuration.dialect.SQLKeyword;
+import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -10,6 +12,7 @@ import com.easy.query.core.migration.ColumnDbTypeResult;
 import com.easy.query.core.migration.EntityMigrationMetadata;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationEntityParser;
+import com.easy.query.core.migration.TableForeignKeyResult;
 import com.easy.query.core.migration.TableIndexResult;
 import com.easy.query.core.migration.commands.DefaultMigrationCommand;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -20,12 +23,14 @@ import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * create time 2025/1/14 13:31
@@ -35,8 +40,11 @@ import java.util.UUID;
  */
 public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationProvider {
 
-    public SQLiteDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword, MigrationEntityParser migrationEntityParser) {
+    private final ServiceProvider serviceProvider;
+
+    public SQLiteDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword, MigrationEntityParser migrationEntityParser, ServiceProvider serviceProvider) {
         super(dataSource, sqlKeyword, migrationEntityParser);
+        this.serviceProvider = serviceProvider;
     }
 
     @Override
@@ -109,6 +117,25 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
             }
         }else{
             sql.deleteCharAt(sql.length() - 1);
+        }
+        QueryRuntimeContext runtimeContext = serviceProvider.getService(QueryRuntimeContext.class);
+        List<TableForeignKeyResult> tableForeignKeys = migrationEntityParser.getTableForeignKeys(entityMigrationMetadata, runtimeContext);
+        if(EasyCollectionUtil.isNotEmpty(tableForeignKeys)){
+            for (TableForeignKeyResult tableForeignKeyResult : tableForeignKeys) {
+                String selfColumns = Arrays.stream(tableForeignKeyResult.selfColumn).map(self -> getQuoteSQLName(self)).collect(Collectors.joining(","));
+                String targetColumns = Arrays.stream(tableForeignKeyResult.targetColumn).map(target -> getQuoteSQLName(target)).collect(Collectors.joining(","));
+                sql.append(newLine).append(",");
+                sql.append(" FOREIGN KEY (")
+                        .append(selfColumns)
+                        .append(") REFERENCES ")
+                        .append(getQuoteSQLName(tableForeignKeyResult.targetTable))
+                        .append("(")
+                        .append(targetColumns)
+                        .append(")");
+                if (EasyStringUtil.isNotBlank(tableForeignKeyResult.action)) {
+                    sql.append(" ").append(tableForeignKeyResult.action).append(" ");
+                }
+            }
         }
         sql.append(newLine).append(");");
 //        String tableComment = getTableComment(entityMigrationMetadata);
@@ -197,4 +224,14 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
 
+    /**
+     * sqlite不支持alter table来额外增加外键必须在create table的时候直接写入外键
+     * @param entityMigrationMetadata
+     * @param tableForeignKeyResult
+     * @return
+     */
+    @Override
+    protected MigrationCommand createTableForeignKey(EntityMigrationMetadata entityMigrationMetadata, TableForeignKeyResult tableForeignKeyResult) {
+        return null;
+    }
 }

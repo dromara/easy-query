@@ -403,6 +403,7 @@ public class EntityMetadata {
                     throw new EasyQueryInvalidOperationException(String.format("[%s.%s] The @ForeignKey annotation cannot be used for one-to-many or many-to-many relationships.", EasyClassUtil.getSimpleName(entityClass), property));
                 }
                 navigateOption.setForeignKey(true);
+                navigateOption.setAction(foreignKey.action());
             }
             navigateOption.setSubQueryToGroupJoin(toMany && navigate.subQueryToGroupJoin());
             navigateOption.setRequired(required);

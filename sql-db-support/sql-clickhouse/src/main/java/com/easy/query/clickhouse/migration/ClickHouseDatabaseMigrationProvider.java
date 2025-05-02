@@ -8,6 +8,7 @@ import com.easy.query.core.migration.ColumnDbTypeResult;
 import com.easy.query.core.migration.EntityMigrationMetadata;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationEntityParser;
+import com.easy.query.core.migration.TableForeignKeyResult;
 import com.easy.query.core.migration.TableIndexResult;
 import com.easy.query.core.migration.commands.DefaultMigrationCommand;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -18,11 +19,13 @@ import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * create time 2025/1/19 14:08
@@ -204,5 +207,9 @@ public class ClickHouseDatabaseMigrationProvider extends AbstractDatabaseMigrati
     protected MigrationCommand createIndex(EntityMigrationMetadata entityMigrationMetadata, TableIndexResult tableIndex) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         return new DefaultMigrationCommand(entityMetadata, "-- not support create index:"+tableIndex.indexName);
+    }
+    @Override
+    protected MigrationCommand createTableForeignKey(EntityMigrationMetadata entityMigrationMetadata, TableForeignKeyResult tableForeignKeyResult) {
+        return null;
     }
 }

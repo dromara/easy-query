@@ -34,6 +34,7 @@ public class NavigateOption {
     private SQLExpression1<WherePredicate<?>> predicateMappingClassFilterExpression;
     private EntityRelationPropertyProvider entityRelationPropertyProvider;
     private boolean foreignKey = false;
+    private String action = null;
     private boolean required = false;
     private boolean subQueryToGroupJoin = false;
 
@@ -161,6 +162,14 @@ public class NavigateOption {
 
     public void setForeignKey(boolean foreignKey) {
         this.foreignKey = foreignKey;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
 
     public boolean isRequired() {

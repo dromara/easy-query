@@ -8,12 +8,14 @@ package com.easy.query.core.migration;
  */
 public class TableForeignKeyResult {
     public final String name;
+    public final String action;
     public final String selfTable;
     public final String targetTable;
     public final String[] selfColumn;
     public final String[] targetColumn;
-    public TableForeignKeyResult(String name,String selfTable,String targetTable,String[] selfColumn,String[] targetColumn){
+    public TableForeignKeyResult(String name,String action,String selfTable,String targetTable,String[] selfColumn,String[] targetColumn){
         this.name=name;
+        this.action = action;
         this.selfTable=selfTable;
         this.targetTable=targetTable;
         this.selfColumn=selfColumn;

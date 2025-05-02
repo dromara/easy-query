@@ -65,6 +65,7 @@ public class NavigateMetadata {
     private final long offset;
     private final long limit;
     private final boolean foreignKey;
+    private final String action;
     private final boolean required;
     private final boolean subQueryToGroupJoin;
 
@@ -92,6 +93,7 @@ public class NavigateMetadata {
         this.getter = getter;
         this.setter = setter;
         this.foreignKey = navigateOption.isForeignKey();
+        this.action = navigateOption.getAction();
         this.required = navigateOption.isRequired();
         this.subQueryToGroupJoin = navigateOption.isSubQueryToGroupJoin();
         if (EasyArrayUtil.isNotEmpty(directMapping)) {
@@ -313,6 +315,10 @@ public class NavigateMetadata {
      */
     public boolean isForeignKey() {
         return foreignKey;
+    }
+
+    public String getAction() {
+        return action;
     }
 
     /**

@@ -124,6 +124,7 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
         //比较差异
         return EasyDatabaseUtil.getTableIndexes(dataSource, columnTableName);
     }
+
     protected Set<String> getTableForeignKeys(EntityMigrationMetadata entityMigrationMetadata, boolean oldTable) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
 
@@ -191,7 +192,9 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
         ArrayList<MigrationCommand> migrationCommands = new ArrayList<>(tableForeignKeys.size());
         for (TableForeignKeyResult tableForeignKeyResult : tableForeignKeys) {
             MigrationCommand migrationCommand = createTableForeignKey(entityMigrationMetadata, tableForeignKeyResult);
-            migrationCommands.add(migrationCommand);
+            if (migrationCommand != null) {
+                migrationCommands.add(migrationCommand);
+            }
         }
         return migrationCommands;
     }
@@ -202,9 +205,11 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
         List<TableForeignKeyResult> tableForeignKeys = migrationEntityParser.getTableForeignKeys(entityMigrationMetadata, runtimeContext);
         ArrayList<MigrationCommand> migrationCommands = new ArrayList<>(tableForeignKeys.size());
         for (TableForeignKeyResult tableForeignKeyResult : tableForeignKeys) {
-            if(!dbTableIForeignKeys.contains(tableForeignKeyResult.name)){
+            if (!dbTableIForeignKeys.contains(tableForeignKeyResult.name)) {
                 MigrationCommand migrationCommand = createTableForeignKey(entityMigrationMetadata, tableForeignKeyResult);
-                migrationCommands.add(migrationCommand);
+                if (migrationCommand != null) {
+                    migrationCommands.add(migrationCommand);
+                }
             }
         }
         return migrationCommands;
@@ -215,7 +220,8 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
     protected abstract MigrationCommand addColumn(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata column);
 
     protected abstract MigrationCommand createIndex(EntityMigrationMetadata entityMigrationMetadata, TableIndexResult tableIndex);
-    protected abstract MigrationCommand createTableForeignKey(EntityMigrationMetadata entityMigrationMetadata, TableForeignKeyResult tableForeignKeyResult);
+
+    protected abstract @Nullable MigrationCommand createTableForeignKey(EntityMigrationMetadata entityMigrationMetadata, TableForeignKeyResult tableForeignKeyResult);
 
     public String getQuoteSQLName(String val) {
         return EasyToSQLUtil.getQuoteSQLName(sqlKeyword, val);

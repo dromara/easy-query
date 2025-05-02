@@ -10,6 +10,7 @@ import com.easy.query.core.migration.ColumnDbTypeResult;
 import com.easy.query.core.migration.EntityMigrationMetadata;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationEntityParser;
+import com.easy.query.core.migration.TableForeignKeyResult;
 import com.easy.query.core.migration.TableIndexResult;
 import com.easy.query.core.migration.commands.DefaultMigrationCommand;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -20,12 +21,14 @@ import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * create time 2025/1/19 14:08
@@ -234,6 +237,30 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         }
         sql.append(joiner);
         sql.append(");");
+        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+    }
+    @Override
+    protected MigrationCommand createTableForeignKey(EntityMigrationMetadata entityMigrationMetadata, TableForeignKeyResult tableForeignKeyResult) {
+        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
+        StringBuilder sql = new StringBuilder();
+        sql.append("ALTER TABLE ");
+        sql.append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()));
+        sql.append(" ADD CONSTRAINT ").append(tableForeignKeyResult.name);
+        sql.append(" FOREIGN KEY (");
+
+        String selfColumns = Arrays.stream(tableForeignKeyResult.selfColumn).map(self -> getQuoteSQLName(self)).collect(Collectors.joining(","));
+        sql.append(selfColumns);
+        sql.append(") REFERENCES ");
+        sql.append(getQuoteSQLName(tableForeignKeyResult.targetTable));
+        sql.append(" (");
+        String targetColumns = Arrays.stream(tableForeignKeyResult.targetColumn).map(target -> getQuoteSQLName(target)).collect(Collectors.joining(","));
+        sql.append(targetColumns);
+        sql.append(")");
+
+        if (EasyStringUtil.isNotBlank(tableForeignKeyResult.action)) {
+            sql.append(" ").append(tableForeignKeyResult.action).append(" ");
+        }
+        sql.append(";");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
 }

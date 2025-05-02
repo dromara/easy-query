@@ -12,12 +12,14 @@ import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  * create time 2025/1/14 13:31
@@ -186,6 +188,39 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
         }
         sql.append(joiner);
         sql.append(");");
+        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+    }
+
+    @Override
+    protected MigrationCommand createTableForeignKey(EntityMigrationMetadata entityMigrationMetadata, TableForeignKeyResult tableForeignKeyResult) {
+        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
+        StringBuilder sql = new StringBuilder();
+        sql.append("ALTER TABLE ");
+        sql.append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()));
+        sql.append(" ADD CONSTRAINT ");
+        sql.append(tableForeignKeyResult.name);
+        sql.append(" FOREIGN KEY (");
+        for (int i = 0; i < tableForeignKeyResult.selfColumn.length; i++) {
+            if (i > 0) {
+                sql.append(",");
+            }
+            sql.append(getQuoteSQLName(tableForeignKeyResult.selfColumn[i]));
+        }
+        sql.append(") REFERENCES ");
+        sql.append(getQuoteSQLName(tableForeignKeyResult.targetTable));
+        sql.append(" (");
+        for (int i = 0; i < tableForeignKeyResult.targetColumn.length; i++) {
+            if (i > 0) {
+                sql.append(",");
+            }
+            sql.append(getQuoteSQLName(tableForeignKeyResult.targetColumn[i]));
+        }
+        sql.append(")");
+
+        if (EasyStringUtil.isNotBlank(tableForeignKeyResult.action)) {
+            sql.append(" ").append(tableForeignKeyResult.action).append(" ");
+        }
+        sql.append(";");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
 }
