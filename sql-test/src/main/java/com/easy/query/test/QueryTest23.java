@@ -82,12 +82,6 @@ import java.util.Map;
  */
 public class QueryTest23 extends BaseTest {
 
-    @Before
-    public void before() {
-        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
-        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(UserAccount.class, UserBook.class));
-        codeFirstCommand.executeWithTransaction(s -> s.commit());
-    }
 
     @Test
     public void testElement3() {

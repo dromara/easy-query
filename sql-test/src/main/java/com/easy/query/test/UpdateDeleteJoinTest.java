@@ -22,20 +22,6 @@ import java.util.Arrays;
  */
 public class UpdateDeleteJoinTest extends BaseTest{
 
-    @Before
-     public void testBefore(){
-        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
-        databaseCodeFirst.createDatabaseIfNotExists();
-        {
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(DocBankCard.class, DocUser.class, DocBank.class));
-            codeFirstCommand.executeWithTransaction(a->a.commit());
-
-        }
-        {
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBankCard.class, DocUser.class, DocBank.class));
-            codeFirstCommand.executeWithTransaction(a->a.commit());
-        }
-    }
     @Test
     public void testUpdateJoin1(){
 

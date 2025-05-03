@@ -120,17 +120,17 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
     protected Set<String> getTableIndexes(EntityMigrationMetadata entityMigrationMetadata, boolean oldTable) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
 
-        String columnTableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, oldTable ? entityMetadata.getOldTableName() : entityMetadata.getTableName(), null, null);
+//        String columnTableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, oldTable ? entityMetadata.getOldTableName() : entityMetadata.getTableName(), null, null);
         //比较差异
-        return EasyDatabaseUtil.getTableIndexes(dataSource, columnTableName);
+        return EasyDatabaseUtil.getTableIndexes(dataSource, oldTable ? entityMetadata.getOldTableName() : entityMetadata.getTableName());
     }
 
     protected Set<String> getTableForeignKeys(EntityMigrationMetadata entityMigrationMetadata, boolean oldTable) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
 
-        String columnTableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, oldTable ? entityMetadata.getOldTableName() : entityMetadata.getTableName(), null, null);
+//        String columnTableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, oldTable ? entityMetadata.getOldTableName() : entityMetadata.getTableName(), null, null);
         //比较差异
-        return EasyDatabaseUtil.getTableForeignKeys(dataSource, columnTableName);
+        return EasyDatabaseUtil.getTableForeignKeys(dataSource, oldTable ? entityMetadata.getOldTableName() : entityMetadata.getTableName());
     }
 
     @Override

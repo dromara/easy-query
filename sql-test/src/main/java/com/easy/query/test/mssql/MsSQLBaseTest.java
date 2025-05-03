@@ -11,6 +11,7 @@ import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
 import com.easy.query.core.extension.casewhen.SQLCaseWhenBuilderFactory;
 import com.easy.query.core.logging.LogFactory;
+import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
@@ -20,6 +21,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * create time 2023/7/27 17:27
@@ -72,6 +74,11 @@ public abstract class MsSQLBaseTest {
                 .build();
         easyQuery = new DefaultEasyQuery(easyQueryClient);
         entityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+
+
+        Set<String> docBankCard = EasyDatabaseUtil.getTableForeignKeys(dataSource, "doc_bank_card");
+        System.out.println(docBankCard);
+
     }
 
     public static void initData() {

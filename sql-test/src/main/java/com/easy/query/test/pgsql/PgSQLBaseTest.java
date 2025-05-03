@@ -4,6 +4,8 @@ import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
+import com.easy.query.core.basic.api.database.CodeFirstCommand;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -11,6 +13,9 @@ import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.router.manager.TableRouteManager;
+import com.easy.query.test.doc.entity.DocBank;
+import com.easy.query.test.doc.entity.DocBankCard;
+import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.encryption.MyEncryptionStrategy;
@@ -26,10 +31,12 @@ import com.easy.query.test.sharding.FixShardingInitializer;
 import com.easy.query.test.sharding.TopicShardingTableRoute;
 import com.easy.query.test.sharding.TopicShardingTimeTableRoute;
 import com.zaxxer.hikari.HikariDataSource;
+import org.junit.Before;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -97,7 +104,7 @@ public class PgSQLBaseTest {
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         tableRouteManager.addRoute(new TopicShardingTableRoute());
         tableRouteManager.addRoute(new TopicShardingTimeTableRoute());
-
+        testBeforex();
     }
 
     public static void initData() {
@@ -130,132 +137,99 @@ public class PgSQLBaseTest {
             easyQuery.insertable(blogs).executeRows();
         }
 
-//
-//        boolean topicAutoAny = easyQuery.queryable(TopicAuto.class).any();
-//        if (!topicAutoAny) {
-//            List<TopicAuto> topicAutos = new ArrayList<>();
-//            for (int i = 0; i < 10; i++) {
-//                TopicAuto topicAuto = new TopicAuto();
-//                topicAuto.setStars(i);
-//                topicAuto.setTitle("title" + i);
-//                topicAuto.setCreateTime(LocalDateTime.now().plusDays(i));
-//                topicAutos.add(topicAuto);
-//            }
-//            long l = easyQuery.insertable(topicAutos).executeRows(true);
-//        }
-//
-//
-//        boolean topicAny = easyQuery.queryable(Topic.class).any();
-//        if(!topicAny){
-//            List<Topic> topics = new ArrayList<>();
-//            for (int i = 0; i < 100; i++) {
-//                Topic topic = new Topic();
-//                topic.setId(String.valueOf(i));
-//                topic.setStars(i + 100);
-//                topic.setTitle("标题" + i);
-//                topic.setCreateTime(LocalDateTime.now().plusDays(i));
-//                topics.add(topic);
-//            }
-//            long l = easyQuery.insertable(topics).executeRows();
-//        }
-//
-//        boolean sysUserAny = easyQuery.queryable(SysUser.class).any();
-//        if(!sysUserAny){
-//            List<SysUser> sysUsers = new ArrayList<>();
-//            for (int i = 0; i < 100; i++) {
-//                SysUser sysUser = new SysUser();
-//                sysUser.setId(String.valueOf(i));
-//                sysUser.setUsername("username"+String.valueOf(i));
-//                sysUser.setCreateTime(LocalDateTime.now().plusDays(i));
-//                sysUser.setPhone("18888888"+String.valueOf(i)+String.valueOf(i));
-//                sysUser.setIdCard("333333333333333"+String.valueOf(i)+String.valueOf(i));
-//                sysUser.setAddress(sysUser.getPhone()+sysUser.getIdCard());
-//                sysUsers.add(sysUser);
-//            }
-//            long l = easyQuery.insertable(sysUsers).executeRows();
-//        }
-//        boolean logicDeleteAny = easyQuery.queryable(LogicDelTopic.class).any();
-//        if(!logicDeleteAny){
-//            List<LogicDelTopic> logicDelTopics = new ArrayList<>();
-//            for (int i = 0; i < 100; i++) {
-//                LogicDelTopic logicDelTopic = new LogicDelTopic();
-//                logicDelTopic.setId(String.valueOf(i));
-//                logicDelTopic.setStars(i + 100);
-//                logicDelTopic.setTitle("标题" + i);
-//                logicDelTopic.setCreateTime(LocalDateTime.now().plusDays(i));
-//                logicDelTopic.setDeleted(false);
-//                logicDelTopics.add(logicDelTopic);
-//            }
-//            long l = easyQuery.insertable(logicDelTopics).executeRows();
-//        }
-//        boolean logicDeleteCusAny = easyQuery.queryable(LogicDelTopicCustom.class).any();
-//        if(!logicDeleteCusAny){
-//            List<LogicDelTopicCustom> logicDelTopics = new ArrayList<>();
-//            for (int i = 0; i < 100; i++) {
-//                LogicDelTopicCustom logicDelTopic = new LogicDelTopicCustom();
-//                logicDelTopic.setId(String.valueOf(i));
-//                logicDelTopic.setStars(i + 100);
-//                logicDelTopic.setTitle("标题" + i);
-//                logicDelTopic.setCreateTime(LocalDateTime.now().plusDays(i));
-//                logicDelTopics.add(logicDelTopic);
-//            }
-//            long l = easyQuery.insertable(logicDelTopics).executeRows();
-//        }
-//        boolean topicInterceptorAny = easyQuery.queryable(TopicInterceptor.class).any();
-//        if(!topicInterceptorAny){
-//            List<TopicInterceptor> topicInterceptors = new ArrayList<>();
-//            for (int i = 0; i < 100; i++) {
-//                TopicInterceptor topicInterceptor = new TopicInterceptor();
-//                topicInterceptor.setId(String.valueOf(i));
-//                topicInterceptor.setStars(i + 100);
-//                topicInterceptor.setTitle("标题" + i);
-//                topicInterceptor.setCreateTime(LocalDateTime.now().plusDays(i));
-//                topicInterceptor.setUpdateTime(LocalDateTime.now().plusDays(i));
-//                topicInterceptor.setCreateBy(i+"");
-//                topicInterceptor.setUpdateBy(i+"");
-//                topicInterceptor.setTenantId(i+"");
-//                topicInterceptors.add(topicInterceptor);
-//            }
-//            long l = easyQuery.insertable(topicInterceptors).executeRows();
-//        }
-//        boolean topicShardingAny = easyQuery.queryable(TopicSharding.class).where(o->o.le(TopicSharding::getStars,1000)).any();
-//        if(!topicShardingAny){
-//
-//            ArrayList<TopicSharding> topicShardings = new ArrayList<>(500);
-//            for (int i = 0; i < 500; i++) {
-//                TopicSharding topicSharding = new TopicSharding();
-//                topicSharding.setId(String.valueOf(i));
-//                topicSharding.setTitle("title" + i);
-//                topicSharding.setStars(i);
-//                topicSharding.setCreateTime(LocalDateTime.now().plusMinutes(i));
-//                topicShardings.add(topicSharding);
-//            }
-//
-//            long l = easyQuery.insertable(topicShardings).executeRows();
-//        }
-//        boolean shardingTimeExists = easyQuery.queryable(TopicShardingTime.class).any();
-//        if(!shardingTimeExists){
-//
-//            LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
-//            LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
-//            Duration between = Duration.between(beginTime, endTime);
-//            long days = between.toDays();
-//            ArrayList<TopicShardingTime> topicShardingTimes = new ArrayList<>(500);
-//            for (int i = 0; i < days; i++) {
-//                LocalDateTime now = beginTime.plusDays(i);
-//                String month = now.format(DateTimeFormatter.ofPattern("yyyyMM"));
-//                TopicShardingTime topicShardingTime = new TopicShardingTime();
-//                topicShardingTime.setId(UUID.randomUUID().toString().replaceAll("-","")+month);
-//                topicShardingTime.setTitle("title" + month);
-//                topicShardingTime.setStars(i);
-//                topicShardingTime.setCreateTime(now);
-//                topicShardingTimes.add(topicShardingTime);
-//            }
-//
-//            long l = easyQuery.insertable(topicShardingTimes).executeRows();
-//            System.out.println("插入时间条数:"+l);
-//        }
     }
 
+    public static void testBeforex(){
+        DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
+        databaseCodeFirst.createDatabaseIfNotExists();
+        {
+
+            try {
+
+                CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(DocBankCard.class,DocBank.class,  DocUser.class));
+                codeFirstCommand.executeWithTransaction(a->a.commit());
+            }catch (Exception exception){
+
+            }
+        }
+        {
+
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class,DocBankCard.class, DocUser.class));
+            codeFirstCommand.executeWithTransaction(a->a.commit());
+        }
+
+        ArrayList<DocBankCard> docBankCards = new ArrayList<>();
+        ArrayList<DocUser> docUsers = new ArrayList<>();
+        ArrayList<DocBank> docBanks = new ArrayList<>();
+
+        {
+            {
+                DocUser docUser = new DocUser();
+                docUser.setId("小明id");
+                docUser.setName("小明姓名");
+                docUser.setPhone("小明手机");
+                docUser.setAge(1);
+                docUsers.add(docUser);
+            }
+            {
+                DocUser docUser = new DocUser();
+                docUser.setId("小红id");
+                docUser.setName("小红姓名");
+                docUser.setPhone("小红手机");
+                docUser.setAge(1);
+                docUsers.add(docUser);
+            }
+            {
+                DocUser docUser = new DocUser();
+                docUser.setId("小黄id");
+                docUser.setName("小黄姓名");
+                docUser.setPhone("小黄手机");
+                docUser.setAge(1);
+                docUsers.add(docUser);
+            }
+        }
+
+        {
+            {
+                DocBank docBank = new DocBank();
+                docBank.setId("建设银行");
+                docBank.setName("建设银行");
+                docBanks.add(docBank);
+            }
+            {
+                DocBank docBank = new DocBank();
+                docBank.setId("中国银行");
+                docBank.setName("中国银行");
+                docBanks.add(docBank);
+            }
+            {
+                DocBank docBank = new DocBank();
+                docBank.setId("工商银行");
+                docBank.setName("工商银行");
+                docBanks.add(docBank);
+            }
+        }
+        {
+            {
+                DocBankCard docBankCard = new DocBankCard();
+                docBankCard.setId("小明工商");
+                docBankCard.setType("储蓄卡");
+                docBankCard.setUid("小明id");
+                docBankCard.setBankId("工商银行");
+                docBankCards.add(docBankCard);
+            }
+            {
+                DocBankCard docBankCard = new DocBankCard();
+                docBankCard.setId("小红建设");
+                docBankCard.setType("储蓄卡");
+                docBankCard.setUid("小红id");
+                docBankCard.setBankId("建设银行");
+                docBankCards.add(docBankCard);
+            }
+        }
+        entityQuery.insertable(docUsers).executeRows();
+        entityQuery.insertable(docBanks).executeRows();
+        entityQuery.insertable(docBankCards).executeRows();
+    }
 
 }

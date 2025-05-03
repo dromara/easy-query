@@ -8,6 +8,8 @@ import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.database.CodeFirstCommand;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
@@ -34,6 +36,9 @@ import com.easy.query.test.conversion.JsonConverter;
 import com.easy.query.test.conversion.MySQLAesEncryptColumnValueSQLConverter;
 import com.easy.query.test.conversion.StudentSizeColumnValueSQLConverter;
 import com.easy.query.test.conversion.UserAgeColumnValueSQLConverter;
+import com.easy.query.test.doc.entity.DocBank;
+import com.easy.query.test.doc.entity.DocBankCard;
+import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.dto.autodto.MyNavigateValueSetter;
 import com.easy.query.test.dto.autotest.RoleJoin;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
@@ -50,6 +55,8 @@ import com.easy.query.test.entity.TopicSharding;
 import com.easy.query.test.entity.TopicShardingDataSource;
 import com.easy.query.test.entity.TopicShardingDataSourceTime;
 import com.easy.query.test.entity.TopicShardingTime;
+import com.easy.query.test.entity.m2m.UserAccount;
+import com.easy.query.test.entity.m2m.UserBook;
 import com.easy.query.test.entity.relation.BookNavigateExtraFilterStrategy;
 import com.easy.query.test.entity.testrelation.JoinType;
 import com.easy.query.test.increment.MyDatabaseIncrementSQLColumnGenerator;
@@ -77,6 +84,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -228,7 +236,7 @@ public abstract class BaseTest {
         dataSourceRouteManager.addRoute(new TopicShardingDataSourceTimeDataSourceRoute());
         dataSourceRouteManager.addRoute(new TopicShardingDataSourceRoute());
 
-
+        beforex();
 
     }
 
@@ -434,6 +442,23 @@ public abstract class BaseTest {
             long l = easyQuery.insertable(topicShardingDataSources).executeRows();
         }
     }
+    public static void beforex(){
+        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
+        databaseCodeFirst.createDatabaseIfNotExists();
+        {
+            try {
 
+                CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(DocBank.class,UserAccount.class, UserBook.class,DocBankCard.class, DocUser.class));
+                codeFirstCommand.executeWithTransaction(a->a.commit());
+            }catch (Exception ignored){
+
+            }
+
+        }
+        {
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class,UserAccount.class, UserBook.class,DocBankCard.class, DocUser.class));
+            codeFirstCommand.executeWithTransaction(a->a.commit());
+        }
+    }
 
 }
