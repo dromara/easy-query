@@ -250,7 +250,8 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
 
         Class<T> joinClass = joinQueryable.queryClass();
 
-        EntityMetadata entityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(joinClass);
+        //不需要额外在获取直接获取表达式的即可
+        EntityMetadata entityMetadata = joinQueryable.queryEntityMetadata();// entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(joinClass)
         EntityQueryExpressionBuilder joinQueryableSQLEntityExpressionBuilder = joinQueryable.getSQLEntityExpressionBuilder();
 
         boolean withTable = joinQueryable instanceof CteTableAvailable;

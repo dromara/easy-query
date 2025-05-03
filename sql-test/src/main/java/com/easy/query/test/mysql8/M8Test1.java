@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class M8Test1 extends BaseTest {
     @Before
-    public void before() {
+    public void before1() {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(M8UserBookIds.class, M8UserBook2.class));
         codeFirstCommand.executeWithTransaction(s -> s.commit());

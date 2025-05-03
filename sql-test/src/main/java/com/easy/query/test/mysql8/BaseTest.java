@@ -6,6 +6,8 @@ import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.database.CodeFirstCommand;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
@@ -22,9 +24,18 @@ import com.easy.query.test.common.MyQueryConfiguration;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.mypage.MyEasyPageResultProvider;
+import com.easy.query.test.mysql8.entity.bank.SysBank;
+import com.easy.query.test.mysql8.entity.bank.SysBankCard;
+import com.easy.query.test.mysql8.entity.bank.SysUser;
+import com.easy.query.test.mysql8.entity.bank.SysUserBook;
 import com.easy.query.test.parser.MyLambdaParser;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * create time 2025/3/4 08:28
@@ -91,8 +102,139 @@ public class BaseTest {
         queryConfiguration.applyInterceptor(new M8Interceptor());
         easyQuery = new DefaultEasyQuery(easyQueryClient);
         easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
-
+        beforex();
     }
 
+    public static void beforex() {
+        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
+        databaseCodeFirst.createDatabaseIfNotExists();
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class, SysBankCard.class, SysBank.class, SysUserBook.class));
+        codeFirstCommand.executeWithTransaction(s -> s.commit());
+        easyEntityQuery.deletable(SysBankCard.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
+        easyEntityQuery.deletable(SysBank.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
+        easyEntityQuery.deletable(SysUser.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
+        ArrayList<SysBank> banks = new ArrayList<>();
+        ArrayList<SysBankCard> bankCards = new ArrayList<>();
+        ArrayList<SysUser> users = new ArrayList<>();
+        ArrayList<SysUserBook> userBooks = new ArrayList<>();
+        {
+            SysBank sysBank = new SysBank();
+            sysBank.setId("1");
+            sysBank.setName("工商银行");
+            sysBank.setCreateTime(LocalDateTime.of(2000, 1, 1, 0, 0));
+            banks.add(sysBank);
+
+            {
+                SysBankCard sysBankCard = new SysBankCard();
+                sysBankCard.setId("bc1");
+                sysBankCard.setUid("u1");
+                sysBankCard.setCode("123");
+                sysBankCard.setType("储蓄卡");
+                sysBankCard.setBankId(sysBank.getId());
+                sysBankCard.setOpenTime(LocalDateTime.of(2000, 1, 2, 0, 0));
+                bankCards.add(sysBankCard);
+            }
+            {
+                SysBankCard sysBankCard = new SysBankCard();
+                sysBankCard.setId("bc2");
+                sysBankCard.setUid("u1");
+                sysBankCard.setCode("1234");
+                sysBankCard.setType("信用卡");
+                sysBankCard.setBankId(sysBank.getId());
+                sysBankCard.setOpenTime(LocalDateTime.of(2000, 1, 2, 0, 0));
+                bankCards.add(sysBankCard);
+            }
+            {
+                SysBankCard sysBankCard = new SysBankCard();
+                sysBankCard.setId("bc3");
+                sysBankCard.setUid("u2");
+                sysBankCard.setCode("1235");
+                sysBankCard.setType("信用卡");
+                sysBankCard.setBankId(sysBank.getId());
+                sysBankCard.setOpenTime(LocalDateTime.of(2000, 1, 2, 0, 0));
+                bankCards.add(sysBankCard);
+            }
+        }
+        {
+            SysBank sysBank = new SysBank();
+            sysBank.setId("2");
+            sysBank.setName("建设银行");
+            sysBank.setCreateTime(LocalDateTime.of(2001, 1, 1, 0, 0));
+            banks.add(sysBank);
+            {
+                SysBankCard sysBankCard = new SysBankCard();
+                sysBankCard.setId("bc4");
+                sysBankCard.setUid("u1");
+                sysBankCard.setCode("1236");
+                sysBankCard.setType("储蓄卡");
+                sysBankCard.setBankId(sysBank.getId());
+                sysBankCard.setOpenTime(LocalDateTime.of(2001, 1, 2, 0, 0));
+                bankCards.add(sysBankCard);
+            }
+            {
+                SysBankCard sysBankCard = new SysBankCard();
+                sysBankCard.setId("bc5");
+                sysBankCard.setCode("1237");
+                sysBankCard.setType("储蓄卡");
+                sysBankCard.setBankId(sysBank.getId());
+                sysBankCard.setOpenTime(LocalDateTime.of(2001, 1, 2, 0, 0));
+                bankCards.add(sysBankCard);
+            }
+        }
+        {
+            SysBank sysBank = new SysBank();
+            sysBank.setId("3");
+            sysBank.setName("招商银行");
+            sysBank.setCreateTime(LocalDateTime.of(2002, 1, 1, 0, 0));
+            banks.add(sysBank);
+        }
+        {
+            SysUser sysUser = new SysUser();
+            sysUser.setId("u1");
+            sysUser.setName("用户1");
+            sysUser.setPhone("123");
+            sysUser.setAge(22);
+            sysUser.setCreateTime(LocalDateTime.of(2012, 1, 1, 0, 0));
+            users.add(sysUser);
+        }
+        {
+            SysUser sysUser = new SysUser();
+            sysUser.setId("u2");
+            sysUser.setName("用户2");
+            sysUser.setPhone("1234");
+            sysUser.setAge(23);
+            sysUser.setCreateTime(LocalDateTime.of(2012, 1, 1, 0, 0));
+            users.add(sysUser);
+        }
+        {
+            SysUserBook sysUserBook = new SysUserBook();
+            sysUserBook.setId("b1");
+            sysUserBook.setName("b1book");
+            sysUserBook.setUid("u1");
+            sysUserBook.setPrice(BigDecimal.valueOf(10));
+            userBooks.add(sysUserBook);
+        }
+        {
+            SysUserBook sysUserBook = new SysUserBook();
+            sysUserBook.setId("b2");
+            sysUserBook.setName("b2book");
+            sysUserBook.setUid("u1");
+            sysUserBook.setPrice(BigDecimal.valueOf(11));
+            userBooks.add(sysUserBook);
+        }
+        {
+            SysUserBook sysUserBook = new SysUserBook();
+            sysUserBook.setId("b3");
+            sysUserBook.setName("b3book");
+            sysUserBook.setUid("u2");
+            sysUserBook.setPrice(BigDecimal.valueOf(9.9));
+            userBooks.add(sysUserBook);
+        }
+        easyEntityQuery.insertable(banks).executeRows();
+        easyEntityQuery.insertable(bankCards).executeRows();
+        easyEntityQuery.insertable(users).executeRows();
+        easyEntityQuery.insertable(userBooks).executeRows();
+
+    }
 
 }

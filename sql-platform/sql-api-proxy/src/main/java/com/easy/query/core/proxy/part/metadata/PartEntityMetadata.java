@@ -5,6 +5,7 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.ColumnOption;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.Map;
@@ -87,5 +88,10 @@ public class PartEntityMetadata extends EntityMetadata {
         }
         return entityMetadata.getColumnMetadataOrNull(columnName);
 
+    }
+
+    @Override
+    public NavigateMetadata getNavigateOrNull(String propertyName) {
+        return entityMetadata.getNavigateOrNull(propertyName);
     }
 }
