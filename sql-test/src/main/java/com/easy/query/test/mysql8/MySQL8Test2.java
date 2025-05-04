@@ -203,4 +203,45 @@ public class MySQL8Test2 extends BaseTest {
 
     }
 
+    @Test
+    public  void testJoin(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<SysBankCard> list = easyEntityQuery.queryable(SysBankCard.class)
+                .where(bank_card -> {
+                    bank_card.bank().name().eq("ICBC");
+                    bank_card.user().name().eq("小明");
+                }).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time` FROM `t_bank_card` t INNER JOIN `t_bank` t1 ON t1.`id` = t.`bank_id` LEFT JOIN `t_sys_user` t2 ON t2.`id` = t.`uid` WHERE t1.`name` = ? AND t2.`name` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("ICBC(String),小明(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public  void testDelete(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        easyEntityQuery.deletable(SysBank.class)
+                .where(bank -> {
+                    bank.name().eq("123");
+                }).executeRows();
+        List<SysBankCard> list = easyEntityQuery.queryable(SysBankCard.class)
+                .where(bank_card -> {
+                    bank_card.bank().name().eq("ICBC");
+                    bank_card.user().name().eq("小明");
+                }).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time` FROM `t_bank_card` t INNER JOIN `t_bank` t1 ON t1.`id` = t.`bank_id` LEFT JOIN `t_sys_user` t2 ON t2.`id` = t.`uid` WHERE t1.`name` = ? AND t2.`name` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("ICBC(String),小明(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
 }

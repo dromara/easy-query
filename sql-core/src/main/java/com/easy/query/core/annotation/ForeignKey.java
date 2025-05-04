@@ -1,5 +1,7 @@
 package com.easy.query.core.annotation;
 
+import com.easy.query.core.enums.OnDeleteActionEnum;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -16,10 +18,13 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface ForeignKey {
+
     /**
      * 当父表被删除或更新时的行为
      * eg.ON DELETE CASCADE
      * @return
      */
-    String action() default "";
+    OnDeleteActionEnum action() default OnDeleteActionEnum.NO_ACTION;
+
+
 }

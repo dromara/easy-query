@@ -4,6 +4,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.common.DirectMappingIterator;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.enums.OnDeleteActionEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.DefaultRelationTableKey;
@@ -146,7 +147,9 @@ public class EasyRelationalUtil {
 
                 MultiTableTypeEnum relationJoin = entityExpressionBuilder.isQuery() ? MultiTableTypeEnum.LEFT_JOIN : MultiTableTypeEnum.INNER_JOIN;
                 if (relationJoin == MultiTableTypeEnum.LEFT_JOIN) {
-                    if (navigateMetadata.isForeignKey() || navigateMetadata.isRequired()) {
+                    //如果目标表不为null那么使用inner join和left join是一样的,如果目标表有外键并且不是set null模式那么也应该使用inner join来提高性能
+                    if (navigateMetadata.isRequired()
+                            || (navigateMetadata.isForeignKey() && (navigateMetadata.getAction() == OnDeleteActionEnum.NO_ACTION || navigateMetadata.getAction() == OnDeleteActionEnum.CASCADE))) {
                         relationJoin = MultiTableTypeEnum.INNER_JOIN;
                     }
                 }

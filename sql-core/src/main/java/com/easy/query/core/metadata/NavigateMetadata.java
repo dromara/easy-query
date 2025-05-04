@@ -2,6 +2,7 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.common.DirectMappingIterator;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.OnDeleteActionEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
@@ -65,7 +66,7 @@ public class NavigateMetadata {
     private final long offset;
     private final long limit;
     private final boolean foreignKey;
-    private final String action;
+    private final OnDeleteActionEnum action;
     private final boolean required;
     private final boolean subQueryToGroupJoin;
 
@@ -317,7 +318,7 @@ public class NavigateMetadata {
         return foreignKey;
     }
 
-    public String getAction() {
+    public OnDeleteActionEnum getAction() {
         return action;
     }
 

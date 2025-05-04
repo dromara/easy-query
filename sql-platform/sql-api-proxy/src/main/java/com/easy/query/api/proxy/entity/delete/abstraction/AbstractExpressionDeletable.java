@@ -3,14 +3,19 @@ package com.easy.query.api.proxy.entity.delete.abstraction;
 import com.easy.query.api.proxy.entity.delete.ExpressionDeletable;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.enums.OnDeleteActionEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
+import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.EntityMetadataManager;
+import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
