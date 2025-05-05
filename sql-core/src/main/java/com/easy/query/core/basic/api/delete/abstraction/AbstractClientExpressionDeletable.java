@@ -27,7 +27,6 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurerImpl;
-import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -38,7 +37,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * @author xuejiaming
@@ -48,7 +46,7 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLExecuteRows<ClientExpressionDeletable<T>> implements ClientExpressionDeletable<T> {
     protected final Class<T> clazz;
-    protected final EntityTableExpressionBuilder table;
+    protected final EntityTableExpressionBuilder tableExpressionBuilder;
     protected final EntityDeleteExpressionBuilder entityDeleteExpressionBuilder;
 
     public AbstractClientExpressionDeletable(Class<T> clazz, EntityDeleteExpressionBuilder entityDeleteExpressionBuilder) {
@@ -59,8 +57,8 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
         QueryRuntimeContext runtimeContext = entityDeleteExpressionBuilder.getRuntimeContext();
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.NONE, runtimeContext);
-        this.entityDeleteExpressionBuilder.addSQLEntityTableExpression(table);
+        this.tableExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.NONE, runtimeContext);
+        this.entityDeleteExpressionBuilder.addSQLEntityTableExpression(tableExpressionBuilder);
     }
 
     @Override
@@ -92,7 +90,7 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     public ClientExpressionDeletable<T> where(boolean condition, SQLExpression1<WherePredicate<T>> whereExpression) {
         if (condition) {
             FilterImpl filter = new FilterImpl(entityDeleteExpressionBuilder.getRuntimeContext(), entityDeleteExpressionBuilder.getExpressionContext(), entityDeleteExpressionBuilder.getWhere(), false, AnyValueFilter.DEFAULT);
-            WherePredicateImpl<T> sqlPredicate = new WherePredicateImpl<>(table.getEntityTable(), new FilterContext(filter, entityDeleteExpressionBuilder));
+            WherePredicateImpl<T> sqlPredicate = new WherePredicateImpl<>(tableExpressionBuilder.getEntityTable(), new FilterContext(filter, entityDeleteExpressionBuilder));
             whereExpression.apply(sqlPredicate);
         }
         return this;
@@ -122,11 +120,11 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
 
         if (condition) {
             PredicateSegment where = entityDeleteExpressionBuilder.getWhere();
-            String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table.getEntityTable());
+            String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(tableExpressionBuilder.getEntityTable());
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
-            ColumnMetadata columnMetadata = table.getEntityTable().getEntityMetadata().getColumnNotNull(keyProperty);
-            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table.getEntityTable(), columnMetadata, entityDeleteExpressionBuilder.getExpressionContext());
-            ColumnValue2Segment compareValue2Segment = EasyColumnSegmentUtil.createColumnCompareValue2Segment(table.getEntityTable(), columnMetadata, entityDeleteExpressionBuilder.getExpressionContext(), id, SQLPredicateCompareEnum.EQ.isLike());
+            ColumnMetadata columnMetadata = tableExpressionBuilder.getEntityTable().getEntityMetadata().getColumnNotNull(keyProperty);
+            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(tableExpressionBuilder.getEntityTable(), columnMetadata, entityDeleteExpressionBuilder.getExpressionContext());
+            ColumnValue2Segment compareValue2Segment = EasyColumnSegmentUtil.createColumnCompareValue2Segment(tableExpressionBuilder.getEntityTable(), columnMetadata, entityDeleteExpressionBuilder.getExpressionContext(), id, SQLPredicateCompareEnum.EQ.isLike());
             andPredicateSegment
                     .setPredicate(new ColumnValuePredicate(column2Segment, compareValue2Segment, SQLPredicateCompareEnum.EQ));
             where.addPredicateSegment(andPredicateSegment);
@@ -139,11 +137,11 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
 
         if (condition) {
             PredicateSegment where = entityDeleteExpressionBuilder.getWhere();
-            String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table.getEntityTable());
+            String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(tableExpressionBuilder.getEntityTable());
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
-            ColumnMetadata columnMetadata = table.getEntityTable().getEntityMetadata().getColumnNotNull(keyProperty);
-            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table.getEntityTable(), columnMetadata, getExpressionContext());
-            List<ColumnValue2Segment> columnValue2Segments = EasyCollectionUtil.select(ids, (o, i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table.getEntityTable(), columnMetadata, getExpressionContext(), o));
+            ColumnMetadata columnMetadata = tableExpressionBuilder.getEntityTable().getEntityMetadata().getColumnNotNull(keyProperty);
+            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(tableExpressionBuilder.getEntityTable(), columnMetadata, getExpressionContext());
+            List<ColumnValue2Segment> columnValue2Segments = EasyCollectionUtil.select(ids, (o, i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(tableExpressionBuilder.getEntityTable(), columnMetadata, getExpressionContext(), o));
             andPredicateSegment
                     .setPredicate(new ColumnCollectionPredicate(column2Segment, columnValue2Segments, SQLPredicateCompareEnum.IN, entityDeleteExpressionBuilder.getExpressionContext()));
             where.addPredicateSegment(andPredicateSegment);

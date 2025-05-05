@@ -7,14 +7,14 @@ import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 
 /**
+ * @author xuejiaming
  * @Description: 文件说明
  * @Date: 2023/3/17 17:14
- * @author xuejiaming
  */
-public abstract class AbstractSQLExecuteRows<TChain>  implements SQLExecuteExpectRows,Interceptable<TChain>,LogicDeletable<TChain> {
+public abstract class AbstractSQLExecuteRows<TChain> implements SQLExecuteExpectRows, Interceptable<TChain>, LogicDeletable<TChain> {
     private final EntityExpressionBuilder entityExpressionBuilder;
 
-    public AbstractSQLExecuteRows(EntityExpressionBuilder entityExpressionBuilder){
+    public AbstractSQLExecuteRows(EntityExpressionBuilder entityExpressionBuilder) {
 
         this.entityExpressionBuilder = entityExpressionBuilder;
     }
@@ -23,26 +23,27 @@ public abstract class AbstractSQLExecuteRows<TChain>  implements SQLExecuteExpec
     public void executeRows(long expectRows, String msg, String code) {
 
         ConnectionManager connectionManager = entityExpressionBuilder.getRuntimeContext().getConnectionManager();
-        Transaction transaction=null;
+        Transaction transaction = null;
         try {
             boolean inTransaction = connectionManager.currentThreadInTransaction();
-            if(!inTransaction){
+            if (!inTransaction) {
                 transaction = connectionManager.beginTransaction();
             }
-            doExecuteRows(expectRows,msg,code);
-            if(!inTransaction){
+            doExecuteRows(expectRows, msg, code);
+            if (!inTransaction) {
                 transaction.commit();
             }
-        }finally {
-            if(transaction!=null){
+        } finally {
+            if (transaction != null) {
                 transaction.close();
             }
         }
     }
-    private void doExecuteRows(long expectRows, String msg, String code){
+
+    private void doExecuteRows(long expectRows, String msg, String code) {
         long rows = executeRows();
-        if(rows!=expectRows){
-            throw new EasyQueryConcurrentException(msg,code);
+        if (rows != expectRows) {
+            throw new EasyQueryConcurrentException(msg, code);
         }
     }
 
@@ -51,11 +52,13 @@ public abstract class AbstractSQLExecuteRows<TChain>  implements SQLExecuteExpec
         entityExpressionBuilder.getExpressionContext().noInterceptor();
         return (TChain) this;
     }
+
     @Override
     public TChain useInterceptor(String name) {
         entityExpressionBuilder.getExpressionContext().useInterceptor(name);
         return (TChain) this;
     }
+
     @Override
     public TChain noInterceptor(String name) {
         entityExpressionBuilder.getExpressionContext().noInterceptor(name);
@@ -70,18 +73,19 @@ public abstract class AbstractSQLExecuteRows<TChain>  implements SQLExecuteExpec
 
     @Override
     public TChain useLogicDelete(boolean enable) {
-        if(enable){
+        if (enable) {
             entityExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.LOGIC_DELETE);
-        }else{
+        } else {
             entityExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.LOGIC_DELETE);
         }
         return (TChain) this;
     }
+
     public TChain batch(boolean use) {
-        if(use){
+        if (use) {
             entityExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.EXECUTE_NO_BATCH);
             entityExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.EXECUTE_BATCH);
-        }else{
+        } else {
             entityExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.EXECUTE_BATCH);
             entityExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.EXECUTE_NO_BATCH);
         }
