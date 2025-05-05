@@ -50,7 +50,7 @@ public class DocBankCard implements ProxyEntityAvailable<DocBankCard, DocBankCar
 
     @NotNull
     @Valid
-    @Navigate(value = RelationTypeEnum.ManyToOne, selfProperty = Fields.bankId)
+    @Navigate(value = RelationTypeEnum.ManyToOne, selfProperty = Fields.bankId,required = true)
     @ForeignKey
     private DocBank bank;
 

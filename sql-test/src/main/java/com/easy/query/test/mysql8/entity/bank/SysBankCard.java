@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 @Data
 @FieldNameConstants
 @EasyAlias("bank_card")
-public class SysBankCard implements ProxyEntityAvailable<SysBankCard , SysBankCardProxy>, Serializable {
+public class SysBankCard implements ProxyEntityAvailable<SysBankCard, SysBankCardProxy>, Serializable {
     @Column(primaryKey = true)
     private String id;
     private String uid;
@@ -50,7 +50,7 @@ public class SysBankCard implements ProxyEntityAvailable<SysBankCard , SysBankCa
     /**
      * 所属银行
      */
-    @Navigate(value = RelationTypeEnum.ManyToOne, selfProperty = {"bankId"}, targetProperty = {"id"})
+    @Navigate(value = RelationTypeEnum.ManyToOne, selfProperty = {"bankId"}, targetProperty = {"id"}, required = true)
     @ForeignKey
     private SysBank bank;
 
