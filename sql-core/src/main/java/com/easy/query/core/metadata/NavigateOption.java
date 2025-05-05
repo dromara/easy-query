@@ -1,6 +1,5 @@
 package com.easy.query.core.metadata;
 
-import com.easy.query.core.enums.OnDeleteActionEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
@@ -34,8 +33,6 @@ public class NavigateOption {
     private SQLExpression1<WherePredicate<?>> predicateFilterExpression;
     private SQLExpression1<WherePredicate<?>> predicateMappingClassFilterExpression;
     private EntityRelationPropertyProvider entityRelationPropertyProvider;
-    private boolean foreignKey = false;
-    private OnDeleteActionEnum action = null;
     private boolean required = false;
     private boolean subQueryToGroupJoin = false;
 
@@ -155,22 +152,6 @@ public class NavigateOption {
 
     public void setEntityRelationPropertyProvider(EntityRelationPropertyProvider entityRelationPropertyProvider) {
         this.entityRelationPropertyProvider = entityRelationPropertyProvider;
-    }
-
-    public boolean isForeignKey() {
-        return foreignKey;
-    }
-
-    public void setForeignKey(boolean foreignKey) {
-        this.foreignKey = foreignKey;
-    }
-
-    public OnDeleteActionEnum getAction() {
-        return action;
-    }
-
-    public void setAction(OnDeleteActionEnum action) {
-        this.action = action;
     }
 
     public boolean isRequired() {

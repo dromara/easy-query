@@ -396,15 +396,6 @@ public class EntityMetadata {
         NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperties, targetProperties, orderProps, navigate.offset(), navigate.limit(), navigate.directMapping());
 
         if (tableEntity) {
-
-            ForeignKey foreignKey = field.getAnnotation(ForeignKey.class);
-            if (foreignKey != null) {
-                if (toMany) {
-                    throw new EasyQueryInvalidOperationException(String.format("[%s.%s] The @ForeignKey annotation cannot be used for one-to-many or many-to-many relationships.", EasyClassUtil.getSimpleName(entityClass), property));
-                }
-                navigateOption.setForeignKey(true);
-                navigateOption.setAction(foreignKey.action());
-            }
             navigateOption.setSubQueryToGroupJoin(toMany && navigate.subQueryToGroupJoin());
             navigateOption.setRequired(required);
             NavigateExtraFilterStrategy navigateExtraFilterStrategy = getNavigateExtraFilterStrategy(configuration, navigate);

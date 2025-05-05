@@ -1,11 +1,11 @@
 package com.easy.query.core.migration;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.ForeignKey;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.TableIndex;
 import com.easy.query.core.annotation.TableIndexes;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.enums.OnDeleteActionEnum;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -196,13 +196,16 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
 
     @Override
     public List<TableForeignKeyResult> getTableForeignKeys(EntityMigrationMetadata entityMigrationMetadata, QueryRuntimeContext runtimeContext) {
+
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         ArrayList<TableForeignKeyResult> tableForeignKeyResults = new ArrayList<>();
         EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
         for (NavigateMetadata navigateMetadata : entityMetadata.getNavigateMetadatas()) {
-            if (navigateMetadata.isForeignKey()) {
+            Field field = entityMigrationMetadata.getFieldByName(navigateMetadata.getPropertyName());
+            ForeignKey foreignKey = field.getAnnotation(ForeignKey.class);
+            if (foreignKey != null) {
                 String selfTable = entityMetadata.getTableName();
-                OnDeleteActionEnum action = navigateMetadata.getAction();
+                String action = foreignKey.action();
                 EntityMetadata targetEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
                 String targetTable = targetEntityMetadata.getTableName();
                 String[] selfPropertiesOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
@@ -210,17 +213,9 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
                 String[] selfColumns = Arrays.stream(selfPropertiesOrPrimary).map(selfProp -> entityMetadata.getColumnNotNull(selfProp).getName()).toArray(String[]::new);
                 String[] targetColumns = Arrays.stream(targetPropertiesOrPrimary).map(targetProp -> targetEntityMetadata.getColumnNotNull(targetProp).getName()).toArray(String[]::new);
                 String name = String.format("%s_%s_%s_fk", selfTable, targetTable, String.join("_", targetColumns));
-                tableForeignKeyResults.add(new TableForeignKeyResult(name, onDeleteAction(action), selfTable, targetTable, selfColumns, targetColumns));
+                tableForeignKeyResults.add(new TableForeignKeyResult(name, action, selfTable, targetTable, selfColumns, targetColumns));
             }
         }
         return tableForeignKeyResults;
-    }
-    private String onDeleteAction(OnDeleteActionEnum action){
-        if(action==OnDeleteActionEnum.CASCADE){
-            return "ON DELETE CASCADE";
-        }else if(action==OnDeleteActionEnum.SET_NULL){
-            return "ON DELETE SET NULL";
-        }
-        return "";
     }
 }

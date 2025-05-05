@@ -1,7 +1,5 @@
 package com.easy.query.core.annotation;
 
-import com.easy.query.core.enums.OnDeleteActionEnum;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,7 +22,7 @@ public @interface ForeignKey {
      * eg.ON DELETE CASCADE
      * @return
      */
-    OnDeleteActionEnum action() default OnDeleteActionEnum.NO_ACTION;
+    String action() default "";
 
 
 }

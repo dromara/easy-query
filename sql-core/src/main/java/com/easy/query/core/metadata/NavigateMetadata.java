@@ -2,7 +2,6 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.common.DirectMappingIterator;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.enums.OnDeleteActionEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
@@ -65,8 +64,6 @@ public class NavigateMetadata {
 
     private final long offset;
     private final long limit;
-    private final boolean foreignKey;
-    private final OnDeleteActionEnum action;
     private final boolean required;
     private final boolean subQueryToGroupJoin;
 
@@ -93,8 +90,6 @@ public class NavigateMetadata {
         this.directMapping = navigateOption.getDirectMapping();
         this.getter = getter;
         this.setter = setter;
-        this.foreignKey = navigateOption.isForeignKey();
-        this.action = navigateOption.getAction();
         this.required = navigateOption.isRequired();
         this.subQueryToGroupJoin = navigateOption.isSubQueryToGroupJoin();
         if (EasyArrayUtil.isNotEmpty(directMapping)) {
@@ -308,18 +303,6 @@ public class NavigateMetadata {
 
     public EntityRelationPropertyProvider getEntityRelationPropertyProvider() {
         return entityRelationPropertyProvider;
-    }
-
-    /**
-     * 是否外键 如果是则使用inner join
-     * @return
-     */
-    public boolean isForeignKey() {
-        return foreignKey;
-    }
-
-    public OnDeleteActionEnum getAction() {
-        return action;
     }
 
     /**
