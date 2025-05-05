@@ -147,9 +147,8 @@ public class EasyRelationalUtil {
 
                 MultiTableTypeEnum relationJoin = entityExpressionBuilder.isQuery() ? MultiTableTypeEnum.LEFT_JOIN : MultiTableTypeEnum.INNER_JOIN;
                 if (relationJoin == MultiTableTypeEnum.LEFT_JOIN) {
-                    //如果目标表不为null那么使用inner join和left join是一样的,如果目标表有外键并且不是set null模式那么也应该使用inner join来提高性能
-                    if (navigateMetadata.isRequired()
-                            || (navigateMetadata.isForeignKey() && (navigateMetadata.getAction() == OnDeleteActionEnum.NO_ACTION || navigateMetadata.getAction() == OnDeleteActionEnum.CASCADE))) {
+                    //如果目标表不为null那么使用inner join和left join是一样的,如果目标表有外键那么可能会设置delete的时候set null模式那么也应该使用inner join来提高性能
+                    if (navigateMetadata.isRequired()) {
                         relationJoin = MultiTableTypeEnum.INNER_JOIN;
                     }
                 }
