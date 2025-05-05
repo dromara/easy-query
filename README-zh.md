@@ -42,7 +42,7 @@
 ## 📚 文档
 <div align="center">
 
-[官方 文档地址](https://www.easy-query.com/easy-query-doc/)
+[GITHUB文档地址](https://xuejmnet.github.io/easy-query-doc/) | [官方 文档地址](https://www.easy-query.com/easy-query-doc/)
 
 </div>
 

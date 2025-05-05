@@ -40,7 +40,7 @@
 ## 📚 documentation
 <div align="center">
 
-[OFFICAL Documentation](https://www.easy-query.com/easy-query-doc/)
+[GITHUB Documentation](https://xuejmnet.github.io/easy-query-doc/) | [OFFICAL Documentation](https://www.easy-query.com/easy-query-doc/)
 
 </div>
 
