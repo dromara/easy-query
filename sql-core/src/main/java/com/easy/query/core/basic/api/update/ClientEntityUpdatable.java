@@ -9,6 +9,8 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
 
+import java.util.List;
+
 /**
  * create time 2023/7/2 21:50
  * 属性模式下的对象更新
@@ -19,6 +21,7 @@ public interface ClientEntityUpdatable<T> extends Updatable<T, ClientEntityUpdat
         SQLExecuteStrategy<ClientEntityUpdatable<T>>,
         ConfigureVersionable<ClientEntityUpdatable<T>>
 {
+    List<T> getEntities();
     /**
      *  update set columns...  针对set的column进行选择
      * @param columnSelectorExpression

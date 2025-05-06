@@ -1,6 +1,7 @@
 package com.easy.query.solon.integration;
 
 import com.easy.query.core.enums.EntityMappingStrategyEnum;
+import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -22,7 +23,7 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public class SolonEasyQueryProperties {
-//    private final static Boolean enable = false;
+    //    private final static Boolean enable = false;
     private final static Boolean deleteThrow = true;
     private final static DatabaseEnum database = DatabaseEnum.MYSQL;
     private final static NameConversionEnum nameConversion = NameConversionEnum.UNDERLINED;
@@ -37,6 +38,10 @@ public class SolonEasyQueryProperties {
      * 建议19
      */
     private final static int mssqlMinBigDecimalScale = 0;
+    /**
+     * 一对多拉取带limit的时候使用哪种模式默认UNION_ALL
+     */
+    private final static IncludeLimitModeEnum includeLimitMode = IncludeLimitModeEnum.UNION_ALL;
     /**
      * 仅分片时有效默认同时5个线程5
      */
@@ -155,66 +160,90 @@ public class SolonEasyQueryProperties {
 
 
     public DatabaseEnum getDatabase() {
-       return getOrDef("database",database,v->{
-           String vl = v.toLowerCase();
-           switch (vl){
-                case "mysql":return DatabaseEnum.MYSQL;
-                case "pgsql":return DatabaseEnum.PGSQL;
-                case "mssql":return DatabaseEnum.MSSQL;
-                case "h2":return DatabaseEnum.H2;
-                case "dameng":return DatabaseEnum.DAMENG;
-                case "kingbase_es":return DatabaseEnum.KINGBASE_ES;
-                case "mssql_row_number":return DatabaseEnum.MSSQL_ROW_NUMBER;
-                case "oracle":return DatabaseEnum.ORACLE;
-                case "sqlite":return DatabaseEnum.SQLITE;
-                case "clickhouse":return DatabaseEnum.CLICKHOUSE;
-                case "gauss_db":return DatabaseEnum.GAUSS_DB;
-                case "db2":return DatabaseEnum.DB2;
+        return getOrDef("database", database, v -> {
+            String vl = v.toLowerCase();
+            switch (vl) {
+                case "mysql":
+                    return DatabaseEnum.MYSQL;
+                case "pgsql":
+                    return DatabaseEnum.PGSQL;
+                case "mssql":
+                    return DatabaseEnum.MSSQL;
+                case "h2":
+                    return DatabaseEnum.H2;
+                case "dameng":
+                    return DatabaseEnum.DAMENG;
+                case "kingbase_es":
+                    return DatabaseEnum.KINGBASE_ES;
+                case "mssql_row_number":
+                    return DatabaseEnum.MSSQL_ROW_NUMBER;
+                case "oracle":
+                    return DatabaseEnum.ORACLE;
+                case "sqlite":
+                    return DatabaseEnum.SQLITE;
+                case "clickhouse":
+                    return DatabaseEnum.CLICKHOUSE;
+                case "gauss_db":
+                    return DatabaseEnum.GAUSS_DB;
+                case "db2":
+                    return DatabaseEnum.DB2;
             }
             return null;
         });
     }
+
     public SQLParameterPrintEnum getSQLParameterPrint() {
-       return getOrDef("sql-parameter-print",SQLParameterPrintEnum.DEFAULT,v->{
-           String vl = v.toLowerCase();
-           switch (vl){
-                case "mybatis":return SQLParameterPrintEnum.MYBATIS;
+        return getOrDef("sql-parameter-print", SQLParameterPrintEnum.DEFAULT, v -> {
+            String vl = v.toLowerCase();
+            switch (vl) {
+                case "mybatis":
+                    return SQLParameterPrintEnum.MYBATIS;
             }
-           return SQLParameterPrintEnum.DEFAULT;
+            return SQLParameterPrintEnum.DEFAULT;
         });
     }
+
     private <T> T getOrDef(String key, T def, Function<String, T> convert) {
         String temp = this.props.get(key);
         T t = Utils.isEmpty(temp) ? def : convert.apply(temp);
-        if(t==null){
+        if (t == null) {
             return def;
         }
         return t;
     }
 
 
-
     public NameConversionEnum getNameConversion() {
-        return getOrDef("name-conversion",nameConversion,v->{
-            switch (v){
-                case "default":return NameConversionEnum.DEFAULT;
-                case "underlined":return NameConversionEnum.UNDERLINED;
-                case "lower_camel_case":return NameConversionEnum.LOWER_CAMEL_CASE;
-                case "upper_camel_case":return NameConversionEnum.UPPER_CAMEL_CASE;
-                case "upper_underlined":return NameConversionEnum.UPPER_UNDERLINED;
+        return getOrDef("name-conversion", nameConversion, v -> {
+            switch (v) {
+                case "default":
+                    return NameConversionEnum.DEFAULT;
+                case "underlined":
+                    return NameConversionEnum.UNDERLINED;
+                case "lower_camel_case":
+                    return NameConversionEnum.LOWER_CAMEL_CASE;
+                case "upper_camel_case":
+                    return NameConversionEnum.UPPER_CAMEL_CASE;
+                case "upper_underlined":
+                    return NameConversionEnum.UPPER_UNDERLINED;
             }
             return null;
         });
     }
 
     public MapKeyConversionEnum getMapKeyConversionEnum() {
-        return getOrDef("map-key-conversion",mapKeyConversion,v->{
-            switch (v){
-                case "default":return MapKeyConversionEnum.DEFAULT;
-                case "lower":return MapKeyConversionEnum.LOWER;
-                case "upper":return MapKeyConversionEnum.UPPER;
-                case "lower_underlined":return MapKeyConversionEnum.LOWER_UNDERLINED;
-                case "upper_underlined":return MapKeyConversionEnum.UPPER_UNDERLINED;
+        return getOrDef("map-key-conversion", mapKeyConversion, v -> {
+            switch (v) {
+                case "default":
+                    return MapKeyConversionEnum.DEFAULT;
+                case "lower":
+                    return MapKeyConversionEnum.LOWER;
+                case "upper":
+                    return MapKeyConversionEnum.UPPER;
+                case "lower_underlined":
+                    return MapKeyConversionEnum.LOWER_UNDERLINED;
+                case "upper_underlined":
+                    return MapKeyConversionEnum.UPPER_UNDERLINED;
             }
             return null;
         });
@@ -222,11 +251,14 @@ public class SolonEasyQueryProperties {
 
 
     public SQLExecuteStrategyEnum getInsertStrategy() {
-        return getOrDef("insert-strategy",insertStrategy,v->{
-            switch (v){
-                case "all_columns":return SQLExecuteStrategyEnum.ALL_COLUMNS;
-                case "only_not_null_columns":return SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
-                case "only_null_columns":return SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS;
+        return getOrDef("insert-strategy", insertStrategy, v -> {
+            switch (v) {
+                case "all_columns":
+                    return SQLExecuteStrategyEnum.ALL_COLUMNS;
+                case "only_not_null_columns":
+                    return SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
+                case "only_null_columns":
+                    return SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS;
             }
             return null;
         });
@@ -234,11 +266,14 @@ public class SolonEasyQueryProperties {
 
 
     public SQLExecuteStrategyEnum getUpdateStrategy() {
-        return getOrDef("update-strategy",updateStrategy,v->{
-            switch (v){
-                case "all_columns":return SQLExecuteStrategyEnum.ALL_COLUMNS;
-                case "only_not_null_columns":return SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
-                case "only_null_columns":return SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS;
+        return getOrDef("update-strategy", updateStrategy, v -> {
+            switch (v) {
+                case "all_columns":
+                    return SQLExecuteStrategyEnum.ALL_COLUMNS;
+                case "only_not_null_columns":
+                    return SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
+                case "only_null_columns":
+                    return SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS;
             }
             return null;
         });
@@ -246,154 +281,190 @@ public class SolonEasyQueryProperties {
 
 
     public ConnectionModeEnum getConnectionMode() {
-        return getOrDef("connection-mode",connectionMode,v->{
-            switch (v){
-                case "system_auto":return ConnectionModeEnum.SYSTEM_AUTO;
-                case "memory_strictly":return ConnectionModeEnum.MEMORY_STRICTLY;
-                case "connection_strictly":return ConnectionModeEnum.CONNECTION_STRICTLY;
-            }
-            return null;
-        });
-    }
-    public PropertyModeEnum getPropertyMode() {
-        return getOrDef("property-mode",propertyMode,v->{
-            switch (v){
-                case "first_lower":return PropertyModeEnum.FIRST_LOWER;
-                case "same_as_entity":return PropertyModeEnum.SAME_AS_ENTITY;
+        return getOrDef("connection-mode", connectionMode, v -> {
+            switch (v) {
+                case "system_auto":
+                    return ConnectionModeEnum.SYSTEM_AUTO;
+                case "memory_strictly":
+                    return ConnectionModeEnum.MEMORY_STRICTLY;
+                case "connection_strictly":
+                    return ConnectionModeEnum.CONNECTION_STRICTLY;
             }
             return null;
         });
     }
 
-    /** 获取对象映射规则 */
-    public EntityMappingStrategyEnum getMappingStrategy() {
-        return getOrDef("mapping-strategy",mappingStrategy,v->{
-            switch (v){
-                case "column_only":return EntityMappingStrategyEnum.COLUMN_ONLY;
-                case "property_only":return EntityMappingStrategyEnum.PROPERTY_ONLY;
-                case "column_and_property":return EntityMappingStrategyEnum.COLUMN_AND_PROPERTY;
-                case "property_first":return EntityMappingStrategyEnum.PROPERTY_FIRST;
+    public PropertyModeEnum getPropertyMode() {
+        return getOrDef("property-mode", propertyMode, v -> {
+            switch (v) {
+                case "first_lower":
+                    return PropertyModeEnum.FIRST_LOWER;
+                case "same_as_entity":
+                    return PropertyModeEnum.SAME_AS_ENTITY;
             }
             return null;
         });
     }
+
+    /**
+     * 获取对象映射规则
+     */
+    public EntityMappingStrategyEnum getMappingStrategy() {
+        return getOrDef("mapping-strategy", mappingStrategy, v -> {
+            switch (v) {
+                case "column_only":
+                    return EntityMappingStrategyEnum.COLUMN_ONLY;
+                case "property_only":
+                    return EntityMappingStrategyEnum.PROPERTY_ONLY;
+                case "column_and_property":
+                    return EntityMappingStrategyEnum.COLUMN_AND_PROPERTY;
+                case "property_first":
+                    return EntityMappingStrategyEnum.PROPERTY_FIRST;
+            }
+            return null;
+        });
+    }
+
     public ShardingQueryInTransactionEnum getShardingQueryInTransaction() {
-        return getOrDef("sharding-query-in-transaction",shardingQueryInTransaction,v->{
-            switch (v){
-                case "serializable":return ShardingQueryInTransactionEnum.SERIALIZABLE;
-                case "concurrency":return ShardingQueryInTransactionEnum.CONCURRENCY;
+        return getOrDef("sharding-query-in-transaction", shardingQueryInTransaction, v -> {
+            switch (v) {
+                case "serializable":
+                    return ShardingQueryInTransactionEnum.SERIALIZABLE;
+                case "concurrency":
+                    return ShardingQueryInTransactionEnum.CONCURRENCY;
             }
             return ShardingQueryInTransactionEnum.SERIALIZABLE;
         });
     }
+
+    public IncludeLimitModeEnum getIncludeLimitMode() {
+        return getOrDef("include-limit-mode", includeLimitMode, v -> {
+            switch (v) {
+                case "union_all":
+                    return IncludeLimitModeEnum.UNION_ALL;
+                case "partition":
+                    return IncludeLimitModeEnum.PARTITION;
+            }
+            return IncludeLimitModeEnum.UNION_ALL;
+        });
+    }
+
     public int getMssqlMinBigDecimalScale() {
-        return this.props.getInt("mssql-min-big-decimal-scale",mssqlMinBigDecimalScale);
+        return this.props.getInt("mssql-min-big-decimal-scale", mssqlMinBigDecimalScale);
     }
 
     public int getMaxShardingQueryLimit() {
-        return this.props.getInt("max-sharding-query-limit",maxShardingQueryLimit);
+        return this.props.getInt("max-sharding-query-limit", maxShardingQueryLimit);
     }
 
     public int getExecutorMaximumPoolSize() {
-        return this.props.getInt("executor-maximum-pool-size",executorMaximumPoolSize);
+        return this.props.getInt("executor-maximum-pool-size", executorMaximumPoolSize);
     }
 
 
     public int getExecutorCorePoolSize() {
-        return this.props.getInt("executor-core-pool-size",executorCorePoolSize);
+        return this.props.getInt("executor-core-pool-size", executorCorePoolSize);
     }
 
 
     public boolean isThrowIfRouteNotMatch() {
-        return this.props.getBool("throw-if-route-not-match",throwIfRouteNotMatch);
+        return this.props.getBool("throw-if-route-not-match", throwIfRouteNotMatch);
     }
 
     public long getShardingExecuteTimeoutMillis() {
-        return this.props.getLong("sharding-execute-timeout-millis",shardingExecuteTimeoutMillis);
+        return this.props.getLong("sharding-execute-timeout-millis", shardingExecuteTimeoutMillis);
     }
 
     public boolean isQueryLargeColumn() {
-        return this.props.getBool("query-large-column",queryLargeColumn);
+        return this.props.getBool("query-large-column", queryLargeColumn);
     }
 
 
     public int getMaxShardingRouteCount() {
-        return this.props.getInt("max-sharding-route-count",maxShardingRouteCount);
+        return this.props.getInt("max-sharding-route-count", maxShardingRouteCount);
     }
 
     public int getExecutorQueueSize() {
-        return this.props.getInt("executor-queue-size",executorQueueSize);
+        return this.props.getInt("executor-queue-size", executorQueueSize);
     }
 
 
     public String getDefaultDataSourceName() {
-        return this.props.getProperty("default-data-source-name",defaultDataSourceName);
+        return this.props.getProperty("default-data-source-name", defaultDataSourceName);
     }
 
     public int getDefaultDataSourceMergePoolSize() {
-        return this.props.getInt("default-data-source-merge-pool-size",defaultDataSourceMergePoolSize);
+        return this.props.getInt("default-data-source-merge-pool-size", defaultDataSourceMergePoolSize);
     }
 
     public long getMultiConnWaitTimeoutMillis() {
-        return this.props.getLong("multi-conn-wait-timeout-millis",multiConnWaitTimeoutMillis);
+        return this.props.getLong("multi-conn-wait-timeout-millis", multiConnWaitTimeoutMillis);
     }
 
     public boolean isWarningBusy() {
-        return this.props.getBool("warning-busy",warningBusy);
+        return this.props.getBool("warning-busy", warningBusy);
     }
 
 
     public int getInsertBatchThreshold() {
-        return this.props.getInt("insert-batch-threshold",insertBatchThreshold);
+        return this.props.getInt("insert-batch-threshold", insertBatchThreshold);
     }
 
 
     public int getUpdateBatchThreshold() {
-        return this.props.getInt("update-batch-threshold",updateBatchThreshold);
+        return this.props.getInt("update-batch-threshold", updateBatchThreshold);
     }
 
 
     public boolean isPrintSql() {
-        return this.props.getBool("print-sql",printSql);
+        return this.props.getBool("print-sql", printSql);
     }
+
     public boolean isPrintNavSql() {
-        return this.props.getBool("print-nav-sql",printNavSql);
+        return this.props.getBool("print-nav-sql", printNavSql);
     }
 
 
     public boolean isStartTimeJob() {
-        return this.props.getBool("start-time-job",startTimeJob);
+        return this.props.getBool("start-time-job", startTimeJob);
     }
 
 
     public boolean isDefaultTrack() {
-        return this.props.getBool("default-track",defaultTrack);
+        return this.props.getBool("default-track", defaultTrack);
     }
 
 
     public int getRelationGroupSize() {
-        return this.props.getInt("relation-group-size",relationGroupSize);
+        return this.props.getInt("relation-group-size", relationGroupSize);
     }
+
     public boolean isKeepNativeStyle() {
-        return this.props.getBool("keep-native-style",keepNativeStyle);
+        return this.props.getBool("keep-native-style", keepNativeStyle);
     }
+
     public boolean isWarningColumnMiss() {
-        return this.props.getBool("warning-column-miss",warningColumnMiss);
+        return this.props.getBool("warning-column-miss", warningColumnMiss);
     }
+
     public int getShardingFetchSize() {
-        return this.props.getInt("sharding-fetch-size",shardingFetchSize);
+        return this.props.getInt("sharding-fetch-size", shardingFetchSize);
     }
+
     public boolean getMapToBeanStrict() {
-        return this.props.getBool("map-to-bean-strict",mapToBeanStrict);
+        return this.props.getBool("map-to-bean-strict", mapToBeanStrict);
     }
+
     public String getDefaultSchema() {
-        return this.props.getProperty("default-schema",defaultSchema);
+        return this.props.getProperty("default-schema", defaultSchema);
     }
+
     public long getReverseOffsetThreshold() {
-        return this.props.getLong("reverse-offset-threshold",reverseOffsetThreshold);
+        return this.props.getLong("reverse-offset-threshold", reverseOffsetThreshold);
     }
+
     public long getResultSizeLimit() {
-        return this.props.getLong("result-size-limit",resultSizeLimit);
+        return this.props.getLong("result-size-limit", resultSizeLimit);
     }
 
 

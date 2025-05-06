@@ -68,6 +68,11 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     }
 
     @Override
+    public List<T> getEntities() {
+        return entities;
+    }
+
+    @Override
     public EntityUpdateExpressionBuilder getUpdateExpressionBuilder() {
         return entityUpdateExpressionBuilder;
     }

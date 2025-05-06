@@ -24,6 +24,11 @@ public class VersionPropertySQLParameter implements BeanSQLParameter {
     }
 
     @Override
+    public boolean hasBean() {
+        return beanSQLParameter.hasBean();
+    }
+
+    @Override
     public TableAvailable getTableOrNull() {
         return beanSQLParameter.getTableOrNull();
     }

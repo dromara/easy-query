@@ -16,6 +16,7 @@ import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.QueryConfiguration;
+import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.common.M8Interceptor;
@@ -24,6 +25,7 @@ import com.easy.query.test.common.MyQueryConfiguration;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.mypage.MyEasyPageResultProvider;
+import com.easy.query.test.mysql8.entity.M8Comment;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
@@ -85,6 +87,7 @@ public class BaseTest {
                 .optionConfigure(op -> {
                     op.setDeleteThrowError(false);
                     op.setDefaultTrack(true);
+                    op.setIncludeLimitMode(IncludeLimitModeEnum.PARTITION);
                 })
 //                .replaceService(Column2MapKeyConversion.class, UpperColumn2MapKeyConversion.class)
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
@@ -108,15 +111,17 @@ public class BaseTest {
     public static void beforex() {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
-        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class, SysBankCard.class, SysBank.class, SysUserBook.class));
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class, SysBankCard.class, SysBank.class, SysUserBook.class, M8Comment.class));
         codeFirstCommand.executeWithTransaction(s -> s.commit());
         easyEntityQuery.deletable(SysBankCard.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(SysBank.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(SysUser.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
+        easyEntityQuery.deletable(M8Comment.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         ArrayList<SysBank> banks = new ArrayList<>();
         ArrayList<SysBankCard> bankCards = new ArrayList<>();
         ArrayList<SysUser> users = new ArrayList<>();
         ArrayList<SysUserBook> userBooks = new ArrayList<>();
+        ArrayList<M8Comment> comments = new ArrayList<>();
         {
             SysBank sysBank = new SysBank();
             sysBank.setId("1");
@@ -230,10 +235,66 @@ public class BaseTest {
             sysUserBook.setPrice(BigDecimal.valueOf(9.9));
             userBooks.add(sysUserBook);
         }
+
+        {
+            M8Comment m8Comment = new M8Comment();
+            m8Comment.setId("1");
+            m8Comment.setContent("我是主评论");
+            m8Comment.setParentId(null);
+            m8Comment.setUsername("小明");
+            m8Comment.setTime(LocalDateTime.of(2020, 1, 1, 0, 0));
+            comments.add(m8Comment);
+            {
+
+
+                M8Comment m8Comment1 = new M8Comment();
+                m8Comment1.setId("2");
+                m8Comment1.setContent("我是子评论");
+                m8Comment1.setParentId("1");
+                m8Comment1.setUsername("小明1");
+                m8Comment1.setTime(LocalDateTime.of(2020, 1, 1, 1, 0));
+                comments.add(m8Comment1);
+            }
+            {
+
+
+                M8Comment m8Comment1 = new M8Comment();
+                m8Comment1.setId("3");
+                m8Comment1.setContent("我是子评论");
+                m8Comment1.setParentId("1");
+                m8Comment1.setUsername("小明2");
+                m8Comment1.setTime(LocalDateTime.of(2020, 1, 1, 2, 0));
+                comments.add(m8Comment1);
+            }
+            {
+
+
+                M8Comment m8Comment1 = new M8Comment();
+                m8Comment1.setId("4");
+                m8Comment1.setContent("我是子评论");
+                m8Comment1.setParentId("1");
+                m8Comment1.setUsername("小明4");
+                m8Comment1.setTime(LocalDateTime.of(2020, 1, 1, 3, 0));
+                comments.add(m8Comment1);
+            }
+            {
+
+
+                M8Comment m8Comment1 = new M8Comment();
+                m8Comment1.setId("5");
+                m8Comment1.setContent("我是子评论");
+                m8Comment1.setParentId("1");
+                m8Comment1.setUsername("小明5");
+                m8Comment1.setTime(LocalDateTime.of(2020, 1, 1, 7, 0));
+                comments.add(m8Comment1);
+            }
+        }
+
         easyEntityQuery.insertable(banks).executeRows();
         easyEntityQuery.insertable(bankCards).executeRows();
         easyEntityQuery.insertable(users).executeRows();
         easyEntityQuery.insertable(userBooks).executeRows();
+        easyEntityQuery.insertable(comments).executeRows();
 
     }
 

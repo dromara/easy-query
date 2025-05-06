@@ -18,7 +18,7 @@ public class MapSQLParameter implements BeanSQLParameter {
     private final boolean predicate;
     private Map<String, Object> bean;
 
-    public MapSQLParameter(String mapKey,boolean predicate) {
+    public MapSQLParameter(String mapKey, boolean predicate) {
         this.mapKey = mapKey;
         this.predicate = predicate;
     }
@@ -34,21 +34,26 @@ public class MapSQLParameter implements BeanSQLParameter {
             throw new EasyQueryException("cant get sql parameter value,Map." + mapKey + ",bean is null");
         }
         Object val = bean.get(mapKey);
-        if(val instanceof MapValue){
-            if(predicate){
-                return ((MapValue)val).getPredicateValue();
+        if (val instanceof MapValue) {
+            if (predicate) {
+                return ((MapValue) val).getPredicateValue();
             }
-            return ((MapValue)val).getCurrentValue();
+            return ((MapValue) val).getCurrentValue();
         }
         return val;
     }
 
     @Override
     public void setBean(Object bean) {
-        if(!(bean instanceof Map)){
+        if (!(bean instanceof Map)) {
             throw new EasyQueryException("cant get sql parameter value,,Map." + mapKey + ",bean is not map");
         }
         this.bean = EasyObjectUtil.typeCastNullable(bean);
+    }
+
+    @Override
+    public boolean hasBean() {
+        return bean != null;
     }
 
     @Override

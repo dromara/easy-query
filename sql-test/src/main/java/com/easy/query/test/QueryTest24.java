@@ -1,9 +1,14 @@
 package com.easy.query.test;
 
+import com.easy.query.api4j.update.EntityUpdatable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.basic.jdbc.parameter.BeanSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.listener.ListenerContext;
@@ -14,6 +19,7 @@ import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * create time 2025/4/28 11:16
@@ -152,5 +158,26 @@ public class QueryTest24 extends BaseTest {
                 .selectColumn((t_topic, t_blog) -> t_blog.createTime())
                 .firstOrNull();
 
+    }
+
+    @Test
+    public  void test123(){
+
+        Topic topic = new Topic();
+        topic.setId("123");
+        topic.setTitle("title123");
+        topic.setStars(1);
+        topic.setCreateTime(LocalDateTime.now());
+        EntityUpdatable<Topic> updatable = easyQuery.updatable(topic);
+        String sql1 = updatable.toSQL(topic);
+        System.out.println("sql:"+sql1);
+        ToSQLResult sqlResult1 = updatable.getClientUpdate().toSQLResult(topic);
+        for (SQLParameter parameter : sqlResult1.getSqlContext().getParameters()) {
+            if(parameter instanceof BeanSQLParameter){
+                BeanSQLParameter beanSQLParameter = (BeanSQLParameter) parameter;
+                beanSQLParameter.setBean(topic);
+            }
+            System.out.println("parameters:"+parameter.getValue());
+        }
     }
 }

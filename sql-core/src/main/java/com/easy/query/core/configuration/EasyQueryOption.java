@@ -1,5 +1,6 @@
 package com.easy.query.core.configuration;
 
+import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -139,6 +140,10 @@ public class EasyQueryOption {
      * 建议19
      */
     private final int mssqlMinBigDecimalScale;
+    /**
+     * 一对多拉取带limit的时候使用哪种模式默认UNION_ALL
+     */
+    private final IncludeLimitModeEnum includeLimitMode;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy,
                            SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode,
@@ -152,7 +157,8 @@ public class EasyQueryOption {
                            int relationGroupSize, boolean keepNativeStyle, long reverseOffsetThreshold,
                            boolean warningColumnMiss, int shardingFetchSize, boolean mapToBeanStrict,
                            String defaultSchema, long resultSizeLimit, boolean printNavSql,
-                           ShardingQueryInTransactionEnum shardingQueryInTransaction,int mssqlMinBigDecimalScale) {
+                           ShardingQueryInTransactionEnum shardingQueryInTransaction, int mssqlMinBigDecimalScale,
+                           IncludeLimitModeEnum includeLimitMode) {
 
 
         if (executorMaximumPoolSize > 0) {
@@ -224,6 +230,7 @@ public class EasyQueryOption {
         this.resultSizeLimit = resultSizeLimit;
         this.shardingQueryInTransaction = shardingQueryInTransaction;
         this.mssqlMinBigDecimalScale = mssqlMinBigDecimalScale;
+        this.includeLimitMode = includeLimitMode;
     }
 
     public int getMaxShardingRouteCount() {
@@ -367,5 +374,9 @@ public class EasyQueryOption {
 
     public int getMssqlMinBigDecimalScale() {
         return mssqlMinBigDecimalScale;
+    }
+
+    public IncludeLimitModeEnum getIncludeLimitMode() {
+        return includeLimitMode;
     }
 }

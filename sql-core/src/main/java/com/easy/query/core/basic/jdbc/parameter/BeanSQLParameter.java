@@ -7,4 +7,5 @@ package com.easy.query.core.basic.jdbc.parameter;
  */
 public interface BeanSQLParameter extends SQLParameter{
     void setBean(Object bean);
+    boolean hasBean();
 }

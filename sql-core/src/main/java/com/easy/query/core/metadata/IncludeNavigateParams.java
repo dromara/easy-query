@@ -24,7 +24,6 @@ public class IncludeNavigateParams implements IncludeRelationIdAvailable {
     private SQLExpression1<ClientQueryable<?>> adapterExpression;
     private TableAvailable table;
     private Integer relationGroupSize;
-    private boolean limit;
     private boolean replace=true;
     private boolean mappingFlat=false;
     private List<NavigateFlatMetadata> navigateFlatMetadataList;
@@ -68,14 +67,6 @@ public class IncludeNavigateParams implements IncludeRelationIdAvailable {
 
     public Integer getQueryRelationGroupSize(){
         return this.relationGroupSize;
-    }
-
-    public boolean isLimit() {
-        return limit;
-    }
-
-    public void setLimit(boolean limit) {
-        this.limit = limit;
     }
 
     public boolean isReplace() {

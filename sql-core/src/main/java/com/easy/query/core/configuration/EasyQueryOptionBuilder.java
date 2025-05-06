@@ -1,5 +1,6 @@
 package com.easy.query.core.configuration;
 
+import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -93,6 +94,10 @@ public class EasyQueryOptionBuilder {
      * 建议19
      */
     private int mssqlMinBigDecimalScale;
+    /**
+     * 一对多拉取带limit的时候使用哪种模式默认UNION_ALL
+     */
+    private IncludeLimitModeEnum includeLimitMode;
 
 
     public EasyQueryOptionBuilder() {
@@ -128,6 +133,7 @@ public class EasyQueryOptionBuilder {
         this.resultSizeLimit = -1L;
         this.shardingQueryInTransaction = ShardingQueryInTransactionEnum.SERIALIZABLE;
         this.mssqlMinBigDecimalScale = 0;
+        this.includeLimitMode = IncludeLimitModeEnum.UNION_ALL;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -278,6 +284,14 @@ public class EasyQueryOptionBuilder {
         this.mssqlMinBigDecimalScale = mssqlMinBigDecimalScale;
     }
 
+    public IncludeLimitModeEnum getIncludeLimitMode() {
+        return includeLimitMode;
+    }
+
+    public void setIncludeLimitMode(IncludeLimitModeEnum includeLimitMode) {
+        this.includeLimitMode = includeLimitMode;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -312,6 +326,7 @@ public class EasyQueryOptionBuilder {
                 this.resultSizeLimit,
                 this.printNavSql,
                 this.shardingQueryInTransaction,
-                this.mssqlMinBigDecimalScale);
+                this.mssqlMinBigDecimalScale,
+                this.includeLimitMode);
     }
 }

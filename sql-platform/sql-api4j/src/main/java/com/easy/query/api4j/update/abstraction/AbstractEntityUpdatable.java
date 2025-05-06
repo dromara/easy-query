@@ -8,6 +8,8 @@ import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -33,6 +35,11 @@ public abstract class AbstractEntityUpdatable<T> implements EntityUpdatable<T> {
     @Override
     public ClientEntityUpdatable<T> getClientUpdate() {
         return clientEntityUpdatable;
+    }
+
+    @Override
+    public List<T> getEntities() {
+        return clientEntityUpdatable.getEntities();
     }
 
     @Override

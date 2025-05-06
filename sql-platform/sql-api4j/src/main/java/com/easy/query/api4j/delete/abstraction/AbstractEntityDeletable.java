@@ -9,6 +9,8 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -23,6 +25,11 @@ public abstract class AbstractEntityDeletable<T> implements EntityDeletable<T> {
 
     public AbstractEntityDeletable(ClientEntityDeletable<T> entityObjectDeletable) {
         this.entityObjectDeletable = entityObjectDeletable;
+    }
+
+    @Override
+    public List<T> getEntities() {
+        return entityObjectDeletable.getEntities();
     }
 
     @Override

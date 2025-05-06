@@ -8,7 +8,12 @@ import com.easy.query.core.basic.api.internal.ConfigureVersionable;
 import com.easy.query.core.basic.api.internal.SQLExecuteStrategy;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.Updatable;
+import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.expression.lambda.SQLExpression1;
+
+import java.util.List;
 
 /**
  * @author xuejiaming
@@ -18,6 +23,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
  */
 public interface EntityUpdatable<T> extends Updatable<T, EntityUpdatable<T>>, SQLExecuteStrategy<EntityUpdatable<T>>,
         ConfigureVersionable<EntityUpdatable<T>> {
+    List<T> getEntities();
     ClientEntityUpdatable<T> getClientUpdate();
     default EntityUpdatable<T> columnConfigure(SQLExpression1<SQLColumnConfigurer<T>> columnConfigureExpression){
         getClientUpdate().columnConfigure(configurer->{
@@ -74,5 +80,16 @@ public interface EntityUpdatable<T> extends Updatable<T, EntityUpdatable<T>>, SQ
     }
     default String toSQL(Object entity) {
         return getClientUpdate().toSQL(entity);
+    }
+    /**
+     * 传入生成sql的上下文用来获取生成sql后的表达式内部的参数
+     *
+     * @return 包含sql和sql结果比如参数
+     */
+
+    default ToSQLResult toSQLResult(T entity) {
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(getUpdateExpressionBuilder().getExpressionContext().getTableContext());
+        String sql = toSQL(entity);
+        return new ToSQLResult(sql, toSQLContext);
     }
 }

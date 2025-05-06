@@ -159,6 +159,7 @@ public class SpringBootStarterBuilder {
                     builder.setResultSizeLimit(easyQueryProperties.getResultSizeLimit());
                     builder.setShardingQueryInTransaction(easyQueryProperties.getShardingQueryInTransaction());
                     builder.setMssqlMinBigDecimalScale(easyQueryProperties.getMssqlMinBigDecimalScale());
+                    builder.setIncludeLimitMode(easyQueryProperties.getIncludeLimitMode());
                 })
                 .customConfigure(s -> {
                     switch (easyQueryProperties.getDatabase()) {

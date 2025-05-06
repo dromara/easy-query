@@ -6,6 +6,7 @@ import com.easy.query.core.basic.api.insert.Insertable;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * create time 2023/6/2 16:14
@@ -14,6 +15,7 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface EntityInsertable<T> extends Insertable<T, EntityInsertable<T>>, SQL4JOnDuplicateKeyUpdate<T, EntityInsertable<T>> {
+    List<T> getEntities();
     @Override
     EntityInsertable<T> insert(T entity);
 

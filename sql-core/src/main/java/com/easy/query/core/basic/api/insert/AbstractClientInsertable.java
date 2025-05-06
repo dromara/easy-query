@@ -66,6 +66,11 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
+    public List<T> getEntities() {
+        return entities;
+    }
+
+    @Override
     public ClientInsertable<T> insert(T entity) {
         if (entity != null) {
             entities.add(entity);

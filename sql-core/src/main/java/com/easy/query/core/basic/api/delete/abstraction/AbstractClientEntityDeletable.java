@@ -21,6 +21,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -72,6 +73,10 @@ public abstract class AbstractClientEntityDeletable<T> extends AbstractSQLExecut
         return 0;
     }
 
+    @Override
+    public List<T> getEntities() {
+        return this.entities;
+    }
 
     @Override
     public ClientEntityDeletable<T> useLogicDelete(boolean enable) {

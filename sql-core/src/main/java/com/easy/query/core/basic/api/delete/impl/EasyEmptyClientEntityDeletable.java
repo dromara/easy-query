@@ -9,7 +9,10 @@ import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
+import com.easy.query.core.util.EasyCollectionUtil;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -20,6 +23,11 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public class EasyEmptyClientEntityDeletable<T> implements ClientEntityDeletable<T> {
+    @Override
+    public List<T> getEntities() {
+        return EasyCollectionUtil.emptyList();
+    }
+
     @Override
     public ExpressionContext getExpressionContext() {
         return null;

@@ -9,6 +9,8 @@ import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -129,6 +131,11 @@ public class AbstractEntityUpdatable<TProxy extends ProxyEntity<TProxy, T>, T> i
     @Override
     public TProxy getTProxy() {
         return tProxy;
+    }
+
+    @Override
+    public List<T> getEntities() {
+        return clientEntityUpdatable.getEntities();
     }
 
     @Override

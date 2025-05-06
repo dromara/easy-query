@@ -6,6 +6,7 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * create time 2023/6/2 15:55
@@ -14,6 +15,7 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public interface ClientInsertable<T> extends Insertable<T, ClientInsertable<T>>, SQLOnDuplicateKeyUpdate<T,ClientInsertable<T>>, SQLConflictThenable<T,ClientInsertable<T>> {
+    List<T> getEntities();
     @Override
     ClientInsertable<T> insert(T entity);
     ClientInsertable<T> columnConfigure(SQLExpression1<ColumnConfigurer<T>> columnConfigureExpression);

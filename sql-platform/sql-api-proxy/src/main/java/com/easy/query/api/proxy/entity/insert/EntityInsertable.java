@@ -9,6 +9,7 @@ import com.easy.query.core.expression.lambda.SQLExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * create time 2023/12/7 13:17
@@ -19,6 +20,7 @@ import java.util.Collection;
 public interface EntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T> extends Insertable<T, EntityInsertable<TProxy,T>>
         , ProxyEntityOnDuplicateKeyUpdate<TProxy,T,EntityInsertable<TProxy,T>>
         , ProxyEntityConflictThenable<TProxy,T,EntityInsertable<TProxy,T>> {
+    List<T> getEntities();
     @Override
     EntityInsertable<TProxy,T> insert(T entity);
 

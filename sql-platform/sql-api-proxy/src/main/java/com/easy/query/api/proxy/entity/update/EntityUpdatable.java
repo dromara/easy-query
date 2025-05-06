@@ -14,6 +14,8 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectExpression;
 
+import java.util.List;
+
 /**
  * create time 2023/12/7 13:55
  * 文件说明
@@ -22,6 +24,8 @@ import com.easy.query.core.proxy.SQLSelectExpression;
  */
 public interface EntityUpdatable<TProxy extends ProxyEntity<TProxy, T>, T> extends Updatable<T, EntityUpdatable<TProxy, T>>, SQLExecuteStrategy<EntityUpdatable<TProxy, T>>,
         ConfigureVersionable<EntityUpdatable<TProxy, T>> {
+
+    List<T> getEntities();
     TProxy getTProxy();
 
     ClientEntityUpdatable<T> getClientUpdate();

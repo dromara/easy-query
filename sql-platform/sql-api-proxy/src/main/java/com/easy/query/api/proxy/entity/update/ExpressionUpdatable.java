@@ -4,7 +4,9 @@ import com.easy.query.core.basic.api.internal.ConfigureVersionable;
 import com.easy.query.core.basic.api.internal.WithVersionable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.api.update.Updatable;
+import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -101,6 +103,12 @@ public interface ExpressionUpdatable<TProxy extends ProxyEntity<TProxy, T>, T> e
 
     default String toSQL(ToSQLContext toSQLContext) {
         return getClientUpdate().toSQL(toSQLContext);
+    }
+
+    default ToSQLResult toSQLResult() {
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(getExpressionContext().getTableContext());
+        String sql = toSQL(toSQLContext);
+        return new ToSQLResult(sql, toSQLContext);
     }
 }
 

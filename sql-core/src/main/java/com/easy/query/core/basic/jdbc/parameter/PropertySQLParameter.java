@@ -34,13 +34,18 @@ public final class PropertySQLParameter implements BeanSQLParameter {
         EntityMetadata entityMetadata = table.getEntityMetadata();
 //        ColumnMetadata column = entityMetadata.getColumnNotNull(propertyName);
 //        Property<Object, ?> propertyLambda = column.getGetterCaller();
-        return EasyBeanUtil.getPropertyValue(bean,entityMetadata,propertyName);
+        return EasyBeanUtil.getPropertyValue(bean, entityMetadata, propertyName);
 //        return propertyLambda.apply(bean);
     }
 
     @Override
     public void setBean(Object bean) {
         this.bean = bean;
+    }
+
+    @Override
+    public boolean hasBean() {
+        return this.bean != null;
     }
 
     @Override

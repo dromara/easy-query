@@ -10,7 +10,10 @@ import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
+import com.easy.query.core.util.EasyCollectionUtil;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -87,6 +90,11 @@ public class EasyEmptyClientEntityUpdatable<T> implements ClientEntityUpdatable<
     @Override
     public ClientEntityUpdatable<T> asTableSegment(BiFunction<String, String, String> segmentAs) {
         return this;
+    }
+
+    @Override
+    public List<T> getEntities() {
+        return EasyCollectionUtil.emptyList();
     }
 
     @Override

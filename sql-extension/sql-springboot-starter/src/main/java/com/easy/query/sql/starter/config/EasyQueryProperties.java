@@ -2,6 +2,7 @@ package com.easy.query.sql.starter.config;
 
 
 import com.easy.query.core.enums.EntityMappingStrategyEnum;
+import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -39,6 +40,10 @@ public class EasyQueryProperties {
      * 建议19
      */
     private int mssqlMinBigDecimalScale = 0;
+    /**
+     * 一对多拉取带limit的时候使用哪种模式默认UNION_ALL
+     */
+    private IncludeLimitModeEnum includeLimitMode = IncludeLimitModeEnum.UNION_ALL;
     /**
      * 仅分片时有效默认同时5个线程5
      */
@@ -489,6 +494,14 @@ public class EasyQueryProperties {
 
     public void setMssqlMinBigDecimalScale(int mssqlMinBigDecimalScale) {
         this.mssqlMinBigDecimalScale = mssqlMinBigDecimalScale;
+    }
+
+    public IncludeLimitModeEnum getIncludeLimitMode() {
+        return includeLimitMode;
+    }
+
+    public void setIncludeLimitMode(IncludeLimitModeEnum includeLimitMode) {
+        this.includeLimitMode = includeLimitMode;
     }
 
     public EasyQueryProperties() {

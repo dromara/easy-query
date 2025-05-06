@@ -24,11 +24,11 @@ public final class PropertyTrackSQLParameter implements BeanSQLParameter {
 
     public PropertyTrackSQLParameter(TableAvailable table, String propertyName, QueryRuntimeContext runtimeContext) {
         TrackContext currentTrackContext = runtimeContext.getTrackManager().getCurrentTrackContext();
-        Objects.requireNonNull(currentTrackContext,"PropertyTrackSQLParameter track context is null");
+        Objects.requireNonNull(currentTrackContext, "PropertyTrackSQLParameter track context is null");
         this.table = table;
         this.propertyName = propertyName;
         this.runtimeContext = runtimeContext;
-        this.currentTrackContext=currentTrackContext;
+        this.currentTrackContext = currentTrackContext;
     }
 
     @Override
@@ -45,16 +45,21 @@ public final class PropertyTrackSQLParameter implements BeanSQLParameter {
         EntityMetadata entityMetadata = table.getEntityMetadata();
 
         EntityState trackEntityState = currentTrackContext.getTrackEntityState(bean);
-        Objects.requireNonNull(trackEntityState,"PropertyTrackSQLParameter trackEntityState is null");
+        Objects.requireNonNull(trackEntityState, "PropertyTrackSQLParameter trackEntityState is null");
 //        ColumnMetadata column = entityMetadata.getColumnNotNull(propertyName);
 //        Property<Object, ?> propertyLambda = column.getGetterCaller();
-        return EasyBeanUtil.getPropertyValue(trackEntityState.getOriginalValue(),entityMetadata,propertyName);
+        return EasyBeanUtil.getPropertyValue(trackEntityState.getOriginalValue(), entityMetadata, propertyName);
 //        return propertyLambda.apply(bean);
     }
 
     @Override
     public void setBean(Object bean) {
         this.bean = bean;
+    }
+
+    @Override
+    public boolean hasBean() {
+        return this.bean != null;
     }
 
     @Override

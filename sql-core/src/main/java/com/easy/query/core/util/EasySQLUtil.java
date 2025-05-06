@@ -1,6 +1,7 @@
 package com.easy.query.core.util;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.jdbc.parameter.BeanSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
@@ -78,9 +79,12 @@ public class EasySQLUtil {
                 builder.append("(");
                 builder.append(param == null ? "null" : EasyClassUtil.getInstanceSimpleName(param));
                 builder.append(")");
-            } else if (sqlParameter instanceof PropertySQLParameter) {
+            } else if (sqlParameter instanceof BeanSQLParameter) {
                 String propertyName = sqlParameter.getPropertyNameOrNull();
-                String param = "[unknown](propertyName:" + propertyName + ")";
+                BeanSQLParameter beanSQLParameter = (BeanSQLParameter) sqlParameter;
+                boolean hasBean = beanSQLParameter.hasBean();
+                Object value = hasBean ? beanSQLParameter.getValue() : "unknown";
+                String param = "[" + (value) + "](propertyName:" + propertyName + ")";
                 if (i++ != 0) {
                     builder.append(",");
                 }

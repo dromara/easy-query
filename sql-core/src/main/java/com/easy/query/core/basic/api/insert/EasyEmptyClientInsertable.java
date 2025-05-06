@@ -9,8 +9,11 @@ import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
+import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -26,6 +29,11 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
     public EasyEmptyClientInsertable(EntityInsertExpressionBuilder entityInsertExpressionBuilder) {
 
         this.entityInsertExpressionBuilder = entityInsertExpressionBuilder;
+    }
+
+    @Override
+    public List<T> getEntities() {
+        return EasyCollectionUtil.emptyList();
     }
 
     @Override

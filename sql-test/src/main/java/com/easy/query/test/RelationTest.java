@@ -1,9 +1,12 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.StringProxy;
+import com.easy.query.api4j.update.EntityUpdatable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.track.TrackManager;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
@@ -28,6 +31,7 @@ import com.easy.query.test.dto.autodto.SchoolClassAOProp9;
 import com.easy.query.test.dto.autodto.SchoolStudentDTOAO111;
 import com.easy.query.test.dto.autodto.SchoolStudentDTOAO222;
 import com.easy.query.test.dto.autodto.SchoolStudentDTOxxx;
+import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.base.Area;
 import com.easy.query.test.entity.base.City;
@@ -188,6 +192,27 @@ public class RelationTest extends BaseTest {
         List<String> ids = Arrays.asList("1", "2", "3");
         try {
             relationInit(ids);
+
+//            {
+//
+//
+//                ListenerContext listenerContext = new ListenerContext();
+//                listenerContextManager.startListen(listenerContext);
+//
+//                try {
+//
+//                    List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
+//                            .includes(o -> o.schoolStudents(), x -> x.limit(2))
+//                            .toList();
+//                }catch (Exception ex){
+//
+//                }
+//                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//                Assert.assertEquals("SELECT t2.`id` AS `id`,t2.`class_id` AS `class_id`,t2.`name` AS `name` FROM (SELECT t1.`id` AS `id`,t1.`class_id` AS `class_id`,t1.`name` AS `name` FROM (SELECT t.`id`,t.`class_id`,t.`name`,(ROW_NUMBER() OVER (PARTITION BY t.`class_id`)) AS `__row__` FROM `school_student` t LIMIT 2) t1 WHERE t1.`__row__` >= ? AND t1.`__row__` <= ?) t2", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                Assert.assertEquals("1(Long),3(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//                listenerContextManager.clear();
+//            }
             {
 
 

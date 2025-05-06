@@ -17,6 +17,8 @@ import com.easy.query.core.proxy.SQLSelectExpression;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -132,6 +134,11 @@ public class AbstractEntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T> 
     public EntityInsertable<TProxy, T> configure(SQLExpression1<ContextConfigurer> configurer) {
         clientInsertable.configure(configurer);
         return this;
+    }
+
+    @Override
+    public List<T> getEntities() {
+        return clientInsertable.getEntities();
     }
 
     @Override
