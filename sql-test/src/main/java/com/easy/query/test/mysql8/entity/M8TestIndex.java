@@ -9,6 +9,8 @@ import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.mysql8.entity.proxy.M8TestIndexProxy;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * create time 2025/4/27 14:45
  * 文件说明
@@ -27,5 +29,9 @@ public class M8TestIndex implements ProxyEntityAvailable<M8TestIndex , M8TestInd
     private String column1;
     private String column2;
     private String column3;
+    @Column(dbDefault = "''")
     private String column4;
+
+    @Column(nullable = false,dbDefault = "CURRENT_TIMESTAMP(3)")
+    private LocalDateTime createTime;
 }

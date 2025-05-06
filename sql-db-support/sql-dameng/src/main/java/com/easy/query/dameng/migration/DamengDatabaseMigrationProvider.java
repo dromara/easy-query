@@ -199,6 +199,9 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         } else {
             sql.append(" NOT NULL");
         }
+        if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
+            sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
+        }
         sql.append(")';");
 //
 //        String columnComment = getColumnComment(entityMigrationMetadata, column);

@@ -76,6 +76,9 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             } else {
                 sql.append(" NOT NULL ");
             }
+            if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
+                sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
+            }
             if (column.isGeneratedKey()) {
                 sql.append(" AUTO_INCREMENT");
             }
@@ -151,6 +154,9 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             sql.append(" NULL");
         } else {
             sql.append(" NOT NULL");
+        }
+        if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
+            sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
         }
 
         String columnComment = getColumnComment(entityMigrationMetadata, column, "'");

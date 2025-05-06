@@ -8,9 +8,9 @@ package com.easy.query.core.migration;
  */
 public class ColumnDbTypeResult {
     public final String columnType;
-    public final Object defValue;
+    public final String defValue;
 
-    public ColumnDbTypeResult(String columnType, Object defValue) {
+    public ColumnDbTypeResult(String columnType, String defValue) {
         this.columnType = columnType;
         this.defValue = defValue;
     }

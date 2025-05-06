@@ -21,19 +21,19 @@ public class DamengMigrationEntityParser extends DefaultMigrationEntityParser {
     private static final Map<Class<?>, ColumnDbTypeResult> columnTypeMap = new HashMap<>();
 
     static {
-        columnTypeMap.put(boolean.class, new ColumnDbTypeResult("number(1)", false));
+        columnTypeMap.put(boolean.class, new ColumnDbTypeResult("number(1)", "0"));
         columnTypeMap.put(Boolean.class, new ColumnDbTypeResult("number(1)", null));
-        columnTypeMap.put(float.class, new ColumnDbTypeResult("real", 0f));
+        columnTypeMap.put(float.class, new ColumnDbTypeResult("real", "0"));
         columnTypeMap.put(Float.class, new ColumnDbTypeResult("real", null));
-        columnTypeMap.put(double.class, new ColumnDbTypeResult("double", 0d));
+        columnTypeMap.put(double.class, new ColumnDbTypeResult("double", "0"));
         columnTypeMap.put(Double.class, new ColumnDbTypeResult("double", null));
-        columnTypeMap.put(short.class, new ColumnDbTypeResult("number(6)", 0));
+        columnTypeMap.put(short.class, new ColumnDbTypeResult("number(6)", "0"));
         columnTypeMap.put(Short.class, new ColumnDbTypeResult("number(6)", null));
-        columnTypeMap.put(int.class, new ColumnDbTypeResult("number(11)", 0));
+        columnTypeMap.put(int.class, new ColumnDbTypeResult("number(11)", "0"));
         columnTypeMap.put(Integer.class, new ColumnDbTypeResult("number(11)", null));
-        columnTypeMap.put(long.class, new ColumnDbTypeResult("number(21)", 0L));
+        columnTypeMap.put(long.class, new ColumnDbTypeResult("number(21)", "0"));
         columnTypeMap.put(Long.class, new ColumnDbTypeResult("number(21)", null));
-        columnTypeMap.put(byte.class, new ColumnDbTypeResult("number(3)", 0));
+        columnTypeMap.put(byte.class, new ColumnDbTypeResult("number(3)", "0"));
         columnTypeMap.put(Byte.class, new ColumnDbTypeResult("number(3)", null));
         columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("number(16,2)", null));
         columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("timestamp(6)", null));

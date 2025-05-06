@@ -19,19 +19,19 @@ public class MsSQLMigrationEntityParser extends DefaultMigrationEntityParser {
     private static final Map<Class<?>, ColumnDbTypeResult> columnTypeMap = new HashMap<>();
 
     static {
-        columnTypeMap.put(boolean.class, new ColumnDbTypeResult("BIT", false));
+        columnTypeMap.put(boolean.class, new ColumnDbTypeResult("BIT", "0"));
         columnTypeMap.put(Boolean.class, new ColumnDbTypeResult("BIT", null));
-        columnTypeMap.put(float.class, new ColumnDbTypeResult("REAL", 0f));
+        columnTypeMap.put(float.class, new ColumnDbTypeResult("REAL", "0"));
         columnTypeMap.put(Float.class, new ColumnDbTypeResult("REAL", null));
-        columnTypeMap.put(double.class, new ColumnDbTypeResult("FLOAT", 0d));
+        columnTypeMap.put(double.class, new ColumnDbTypeResult("FLOAT", "0"));
         columnTypeMap.put(Double.class, new ColumnDbTypeResult("FLOAT", null));
-        columnTypeMap.put(short.class, new ColumnDbTypeResult("SMALLINT", 0));
+        columnTypeMap.put(short.class, new ColumnDbTypeResult("SMALLINT", "0"));
         columnTypeMap.put(Short.class, new ColumnDbTypeResult("SMALLINT", null));
-        columnTypeMap.put(int.class, new ColumnDbTypeResult("INT", 0));
+        columnTypeMap.put(int.class, new ColumnDbTypeResult("INT", "0"));
         columnTypeMap.put(Integer.class, new ColumnDbTypeResult("INT", null));
-        columnTypeMap.put(long.class, new ColumnDbTypeResult("BIGINT", 0L));
+        columnTypeMap.put(long.class, new ColumnDbTypeResult("BIGINT", "0"));
         columnTypeMap.put(Long.class, new ColumnDbTypeResult("BIGINT", null));
-        columnTypeMap.put(byte.class, new ColumnDbTypeResult("TINYINT", 0));
+        columnTypeMap.put(byte.class, new ColumnDbTypeResult("TINYINT", "0"));
         columnTypeMap.put(Byte.class, new ColumnDbTypeResult("TINYINT", null));
         columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("DECIMAL(16,2)", null));
         columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("DATETIME", null));

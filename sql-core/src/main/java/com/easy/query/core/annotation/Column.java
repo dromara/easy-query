@@ -155,6 +155,13 @@ public @interface Column {
     String dbType() default "";
 
     /**
+     * 数据库默认值
+     * 仅迁移时生效
+     * @return
+     */
+    String dbDefault() default "";
+
+    /**
      * 说明备注
      * @return
      */

@@ -1,5 +1,6 @@
 package com.easy.query.core.migration;
 
+import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -20,7 +21,7 @@ public interface MigrationEntityParser {
      * @param columnMetadata
      * @return
      */
-    @Nullable
+    @NotNull
     ColumnDbTypeResult getColumnDbType(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata);
 
     /**

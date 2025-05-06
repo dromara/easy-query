@@ -35,23 +35,23 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
     private static final Map<Class<?>, ColumnDbTypeResult> columnTypeMap = new HashMap<>();
 
     static {
-        columnTypeMap.put(boolean.class, new ColumnDbTypeResult("TINYINT(1)", false));
+        columnTypeMap.put(boolean.class, new ColumnDbTypeResult("TINYINT(1)", "0"));
         columnTypeMap.put(Boolean.class, new ColumnDbTypeResult("TINYINT(1)", null));
-        columnTypeMap.put(float.class, new ColumnDbTypeResult("FLOAT", 0f));
+        columnTypeMap.put(float.class, new ColumnDbTypeResult("FLOAT", "0"));
         columnTypeMap.put(Float.class, new ColumnDbTypeResult("FLOAT", null));
-        columnTypeMap.put(double.class, new ColumnDbTypeResult("DOUBLE", 0d));
+        columnTypeMap.put(double.class, new ColumnDbTypeResult("DOUBLE", "0"));
         columnTypeMap.put(Double.class, new ColumnDbTypeResult("DOUBLE", null));
-        columnTypeMap.put(short.class, new ColumnDbTypeResult("SMALLINT(6)", 0));
+        columnTypeMap.put(short.class, new ColumnDbTypeResult("SMALLINT(6)", "0"));
         columnTypeMap.put(Short.class, new ColumnDbTypeResult("SMALLINT(6)", null));
-        columnTypeMap.put(int.class, new ColumnDbTypeResult("INT(11)", 0));
+        columnTypeMap.put(int.class, new ColumnDbTypeResult("INT(11)", "0"));
         columnTypeMap.put(Integer.class, new ColumnDbTypeResult("INT(11)", null));
-        columnTypeMap.put(long.class, new ColumnDbTypeResult("BIGINT(20)", 0L));
+        columnTypeMap.put(long.class, new ColumnDbTypeResult("BIGINT(20)", "0"));
         columnTypeMap.put(Long.class, new ColumnDbTypeResult("BIGINT(20)", null));
-        columnTypeMap.put(byte.class, new ColumnDbTypeResult("TINYINT(3)", 0));
+        columnTypeMap.put(byte.class, new ColumnDbTypeResult("TINYINT(3)", "0"));
         columnTypeMap.put(Byte.class, new ColumnDbTypeResult("TINYINT(3)", null));
         columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("DECIMAL(16,2)", null));
         columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("DATETIME(3)", null));
-        columnTypeMap.put(String.class, new ColumnDbTypeResult("VARCHAR(255)", ""));
+        columnTypeMap.put(String.class, new ColumnDbTypeResult("VARCHAR(255)", null));
     }
 
     protected Map<Class<?>, ColumnDbTypeResult> getColumnTypeMap() {
@@ -62,13 +62,19 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
     public ColumnDbTypeResult getColumnDbType(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
         Field declaredField = entityMigrationMetadata.getFieldByColumnMetadata(columnMetadata);
         Column annotation = declaredField.getAnnotation(Column.class);
+        String dbDefault=null;
         if (annotation != null) {
             String dbType = annotation.dbType();
+            dbDefault = annotation.dbDefault();
             if (EasyStringUtil.isNotBlank(dbType)) {
-                return new ColumnDbTypeResult(dbType, null);
+                return new ColumnDbTypeResult(dbType, dbDefault);
             }
         }
-        return getColumnTypeMap().get(columnMetadata.getPropertyType());
+        ColumnDbTypeResult columnDbTypeResult = getColumnTypeMap().get(columnMetadata.getPropertyType());
+        if(EasyStringUtil.isNotBlank(dbDefault)){
+            return new ColumnDbTypeResult(columnDbTypeResult.columnType,dbDefault);
+        }
+        return columnDbTypeResult;
     }
 
     @Override
