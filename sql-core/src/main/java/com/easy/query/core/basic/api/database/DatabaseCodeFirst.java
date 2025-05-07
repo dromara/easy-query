@@ -57,6 +57,13 @@ public interface DatabaseCodeFirst {
     CodeFirstCommand dropTableCommand(List<Class<?>> entities);
 
     /**
+     * 删除表如果存在的话
+     * @param entities 数据库对象集合
+     * @return 可删除的表的执行对象
+     */
+    CodeFirstCommand dropTableIfExistsCommand(List<Class<?>> entities);
+
+    /**
      * 自动同步表结构
      * 如果数据库不存在则创建数据库(oracle不支持)
      * 如果表不存在则创建表

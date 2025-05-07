@@ -1,7 +1,6 @@
 package com.easy.query.core.expression.implicit;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.DefaultRelationTableKey;
@@ -9,7 +8,8 @@ import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.PartitionByRelationTableKey;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.include.getter.EqualsDirectToOneGetter;
-import com.easy.query.core.expression.include.getter.EqualsManyToManyGetter;
+import com.easy.query.core.expression.include.getter.EqualsManyToManyMappingRowsGetter;
+import com.easy.query.core.expression.include.getter.EqualsManyToManyNoMappingRowsGetter;
 import com.easy.query.core.expression.include.getter.EqualsManyToOneGetter;
 import com.easy.query.core.expression.include.getter.EqualsOneToManyGetter;
 import com.easy.query.core.expression.include.getter.EqualsOneToOneGetter;
@@ -19,7 +19,6 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
-import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
@@ -29,6 +28,7 @@ import com.easy.query.core.func.def.PartitionBySQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
@@ -55,7 +55,7 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
     }
 
     @Override
-    public <T> ClientQueryable<T> toImplicitSubQuery(EntityExpressionBuilder entityExpressionBuilder,TableAvailable leftTable, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext) {
+    public <T> ClientQueryable<T> toImplicitSubQuery(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext) {
 
         ClientQueryable<?> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getNavigatePropertyType(), runtimeContext);
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
@@ -156,7 +156,7 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
                     s.column(column);
                 }
             });
-            if(EasySQLSegmentUtil.isNotEmpty(orderBySQLBuilderSegment)){
+            if (EasySQLSegmentUtil.isNotEmpty(orderBySQLBuilderSegment)) {
                 partitionBySQLFunction.addOrder(orderBySQLBuilderSegment);
             }
             x.sqlFuncAs(partitionBySQLFunction, "__row__");
@@ -165,8 +165,19 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
     }
 
     @Override
-    public void relationMultiIdsFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<List<Object>> relationIds) {
-        targetWherePredicate.relationIn(targetProps, relationIds);
+    public void relationMultiIdsFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<List<Object>> relationIds, Integer groupSize) {
+        if (groupSize != null && relationIds.size() > groupSize) {
+            List<List<List<Object>>> partitionRelationIds = EasyCollectionUtil.partition(relationIds, groupSize);
+            targetWherePredicate.and(() -> {
+                for (List<List<Object>> partitionRelationId : partitionRelationIds) {
+                    targetWherePredicate.relationIn(targetProps, partitionRelationId).or();
+                }
+            });
+        } else {
+            targetWherePredicate.relationIn(targetProps, relationIds);
+        }
+
+
     }
 
     @Override
@@ -197,6 +208,9 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
 
     @Override
     public RelationIncludeGetter getManyToManyGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes, List<Object> mappingRows) {
-        return new EqualsManyToManyGetter(runtimeContext, navigateMetadata, targetPropertyNames, includes, mappingRows);
+        if(navigateMetadata.getMappingClass()==null){
+            return new EqualsManyToManyNoMappingRowsGetter( navigateMetadata, targetPropertyNames, includes);
+        }
+        return new EqualsManyToManyMappingRowsGetter(runtimeContext, navigateMetadata, targetPropertyNames, includes, mappingRows);
     }
 }

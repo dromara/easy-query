@@ -10,6 +10,7 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.include.RelationExtraEntity;
+import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
 
 import java.util.Collection;
@@ -49,8 +50,9 @@ public interface EntityRelationPropertyProvider {
      * @param targetWherePredicate
      * @param targetProps
      * @param relationIds
+     * @param groupSize
      */
-    void relationMultiIdsFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<List<Object>> relationIds);
+    void relationMultiIdsFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<List<Object>> relationIds, Integer groupSize);
 
     /**
      * 拉取带limit时候的条件

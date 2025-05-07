@@ -14,6 +14,6 @@ public interface MigrationsSQLGenerator {
     List<MigrationCommand> generateMigrationSQL(MigrationContext migrationContext);
 
     List<MigrationCommand> generateCreateTableMigrationSQL(MigrationContext migrationContext);
-    List<MigrationCommand> generateDropTableMigrationSQL(MigrationContext migrationContext);
+    List<MigrationCommand> generateDropTableMigrationSQL(MigrationContext migrationContext,boolean checkTableExists);
     boolean tableExists(Class<?> entityType);
 }

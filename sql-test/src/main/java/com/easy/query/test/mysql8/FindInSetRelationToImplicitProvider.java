@@ -13,6 +13,7 @@ import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
+import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
@@ -72,7 +73,7 @@ public class FindInSetRelationToImplicitProvider implements EntityRelationProper
     }
 
     @Override
-    public void relationMultiIdsFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<List<Object>> relationIds) {
+    public void relationMultiIdsFetcherPredicate(WherePredicate<?> targetWherePredicate, String[] targetProps, List<List<Object>> relationIds, Integer groupSize) {
         //仅支持单个属性多个属性自己去实现
         String targetProp = targetProps[0];
         String collect = relationIds.stream().filter(o -> o.get(0) != null && EasyStringUtil.isNotBlank(o.get(0).toString()))

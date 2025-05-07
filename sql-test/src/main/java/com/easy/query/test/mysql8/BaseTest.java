@@ -1,5 +1,6 @@
 package com.easy.query.test.mysql8;
 
+import com.bestvike.linq.Linq;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
@@ -25,7 +26,10 @@ import com.easy.query.test.common.MyQueryConfiguration;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.mypage.MyEasyPageResultProvider;
+import com.easy.query.test.mysql8.entity.M8Child;
 import com.easy.query.test.mysql8.entity.M8Comment;
+import com.easy.query.test.mysql8.entity.M8Parent;
+import com.easy.query.test.mysql8.entity.M8ParentChild;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
@@ -38,6 +42,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 
 /**
  * create time 2025/3/4 08:28
@@ -88,6 +93,7 @@ public class BaseTest {
                     op.setDeleteThrowError(false);
                     op.setDefaultTrack(true);
                     op.setIncludeLimitMode(IncludeLimitModeEnum.PARTITION);
+                    op.setRelationGroupSize(50);
                 })
 //                .replaceService(Column2MapKeyConversion.class, UpperColumn2MapKeyConversion.class)
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
@@ -111,12 +117,12 @@ public class BaseTest {
     public static void beforex() {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
-        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class,SysBank.class, SysBankCard.class,  SysUserBook.class, M8Comment.class));
-        codeFirstCommand.executeWithTransaction(s -> s.commit());
-        CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.dropTableCommand(Arrays.asList(SysUser.class, SysBankCard.class, SysBank.class, SysUserBook.class, M8Comment.class));
+//        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class,SysBank.class, SysBankCard.class,  SysUserBook.class, M8Comment.class));
+//        codeFirstCommand.executeWithTransaction(s -> s.commit());
+        CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(SysUser.class, SysBankCard.class, SysBank.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class, M8ParentChild.class));
         codeFirstCommand2.executeWithTransaction(s -> s.commit());
 
-        CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class, SysBank.class,  SysBankCard.class,SysUserBook.class, M8Comment.class));
+        CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class, SysBank.class, SysBankCard.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class,M8ParentChild.class));
         codeFirstCommand1.executeWithTransaction(s -> {
             System.out.println(s.getSQL());
             s.commit();
@@ -125,6 +131,9 @@ public class BaseTest {
         easyEntityQuery.deletable(SysBank.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(SysUser.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(M8Comment.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
+        easyEntityQuery.deletable(M8Parent.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
+        easyEntityQuery.deletable(M8Child.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
+        easyEntityQuery.deletable(M8ParentChild.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         ArrayList<SysBank> banks = new ArrayList<>();
         ArrayList<SysBankCard> bankCards = new ArrayList<>();
         ArrayList<SysUser> users = new ArrayList<>();
@@ -298,11 +307,54 @@ public class BaseTest {
             }
         }
 
+        ArrayList<M8Parent> parents = new ArrayList<>();
+        ArrayList<M8Child> children = new ArrayList<>();
+        ArrayList<M8ParentChild> parentChildren = new ArrayList<>();
+        for (int i = 0; i < 300; i++) {
+            M8Parent m8Parent = new M8Parent();
+            m8Parent.setId(UUID.randomUUID().toString());
+            m8Parent.setName("name" + i);
+            m8Parent.setOrder(i);
+            parents.add(m8Parent);
+            M8ParentChild m8ParentChild = new M8ParentChild();
+            m8ParentChild.setId(UUID.randomUUID().toString());
+            m8ParentChild.setParentId(m8Parent.getId());
+            m8ParentChild.setChildId(m8Parent.getId());
+            parentChildren.add(m8ParentChild);
+            for (int j = 0; j < 300; j++) {
+                M8Child m8Child = new M8Child();
+                m8Child.setId(UUID.randomUUID().toString());
+                m8Child.setParentId(m8Parent.getId());
+                m8Child.setName("name" + i);
+                m8Child.setOrder(i);
+                children.add(m8Child);
+
+            }
+        }
+        {
+            for (int i = 15; i < 30; i++) {
+
+                M8Parent m8Parent = parents.get(i);
+                for (int j = 2; j < 213; j++) {
+                    M8Child child = children.get(j);
+                    M8ParentChild m8ParentChild = new M8ParentChild();
+                    m8ParentChild.setId(UUID.randomUUID().toString());
+                    m8ParentChild.setParentId(m8Parent.getId());
+                    m8ParentChild.setChildId(child.getId());
+                    parentChildren.add(m8ParentChild);
+                }
+            }
+        }
+
+
         easyEntityQuery.insertable(banks).executeRows();
         easyEntityQuery.insertable(bankCards).executeRows();
         easyEntityQuery.insertable(users).executeRows();
         easyEntityQuery.insertable(userBooks).executeRows();
         easyEntityQuery.insertable(comments).executeRows();
+        easyEntityQuery.insertable(parents).batch().executeRows();
+        easyEntityQuery.insertable(Linq.of(parentChildren).orderBy(s->s.getId()).toList()).batch().executeRows();
+        easyEntityQuery.insertable(Linq.of(children).orderBy(s->s.getId()).toList()).batch().executeRows();
 
     }
 

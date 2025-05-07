@@ -157,9 +157,14 @@ public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
     }
 
     @Override
-    public List<MigrationCommand> generateDropTableMigrationSQL(MigrationContext migrationContext) {
+    public List<MigrationCommand> generateDropTableMigrationSQL(MigrationContext migrationContext,boolean checkTableExists) {
         ArrayList<MigrationCommand> migrationCommands = new ArrayList<>(migrationContext.getEntities().size());
         for (Class<?> entity : migrationContext.getEntities()) {
+            if(checkTableExists){
+                if(!tableExists(entity)){
+                    continue;
+                }
+            }
             EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entity);
             MigrationCommand migrationCommand = databaseMigrationProvider.dropTable(new EntityMigrationMetadata(entityMetadata));
             if (migrationCommand != null) {

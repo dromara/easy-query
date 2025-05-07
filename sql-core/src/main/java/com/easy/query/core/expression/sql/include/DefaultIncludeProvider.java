@@ -92,7 +92,19 @@ public class DefaultIncludeProvider implements IncludeProvider {
 
                 EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
                 EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
-                ClientQueryable<?> partitionQueryable = clientQueryable.select(Map.class, x -> {
+                ClientQueryable<?> partitionQueryable = noLimitQueryable.where(o -> {
+                            o.and(() -> {
+                                EntityRelationPropertyProvider relationPropertyProvider = navigateMetadata.getEntityRelationPropertyProvider();
+
+                                if (directMapping) {
+                                    relationPropertyProvider.relationMultiIdsFetcherPredicate(o, navigateMetadata.getDirectTargetPropertiesOrPrimary(runtimeContext), relationIds,includeNavigateParams.getQueryRelationGroupSize());
+                                } else {
+                                    relationPropertyProvider.relationMultiIdsFetcherPredicate(o, navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationIds,includeNavigateParams.getQueryRelationGroupSize());
+                                }
+                                navigateMetadata.predicateFilterApply(o);
+//                        navigateMetadata.predicateFilterApply(o);
+                            });
+                        }).select(Map.class, x -> {
                             x.columnAll();
 
 
@@ -147,9 +159,9 @@ public class DefaultIncludeProvider implements IncludeProvider {
                 EntityRelationPropertyProvider relationPropertyProvider = navigateMetadata.getEntityRelationPropertyProvider();
 
                 if (directMapping) {
-                    relationPropertyProvider.relationMultiIdsFetcherPredicate(o, navigateMetadata.getDirectTargetPropertiesOrPrimary(runtimeContext), relationIds);
+                    relationPropertyProvider.relationMultiIdsFetcherPredicate(o, navigateMetadata.getDirectTargetPropertiesOrPrimary(runtimeContext), relationIds,includeNavigateParams.getQueryRelationGroupSize());
                 } else {
-                    relationPropertyProvider.relationMultiIdsFetcherPredicate(o, navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationIds);
+                    relationPropertyProvider.relationMultiIdsFetcherPredicate(o, navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationIds,includeNavigateParams.getQueryRelationGroupSize());
                 }
                 navigateMetadata.predicateFilterApply(o);
 //                        navigateMetadata.predicateFilterApply(o);

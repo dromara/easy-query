@@ -24,10 +24,10 @@ public class EasyIncludeUtil {
 //        return queryableExpressionGroupExecute(queryRelationGroupSize, () -> includeQueryable, includeRelationIdAvailable, relationIds, produce);
 //    }
 
-    public static <TR> List<TR> queryableExpressionGroupExecute(int queryRelationGroupSize, SQLFuncExpression<ClientQueryable<?>> includeQueryableExpression, IncludeRelationIdAvailable includeRelationIdAvailable, List<List<Object>> relationIds, SQLFuncExpression1<ClientQueryable<?>, List<TR>> produce) {
+    public static <TR> List<TR> queryableExpressionGroupExecute(int queryRelationGroupSize, SQLFuncExpression<ClientQueryable<?>> includeQueryableExpression, IncludeRelationIdAvailable includeRelationIdAvailable, List<List<Object>> relationIds, SQLFuncExpression1<ClientQueryable<?>, List<TR>> produce,boolean ignoreGroupSize) {
 //        int queryRelationGroupSize = includeNavigateParams.getQueryRelationGroupSize(easyQueryOption.getRelationGroupSize());
 
-        if (relationIds.size() <= queryRelationGroupSize) {
+        if (relationIds.size() <= queryRelationGroupSize || ignoreGroupSize) {
             includeRelationIdAvailable.getRelationIds().addAll(relationIds);
             return executeQueryableAndClearParams(includeQueryableExpression.apply(), includeRelationIdAvailable, produce);
         } else {

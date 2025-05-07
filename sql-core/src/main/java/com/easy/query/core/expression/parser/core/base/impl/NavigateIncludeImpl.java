@@ -163,7 +163,7 @@ public class NavigateIncludeImpl implements NavigateInclude {
                             s.setPrintNavSQL(printSQL);
                         }).where(t -> {
                             EntityRelationPropertyProvider entityRelationPropertyProvider = navigateMetadata.getEntityRelationPropertyProvider();
-                            entityRelationPropertyProvider.relationMultiIdsFetcherPredicate(t, navigateMetadata.getDirectMappingSelfPropertiesOrPrimary(runtimeContext), includeNavigateParams.getRelationIds());
+                            entityRelationPropertyProvider.relationMultiIdsFetcherPredicate(t, navigateMetadata.getDirectMappingSelfPropertiesOrPrimary(runtimeContext), includeNavigateParams.getRelationIds(), includeNavigateParams.getQueryRelationGroupSize());
 //                            t.relationIn(navigateMetadata.getDirectMappingSelfPropertiesOrPrimary(runtimeContext), includeNavigateParams.getRelationIds());
                             propNavigateMetadata.predicateFilterApply(t);
                         })
@@ -183,7 +183,7 @@ public class NavigateIncludeImpl implements NavigateInclude {
                             s.setPrintNavSQL(printSQL);
                         }).where(t -> {
                             EntityRelationPropertyProvider entityRelationPropertyProvider = navigateMetadata.getEntityRelationPropertyProvider();
-                            entityRelationPropertyProvider.relationMultiIdsFetcherPredicate(t, navigateMetadata.getSelfMappingProperties(), includeNavigateParams.getRelationIds());
+                            entityRelationPropertyProvider.relationMultiIdsFetcherPredicate(t, navigateMetadata.getSelfMappingProperties(), includeNavigateParams.getRelationIds(), includeNavigateParams.getQueryRelationGroupSize());
 //                            t.relationIn(navigateMetadata.getSelfMappingProperties(), includeNavigateParams.getRelationIds());
                             navigateMetadata.predicateMappingClassFilterApply(t);
                         })

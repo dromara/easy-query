@@ -128,7 +128,11 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 
 
         int queryRelationGroupSize = includeNavigateParams.getQueryRelationGroupSize();
+        boolean ignoreGroupSize = false;
         if (RelationTypeEnum.ManyToMany == navigateMetadata.getRelationType() && navigateMetadata.getMappingClass() != null) {
+            if (EasyCollectionUtil.isNotEmpty(navigateMetadata.getOrderProps())) {
+                ignoreGroupSize = true;
+            }
             confirmMappingRows(queryRelationGroupSize, includeParseContext, relationIds);
             EntityMetadata mappingEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getMappingClass());
 
@@ -165,7 +169,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
             ExpressionContext innerExpressionContext = q.getSQLEntityExpressionBuilder().getExpressionContext();
             List<?> list = q.toList();
             return getRelationExtraEntities(innerExpressionContext, list);
-        });
+        }, ignoreGroupSize);
         return new DefaultIncludeParserResult(entityMetadata, navigateMetadata, relationExtraEntities, navigateMetadata.getRelationType(),
                 includeParseContext.getNavigatePropertyName(),
                 includeParseContext.getNavigateOriginalPropertyType(),
@@ -189,7 +193,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 
         IncludeNavigateParams includeNavigateParams = includeParseContext.getIncludeNavigateParams();
 
-        List<?> mappingRows = EasyIncludeUtil.queryableExpressionGroupExecute(queryRelationGroupSize, includeNavigateParams.getMappingQueryableFunction(), includeNavigateParams, relationIds, o -> o.asNoTracking().toList());
+        List<?> mappingRows = EasyIncludeUtil.queryableExpressionGroupExecute(queryRelationGroupSize, includeNavigateParams.getMappingQueryableFunction(), includeNavigateParams, relationIds, o -> o.asNoTracking().toList(), true);
         includeParseContext.setMappingRows(EasyObjectUtil.typeCastNullable(mappingRows));
     }
 
@@ -293,7 +297,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
     private void processorExtraSelect(EntityMetadataManager entityMetadataManager, Class<?> resultClassType, ColumnAsSelector<?, ?> columnAsSelector) {
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(resultClassType);
         ExtraAutoIncludeConfigure extraAutoIncludeConfigure = entityMetadata.getExtraAutoIncludeConfigure();
-        if(extraAutoIncludeConfigure !=null){
+        if (extraAutoIncludeConfigure != null) {
             ExtraSelect extraSelect = extraAutoIncludeConfigure.getExtraSelect();
             if (extraSelect != null) {
                 extraSelect.select(columnAsSelector);

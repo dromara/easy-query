@@ -49,7 +49,15 @@ public class DefaultDatabaseCodeFirst implements DatabaseCodeFirst{
     public CodeFirstCommand dropTableCommand(List<Class<?>> entities) {
         MigrationsSQLGenerator migrationsSQLGenerator = getRuntimeContext().getMigrationsSQLGenerator();
         MigrationContext migrationContext = new MigrationContext(entities);
-        List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateDropTableMigrationSQL(migrationContext);
+        List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateDropTableMigrationSQL(migrationContext,false);
+        return createCodeFirstCommand(migrationCommands);
+    }
+
+    @Override
+    public CodeFirstCommand dropTableIfExistsCommand(List<Class<?>> entities) {
+        MigrationsSQLGenerator migrationsSQLGenerator = getRuntimeContext().getMigrationsSQLGenerator();
+        MigrationContext migrationContext = new MigrationContext(entities);
+        List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateDropTableMigrationSQL(migrationContext,true);
         return createCodeFirstCommand(migrationCommands);
     }
 
