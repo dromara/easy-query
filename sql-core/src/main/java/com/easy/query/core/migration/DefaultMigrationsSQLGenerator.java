@@ -86,6 +86,9 @@ public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
                         if (migrationCommand != null) {
                             migrationCommands.add(migrationCommand);
                         }
+                        //创建外键
+                        List<MigrationCommand> tableForeignKeyCommands = databaseMigrationProvider.createTableForeignKey(entityMigrationMetadata, runtimeContext);
+                        migrationCommands.addAll(tableForeignKeyCommands);
                         //创建索引
                         List<MigrationCommand> tableIndexCommands = databaseMigrationProvider.createTableIndex(entityMigrationMetadata);
                         migrationCommands.addAll(tableIndexCommands);

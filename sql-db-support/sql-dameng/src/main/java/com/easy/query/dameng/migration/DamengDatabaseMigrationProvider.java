@@ -223,7 +223,7 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
     protected MigrationCommand createIndex(EntityMigrationMetadata entityMigrationMetadata, TableIndexResult tableIndex) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
-        sql.append("CREATE ");
+        sql.append("execute immediate 'CREATE ");
         if (tableIndex.unique) {
             sql.append("UNIQUE INDEX ");
         } else {
@@ -239,14 +239,14 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
             joiner.add(column);
         }
         sql.append(joiner);
-        sql.append(");");
+        sql.append(")';");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
     @Override
     protected MigrationCommand createTableForeignKey(EntityMigrationMetadata entityMigrationMetadata, TableForeignKeyResult tableForeignKeyResult) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
-        sql.append("ALTER TABLE ");
+        sql.append("execute immediate 'ALTER TABLE ");
         sql.append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()));
         sql.append(" ADD CONSTRAINT ").append(tableForeignKeyResult.name);
         sql.append(" FOREIGN KEY (");
@@ -263,7 +263,7 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         if (EasyStringUtil.isNotBlank(tableForeignKeyResult.action)) {
             sql.append(" ").append(tableForeignKeyResult.action).append(" ");
         }
-        sql.append(";");
+        sql.append("';");
         return new DefaultMigrationCommand(entityMetadata, sql.toString());
     }
 }

@@ -60,7 +60,6 @@ public class M8BankTest extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-
         List<SysBankCard> list = easyEntityQuery.queryable(SysBankCard.class)
                 .where(bank_card -> {
                     bank_card.user().name().eq("小明");

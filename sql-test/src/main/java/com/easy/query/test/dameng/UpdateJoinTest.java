@@ -25,23 +25,28 @@ public class UpdateJoinTest extends DamengBaseTest {
 
 
     @Before
-    public void testBefore(){
+    public void testBefore() {
         DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
+        {
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class,DocBankCard.class, DocUser.class));
+            codeFirstCommand.executeWithTransaction(a -> a.commit());
+        }
 
         {
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(DocBankCard.class, DocUser.class, DocBank.class));
-            codeFirstCommand.executeWithTransaction(a->a.commit());
+            codeFirstCommand.executeWithTransaction(a -> a.commit());
 
         }
         {
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBankCard.class, DocUser.class, DocBank.class));
-            codeFirstCommand.executeWithTransaction(a->a.commit());
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class,DocBankCard.class, DocUser.class));
+            codeFirstCommand.executeWithTransaction(a -> a.commit());
         }
 //        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class));
     }
+
     @Test
-    public void testUpdateJoin1(){
+    public void testUpdateJoin1() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
@@ -60,8 +65,9 @@ public class UpdateJoinTest extends DamengBaseTest {
         Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testUpdateJoin2(){
+    public void testUpdateJoin2() {
 //        entityQuery.sqlExecute("UPDATE \"doc_bank_card\" t SET \"type\" = t1.\"name\" FROM \"doc_bank\" t1 INNER JOIN \"doc_user\" t2 ON t2.\"id\" = t.\"id\" WHERE t1.\"id\" = t.\"bank_id\" AND t2.\"name\" LIKE '123'");
 //        entityQuery.sqlExecute("UPDATE \"doc_bank_card\" t SET \"type\" = t1.\"name\" FROM \"doc_bank\" t1 , \"doc_user\" t2 WHERE t1.\"id\" = t.\"bank_id\" AND t2.\"id\" = t1.\"id\" AND t2.\"name\" LIKE '123'");
 
