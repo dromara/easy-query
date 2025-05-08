@@ -148,8 +148,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
 
         EntityRelationPropertyProvider entityRelationPropertyProvider = selfNavigateMetadata.getEntityRelationPropertyProvider();
         //entities如果size只有1就不需要后续操作
-
-        RelationIncludeGetter manyToManyGetter = entityRelationPropertyProvider.getManyToManyGetter(runtimeContext, selfNavigateMetadata, targetColumnMetadataPropertyNames, includes, mappingRows);
+        RelationIncludeGetter manyToManyGetter = entityRelationPropertyProvider.getManyToManyGetter(runtimeContext, selfNavigateMetadata, targetColumnMetadataPropertyNames, includes, mappingRows,includeParserResult.isHasOrder());
         if (manyToManyGetter == null) {
             throw new EasyQueryInvalidOperationException("Please implement the getManyToManyGetter method first.");
         }

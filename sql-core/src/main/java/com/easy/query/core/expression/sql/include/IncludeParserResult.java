@@ -58,5 +58,6 @@ public interface IncludeParserResult {
     List<RelationExtraEntity> getRelationExtraEntities();
     List<NavigateFlatMetadata> getNavigateFlatMetadataList();
     EntityMetadata getFlatQueryEntityMetadata();
+    boolean isHasOrder();
 
 }

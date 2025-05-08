@@ -57,6 +57,8 @@ public class DefaultIncludeProvider implements IncludeProvider {
         includeNavigateParams.setRelationGroupSize(relationGroupSize);
         NavigateInclude navigateInclude = new NavigateIncludeImpl(table, entityMetadata, expressionContext.getRuntimeContext(), includeNavigateParams, expressionContext);
         ClientQueryable<TProperty> clientQueryable = navigateIncludeSQLExpression.apply(navigateInclude);
+        boolean hasOrder = EasySQLSegmentUtil.isNotEmpty(clientQueryable.getSQLEntityExpressionBuilder().getOrder());
+        includeNavigateParams.setHasOrder(hasOrder);
         boolean hasLimit = clientQueryable.getSQLEntityExpressionBuilder().hasLimit();
         NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
         if (!Objects.equals(navigateMetadata.getNavigatePropertyType(), clientQueryable.queryClass())) {

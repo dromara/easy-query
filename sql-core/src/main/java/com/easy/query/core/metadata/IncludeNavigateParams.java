@@ -25,6 +25,7 @@ public class IncludeNavigateParams implements IncludeRelationIdAvailable {
     private TableAvailable table;
     private Integer relationGroupSize;
     private boolean replace=true;
+    private boolean hasOrder=false;
     private boolean mappingFlat=false;
     private List<NavigateFlatMetadata> navigateFlatMetadataList;
     private EntityMetadata flatQueryEntityMetadata;
@@ -75,6 +76,14 @@ public class IncludeNavigateParams implements IncludeRelationIdAvailable {
 
     public void setReplace(boolean replace) {
         this.replace = replace;
+    }
+
+    public boolean isHasOrder() {
+        return hasOrder;
+    }
+
+    public void setHasOrder(boolean hasOrder) {
+        this.hasOrder = hasOrder;
     }
 
     public boolean isMappingFlat() {

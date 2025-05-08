@@ -8,6 +8,7 @@ import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.PartitionByRelationTableKey;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.include.getter.EqualsDirectToOneGetter;
+import com.easy.query.core.expression.include.getter.EqualsManyToManyMappingOrderRowsGetter;
 import com.easy.query.core.expression.include.getter.EqualsManyToManyMappingRowsGetter;
 import com.easy.query.core.expression.include.getter.EqualsManyToManyNoMappingRowsGetter;
 import com.easy.query.core.expression.include.getter.EqualsManyToOneGetter;
@@ -207,9 +208,12 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
     }
 
     @Override
-    public RelationIncludeGetter getManyToManyGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes, List<Object> mappingRows) {
-        if(navigateMetadata.getMappingClass()==null){
-            return new EqualsManyToManyNoMappingRowsGetter( navigateMetadata, targetPropertyNames, includes);
+    public RelationIncludeGetter getManyToManyGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes, List<Object> mappingRows,boolean hasOrder) {
+        if (navigateMetadata.getMappingClass() == null) {
+            return new EqualsManyToManyNoMappingRowsGetter(navigateMetadata, targetPropertyNames, includes);
+        }
+        if(hasOrder){
+            return new EqualsManyToManyMappingOrderRowsGetter(runtimeContext, navigateMetadata, targetPropertyNames, includes, mappingRows);
         }
         return new EqualsManyToManyMappingRowsGetter(runtimeContext, navigateMetadata, targetPropertyNames, includes, mappingRows);
     }

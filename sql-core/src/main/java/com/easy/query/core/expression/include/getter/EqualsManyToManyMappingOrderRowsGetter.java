@@ -22,13 +22,13 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public class EqualsManyToManyMappingRowsGetter extends AbstractIncludeGetter implements RelationIncludeGetter {
+public class EqualsManyToManyMappingOrderRowsGetter extends AbstractIncludeGetter implements RelationIncludeGetter {
     private final QueryRuntimeContext runtimeContext;
     private final String[] targetPropertyNames;
     private final RelationValueColumnMetadataFactory relationValueColumnMetadataFactory;
-    private final Map<RelationValue, Collection<RelationExtraEntity>> targetToManyMap;
+    private final Map<RelationValue, Collection<EntityIndex<RelationExtraEntity>>> targetToManyMap;
 
-    public EqualsManyToManyMappingRowsGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes, List<Object> mappingRows) {
+    public EqualsManyToManyMappingOrderRowsGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes, List<Object> mappingRows) {
         super(navigateMetadata);
         this.runtimeContext = runtimeContext;
         this.relationValueColumnMetadataFactory = runtimeContext.getRelationValueColumnMetadataFactory();
@@ -44,7 +44,15 @@ public class EqualsManyToManyMappingRowsGetter extends AbstractIncludeGetter imp
 
     @Override
     public Object getIncludeValue(RelationValue relationValue) {
-        return targetToManyMap.computeIfAbsent(relationValue, k -> createManyCollection());
+        Collection<EntityIndex<RelationExtraEntity>> entityIndices = targetToManyMap.computeIfAbsent(relationValue, k -> createManyCollection());
+        if (EasyCollectionUtil.isEmpty(entityIndices)) {
+            return entityIndices;
+        }
+        Collection<Object> manyCollection = createManyCollection();
+        entityIndices.stream().sorted(Comparator.comparingInt(a -> a.index)).forEach(item -> {
+            manyCollection.add(item.entity);
+        });
+        return manyCollection;
     }
 
     /**
@@ -54,23 +62,25 @@ public class EqualsManyToManyMappingRowsGetter extends AbstractIncludeGetter imp
      * @param <TNavigateEntity>
      * @return
      */
-    protected <TNavigateEntity> Map<RelationValue, Collection<TNavigateEntity>> getTargetToManyMap(List<RelationExtraEntity> includes) {
+    protected <TNavigateEntity> Map<RelationValue, Collection<EntityIndex<TNavigateEntity>>> getTargetToManyMap(List<RelationExtraEntity> includes) {
         Class<?> collectionType = EasyClassUtil.getCollectionImplType(navigateMetadata.getNavigateOriginalPropertyType());
-        Map<RelationValue, Collection<TNavigateEntity>> resultMap = new HashMap<>();
+        Map<RelationValue, Collection<EntityIndex<TNavigateEntity>>> resultMap = new HashMap<>();
+        int i = 0;
         for (RelationExtraEntity target : includes) {
             RelationValue targetRelationId = target.getRelationExtraColumns(targetPropertyNames);
             if (targetRelationId.isNull()) {
                 continue;
             }
-            Collection<TNavigateEntity> objects = resultMap.computeIfAbsent(targetRelationId, k -> (Collection<TNavigateEntity>) EasyClassUtil.newInstance(collectionType));
-            objects.add((TNavigateEntity) target.getEntity());
+            Collection<EntityIndex<TNavigateEntity>> objects = resultMap.computeIfAbsent(targetRelationId, k -> (Collection<EntityIndex<TNavigateEntity>>) EasyClassUtil.newInstance(collectionType));
+            objects.add(new EntityIndex<>((TNavigateEntity) target.getEntity(), i));
+            i++;
         }
         return resultMap;
     }
 
-    protected <TNavigateEntity> Map<RelationValue, Collection<TNavigateEntity>> getTargetToManyMap(List<RelationExtraEntity> includes, List<Object> mappingRows) {
+    protected <TNavigateEntity> Map<RelationValue, Collection<EntityIndex<TNavigateEntity>>> getTargetToManyMap(List<RelationExtraEntity> includes, List<Object> mappingRows) {
 
-        Map<RelationValue, Collection<TNavigateEntity>> resultMap = new HashMap<>();
+        Map<RelationValue, Collection<EntityIndex<TNavigateEntity>>> resultMap = new HashMap<>();
 
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getMappingClass());
         RelationValueColumnMetadata selfRelationColumn = relationValueColumnMetadataFactory.create(entityMetadata, navigateMetadata.getSelfMappingProperties());
@@ -78,7 +88,7 @@ public class EqualsManyToManyMappingRowsGetter extends AbstractIncludeGetter imp
         RelationValueColumnMetadata targetRelationColumn = relationValueColumnMetadataFactory.create(entityMetadata, navigateMetadata.getTargetMappingProperties());
 
 
-        Map<RelationValue, Collection<TNavigateEntity>> targetToManyMap = getTargetToManyMap(includes);
+        Map<RelationValue, Collection<EntityIndex<TNavigateEntity>>> targetToManyMap = getTargetToManyMap(includes);
         for (Object mappingRow : mappingRows) {
             RelationValue selfRelationId = selfRelationColumn.getRelationValue(mappingRow);
             if (selfRelationId.isNull()) {
@@ -88,8 +98,8 @@ public class EqualsManyToManyMappingRowsGetter extends AbstractIncludeGetter imp
             if (targetRelationId.isNull()) {
                 continue;
             }
-            Collection<TNavigateEntity> targetEntities = resultMap.computeIfAbsent(selfRelationId, k -> createManyCollection());
-            Collection<TNavigateEntity> targets = targetToManyMap.get(targetRelationId);
+            Collection<EntityIndex<TNavigateEntity>> targetEntities = resultMap.computeIfAbsent(selfRelationId, k -> createManyCollection());
+            Collection<EntityIndex<TNavigateEntity>> targets = targetToManyMap.get(targetRelationId);
             if (EasyCollectionUtil.isNotEmpty(targets)) {
                 targetEntities.addAll(targets);
             }

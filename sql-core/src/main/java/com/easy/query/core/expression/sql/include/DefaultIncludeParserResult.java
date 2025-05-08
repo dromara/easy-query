@@ -37,6 +37,7 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
     private final List<NavigateFlatMetadata> navigateFlatMetadataList;
     private final EntityMetadata flatQueryEntityMetadata;
     private final String[] directMapping;
+    private final boolean hasOrder;
 
     public DefaultIncludeParserResult(EntityMetadata entityMetadata,
                                       NavigateMetadata navigateMetadata,
@@ -56,7 +57,8 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
                                       Property<Object, ?> getter,
                                       List<NavigateFlatMetadata> navigateFlatMetadataList,
                                       EntityMetadata flatQueryEntityMetadata,
-                                      String[] directMapping){
+                                      String[] directMapping,
+                                      boolean hasOrder){
 
         this.entityMetadata = entityMetadata;
         this.navigateMetadata = navigateMetadata;
@@ -77,6 +79,7 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
         this.navigateFlatMetadataList = navigateFlatMetadataList;
         this.flatQueryEntityMetadata = flatQueryEntityMetadata;
         this.directMapping = directMapping;
+        this.hasOrder = hasOrder;
     }
     @Override
     public EntityMetadata getEntityMetadata() {
@@ -174,5 +177,10 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
     @Override
     public EntityMetadata getFlatQueryEntityMetadata() {
         return flatQueryEntityMetadata;
+    }
+
+    @Override
+    public boolean isHasOrder() {
+        return hasOrder;
     }
 }

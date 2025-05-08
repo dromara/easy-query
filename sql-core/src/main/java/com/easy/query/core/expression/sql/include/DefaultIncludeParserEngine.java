@@ -12,6 +12,8 @@ import com.easy.query.core.expression.parser.core.extra.ExtraSelect;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadata;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -40,6 +42,7 @@ import java.util.stream.Collectors;
  * @author xuejiaming
  */
 public class DefaultIncludeParserEngine implements IncludeParserEngine {
+    private static final Log log = LogFactory.getLog(DefaultIncludeParserEngine.class);
 
     private <TEntity> List<RelationExtraEntity> getRelationExtraEntities(ExpressionContext expressionContext, List<TEntity> entities) {
         if (EasyCollectionUtil.isEmpty(entities)) {
@@ -130,7 +133,9 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         int queryRelationGroupSize = includeNavigateParams.getQueryRelationGroupSize();
         boolean ignoreGroupSize = false;
         if (RelationTypeEnum.ManyToMany == navigateMetadata.getRelationType() && navigateMetadata.getMappingClass() != null) {
-            if (EasyCollectionUtil.isNotEmpty(navigateMetadata.getOrderProps())) {
+            //多对多映射关系，如果存在排序，则不使用groupSize分批次拉取,只能使用IN+OR或者UNION ALL拉取完整数据
+            if (includeNavigateParams.isHasOrder()) {
+                log.warn("!!!For many-to-many relationships, please avoid sorting the results to ensure correctness. Use IN combined with OR in the framework to retrieve the data.");
                 ignoreGroupSize = true;
             }
             confirmMappingRows(queryRelationGroupSize, includeParseContext, relationIds);
@@ -185,7 +190,8 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                 includeParseContext.getNavigatePropertyGetter(),
                 includeParseContext.getIncludeNavigateParams().getNavigateFlatMetadataList(),
                 includeParseContext.getIncludeNavigateParams().getFlatQueryEntityMetadata(),
-                includeParseContext.getDirectMapping()
+                includeParseContext.getDirectMapping(),
+                includeParseContext.getIncludeNavigateParams().isHasOrder()
         );
     }
 
