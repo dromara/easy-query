@@ -1611,6 +1611,55 @@ public class M8BankTest extends BaseTest {
 
     }
     @Test
+    public void testUserAutoSubQueryToGroupJoin1() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<Part1<SysUser, Long>> list = easyEntityQuery.queryable(SysUser.class)
+                .select(user -> Select.PART.of(
+                        user,
+                        user.bankCards3().where(s -> s.type().eq("储蓄卡")).count()
+                )).toList();
+
+        listenerContextManager.clear();
+
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time`,t2.`__count2__` AS `__part__column1` FROM `t_sys_user` t INNER JOIN (SELECT t1.`uid` AS `uid`,COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE NULL END)) AS `__count2__` FROM `t_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("储蓄卡(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testUserAutoSubQueryToGroupJoin3_1() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft2<String, Long>> list = easyEntityQuery.queryable(SysUser.class)
+                .groupBy(user -> GroupKeys.of(user.name()))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.where(s -> s.bankCards3().any(a -> {
+                            a.or(() -> {
+                                a.type().eq("123");
+                                a.code().eq("456");
+                            });
+                        })).count()
+                )).toList();
+
+        listenerContextManager.clear();
+
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`name` AS `value1`,COUNT((CASE WHEN t2.`__any2__` = ? THEN ? ELSE NULL END)) AS `value2` FROM `t_sys_user` t INNER JOIN (SELECT t1.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN (t1.`type` = ? OR t1.`code` = ?) THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `t_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` GROUP BY t.`name`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("true(Boolean),1(Integer),123(String),456(String),1(Integer),true(Boolean),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
     public void testUserAutoSubQueryToGroupJoin2() {
 
         ListenerContext listenerContext = new ListenerContext(true);
@@ -1638,6 +1687,34 @@ public class M8BankTest extends BaseTest {
 //                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time` FROM `t_sys_user` t LEFT JOIN (SELECT t2.`id` AS `id`,t2.`uid` AS `uid`,t2.`code` AS `code`,t2.`type` AS `type`,t2.`bank_id` AS `bank_id`,t2.`open_time` AS `open_time` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time`,(ROW_NUMBER() OVER (PARTITION BY t1.`uid` ORDER BY t1.`open_time` ASC)) AS `__row__` FROM `t_bank_card` t1) t2 WHERE t2.`__row__` = ?) t4 ON t4.`uid` = t.`id` INNER JOIN `t_bank` t5 ON t5.`id` = t4.`bank_id` WHERE t4.`type` = ? AND t5.`name` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),储蓄卡(String),工商银行(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testUserAutoSubQueryToGroupJoin3() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft2<String, Long>> list = easyEntityQuery.queryable(SysUser.class)
+                .groupBy(user -> GroupKeys.of(user.name()))
+                .select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.where(s -> s.bankCards2().any(a -> {
+                            a.or(() -> {
+                                a.type().eq("123");
+                                a.code().eq("456");
+                            });
+                        })).count()
+                )).toList();
+
+        listenerContextManager.clear();
+
+
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`name` AS `value1`,COUNT((CASE WHEN IFNULL(t2.`__any2__`,?) = ? THEN ? ELSE NULL END)) AS `value2` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN (t1.`type` = ? OR t1.`code` = ?) THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `t_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` GROUP BY t.`name`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),true(Boolean),1(Integer),123(String),456(String),1(Integer),true(Boolean),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 

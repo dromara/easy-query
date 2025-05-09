@@ -76,6 +76,11 @@ public class FilterImpl implements Filter {
         this.nextPredicateSegment = new AndPredicateSegment();
     }
 
+    @Override
+    public boolean isOr() {
+        return nextPredicateSegment instanceof OrPredicateSegment;
+    }
+
     protected void nextAnd() {
         if (nextPredicateSegment.isNotEmpty()) {
             this.rootPredicateSegment.addPredicateSegment(nextPredicateSegment);
@@ -840,27 +845,4 @@ public class FilterImpl implements Filter {
         next();
     }
 
-    @Override
-    public Filter range(TableAvailable table, String property, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange) {
-        if (conditionLeft && conditionRight) {
-            this.and(innerFilter -> {
-                boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
-                innerFilter.valueCompare(table, property, valLeft, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE);
-                boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
-                innerFilter.valueCompare(table, property, valRight, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE);
-            });
-        } else {
-
-            if (conditionLeft) {
-                boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
-                this.valueCompare(table, property, valLeft, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE);
-
-            }
-            if (conditionRight) {
-                boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
-                this.valueCompare(table, property, valRight, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE);
-            }
-        }
-        return this;
-    }
 }

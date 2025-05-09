@@ -32,6 +32,7 @@ import java.util.function.Supplier;
 public interface Filter extends SQLNative<Filter> {
     ValueFilter getValueFilter();
 
+    boolean isOr();
     default boolean conditionAppend(TableAvailable table, String property, Object value) {
         return this.getValueFilter().accept(table, property, value);
     }
@@ -749,5 +750,4 @@ public interface Filter extends SQLNative<Filter> {
 
     void valueCompare(TableAvailable table, String property, Object val, SQLPredicateCompare condition);
 
-    Filter range(TableAvailable table, String property, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange);
 }

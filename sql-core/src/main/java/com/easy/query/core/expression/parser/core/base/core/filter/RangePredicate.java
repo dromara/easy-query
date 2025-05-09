@@ -201,10 +201,5 @@ public interface RangePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, Fil
      * @param sqlRange
      * @return
      */
-    default TChain range(boolean condition, String property, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange) {
-        if (condition) {
-            getFilter().range(this.getTable(),property,conditionLeft,valLeft,conditionRight,valRight,sqlRange);
-        }
-        return castChain();
-    }
+    TChain range(boolean condition, String property, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange);
 }

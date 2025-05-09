@@ -2,6 +2,7 @@ package com.easy.query.core.expression.parser.core.base.impl;
 
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
+import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.core.SQLNative;
@@ -254,10 +255,40 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
             if (properties.length == 1) {
                 eq(properties[0], vals.get(0));
             } else {
-                getFilter().relationEq(getTable(),properties, Collections.singletonList(vals));
+                getFilter().relationEq(getTable(), properties, Collections.singletonList(vals));
 //                throw new UnsupportedOperationException("还没实现");
             }
         }
         return this;
+    }
+
+    @Override
+    public WherePredicate<T1> range(boolean condition, String property, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange) {
+        if (condition) {
+            Filter filter = getFilter();
+            boolean isOr = filter.isOr();
+            if (isOr) {
+                or(() -> {
+                    range0(property,conditionLeft,valLeft,conditionRight,valRight,sqlRange);
+                });
+            }else{
+                and(() -> {
+                    range0(property,conditionLeft,valLeft,conditionRight,valRight,sqlRange);
+                });
+            }
+        }
+        return castChain();
+    }
+
+    public void range0( String property, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange) {
+        if (conditionLeft) {
+            boolean openFirst = SQLRangeEnum.openFirst(sqlRange);
+            getFilter().valueCompare(table, property, valLeft, openFirst ? SQLPredicateCompareEnum.GT : SQLPredicateCompareEnum.GE);
+            getFilter().and();
+        }
+        if (conditionRight) {
+            boolean openEnd = SQLRangeEnum.openEnd(sqlRange);
+            getFilter().valueCompare(table, property, valRight, openEnd ? SQLPredicateCompareEnum.LT : SQLPredicateCompareEnum.LE);
+        }
     }
 }
