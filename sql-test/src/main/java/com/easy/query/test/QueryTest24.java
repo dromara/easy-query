@@ -637,4 +637,28 @@ public class QueryTest24 extends BaseTest {
         Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`,'%Y-%m') AS `value1`,(DATE_FORMAT(t.`create_time`,'%Y-%m') LIKE CONCAT(?,'%')) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("2020-02(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
+    @Test
+    public void test28() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Draft2<String, Boolean>> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .select(t_blog -> Select.DRAFT.of(
+                        t_blog.createTime().format("yyyy-MM"),
+                        t_blog.expression().valueOf(() -> {
+                            t_blog.or(() -> {
+                                t_blog.createTime().format("yyyy-MM").startsWith("2020-02");
+                                t_blog.title().startsWith("小明");
+                            });
+                        })
+                )).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`,'%Y-%m') AS `value1`,((DATE_FORMAT(t.`create_time`,'%Y-%m') LIKE CONCAT(?,'%') OR t.`title` LIKE CONCAT(?,'%'))) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2020-02(String),小明(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
 }
