@@ -5,6 +5,7 @@ import com.easy.query.core.expression.parser.core.PropColumn;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 
@@ -18,6 +19,7 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public interface ColumnFuncSelector {
+    ColumnFuncSelector expression(PredicateSegment sqlSegment);
     ColumnFuncSelector column(String property);
 
     /**

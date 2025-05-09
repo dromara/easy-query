@@ -4,6 +4,8 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.expression.segment.impl.CaseWhenSQLSegment;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.impl.ColumSQLExpressionImpl;
@@ -15,6 +17,7 @@ import com.easy.query.core.func.column.impl.ColumnKeepStyleExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnLazyFunctionExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnMultiValueExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnSubQueryExpressionImpl;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -33,6 +36,13 @@ public class ColumnFuncSelectorImpl implements ColumnFuncSelector {
 
         this.concatExpressions = concatExpressions;
     }
+
+    @Override
+    public ColumnFuncSelector expression(PredicateSegment sqlSegment) {
+        concatExpressions.add(new ColumSQLExpressionImpl(new CaseWhenSQLSegment(toSQLContext -> sqlSegment.toSQL(toSQLContext), visitor -> EasySQLSegmentUtil.tableVisit(sqlSegment, visitor))));
+        return this;
+    }
+
     @Override
     public ColumnFuncSelector column(String property) {
         concatExpressions.add(new ColumnFuncExpressionImpl(null,property));

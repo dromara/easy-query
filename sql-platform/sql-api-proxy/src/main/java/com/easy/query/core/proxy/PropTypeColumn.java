@@ -30,6 +30,21 @@ public interface PropTypeColumn<TProperty> extends PropTypeSetColumn<TProperty> 
         }
     }
 
+    static  void acceptAnyValue(ColumnFuncSelector columnFuncSelector, Object val) {
+        if(val instanceof PropTypeColumn){
+            PropTypeColumn<?> column = (PropTypeColumn<?>) val;
+            if (column instanceof DSLSQLFunctionAvailable) {
+                SQLFunc fx = column.getEntitySQLContext().getRuntimeContext().fx();
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) column).func().apply(fx);
+                columnFuncSelector.sqlFunc(column.getTable(), sqlFunction);
+            } else {
+                columnFuncSelector.column(column.getTable(), column.getValue());
+            }
+        }else{
+            columnFuncSelector.value(val);
+        }
+    }
+
     static <TR> void columnFuncSelector(ColumnFuncSelector columnFuncSelector, PropTypeColumn<TR> column) {
         if (column instanceof DSLSQLFunctionAvailable) {
             SQLFunc fx = column.getEntitySQLContext().getRuntimeContext().fx();

@@ -17,9 +17,13 @@ import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
+import com.easy.query.core.expression.parser.core.base.core.FilterContext;
+import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -423,6 +427,16 @@ public class Expression {
 
 
 
+    public ColumnFunctionCompareComparableBooleanChainExpression<Boolean> valueOf(SQLActionExpression sqlActionExpression) {
+        EntityExpressionBuilder entityExpressionBuilder = this.entitySQLContext.getEntityExpressionBuilder();
+        AndPredicateSegment andPredicateSegment = new AndPredicateSegment(true);
+        FilterImpl filter = new FilterImpl(entityExpressionBuilder.getRuntimeContext(), entityExpressionBuilder.getExpressionContext(), andPredicateSegment, false, entityExpressionBuilder.getExpressionContext().getValueFilter());
+        this.entitySQLContext.getCurrentEntitySQLContext()._where(filter,sqlActionExpression);
+
+        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(entitySQLContext, null, null, f -> f.anySQLFunction("({0})",c->{
+            c.expression(andPredicateSegment);
+        }), Boolean.class);
+    }
 
 
 

@@ -29,6 +29,7 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.Temporal;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -440,40 +441,51 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
     }
 
 
-    default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> isBeforeValue(LocalDateTime time) {
-        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.anySQLFunction("({0} < {1})",s->{
-                    s.sqlFunc(sqlFunction).value(time);
-                });
-            } else {
-                return fx.anySQLFunction("({0} < {1})",s->{
-                    s.column(this.getValue()).value(time);
-                });
-            }
-        }, Boolean.class);
-    }
-    default void isBefore(LocalDateTime time) {
-        Expression.of(this.getCurrentEntitySQLContext()).sql("{0}",c->c.expression(isBeforeValue(time)));
+
+    default <T extends Temporal> void isBefore(T time) {
+        ColumnFunctionCompareComparableBooleanChainExpression<Boolean> isAfterValue = dateTimeCompareExpression(time, this, this.getCurrentEntitySQLContext(), false);
+        Expression.of(this.getCurrentEntitySQLContext()).sql("{0}",c->c.expression(isAfterValue));
     }
 
-    default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> isAfterValue(LocalDateTime time) {
-        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.anySQLFunction("({0} > {1})",s->{
-                    s.sqlFunc(sqlFunction).value(time);
-                });
-            } else {
-                return fx.anySQLFunction("({0} > {1})",s->{
-                    s.column(this.getValue()).value(time);
-                });
-            }
-        }, Boolean.class);
+    default <T> void isBefore(ColumnDateTimeFunctionAvailable<T> time) {
+        ColumnFunctionCompareComparableBooleanChainExpression<Boolean> isAfterValue = dateTimeCompareExpression(time, this, this.getCurrentEntitySQLContext(), false);
+        Expression.of(this.getCurrentEntitySQLContext()).sql("{0}",c->c.expression(isAfterValue));
     }
-    default void isAfter(LocalDateTime time) {
-        Expression.of(this.getCurrentEntitySQLContext()).sql("{0}",c->c.expression(isAfterValue(time)));
+    default void isBefore(PropTypeColumn<Date> time) {
+        ColumnFunctionCompareComparableBooleanChainExpression<Boolean> isAfterValue = dateTimeCompareExpression(time, this, this.getCurrentEntitySQLContext(), false);
+        Expression.of(this.getCurrentEntitySQLContext()).sql("{0}",c->c.expression(isAfterValue));
+    }
+
+    default <T extends Temporal> void isAfter(T time) {
+        ColumnFunctionCompareComparableBooleanChainExpression<Boolean> isAfterValue = dateTimeCompareExpression(time, this, this.getCurrentEntitySQLContext(), true);
+        Expression.of(this.getCurrentEntitySQLContext()).sql("{0}",c->c.expression(isAfterValue));
+    }
+    default <T> void isAfter(ColumnDateTimeFunctionAvailable<T> time) {
+        ColumnFunctionCompareComparableBooleanChainExpression<Boolean> isAfterValue = dateTimeCompareExpression(time, this, this.getCurrentEntitySQLContext(), false);
+        Expression.of(this.getCurrentEntitySQLContext()).sql("{0}",c->c.expression(isAfterValue));
+    }
+
+    default void isAfter(Date time) {
+        ColumnFunctionCompareComparableBooleanChainExpression<Boolean> isAfterValue = dateTimeCompareExpression(time, this, this.getCurrentEntitySQLContext(), true);
+        Expression.of(this.getCurrentEntitySQLContext()).sql("{0}",c->c.expression(isAfterValue));
+    }
+
+     static <TProp> ColumnFunctionCompareComparableBooleanChainExpression<Boolean> dateTimeCompareExpression(TProp time,PropTypeColumn<?> propTypeColumn, EntitySQLContext entitySQLContext, boolean isAfter) {
+         String operate = isAfter ? ">" : "<";
+         return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(entitySQLContext, propTypeColumn.getTable(), propTypeColumn.getValue(), fx -> {
+             if (propTypeColumn instanceof DSLSQLFunctionAvailable) {
+                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) propTypeColumn).func().apply(fx);
+                 return fx.anySQLFunction("({0} "+operate+" {1})", s -> {
+                     s.sqlFunc(sqlFunction);
+                     PropTypeColumn.acceptAnyValue(s,time);
+                 });
+             } else {
+                 return fx.anySQLFunction("({0} "+operate+" {1})", s -> {
+                     s.column(propTypeColumn.getValue());
+                     PropTypeColumn.acceptAnyValue(s,time);
+                 });
+             }
+         }, Boolean.class);
     }
 
 
