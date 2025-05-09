@@ -8,19 +8,15 @@ import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
-import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * create time 2025/4/28 11:16
@@ -215,7 +211,7 @@ public class QueryTest24 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         easyQueryClient.queryable(BlogEntity.class)
                 .where(t_blog -> {
-                    t_blog.and(()->{
+                    t_blog.and(() -> {
                         t_blog.rangeClosed("createTime", LocalDateTime.of(2020, 1, 1, 0, 0), LocalDateTime.of(2021, 1, 1, 0, 0));
                         t_blog.or();
                         t_blog.rangeClosed("star", 1, 100);
@@ -228,6 +224,7 @@ public class QueryTest24 extends BaseTest {
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND ((`create_time` >= ? AND `create_time` <= ?) OR (`star` >= ? AND `star` <= ?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),2020-01-01T00:00(LocalDateTime),2021-01-01T00:00(LocalDateTime),1(Integer),100(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
     public void test13() {
 
@@ -251,5 +248,353 @@ public class QueryTest24 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND ((IFNULL(`create_time`,`create_time`) >= ? AND IFNULL(`create_time`,`create_time`) < ?) OR (IFNULL(`star`,`star`) >= ? AND IFNULL(`star`,`star`) < ?)) AND (`create_time` >= ? OR `create_time` >= ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),2020-01-01T00:00(LocalDateTime),2021-01-01T00:00(LocalDateTime),1(Integer),100(Integer),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+
+    @Test
+    public void test14() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        LocalDateTime begin = null;
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(t_blog -> {
+                    t_blog.or(() -> {
+                        t_blog.createTime().nullOrDefault(t_blog.createTime()).rangeClosedOpen(begin, LocalDateTime.of(2021, 1, 1, 0, 0));
+                        t_blog.star().nullOrDefault(t_blog.star()).rangeClosedOpen(1, 100);
+                    });
+                    t_blog.or(() -> {
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                    });
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (IFNULL(`create_time`,`create_time`) < ? OR (IFNULL(`star`,`star`) >= ? AND IFNULL(`star`,`star`) < ?)) AND (`create_time` >= ? OR `create_time` >= ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2021-01-01T00:00(LocalDateTime),1(Integer),100(Integer),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void test15() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 0, 0);
+        LocalDateTime end = null;
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(t_blog -> {
+                    t_blog.or(() -> {
+                        t_blog.createTime().nullOrDefault(t_blog.createTime()).rangeClosedOpen(begin, end);
+                        t_blog.star().nullOrDefault(t_blog.star()).rangeClosedOpen(1, 100);
+                    });
+                    t_blog.or(() -> {
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                    });
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (IFNULL(`create_time`,`create_time`) >= ? OR (IFNULL(`star`,`star`) >= ? AND IFNULL(`star`,`star`) < ?)) AND (`create_time` >= ? OR `create_time` >= ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2020-01-01T00:00(LocalDateTime),1(Integer),100(Integer),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void test16() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        LocalDateTime begin = null;
+        LocalDateTime end = null;
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(t_blog -> {
+                    t_blog.or(() -> {
+                        t_blog.createTime().nullOrDefault(t_blog.createTime()).rangeClosedOpen(begin, end);
+                        t_blog.star().nullOrDefault(t_blog.star()).rangeClosedOpen(1, 100);
+                    });
+                    t_blog.or(() -> {
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                    });
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (IFNULL(`star`,`star`) >= ? AND IFNULL(`star`,`star`) < ?) AND (`create_time` >= ? OR `create_time` >= ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),1(Integer),100(Integer),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void test17() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        LocalDateTime begin = null;
+        LocalDateTime end = LocalDateTime.of(2021, 1, 1, 0, 0);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(t_blog -> {
+                    t_blog.or(() -> {
+                        t_blog.createTime().rangeClosed(begin, end);
+                        t_blog.star().rangeClosed(1, 100);
+                    });
+                    t_blog.or(() -> {
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                    });
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (`create_time` <= ? OR (`star` >= ? AND `star` <= ?)) AND (`create_time` >= ? OR `create_time` >= ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2021-01-01T00:00(LocalDateTime),1(Integer),100(Integer),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void test18() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 0, 0);
+        LocalDateTime end = null;
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(t_blog -> {
+                    t_blog.or(() -> {
+                        t_blog.createTime().rangeClosed(begin, end);
+                        t_blog.star().rangeClosed(1, 100);
+                    });
+                    t_blog.or(() -> {
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                    });
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (`create_time` >= ? OR (`star` >= ? AND `star` <= ?)) AND (`create_time` >= ? OR `create_time` >= ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),2020-01-01T00:00(LocalDateTime),1(Integer),100(Integer),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void test19() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        LocalDateTime begin = null;
+        LocalDateTime end = null;
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(t_blog -> {
+                    t_blog.or(() -> {
+                        t_blog.createTime().rangeClosed(begin, end);
+                        t_blog.star().rangeClosed(1, 100);
+                    });
+                    t_blog.or(() -> {
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                    });
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (`star` >= ? AND `star` <= ?) AND (`create_time` >= ? OR `create_time` >= ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),1(Integer),100(Integer),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+
+
+
+
+    @Test
+    public void test20() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        LocalDateTime begin = null;
+        LocalDateTime end = LocalDateTime.of(2021, 1, 1, 0, 0);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(t_blog -> {
+                    t_blog.or(() -> {
+                        t_blog.star().rangeClosed(1, 100);
+                        t_blog.createTime().rangeClosed(begin, end);
+                    });
+                    t_blog.or(() -> {
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                    });
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND ((`star` >= ? AND `star` <= ?) OR `create_time` <= ?) AND (`create_time` >= ? OR `create_time` >= ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),1(Integer),100(Integer),2021-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void test21() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 0, 0);
+        LocalDateTime end = null;
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(t_blog -> {
+                    t_blog.or(() -> {
+                        t_blog.star().rangeClosed(1, 100);
+                        t_blog.createTime().rangeClosed(begin, end);
+                    });
+                    t_blog.or(() -> {
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                    });
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND ((`star` >= ? AND `star` <= ?) OR `create_time` >= ?) AND (`create_time` >= ? OR `create_time` >= ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),1(Integer),100(Integer),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void test22() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        LocalDateTime begin = null;
+        LocalDateTime end = null;
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(t_blog -> {
+                    t_blog.or(() -> {
+                        t_blog.star().rangeClosed(1, 100);
+                        t_blog.createTime().rangeClosed(begin, end);
+                    });
+                    t_blog.or(() -> {
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                    });
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (`star` >= ? AND `star` <= ?) AND (`create_time` >= ? OR `create_time` >= ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),1(Integer),100(Integer),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+
+
+
+
+
+    @Test
+    public void test23() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        LocalDateTime begin = null;
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(t_blog -> {
+                    t_blog.or(() -> {
+                        t_blog.star().nullOrDefault(t_blog.star()).rangeClosedOpen(1, 100);
+                        t_blog.createTime().nullOrDefault(t_blog.createTime()).rangeClosedOpen(begin, LocalDateTime.of(2021, 1, 1, 0, 0));
+                    });
+                    t_blog.or(() -> {
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                    });
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND ((IFNULL(`star`,`star`) >= ? AND IFNULL(`star`,`star`) < ?) OR IFNULL(`create_time`,`create_time`) < ?) AND (`create_time` >= ? OR `create_time` >= ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),1(Integer),100(Integer),2021-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void test24() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 0, 0);
+        LocalDateTime end = null;
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(t_blog -> {
+                    t_blog.or(() -> {
+                        t_blog.star().nullOrDefault(t_blog.star()).rangeClosedOpen(1, 100);
+                        t_blog.createTime().nullOrDefault(t_blog.createTime()).rangeClosedOpen(begin, end);
+                    });
+                    t_blog.or(() -> {
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                    });
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND ((IFNULL(`star`,`star`) >= ? AND IFNULL(`star`,`star`) < ?) OR IFNULL(`create_time`,`create_time`) >= ?) AND (`create_time` >= ? OR `create_time` >= ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),1(Integer),100(Integer),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void test25() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        LocalDateTime begin = null;
+        LocalDateTime end = null;
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(t_blog -> {
+                    t_blog.or(() -> {
+                        t_blog.createTime().nullOrDefault(t_blog.createTime()).rangeClosedOpen(begin, end);
+                        t_blog.star().nullOrDefault(t_blog.star()).rangeClosedOpen(1, 100);
+                    });
+                    t_blog.or(() -> {
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                        t_blog.createTime().ge(LocalDateTime.of(2020, 1, 1, 0, 0));
+                    });
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (IFNULL(`star`,`star`) >= ? AND IFNULL(`star`,`star`) < ?) AND (`create_time` >= ? OR `create_time` >= ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),1(Integer),100(Integer),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void test26() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(t_blog -> {
+                    t_blog.createTime().isBeforeValue(LocalDateTime.of(2020, 1, 1, 0, 0)).eq(true);
+                    t_blog.createTime().isAfterValue(LocalDateTime.of(2020, 1, 1, 0, 0)).eq(false);
+                    t_blog.createTime().nullOrDefault(LocalDateTime.now()).isBeforeValue(LocalDateTime.of(2020, 1, 1, 0, 0)).eq(true);
+                    t_blog.createTime().nullOrDefault(t_blog.createTime()).isBeforeValue(LocalDateTime.of(2020, 1, 1, 0, 0)).eq(true);
+                    t_blog.createTime().isBefore(LocalDateTime.of(2020, 1, 1, 0, 0));
+                    t_blog.createTime().nullOrDefault(t_blog.createTime()).isAfter(LocalDateTime.of(2020, 1, 1, 0, 0));
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (IFNULL(`star`,`star`) >= ? AND IFNULL(`star`,`star`) < ?) AND (`create_time` >= ? OR `create_time` >= ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),1(Integer),100(Integer),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 }

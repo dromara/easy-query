@@ -76,10 +76,19 @@ public interface DSLContainsStringPredicate extends TablePropColumn, EntitySQLCo
         }
     }
 
+    /**
+     * 包含val值
+     * @param val 比较值
+     */
     default void contains(String val) {
         contains(true, val);
     }
 
+    /**
+     * 包含val值
+     * @param condition 如果为false则该条件不生效
+     * @param val 比较值
+     */
     default void contains(boolean condition, String val) {
         if (condition) {
 

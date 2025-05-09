@@ -13,11 +13,13 @@ import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastDateTimeAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastStringAvailable;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableBooleanChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableDateTimeChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.filter.ColumnFunctionCompareComparableDateTimeFilterChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.filter.impl.ColumnFunctionCompareComparableDateTimeFilterChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableBooleanChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableDateTimeChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableStringChainExpressionImpl;
@@ -435,6 +437,43 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
      */
     default DurationExpression duration(Date after) {
         return new DurationExpression(this, Expression.of(this.getEntitySQLContext()).constant(after));
+    }
+
+
+    default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> isBeforeValue(LocalDateTime time) {
+        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.anySQLFunction("({0} < {1})",s->{
+                    s.sqlFunc(sqlFunction).value(time);
+                });
+            } else {
+                return fx.anySQLFunction("({0} < {1})",s->{
+                    s.column(this.getValue()).value(time);
+                });
+            }
+        }, Boolean.class);
+    }
+    default void isBefore(LocalDateTime time) {
+        Expression.of(this.getCurrentEntitySQLContext()).sql("{0}",c->c.expression(isBeforeValue(time)));
+    }
+
+    default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> isAfterValue(LocalDateTime time) {
+        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            if (this instanceof DSLSQLFunctionAvailable) {
+                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
+                return fx.anySQLFunction("({0} > {1})",s->{
+                    s.sqlFunc(sqlFunction).value(time);
+                });
+            } else {
+                return fx.anySQLFunction("({0} > {1})",s->{
+                    s.column(this.getValue()).value(time);
+                });
+            }
+        }, Boolean.class);
+    }
+    default void isAfter(LocalDateTime time) {
+        Expression.of(this.getCurrentEntitySQLContext()).sql("{0}",c->c.expression(isAfterValue(time)));
     }
 
 
