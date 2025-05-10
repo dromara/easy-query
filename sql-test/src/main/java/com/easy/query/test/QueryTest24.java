@@ -6,6 +6,7 @@ import com.easy.query.core.basic.jdbc.parameter.BeanSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.Select;
@@ -601,6 +602,7 @@ public class QueryTest24 extends BaseTest {
                     t_blog.createTime().isBefore(LocalDateTime.of(2020, 1, 1, 0, 0));
                     t_blog.createTime().isBefore(t_blog.createTime());
                     t_blog.createTime().nullOrDefault(t_blog.createTime()).isAfter(t_blog.createTime());
+                    t_blog.createTime().plus(1, TimeUnitEnum.DAYS).isAfter(LocalDateTime.of(2020, 1, 1, 0, 0));
 
                 }).selectColumn(t_blog -> t_blog.expression().valueOf(() -> {
                     t_blog.createTime().isBefore(LocalDateTime.of(2020, 1, 1, 0, 0));
@@ -660,5 +662,27 @@ public class QueryTest24 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`,'%Y-%m') AS `value1`,((DATE_FORMAT(t.`create_time`,'%Y-%m') LIKE CONCAT(?,'%') OR t.`title` LIKE CONCAT(?,'%'))) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("2020-02(String),小明(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+
+    @Test
+    public void test29() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Boolean> list = easyEntityQuery.queryable(BlogEntity.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(t_blog -> {
+                    t_blog.createTime().plus(1, TimeUnitEnum.DAYS).isAfter(LocalDateTime.of(2020, 1, 1, 0, 0));
+
+                }).selectColumn(t_blog -> t_blog.expression().valueOf(() -> {
+                    t_blog.createTime().isBefore(LocalDateTime.of(2020, 1, 1, 0, 0));
+                    t_blog.title().eq("123");
+                })).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT ((t.`create_time` < ?) AND t.`title` = ?) FROM `t_blog` t WHERE t.`deleted` = ? AND (date_add(t.`create_time`, interval (?) day) > ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2020-01-01T00:00(LocalDateTime),123(String),false(Boolean),1(Long),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 }
