@@ -66,7 +66,7 @@ public interface EntityAggregatable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
                 return fx.sum(x -> {
                     PropTypeColumn.columnFuncSelector(x, propTypeColumn);
                 });
-            },def!=null?def.getClass(): propTypeColumn.getPropertyType());
+            }, def != null ? def.getClass() : propTypeColumn.getPropertyType());
         }).toList();
         TMember resultMember = EasyCollectionUtil.firstOrNull(list);
         if (resultMember == null) {
@@ -80,36 +80,21 @@ public interface EntityAggregatable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
     }
 
     default <TMember extends Comparable<?>> TMember maxOrDefault(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector, TMember def) {
-//        getQueryable().select(t -> Select.DRAFT.of(
-//                columnSelector.apply(t).max()
-//        ))
-        ValueHolder<ResultColumnMetadata> objectValueHolder = new ValueHolder<>();
+        ValueHolder<Class<?>> propertyTypeHolder = new ValueHolder<>();
         List<TMember> list = getQueryable().selectColumn(s -> {
             PropTypeColumn<TMember> propTypeColumn = columnSelector.apply(s);
-
-            if (propTypeColumn instanceof SQLColumn && propTypeColumn.getTable() != null) {
-                EntityMetadata entityMetadata = propTypeColumn.getTable().getEntityMetadata();
-                ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(propTypeColumn.getValue());
-                if (columnMetadata != null) {
-                    objectValueHolder.setValue(new EntityResultColumnMetadata(0, entityMetadata, columnMetadata));
-                } else {
-                    objectValueHolder.setValue(new BasicResultColumnMetadata(propTypeColumn.getPropertyType(), null, new BasicJdbcProperty(0, propTypeColumn.getPropertyType())));
-                }
-            } else {
-                objectValueHolder.setValue(new BasicResultColumnMetadata(propTypeColumn.getPropertyType(), null, new BasicJdbcProperty(0, propTypeColumn.getPropertyType())));
-            }
-
+            propertyTypeHolder.setValue(propTypeColumn.getPropertyType());
             return new ColumnFunctionCompareComparableAnyChainExpressionImpl<TMember>(s.getEntitySQLContext(), s.getTable(), propTypeColumn.getValue(), fx -> {
                 return fx.max(x -> {
                     PropTypeColumn.columnFuncSelector(x, propTypeColumn);
                 });
-            }, def != null ? def.getClass() : objectValueHolder.getValue().getPropertyType());
+            }, def != null ? def.getClass() : propertyTypeHolder.getValue());
         }).toList();
         TMember resultMember = EasyCollectionUtil.firstOrNull(list);
         if (resultMember == null) {
             return def;
         }
-        return EasyObjectUtil.typeCastNullable(EasyJdbcExecutorUtil.fromValue(objectValueHolder.getValue(), resultMember));
+        return resultMember;
     }
 
     default <TMember> TMember minOrNull(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
@@ -118,33 +103,21 @@ public interface EntityAggregatable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
 
     default <TMember> TMember minOrDefault(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector, TMember def) {
 
-        ValueHolder<ResultColumnMetadata> objectValueHolder = new ValueHolder<>();
+        ValueHolder<Class<?>> propertyTypeHolder = new ValueHolder<>();
         List<TMember> list = getQueryable().selectColumn(s -> {
             PropTypeColumn<TMember> propTypeColumn = columnSelector.apply(s);
-
-            if (propTypeColumn instanceof SQLColumn && propTypeColumn.getTable() != null) {
-                EntityMetadata entityMetadata = propTypeColumn.getTable().getEntityMetadata();
-                ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(propTypeColumn.getValue());
-                if (columnMetadata != null) {
-                    objectValueHolder.setValue(new EntityResultColumnMetadata(0, entityMetadata, columnMetadata));
-                } else {
-                    objectValueHolder.setValue(new BasicResultColumnMetadata(propTypeColumn.getPropertyType(), null, new BasicJdbcProperty(0, propTypeColumn.getPropertyType())));
-                }
-            } else {
-                objectValueHolder.setValue(new BasicResultColumnMetadata(propTypeColumn.getPropertyType(), null, new BasicJdbcProperty(0, propTypeColumn.getPropertyType())));
-            }
-
+            propertyTypeHolder.setValue(propTypeColumn.getPropertyType());
             return new ColumnFunctionCompareComparableAnyChainExpressionImpl<TMember>(s.getEntitySQLContext(), s.getTable(), propTypeColumn.getValue(), fx -> {
                 return fx.min(x -> {
                     PropTypeColumn.columnFuncSelector(x, propTypeColumn);
                 });
-            },def!=null?def.getClass(): objectValueHolder.getValue().getPropertyType());
+            }, def != null ? def.getClass() : propertyTypeHolder.getValue());
         }).toList();
         TMember resultMember = EasyCollectionUtil.firstOrNull(list);
         if (resultMember == null) {
             return def;
         }
-        return EasyObjectUtil.typeCastNullable(EasyJdbcExecutorUtil.fromValue(objectValueHolder.getValue(), resultMember));
+        return resultMember;
     }
 
     default <TMember extends Number> Double avgOrNull(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {

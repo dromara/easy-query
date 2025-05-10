@@ -441,6 +441,7 @@ public class QueryTest18 extends BaseTest {
 
         TopicTypeEnum topicTypeEnum = easyEntityQuery.queryable(TopicTypeTest1.class)
                 .maxOrNull(x -> x.topicType());
+        Assert.assertEquals(TopicTypeEnum.CLASSER, topicTypeEnum);
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT MAX(t.`topic_type`) FROM `t_topic_type` t", jdbcExecuteAfterArg.getBeforeArg().getSql());

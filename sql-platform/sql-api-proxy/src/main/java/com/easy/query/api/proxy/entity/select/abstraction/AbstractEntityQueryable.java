@@ -17,6 +17,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
+import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.OffsetLimitEntry;
@@ -313,6 +314,11 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         PropTypeColumn<TR> column = selectExpression.apply(get1Proxy());
         Objects.requireNonNull(column, "select column null result class");
 
+        ResultColumnMetadata resultColumnMetadata= column.getTableResultColumnMetadataOrNull(0);
+        if(resultColumnMetadata!=null){
+            ResultColumnMetadata[] resultColumnMetadatas = new ResultColumnMetadata[]{resultColumnMetadata};
+            clientQueryable.getSQLEntityExpressionBuilder().getExpressionContext().setResultPropTypes(resultColumnMetadatas);
+        }
         ClientQueryable<?> select = clientQueryable.select(column.getPropertyType(), o -> {
             PropTypeColumn.selectColumn(o.getAsSelector(), column);
         });

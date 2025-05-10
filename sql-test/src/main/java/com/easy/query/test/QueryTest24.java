@@ -13,7 +13,9 @@ import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
+import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,6 +23,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -612,8 +615,8 @@ public class QueryTest24 extends BaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT ((t.`create_time` < ?) AND t.`title` = ?) FROM `t_blog` t WHERE t.`deleted` = ? AND ((t.`create_time` < ?)) = ? AND (IFNULL(t.`create_time`,?) < ?) AND (IFNULL(t.`create_time`,t.`create_time`) > ?) AND (t.`create_time` < ?) AND (t.`create_time` < t.`create_time`) AND (IFNULL(t.`create_time`,t.`create_time`) < t.`create_time`)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("2020-01-01T00:00(LocalDateTime),123(String),false(Boolean),2020-01-01T00:00(LocalDateTime),true(Boolean),2022-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT ((t.`create_time` < ?) AND t.`title` = ?) FROM `t_blog` t WHERE t.`deleted` = ? AND ((t.`create_time` < ?)) = ? AND (IFNULL(t.`create_time`,?) < ?) AND (IFNULL(t.`create_time`,t.`create_time`) > ?) AND (t.`create_time` < ?) AND (t.`create_time` < t.`create_time`) AND (IFNULL(t.`create_time`,t.`create_time`) < t.`create_time`) AND (date_add(t.`create_time`, interval (?) day) > ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2020-01-01T00:00(LocalDateTime),123(String),false(Boolean),2020-01-01T00:00(LocalDateTime),true(Boolean),2022-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime),1(Long),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 
     @Test
@@ -685,4 +688,52 @@ public class QueryTest24 extends BaseTest {
         Assert.assertEquals("SELECT ((t.`create_time` < ?) AND t.`title` = ?) FROM `t_blog` t WHERE t.`deleted` = ? AND (date_add(t.`create_time`, interval (?) day) > ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("2020-01-01T00:00(LocalDateTime),123(String),false(Boolean),1(Long),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+    @Test
+    public void testx13() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        TopicTypeEnum topicTypeEnum = easyEntityQuery.queryable(TopicTypeTest1.class).selectColumn(t -> t.topicType()).firstOrNull();
+        System.out.println(topicTypeEnum);
+        Assert.assertEquals(TopicTypeEnum.CLASSER, topicTypeEnum);
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`topic_type` FROM `t_topic_type` t LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testx14() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        TopicTypeEnum topicTypeEnum = easyEntityQuery.queryable(TopicTypeTest1.class).selectColumn(t -> t.topicType().max()).firstOrNull();
+        System.out.println(topicTypeEnum);
+        Assert.assertEquals(TopicTypeEnum.CLASSER, topicTypeEnum);
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT MAX(t.`topic_type`) FROM `t_topic_type` t LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testx15() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        TopicTypeEnum topicTypeEnum = easyEntityQuery.queryable(TopicTypeTest1.class).selectColumn(t -> t.topicType().min()).firstOrNull();
+        System.out.println(topicTypeEnum);
+        Assert.assertEquals(TopicTypeEnum.CLASSER, topicTypeEnum);
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT MIN(t.`topic_type`) FROM `t_topic_type` t LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testx16() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        easyEntityQuery.queryable(TopicTypeTest1.class).whereById(null).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`topic_type`,`create_time` FROM `t_topic_type` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
 }

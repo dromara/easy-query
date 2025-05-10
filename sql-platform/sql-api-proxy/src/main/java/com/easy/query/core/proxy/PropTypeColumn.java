@@ -1,13 +1,16 @@
 package com.easy.query.core.proxy;
 
+import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
+import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultColumnMetadata;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.Setter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnFuncSelector;
+import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 /**
@@ -30,8 +33,8 @@ public interface PropTypeColumn<TProperty> extends PropTypeSetColumn<TProperty> 
         }
     }
 
-    static  void acceptAnyValue(ColumnFuncSelector columnFuncSelector, Object val) {
-        if(val instanceof PropTypeColumn){
+    static void acceptAnyValue(ColumnFuncSelector columnFuncSelector, Object val) {
+        if (val instanceof PropTypeColumn) {
             PropTypeColumn<?> column = (PropTypeColumn<?>) val;
             if (column instanceof DSLSQLFunctionAvailable) {
                 SQLFunc fx = column.getEntitySQLContext().getRuntimeContext().fx();
@@ -40,7 +43,7 @@ public interface PropTypeColumn<TProperty> extends PropTypeSetColumn<TProperty> 
             } else {
                 columnFuncSelector.column(column.getTable(), column.getValue());
             }
-        }else{
+        } else {
             columnFuncSelector.value(val);
         }
     }
@@ -73,5 +76,20 @@ public interface PropTypeColumn<TProperty> extends PropTypeSetColumn<TProperty> 
         } else {
             setter.setWithColumn(table, property, column.getValue());
         }
+    }
+
+    default ResultColumnMetadata getTableResultColumnMetadataOrNull(int index) {
+        PropTypeColumn<TProperty> column = this;
+        if (column.getTable() != null) {
+            EntityMetadata entityMetadata = column.getTable().getEntityMetadata();
+            ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(column.getValue());
+            if (columnMetadata != null) {
+                if (columnMetadata.getValueConverter() != null) {
+                    return new EntityResultColumnMetadata(index, entityMetadata, columnMetadata);
+                }
+            }
+        }
+        return null;
+//        return new BasicResultColumnMetadata(column.getPropertyType(), null, new BasicJdbcProperty(index, column.getPropertyType()));
     }
 }
