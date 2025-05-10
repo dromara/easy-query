@@ -902,7 +902,7 @@ public class QueryTest16 extends BaseTest {
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
 //            Assert.assertEquals("SELECT t.`id` AS `value1`,(NOT EXISTS((SELECT 1 FROM `t_user` t2 WHERE t2.`company_id` = t.`id` LIMIT 1))) AS `value2` FROM `t_company` t WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("SELECT t.`id` AS `value1`,(NOT EXISTS((SELECT 1 FROM `t_user` t1 WHERE t1.`company_id` = t.`id` LIMIT 1))) AS `value2` FROM `t_company` t WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`id` AS `value1`,(NOT (EXISTS((SELECT 1 FROM `t_user` t1 WHERE t1.`company_id` = t.`id` LIMIT 1)))) AS `value2` FROM `t_company` t WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("%xx公司%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }

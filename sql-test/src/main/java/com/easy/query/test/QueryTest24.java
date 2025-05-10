@@ -12,6 +12,7 @@ import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
@@ -688,6 +689,7 @@ public class QueryTest24 extends BaseTest {
         Assert.assertEquals("SELECT (t.`create_time` < ? AND t.`title` = ?) FROM `t_blog` t WHERE t.`deleted` = ? AND date_add(t.`create_time`, interval (?) day) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("2020-01-01T00:00(LocalDateTime),123(String),false(Boolean),1(Long),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
     public void testx13() {
         ListenerContext listenerContext = new ListenerContext();
@@ -700,6 +702,7 @@ public class QueryTest24 extends BaseTest {
         Assert.assertEquals("SELECT t.`topic_type` FROM `t_topic_type` t LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
         listenerContextManager.clear();
     }
+
     @Test
     public void testx14() {
         ListenerContext listenerContext = new ListenerContext();
@@ -712,6 +715,7 @@ public class QueryTest24 extends BaseTest {
         Assert.assertEquals("SELECT MAX(t.`topic_type`) FROM `t_topic_type` t LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
         listenerContextManager.clear();
     }
+
     @Test
     public void testx15() {
         ListenerContext listenerContext = new ListenerContext();
@@ -724,6 +728,7 @@ public class QueryTest24 extends BaseTest {
         Assert.assertEquals("SELECT MIN(t.`topic_type`) FROM `t_topic_type` t LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
         listenerContextManager.clear();
     }
+
     @Test
     public void testx16() {
         ListenerContext listenerContext = new ListenerContext();
@@ -735,6 +740,7 @@ public class QueryTest24 extends BaseTest {
         Assert.assertEquals("null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testx17() {
         ListenerContext listenerContext = new ListenerContext();
@@ -751,10 +757,11 @@ public class QueryTest24 extends BaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (NOT `title` LIKE CONCAT(?,'%') AND `create_time` > ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (NOT (`title` LIKE CONCAT(?,'%') AND `create_time` > ?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),123(String),2024-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testx18() {
         ListenerContext listenerContext = new ListenerContext();
@@ -763,7 +770,7 @@ public class QueryTest24 extends BaseTest {
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(t_blog -> {
                     t_blog.expression().not(() -> {
-                        t_blog.or(()->{
+                        t_blog.or(() -> {
                             t_blog.title().startsWith("123");
                             t_blog.createTime().isAfter(LocalDateTime.of(2024, 1, 1, 0, 0));
                         });
@@ -773,9 +780,25 @@ public class QueryTest24 extends BaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (NOT (`title` LIKE CONCAT(?,'%') OR `create_time` > ?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (NOT ((`title` LIKE CONCAT(?,'%') OR `create_time` > ?)))", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),123(String),2024-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+
+        List<SysUser> list1 = easyEntityQuery.queryable(SysUser.class)
+                .where(s -> {
+                    s.expression().not(() -> {
+
+                        s.phone().startsWith("123");
+                        s.username().startsWith("金");
+                    });
+                    s.expression().valueOf(() -> {
+                        s.or(() -> {
+
+                            s.phone().startsWith("123");
+                            s.username().startsWith("金");
+                        });
+                    }).eq(true);
+                }).toList();
     }
 
 }

@@ -819,7 +819,7 @@ public class M8BankTest extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time`,(NOT EXISTS((SELECT 1 FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time` FROM `t_bank_card` t1 WHERE t1.`bank_id` = t.`id` ORDER BY t1.`open_time` ASC LIMIT 2) t2 WHERE t2.`open_time` >= ? LIMIT 1))) AS `__part__column1` FROM `t_bank` t WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time`,(NOT (EXISTS((SELECT 1 FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time` FROM `t_bank_card` t1 WHERE t1.`bank_id` = t.`id` ORDER BY t1.`open_time` ASC LIMIT 2) t2 WHERE t2.`open_time` >= ? LIMIT 1)))) AS `__part__column1` FROM `t_bank` t WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("2002-01-01T00:00(LocalDateTime),%银行%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }

@@ -425,14 +425,14 @@ public class QueryTest21 extends BaseTest {
         DefaultNameConversion defaultNameConversion = new DefaultNameConversion();
 
         testNameConversion(defaultNameConversion, "userAge");
-        testNameConversion(defaultNameConversion, "user_age");
         testNameConversion(underlinedNameConversion, "userAge");
-        testNameConversion(underlinedNameConversion, "user_age");
         testNameConversion(upperUnderlinedNameConversion, "userAge");
-        testNameConversion(upperUnderlinedNameConversion, "user_age");
         testNameConversion(lowerCamelCaseNameConversion, "userAge");
-        testNameConversion(lowerCamelCaseNameConversion, "user_age");
         testNameConversion(upperCamelCaseNameConversion, "userAge");
+        testNameConversion(defaultNameConversion, "user_age");
+        testNameConversion(underlinedNameConversion, "user_age");
+        testNameConversion(upperUnderlinedNameConversion, "user_age");
+        testNameConversion(lowerCamelCaseNameConversion, "user_age");
         testNameConversion(upperCamelCaseNameConversion, "user_age");
     }
 
@@ -575,7 +575,7 @@ public class QueryTest21 extends BaseTest {
 
     public static void testNameConversion(NameConversion nameConversion, String uag) {
 
-        System.out.printf("%s-->%s-->%s%n", uag, EasyClassUtil.getSimpleName(nameConversion.getClass()), nameConversion.convert(uag));
+        System.out.printf("property:%s-->conversion:%s-->column:%s%n", uag, EasyClassUtil.getSimpleName(nameConversion.getClass()), nameConversion.convert(uag));
     }
 
 

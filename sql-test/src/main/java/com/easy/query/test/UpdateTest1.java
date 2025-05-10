@@ -489,11 +489,11 @@ public class UpdateTest1 extends BaseTest {
         EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
         Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
         EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
-        Assert.assertEquals("UPDATE `_abc`.`t_blog_abc` SET `is_top` = (NOT `is_top`) WHERE `deleted` = ? AND `id` = ?", easyQuerySQLStatementException.getSQL());
+        Assert.assertEquals("UPDATE `_abc`.`t_blog_abc` SET `is_top` = (NOT (`is_top`)) WHERE `deleted` = ? AND `id` = ?", easyQuerySQLStatementException.getSQL());
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("UPDATE `_abc`.`t_blog_abc` SET `is_top` = (NOT `is_top`) WHERE `deleted` = ? AND `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("UPDATE `_abc`.`t_blog_abc` SET `is_top` = (NOT (`is_top`)) WHERE `deleted` = ? AND `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),2xxxa(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }

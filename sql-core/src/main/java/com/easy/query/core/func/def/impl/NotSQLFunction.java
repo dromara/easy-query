@@ -26,7 +26,7 @@ public class NotSQLFunction  extends AbstractExpressionSQLFunction {
         if(columnExpressions.size()!=1){
             throw new IllegalArgumentException("not function arguments != 1");
         }
-        return "(NOT {0})";
+        return "(NOT ({0}))";
     }
 
     @Override
