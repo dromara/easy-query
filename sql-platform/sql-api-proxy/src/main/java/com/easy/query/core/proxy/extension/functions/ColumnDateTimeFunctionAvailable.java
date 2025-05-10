@@ -475,12 +475,12 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
          return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(entitySQLContext, propTypeColumn.getTable(), propTypeColumn.getValue(), fx -> {
              if (propTypeColumn instanceof DSLSQLFunctionAvailable) {
                  SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) propTypeColumn).func().apply(fx);
-                 return fx.anySQLFunction("({0} "+operate+" {1})", s -> {
+                 return fx.anySQLFunction("{0} "+operate+" {1}", s -> {
                      s.sqlFunc(sqlFunction);
                      PropTypeColumn.acceptAnyValue(s,time);
                  });
              } else {
-                 return fx.anySQLFunction("({0} "+operate+" {1})", s -> {
+                 return fx.anySQLFunction("{0} "+operate+" {1}", s -> {
                      s.column(propTypeColumn.getValue());
                      PropTypeColumn.acceptAnyValue(s,time);
                  });
