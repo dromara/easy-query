@@ -15,9 +15,11 @@ import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeTest1;
+import com.easy.query.test.entity.blogtest.UserRole;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.vo.SysUserRoleMenuDTO;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -783,22 +785,27 @@ public class QueryTest24 extends BaseTest {
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND (NOT ((`title` LIKE CONCAT(?,'%') OR `create_time` > ?)))", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),123(String),2024-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+//
+//        List<SysUserRoleMenuDTO> users = easyEntityQuery.queryable(SysUser.class)
+//                .where(u -> {
+//                    u.username().startsWith("金");
+//                })
+//                .orderBy(u -> u.createTime().asc())
+//                .selectAutoInclude(SysUserRoleMenuDTO.class)
+//                .toList();
 
-        List<SysUser> list1 = easyEntityQuery.queryable(SysUser.class)
+        List<Draft2<String, String>> list1 = easyEntityQuery.queryable(SysUser.class)
                 .where(s -> {
-                    s.expression().not(() -> {
+                    s.phone().startsWith("186");
+                }).select(s -> Select.DRAFT.of(
+                        s.phone(),//value1
+                        s.username()//value2
+                )).toList();
+        for (Draft2<String, String> draft2 : list1) {
 
-                        s.phone().startsWith("123");
-                        s.username().startsWith("金");
-                    });
-                    s.expression().valueOf(() -> {
-                        s.or(() -> {
-
-                            s.phone().startsWith("123");
-                            s.username().startsWith("金");
-                        });
-                    }).eq(true);
-                }).toList();
+            String phone = draft2.getValue1();
+            String username = draft2.getValue2();
+        }
     }
 
 }

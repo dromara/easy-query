@@ -33,7 +33,15 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
 
     //    void _setProxy(TProxy tProxy);
 
+    /**
+     * 请使用{@link #first()}
+     * @return
+     */
+    @Deprecated
     default T1Proxy firstElement() {
+        return element(0);
+    }
+    default T1Proxy first() {
         return element(0);
     }
 
