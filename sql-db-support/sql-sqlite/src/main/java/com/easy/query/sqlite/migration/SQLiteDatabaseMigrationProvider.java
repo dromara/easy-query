@@ -92,11 +92,12 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
             } else {
                 sql.append(" NOT NULL ");
             }
-            if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
-                sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
-            }
             if (column.isGeneratedKey()) {
                 sql.append(" PRIMARY KEY AUTOINCREMENT");
+            }else{
+                if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
+                    sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
+                }
             }
 //            String columnComment = getColumnComment(entityMigrationMetadata, column);
 //            if (EasyStringUtil.isNotBlank(columnComment)) {

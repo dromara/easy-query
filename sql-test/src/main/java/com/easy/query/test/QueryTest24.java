@@ -9,6 +9,7 @@ import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
@@ -19,7 +20,9 @@ import com.easy.query.test.entity.blogtest.UserRole;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.vo.GenericDTO;
 import com.easy.query.test.vo.SysUserRoleMenuDTO;
+import com.easy.query.test.vo.proxy.GenericDTOProxy;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -794,18 +797,17 @@ public class QueryTest24 extends BaseTest {
 //                .selectAutoInclude(SysUserRoleMenuDTO.class)
 //                .toList();
 
-        List<Draft2<String, String>> list1 = easyEntityQuery.queryable(SysUser.class)
+
+        List<GenericDTO> list1 = easyEntityQuery.queryable(SysUser.class)
                 .where(s -> {
                     s.phone().startsWith("186");
-                }).select(s -> Select.DRAFT.of(
-                        s.phone(),//value1
-                        s.username()//value2
+                })
+                .select(GenericDTO.class, s -> Select.of(
+//                        s.FETCHER.allFields(),//如果需要全字段映射
+                        s.phone().as(GenericDTO.Fields.value1),
+                        s.address().subString(1, 10).as(GenericDTO.Fields.value2)
                 )).toList();
-        for (Draft2<String, String> draft2 : list1) {
 
-            String phone = draft2.getValue1();
-            String username = draft2.getValue2();
-        }
     }
 
 }

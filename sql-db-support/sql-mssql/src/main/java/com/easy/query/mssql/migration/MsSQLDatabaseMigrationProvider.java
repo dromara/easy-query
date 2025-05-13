@@ -118,11 +118,12 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
             } else {
                 sql.append(" NOT NULL ");
             }
-            if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
-                sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
-            }
             if (column.isGeneratedKey()) {
                 sql.append(" IDENTITY(1,1)");
+            }else{
+                if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
+                    sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
+                }
             }
             if (column.isPrimary()) {
                 sql.append(" PRIMARY KEY ");
