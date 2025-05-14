@@ -115,7 +115,7 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
     EntityQueryable<T1Proxy, T1> limit(boolean condition, long offset, long rows);
 
     /**
-     * 先limit再select
+     * 先limit再select select selectExpression(*) from (select * from table limit x,y) t
      * @param offset
      * @param rows
      * @param selectExpression
@@ -127,26 +127,46 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
         return limitSelect(true, offset, rows, selectExpression);
     }
 
+    /**
+     * 先limit再select select selectExpression(*) from (select * from table limit x,y) t
+     * @param condition
+     * @param offset
+     * @param rows
+     * @param selectExpression
+     * @return
+     * @param <TRProxy>
+     * @param <TR>
+     */
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> limitSelect(boolean condition, long offset, long rows, SQLFuncExpression1<T1Proxy, TRProxy> selectExpression) {
         return this.limit(condition, offset, rows).select(t -> t).select(selectExpression);
     }
 
+    /**
+     * 先limit再select select selectExpression(*) from (select * from table limit x,y) t
+     * @param offset
+     * @param rows
+     * @param resultClass
+     * @param selectExpression
+     * @return
+     * @param <TR>
+     */
     default <TR> Query<TR> limitSelect(long offset, long rows, Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression) {
         return limitSelect(true, offset, rows, resultClass, selectExpression);
     }
 
+    /**
+     * 先limit再select select selectExpression(*) from (select * from table limit x,y) t
+     * @param condition 是否生效该函数
+     * @param offset
+     * @param rows
+     * @param resultClass
+     * @param selectExpression
+     * @return
+     * @param <TR>
+     */
+
     default <TR> Query<TR> limitSelect(boolean condition, long offset, long rows, Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression) {
         return this.limit(condition, offset, rows).select(t -> t).select(resultClass, selectExpression);
     }
-//    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(SQLFuncExpression1<SQLKtNavigateIncludeImpl<T1>, ProxyQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression) {
-//        return include(true, navigateIncludeSQLExpression);
-//    }
-//
-//    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(boolean condition, SQLFuncExpression1<SQLKtNavigateIncludeImpl<T1>, ProxyQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression) {
-//        if (condition) {
-//            getClientQueryable().<TProperty>include(navigateInclude -> navigateIncludeSQLExpression.apply(new SQLKtNavigateIncludeImpl<>(navigateInclude)).getClientQueryable());
-//        }
-//        return this;
-//    }
 
 }

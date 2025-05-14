@@ -1,7 +1,5 @@
 package com.easy.query.sql.starter;
 
-import com.easy.query.api.proxy.client.EasyProxyQuery;
-import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.annotation.EasyQueryTrack;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.InvokeTryFinally;
@@ -47,23 +45,11 @@ public class EasyQueryTrackAopConfiguration {
 
     public EasyQueryTrackAopConfiguration(ApplicationContext applicationContext) {
         Map<String, EasyQueryClient> easyQueryClientMap = applicationContext.getBeansOfType(EasyQueryClient.class);
-        Map<String, EasyQuery> easyQueryMap = applicationContext.getBeansOfType(EasyQuery.class);
-        Map<String, EasyProxyQuery> easyProxyQueryMap = applicationContext.getBeansOfType(EasyProxyQuery.class);
         Set<TrackManager> distinct = new LinkedHashSet<>();
         for (Map.Entry<String, EasyQueryClient> easyQueryClientEntry : easyQueryClientMap.entrySet()) {
             TrackManager trackManager = easyQueryClientEntry.getValue().getRuntimeContext().getTrackManager();
             distinct.add(trackManager);
             trackManagerMap.put(easyQueryClientEntry.getKey(), trackManager);
-        }
-        for (Map.Entry<String, EasyQuery> easyQueryEntry : easyQueryMap.entrySet()) {
-            TrackManager trackManager = easyQueryEntry.getValue().getRuntimeContext().getTrackManager();
-            distinct.add(trackManager);
-            trackManagerMap.put(easyQueryEntry.getKey(), trackManager);
-        }
-        for (Map.Entry<String, EasyProxyQuery> easyProxyQueryEntry : easyProxyQueryMap.entrySet()) {
-            TrackManager trackManager = easyProxyQueryEntry.getValue().getRuntimeContext().getTrackManager();
-            distinct.add(trackManager);
-            trackManagerMap.put(easyProxyQueryEntry.getKey(), trackManager);
         }
         InvokeTryFinally invokeTryFinally= EmptyInvokeTryFinally.EMPTY;
         for (TrackManager trackManager : distinct) {

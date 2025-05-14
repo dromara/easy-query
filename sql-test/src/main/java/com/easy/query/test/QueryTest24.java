@@ -7,8 +7,10 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
+import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
 import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -18,6 +20,7 @@ import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.blogtest.UserRole;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
+import com.easy.query.test.entity.proxy.SysUserProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.vo.GenericDTO;
@@ -801,12 +804,16 @@ public class QueryTest24 extends BaseTest {
         List<GenericDTO> list1 = easyEntityQuery.queryable(SysUser.class)
                 .where(s -> {
                     s.phone().startsWith("186");
+                    SQLStringTypeColumn<SysUserProxy> phone = s.phone();
+                    ColumnFunctionCompareComparableStringChainExpression<String> stringColumnFunctionCompareComparableStringChainExpression = phone.subString(1, 2);
                 })
                 .select(GenericDTO.class, s -> Select.of(
 //                        s.FETCHER.allFields(),//如果需要全字段映射
                         s.phone().as(GenericDTO.Fields.value1),
                         s.address().subString(1, 10).as(GenericDTO.Fields.value2)
                 )).toList();
+
+
 
     }
 

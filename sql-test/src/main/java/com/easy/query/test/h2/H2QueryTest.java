@@ -532,9 +532,9 @@ public class H2QueryTest extends H2BaseTest {
         alltype.setNumberLongBasic(12345678911L);
         alltype.setNumberByteBasic(new Byte("-1"));
         alltype.setEnableBasic(true);
-        long l = easyProxyQuery.insertable(alltype).executeRows();
+        long l = easyEntityQuery.insertable(alltype).executeRows();
         Assert.assertEquals(1, l);
-        ALLTYPE alltype1 = easyProxyQuery.queryable(ALLTYPEProxy.createTable())
+        ALLTYPE alltype1 = easyEntityQuery.queryable(ALLTYPE.class)
                 .whereById("123456").firstOrNull();
         Assert.assertNotNull(alltype1);
         Assert.assertEquals(alltype1.getId(), alltype.getId());
@@ -595,9 +595,9 @@ public class H2QueryTest extends H2BaseTest {
         alltype.setNumberLongBasic(12345678911L);
         alltype.setNumberByteBasic(new Byte("-1"));
         alltype.setEnableBasic(true);
-        long l = easyProxyQuery.insertable(alltype).executeRows();
+        long l = easyEntityQuery.insertable(alltype).executeRows();
         Assert.assertEquals(1, l);
-        ALLTYPE1 alltype1 = easyProxyQuery.queryable(ALLTYPE1Proxy.createTable())
+        ALLTYPE1 alltype1 = easyEntityQuery.queryable(ALLTYPE1.class)
                 .whereById("1234567").firstOrNull();
         Assert.assertNotNull(alltype1);
         Assert.assertEquals(alltype1.getId(), alltype.getId());
@@ -658,10 +658,10 @@ public class H2QueryTest extends H2BaseTest {
         alltype.setNumberLongBasic(12345678911L);
         alltype.setNumberByteBasic(new Byte("-1"));
         alltype.setEnableBasic(true);
-        long l = easyProxyQuery.insertable(alltype).executeRows();
+        long l = easyEntityQuery.insertable(alltype).executeRows();
         Assert.assertEquals(1, l);
-        ALLTYPEVO1 alltype1 = easyProxyQuery.queryable(ALLTYPE1Proxy.createTable())
-                .whereById("1235678").select(o->ALLTYPEVO1Proxy.createTable()).firstOrNull();
+        ALLTYPEVO1 alltype1 = easyEntityQuery.queryable(ALLTYPE1.class)
+                .whereById("1235678").select(ALLTYPEVO1.class).firstOrNull();
         Assert.assertNotNull(alltype1);
         Assert.assertEquals(alltype1.getId(), alltype.getId());
         Assert.assertEquals(alltype1.getNumberDecimal(), alltype.getNumberDecimal());

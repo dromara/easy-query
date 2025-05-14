@@ -583,47 +583,6 @@ public class QueryTest3 extends BaseTest {
     }
 
     @Test
-    public void testProxy1() {
-        TopicProxy table = TopicProxy.createTable();
-        List<Topic> list1 = easyProxyQuery
-                .queryable(table)
-                .where(o -> {
-                    o.id().eq("123" );
-                    o.title().like("xxx" );
-                })
-                .where(t -> {
-                    t.id().eq("123");
-                    t.title().like("xxx");
-                })
-                .select(o -> o.FETCHER.id().title().fetchProxy())
-                .toList();
-        {
-            try {
-
-                List<Topic> list = easyProxyQuery.queryable(TopicProxy.createTable())
-                        .where(o -> o.id().eq("123" ))
-                        .toList();
-            } catch (Exception ex) {
-                Assert.assertTrue(ex instanceof EasyQueryTableNotInSQLContextException);
-                Assert.assertTrue(ex.getMessage().startsWith("not found table:[Topic:" ));
-                Assert.assertTrue(ex.getMessage().endsWith("] in sql context" ));
-            }
-        }
-
-        String sql = easyProxyQuery.queryable(BlogEntityProxy.createTable())
-                .leftJoin(TopicAutoProxy.createTable(), (a,b) -> a.id().eq(b.title()))
-                .where((a,b) -> b.title().eq(a.id())).toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN `t_topic_auto` t1 ON t.`id` = t1.`title` WHERE t.`deleted` = ? AND t1.`title` = t.`id`" , sql);
-
-        EasyPageResult<Topic> topicPageResult = easyProxyQuery
-                .queryable(TopicProxy.createTable())
-                .where(o -> o.id().isNotNull())
-                .toPageResult(3, 10);
-        List<Topic> data = topicPageResult.getData();
-        Assert.assertEquals(10, data.size());
-    }
-
-    @Test
     public void testLambda3() {
         Topic topic = easyQuery.queryable(Topic.class)
                 .where(t -> t.eq(Topic::getId, "3" ).or().like(Topic::getTitle, "你好" ))
@@ -750,26 +709,6 @@ public class QueryTest3 extends BaseTest {
                     .toSQL();
             Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `score` = ? AND `score` >= `order`" , sql1);
         }
-    }
-
-    @Test
-    public void testProxy6() {
-
-        List<Map<String, Object>> list = easyProxyQuery
-                .queryable(TopicProxy.createTable())
-                .select(o -> {
-                    MapProxy table = new MapProxy();
-                    table.selectExpression(o.id(),o.title());
-                    return table;
-                })
-                .toList();
-        for (Map<?, ?> map : list) {
-            for (Map.Entry<?, ?> entry : map.entrySet()) {
-                System.out.println(entry.getKey());
-                System.out.println(entry.getValue());
-            }
-        }
-
     }
 
     @Test
@@ -1367,8 +1306,9 @@ public class QueryTest3 extends BaseTest {
 
     @Test
     public void query9_1() {
-        try (JdbcStreamResult<BlogEntity> streamResult = easyProxyQuery.queryable(BlogEntityProxy.createTable()).where(o -> o.star().le(100))
-                .orderBy(o -> o.createTime().asc()).toStreamResult(100)) {
+
+        try (JdbcStreamResult<BlogEntity> streamResult = easyEntityQuery.queryable(BlogEntity.class).where(t_blog -> t_blog.star().le(100))
+                .orderBy(t_blog -> t_blog.createTime().asc()).toStreamResult(100)) {
 //            StreamIterable<BlogEntity> streamIterable = streamResult.getStreamIterable();
 //            Iterator<BlogEntity> iterator = streamIterable.iterator();
 //            int fetchSize=10;

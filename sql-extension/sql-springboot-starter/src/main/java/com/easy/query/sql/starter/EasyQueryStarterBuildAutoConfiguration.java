@@ -1,33 +1,9 @@
 package com.easy.query.sql.starter;
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
-import com.easy.query.api.proxy.client.DefaultEasyProxyQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.api.proxy.client.EasyProxyQuery;
-import com.easy.query.api4j.client.DefaultEasyQuery;
-import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
-import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
-import com.easy.query.core.basic.extension.conversion.ValueConverter;
-import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
-import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
-import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
-import com.easy.query.core.basic.extension.interceptor.Interceptor;
-import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
-import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
-import com.easy.query.core.basic.extension.navigate.NavigateValueSetter;
-import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.bootstrapper.StarterConfigurer;
-import com.easy.query.sql.starter.config.JdbcTypeHandlerReplaceConfigurer;
-import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
-import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
-import com.easy.query.core.configuration.QueryConfiguration;
-import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.sharding.initializer.ShardingInitializer;
-import com.easy.query.core.sharding.router.manager.DataSourceRouteManager;
-import com.easy.query.core.sharding.router.manager.TableRouteManager;
-import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
-import com.easy.query.core.sharding.route.table.TableRoute;
 import com.easy.query.sql.starter.config.EasyQueryInitializeOption;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -65,22 +41,9 @@ public class EasyQueryStarterBuildAutoConfiguration {
 
         return SpringBootStarterBuilder.buildClient(dataSource, easyQueryProperties, easyQueryInitializeOption, starterConfigurer);
     }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public EasyQuery easyQuery(EasyQueryClient easyQueryClient) {
-        return new DefaultEasyQuery(easyQueryClient);
-    }
-
     @Bean
     @ConditionalOnMissingBean
     public EasyEntityQuery entityQuery(EasyQueryClient easyQueryClient) {
         return new DefaultEasyEntityQuery(easyQueryClient);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public EasyProxyQuery easyProxyQuery(EasyQueryClient easyQueryClient) {
-        return new DefaultEasyProxyQuery(easyQueryClient);
     }
 }

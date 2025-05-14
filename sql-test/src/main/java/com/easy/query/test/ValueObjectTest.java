@@ -708,39 +708,6 @@ public class ValueObjectTest extends BaseTest {
         }
 
 
-        System.out.println("----------");
-
-        {
-
-            ValueCompany province12 = easyProxyQuery.queryable(VCTable.createTable())
-                    .where(o -> o.address().province().eq("province1"))
-                    .firstOrNull();
-            Assert.assertNotNull(province12);
-        }
-        {
-
-            VCTable table = VCTable.createTable();
-            ValueCompany province12 = easyProxyQuery.queryable(table)
-                    .where(o -> o.address().province().eq("province1"))
-                    .firstOrNull();
-            Assert.assertNotNull(province12);
-        }
-        {
-
-            ValueCompany province12 = easyProxyQuery.queryable(VCTable.createTable())
-                    .where(o -> o.address().province().eq("province1"))
-                    .select(ValueCompany.class,o->Select.of(o.address(),o.license().extra().licenseImage()))
-                    .firstOrNull();
-            Assert.assertNotNull(province12);
-        }
-        {
-
-            ValueCompany province12 = easyProxyQuery.queryable(VCTable.createTable())
-                    .where(o -> o.address().province().eq("province1"))
-                    .select(ValueCompany.class,o->Select.of(o.address(),o.license().extra()))
-                    .firstOrNull();
-            Assert.assertNotNull(province12);
-        }
         {
 
             ValueCompanyDTO province12 = easyEntityQuery.queryable(ValueCompany.class)

@@ -665,23 +665,6 @@ public class QueryTest7 extends BaseTest {
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (`id` IS NULL OR `id` = '' OR LTRIM(`id`) = '')", sql);
     }
     @Test
-    public void testBank3() {
-        String sql = easyProxyQuery
-                .queryable(TopicProxy.createTable())
-                .where(o -> o.id().isNotBlank())
-                .toSQL();
-        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (`id` IS NOT NULL AND `id` <> '' AND LTRIM(`id`) <> '')", sql);
-    }
-
-    @Test
-    public void testBank4() {
-        String sql = easyProxyQuery
-                .queryable(TopicProxy.createTable())
-                .where(o -> o.id().isBlank())
-                .toSQL();
-        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (`id` IS NULL OR `id` = '' OR LTRIM(`id`) = '')", sql);
-    }
-    @Test
     public void testEmpty1() {
         String sql = easyQuery
                 .queryable(Topic.class)
@@ -697,20 +680,6 @@ public class QueryTest7 extends BaseTest {
                 .where(o -> o.isEmpty(Topic::getId))
                 .toSQL();
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (`id` IS NULL OR `id` = '')", sql);
-    }
-    @Test
-    public void testEmpty3() {
-        String sql = easyProxyQuery.queryable(TopicProxy.createTable())
-                .where(o -> o.id().isEmpty())
-                .toSQL();
-        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (`id` IS NULL OR `id` = '')", sql);
-    }
-    @Test
-    public void testEmpty4() {
-        String sql = easyProxyQuery.queryable(TopicProxy.createTable())
-                .where(o -> o.id().isNotEmpty())
-                .toSQL();
-        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE (`id` IS NOT NULL AND `id` <> '')", sql);
     }
 
     @Test

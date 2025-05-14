@@ -21,12 +21,9 @@
     <modules>
         <module>sql-core</module>
         <module>sql-platform</module>
-        <module>sql-platform/sql-api4j</module>
-        <module>sql-platform/sql-api4kt</module>
         <module>sql-platform/sql-api-proxy</module>
         <module>sql-extension</module>
         <module>sql-extension/sql-springboot-starter</module>
-        <module>sql-extension/sql-kt-springboot-starter</module>
         <module>sql-extension/sql-solon-plugin</module>
         <module>sql-extension/sql-cache</module>
         <module>sql-db-support</module>

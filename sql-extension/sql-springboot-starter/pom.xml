@@ -92,12 +92,6 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>com.easy-query</groupId>
-            <artifactId>sql-api4j</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
         <!--        <dependency>-->
         <!--            <groupId>org.easy-query</groupId>-->
         <!--            <artifactId>sql-spring</artifactId>-->

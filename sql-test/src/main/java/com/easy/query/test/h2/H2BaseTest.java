@@ -1,9 +1,7 @@
 package com.easy.query.test.h2;
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
-import com.easy.query.api.proxy.client.DefaultEasyProxyQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.api.proxy.client.EasyProxyQuery;
 import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -52,7 +50,6 @@ public class H2BaseTest {
     public static EasyQueryShardingOption easyQueryShardingOption;
     public static EasyQuery easyQuery;
     public static EasyEntityQuery easyEntityQuery;
-    public static EasyProxyQuery easyProxyQuery;
     public static EasyQuery easyQueryOrder;
     public static ListenerContextManager listenerContextManager;
 
@@ -128,7 +125,6 @@ public class H2BaseTest {
                 .useDatabaseConfigure(new H2DatabaseConfiguration())
                 .build();
         easyQuery = new DefaultEasyQuery(easyQueryClient);
-        easyProxyQuery=new DefaultEasyProxyQuery(easyQueryClient);
         easyEntityQuery=new DefaultEasyEntityQuery(easyQueryClient);
         QueryRuntimeContext runtimeContext1 = easyQuery.getRuntimeContext();
         QueryConfiguration queryConfiguration1 = runtimeContext1.getQueryConfiguration();
