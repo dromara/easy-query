@@ -2,9 +2,6 @@ package com.easy.query.test;
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.api4j.client.DefaultEasyQuery;
-import com.easy.query.api4j.client.EasyQuery;
-import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
@@ -63,7 +60,6 @@ import com.easy.query.test.keytest.MyTestPrimaryKeyGenerator;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
-import com.easy.query.test.parser.MyLambdaParser;
 import com.easy.query.test.sharding.DataSourceAndTableShardingInitializer;
 import com.easy.query.test.sharding.DataSourceShardingInitializer;
 import com.easy.query.test.sharding.TopicShardingDataSourceRoute;
@@ -96,7 +92,6 @@ public abstract class BaseTest {
     public static HikariDataSource dataSource;
     public static EasyQueryShardingOption easyQueryShardingOption;
     public static EasyQueryClient easyQueryClient;
-    public static EasyQuery easyQuery;
     public static EasyEntityQuery easyEntityQuery;
     public static ListenerContextManager listenerContextManager;
 
@@ -110,7 +105,6 @@ public abstract class BaseTest {
 
 
     public static void init() {
-        EasyLambdaUtil.replaceParser(new MyLambdaParser());
         initDatasource();
         initEasyQuery();
         initData();
@@ -187,9 +181,8 @@ public abstract class BaseTest {
 //                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
-        easyQuery = new DefaultEasyQuery(easyQueryClient);
         easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
-        QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
+        QueryRuntimeContext runtimeContext = easyEntityQuery.getRuntimeContext();
         QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
         configuration.applyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());
         configuration.applyEncryptionStrategy(new Base64EncryptionStrategy());
@@ -235,8 +228,8 @@ public abstract class BaseTest {
     }
 
     public static void initData() {
-        easyQuery.deletable(BlogEntity.class).where(o -> o.isNotBlank(BlogEntity::getId)).disableLogicDelete().allowDeleteStatement(true).executeRows();
-        boolean any = easyQuery.queryable(BlogEntity.class).any();
+        easyEntityQuery.deletable(BlogEntity.class).where(o -> o.id().isNotBlank()).disableLogicDelete().allowDeleteStatement(true).executeRows();
+        boolean any = easyEntityQuery.queryable(BlogEntity.class).any();
         if (!any) {
 
             LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 1, 1, 1);
@@ -261,11 +254,11 @@ public abstract class BaseTest {
                 blog.setDeleted(false);
                 blogs.add(blog);
             }
-            easyQuery.insertable(blogs).executeRows();
+            easyEntityQuery.insertable(blogs).executeRows();
         }
 
 
-        boolean topicAutoAny = easyQuery.queryable(TopicAuto.class).any();
+        boolean topicAutoAny = easyEntityQuery.queryable(TopicAuto.class).any();
         if (!topicAutoAny) {
             List<TopicAuto> topicAutos = new ArrayList<>();
             for (int i = 0; i < 10; i++) {
@@ -275,11 +268,11 @@ public abstract class BaseTest {
                 topicAuto.setCreateTime(LocalDateTime.now().plusDays(i));
                 topicAutos.add(topicAuto);
             }
-            long l = easyQuery.insertable(topicAutos).executeRows(true);
+            long l = easyEntityQuery.insertable(topicAutos).executeRows(true);
         }
 
 
-        boolean topicAny = easyQuery.queryable(Topic.class).any();
+        boolean topicAny = easyEntityQuery.queryable(Topic.class).any();
         if (!topicAny) {
             List<Topic> topics = new ArrayList<>();
             for (int i = 0; i < 100; i++) {
@@ -290,10 +283,10 @@ public abstract class BaseTest {
                 topic.setCreateTime(LocalDateTime.now().plusDays(i));
                 topics.add(topic);
             }
-            long l = easyQuery.insertable(topics).executeRows();
+            long l = easyEntityQuery.insertable(topics).executeRows();
         }
 
-        boolean sysUserAny = easyQuery.queryable(SysUser.class).any();
+        boolean sysUserAny = easyEntityQuery.queryable(SysUser.class).any();
         if (!sysUserAny) {
             List<SysUser> sysUsers = new ArrayList<>();
             for (int i = 0; i < 100; i++) {
@@ -306,9 +299,9 @@ public abstract class BaseTest {
                 sysUser.setAddress(sysUser.getPhone() + sysUser.getIdCard());
                 sysUsers.add(sysUser);
             }
-            long l = easyQuery.insertable(sysUsers).executeRows();
+            long l = easyEntityQuery.insertable(sysUsers).executeRows();
         }
-        boolean logicDeleteAny = easyQuery.queryable(LogicDelTopic.class).any();
+        boolean logicDeleteAny = easyEntityQuery.queryable(LogicDelTopic.class).any();
         if (!logicDeleteAny) {
             List<LogicDelTopic> logicDelTopics = new ArrayList<>();
             for (int i = 0; i < 100; i++) {
@@ -320,9 +313,9 @@ public abstract class BaseTest {
                 logicDelTopic.setDeleted(false);
                 logicDelTopics.add(logicDelTopic);
             }
-            long l = easyQuery.insertable(logicDelTopics).executeRows();
+            long l = easyEntityQuery.insertable(logicDelTopics).executeRows();
         }
-        boolean logicDeleteCusAny = easyQuery.queryable(LogicDelTopicCustom.class).any();
+        boolean logicDeleteCusAny = easyEntityQuery.queryable(LogicDelTopicCustom.class).any();
         if (!logicDeleteCusAny) {
             List<LogicDelTopicCustom> logicDelTopics = new ArrayList<>();
             for (int i = 0; i < 100; i++) {
@@ -333,9 +326,9 @@ public abstract class BaseTest {
                 logicDelTopic.setCreateTime(LocalDateTime.now().plusDays(i));
                 logicDelTopics.add(logicDelTopic);
             }
-            long l = easyQuery.insertable(logicDelTopics).executeRows();
+            long l = easyEntityQuery.insertable(logicDelTopics).executeRows();
         }
-        boolean topicInterceptorAny = easyQuery.queryable(TopicInterceptor.class).any();
+        boolean topicInterceptorAny = easyEntityQuery.queryable(TopicInterceptor.class).any();
         if (!topicInterceptorAny) {
             List<TopicInterceptor> topicInterceptors = new ArrayList<>();
             for (int i = 0; i < 100; i++) {
@@ -350,9 +343,9 @@ public abstract class BaseTest {
                 topicInterceptor.setTenantId(String.valueOf(i));
                 topicInterceptors.add(topicInterceptor);
             }
-            long l = easyQuery.insertable(topicInterceptors).executeRows();
+            long l = easyEntityQuery.insertable(topicInterceptors).executeRows();
         }
-        boolean topicShardingAny = easyQuery.queryable(TopicSharding.class).where(o -> o.le(TopicSharding::getStars, 1000)).any();
+        boolean topicShardingAny = easyEntityQuery.queryable(TopicSharding.class).where(o -> o.stars().le(1000)).any();
         if (!topicShardingAny) {
 
             ArrayList<TopicSharding> topicShardings = new ArrayList<>(500);
@@ -365,9 +358,9 @@ public abstract class BaseTest {
                 topicShardings.add(topicSharding);
             }
 
-            long l = easyQuery.insertable(topicShardings).executeRows();
+            long l = easyEntityQuery.insertable(topicShardings).executeRows();
         }
-        boolean shardingTimeExists = easyQuery.queryable(TopicShardingTime.class).any();
+        boolean shardingTimeExists = easyEntityQuery.queryable(TopicShardingTime.class).any();
         if (!shardingTimeExists) {
 
             LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
@@ -386,10 +379,10 @@ public abstract class BaseTest {
                 topicShardingTimes.add(topicShardingTime);
             }
 
-            long l = easyQuery.insertable(topicShardingTimes).executeRows();
+            long l = easyEntityQuery.insertable(topicShardingTimes).executeRows();
             System.out.println("插入时间条数:" + l);
         }
-        boolean shardingDataSourceTimeExists = easyQuery.queryable(TopicShardingDataSourceTime.class).any();
+        boolean shardingDataSourceTimeExists = easyEntityQuery.queryable(TopicShardingDataSourceTime.class).any();
         System.out.println(shardingDataSourceTimeExists);
         if (!shardingDataSourceTimeExists) {
 
@@ -409,11 +402,11 @@ public abstract class BaseTest {
                 topicShardingDataSourceTimes.add(topicShardingDataSourceTime);
             }
 
-            long l = easyQuery.insertable(topicShardingDataSourceTimes).executeRows();
+            long l = easyEntityQuery.insertable(topicShardingDataSourceTimes).executeRows();
             System.out.println("插入时间条数:" + l);
         }
 
-        boolean any1 = easyQuery.queryable(TopicShardingDataSource.class)
+        boolean any1 = easyEntityQuery.queryable(TopicShardingDataSource.class)
                 .any();
         if (!any1) {
 
@@ -433,7 +426,7 @@ public abstract class BaseTest {
                 topicShardingDataSources.add(topicShardingDataSource);
             }
 
-            long l = easyQuery.insertable(topicShardingDataSources).executeRows();
+            long l = easyEntityQuery.insertable(topicShardingDataSources).executeRows();
         }
     }
     public static void beforex(){

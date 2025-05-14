@@ -1,9 +1,12 @@
 package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.ShardingDataSourceKey;
 import com.easy.query.core.annotation.ShardingTableKey;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.proxy.TopicShardingDataSourceProxy;
 import com.easy.query.test.sharding.DataSourceAndTableShardingInitializer;
 import com.easy.query.test.sharding.DataSourceShardingInitializer;
 import lombok.Data;
@@ -20,7 +23,8 @@ import java.time.LocalDateTime;
 @Data
 @Table(value = "t_topic_sharding_ds",shardingInitializer = DataSourceShardingInitializer.class)
 @ToString
-public class TopicShardingDataSource {
+@EntityProxy
+public class TopicShardingDataSource implements ProxyEntityAvailable<TopicShardingDataSource , TopicShardingDataSourceProxy> {
 
     @Column(primaryKey = true)
     private String id;
