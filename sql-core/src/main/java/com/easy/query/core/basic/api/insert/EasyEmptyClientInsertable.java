@@ -3,16 +3,14 @@ package com.easy.query.core.basic.api.insert;
 import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
-import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -21,7 +19,7 @@ import java.util.function.Function;
  * @author xuejiaming
  * @FileName: EasyEmptyInsertable.java
  * @Description: 文件说明
- * @Date: 2023/3/6 08:49
+ * create time 2023/3/6 08:49
  */
 public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
     private final EntityInsertExpressionBuilder entityInsertExpressionBuilder;
@@ -53,7 +51,7 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
     }
 
     @Override
-    public ClientInsertable<T> columnConfigure(SQLExpression1<ColumnConfigurer<T>> columnConfigureExpression) {
+    public ClientInsertable<T> columnConfigure(SQLActionExpression1<ColumnConfigurer<T>> columnConfigureExpression) {
         return this;
     }
 
@@ -135,17 +133,17 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
         return this;
     }
     @Override
-    public ClientInsertable<T> configure(SQLExpression1<ContextConfigurer> configurer) {
+    public ClientInsertable<T> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         return this;
     }
 
     @Override
-    public ClientInsertable<T> onConflictDoUpdate(Collection<String> constraintProperties, SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
+    public ClientInsertable<T> onConflictDoUpdate(Collection<String> constraintProperties, SQLActionExpression1<ColumnOnlySelector<T>> setColumnSelector) {
         return this;
     }
 
     @Override
-    public ClientInsertable<T> onConflictDoUpdate(SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
+    public ClientInsertable<T> onConflictDoUpdate(SQLActionExpression1<ColumnOnlySelector<T>> setColumnSelector) {
         return this;
     }
 
@@ -160,12 +158,12 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
     }
 
     @Override
-    public ClientInsertable<T> onDuplicateKeyUpdate(SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
+    public ClientInsertable<T> onDuplicateKeyUpdate(SQLActionExpression1<ColumnOnlySelector<T>> setColumnSelector) {
         return this;
     }
 
     @Override
-    public ClientInsertable<T> onConflictThen(SQLExpression1<ColumnOnlySelector<T>> updateSetSelector, Collection<String> constraintProperties) {
+    public ClientInsertable<T> onConflictThen(SQLActionExpression1<ColumnOnlySelector<T>> updateSetSelector, Collection<String> constraintProperties) {
         return this;
     }
 }

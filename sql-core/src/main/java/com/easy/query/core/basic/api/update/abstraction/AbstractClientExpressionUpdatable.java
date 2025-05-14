@@ -12,7 +12,7 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -31,7 +31,6 @@ import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurerImpl;
-import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -42,13 +41,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * @author xuejiaming
  * @FileName: AbstractExpressionUpdate.java
  * @Description: 文件说明
- * @Date: 2023/2/25 08:24
+ * create time 2023/2/25 08:24
  */
 public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLExecuteRows<ClientExpressionUpdatable<T>> implements ClientExpressionUpdatable<T> {
     protected final Class<T> clazz;
@@ -123,7 +121,7 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     }
 
     @Override
-    public ClientExpressionUpdatable<T> setSQLSegment(boolean condition, String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume) {
+    public ClientExpressionUpdatable<T> setSQLSegment(boolean condition, String property, String sqlSegment, SQLActionExpression1<SQLNativePropertyExpressionContext> contextConsume) {
         if (condition) {
             columnSetter.setSQLSegment(property, sqlSegment, contextConsume);
         }
@@ -131,7 +129,7 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     }
 
     @Override
-    public ClientExpressionUpdatable<T> where(boolean condition, SQLExpression1<WherePredicate<T>> whereExpression) {
+    public ClientExpressionUpdatable<T> where(boolean condition, SQLActionExpression1<WherePredicate<T>> whereExpression) {
         if (condition) {
             FilterImpl filter = new FilterImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getExpressionContext(), entityUpdateExpressionBuilder.getWhere(), false, AnyValueFilter.DEFAULT);
             WherePredicateImpl<T> sqlPredicate = new WherePredicateImpl<>(table, new FilterContext(filter, entityUpdateExpressionBuilder));
@@ -216,7 +214,7 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     }
 
     @Override
-    public ClientExpressionUpdatable<T> configure(SQLExpression1<ContextConfigurer> configurer) {
+    public ClientExpressionUpdatable<T> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         if (configurer != null) {
             configurer.apply(new ContextConfigurerImpl(entityUpdateExpressionBuilder.getExpressionContext()));
         }

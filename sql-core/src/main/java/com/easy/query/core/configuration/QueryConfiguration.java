@@ -44,7 +44,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author xuejiaming
  * @FileName: JDQCConfiguration.java
  * @Description: 文件说明
- * @Date: 2023/2/7 09:06
+ * create time 2023/2/7 09:06
  */
 public class QueryConfiguration {
     private static final LogicDeleteStrategy BOOL_LOGIC_DELETE = new BooleanLogicDeleteStrategy();

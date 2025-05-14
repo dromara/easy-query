@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @FileName: DefaultMetadataManager.java
  * @Description: 文件说明
- * @Date: 2023/2/11 10:16
+ * create time 2023/2/11 10:16
  * @author xuejiaming
  */
 public class DefaultEntityMetadataManager implements EntityMetadataManager {

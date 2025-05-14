@@ -64,7 +64,7 @@ import java.util.function.Predicate;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/3/4 17:05
+ * create time 2023/3/4 17:05
  */
 public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBuilder implements EntityUpdateExpressionBuilder {
 

@@ -5,7 +5,6 @@ import com.easy.query.core.basic.api.internal.ContextConfigure;
 import com.easy.query.core.basic.api.internal.FilterConfigurable;
 import com.easy.query.core.basic.api.internal.Interceptable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
-import com.easy.query.core.basic.api.internal.QueryStrategy;
 import com.easy.query.core.basic.api.internal.TableLogicDeletable;
 import com.easy.query.core.basic.api.internal.TableReNameable;
 import com.easy.query.core.basic.api.select.extension.queryable.Aggregatable1;
@@ -25,8 +24,6 @@ import com.easy.query.core.basic.api.select.extension.queryable.Treeable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Unionable1;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 
 /**
  * create time 2023/6/1 17:26
@@ -39,7 +36,6 @@ public interface ClientQueryable<T1> extends Query<T1>,
         LogicDeletable<ClientQueryable<T1>>,
         TableReNameable<ClientQueryable<T1>>,
         TableLogicDeletable<ClientQueryable<T1>>,
-        QueryStrategy<ClientQueryable<T1>>,
         FilterConfigurable<ClientQueryable<T1>>,
         ContextConfigure<ClientQueryable<T1>>,
         Aggregatable1<T1>,

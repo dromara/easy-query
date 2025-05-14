@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select.extension.queryable;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 
 /**
@@ -12,11 +12,11 @@ import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
  */
 public interface Havingable1<T1> {
 
-    default ClientQueryable<T1> having(SQLExpression1<WhereAggregatePredicate<T1>> predicateExpression) {
+    default ClientQueryable<T1> having(SQLActionExpression1<WhereAggregatePredicate<T1>> predicateExpression) {
         return having(true, predicateExpression);
     }
 
-    ClientQueryable<T1> having(boolean condition, SQLExpression1<WhereAggregatePredicate<T1>> predicateExpression);
+    ClientQueryable<T1> having(boolean condition, SQLActionExpression1<WhereAggregatePredicate<T1>> predicateExpression);
 
 
 }

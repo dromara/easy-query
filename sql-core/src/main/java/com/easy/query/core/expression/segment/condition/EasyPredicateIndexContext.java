@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * @FileName: EasyPredicateContext.java
  * @Description: 文件说明
- * @Date: 2023/3/15 09:39
+ * create time 2023/3/15 09:39
  * @author xuejiaming
  */
 public class EasyPredicateIndexContext implements PredicateIndexContext, SegmentIndex {

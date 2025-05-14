@@ -10,7 +10,7 @@ import java.util.Map;
  * @author xuejiaming
  * @FileName: EasyOrderBuilder.java
  * @Description: 文件说明
- * @Date: 2023/3/23 21:16
+ * create time 2023/3/23 21:16
  */
 public interface ObjectSortBuilder {
 

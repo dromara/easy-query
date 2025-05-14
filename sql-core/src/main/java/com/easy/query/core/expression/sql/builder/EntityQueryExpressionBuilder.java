@@ -7,7 +7,7 @@ import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 
 /**
  * @Description: 文件说明
- * @Date: 2023/3/3 22:17
+ * create time 2023/3/3 22:17
  * @author xuejiaming
  */
 public interface EntityQueryExpressionBuilder extends EntityPredicateExpressionBuilder, LambdaEntityExpressionBuilder {

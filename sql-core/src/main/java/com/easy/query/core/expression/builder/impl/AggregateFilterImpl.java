@@ -7,7 +7,7 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.func.ColumnFunction;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.expression.segment.Column2Segment;
@@ -21,7 +21,6 @@ import com.easy.query.core.expression.segment.condition.predicate.SQLNativePredi
 import com.easy.query.core.expression.segment.condition.predicate.SQLNativesPredicateImpl;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
-import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -233,7 +232,7 @@ public class AggregateFilterImpl implements AggregateFilter {
 
 
     @Override
-    public AggregateFilter sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
+    public AggregateFilter sqlNativeSegment(String sqlSegment, SQLActionExpression1<SQLNativeExpressionContext> contextConsume) {
         Objects.requireNonNull(contextConsume, "sql native context consume cannot be null");
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
         contextConsume.apply(sqlNativeExpressionContext);
@@ -249,7 +248,7 @@ public class AggregateFilterImpl implements AggregateFilter {
     }
 
     @Override
-    public AggregateFilter and(SQLExpression1<AggregateFilter> aggregateFilterSQLExpression) {
+    public AggregateFilter and(SQLActionExpression1<AggregateFilter> aggregateFilterSQLExpression) {
         this.rootPredicateSegment.addPredicateSegment(this.nextPredicateSegment);
         AggregateFilterImpl aggregateFilter = new AggregateFilterImpl(expressionContext, this.nextPredicateSegment);
         aggregateFilterSQLExpression.apply(aggregateFilter);
@@ -263,7 +262,7 @@ public class AggregateFilterImpl implements AggregateFilter {
     }
 
     @Override
-    public AggregateFilter or(SQLExpression1<AggregateFilter> aggregateFilterSQLExpression) {
+    public AggregateFilter or(SQLActionExpression1<AggregateFilter> aggregateFilterSQLExpression) {
         this.nextPredicateSegment = new OrPredicateSegment();
         this.rootPredicateSegment.addPredicateSegment(this.nextPredicateSegment);
         AggregateFilterImpl aggregateFilter = new AggregateFilterImpl(expressionContext, this.nextPredicateSegment);

@@ -7,7 +7,7 @@ import com.easy.query.core.expression.segment.SelectConstSegment;
 /**
  * @FileName: SelectCountSegment.java
  * @Description: 文件说明
- * @Date: 2023/3/3 12:52
+ * create time 2023/3/3 12:52
  * @author xuejiaming
  */
 public class SelectConstSegmentImpl implements SelectConstSegment {

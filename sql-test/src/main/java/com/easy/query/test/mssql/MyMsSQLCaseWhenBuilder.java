@@ -1,8 +1,7 @@
 package com.easy.query.test.mssql;
 
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.Filter;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.segment.scec.expression.ColumnConstParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.ColumnConstParameterExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
@@ -32,7 +31,7 @@ public class MyMsSQLCaseWhenBuilder extends DefaultCaseWhenBuilder {
     }
 
     @Override
-    public SQLCaseWhenBuilder caseWhen(SQLExpression1<Filter> predicate, ParamExpression paramExpression) {
+    public SQLCaseWhenBuilder caseWhen(SQLActionExpression1<Filter> predicate, ParamExpression paramExpression) {
         return super.caseWhen(predicate, processorConstBigDecimal(paramExpression));
     }
 

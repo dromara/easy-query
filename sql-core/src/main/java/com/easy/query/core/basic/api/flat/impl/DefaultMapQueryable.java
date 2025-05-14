@@ -24,7 +24,7 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLConsumer;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -62,7 +62,7 @@ public class DefaultMapQueryable implements MapQueryable {
     }
 
     @Override
-    public MapQueryable join(MultiTableTypeEnum joinTable, SQLExpression1<MapFilter> on) {
+    public MapQueryable join(MultiTableTypeEnum joinTable, SQLActionExpression1<MapFilter> on) {
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(Map.class);
         EntityTableExpressionBuilder sqlTable = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.LEFT_JOIN, runtimeContext);
         queryable.getSQLEntityExpressionBuilder().addSQLEntityTableExpression(sqlTable);
@@ -71,7 +71,7 @@ public class DefaultMapQueryable implements MapQueryable {
     }
 
     @Override
-    public MapQueryable join(MultiTableTypeEnum joinTable, MapQueryable mapQueryable, SQLExpression1<MapFilter> on) {
+    public MapQueryable join(MultiTableTypeEnum joinTable, MapQueryable mapQueryable, SQLActionExpression1<MapFilter> on) {
 
         ClientQueryable<Map<String, Object>> selectAllTQueryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(mapQueryable.getClientQueryable());
         queryable.getSQLEntityExpressionBuilder().getExpressionContext().extract(selectAllTQueryable.getSQLEntityExpressionBuilder().getExpressionContext());
@@ -282,13 +282,13 @@ public class DefaultMapQueryable implements MapQueryable {
     }
 
     @Override
-    public MapQueryable where(SQLExpression1<MapFilter> whereExpression) {
+    public MapQueryable where(SQLActionExpression1<MapFilter> whereExpression) {
         whereExpression.apply(new MapFilterImpl(this.queryable));
         return this;
     }
 
     @Override
-    public MapQueryable select(SQLExpression1<MapSelector> selectExpression) {
+    public MapQueryable select(SQLActionExpression1<MapSelector> selectExpression) {
         selectExpression.apply(new MapSelectorImpl(this.queryable));
         ClientQueryable<Map<String, Object>> anonymousQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(queryClass, this.queryable.getSQLEntityExpressionBuilder());
         return new DefaultMapQueryable(anonymousQueryable);
@@ -300,19 +300,19 @@ public class DefaultMapQueryable implements MapQueryable {
     }
 
     @Override
-    public MapQueryable groupBy(SQLExpression1<MapGroupSelector> selectExpression) {
+    public MapQueryable groupBy(SQLActionExpression1<MapGroupSelector> selectExpression) {
         selectExpression.apply(new MapGroupSelectorImpl(this.queryable));
         return this;
     }
 
     @Override
-    public MapQueryable having(SQLExpression1<MapHaving> havingExpression) {
+    public MapQueryable having(SQLActionExpression1<MapHaving> havingExpression) {
         havingExpression.apply(new MapHavingImpl(this.queryable));
         return this;
     }
 
     @Override
-    public MapQueryable orderBy(SQLExpression1<MapOrderBy> orderByExpression, boolean asc) {
+    public MapQueryable orderBy(SQLActionExpression1<MapOrderBy> orderByExpression, boolean asc) {
         orderByExpression.apply(new MapOrderByImpl(this.queryable, asc));
         return this;
     }
@@ -350,12 +350,6 @@ public class DefaultMapQueryable implements MapQueryable {
     @Override
     public MapQueryable useLogicDelete(boolean enable) {
         this.queryable.useLogicDelete(enable);
-        return this;
-    }
-
-    @Override
-    public MapQueryable queryLargeColumn(boolean queryLarge) {
-        this.queryable.queryLargeColumn(queryLarge);
         return this;
     }
 

@@ -9,7 +9,7 @@ import java.util.function.Function;
  * @author xuejiaming
  * @FileName: DefaultMemoryCache.java
  * @Description: 文件说明
- * @Date: 2023/2/11 10:14
+ * create time 2023/2/11 10:14
  */
 public class DefaultMemoryCache<K, V> implements Cache<K, V> {
     private final ConcurrentHashMap<K, V> map = new ConcurrentHashMap<K, V>();

@@ -6,7 +6,7 @@ import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 import com.easy.query.core.proxy.SQLColumnSetExpression;
@@ -130,7 +130,7 @@ public class ColumnSelectSQLContext implements EntitySQLContext {
 //    }
 
     @Override
-    public void _executeNativeSql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+    public void _executeNativeSql(String sqlSegment, SQLActionExpression1<SQLNativeProxyExpressionContext> contextConsume) {
 
         if (accept instanceof PredicateEntityExpressionAccept) {
             accept.accept(new SQLPredicateImpl(f -> {

@@ -1,7 +1,6 @@
 package com.easy.query.core.expression.sql.builder;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLFuncExpression2;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
@@ -14,7 +13,7 @@ import java.util.function.Supplier;
 /**
  * @FileName: EntityTableSegment.java
  * @Description: 文件说明
- * @Date: 2023/3/3 21:50
+ * create time 2023/3/3 21:50
  * @author xuejiaming
  */
 public interface EntityTableExpressionBuilder extends TableExpressionBuilder {
@@ -36,9 +35,9 @@ public interface EntityTableExpressionBuilder extends TableExpressionBuilder {
 
     String getColumnName(String propertyName);
 
-    SQLExpression1<WherePredicate<Object>> getLogicDeleteQueryFilterExpression();
+    SQLActionExpression1<WherePredicate<Object>> getLogicDeleteQueryFilterExpression();
 
-    SQLExpression1<ColumnSetter<Object>> getLogicDeletedSQLExpression();
+    SQLActionExpression1<ColumnSetter<Object>> getLogicDeletedSQLExpression();
 
     EntityTableExpressionBuilder copyEntityTableExpressionBuilder();
 

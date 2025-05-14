@@ -3,7 +3,7 @@ package com.easy.query.core.extension.casewhen;
 import com.easy.query.core.common.tuple.Tuple2;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Filter;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.scec.expression.ColumnConstParameterExpressionImpl;
@@ -25,17 +25,17 @@ import java.util.List;
 public class CaseWhenBuilderExpression {
     private final QueryRuntimeContext runtimeContext;
     private final ExpressionContext expressionContext;
-    private final List<Tuple2<SQLExpression1<Filter>, ParamExpression>> whens;
+    private final List<Tuple2<SQLActionExpression1<Filter>, ParamExpression>> whens;
 
     public CaseWhenBuilderExpression(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext){
         this.runtimeContext = runtimeContext;
         this.expressionContext = expressionContext;
         whens=new ArrayList<>();
     }
-    public CaseWhenBuilderExpression caseWhen(SQLExpression1<Filter> predicate, Object then){
+    public CaseWhenBuilderExpression caseWhen(SQLActionExpression1<Filter> predicate, Object then){
         return caseWhen(predicate,new ColumnConstParameterExpressionImpl(then));
     }
-    public CaseWhenBuilderExpression caseWhen(SQLExpression1<Filter> predicate, ParamExpression paramExpression){
+    public CaseWhenBuilderExpression caseWhen(SQLActionExpression1<Filter> predicate, ParamExpression paramExpression){
         whens.add(new Tuple2<>(predicate,paramExpression));
         return this;
     }

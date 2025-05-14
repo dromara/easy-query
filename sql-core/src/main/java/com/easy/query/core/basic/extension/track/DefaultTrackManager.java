@@ -7,7 +7,7 @@ import com.easy.query.core.exception.EasyQueryException;
  * @author xuejiaming
  * @FileName: DeffaultTrackManager.java
  * @Description: 文件说明
- * @Date: 2023/3/19 17:07
+ * create time 2023/3/19 17:07
  */
 public class DefaultTrackManager implements TrackManager {
     private final ThreadLocal<TrackContext> threadTC = ThreadLocal.withInitial(() -> null);

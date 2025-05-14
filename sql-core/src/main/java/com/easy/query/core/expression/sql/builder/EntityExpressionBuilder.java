@@ -15,7 +15,7 @@ import java.util.function.Function;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/3/4 16:29
+ * create time 2023/3/4 16:29
  */
 public interface EntityExpressionBuilder extends ExpressionBuilder, RuntimeContextAvailable {
     default boolean isQuery() {

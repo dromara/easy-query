@@ -3,11 +3,9 @@ package com.easy.query.core.proxy.columns;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.api.internal.ExpressionConfigurable;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.parser.core.available.EmptyTableAvailable;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 
@@ -26,9 +24,9 @@ public class SubQueryContext<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
     private final String fullName;
     private final T1Proxy propertyProxy;
     private final Object leftTableProxy;
-    private SQLExpression1<T1Proxy> whereExpression;
-    private SQLExpression1<T1Proxy> orderByExpression;
-    private SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression;
+    private SQLActionExpression1<T1Proxy> whereExpression;
+    private SQLActionExpression1<T1Proxy> orderByExpression;
+    private SQLActionExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression;
     private boolean distinct;
     private int fromIndex;
     private int toIndex;
@@ -85,39 +83,39 @@ public class SubQueryContext<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
         return leftTable;
     }
 
-    public SQLExpression1<T1Proxy> getWhereExpression() {
+    public SQLActionExpression1<T1Proxy> getWhereExpression() {
         return whereExpression;
     }
 
-    public SQLExpression1<T1Proxy> getOrderByExpression() {
+    public SQLActionExpression1<T1Proxy> getOrderByExpression() {
         return orderByExpression;
     }
 
-    public SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> getConfigureExpression() {
+    public SQLActionExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> getConfigureExpression() {
         return configureExpression;
     }
 
-    public void setWhereExpression(SQLExpression1<T1Proxy> whereExpression) {
+    public void setWhereExpression(SQLActionExpression1<T1Proxy> whereExpression) {
         this.whereExpression = whereExpression;
     }
 
-    public void setOrderByExpression(SQLExpression1<T1Proxy> orderByExpression) {
+    public void setOrderByExpression(SQLActionExpression1<T1Proxy> orderByExpression) {
         this.orderByExpression = orderByExpression;
     }
 
-    public void setConfigureExpression(SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression) {
+    public void setConfigureExpression(SQLActionExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression) {
         this.configureExpression = configureExpression;
     }
     //    public AnonymousManyJoinEntityTableExpressionBuilder getAnonymousManyJoinEntityTableExpressionBuilder() {
 //        return anonymousManyJoinEntityTableExpressionBuilder;
 //    }
 
-    public void appendWhereExpression(SQLExpression1<T1Proxy> whereExpression) {
+    public void appendWhereExpression(SQLActionExpression1<T1Proxy> whereExpression) {
         if (whereExpression != null) {
             if (this.whereExpression == null) {
                 this.whereExpression = whereExpression;
             } else {
-                SQLExpression1<T1Proxy> preWhereExpression = this.whereExpression;
+                SQLActionExpression1<T1Proxy> preWhereExpression = this.whereExpression;
                 this.whereExpression = o -> {
                     preWhereExpression.apply(o);
                     whereExpression.apply(o);
@@ -126,12 +124,12 @@ public class SubQueryContext<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
         }
     }
 
-    public void appendOrderByExpression(SQLExpression1<T1Proxy> orderByExpression) {
+    public void appendOrderByExpression(SQLActionExpression1<T1Proxy> orderByExpression) {
         if (orderByExpression != null) {
             if (this.orderByExpression == null) {
                 this.orderByExpression = orderByExpression;
             } else {
-                SQLExpression1<T1Proxy> preOrderByExpression = this.orderByExpression;
+                SQLActionExpression1<T1Proxy> preOrderByExpression = this.orderByExpression;
                 this.orderByExpression = o -> {
                     preOrderByExpression.apply(o);
                     orderByExpression.apply(o);
@@ -140,12 +138,12 @@ public class SubQueryContext<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
         }
     }
 
-    public void appendConfigureExpression(SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression) {
+    public void appendConfigureExpression(SQLActionExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression) {
         if (configureExpression != null) {
             if (this.configureExpression == null) {
                 this.configureExpression = configureExpression;
             } else {
-                SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> preConfigureExpression = this.configureExpression;
+                SQLActionExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> preConfigureExpression = this.configureExpression;
                 this.configureExpression = o -> {
                     preConfigureExpression.apply(o);
                     configureExpression.apply(o);

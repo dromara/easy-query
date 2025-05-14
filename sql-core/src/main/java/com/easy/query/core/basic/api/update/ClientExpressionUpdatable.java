@@ -5,7 +5,7 @@ import com.easy.query.core.basic.api.internal.WithVersionable;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.ToSQLResult;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -20,7 +20,7 @@ import java.util.Collection;
  * @author xuejiaming
  * @FileName: ExpressionUpdatable.java
  * @Description: 文件说明
- * @Date: 2023/2/24 23:21
+ * create time 2023/2/24 23:21
  */
 public interface ClientExpressionUpdatable<T> extends Updatable<T, ClientExpressionUpdatable<T>>,
         WithVersionable<ClientExpressionUpdatable<T>>,
@@ -104,10 +104,10 @@ public interface ClientExpressionUpdatable<T> extends Updatable<T, ClientExpress
     ClientExpressionUpdatable<T> setDecrementNumber(boolean condition, String property, Number val);
 
 
-    default ClientExpressionUpdatable<T> setSQLSegment(String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume){
+    default ClientExpressionUpdatable<T> setSQLSegment(String property, String sqlSegment, SQLActionExpression1<SQLNativePropertyExpressionContext> contextConsume){
         return setSQLSegment(true,property,sqlSegment,contextConsume);
     }
-    ClientExpressionUpdatable<T> setSQLSegment(boolean condition, String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume);
+    ClientExpressionUpdatable<T> setSQLSegment(boolean condition, String property, String sqlSegment, SQLActionExpression1<SQLNativePropertyExpressionContext> contextConsume);
     // endregion
 
     default ClientExpressionUpdatable<T> setSQLFunction(String property, SQLFunction sqlFunction){
@@ -120,11 +120,11 @@ public interface ClientExpressionUpdatable<T> extends Updatable<T, ClientExpress
        });
    }
 
-    default ClientExpressionUpdatable<T> where(SQLExpression1<WherePredicate<T>> whereExpression) {
+    default ClientExpressionUpdatable<T> where(SQLActionExpression1<WherePredicate<T>> whereExpression) {
         return where(true, whereExpression);
     }
 
-    ClientExpressionUpdatable<T> where(boolean condition, SQLExpression1<WherePredicate<T>> whereExpression);
+    ClientExpressionUpdatable<T> where(boolean condition, SQLActionExpression1<WherePredicate<T>> whereExpression);
 
     default ClientExpressionUpdatable<T> whereById(Object id) {
         return whereById(true, id);

@@ -2,10 +2,9 @@ package com.easy.query.api.proxy.entity.update.abstraction;
 
 import com.easy.query.api.proxy.entity.update.ExpressionUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
-import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.function.BiFunction;
@@ -15,7 +14,7 @@ import java.util.function.Function;
  * @author xuejiaming
  * @FileName: AbstractExpressionUpdate.java
  * @Description: 文件说明
- * @Date: 2023/2/25 08:24
+ * create time 2023/2/25 08:24
  */
 public abstract class AbstractExpressionUpdatable<TProxy extends ProxyEntity<TProxy, T>, T> implements ExpressionUpdatable<TProxy, T> {
     private final TProxy tProxy;
@@ -103,7 +102,7 @@ public abstract class AbstractExpressionUpdatable<TProxy extends ProxyEntity<TPr
     }
 
     @Override
-    public ExpressionUpdatable<TProxy, T> configure(SQLExpression1<ContextConfigurer> configurer) {
+    public ExpressionUpdatable<TProxy, T> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         clientExpressionUpdatable.configure(configurer);
         return this;
     }

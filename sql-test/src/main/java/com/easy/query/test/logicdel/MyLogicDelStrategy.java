@@ -2,7 +2,7 @@ package com.easy.query.test.logicdel;
 
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.basic.extension.logicdel.abstraction.AbstractLogicDeleteStrategy;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
@@ -26,12 +26,12 @@ public class MyLogicDelStrategy extends AbstractLogicDeleteStrategy {
 
 
     @Override
-    protected SQLExpression1<WherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, String propertyName) {
+    protected SQLActionExpression1<WherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, String propertyName) {
         return o ->o.isNull(propertyName);
     }
 
     @Override
-    protected SQLExpression1<ColumnSetter<Object>> getDeletedSQLExpression(LogicDeleteBuilder builder, String propertyName) {
+    protected SQLActionExpression1<ColumnSetter<Object>> getDeletedSQLExpression(LogicDeleteBuilder builder, String propertyName) {
 //        LocalDateTime now = LocalDateTime.now();
 //        return o->o.set(lambdaProperty,now);
         //上面的是错误用法,将now值获取后那么这个now就是个固定值而不是动态值

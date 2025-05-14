@@ -1,6 +1,6 @@
 package com.easy.query.core.proxy.columns.impl;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.PropTypeColumn;
@@ -63,7 +63,7 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public SQLManyQueryable<TProxy,T1Proxy, T1> orderBy(boolean condition, SQLExpression1<T1Proxy> orderExpression) {
+    public SQLManyQueryable<TProxy,T1Proxy, T1> orderBy(boolean condition, SQLActionExpression1<T1Proxy> orderExpression) {
         if (condition) {
             subQueryContext.appendOrderByExpression(orderExpression);
         }
@@ -100,13 +100,13 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public SQLManyQueryable<TProxy,T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression) {
+    public SQLManyQueryable<TProxy,T1Proxy, T1> where(SQLActionExpression1<T1Proxy> whereExpression) {
         subQueryContext.appendWhereExpression(whereExpression);
         return this;
     }
 
     @Override
-    public void any(SQLExpression1<T1Proxy> whereExpression) {
+    public void any(SQLActionExpression1<T1Proxy> whereExpression) {
         subQueryContext.appendWhereExpression(whereExpression);
         SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         sqlQueryable.any();
@@ -119,7 +119,7 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public void none(SQLExpression1<T1Proxy> whereExpression) {
+    public void none(SQLActionExpression1<T1Proxy> whereExpression) {
         subQueryContext.appendWhereExpression(whereExpression);
         SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
         sqlQueryable.none();

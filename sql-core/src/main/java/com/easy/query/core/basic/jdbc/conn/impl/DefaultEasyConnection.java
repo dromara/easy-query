@@ -13,7 +13,7 @@ import java.sql.SQLException;
  * @author xuejiaming
  * @FileName: DefaultEasyConnection.java
  * @Description: 文件说明
- * @Date: 2023/2/21 09:26
+ * create time 2023/2/21 09:26
  */
 public class DefaultEasyConnection implements EasyConnection {
     private static final Log log= LogFactory.getLog(DefaultEasyConnection.class);

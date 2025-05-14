@@ -47,7 +47,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @FileName: DefaultJdbcTypeHandler.java
  * @Description: 文件说明
- * @Date: 2023/2/17 22:09
+ * create time 2023/2/17 22:09
  * @author xuejiaming
  */
 public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {

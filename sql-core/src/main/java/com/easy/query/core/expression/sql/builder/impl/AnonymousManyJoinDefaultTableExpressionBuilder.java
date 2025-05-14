@@ -16,7 +16,7 @@ import java.util.Map;
  * @author xuejiaming
  * @FileName: EasyAnonymousEntityTableExpressionSegment.java
  * @Description: 匿名实体表表达式
- * @Date: 2023/3/3 23:31
+ * create time 2023/3/3 23:31
  */
 public class AnonymousManyJoinDefaultTableExpressionBuilder extends AnonymousDefaultTableExpressionBuilder implements AnonymousManyJoinEntityTableExpressionBuilder {
     private final String[] defaultSelectKeys;

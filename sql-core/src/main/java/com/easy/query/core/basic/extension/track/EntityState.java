@@ -8,7 +8,7 @@ import com.easy.query.core.util.EasyBeanUtil;
 /**
  * @FileName: EntryState.java
  * @Description: 文件说明
- * @Date: 2023/3/18 21:22
+ * create time 2023/3/18 21:22
  * @author xuejiaming
  */
 public class EntityState {

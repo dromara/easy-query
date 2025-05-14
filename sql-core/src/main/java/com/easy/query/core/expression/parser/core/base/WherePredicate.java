@@ -4,8 +4,8 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.SQLFxAvailable;
 import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
@@ -27,7 +27,7 @@ import com.easy.query.core.func.SQLFunction;
  * @author xuejiaming
  * @FileName: WherePredicate.java
  * @Description: 文件说明
- * @Date: 2023/2/5 09:09
+ * create time 2023/2/5 09:09
  */
 public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvailable, SQLPropertyNative<WherePredicate<T1>>
         , SelfPredicate<T1, WherePredicate<T1>>
@@ -85,7 +85,7 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
      * @return
      */
     @Deprecated
-    default WherePredicate<T1> and(SQLExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression) {
+    default WherePredicate<T1> and(SQLActionExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression) {
         return and(true, sqlWherePredicateSQLExpression);
     }
 
@@ -114,7 +114,7 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
      * @return
      */
     @Deprecated
-    WherePredicate<T1> and(boolean condition, SQLExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression);
+    WherePredicate<T1> and(boolean condition, SQLActionExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression);
 
     /**
      * 采用无参数and or处理括号和多表问题
@@ -195,7 +195,7 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
      * @param <T2>
      */
     @Deprecated
-    default <T2> WherePredicate<T1> and(WherePredicate<T2> t2WherePredicate, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression) {
+    default <T2> WherePredicate<T1> and(WherePredicate<T2> t2WherePredicate, SQLActionExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression) {
         return and(true, t2WherePredicate, sqlWherePredicateSQLExpression);
     }
 
@@ -226,7 +226,7 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
      * @param <T2>
      */
     @Deprecated
-    <T2> WherePredicate<T1> and(boolean condition, WherePredicate<T2> t2WherePredicate, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression);
+    <T2> WherePredicate<T1> and(boolean condition, WherePredicate<T2> t2WherePredicate, SQLActionExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression);
 
     default WherePredicate<T1> or() {
         return or(true);
@@ -258,7 +258,7 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
      * @return
      */
     @Deprecated
-    default WherePredicate<T1> or(SQLExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression) {
+    default WherePredicate<T1> or(SQLActionExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression) {
         return or(true, sqlWherePredicateSQLExpression);
     }
 
@@ -287,7 +287,7 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
      * @return
      */
     @Deprecated
-    WherePredicate<T1> or(boolean condition, SQLExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression);
+    WherePredicate<T1> or(boolean condition, SQLActionExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression);
 
 
     /**
@@ -368,7 +368,7 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
      * @param <T2>
      */
     @Deprecated
-    default <T2> WherePredicate<T1> or(WherePredicate<T2> t2WherePredicate, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression) {
+    default <T2> WherePredicate<T1> or(WherePredicate<T2> t2WherePredicate, SQLActionExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression) {
         return or(true, t2WherePredicate, sqlWherePredicateSQLExpression);
     }
 
@@ -399,7 +399,7 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
      * @param <T2>
      */
     @Deprecated
-    <T2> WherePredicate<T1> or(boolean condition, WherePredicate<T2> t2WherePredicate, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression);
+    <T2> WherePredicate<T1> or(boolean condition, WherePredicate<T2> t2WherePredicate, SQLActionExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression);
 
     /**
      * 采用无参数and or处理括号和多表问题

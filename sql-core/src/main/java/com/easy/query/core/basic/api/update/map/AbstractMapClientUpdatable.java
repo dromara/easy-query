@@ -9,15 +9,13 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.builder.impl.ConfigurerImpl;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnConfigurerImpl;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.MapUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurerImpl;
-import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 
@@ -103,7 +101,7 @@ public abstract class AbstractMapClientUpdatable extends AbstractSQLExecuteRows<
     }
 
     @Override
-    public MapClientUpdatable<Map<String, Object>> configure(SQLExpression1<ContextConfigurer> configurer) {
+    public MapClientUpdatable<Map<String, Object>> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         if (configurer != null) {
             configurer.apply(new ContextConfigurerImpl(mapUpdateExpressionBuilder.getExpressionContext()));
         }
@@ -122,7 +120,7 @@ public abstract class AbstractMapClientUpdatable extends AbstractSQLExecuteRows<
     }
 
     @Override
-    public MapClientUpdatable<Map<String, Object>> columnConfigure(SQLExpression1<ColumnConfigurer<Map<String, Object>>> columnConfigureExpression) {
+    public MapClientUpdatable<Map<String, Object>> columnConfigure(SQLActionExpression1<ColumnConfigurer<Map<String, Object>>> columnConfigureExpression) {
         ColumnConfigurerImpl<Map<String, Object>> columnConfigurer = new ColumnConfigurerImpl<>(table.getEntityTable(), new ConfigurerImpl(this.mapUpdateExpressionBuilder));
         columnConfigureExpression.apply(columnConfigurer);
         return this;

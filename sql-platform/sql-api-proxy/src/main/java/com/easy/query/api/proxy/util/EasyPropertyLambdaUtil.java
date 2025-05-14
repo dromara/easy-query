@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
  * @author xuejiaming
  * @FileName: LambdaUtil.java
  * @Description: 文件说明
- * @Date: 2023/2/7 08:36
+ * create time 2023/2/7 08:36
  */
 public class EasyPropertyLambdaUtil {
 

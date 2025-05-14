@@ -64,11 +64,6 @@ public class Select {
 
     public static Draft DRAFT = new Draft();
     public static SQLPart PART = new SQLPart();
-    /**
-     * 请使用#{@link #PART}
-     */
-    @Deprecated
-    public static SQLPart PARTITION = new SQLPart();
 
 
     public static <TR, TRProxy> void setDraftPropTypes(ClientQueryable<TR> select, TRProxy trProxy) {
@@ -128,16 +123,6 @@ public class Select {
                 return new EasyEntityQueryable<>(resultProxy, select);
             }
         } else {
-//            if(resultProxy instanceof PartitionByProxy){
-//                PartitionByProxy resultProxy1 = (PartitionByProxy) resultProxy;
-//                ClientQueryable<?> select = queryable.select(resultProxy1.getPartitionByEntityClass(), columnAsSelector -> {
-//                    selectAsExpression.accept(columnAsSelector.getAsSelector());
-//                });
-//                Select.setDraftPropTypes(select, resultProxy);
-//                return new EasyEntityQueryable<>(resultProxy, (ClientQueryable<TR>)select);
-//            }else{
-//
-//            }
             EntityMetadata resultEntityMetadata = getResultProxyEntityMetadata(resultProxy, runtimeContext);
             ClientQueryable<TR> select = queryable.select(resultProxy.getEntityClass(), resultEntityMetadata, columnAsSelector -> {
                 if (resultProxy instanceof PartProxy) {

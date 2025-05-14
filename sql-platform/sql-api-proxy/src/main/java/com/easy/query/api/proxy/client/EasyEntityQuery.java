@@ -9,7 +9,7 @@ import com.easy.query.api.proxy.entity.update.EntityUpdatable;
 import com.easy.query.api.proxy.entity.update.ExpressionUpdatable;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.configuration.LoadIncludeConfiguration;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.expression.parser.core.PropColumn;
@@ -99,7 +99,7 @@ public interface EasyEntityQuery extends EasyBaseQuery{
         }
         loadInclude(Collections.singletonList(entity),navigateProperty);
     }
-    default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> void loadInclude(T entity,SQLFuncExpression1<TProxy, PropColumn> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
+    default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> void loadInclude(T entity,SQLFuncExpression1<TProxy, PropColumn> navigateProperty, SQLActionExpression1<LoadIncludeConfiguration> configure){
         if(entity==null){
             return;
         }
@@ -108,7 +108,7 @@ public interface EasyEntityQuery extends EasyBaseQuery{
     default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> void loadInclude(List<T> entities,SQLFuncExpression1<TProxy, PropColumn> navigateProperty){
         loadInclude(entities,navigateProperty,null);
     }
-    default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> void loadInclude(List<T> entities, SQLFuncExpression1<TProxy, PropColumn> navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure){
+    default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T,TProxy>> void loadInclude(List<T> entities, SQLFuncExpression1<TProxy, PropColumn> navigateProperty, SQLActionExpression1<LoadIncludeConfiguration> configure){
         if(EasyCollectionUtil.isEmpty(entities)){
             return;
         }

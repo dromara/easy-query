@@ -8,7 +8,7 @@ import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
  * @author xuejiaming
  * @FileName: EasyJdbcTypeHandler.java
  * @Description: 文件说明
- * @Date: 2023/2/17 22:07
+ * create time 2023/2/17 22:07
  */
 public interface JdbcTypeHandlerManager {
     /**

@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.extension.conversion;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
@@ -19,8 +19,8 @@ public interface SQLPropertyConverter extends SQLTableOwner, SQLSegment {
     default void sqlNativeSegment(String sqlSegment){
         sqlNativeSegment(sqlSegment,c->{});
     }
-    void sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume);
-    default void sqlFunction(SQLFunction sqlFunction, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume){
+    void sqlNativeSegment(String sqlSegment, SQLActionExpression1<SQLNativePropertyExpressionContext> contextConsume);
+    default void sqlFunction(SQLFunction sqlFunction, SQLActionExpression1<SQLNativePropertyExpressionContext> contextConsume){
         String sqlSegment = sqlFunction.sqlSegment(getTable());
         sqlNativeSegment(sqlSegment,context->{
             sqlFunction.consume(context.getSQLNativeChainExpressionContext());
@@ -35,7 +35,7 @@ public interface SQLPropertyConverter extends SQLTableOwner, SQLSegment {
     }
 
     /**
-     * 使用{@link #sqlFunction(SQLFunction, SQLExpression1)}
+     * 使用{@link #sqlFunction(SQLFunction, SQLActionExpression1)}
      * @param table
      * @param sqlFunction
      * @param aliasProp

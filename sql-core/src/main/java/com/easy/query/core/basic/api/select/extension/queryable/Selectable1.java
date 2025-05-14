@@ -2,7 +2,7 @@ package com.easy.query.core.basic.api.select.extension.queryable;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.expression.segment.ColumnSegment;
@@ -25,7 +25,7 @@ public interface Selectable1<T1> {
      * @param selectExpression
      * @return
      */
-    ClientQueryable<T1> select(SQLExpression1<ColumnSelector<T1>> selectExpression);
+    ClientQueryable<T1> select(SQLActionExpression1<ColumnSelector<T1>> selectExpression);
 
     /**
      * 将当前T1对象转成TR对象，select会将T1属性所对应的列名映射到TR对象的列名上(忽略大小写)
@@ -48,7 +48,7 @@ public interface Selectable1<T1> {
     default <TR> Query<TR> selectAutoInclude(Class<TR> resultClass){
         return selectAutoInclude(resultClass,null,false);
     }
-    <TR> Query<TR> selectAutoInclude(Class<TR> resultClass,SQLExpression1<ColumnAsSelector<T1, TR>> selectExpression,boolean replace);
+    <TR> Query<TR> selectAutoInclude(Class<TR> resultClass, SQLActionExpression1<ColumnAsSelector<T1, TR>> selectExpression, boolean replace);
 
     /**
      * 设置返回对象，返回对象会根据selectExpression映射相同列名
@@ -57,8 +57,8 @@ public interface Selectable1<T1> {
      * @return
      * @param <TR>
      */
-     <TR> ClientQueryable<TR> select(Class<TR> resultClass, SQLExpression1<ColumnAsSelector<T1, TR>> selectExpression);
-    <TR> ClientQueryable<TR> select(Class<TR> resultClass,EntityMetadata entityMetadata, SQLExpression1<ColumnAsSelector<T1, TR>> selectExpression);
+     <TR> ClientQueryable<TR> select(Class<TR> resultClass, SQLActionExpression1<ColumnAsSelector<T1, TR>> selectExpression);
+    <TR> ClientQueryable<TR> select(Class<TR> resultClass,EntityMetadata entityMetadata, SQLActionExpression1<ColumnAsSelector<T1, TR>> selectExpression);
     default ClientQueryable<T1> select(ColumnSegment columnSegment, boolean clearAll) {
         return select(Collections.singletonList(columnSegment), clearAll);
     }

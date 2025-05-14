@@ -1,23 +1,17 @@
 package com.easy.query.core.proxy.columns.impl;
 
-import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.expression.ManyConfiguration;
-import com.easy.query.core.expression.RelationTableKey;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.columns.SubQueryContext;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.core.ProxyFlatElementEntitySQLContext;
 import com.easy.query.core.proxy.core.ProxyManyJoinFlatElementEntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
@@ -30,8 +24,6 @@ import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctio
 import com.easy.query.core.proxy.grouping.DefaultSQLGroupQueryable;
 
 import java.math.BigDecimal;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * create time 2024/6/5 08:28
@@ -57,7 +49,7 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
     }
 
     @Override
-    public SQLQueryable<T1Proxy, T1> orderBy(boolean condition, SQLExpression1<T1Proxy> orderExpression) {
+    public SQLQueryable<T1Proxy, T1> orderBy(boolean condition, SQLActionExpression1<T1Proxy> orderExpression) {
         rewritePredicateToSelectProvider.getSubQueryContext().appendOrderByExpression(orderExpression);
         return this;
     }
@@ -93,13 +85,13 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
     }
 
     @Override
-    public SQLQueryable<T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression) {
+    public SQLQueryable<T1Proxy, T1> where(SQLActionExpression1<T1Proxy> whereExpression) {
         rewritePredicateToSelectProvider.getSubQueryContext().appendWhereExpression(whereExpression);
         return this;
     }
 
     @Override
-    public void any(SQLExpression1<T1Proxy> whereExpression) {
+    public void any(SQLActionExpression1<T1Proxy> whereExpression) {
         this.rewritePredicateToSelectProvider.getSubQueryContext().appendWhereExpression(whereExpression);
         this.rewritePredicateToSelectProvider.anyValue().eq(true);
 
@@ -111,7 +103,7 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
     }
 
     @Override
-    public void none(SQLExpression1<T1Proxy> whereExpression) {
+    public void none(SQLActionExpression1<T1Proxy> whereExpression) {
         this.rewritePredicateToSelectProvider.getSubQueryContext().appendWhereExpression(whereExpression);
         this.rewritePredicateToSelectProvider.noneValue().eq(true);
     }

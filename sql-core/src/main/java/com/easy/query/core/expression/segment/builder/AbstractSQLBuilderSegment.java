@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 /**
  * @Description: 文件说明
- * @Date: 2023/2/13 21:30
+ * create time 2023/2/13 21:30
  * @author xuejiaming
  */
 public abstract class AbstractSQLBuilderSegment implements SQLBuilderSegment {

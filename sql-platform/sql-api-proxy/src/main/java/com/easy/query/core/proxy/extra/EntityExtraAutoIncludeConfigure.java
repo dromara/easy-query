@@ -1,7 +1,7 @@
 package com.easy.query.core.proxy.extra;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.extra.ExtraAutoIncludeConfigure;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -20,14 +20,14 @@ public interface EntityExtraAutoIncludeConfigure<TProxy extends ProxyEntity<TPro
      * @param queryableConfigureExpression
      * @return
      */
-    EntityExtraAutoIncludeConfigure<TProxy,TEntity> configure(SQLExpression1<EntityQueryable<TProxy,TEntity>> queryableConfigureExpression);
+    EntityExtraAutoIncludeConfigure<TProxy,TEntity> configure(SQLActionExpression1<EntityQueryable<TProxy,TEntity>> queryableConfigureExpression);
 
     /**
      * 额外的筛选
      * @param whereExpression
      * @return
      */
-    EntityExtraAutoIncludeConfigure<TProxy,TEntity> where(SQLExpression1<TProxy> whereExpression);
+    EntityExtraAutoIncludeConfigure<TProxy,TEntity> where(SQLActionExpression1<TProxy> whereExpression);
 
     /**
      * 额外的查询

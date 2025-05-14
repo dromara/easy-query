@@ -8,11 +8,10 @@ import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.MultiCollection;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
@@ -20,16 +19,13 @@ import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * @author xuejiaming
  * @Description: 默认的数据库条件比较
- * @Date: 2023/2/7 06:58
+ * create time 2023/2/7 06:58
  */
 public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     private final FilterContext filterContext;
@@ -139,7 +135,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     }
 
     @Override
-    public WherePredicate<T1> and(boolean condition, SQLExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression) {
+    public WherePredicate<T1> and(boolean condition, SQLActionExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression) {
         if (condition) {
             getFilter().and(f -> {
                 Filter filter = filterContext.getFilter();
@@ -165,7 +161,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     }
 
     @Override
-    public <T2> WherePredicate<T1> and(boolean condition, WherePredicate<T2> t2WherePredicate, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression) {
+    public <T2> WherePredicate<T1> and(boolean condition, WherePredicate<T2> t2WherePredicate, SQLActionExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression) {
         if (condition) {
             getFilter().and(f -> {
                 Filter filter = filterContext.getFilter();
@@ -186,7 +182,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     }
 
     @Override
-    public WherePredicate<T1> or(boolean condition, SQLExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression) {
+    public WherePredicate<T1> or(boolean condition, SQLActionExpression1<WherePredicate<T1>> sqlWherePredicateSQLExpression) {
         if (condition) {
             getFilter().or(f -> {
                 Filter filter = filterContext.getFilter();
@@ -212,7 +208,7 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     }
 
     @Override
-    public <T2> WherePredicate<T1> or(boolean condition, WherePredicate<T2> t2WherePredicate, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression) {
+    public <T2> WherePredicate<T1> or(boolean condition, WherePredicate<T2> t2WherePredicate, SQLActionExpression2<WherePredicate<T1>, WherePredicate<T2>> sqlWherePredicateSQLExpression) {
         if (condition) {
             getFilter().or(f -> {
                 Filter filter = filterContext.getFilter();

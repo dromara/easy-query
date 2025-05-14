@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.parser.core.base.tree;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
 /**
@@ -40,5 +40,5 @@ public interface TreeCTEConfigurer {
      */
     void setDeepColumnName(String deepColumnName);
 
-    void setChildFilter(SQLExpression1<WherePredicate<?>> whereExpression);
+    void setChildFilter(SQLActionExpression1<WherePredicate<?>> whereExpression);
 }

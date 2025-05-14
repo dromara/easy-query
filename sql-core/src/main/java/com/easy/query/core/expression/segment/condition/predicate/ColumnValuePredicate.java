@@ -20,7 +20,7 @@ import com.easy.query.core.util.EasySQLUtil;
  * @author xuejiaming
  * @FileName: ColumnValuePredicate.java
  * @Description: colum和具体值的断言
- * @Date: 2023/2/14 23:34
+ * create time 2023/2/14 23:34
  */
 public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
     private final Column2Segment column2Segment;

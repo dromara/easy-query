@@ -17,7 +17,7 @@ import java.util.Objects;
  * @author xuejiaming
  * @FileName: PredicateSegment.java
  * @Description: 文件说明
- * @Date: 2023/2/14 23:05
+ * create time 2023/2/14 23:05
  */
 public abstract class AbstractPredicateSegment implements PredicateSegment,ShardingPredicateSegment {
     protected List<PredicateSegment> children;

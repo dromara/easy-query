@@ -5,7 +5,7 @@ import com.easy.query.core.basic.api.internal.SQLExecuteStrategy;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.ToSQLResult;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
 
@@ -27,7 +27,7 @@ public interface ClientEntityUpdatable<T> extends Updatable<T, ClientEntityUpdat
      * @param columnSelectorExpression
      * @return
      */
-    default ClientEntityUpdatable<T> setColumns(SQLExpression1<ColumnOnlySelector<T>> columnSelectorExpression) {
+    default ClientEntityUpdatable<T> setColumns(SQLActionExpression1<ColumnOnlySelector<T>> columnSelectorExpression) {
         return setColumns(true, columnSelectorExpression);
     }
 
@@ -37,14 +37,14 @@ public interface ClientEntityUpdatable<T> extends Updatable<T, ClientEntityUpdat
      * @param columnSelectorExpression
      * @return
      */
-    ClientEntityUpdatable<T> setColumns(boolean condition, SQLExpression1<ColumnOnlySelector<T>> columnSelectorExpression);
+    ClientEntityUpdatable<T> setColumns(boolean condition, SQLActionExpression1<ColumnOnlySelector<T>> columnSelectorExpression);
 
     /**
      * 忽略的是set的id,并不是where的
      * @param columnSelectorExpression
      * @return
      */
-    default ClientEntityUpdatable<T> setIgnoreColumns(SQLExpression1<ColumnOnlySelector<T>> columnSelectorExpression) {
+    default ClientEntityUpdatable<T> setIgnoreColumns(SQLActionExpression1<ColumnOnlySelector<T>> columnSelectorExpression) {
         return setIgnoreColumns(true, columnSelectorExpression);
     }
 
@@ -54,7 +54,7 @@ public interface ClientEntityUpdatable<T> extends Updatable<T, ClientEntityUpdat
      * @param columnSelectorExpression
      * @return
      */
-    ClientEntityUpdatable<T> setIgnoreColumns(boolean condition, SQLExpression1<ColumnOnlySelector<T>> columnSelectorExpression);
+    ClientEntityUpdatable<T> setIgnoreColumns(boolean condition, SQLActionExpression1<ColumnOnlySelector<T>> columnSelectorExpression);
 
     /**
      * 当前环境如果是追踪的情况下设置的column值将以原始值original value作为条件,新值作为set进行更新
@@ -62,7 +62,7 @@ public interface ClientEntityUpdatable<T> extends Updatable<T, ClientEntityUpdat
      * @param columnSelectorExpression
      * @return
      */
-    default ClientEntityUpdatable<T> whereColumns(SQLExpression1<ColumnOnlySelector<T>> columnSelectorExpression) {
+    default ClientEntityUpdatable<T> whereColumns(SQLActionExpression1<ColumnOnlySelector<T>> columnSelectorExpression) {
         return whereColumns(true, columnSelectorExpression);
     }
 
@@ -73,9 +73,9 @@ public interface ClientEntityUpdatable<T> extends Updatable<T, ClientEntityUpdat
      * @param columnSelectorExpression
      * @return
      */
-    ClientEntityUpdatable<T> whereColumns(boolean condition, SQLExpression1<ColumnOnlySelector<T>> columnSelectorExpression);
+    ClientEntityUpdatable<T> whereColumns(boolean condition, SQLActionExpression1<ColumnOnlySelector<T>> columnSelectorExpression);
 
-    ClientEntityUpdatable<T> columnConfigure(SQLExpression1<ColumnConfigurer<T>> columnConfigureExpression);
+    ClientEntityUpdatable<T> columnConfigure(SQLActionExpression1<ColumnConfigurer<T>> columnConfigureExpression);
     String toSQL(Object entity);
     String toSQL(Object entity, ToSQLContext toSQLContext);
     /**

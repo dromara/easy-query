@@ -3,11 +3,10 @@ package com.easy.query.api.proxy.entity.delete.impl;
 import com.easy.query.api.proxy.entity.delete.EntityOnlyDeletable;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
-import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -129,7 +128,7 @@ public class EasyEntityOnlyDeletable<T> implements EntityOnlyDeletable<T> {
     }
 
     @Override
-    public EntityOnlyDeletable<T> configure(SQLExpression1<ContextConfigurer> configurer) {
+    public EntityOnlyDeletable<T> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         clientEntityDeletable.configure(configurer);
         return this;
     }

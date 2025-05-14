@@ -1,7 +1,7 @@
 package com.easy.query.core.func.def.impl;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 import com.easy.query.core.func.column.ColumnExpression;
@@ -19,9 +19,9 @@ import java.util.List;
 public class NativeSegmentSQLFunction extends AbstractExpressionSQLFunction {
 
     private final String sqlSegment;
-    private final SQLExpression1<SQLNativeChainExpressionContext> consume;
+    private final SQLActionExpression1<SQLNativeChainExpressionContext> consume;
 
-    public NativeSegmentSQLFunction(String  sqlSegment, SQLExpression1<SQLNativeChainExpressionContext> consume) {
+    public NativeSegmentSQLFunction(String  sqlSegment, SQLActionExpression1<SQLNativeChainExpressionContext> consume) {
         this.sqlSegment = sqlSegment;
         this.consume = consume;
     }

@@ -3,7 +3,7 @@ package com.easy.query.test.navigate;
 import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.basic.extension.navigate.NavigateBuilder;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
 /**
@@ -14,12 +14,12 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
  */
 public class MyNavigateExtraFilterStrategy implements NavigateExtraFilterStrategy {
     @Override
-    public @Nullable SQLExpression1<WherePredicate<?>> getPredicateFilterExpression(NavigateBuilder builder) {
+    public @Nullable SQLActionExpression1<WherePredicate<?>> getPredicateFilterExpression(NavigateBuilder builder) {
         return null;
     }
 
     @Override
-    public SQLExpression1<WherePredicate<?>> getPredicateMappingClassFilterExpression(NavigateBuilder builder) {
+    public SQLActionExpression1<WherePredicate<?>> getPredicateMappingClassFilterExpression(NavigateBuilder builder) {
         return null;
     }
 }

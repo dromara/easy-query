@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 /**
  * @FileName: SysUserLogbyMonth.java
  * @Description: 文件说明
- * @Date: 2023/2/11 21:43
+ * create time 2023/2/11 21:43
  * @author xuejiaming
  */
 @Table("sys_user_logby_month_202103")

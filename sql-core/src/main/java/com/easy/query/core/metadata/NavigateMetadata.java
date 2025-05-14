@@ -6,7 +6,7 @@ import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.util.EasyArrayUtil;
@@ -56,8 +56,8 @@ public class NavigateMetadata {
     private final String[] selfMappingProperties;
     private final String[] targetMappingProperties;
     private final String[] directMapping;
-    private final SQLExpression1<WherePredicate<?>> predicateFilterExpression;
-    private final SQLExpression1<WherePredicate<?>> predicateMappingClassFilterExpression;
+    private final SQLActionExpression1<WherePredicate<?>> predicateFilterExpression;
+    private final SQLActionExpression1<WherePredicate<?>> predicateMappingClassFilterExpression;
 
     private final Map<String, NavigateMetadata> directMappingMetadataMap;
     private final EntityRelationPropertyProvider entityRelationPropertyProvider;
@@ -253,7 +253,7 @@ public class NavigateMetadata {
         return columnMetadatas;
     }
 
-    public SQLExpression1<WherePredicate<?>> getPredicateFilterExpression() {
+    public SQLActionExpression1<WherePredicate<?>> getPredicateFilterExpression() {
         return predicateFilterExpression;
     }
 
@@ -267,7 +267,7 @@ public class NavigateMetadata {
         }
     }
 
-    public SQLExpression1<WherePredicate<?>> getPredicateMappingClassFilterExpression() {
+    public SQLActionExpression1<WherePredicate<?>> getPredicateMappingClassFilterExpression() {
         return predicateMappingClassFilterExpression;
     }
 

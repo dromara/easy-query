@@ -1,7 +1,7 @@
 package com.easy.query.core.proxy.sql.include;
 
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 
@@ -14,9 +14,9 @@ import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 public interface IncludeManyAvailable<TProxy> extends MappingPath, EntitySQLContextAvailable {
     default void include() {
     }
-    default void includeFilter( SQLExpression1<TProxy> whereExpression) {
+    default void includeFilter( SQLActionExpression1<TProxy> whereExpression) {
     }
-    default void includeFilter(boolean condition, SQLExpression1<TProxy> whereExpression) {
+    default void includeFilter(boolean condition, SQLActionExpression1<TProxy> whereExpression) {
         if (condition) {
         }
     }

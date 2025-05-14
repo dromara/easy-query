@@ -90,7 +90,7 @@ import java.util.UUID;
  * @author xuejiaming
  * @FileName: BaseTest.java
  * @Description: 基础单元测试类用于构建easy-query
- * @Date: 2023/3/16 16:47
+ * create time 2023/3/16 16:47
  */
 public abstract class BaseTest {
     public static HikariDataSource dataSource;

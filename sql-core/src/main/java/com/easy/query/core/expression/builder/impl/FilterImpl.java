@@ -5,12 +5,11 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
-import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.expression.segment.Column2Segment;
@@ -34,7 +33,6 @@ import com.easy.query.core.expression.segment.condition.predicate.SQLNativePredi
 import com.easy.query.core.expression.segment.condition.predicate.SQLNativesPredicateImpl;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.func.SQLFunction;
@@ -48,7 +46,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -762,7 +759,7 @@ public class FilterImpl implements Filter {
     }
 
     @Override
-    public Filter sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
+    public Filter sqlNativeSegment(String sqlSegment, SQLActionExpression1<SQLNativeExpressionContext> contextConsume) {
         Objects.requireNonNull(contextConsume, "sql native context consume cannot be null");
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
         contextConsume.apply(sqlNativeExpressionContext);
@@ -786,7 +783,7 @@ public class FilterImpl implements Filter {
     }
 
     @Override
-    public Filter and(SQLExpression1<Filter> sqlWherePredicateSQLExpression) {
+    public Filter and(SQLActionExpression1<Filter> sqlWherePredicateSQLExpression) {
         and0();
         Filter filter = create();
         sqlWherePredicateSQLExpression.apply(filter);
@@ -817,7 +814,7 @@ public class FilterImpl implements Filter {
     }
 
     @Override
-    public Filter or(SQLExpression1<Filter> sqlWherePredicateSQLExpression) {
+    public Filter or(SQLActionExpression1<Filter> sqlWherePredicateSQLExpression) {
         or0();
         Filter filter = create();
         sqlWherePredicateSQLExpression.apply(filter);

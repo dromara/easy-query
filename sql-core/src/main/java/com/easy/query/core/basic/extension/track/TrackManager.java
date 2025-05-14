@@ -3,7 +3,7 @@ package com.easy.query.core.basic.extension.track;
 /**
  * @FileName: TrackManager.java
  * @Description: 文件说明
- * @Date: 2023/3/19 13:51
+ * create time 2023/3/19 13:51
  * @author xuejiaming
  */
 public interface TrackManager extends InvokeTryFinally {

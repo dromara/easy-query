@@ -19,9 +19,8 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
-import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.func.SQLFunc;
@@ -52,7 +51,6 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.core.util.EasyStringUtil;
 
 import java.math.BigDecimal;
 import java.sql.Time;
@@ -60,13 +58,9 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * create time 2024/2/17 22:21
@@ -95,7 +89,7 @@ public class Expression {
         }, Object.class);
     }
 
-    public ColumnFunctionCompareComparableAnyChainExpression<Object> sqlSegment(String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume) {
+    public ColumnFunctionCompareComparableAnyChainExpression<Object> sqlSegment(String sqlSegment, SQLActionExpression1<ProxyColumnFuncSelector> contextConsume) {
         return sqlSegment(sqlSegment, contextConsume, Object.class);
     }
 
@@ -118,7 +112,7 @@ public class Expression {
      * @param <TR>
      * @return 返回元素sql片段
      */
-    public <TR> ColumnFunctionCompareComparableAnyChainExpression<TR> sqlSegment(String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume, Class<TR> resultClass) {
+    public <TR> ColumnFunctionCompareComparableAnyChainExpression<TR> sqlSegment(String sqlSegment, SQLActionExpression1<ProxyColumnFuncSelector> contextConsume, Class<TR> resultClass) {
         return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(entitySQLContext, null, null, f -> {
             return f.anySQLFunction(sqlSegment, c -> contextConsume.apply(new ProxyColumnFuncSelectorImpl(c)));
         }, resultClass);
@@ -151,7 +145,7 @@ public class Expression {
      * @param sqlSegment
      * @param contextConsume
      */
-    public void sql(String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume) {
+    public void sql(String sqlSegment, SQLActionExpression1<ProxyColumnFuncSelector> contextConsume) {
         sql(true, sqlSegment, contextConsume);
     }
 
@@ -162,7 +156,7 @@ public class Expression {
      * @param sqlSegment
      * @param contextConsume
      */
-    public void sql(boolean condition, String sqlSegment, SQLExpression1<ProxyColumnFuncSelector> contextConsume) {
+    public void sql(boolean condition, String sqlSegment, SQLActionExpression1<ProxyColumnFuncSelector> contextConsume) {
         if (condition) {
             sqlSegment(sqlSegment, contextConsume).executeSQL();
         }
@@ -213,12 +207,12 @@ public class Expression {
      * @return 返回元素sql片段
      */
     @Deprecated
-    public PropTypeColumn<Object> sqlType(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+    public PropTypeColumn<Object> sqlType(String sqlSegment, SQLActionExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         return sqlType(sqlSegment, contextConsume, Object.class);
     }
 
     @Deprecated
-    public <T> PropTypeColumn<T> sqlType(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume, Class<T> resultClass) {
+    public <T> PropTypeColumn<T> sqlType(String sqlSegment, SQLActionExpression1<SQLNativeProxyExpressionContext> contextConsume, Class<T> resultClass) {
         return new SQLNativeSegmentExpressionImpl(entitySQLContext, sqlSegment, c -> {
             contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c.getSQLNativeExpressionContext()));
         }).asAnyType(resultClass);
@@ -331,7 +325,7 @@ public class Expression {
         return caseWhen(sqlActionExpression).then(thenValue).elseEnd(elseValue);
     }
 
-    public ColumnFunctionCompareComparableStringChainExpression<String> concat(SQLExpression1<ConcatExpressionSelector> stringExpressions) {
+    public ColumnFunctionCompareComparableStringChainExpression<String> concat(SQLActionExpression1<ConcatExpressionSelector> stringExpressions) {
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(entitySQLContext, null, null, fx -> {
             return fx.concat(o -> {
                 stringExpressions.apply(new ConcatExpressionSelectorImpl(entitySQLContext.getRuntimeContext().fx(), o));

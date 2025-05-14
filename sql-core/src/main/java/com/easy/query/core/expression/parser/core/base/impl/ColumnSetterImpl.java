@@ -2,7 +2,7 @@ package com.easy.query.core.expression.parser.core.base.impl;
 
 import com.easy.query.core.expression.builder.Setter;
 import com.easy.query.core.expression.builder.impl.SetterImpl;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
@@ -13,7 +13,7 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/2/25 17:39
+ * create time 2023/2/25 17:39
  */
 public class ColumnSetterImpl<T> implements ColumnSetter<T> {
     protected final Setter setter;
@@ -59,7 +59,7 @@ public class ColumnSetterImpl<T> implements ColumnSetter<T> {
     }
 
     @Override
-    public ColumnSetter<T> setSQLSegment(String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume) {
+    public ColumnSetter<T> setSQLSegment(String property, String sqlSegment, SQLActionExpression1<SQLNativePropertyExpressionContext> contextConsume) {
         setter.sqlNativeSegment(table,property,sqlSegment,c->{
             contextConsume.apply(new SQLNativePropertyExpressionContextImpl(table, c));
         });

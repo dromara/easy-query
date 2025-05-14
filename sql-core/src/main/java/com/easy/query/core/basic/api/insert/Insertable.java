@@ -18,7 +18,7 @@ import java.util.Collection;
  * @author xuejiaming
  * @FileName: Insertable.java
  * @Description: 文件说明
- * @Date: 2023/2/20 08:48
+ * create time 2023/2/20 08:48
  */
 public interface Insertable<T, TChain> extends SQLExecuteRows,
         Interceptable<TChain>,

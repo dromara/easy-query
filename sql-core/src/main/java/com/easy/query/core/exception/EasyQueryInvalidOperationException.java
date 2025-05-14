@@ -4,7 +4,7 @@ package com.easy.query.core.exception;
 /**
  * @FileName: EasyQueryInvalidOperationException.java
  * @Description: 文件说明
- * @Date: 2023/3/21 13:19
+ * create time 2023/3/21 13:19
  * @author xuejiaming
  */
 public class EasyQueryInvalidOperationException extends EasyQueryException{

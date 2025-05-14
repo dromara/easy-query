@@ -1,7 +1,7 @@
 package com.easy.query.core.extension.casewhen;
 
 import com.easy.query.core.expression.builder.Filter;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.scec.expression.ColumnConstParameterExpressionImpl;
@@ -19,11 +19,11 @@ import com.easy.query.core.func.SQLFunction;
 public interface SQLCaseWhenBuilder {
     ExpressionContext getExpressionContext();
 
-    default SQLCaseWhenBuilder caseWhen(SQLExpression1<Filter> predicate, Object then) {
+    default SQLCaseWhenBuilder caseWhen(SQLActionExpression1<Filter> predicate, Object then) {
         return caseWhen(predicate, new ColumnConstParameterExpressionImpl(then));
     }
 
-    SQLCaseWhenBuilder caseWhen(SQLExpression1<Filter> predicate, ParamExpression paramExpression);
+    SQLCaseWhenBuilder caseWhen(SQLActionExpression1<Filter> predicate, ParamExpression paramExpression);
 
     default SQLFunction elseEnd(Object elseValue) {
         return elseEnd(new ColumnConstParameterExpressionImpl(elseValue));

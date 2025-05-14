@@ -7,7 +7,7 @@ import com.easy.query.core.basic.api.update.Updatable;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.ToSQLResult;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.proxy.ProxyEntity;
 
@@ -17,17 +17,17 @@ import java.util.Collection;
  * @author xuejiaming
  * @FileName: ExpressionUpdatable.java
  * @Description: 文件说明
- * @Date: 2023/2/24 23:21
+ * create time 2023/2/24 23:21
  */
 public interface ExpressionUpdatable<TProxy extends ProxyEntity<TProxy, T>, T> extends Updatable<T, ExpressionUpdatable<TProxy,T>>, WithVersionable<ExpressionUpdatable<TProxy,T>>, ConfigureVersionable<ExpressionUpdatable<TProxy,T>> {
     TProxy getProxy();
     ClientExpressionUpdatable<T> getClientUpdate();
 
-    default ExpressionUpdatable<TProxy,T> setColumns(SQLExpression1<TProxy> columnSetExpression) {
+    default ExpressionUpdatable<TProxy,T> setColumns(SQLActionExpression1<TProxy> columnSetExpression) {
         return setColumns(true,columnSetExpression);
     }
 
-    default ExpressionUpdatable<TProxy,T> setColumns(boolean condition, SQLExpression1<TProxy> columnSetExpression) {
+    default ExpressionUpdatable<TProxy,T> setColumns(boolean condition, SQLActionExpression1<TProxy> columnSetExpression) {
         if(condition){
             getProxy().getEntitySQLContext()._set(getClientUpdate().getColumnSetter().getSetter(),()->{
                 columnSetExpression.apply(getProxy());
@@ -47,7 +47,7 @@ public interface ExpressionUpdatable<TProxy extends ProxyEntity<TProxy, T>, T> e
      * @param whereExpression
      * @return
      */
-    default ExpressionUpdatable<TProxy,T> where(SQLExpression1<TProxy> whereExpression) {
+    default ExpressionUpdatable<TProxy,T> where(SQLActionExpression1<TProxy> whereExpression) {
         return where(true,whereExpression);
     }
 
@@ -61,7 +61,7 @@ public interface ExpressionUpdatable<TProxy extends ProxyEntity<TProxy, T>, T> e
      * @param whereExpression
      * @return
      */
-    default ExpressionUpdatable<TProxy,T> where(boolean condition, SQLExpression1<TProxy> whereExpression) {
+    default ExpressionUpdatable<TProxy,T> where(boolean condition, SQLActionExpression1<TProxy> whereExpression) {
         if(condition){
             getClientUpdate().where(true,where -> {
                 getProxy().getEntitySQLContext()._where(where.getFilter(),()->{

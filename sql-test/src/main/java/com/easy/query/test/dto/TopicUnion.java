@@ -1,6 +1,7 @@
 package com.easy.query.test.dto;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
  * @author xuejiaming
  */
 @Data
+@EntityProxy
 public class TopicUnion {
     private String id;
     private Integer stars;

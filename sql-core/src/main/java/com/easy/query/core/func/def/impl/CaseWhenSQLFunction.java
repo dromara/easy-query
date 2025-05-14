@@ -5,7 +5,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.impl.CaseWhenSQLSegment;
@@ -30,12 +30,12 @@ import java.util.List;
 public class CaseWhenSQLFunction extends AbstractExpressionSQLFunction {
     private final QueryRuntimeContext runtimeContext;
     private final ExpressionContext expressionContext;
-    private final List<Tuple2<SQLExpression1<Filter>, ParamExpression>> whens;
+    private final List<Tuple2<SQLActionExpression1<Filter>, ParamExpression>> whens;
     private final ParamExpression elseValue;
     private final List<ColumnExpression> columnExpressions = new ArrayList<>();
     private final StringBuilder sql = new StringBuilder();
 
-    public CaseWhenSQLFunction(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, List<Tuple2<SQLExpression1<Filter>, ParamExpression>> whens, ParamExpression elseValue) {
+    public CaseWhenSQLFunction(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, List<Tuple2<SQLActionExpression1<Filter>, ParamExpression>> whens, ParamExpression elseValue) {
         this.runtimeContext = runtimeContext;
         this.expressionContext = expressionContext;
 
@@ -48,8 +48,8 @@ public class CaseWhenSQLFunction extends AbstractExpressionSQLFunction {
 
         int i = 0;
         sql.append("(CASE ");
-        for (Tuple2<SQLExpression1<Filter>, ParamExpression> when : whens) {
-            SQLExpression1<Filter> filterExpression = when.t();
+        for (Tuple2<SQLActionExpression1<Filter>, ParamExpression> when : whens) {
+            SQLActionExpression1<Filter> filterExpression = when.t();
             ParamExpression paramExpression = when.t1();
             AndPredicateSegment resolve = resolve(runtimeContext, expressionContext, filterExpression);
             ColumSQLExpressionImpl columSQLExpressionPredicate = new ColumSQLExpressionImpl(new CaseWhenSQLSegment(toSQLContext -> resolve.toSQL(toSQLContext), visitor -> EasySQLSegmentUtil.tableVisit(resolve, visitor)));
@@ -70,7 +70,7 @@ public class CaseWhenSQLFunction extends AbstractExpressionSQLFunction {
         sql.append("ELSE ").append("{").append(i++).append("}").append(" END)");
     }
 
-    public AndPredicateSegment resolve(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, SQLExpression1<Filter> filterExpression) {
+    public AndPredicateSegment resolve(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, SQLActionExpression1<Filter> filterExpression) {
 
         AndPredicateSegment andPredicateSegment = new AndPredicateSegment(true);
         FilterImpl filter = new FilterImpl(runtimeContext, expressionContext, andPredicateSegment, false, AnyValueFilter.DEFAULT);

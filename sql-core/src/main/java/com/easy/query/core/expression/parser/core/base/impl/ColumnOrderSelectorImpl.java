@@ -10,7 +10,7 @@ import com.easy.query.core.util.EasyObjectUtil;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/2/8 12:26
+ * create time 2023/2/8 12:26
  */
 public class ColumnOrderSelectorImpl<T1> implements ColumnOrderSelector<T1> {
     protected final TableAvailable table;

@@ -5,7 +5,7 @@ import com.easy.query.core.common.tuple.Tuple2;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
@@ -24,10 +24,10 @@ import java.util.List;
 public class CaseWhenSQLColumnSegment implements CloneableSQLSegment {
 
     private final ExpressionContext expressionContext;
-    private final List<Tuple2<SQLExpression1<Filter>, ParamExpression>> whens;
+    private final List<Tuple2<SQLActionExpression1<Filter>, ParamExpression>> whens;
     private final ParamExpression elseValue;
 
-    public CaseWhenSQLColumnSegment(ExpressionContext expressionContext, List<Tuple2<SQLExpression1<Filter>,ParamExpression>> whens, ParamExpression elseValue){
+    public CaseWhenSQLColumnSegment(ExpressionContext expressionContext, List<Tuple2<SQLActionExpression1<Filter>,ParamExpression>> whens, ParamExpression elseValue){
         this.expressionContext = expressionContext;
 
         this.whens = whens;
@@ -43,8 +43,8 @@ public class CaseWhenSQLColumnSegment implements CloneableSQLSegment {
 
         StringBuilder sql = new StringBuilder();
         sql.append("(CASE ");
-        for (Tuple2<SQLExpression1<Filter>, ParamExpression> when : whens) {
-            SQLExpression1<Filter> filterExpression = when.t();
+        for (Tuple2<SQLActionExpression1<Filter>, ParamExpression> when : whens) {
+            SQLActionExpression1<Filter> filterExpression = when.t();
             ParamExpression paramExpression = when.t1();
             AndPredicateSegment resolve = resolve(filterExpression);
             String caseWhenPredicateSql = resolve.toSQL(toSQLContext);
@@ -55,7 +55,7 @@ public class CaseWhenSQLColumnSegment implements CloneableSQLSegment {
         sql.append("ELSE ").append(elseValue).append(" END)");
         return sql.toString();
     }
-    public AndPredicateSegment resolve(SQLExpression1<Filter> filterExpression){
+    public AndPredicateSegment resolve(SQLActionExpression1<Filter> filterExpression){
 
         AndPredicateSegment andPredicateSegment = new AndPredicateSegment(true);
         FilterImpl filter = new FilterImpl(expressionContext.getRuntimeContext(),expressionContext,andPredicateSegment,false, AnyValueFilter.DEFAULT);

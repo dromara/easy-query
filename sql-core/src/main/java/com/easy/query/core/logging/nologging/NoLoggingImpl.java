@@ -5,7 +5,7 @@ import com.easy.query.core.logging.Log;
 /**
  * @FileName: NoLoggingImpl.java
  * @Description: 文件说明
- * @Date: 2023/3/10 13:52
+ * create time 2023/3/10 13:52
  * @author xuejiaming
  */
 public class NoLoggingImpl implements Log {

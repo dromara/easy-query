@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * @Description: 文件说明
- * @Date: 2023/2/24 22:15
+ * create time 2023/2/24 22:15
  * @author xuejiaming
  */
 public class UpdateSetSQLBuilderSegment extends AbstractSQLBuilderSegment {

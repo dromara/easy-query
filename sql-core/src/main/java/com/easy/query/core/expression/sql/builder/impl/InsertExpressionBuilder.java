@@ -36,7 +36,7 @@ import java.util.Set;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/3/4 16:49
+ * create time 2023/3/4 16:49
  */
 public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder implements EntityInsertExpressionBuilder {
     protected final SQLBuilderSegment columns;

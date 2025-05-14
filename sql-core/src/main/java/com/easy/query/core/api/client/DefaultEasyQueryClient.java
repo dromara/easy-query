@@ -9,7 +9,6 @@ import com.easy.query.core.basic.api.flat.impl.DefaultMapQueryable;
 import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.api.insert.map.MapClientInsertable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
@@ -19,27 +18,17 @@ import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
-import com.easy.query.core.common.IncludeRelationIdContext;
-import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.LoadIncludeConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.include.IncludeProcessor;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLFuncExpression;
-import com.easy.query.core.expression.sql.builder.EasyExpressionContext;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
-import com.easy.query.core.expression.sql.include.DefaultIncludeParserResult;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.expression.sql.include.IncludeProvider;
-import com.easy.query.core.expression.sql.include.MultiRelationValue;
-import com.easy.query.core.expression.sql.include.RelationEntityImpl;
-import com.easy.query.core.expression.sql.include.RelationExtraEntity;
-import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
@@ -47,20 +36,16 @@ import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.migration.DatabaseMigrationProvider;
 import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.EasyIncludeUtil;
 import com.easy.query.core.util.EasyObjectUtil;
-import com.easy.query.core.util.EasySQLExpressionUtil;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author xuejiaming
- * @Date: 2023/3/6 13:30
+ * create time 2023/3/6 13:30
  */
 public class DefaultEasyQueryClient implements EasyQueryClient {
     private final QueryRuntimeContext runtimeContext;
@@ -247,7 +232,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
     }
 
     @Override
-    public <T> void loadInclude(List<T> entities, String navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure) {
+    public <T> void loadInclude(List<T> entities, String navigateProperty, SQLActionExpression1<LoadIncludeConfiguration> configure) {
         if (EasyCollectionUtil.isEmpty(entities)) {
             return;
         }

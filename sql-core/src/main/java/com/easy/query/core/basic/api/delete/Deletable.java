@@ -15,7 +15,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
  * @author xuejiaming
  * @FileName: Deletable.java
  * @Description: 文件说明
- * @Date: 2023/2/28 12:19
+ * create time 2023/2/28 12:19
  */
 public interface Deletable<T, TChain> extends SQLExecuteExpectRows,
         Interceptable<TChain>,

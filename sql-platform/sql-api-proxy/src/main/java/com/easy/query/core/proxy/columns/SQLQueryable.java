@@ -1,18 +1,7 @@
 package com.easy.query.core.proxy.columns;
 
-import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
-import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
-import com.easy.query.core.basic.api.internal.ExpressionConfigurable;
-import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.common.OffsetLimitEntry;
-import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.metadata.IncludeNavigateParams;
-import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.ManyPropColumn;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -23,8 +12,6 @@ import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionComp
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableBooleanChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
-import com.easy.query.core.util.EasyNavigateUtil;
-import com.easy.query.core.util.EasyObjectUtil;
 
 import java.math.BigDecimal;
 
@@ -48,22 +35,22 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
 
     SQLQueryable<T1Proxy, T1> distinct(boolean useDistinct);
 
-    default SQLQueryable<T1Proxy, T1> orderBy(SQLExpression1<T1Proxy> orderExpression) {
+    default SQLQueryable<T1Proxy, T1> orderBy(SQLActionExpression1<T1Proxy> orderExpression) {
         return orderBy(true, orderExpression);
     }
 
-    SQLQueryable<T1Proxy, T1> orderBy(boolean condition, SQLExpression1<T1Proxy> orderExpression);
+    SQLQueryable<T1Proxy, T1> orderBy(boolean condition, SQLActionExpression1<T1Proxy> orderExpression);
 
 //    SQLQueryable<T1Proxy, T1> elements(int begin,int end);
 
-    SQLQueryable<T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression);
+    SQLQueryable<T1Proxy, T1> where(SQLActionExpression1<T1Proxy> whereExpression);
 
     /**
      * 存在任意一个满足条件
      *
      * @param whereExpression
      */
-    void any(SQLExpression1<T1Proxy> whereExpression);
+    void any(SQLActionExpression1<T1Proxy> whereExpression);
 
 
     /**
@@ -76,7 +63,7 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
      *
      * @param whereExpression
      */
-    void none(SQLExpression1<T1Proxy> whereExpression);
+    void none(SQLActionExpression1<T1Proxy> whereExpression);
 
     /**
      * 不存在任意一个满足条件

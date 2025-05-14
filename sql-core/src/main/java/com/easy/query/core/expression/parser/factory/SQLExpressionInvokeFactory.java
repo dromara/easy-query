@@ -13,7 +13,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
  * @author xuejiaming
  * @FileName: EasyQueryLambdaFactory.java
  * @Description: 文件说明
- * @Date: 2023/2/14 08:33
+ * create time 2023/2/14 08:33
  */
 public interface SQLExpressionInvokeFactory {
     <T1> WherePredicate<T1> createWherePredicate(TableAvailable table, EntityExpressionBuilder sqlEntityExpression, PredicateSegment predicateSegment);

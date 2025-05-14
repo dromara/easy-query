@@ -14,7 +14,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 /**
  * @FileName: SpringConnectionManager.java
  * @Description: 文件说明
- * @Date: 2023/3/10 22:01
+ * create time 2023/3/10 22:01
  * @author xuejiaming
  */
 public class SpringConnectionManager extends DefaultConnectionManager {

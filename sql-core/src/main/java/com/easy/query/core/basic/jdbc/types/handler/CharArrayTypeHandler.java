@@ -9,7 +9,7 @@ import java.sql.SQLException;
 /**
  * @FileName: CharArrayTypeHandler.java
  * @Description: 文件说明
- * @Date: 2023/2/17 21:53
+ * create time 2023/2/17 21:53
  * @author xuejiaming
  */
 public class CharArrayTypeHandler implements JdbcTypeHandler {

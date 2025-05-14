@@ -15,7 +15,7 @@ import com.easy.query.core.util.EasySQLUtil;
 /**
  * @FileName: FuncColumnValuePredicate.java
  * @Description: column加方法函数和对应的值比较
- * @Date: 2023/2/14 23:34
+ * create time 2023/2/14 23:34
  * @author xuejiaming
  */
 public class FuncColumnValuePredicate implements Predicate {

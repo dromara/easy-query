@@ -1,7 +1,6 @@
 package com.easy.query.api.proxy.extension.tree;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.proxy.ProxyEntity;
 
@@ -46,7 +45,7 @@ public class EntityTreeCTEConfigurerImpl<T1Proxy extends ProxyEntity<T1Proxy, T1
     }
 
     @Override
-    public void setChildFilter(SQLExpression1<T1Proxy> whereExpression) {
+    public void setChildFilter(SQLActionExpression1<T1Proxy> whereExpression) {
         treeCTEConfigurer.setChildFilter(s->{
             t1Proxy.getEntitySQLContext()._where(s.getFilter(), () -> {
                 whereExpression.apply(t1Proxy.create(s.getTable(),t1Proxy.getEntitySQLContext()));

@@ -3,7 +3,7 @@ package com.easy.query.core.basic.api.select.extension.queryable;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.exception.EasyQueryOrderByInvalidOperationException;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 
@@ -15,27 +15,27 @@ import com.easy.query.core.expression.parser.core.base.ColumnSelector;
  */
 public interface Orderable1<T1> {
 
-    default ClientQueryable<T1> orderByAsc(SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
+    default ClientQueryable<T1> orderByAsc(SQLActionExpression1<ColumnOrderSelector<T1>> selectExpression) {
         return orderByAsc(true, selectExpression);
     }
 
-    default ClientQueryable<T1> orderByAsc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
+    default ClientQueryable<T1> orderByAsc(boolean condition, SQLActionExpression1<ColumnOrderSelector<T1>> selectExpression) {
         return orderBy(condition, selectExpression, true);
     }
 
-    default ClientQueryable<T1> orderByDesc(SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
+    default ClientQueryable<T1> orderByDesc(SQLActionExpression1<ColumnOrderSelector<T1>> selectExpression) {
         return orderByDesc(true, selectExpression);
     }
 
-    default ClientQueryable<T1> orderByDesc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
+    default ClientQueryable<T1> orderByDesc(boolean condition, SQLActionExpression1<ColumnOrderSelector<T1>> selectExpression) {
         return orderBy(condition, selectExpression, false);
     }
 
-    default ClientQueryable<T1> orderBy(SQLExpression1<ColumnOrderSelector<T1>> selectExpression, boolean asc) {
+    default ClientQueryable<T1> orderBy(SQLActionExpression1<ColumnOrderSelector<T1>> selectExpression, boolean asc) {
         return orderBy(true, selectExpression, asc);
     }
 
-    ClientQueryable<T1> orderBy(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression, boolean asc);
+    ClientQueryable<T1> orderBy(boolean condition, SQLActionExpression1<ColumnOrderSelector<T1>> selectExpression, boolean asc);
 
     /**
      * @param configuration

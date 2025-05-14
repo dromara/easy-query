@@ -4,7 +4,7 @@ import com.easy.query.core.util.EasyBitwiseUtil;
 
 /**
  * @Description: 文件说明
- * @Date: 2023/3/17 22:06
+ * create time 2023/3/17 22:06
  * @author xuejiaming
  */
 public enum SQLRangeEnum {

@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.internal;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
 
 import java.util.Collection;
@@ -41,7 +41,7 @@ public interface SQLOnDuplicateKeyUpdate<T, TChain> {
      * @return
      */
     @Deprecated
-   default TChain onConflictDoUpdate(String constraintProperty, SQLExpression1<ColumnOnlySelector<T>> setColumnSelector){
+   default TChain onConflictDoUpdate(String constraintProperty, SQLActionExpression1<ColumnOnlySelector<T>> setColumnSelector){
        return onConflictDoUpdate(Collections.singletonList(constraintProperty),setColumnSelector);
    }
     /**
@@ -49,13 +49,13 @@ public interface SQLOnDuplicateKeyUpdate<T, TChain> {
      * @return
      */
     @Deprecated
-    TChain onConflictDoUpdate(Collection<String> constraintProperties, SQLExpression1<ColumnOnlySelector<T>> setColumnSelector);
+    TChain onConflictDoUpdate(Collection<String> constraintProperties, SQLActionExpression1<ColumnOnlySelector<T>> setColumnSelector);
     /**
      * 请使用 onConflictThen
      * @return
      */
     @Deprecated
-    TChain onConflictDoUpdate(SQLExpression1<ColumnOnlySelector<T>> setColumnSelector);
+    TChain onConflictDoUpdate(SQLActionExpression1<ColumnOnlySelector<T>> setColumnSelector);
 
     /**
      * 请使用 onConflictThen
@@ -69,5 +69,5 @@ public interface SQLOnDuplicateKeyUpdate<T, TChain> {
      * @return
      */
     @Deprecated
-    TChain onDuplicateKeyUpdate(SQLExpression1<ColumnOnlySelector<T>> setColumnSelector);
+    TChain onDuplicateKeyUpdate(SQLActionExpression1<ColumnOnlySelector<T>> setColumnSelector);
 }

@@ -1,16 +1,12 @@
 package com.easy.query.core.proxy.columns.impl;
 
-import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.core.basic.api.internal.ExpressionConfigurable;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
-import com.easy.query.core.proxy.columns.SQLPredicateQueryable;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.columns.SubQueryContext;
 import com.easy.query.core.proxy.core.EntitySQLContext;
@@ -74,16 +70,16 @@ public class EmptySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> imp
     }
 
     @Override
-    public SQLQueryable<T1Proxy, T1> orderBy(boolean condition, SQLExpression1<T1Proxy> orderExpression) {
+    public SQLQueryable<T1Proxy, T1> orderBy(boolean condition, SQLActionExpression1<T1Proxy> orderExpression) {
         return null;
     }
 
     @Override
-    public SQLQueryable<T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression) {
+    public SQLQueryable<T1Proxy, T1> where(SQLActionExpression1<T1Proxy> whereExpression) {
         return this;
     }
     @Override
-    public void any(SQLExpression1<T1Proxy> whereExpression) {
+    public void any(SQLActionExpression1<T1Proxy> whereExpression) {
         throw new UnsupportedOperationException();
     }
 
@@ -93,7 +89,7 @@ public class EmptySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> imp
     }
 
     @Override
-    public void none(SQLExpression1<T1Proxy> whereExpression) {
+    public void none(SQLActionExpression1<T1Proxy> whereExpression) {
         throw new UnsupportedOperationException();
     }
 

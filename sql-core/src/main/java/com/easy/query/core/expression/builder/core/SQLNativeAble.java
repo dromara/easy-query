@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.builder.core;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
@@ -20,7 +20,7 @@ public interface SQLNativeAble extends RuntimeContextAvailable {
      * @param contextConsume
      * @return
      */
-    Object sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume);
+    Object sqlNativeSegment(String sqlSegment, SQLActionExpression1<SQLNativeExpressionContext> contextConsume);
     default Object sqlFunctionExecute(TableAvailable defaultTable, SQLFunction sqlFunction){
         return sqlNativeSegment(sqlFunction.sqlSegment(defaultTable),c->{
             sqlFunction.consume(new SQLNativeChainExpressionContextImpl(defaultTable,c));

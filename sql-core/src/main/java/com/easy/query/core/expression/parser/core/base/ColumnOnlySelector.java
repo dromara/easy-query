@@ -7,7 +7,7 @@ import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/2/6 23:20
+ * create time 2023/2/6 23:20
  */
 public interface ColumnOnlySelector<T1> extends EntitySQLTableOwner<T1> {
     OnlySelector getOnlySelector();

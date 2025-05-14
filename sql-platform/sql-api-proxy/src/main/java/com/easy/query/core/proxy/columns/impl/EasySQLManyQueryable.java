@@ -3,7 +3,7 @@ package com.easy.query.core.proxy.columns.impl;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.PropTypeColumn;
@@ -87,19 +87,19 @@ public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
     }
 
     @Override
-    public SQLQueryable<T1Proxy, T1> orderBy(boolean condition, SQLExpression1<T1Proxy> orderExpression) {
+    public SQLQueryable<T1Proxy, T1> orderBy(boolean condition, SQLActionExpression1<T1Proxy> orderExpression) {
         this.getSubQueryContext().appendOrderByExpression(orderExpression);
         return this;
     }
 
     @Override
-    public SQLQueryable<T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression) {
+    public SQLQueryable<T1Proxy, T1> where(SQLActionExpression1<T1Proxy> whereExpression) {
         this.getSubQueryContext().appendWhereExpression(whereExpression);
         return this;
     }
 
     @Override
-    public void any(SQLExpression1<T1Proxy> whereExpression) {
+    public void any(SQLActionExpression1<T1Proxy> whereExpression) {
         where(whereExpression).any();
     }
 
@@ -134,7 +134,7 @@ public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
     }
 
     @Override
-    public void none(SQLExpression1<T1Proxy> whereExpression) {
+    public void none(SQLActionExpression1<T1Proxy> whereExpression) {
         where(whereExpression).none();
     }
 

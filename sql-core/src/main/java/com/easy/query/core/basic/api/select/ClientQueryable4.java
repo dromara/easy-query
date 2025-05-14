@@ -14,7 +14,7 @@ import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
  * @author xuejiaming
  * @FileName: Queryable4.java
  * @Description: 文件说明
- * @Date: 2023/3/9 12:10
+ * create time 2023/3/9 12:10
  */
 public interface ClientQueryable4<T1, T2, T3, T4> extends ClientOverrideQueryable4<T1,T2,T3,T4>,
         Aggregatable4<T1, T2, T3, T4>,

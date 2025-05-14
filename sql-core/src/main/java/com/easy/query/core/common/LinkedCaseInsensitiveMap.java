@@ -12,7 +12,7 @@ import java.util.Set;
  *
  * @FileName: CaseInsensitiveLinkedHashMap.java
  * @Description: 文件说明
- * @Date: 2023/2/11 10:20
+ * create time 2023/2/11 10:20
  * @author xuejiaming
  */
 public class LinkedCaseInsensitiveMap<V> extends LinkedHashMap<String, V> {

@@ -6,7 +6,6 @@ import com.easy.query.core.annotation.ColumnSQLExpression;
 import com.easy.query.core.annotation.EasyAssertMessage;
 import com.easy.query.core.annotation.EasyTree;
 import com.easy.query.core.annotation.Encryption;
-import com.easy.query.core.annotation.ForeignKey;
 import com.easy.query.core.annotation.InsertIgnore;
 import com.easy.query.core.annotation.LogicDelete;
 import com.easy.query.core.annotation.Navigate;
@@ -74,7 +73,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryPropertyNotFoundException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -400,7 +399,7 @@ public class EntityMetadata {
             navigateOption.setRequired(required);
             NavigateExtraFilterStrategy navigateExtraFilterStrategy = getNavigateExtraFilterStrategy(configuration, navigate);
             if (navigateExtraFilterStrategy != null) {
-                SQLExpression1<WherePredicate<?>> predicateFilterExpression = navigateExtraFilterStrategy.getPredicateFilterExpression(new NavigateBuilder(navigateOption));
+                SQLActionExpression1<WherePredicate<?>> predicateFilterExpression = navigateExtraFilterStrategy.getPredicateFilterExpression(new NavigateBuilder(navigateOption));
                 if (predicateFilterExpression != null) {
                     navigateOption.setPredicateFilterExpression(predicateFilterExpression);
                 }
@@ -423,7 +422,7 @@ public class EntityMetadata {
                     navigateOption.setSelfMappingProperties(navigate.selfMappingProperty());
                     navigateOption.setTargetMappingProperties(navigate.targetMappingProperty());
                     if (navigateExtraFilterStrategy != null) {
-                        SQLExpression1<WherePredicate<?>> predicateFilterExpression = navigateExtraFilterStrategy.getPredicateMappingClassFilterExpression(new NavigateBuilder(navigateOption));
+                        SQLActionExpression1<WherePredicate<?>> predicateFilterExpression = navigateExtraFilterStrategy.getPredicateMappingClassFilterExpression(new NavigateBuilder(navigateOption));
                         if (predicateFilterExpression != null) {
                             navigateOption.setPredicateMappingClassFilterExpression(predicateFilterExpression);
                         }
@@ -667,32 +666,7 @@ public class EntityMetadata {
                 columnOption.setGeneratedKey(generatedKey);
 
 
-                columnOption.setLarge(column.large());
 
-
-//                    columnMetadata.setSelect(column.select());
-//                    columnMetadata.setNullable(false);//如果为主键那么之前设置的nullable将无效
-
-
-//                Class<? extends ValueUpdateAtomicTrack<?>> trackValueUpdateClass = column.valueUpdateAtomicTrack();
-//                if (!Objects.equals(DefaultValueUpdateAtomicTrack.class, trackValueUpdateClass)) {
-//                    ValueUpdateAtomicTrack<?> trackValueUpdate = configuration.getValueUpdateAtomicTrack(trackValueUpdateClass);
-//                    if (trackValueUpdate == null) {
-//                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " trackValueUpdate unknown, plz register this component");
-//                    }
-//                    if(column.concurrent()){
-//                        throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + "conflict with trackValueUpdate and concurrent");
-//                    }
-//                    columnOption.setValueUpdateAtomicTrack(EasyObjectUtil.typeCastNullable(trackValueUpdate));
-//                }else{
-//                    if(column.concurrent()){
-//                        ValueUpdateAtomicTrack<?> valueUpdateAtomicTrack = configuration.getValueUpdateAtomicTrack(ConcurrentValueUpdateAtomicTrack.class);
-//                        columnOption.setValueUpdateAtomicTrack(EasyObjectUtil.typeCastNullable(valueUpdateAtomicTrack));
-//                    }
-//                }
-//                if(column.concurrent()){
-//                    columnOption.setConcurrentUpdateInTrack(true);
-//                }
                 Class<? extends ColumnValueSQLConverter> columnValueSQLConverterClass = column.sqlConversion();
                 boolean hasSQLConversion = !Objects.equals(DefaultColumnValueSQLConverter.class, columnValueSQLConverterClass);
                 ColumnSQLExpression columnSQLExpression = column.sqlExpression();

@@ -5,7 +5,7 @@ import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.func.ColumnFunction;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.SQLFxAvailable;
 import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
@@ -14,7 +14,7 @@ import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
  * @author xuejiaming
  * @FileName: AggregatePredicate.java
  * @Description: 文件说明
- * @Date: 2023/2/18 22:17
+ * create time 2023/2/18 22:17
  */
 public interface WhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<WhereAggregatePredicate<T1>>, SQLFxAvailable {
     AggregateFilter getAggregateFilter();
@@ -97,11 +97,11 @@ public interface WhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1>, SQ
 
     WhereAggregatePredicate<T1> and(boolean condition);
 
-    default WhereAggregatePredicate<T1> and(SQLExpression1<WhereAggregatePredicate<T1>> sqlAggregatePredicateSQLExpression) {
+    default WhereAggregatePredicate<T1> and(SQLActionExpression1<WhereAggregatePredicate<T1>> sqlAggregatePredicateSQLExpression) {
         return and(true, sqlAggregatePredicateSQLExpression);
     }
 
-    WhereAggregatePredicate<T1> and(boolean condition, SQLExpression1<WhereAggregatePredicate<T1>> sqlAggregatePredicateSQLExpression);
+    WhereAggregatePredicate<T1> and(boolean condition, SQLActionExpression1<WhereAggregatePredicate<T1>> sqlAggregatePredicateSQLExpression);
 
     default WhereAggregatePredicate<T1> or() {
         return or(true);
@@ -109,10 +109,10 @@ public interface WhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1>, SQ
 
     WhereAggregatePredicate<T1> or(boolean condition);
 
-    default WhereAggregatePredicate<T1> or(SQLExpression1<WhereAggregatePredicate<T1>> sqlAggregatePredicateSQLExpression) {
+    default WhereAggregatePredicate<T1> or(SQLActionExpression1<WhereAggregatePredicate<T1>> sqlAggregatePredicateSQLExpression) {
         return or(true, sqlAggregatePredicateSQLExpression);
     }
 
-    WhereAggregatePredicate<T1> or(boolean condition, SQLExpression1<WhereAggregatePredicate<T1>> sqlAggregatePredicateSQLExpression);
+    WhereAggregatePredicate<T1> or(boolean condition, SQLActionExpression1<WhereAggregatePredicate<T1>> sqlAggregatePredicateSQLExpression);
 
 }

@@ -16,7 +16,7 @@ import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
  * @author xuejiaming
  * @FileName: Select3.java
  * @Description: 文件说明
- * @Date: 2023/2/6 22:44
+ * create time 2023/2/6 22:44
  */
 public interface ClientQueryable3<T1, T2, T3> extends ClientOverrideQueryable3<T1,T2,T3> ,
         Aggregatable3<T1, T2, T3>,

@@ -1,6 +1,6 @@
 package com.easy.query.mysql.func;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.func.SQLFuncImpl;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnFuncSelector;
@@ -13,7 +13,7 @@ import com.easy.query.core.func.column.ColumnFuncSelector;
  */
 public class MySQLFuncImpl extends SQLFuncImpl {
     @Override
-    public SQLFunction stringCompareTo(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction stringCompareTo(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new MySQLStringCompareToSQLFunction(getColumnExpressions(sqlExpression));
     }
 }

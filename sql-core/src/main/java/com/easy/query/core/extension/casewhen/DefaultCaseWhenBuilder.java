@@ -3,7 +3,7 @@ package com.easy.query.core.extension.casewhen;
 import com.easy.query.core.common.tuple.Tuple2;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Filter;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.func.SQLFunction;
@@ -21,7 +21,7 @@ import java.util.List;
 public class DefaultCaseWhenBuilder implements SQLCaseWhenBuilder {
     protected final QueryRuntimeContext runtimeContext;
     protected final ExpressionContext expressionContext;
-    protected final List<Tuple2<SQLExpression1<Filter>, ParamExpression>> whens;
+    protected final List<Tuple2<SQLActionExpression1<Filter>, ParamExpression>> whens;
 
     public DefaultCaseWhenBuilder(ExpressionContext expressionContext) {
         this.runtimeContext = expressionContext.getRuntimeContext();
@@ -34,7 +34,7 @@ public class DefaultCaseWhenBuilder implements SQLCaseWhenBuilder {
         return expressionContext;
     }
 
-    public SQLCaseWhenBuilder caseWhen(SQLExpression1<Filter> predicate, ParamExpression paramExpression) {
+    public SQLCaseWhenBuilder caseWhen(SQLActionExpression1<Filter> predicate, ParamExpression paramExpression) {
         whens.add(new Tuple2<>(predicate, paramExpression));
         return this;
     }

@@ -6,7 +6,7 @@ import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.basic.extension.navigate.NavigateBuilder;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.entity.navf.proxy.RoleJoinProxy;
@@ -42,7 +42,7 @@ public class RoleJoin implements ProxyEntityAvailable<RoleJoin , RoleJoinProxy> 
     public static class RoleJoinType implements NavigateExtraFilterStrategy {
 
         @Override
-        public SQLExpression1<WherePredicate<?>> getPredicateFilterExpression(NavigateBuilder builder) {
+        public SQLActionExpression1<WherePredicate<?>> getPredicateFilterExpression(NavigateBuilder builder) {
             // 获取使用这个注解的类
             Class<?> entityClass = builder.getNavigateOption().getEntityMetadata().getEntityClass();
             // 获取使用注解的字段属性名
@@ -78,7 +78,7 @@ public class RoleJoin implements ProxyEntityAvailable<RoleJoin , RoleJoinProxy> 
         }
 
         @Override
-        public SQLExpression1<WherePredicate<?>> getPredicateMappingClassFilterExpression(NavigateBuilder builder) {
+        public SQLActionExpression1<WherePredicate<?>> getPredicateMappingClassFilterExpression(NavigateBuilder builder) {
             return null;
         }
     }

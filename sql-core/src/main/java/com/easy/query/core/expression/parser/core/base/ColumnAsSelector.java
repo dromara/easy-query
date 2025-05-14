@@ -6,7 +6,7 @@ import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.func.DefaultColumnPropertyFunction;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.SQLFxAvailable;
@@ -18,7 +18,7 @@ import com.easy.query.core.func.ACSSelector;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/2/6 22:58
+ * create time 2023/2/6 22:58
  */
 public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAsPropertyNative<ColumnAsSelector<T1, TR>>, SQLFxAvailable {
     AsSelector getAsSelector();
@@ -49,11 +49,11 @@ public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAs
         return columnInclude(condition, property, aliasProperty, ColumnAsSelector::columnAll);
     }
 
-    default <TIncludeSource, TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty, SQLExpression1<ColumnAsSelector<TIncludeResult, TIncludeResult>> includeSelectorExpression) {
+    default <TIncludeSource, TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(String property, String aliasProperty, SQLActionExpression1<ColumnAsSelector<TIncludeResult, TIncludeResult>> includeSelectorExpression) {
         return columnInclude(true, property, aliasProperty, includeSelectorExpression);
     }
 
-    <TIncludeSource, TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(boolean condition, String property, String aliasProperty, SQLExpression1<ColumnAsSelector<TIncludeResult, TIncludeResult>> includeSelectorExpression);
+    <TIncludeSource, TIncludeResult> ColumnAsSelector<T1, TR> columnInclude(boolean condition, String property, String aliasProperty, SQLActionExpression1<ColumnAsSelector<TIncludeResult, TIncludeResult>> includeSelectorExpression);
 
     ColumnAsSelector<T1, TR> columnIgnore(String property);
 
@@ -73,7 +73,7 @@ public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAs
         return this;
     }
 
-    default ColumnAsSelector<T1, TR> columnCount(String property, SQLExpression1<ACSSelector> sqlExpression) {
+    default ColumnAsSelector<T1, TR> columnCount(String property, SQLActionExpression1<ACSSelector> sqlExpression) {
         getAsSelector().columnCount(getTable(), property, sqlExpression);
         return this;
     }
@@ -83,7 +83,7 @@ public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAs
         return this;
     }
 
-    default ColumnAsSelector<T1, TR> columnCountAs(String property, String propertyAlias, SQLExpression1<ACSSelector> sqlExpression) {
+    default ColumnAsSelector<T1, TR> columnCountAs(String property, String propertyAlias, SQLActionExpression1<ACSSelector> sqlExpression) {
         getAsSelector().columnCountAs(getTable(), property, propertyAlias, sqlExpression);
         return this;
     }
@@ -93,7 +93,7 @@ public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAs
         return this;
     }
 
-    default ColumnAsSelector<T1, TR> columnSum(String property, SQLExpression1<ACSSelector> sqlExpression) {
+    default ColumnAsSelector<T1, TR> columnSum(String property, SQLActionExpression1<ACSSelector> sqlExpression) {
         getAsSelector().columnSum(getTable(), property, sqlExpression);
         return this;
     }
@@ -103,7 +103,7 @@ public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAs
         return this;
     }
 
-    default ColumnAsSelector<T1, TR> columnSumAs(String property, String propertyAlias, SQLExpression1<ACSSelector> sqlExpression) {
+    default ColumnAsSelector<T1, TR> columnSumAs(String property, String propertyAlias, SQLActionExpression1<ACSSelector> sqlExpression) {
         getAsSelector().columnSumAs(getTable(), property, propertyAlias, sqlExpression);
         return this;
     }
@@ -133,7 +133,7 @@ public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAs
         return this;
     }
 
-    default ColumnAsSelector<T1, TR> columnAvg(String property, SQLExpression1<ACSSelector> sqlExpression) {
+    default ColumnAsSelector<T1, TR> columnAvg(String property, SQLActionExpression1<ACSSelector> sqlExpression) {
         getAsSelector().columnAvg(getTable(), property, sqlExpression);
         return this;
     }
@@ -143,7 +143,7 @@ public interface ColumnAsSelector<T1, TR> extends EntitySQLTableOwner<T1>, SQLAs
         return this;
     }
 
-    default ColumnAsSelector<T1, TR> columnAvgAs(String property, String propertyAlias, SQLExpression1<ACSSelector> sqlExpression) {
+    default ColumnAsSelector<T1, TR> columnAvgAs(String property, String propertyAlias, SQLActionExpression1<ACSSelector> sqlExpression) {
         getAsSelector().columnAvgAs(getTable(), property, propertyAlias, sqlExpression);
         return this;
     }

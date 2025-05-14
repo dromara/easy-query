@@ -23,7 +23,7 @@ import java.util.function.Supplier;
  * @author xuejiaming
  * @FileName: DeleteTest.java
  * @Description: 文件说明
- * @Date: 2023/3/21 12:54
+ * create time 2023/3/21 12:54
  */
 public class DeleteTest extends BaseTest {
     @Test

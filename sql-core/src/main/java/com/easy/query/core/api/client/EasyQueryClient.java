@@ -16,8 +16,7 @@ import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.configuration.LoadIncludeConfiguration;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.migration.DatabaseMigrationProvider;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -26,13 +25,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author xuejiaming
  * @FileName: JQDCClient.java
  * @Description: 文件说明
- * @Date: 2023/2/5 21:27
+ * create time 2023/2/5 21:27
  */
 public interface EasyQueryClient extends RuntimeContextAvailable {
 
@@ -136,7 +134,7 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
         loadInclude(Collections.singletonList(entity), navigateProperty);
     }
 
-    default <T> void loadInclude(T entity, String navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure) {
+    default <T> void loadInclude(T entity, String navigateProperty, SQLActionExpression1<LoadIncludeConfiguration> configure) {
         loadInclude(Collections.singletonList(entity), navigateProperty, configure);
     }
 
@@ -144,7 +142,7 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
         loadInclude(entities, navigateProperty, null);
     }
 
-    <T> void loadInclude(List<T> entities, String navigateProperty, SQLExpression1<LoadIncludeConfiguration> configure);
+    <T> void loadInclude(List<T> entities, String navigateProperty, SQLActionExpression1<LoadIncludeConfiguration> configure);
 
     DatabaseCodeFirst getDatabaseCodeFirst();
 

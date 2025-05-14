@@ -63,12 +63,6 @@ public @interface Column {
 //     */
 //    int scale() default 0;
 
-    /**
-     * 是否是大字段 true:是 false:否
-     * 如果需要默认不查询请使用{@link #autoSelect()}
-     */
-    @Deprecated
-    boolean large() default false;
 
     /**
      * 值转换器 在内存中通过java代码进行转换

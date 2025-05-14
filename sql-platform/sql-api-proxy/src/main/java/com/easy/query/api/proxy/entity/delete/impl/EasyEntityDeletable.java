@@ -8,7 +8,7 @@ import com.easy.query.core.proxy.ProxyEntity;
  * @author xuejiaming
  * @FileName: EasyEntityDeletable.java
  * @Description: 文件说明
- * @Date: 2023/3/6 13:20
+ * create time 2023/3/6 13:20
  */
 public class EasyEntityDeletable<TProxy extends ProxyEntity<TProxy, T>, T> extends AbstractEntityDeletable<TProxy, T> {
     public EasyEntityDeletable(ClientEntityDeletable<T> entityObjectDeletable) {

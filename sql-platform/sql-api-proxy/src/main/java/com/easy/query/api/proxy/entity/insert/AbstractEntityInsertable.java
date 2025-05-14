@@ -6,18 +6,16 @@ import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.builder.impl.FetchSelector;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
-import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectExpression;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -131,7 +129,7 @@ public class AbstractEntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T> 
     }
 
     @Override
-    public EntityInsertable<TProxy, T> configure(SQLExpression1<ContextConfigurer> configurer) {
+    public EntityInsertable<TProxy, T> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         clientInsertable.configure(configurer);
         return this;
     }
@@ -154,7 +152,7 @@ public class AbstractEntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T> 
     }
 
     @Override
-    public EntityInsertable<TProxy, T> columnConfigure(SQLExpression2<TProxy, ProxyColumnConfigurer<TProxy, T>> columnConfigureExpression) {
+    public EntityInsertable<TProxy, T> columnConfigure(SQLActionExpression2<TProxy, ProxyColumnConfigurer<TProxy, T>> columnConfigureExpression) {
         clientInsertable.columnConfigure(c->{
             columnConfigureExpression.apply(tProxy,new ProxyColumnConfigurerImpl<>(c.getConfigurer()));
         });

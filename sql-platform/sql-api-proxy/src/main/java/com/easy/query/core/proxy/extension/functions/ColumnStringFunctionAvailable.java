@@ -1,6 +1,6 @@
 package com.easy.query.core.proxy.extension.functions;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
@@ -85,8 +85,8 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @param stringExpressions
      * @return
      */
-    default ColumnFunctionCompareComparableStringChainExpression<TProperty> concat(SQLExpression1<ConcatExpressionSelector> stringExpressions) {
-        SQLExpression1<ColumnFuncSelector> selector = o -> {
+    default ColumnFunctionCompareComparableStringChainExpression<TProperty> concat(SQLActionExpression1<ConcatExpressionSelector> stringExpressions) {
+        SQLActionExpression1<ColumnFuncSelector> selector = o -> {
             stringExpressions.apply(new ConcatExpressionSelectorImpl(getEntitySQLContext().getRuntimeContext().fx(), o));
         };
         return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {

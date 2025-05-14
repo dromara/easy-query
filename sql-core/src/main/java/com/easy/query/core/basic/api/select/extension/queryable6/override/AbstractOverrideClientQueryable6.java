@@ -5,7 +5,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable6;
 import com.easy.query.core.basic.api.select.abstraction.AbstractClientQueryable;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
@@ -14,7 +14,6 @@ import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
-import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
 import java.util.function.BiFunction;
@@ -90,31 +89,31 @@ public abstract class AbstractOverrideClientQueryable6<T1, T2, T3, T4, T5, T6> e
     }
 
     @Override
-    public ClientQueryable6<T1, T2, T3, T4, T5,T6> where(boolean condition, SQLExpression1<WherePredicate<T1>> whereExpression) {
+    public ClientQueryable6<T1, T2, T3, T4, T5,T6> where(boolean condition, SQLActionExpression1<WherePredicate<T1>> whereExpression) {
         super.where(condition, whereExpression);
         return getClientQueryable6();
     }
 
     @Override
-    public ClientQueryable6<T1, T2, T3, T4, T5,T6> orderByAsc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
+    public ClientQueryable6<T1, T2, T3, T4, T5,T6> orderByAsc(boolean condition, SQLActionExpression1<ColumnOrderSelector<T1>> selectExpression) {
         super.orderByAsc(condition, selectExpression);
         return getClientQueryable6();
     }
 
     @Override
-    public ClientQueryable6<T1, T2, T3, T4, T5,T6> orderByDesc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
+    public ClientQueryable6<T1, T2, T3, T4, T5,T6> orderByDesc(boolean condition, SQLActionExpression1<ColumnOrderSelector<T1>> selectExpression) {
         super.orderByAsc(condition, selectExpression);
         return getClientQueryable6();
     }
 
     @Override
-    public ClientQueryable6<T1, T2, T3, T4, T5,T6> groupBy(boolean condition, SQLExpression1<ColumnGroupSelector<T1>> selectExpression) {
+    public ClientQueryable6<T1, T2, T3, T4, T5,T6> groupBy(boolean condition, SQLActionExpression1<ColumnGroupSelector<T1>> selectExpression) {
         super.groupBy(condition, selectExpression);
         return getClientQueryable6();
     }
 
     @Override
-    public ClientQueryable6<T1, T2, T3, T4, T5,T6> having(boolean condition, SQLExpression1<WhereAggregatePredicate<T1>> predicateExpression) {
+    public ClientQueryable6<T1, T2, T3, T4, T5,T6> having(boolean condition, SQLActionExpression1<WhereAggregatePredicate<T1>> predicateExpression) {
         super.having(condition, predicateExpression);
         return getClientQueryable6();
     }
@@ -193,12 +192,6 @@ public abstract class AbstractOverrideClientQueryable6<T1, T2, T3, T4, T5, T6> e
     }
 
     @Override
-    public ClientQueryable6<T1, T2, T3, T4, T5,T6> queryLargeColumn(boolean queryLarge) {
-        super.queryLargeColumn(queryLarge);
-        return getClientQueryable6();
-    }
-
-    @Override
     public ClientQueryable6<T1, T2, T3, T4, T5,T6> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
         super.useShardingConfigure(maxShardingQueryLimit, connectionMode);
         return getClientQueryable6();
@@ -256,7 +249,7 @@ public abstract class AbstractOverrideClientQueryable6<T1, T2, T3, T4, T5, T6> e
         return getClientQueryable6();
     }
     @Override
-    public ClientQueryable6<T1, T2, T3, T4, T5,T6> configure(SQLExpression1<ContextConfigurer> configurer) {
+    public ClientQueryable6<T1, T2, T3, T4, T5,T6> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         super.configure(configurer);
         return getClientQueryable6();
     }

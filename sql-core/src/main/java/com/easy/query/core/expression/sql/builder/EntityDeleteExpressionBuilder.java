@@ -5,7 +5,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
 
 /**
  * @Description: 文件说明
- * @Date: 2023/3/4 16:30
+ * create time 2023/3/4 16:30
  * @author xuejiaming
  */
 public interface EntityDeleteExpressionBuilder extends EntityPredicateExpressionBuilder, LambdaEntityExpressionBuilder {

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @FileName: EasyParameter.java
  * @Description: 文件说明
- * @Date: 2023/2/17 21:09
+ * create time 2023/2/17 21:09
  * @author xuejiaming
  */
 public class EasyParameter {

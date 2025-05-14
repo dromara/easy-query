@@ -13,7 +13,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/2/6 23:20
+ * create time 2023/2/6 23:20
  */
 public interface ColumnSelector<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<ColumnSelector<T1>>, SQLFxAvailable {
     default EntityQueryExpressionBuilder getEntityQueryExpressionBuilder(){

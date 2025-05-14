@@ -3,7 +3,7 @@ package com.easy.query.core.exception;
 /**
  * @FileName: EasyQueryNotFoundException.java
  * @Description: 文件说明
- * @Date: 2023/3/7 12:38
+ * create time 2023/3/7 12:38
  * @author xuejiaming
  */
 public class EasyQuerySingleMoreElementException extends EasyQueryException {

@@ -6,7 +6,7 @@ import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 /**
  * @FileName: GlobalEntityInterceptor.java
  * @Description: 文件说明
- * @Date: 2023/3/15 13:01
+ * create time 2023/3/15 13:01
  * @author xuejiaming
  */
 public interface EntityInterceptor extends Interceptor {

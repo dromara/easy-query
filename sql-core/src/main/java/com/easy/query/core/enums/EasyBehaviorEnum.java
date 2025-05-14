@@ -22,7 +22,7 @@ public enum EasyBehaviorEnum {
     /**
      * 查询大列
      */
-    QUERY_LARGE_COLUMN(1<<3),
+//    QUERY_LARGE_COLUMN(1<<3),
     ON_DUPLICATE_KEY_IGNORE(1<<4),
     ON_DUPLICATE_KEY_UPDATE(1<<5),
     EXECUTE_BATCH(1<<6),

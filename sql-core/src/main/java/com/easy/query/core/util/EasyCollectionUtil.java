@@ -26,7 +26,7 @@ import java.util.function.Supplier;
  * @author xuejiaming
  * @FileName: ArrayUtil.java
  * @Description: 文件说明
- * @Date: 2023/2/26 14:07
+ * create time 2023/2/26 14:07
  */
 public class EasyCollectionUtil {
     public static <TNavigateEntity> Collection<TNavigateEntity> createManyCollection(NavigateMetadata navigateMetadata) {

@@ -36,7 +36,7 @@ import java.util.stream.Stream;
  * @author xuejiaming
  * @FileName: EasyUtil.java
  * @Description: 文件说明
- * @Date: 2023/3/4 13:12
+ * create time 2023/3/4 13:12
  */
 public class EasyUtil {
 

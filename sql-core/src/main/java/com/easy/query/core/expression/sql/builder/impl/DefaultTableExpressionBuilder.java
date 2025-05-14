@@ -2,8 +2,7 @@ package com.easy.query.core.expression.sql.builder.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLFuncExpression2;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -21,7 +20,7 @@ import java.util.function.Supplier;
  * @author xuejiaming
  * @FileName: EasyEntityTableExpressionSegment.java
  * @Description: 文件说明
- * @Date: 2023/3/3 23:31
+ * create time 2023/3/3 23:31
  */
 public class DefaultTableExpressionBuilder implements EntityTableExpressionBuilder {
 
@@ -82,7 +81,7 @@ public class DefaultTableExpressionBuilder implements EntityTableExpressionBuild
     }
 
     @Override
-    public SQLExpression1<WherePredicate<Object>> getLogicDeleteQueryFilterExpression() {
+    public SQLActionExpression1<WherePredicate<Object>> getLogicDeleteQueryFilterExpression() {
         if (getEntityMetadata().enableLogicDelete()) {
             Boolean logicDel = tableLogicDelValue();
             if (logicDel == null || logicDel) {
@@ -100,7 +99,7 @@ public class DefaultTableExpressionBuilder implements EntityTableExpressionBuild
     }
 
     @Override
-    public SQLExpression1<ColumnSetter<Object>> getLogicDeletedSQLExpression() {
+    public SQLActionExpression1<ColumnSetter<Object>> getLogicDeletedSQLExpression() {
         if (getEntityMetadata().enableLogicDelete()) {
             return getEntityMetadata().getLogicDeleteMetadata().getLogicDeletedSQLExpression();
         }

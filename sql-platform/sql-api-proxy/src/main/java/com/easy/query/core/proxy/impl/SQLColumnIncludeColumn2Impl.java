@@ -3,9 +3,7 @@ package com.easy.query.core.proxy.impl;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.builder.Setter;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLExpression2;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumnSetExpression;
@@ -26,9 +24,9 @@ public class SQLColumnIncludeColumn2Impl<TPropertyProxy extends ProxyEntity<TPro
     private final String aliasProperty;
     private final ProxyEntity<TPropertyProxy, TProperty> columnProxy;
     private final TProxy tProxy;
-    private final SQLExpression2<TProxy,TPropertyProxy> navigateSelectExpression;
+    private final SQLActionExpression2<TProxy,TPropertyProxy> navigateSelectExpression;
 
-    public  SQLColumnIncludeColumn2Impl(TableAvailable table, String selfProperty, String aliasProperty,ProxyEntity<TPropertyProxy, TProperty> columnProxy,TProxy tProxy, SQLExpression2<TProxy,TPropertyProxy> navigateSelectExpression) {
+    public  SQLColumnIncludeColumn2Impl(TableAvailable table, String selfProperty, String aliasProperty,ProxyEntity<TPropertyProxy, TProperty> columnProxy,TProxy tProxy, SQLActionExpression2<TProxy,TPropertyProxy> navigateSelectExpression) {
         this.table = table;
         this.selfProperty = selfProperty;
         this.aliasProperty = aliasProperty;

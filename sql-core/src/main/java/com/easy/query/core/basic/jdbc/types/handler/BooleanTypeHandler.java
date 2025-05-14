@@ -9,7 +9,7 @@ import java.sql.SQLException;
 /**
  * @FileName: BooleanTypeHandler.java
  * @Description: 文件说明
- * @Date: 2023/2/17 21:39
+ * create time 2023/2/17 21:39
  * @author xuejiaming
  */
 public class BooleanTypeHandler implements JdbcTypeHandler {

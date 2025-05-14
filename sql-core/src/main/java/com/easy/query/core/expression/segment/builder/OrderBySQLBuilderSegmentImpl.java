@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * @Description: 文件说明
- * @Date: 2023/2/13 22:39
+ * create time 2023/2/13 22:39
  * @author xuejiaming
  */
 public class OrderBySQLBuilderSegmentImpl extends AbstractSQLBuilderSegment implements OrderBySQLBuilderSegment {

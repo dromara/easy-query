@@ -7,7 +7,7 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.RelationTableKey;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.segment.Column2Segment;
@@ -43,7 +43,7 @@ import java.util.Objects;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/3/4 16:32
+ * create time 2023/3/4 16:32
  */
 public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBuilder implements EntityDeleteExpressionBuilder {
     protected final PredicateSegment where;
@@ -84,7 +84,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
         EntityMetadata entityMetadata = table.getEntityMetadata();
         boolean useLogicDelete = entityMetadata.enableLogicDelete() && expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.LOGIC_DELETE);
         if (useLogicDelete) {
-            SQLExpression1<ColumnSetter<Object>> logicDeletedSQLExpression = table.getLogicDeletedSQLExpression();
+            SQLActionExpression1<ColumnSetter<Object>> logicDeletedSQLExpression = table.getLogicDeletedSQLExpression();
             if (logicDeletedSQLExpression != null) {
                 UpdateSetSQLBuilderSegment setSQLSegmentBuilder = new UpdateSetSQLBuilderSegment();
                 SQLExpressionInvokeFactory easyQueryLambdaFactory = getRuntimeContext().getSQLExpressionInvokeFactory();

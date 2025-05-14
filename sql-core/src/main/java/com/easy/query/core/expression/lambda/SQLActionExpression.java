@@ -2,7 +2,7 @@ package com.easy.query.core.expression.lambda;
 
 /**
  * create time 2023/10/11 22:37
- * 文件说明
+ * 无参数入参的代码块
  *
  * @author xuejiaming
  */

@@ -3,7 +3,7 @@ package com.easy.query.core.basic.extension.interceptor;
 /**
  * @FileName: GlobalInterceptor.java
  * @Description: 文件说明
- * @Date: 2023/3/9 21:35
+ * create time 2023/3/9 21:35
  * @author xuejiaming
  */
 public interface Interceptor {

@@ -6,10 +6,9 @@ import com.easy.query.core.basic.api.internal.ConfigureVersionable;
 import com.easy.query.core.basic.api.internal.SQLExecuteStrategy;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.Updatable;
-import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.ToSQLResult;
-import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectExpression;
@@ -30,7 +29,7 @@ public interface EntityUpdatable<TProxy extends ProxyEntity<TProxy, T>, T> exten
 
     ClientEntityUpdatable<T> getClientUpdate();
 
-    default EntityUpdatable<TProxy, T> columnConfigure(SQLExpression2<TProxy, ProxyColumnConfigurer<TProxy, T>> columnConfigureExpression) {
+    default EntityUpdatable<TProxy, T> columnConfigure(SQLActionExpression2<TProxy, ProxyColumnConfigurer<TProxy, T>> columnConfigureExpression) {
         getClientUpdate().columnConfigure(configurer -> {
             columnConfigureExpression.apply(getTProxy(), new ProxyColumnConfigurerImpl<>(configurer.getConfigurer()));
         });

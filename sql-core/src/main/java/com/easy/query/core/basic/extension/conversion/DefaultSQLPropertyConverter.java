@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.extension.conversion;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
 import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContextImpl;
@@ -41,7 +41,7 @@ public class DefaultSQLPropertyConverter implements SQLPropertyConverter {
 
 
     @Override
-    public void sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume) {
+    public void sqlNativeSegment(String sqlSegment, SQLActionExpression1<SQLNativePropertyExpressionContext> contextConsume) {
         Objects.requireNonNull(sqlSegment, "sqlSegment can not be null");
         Objects.requireNonNull(contextConsume, "sqlExpression can not be null");
 //        this.sqlFunction = expressionContext.getRuntimeContext().fx().anySQLFunction(sqlSegment, sqlExpression);

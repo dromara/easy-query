@@ -1,16 +1,11 @@
 package com.easy.query.core.basic.api.update.map;
 
-import com.easy.query.core.basic.api.insert.map.MapClientInsertable;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.lambda.SQLFuncExpression2;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
-import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -91,7 +86,7 @@ public class EasyEmptyMapClientUpdatable implements MapClientUpdatable<Map<Strin
         return this;
     }
     @Override
-    public MapClientUpdatable<Map<String, Object>> configure(SQLExpression1<ContextConfigurer> configurer) {
+    public MapClientUpdatable<Map<String, Object>> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         return this;
     }
 
@@ -106,7 +101,7 @@ public class EasyEmptyMapClientUpdatable implements MapClientUpdatable<Map<Strin
     }
 
     @Override
-    public MapClientUpdatable<Map<String, Object>> columnConfigure(SQLExpression1<ColumnConfigurer<Map<String, Object>>> columnConfigureExpression) {
+    public MapClientUpdatable<Map<String, Object>> columnConfigure(SQLActionExpression1<ColumnConfigurer<Map<String, Object>>> columnConfigureExpression) {
         return this;
     }
 }

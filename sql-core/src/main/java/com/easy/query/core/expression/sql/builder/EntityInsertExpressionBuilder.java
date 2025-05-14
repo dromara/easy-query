@@ -8,7 +8,7 @@ import java.util.Collection;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/3/4 16:30
+ * create time 2023/3/4 16:30
  */
 public interface EntityInsertExpressionBuilder extends EntityExpressionBuilder, EntityToExpressionBuilder,EntityColumnConfigurerExpressionBuilder {
     SQLBuilderSegment getColumns();

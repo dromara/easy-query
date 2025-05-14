@@ -7,7 +7,7 @@ import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 /**
  * @FileName: AndPredicateSegment.java
  * @Description: 文件说明
- * @Date: 2023/2/14 23:11
+ * create time 2023/2/14 23:11
  * @author xuejiaming
  */
 public class AndPredicateSegment extends AbstractPredicateSegment {

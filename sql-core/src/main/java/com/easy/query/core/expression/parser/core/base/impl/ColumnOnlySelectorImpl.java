@@ -7,7 +7,7 @@ import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/2/25 21:31
+ * create time 2023/2/25 21:31
  */
 public class ColumnOnlySelectorImpl<T> implements ColumnOnlySelector<T> {
     private final OnlySelector onlySelector;

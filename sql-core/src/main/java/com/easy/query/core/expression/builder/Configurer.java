@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.builder;
 
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 
@@ -12,6 +12,6 @@ import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionCo
  * @author xuejiaming
  */
 public interface Configurer {
-    Configurer column(TableAvailable table, String property, String sqlSegment, SQLExpression2<SQLNativeExpressionContext, SQLParameter> contextConsume);
+    Configurer column(TableAvailable table, String property, String sqlSegment, SQLActionExpression2<SQLNativeExpressionContext, SQLParameter> contextConsume);
 
 }

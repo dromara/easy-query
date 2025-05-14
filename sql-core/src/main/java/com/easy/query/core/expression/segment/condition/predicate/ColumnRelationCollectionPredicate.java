@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @author xuejiaming
  * @FileName: ColumnCollectionPredicate.java
  * @Description: 表达式集合判断
- * @Date: 2023/2/14 23:34
+ * create time 2023/2/14 23:34
  */
 public class ColumnRelationCollectionPredicate implements ValuesPredicate, ShardingPredicate {
     private final List<List<Object>> relationIds;

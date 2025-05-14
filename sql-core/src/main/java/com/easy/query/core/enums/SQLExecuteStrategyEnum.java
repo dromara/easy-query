@@ -2,7 +2,7 @@ package com.easy.query.core.enums;
 
 /**
  * @Description: 文件说明
- * @Date: 2023/3/20 10:33
+ * create time 2023/3/20 10:33
  * @author xuejiaming
  */
 public enum SQLExecuteStrategyEnum {

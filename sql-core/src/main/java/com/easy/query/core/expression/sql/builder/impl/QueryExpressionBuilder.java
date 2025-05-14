@@ -45,7 +45,7 @@ import java.util.Map;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/3/3 22:10
+ * create time 2023/3/3 22:10
  */
 public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBuilder implements EntityQueryExpressionBuilder {
 

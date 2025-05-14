@@ -3,7 +3,7 @@ package com.easy.query.core.metadata;
 import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.common.IncludeRelationIdAvailable;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
@@ -21,7 +21,7 @@ public class IncludeNavigateParams implements IncludeRelationIdAvailable {
     private final List<List<Object>> relationIds;
     private NavigateMetadata navigateMetadata;
     private SQLFuncExpression<ClientQueryable<?>> mappingQueryableFunction;
-    private SQLExpression1<ClientQueryable<?>> adapterExpression;
+    private SQLActionExpression1<ClientQueryable<?>> adapterExpression;
     private TableAvailable table;
     private Integer relationGroupSize;
     private boolean replace=true;
@@ -118,11 +118,11 @@ public class IncludeNavigateParams implements IncludeRelationIdAvailable {
         this.flatClassType = flatClassType;
     }
 
-    public SQLExpression1<ClientQueryable<?>> getAdapterExpression() {
+    public SQLActionExpression1<ClientQueryable<?>> getAdapterExpression() {
         return adapterExpression;
     }
 
-    public void setAdapterExpression(SQLExpression1<ClientQueryable<?>> adapterExpression) {
+    public void setAdapterExpression(SQLActionExpression1<ClientQueryable<?>> adapterExpression) {
         this.adapterExpression = adapterExpression;
     }
 

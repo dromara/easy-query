@@ -15,7 +15,7 @@ import com.easy.query.core.expression.include.getter.EqualsManyToOneGetter;
 import com.easy.query.core.expression.include.getter.EqualsOneToManyGetter;
 import com.easy.query.core.expression.include.getter.EqualsOneToOneGetter;
 import com.easy.query.core.expression.include.getter.RelationIncludeGetter;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner;
@@ -96,7 +96,7 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
     }
 
     @Override
-    public <T1> AnonymousManyJoinEntityTableExpressionBuilder toImplicitPartitionBy(Class<T1> entityClass, EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, int index, QueryRuntimeContext runtimeContext, SQLExpression1<ClientQueryable<T1>> clientQueryableSQLExpression) {
+    public <T1> AnonymousManyJoinEntityTableExpressionBuilder toImplicitPartitionBy(Class<T1> entityClass, EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, int index, QueryRuntimeContext runtimeContext, SQLActionExpression1<ClientQueryable<T1>> clientQueryableSQLExpression) {
         //获取表达式配置信息
         ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(new DefaultRelationTableKey(leftTable, navigateMetadata.getPropertyName()));
         //创建分区分组查询表达式
@@ -110,7 +110,7 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
     }
 
 
-    private <T1> ClientQueryable<?> createPartitionQueryable(Class<T1> entityClass, QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, ManyConfiguration manyConfiguration, SQLExpression1<ClientQueryable<T1>> clientQueryableSQLExpression) {
+    private <T1> ClientQueryable<?> createPartitionQueryable(Class<T1> entityClass, QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, ManyConfiguration manyConfiguration, SQLActionExpression1<ClientQueryable<T1>> clientQueryableSQLExpression) {
 
         String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
 

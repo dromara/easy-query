@@ -3,13 +3,11 @@ package com.easy.query.api.proxy.entity.update.abstraction;
 import com.easy.query.api.proxy.entity.update.EntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
-import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -72,7 +70,7 @@ public class AbstractEntityUpdatable<TProxy extends ProxyEntity<TProxy, T>, T> i
         return this;
     }
     @Override
-    public EntityUpdatable<TProxy, T> configure(SQLExpression1<ContextConfigurer> configurer) {
+    public EntityUpdatable<TProxy, T> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         clientEntityUpdatable.configure(configurer);
         return this;
     }

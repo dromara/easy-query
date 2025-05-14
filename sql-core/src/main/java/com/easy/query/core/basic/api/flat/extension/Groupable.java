@@ -2,7 +2,7 @@ package com.easy.query.core.basic.api.flat.extension;
 
 import com.easy.query.core.basic.api.flat.MapQueryable;
 import com.easy.query.core.basic.api.flat.provider.MapGroupSelector;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 
 /**
  * create time 2024/3/26 16:57
@@ -12,5 +12,5 @@ import com.easy.query.core.expression.lambda.SQLExpression1;
  */
 public interface Groupable {
 
-    MapQueryable groupBy(SQLExpression1<MapGroupSelector> selectExpression);
+    MapQueryable groupBy(SQLActionExpression1<MapGroupSelector> selectExpression);
 }

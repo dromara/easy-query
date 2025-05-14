@@ -19,13 +19,11 @@ import com.easy.query.api.proxy.entity.select.extension.queryable.EntitySelectab
 import com.easy.query.api.proxy.entity.select.extension.queryable.IEntityTree1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.IEntityUnion1;
 import com.easy.query.core.basic.api.internal.ExpressionConfigurable;
-import com.easy.query.core.basic.api.internal.QueryStrategy;
 import com.easy.query.core.basic.api.select.ClientQueryableAvailable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 
 /**
@@ -37,7 +35,6 @@ import com.easy.query.core.proxy.SQLSelectAsExpression;
 public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends ClientQueryableAvailable<T1>,
         FlatListResultAble<T1Proxy, T1>,
         ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>,
-        QueryStrategy<EntityQueryable<T1Proxy, T1>>,
         ClientEntityQueryableAvailable<T1>,
         EntityFilterable1<T1Proxy, T1>,
         EntityCountable1<T1Proxy, T1>,

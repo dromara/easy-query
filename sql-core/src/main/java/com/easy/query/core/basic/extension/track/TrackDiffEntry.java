@@ -3,7 +3,7 @@ package com.easy.query.core.basic.extension.track;
 /**
  * @FileName: TrackDiffEntry.java
  * @Description: 文件说明
- * @Date: 2023/3/20 10:06
+ * create time 2023/3/20 10:06
  * @author xuejiaming
  */
 public class TrackDiffEntry {

@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.internal;
 
 import com.easy.query.core.annotation.Nullable;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
 
 import java.util.Collection;
@@ -21,7 +21,7 @@ public interface SQLConflictThenable<T, TChain> {
      * @return
      * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 不指定唯一约束时如果当前表没有主键报错
      */
-   default TChain onConflictThen(@Nullable SQLExpression1<ColumnOnlySelector<T>> updateSetSelector){
+   default TChain onConflictThen(@Nullable SQLActionExpression1<ColumnOnlySelector<T>> updateSetSelector){
        return onConflictThen(updateSetSelector,(String) null);
    }
     /**
@@ -31,7 +31,7 @@ public interface SQLConflictThenable<T, TChain> {
      * @return
      * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 不指定唯一约束时如果当前表没有主键报错
      */
-    default TChain onConflictThen(@Nullable SQLExpression1<ColumnOnlySelector<T>> updateSetSelector,@Nullable String constraintProperty){
+    default TChain onConflictThen(@Nullable SQLActionExpression1<ColumnOnlySelector<T>> updateSetSelector, @Nullable String constraintProperty){
        Collection<String> constraintProperties = constraintProperty==null?null: Collections.singletonList(constraintProperty);
         return onConflictThen(updateSetSelector,constraintProperties);
     }
@@ -42,6 +42,6 @@ public interface SQLConflictThenable<T, TChain> {
      * @return
      * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 不指定唯一约束时如果当前表没有主键报错
      */
-    TChain onConflictThen(@Nullable SQLExpression1<ColumnOnlySelector<T>> updateSetSelector,@Nullable Collection<String> constraintProperties);
+    TChain onConflictThen(@Nullable SQLActionExpression1<ColumnOnlySelector<T>> updateSetSelector, @Nullable Collection<String> constraintProperties);
 
 }

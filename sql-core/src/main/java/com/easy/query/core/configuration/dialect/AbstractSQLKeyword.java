@@ -5,7 +5,7 @@ import com.easy.query.core.util.EasyStringUtil;
 /**
  * @FileName: DefaultEasyQueryDialect.java
  * @Description: 文件说明
- * @Date: 2023/2/12 09:22
+ * create time 2023/2/12 09:22
  * @author xuejiaming
  */
 public abstract class AbstractSQLKeyword implements SQLKeyword {

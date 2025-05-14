@@ -4,7 +4,7 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnFunction;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -12,7 +12,7 @@ import com.easy.query.core.util.EasyObjectUtil;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/2/18 22:41
+ * create time 2023/2/18 22:41
  */
 public class WhereAggregatePredicateImpl<T1> implements WhereAggregatePredicate<T1> {
     protected final TableAvailable table;
@@ -55,7 +55,7 @@ public class WhereAggregatePredicateImpl<T1> implements WhereAggregatePredicate<
     }
 
     @Override
-    public WhereAggregatePredicate<T1> and(boolean condition, SQLExpression1<WhereAggregatePredicate<T1>> sqlAggregatePredicateSQLExpression) {
+    public WhereAggregatePredicate<T1> and(boolean condition, SQLActionExpression1<WhereAggregatePredicate<T1>> sqlAggregatePredicateSQLExpression) {
         if (condition) {
             aggregateFilter.and(f->{
                 sqlAggregatePredicateSQLExpression.apply(new WhereAggregatePredicateImpl<>(table,aggregateFilter));
@@ -73,7 +73,7 @@ public class WhereAggregatePredicateImpl<T1> implements WhereAggregatePredicate<
     }
 
     @Override
-    public WhereAggregatePredicate<T1> or(boolean condition, SQLExpression1<WhereAggregatePredicate<T1>> sqlAggregatePredicateSQLExpression) {
+    public WhereAggregatePredicate<T1> or(boolean condition, SQLActionExpression1<WhereAggregatePredicate<T1>> sqlAggregatePredicateSQLExpression) {
         if (condition) {
             aggregateFilter.or(f->{
                 sqlAggregatePredicateSQLExpression.apply(new WhereAggregatePredicateImpl<>(table,aggregateFilter));

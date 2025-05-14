@@ -1,7 +1,7 @@
 package com.easy.query.core.proxy.grouping.proxy;
 
 import com.easy.query.core.expression.builder.GroupSelector;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
@@ -128,7 +128,7 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
     }
 
 
-    public SQLGroupQueryable<TSourceProxy> where(SQLExpression1<TSourceProxy> where) {
+    public SQLGroupQueryable<TSourceProxy> where(SQLActionExpression1<TSourceProxy> where) {
         return new DefaultSQLGroupQueryable<>(tSourceProxy, this.entitySQLContext, where);
     }
 //

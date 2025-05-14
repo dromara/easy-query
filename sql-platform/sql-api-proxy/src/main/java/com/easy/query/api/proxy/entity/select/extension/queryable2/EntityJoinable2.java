@@ -6,8 +6,8 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable3;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable3;
 import com.easy.query.core.basic.api.select.ClientQueryable3;
 import com.easy.query.core.common.tuple.MergeTuple3;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLExpression3;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression3;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 
@@ -59,11 +59,11 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy> join对象的代理
      * @param <T3> join对象
      */
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoin(Class<T3> joinClass, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoin(Class<T3> joinClass, SQLActionExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
         T3Proxy t3Proxy = EntityQueryProxyManager.create(joinClass);
         return leftJoin(t3Proxy,onExpression);
     }
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoin(T3Proxy t3Proxy, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoin(T3Proxy t3Proxy, SQLActionExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
         ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().leftJoin(t3Proxy.getEntityClass(), (t, t1, t2) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
                 onExpression.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable(),get1Proxy().getEntitySQLContext()));
@@ -89,7 +89,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy> join对象的代理
      * @param <T3> join对象
      */
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLActionExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
         ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().leftJoin(joinQueryable.getClientQueryable(), (t, t1, t2) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
                 onExpression.apply(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy().create(t2.getTable(), get1Proxy().getEntitySQLContext()));
@@ -139,12 +139,12 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy> join对象的代理
      * @param <T3> join对象
      */
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoin(Class<T3> joinClass, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoin(Class<T3> joinClass, SQLActionExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
         T3Proxy t3Proxy = EntityQueryProxyManager.create(joinClass);
         return rightJoin(t3Proxy,onExpression);
 
     }
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoin(T3Proxy t3Proxy, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoin(T3Proxy t3Proxy, SQLActionExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
         ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().rightJoin(t3Proxy.getEntityClass(), (t, t1, t2) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
                 onExpression.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable(),get1Proxy().getEntitySQLContext()));
@@ -172,7 +172,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy> join对象的代理
      * @param <T3> join对象
      */
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLActionExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
         ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().rightJoin(joinQueryable.getClientQueryable(), (t, t1, t2) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
                 onExpression.apply(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy().create(t2.getTable(), get1Proxy().getEntitySQLContext()));
@@ -222,12 +222,12 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy> join对象的代理
      * @param <T3> join对象
      */
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoin(Class<T3> joinClass, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoin(Class<T3> joinClass, SQLActionExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
         T3Proxy t3Proxy = EntityQueryProxyManager.create(joinClass);
         return innerJoin(t3Proxy,onExpression);
 
     }
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoin(T3Proxy t3Proxy, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoin(T3Proxy t3Proxy, SQLActionExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
         ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().innerJoin(t3Proxy.getEntityClass(), (t, t1, t2) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
                 onExpression.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable(),get1Proxy().getEntitySQLContext()));
@@ -255,7 +255,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy> join对象的代理
      * @param <T3> join对象
      */
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLActionExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
         ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().innerJoin(joinQueryable.getClientQueryable(), (t, t1, t2) -> {
             get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
                 onExpression.apply(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy().create(t2.getTable(), get1Proxy().getEntitySQLContext()));
@@ -275,7 +275,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy>
      * @param <T3>
      */
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoinMerge(Class<T3> joinClass, SQLExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoinMerge(Class<T3> joinClass, SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
         return leftJoin(joinClass, (t1, t2, t3) -> {
             onExpression.apply(new MergeTuple3<>(t1, t2, t3));
         });
@@ -291,7 +291,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy>
      * @param <T3>
      */
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
         return leftJoin(joinQueryable, (t1, t2, t3) -> {
             onExpression.apply(new MergeTuple3<>(t1, t2, t3));
         });
@@ -307,7 +307,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy>
      * @param <T3>
      */
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoinMerge(Class<T3> joinClass, SQLExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoinMerge(Class<T3> joinClass, SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
         return rightJoin(joinClass, (t1, t2, t3) -> {
             onExpression.apply(new MergeTuple3<>(t1, t2, t3));
         });
@@ -323,7 +323,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy>
      * @param <T3>
      */
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
         return rightJoin(joinQueryable, (t1, t2, t3) -> {
             onExpression.apply(new MergeTuple3<>(t1, t2, t3));
         });
@@ -339,7 +339,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy>
      * @param <T3>
      */
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoinMerge(Class<T3> joinClass, SQLExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoinMerge(Class<T3> joinClass, SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
         return innerJoin(joinClass, (t1, t2, t3) -> {
             onExpression.apply( new MergeTuple3<>(t1, t2, t3));
         });
@@ -355,7 +355,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy>
      * @param <T3>
      */
-    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
         return innerJoin(joinQueryable, (t1, t2, t3) -> {
             onExpression.apply(new MergeTuple3<>(t1, t2, t3));
         });

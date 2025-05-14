@@ -1,7 +1,7 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  * @author xuejiaming
  * @FileName: EasyAnonymousEntityTableExpressionSegment.java
  * @Description: 匿名实体表表达式
- * @Date: 2023/3/3 23:31
+ * create time 2023/3/3 23:31
  */
 public class AnonymousDefaultTableExpressionBuilder extends DefaultTableExpressionBuilder implements AnonymousEntityTableExpressionBuilder {
     protected final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
@@ -30,12 +30,12 @@ public class AnonymousDefaultTableExpressionBuilder extends DefaultTableExpressi
     }
 
     @Override
-    public SQLExpression1<WherePredicate<Object>> getLogicDeleteQueryFilterExpression() {
+    public SQLActionExpression1<WherePredicate<Object>> getLogicDeleteQueryFilterExpression() {
         return null;
     }
 
     @Override
-    public SQLExpression1<ColumnSetter<Object>> getLogicDeletedSQLExpression() {
+    public SQLActionExpression1<ColumnSetter<Object>> getLogicDeletedSQLExpression() {
         return null;
     }
 

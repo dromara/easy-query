@@ -39,7 +39,7 @@ import java.util.Map;
  * @author xuejiaming
  * @FileName: EasyQueryStarter.java
  * @Description: 文件说明
- * @Date: 2023/3/11 12:47
+ * create time 2023/3/11 12:47
  */
 @Configuration
 @EnableConfigurationProperties(EasyQueryProperties.class)

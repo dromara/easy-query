@@ -4,8 +4,7 @@ import com.easy.query.api.proxy.entity.insert.extension.ProxyColumnConfigurer;
 import com.easy.query.api.proxy.internal.ProxyEntityConflictThenable;
 import com.easy.query.api.proxy.internal.ProxyEntityOnDuplicateKeyUpdate;
 import com.easy.query.core.basic.api.insert.Insertable;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.Collection;
@@ -28,5 +27,5 @@ public interface EntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T> exte
     EntityInsertable<TProxy,T> insert(Collection<T> entities);
 
 
-    EntityInsertable<TProxy,T> columnConfigure(SQLExpression2<TProxy,ProxyColumnConfigurer<TProxy,T>> columnConfigureExpression);
+    EntityInsertable<TProxy,T> columnConfigure(SQLActionExpression2<TProxy,ProxyColumnConfigurer<TProxy,T>> columnConfigureExpression);
 }

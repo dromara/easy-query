@@ -65,10 +65,6 @@ public class EasyQueryOption {
      */
     private final int defaultDataSourceMergePoolSize;
     /**
-     * 默认查询是否查询large column默认true
-     */
-    private final boolean queryLargeColumn;
-    /**
      * 默认最大分片路由数默认128仅限制条件predicate
      */
     private final int maxShardingRouteCount;
@@ -150,7 +146,7 @@ public class EasyQueryOption {
                            int maxShardingQueryLimit, int executorMaximumPoolSize, int executorCorePoolSize,
                            boolean throwIfNotMatchRoute, long shardingExecuteTimeoutMillis,
                            EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption,
-                           String defaultDataSourceName, int defaultDataSourceMergePoolSize, boolean queryLargeColumn,
+                           String defaultDataSourceName, int defaultDataSourceMergePoolSize,
                            int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
                            boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold,
                            boolean printSql, boolean startTimeJob, boolean defaultTrack,
@@ -209,7 +205,6 @@ public class EasyQueryOption {
         this.replicaOption = replicaOption;
         this.defaultDataSourceName = defaultDataSourceName;
         this.defaultDataSourceMergePoolSize = defaultDataSourceMergePoolSize;
-        this.queryLargeColumn = queryLargeColumn;
         this.maxShardingRouteCount = maxShardingRouteCount;
         this.executorQueueSize = executorQueueSize;
         this.multiConnWaitTimeoutMillis = multiConnWaitTimeoutMillis;
@@ -283,10 +278,6 @@ public class EasyQueryOption {
 
     public String getDefaultDataSourceName() {
         return defaultDataSourceName;
-    }
-
-    public boolean isQueryLargeColumn() {
-        return queryLargeColumn;
     }
 
     public int getExecutorQueueSize() {

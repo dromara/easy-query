@@ -2,7 +2,7 @@ package com.easy.query.core.func;
 
 import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.enums.SQLLikeEnum;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
@@ -91,66 +91,66 @@ public class SQLFuncImpl implements SQLFunc {
         return EasyObjectUtil.getValueOrNull(tableOwner, SQLTableOwner::getTable);
     }
 
-    protected List<ColumnExpression> getColumnExpressions(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    protected List<ColumnExpression> getColumnExpressions(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         List<ColumnExpression> columnExpressions = new ArrayList<>();
         sqlExpression.apply(new ColumnFuncSelectorImpl(columnExpressions));
         return columnExpressions;
     }
 
     @Override
-    public DistinctDefaultSQLFunction sum(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public DistinctDefaultSQLFunction sum(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new SumSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public DistinctDefaultSQLFunction count(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public DistinctDefaultSQLFunction count(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new CountSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction max(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction max(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new MaxSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction min(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction min(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new MinSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction toLower(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction toLower(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new ToLowerSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction toUpper(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction toUpper(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new ToUpperSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction subString(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction subString(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new SubStringSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction indexOf(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction indexOf(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new IndexOfSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public DistinctDefaultSQLFunction avg(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public DistinctDefaultSQLFunction avg(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new AvgSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction nullOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction nullOrDefault(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         List<ColumnExpression> columnExpressions = new ArrayList<>();
         sqlExpression.apply(new ColumnFuncSelectorImpl(columnExpressions));
         return new NullDefaultSQLFunction(columnExpressions);
     }
 
     @Override
-    public SQLFunction abs(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction abs(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new AbsSQLFunction(getColumnExpressions(sqlExpression));
     }
 
@@ -160,7 +160,7 @@ public class SQLFuncImpl implements SQLFunc {
     }
 
     @Override
-    public SQLFunction dateTimeFormat(SQLExpression1<ColumnFuncSelector> sqlExpression, String javaFormat) {
+    public SQLFunction dateTimeFormat(SQLActionExpression1<ColumnFuncSelector> sqlExpression, String javaFormat) {
         return new DateTimeFormatSQLFunction(getColumnExpressions(sqlExpression), javaFormat);
     }
 
@@ -175,37 +175,37 @@ public class SQLFuncImpl implements SQLFunc {
     }
 
     @Override
-    public SQLFunction bank(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction bank(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new BankSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction notBank(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction notBank(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new NotBankSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction empty(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction empty(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new EmptySQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction notEmpty(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction notEmpty(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new NotEmptySQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction constValue(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction constValue(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new ConstSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction subQueryValue(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction subQueryValue(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new SubQuerySQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction exists(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction exists(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new SubQueryExistsSQLFunction(getColumnExpressions(sqlExpression));
     }
 
@@ -225,117 +225,117 @@ public class SQLFuncImpl implements SQLFunc {
     }
 
     @Override
-    public SQLFunction trim(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction trim(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new TrimSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction trimStart(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction trimStart(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new TrimStartSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction trimEnd(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction trimEnd(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new TrimEndSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction replace(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction replace(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new ReplaceSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction stringCompareTo(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction stringCompareTo(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new StringCompareToSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction leftPad(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction leftPad(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new LeftPadSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction rightPad(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction rightPad(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new RightPadSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction joining(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean distinct) {
+    public SQLFunction joining(SQLActionExpression1<ColumnFuncSelector> sqlExpression, boolean distinct) {
         return new JoiningSQLFunction(getColumnExpressions(sqlExpression), distinct);
     }
 
     @Override
-    public SQLFunction length(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction length(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new LengthSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction cast(SQLExpression1<ColumnFuncSelector> sqlExpression, Class<?> targetClazz) {
+    public SQLFunction cast(SQLActionExpression1<ColumnFuncSelector> sqlExpression, Class<?> targetClazz) {
         return new CastSQLFunction(getColumnExpressions(sqlExpression), targetClazz);
     }
 
     @Override
-    public SQLFunction plusDateTime(SQLExpression1<ColumnFuncSelector> sqlExpression, long duration, TimeUnit timeUnit) {
+    public SQLFunction plusDateTime(SQLActionExpression1<ColumnFuncSelector> sqlExpression, long duration, TimeUnit timeUnit) {
         return new DateTimePlusSQLFunction(getColumnExpressions(sqlExpression), duration, timeUnit);
     }
 
     @Override
-    public SQLFunction plusDateTime2(SQLExpression1<ColumnFuncSelector> sqlExpression, TimeUnitEnum timeUnit) {
+    public SQLFunction plusDateTime2(SQLActionExpression1<ColumnFuncSelector> sqlExpression, TimeUnitEnum timeUnit) {
         return new DateTime2PlusSQLFunction(getColumnExpressions(sqlExpression), timeUnit);
     }
 
     @Override
-    public SQLFunction plusDateTimeMonths(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction plusDateTimeMonths(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new DateTimePlusMonthSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction plusDateTimeYears(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction plusDateTimeYears(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new DateTimePlusYearSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction dateTimeProperty(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeUnitEnum dateTimeUnitEnum) {
+    public SQLFunction dateTimeProperty(SQLActionExpression1<ColumnFuncSelector> sqlExpression, DateTimeUnitEnum dateTimeUnitEnum) {
         return new DateTimePropertySQLFunction(getColumnExpressions(sqlExpression), dateTimeUnitEnum);
     }
 
     @Override
-    public SQLFunction duration(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum) {
+    public SQLFunction duration(SQLActionExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum) {
         return new DateTimeDurationSQLFunction(getColumnExpressions(sqlExpression), durationEnum);
     }
 
     @Override
-    public SQLFunction duration2(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum) {
+    public SQLFunction duration2(SQLActionExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum) {
         return new DateTimeDuration2SQLFunction(getColumnExpressions(sqlExpression), durationEnum);
     }
 
     @Override
-    public SQLFunction math(SQLExpression1<ColumnFuncSelector> sqlExpression, MathMethodEnum mathMethodEnum) {
+    public SQLFunction math(SQLActionExpression1<ColumnFuncSelector> sqlExpression, MathMethodEnum mathMethodEnum) {
         return new MathSQLFunction(getColumnExpressions(sqlExpression), mathMethodEnum);
     }
 
     @Override
-    public SQLFunction not(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction not(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new NotSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction equalsWith(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction equalsWith(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new EqualsWithSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction orderByNullsMode(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean asc, @NotNull OrderByModeEnum orderByModeEnum) {
+    public SQLFunction orderByNullsMode(SQLActionExpression1<ColumnFuncSelector> sqlExpression, boolean asc, @NotNull OrderByModeEnum orderByModeEnum) {
         return new OrderByNullsModeSQLFunction(getColumnExpressions(sqlExpression), asc, orderByModeEnum);
     }
 
     @Override
-    public SQLFunction numberCalc(SQLExpression1<ColumnFuncSelector> sqlExpression, NumberCalcEnum numberCalcEnum) {
+    public SQLFunction numberCalc(SQLActionExpression1<ColumnFuncSelector> sqlExpression, NumberCalcEnum numberCalcEnum) {
         return new NumberCalcSQLFunction(getColumnExpressions(sqlExpression), numberCalcEnum);
     }
 
     @Override
-    public SQLFunction like(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean like, SQLLikeEnum sqlLike) {
+    public SQLFunction like(SQLActionExpression1<ColumnFuncSelector> sqlExpression, boolean like, SQLLikeEnum sqlLike) {
         LikeSQLFunction likeSQLFunction = new LikeSQLFunction(getColumnExpressions(sqlExpression), sqlLike);
         if (!like) {
             return not(x -> x.sqlFunc(likeSQLFunction));
@@ -344,57 +344,57 @@ public class SQLFuncImpl implements SQLFunc {
     }
 
     @Override
-    public SQLFunction anySQLFunction(String sqlSegment, SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction anySQLFunction(String sqlSegment, SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new AnySQLFunction(sqlSegment, getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public PartitionBySQLFunction rowNumberOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public PartitionBySQLFunction rowNumberOver(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new RowNumberOverSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public PartitionBySQLFunction rankNumberOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public PartitionBySQLFunction rankNumberOver(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new RankOverSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public PartitionBySQLFunction denseRankNumberOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public PartitionBySQLFunction denseRankNumberOver(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new DenseRankOverSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public PartitionBySQLFunction countOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public PartitionBySQLFunction countOver(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new CountOverSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public PartitionBySQLFunction sumOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public PartitionBySQLFunction sumOver(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new SumOverSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public PartitionBySQLFunction avgOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public PartitionBySQLFunction avgOver(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new AvgOverSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public PartitionBySQLFunction maxOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public PartitionBySQLFunction maxOver(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new MaxOverSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public PartitionBySQLFunction minOver(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public PartitionBySQLFunction minOver(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new MinOverSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction jsonField(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction jsonField(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new JsonFieldSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction containsField(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction containsField(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         throw new UnsupportedOperationException();
     }
 

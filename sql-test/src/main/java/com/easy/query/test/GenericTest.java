@@ -71,7 +71,7 @@ import java.util.function.Supplier;
  * @author xuejiaming
  * @FileName: GenericTest.java
  * @Description: 文件说明
- * @Date: 2023/3/17 22:22
+ * create time 2023/3/17 22:22
  */
 public class GenericTest extends BaseTest {
 
@@ -167,7 +167,6 @@ public class GenericTest extends BaseTest {
         easyBehavior.removeBehavior(EasyBehaviorEnum.LOGIC_DELETE);
         Assert.assertFalse(easyBehavior.hasBehavior(EasyBehaviorEnum.LOGIC_DELETE));
         easyBehavior.removeBehavior(EasyBehaviorEnum.USE_INTERCEPTOR);
-        easyBehavior.removeBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
         easyBehavior.removeBehavior(EasyBehaviorEnum.JDBC_LISTEN);
         Assert.assertTrue(easyBehavior.isDefaultBehavior());
     }
@@ -189,12 +188,6 @@ public class GenericTest extends BaseTest {
     public void queryLargeColumnTest1() {
         String sql = easyQuery.queryable(QueryLargeColumnTestEntity.class).toSQL();
         Assert.assertEquals("SELECT `id`,`name`,`content` FROM `query_large_column_test`", sql);
-    }
-
-    @Test
-    public void queryLargeColumnTest2() {
-        String sql = easyQuery.queryable(QueryLargeColumnTestEntity.class).queryLargeColumn(false).toSQL();
-        Assert.assertEquals("SELECT `id`,`name` FROM `query_large_column_test`", sql);
     }
 
     @Test

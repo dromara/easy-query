@@ -3,14 +3,12 @@ package com.easy.query.api.proxy.entity.delete.abstraction;
 import com.easy.query.api.proxy.entity.delete.EntityDeletable;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
-import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -19,7 +17,7 @@ import java.util.function.Function;
  * @author xuejiaming
  * @FileName: AbstractEntityDelete.java
  * @Description: 文件说明
- * @Date: 2023/2/28 12:33
+ * create time 2023/2/28 12:33
  */
 public abstract class AbstractEntityDeletable<TProxy extends ProxyEntity<TProxy, T>, T> implements EntityDeletable<TProxy,T> {
     private final ClientEntityDeletable<T> entityObjectDeletable;
@@ -142,7 +140,7 @@ public abstract class AbstractEntityDeletable<TProxy extends ProxyEntity<TProxy,
         return this;
     }
     @Override
-    public EntityDeletable<TProxy, T> configure(SQLExpression1<ContextConfigurer> configurer) {
+    public EntityDeletable<TProxy, T> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         entityObjectDeletable.configure(configurer);
         return this;
     }

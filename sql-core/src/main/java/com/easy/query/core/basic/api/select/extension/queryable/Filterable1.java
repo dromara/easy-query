@@ -4,7 +4,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
 import java.util.Collection;
@@ -18,11 +18,11 @@ import java.util.Collection;
 public interface Filterable1<T1> {
 
 
-    default ClientQueryable<T1> where(SQLExpression1<WherePredicate<T1>> whereExpression) {
+    default ClientQueryable<T1> where(SQLActionExpression1<WherePredicate<T1>> whereExpression) {
         return where(true, whereExpression);
     }
 
-    ClientQueryable<T1> where(boolean condition, SQLExpression1<WherePredicate<T1>> whereExpression);
+    ClientQueryable<T1> where(boolean condition, SQLActionExpression1<WherePredicate<T1>> whereExpression);
 
     /**
      * 根据id查询

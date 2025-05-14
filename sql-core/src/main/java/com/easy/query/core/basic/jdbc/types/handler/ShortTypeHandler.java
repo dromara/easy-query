@@ -9,7 +9,7 @@ import java.sql.SQLException;
 /**
  * @FileName: DoubleTypeHandler.java
  * @Description: 文件说明
- * @Date: 2023/2/17 22:02
+ * create time 2023/2/17 22:02
  * @author xuejiaming
  */
 public class ShortTypeHandler implements JdbcTypeHandler {

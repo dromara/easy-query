@@ -1,10 +1,9 @@
 package com.easy.query.core.expression.parser.core.base.core;
 
 import com.easy.query.core.expression.builder.core.SQLNative;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.ChainCast;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.SQLAliasNativePropertyExpressionContext;
 import com.easy.query.core.expression.parser.core.base.scec.SQLAliasNativePropertyExpressionContextImpl;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
@@ -41,11 +40,11 @@ public interface SQLAsPropertyNative<TChain> extends SQLTableOwner, ChainCast<TC
      * @param contextConsume
      * @return
      */
-    default TChain sqlNativeSegment(String sqlSegment, SQLExpression1<SQLAliasNativePropertyExpressionContext> contextConsume){
+    default TChain sqlNativeSegment(String sqlSegment, SQLActionExpression1<SQLAliasNativePropertyExpressionContext> contextConsume){
         return sqlNativeSegment(true,sqlSegment,contextConsume);
     }
 
-    default TChain sqlNativeSegment(boolean condition,String sqlSegment, SQLExpression1<SQLAliasNativePropertyExpressionContext> contextConsume){
+    default TChain sqlNativeSegment(boolean condition,String sqlSegment, SQLActionExpression1<SQLAliasNativePropertyExpressionContext> contextConsume){
         if(condition){
             getSQLNative().sqlNativeSegment(sqlSegment, context->{
                 contextConsume.apply(new SQLAliasNativePropertyExpressionContextImpl(getTable(),context));

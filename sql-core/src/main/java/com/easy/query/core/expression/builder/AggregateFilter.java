@@ -6,7 +6,7 @@ import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.func.ColumnFunction;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunction;
 
@@ -42,9 +42,9 @@ public interface AggregateFilter extends SQLNative<AggregateFilter> , RuntimeCon
 
     AggregateFilter and();
 
-    AggregateFilter and(SQLExpression1<AggregateFilter> aggregateFilterSQLExpression);
+    AggregateFilter and(SQLActionExpression1<AggregateFilter> aggregateFilterSQLExpression);
 
     AggregateFilter or();
 
-    AggregateFilter or(SQLExpression1<AggregateFilter> aggregateFilterSQLExpression);
+    AggregateFilter or(SQLActionExpression1<AggregateFilter> aggregateFilterSQLExpression);
 }

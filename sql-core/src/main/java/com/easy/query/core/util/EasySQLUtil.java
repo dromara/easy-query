@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  * @author xuejiaming
  * @FileName: SQLUtil.java
  * @Description: 文件说明
- * @Date: 2023/3/9 22:40
+ * create time 2023/3/9 22:40
  */
 public class EasySQLUtil {
     private EasySQLUtil() {

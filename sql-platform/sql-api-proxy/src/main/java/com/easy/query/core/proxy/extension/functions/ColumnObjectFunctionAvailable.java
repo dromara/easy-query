@@ -1,6 +1,6 @@
 package com.easy.query.core.proxy.extension.functions;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
@@ -14,7 +14,6 @@ import com.easy.query.core.proxy.extension.functions.executor.filter.impl.Column
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
-import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.function.Function;
 
@@ -79,7 +78,7 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
         });
     }
 
-    default TChain nullOrDefault(SQLExpression1<ProxyColumnFuncSelector> selector) {
+    default TChain nullOrDefault(SQLActionExpression1<ProxyColumnFuncSelector> selector) {
         return createChainExpression(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.nullOrDefault(o -> {
                 PropTypeColumn.columnFuncSelector(o, this);
@@ -99,7 +98,7 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
         });
     }
 
-    default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> equalsWith(SQLExpression1<ProxyColumnFuncSelector> selector) {
+    default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> equalsWith(SQLActionExpression1<ProxyColumnFuncSelector> selector) {
         return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.equalsWith(o -> {
                 PropTypeColumn.columnFuncSelector(o, this);

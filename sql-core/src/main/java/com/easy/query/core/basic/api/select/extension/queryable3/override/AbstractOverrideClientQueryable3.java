@@ -5,7 +5,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable3;
 import com.easy.query.core.basic.api.select.abstraction.AbstractClientQueryable;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
@@ -14,7 +14,6 @@ import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
-import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 
 import java.util.Collection;
 import java.util.function.BiFunction;
@@ -70,31 +69,31 @@ public abstract class AbstractOverrideClientQueryable3<T1, T2, T3> extends Abstr
     }
 
     @Override
-    public ClientQueryable3<T1, T2, T3> where(boolean condition, SQLExpression1<WherePredicate<T1>> whereExpression) {
+    public ClientQueryable3<T1, T2, T3> where(boolean condition, SQLActionExpression1<WherePredicate<T1>> whereExpression) {
         super.where(condition, whereExpression);
         return getClientQueryable3();
     }
 
     @Override
-    public ClientQueryable3<T1, T2, T3> orderByAsc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
+    public ClientQueryable3<T1, T2, T3> orderByAsc(boolean condition, SQLActionExpression1<ColumnOrderSelector<T1>> selectExpression) {
         super.orderByAsc(condition, selectExpression);
         return getClientQueryable3();
     }
 
     @Override
-    public ClientQueryable3<T1, T2, T3> orderByDesc(boolean condition, SQLExpression1<ColumnOrderSelector<T1>> selectExpression) {
+    public ClientQueryable3<T1, T2, T3> orderByDesc(boolean condition, SQLActionExpression1<ColumnOrderSelector<T1>> selectExpression) {
         super.orderByAsc(condition, selectExpression);
         return getClientQueryable3();
     }
 
     @Override
-    public ClientQueryable3<T1, T2, T3> groupBy(boolean condition, SQLExpression1<ColumnGroupSelector<T1>> selectExpression) {
+    public ClientQueryable3<T1, T2, T3> groupBy(boolean condition, SQLActionExpression1<ColumnGroupSelector<T1>> selectExpression) {
         super.groupBy(condition, selectExpression);
         return getClientQueryable3();
     }
 
     @Override
-    public ClientQueryable3<T1, T2, T3> having(boolean condition, SQLExpression1<WhereAggregatePredicate<T1>> predicateExpression) {
+    public ClientQueryable3<T1, T2, T3> having(boolean condition, SQLActionExpression1<WhereAggregatePredicate<T1>> predicateExpression) {
         super.having(condition, predicateExpression);
         return getClientQueryable3();
     }
@@ -173,12 +172,6 @@ public abstract class AbstractOverrideClientQueryable3<T1, T2, T3> extends Abstr
     }
 
     @Override
-    public ClientQueryable3<T1, T2, T3> queryLargeColumn(boolean queryLarge) {
-        super.queryLargeColumn(queryLarge);
-        return getClientQueryable3();
-    }
-
-    @Override
     public ClientQueryable3<T1, T2, T3> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
         super.useShardingConfigure(maxShardingQueryLimit, connectionMode);
         return getClientQueryable3();
@@ -235,7 +228,7 @@ public abstract class AbstractOverrideClientQueryable3<T1, T2, T3> extends Abstr
         return getClientQueryable3();
     }
     @Override
-    public ClientQueryable3<T1, T2, T3> configure(SQLExpression1<ContextConfigurer> configurer) {
+    public ClientQueryable3<T1, T2, T3> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         super.configure(configurer);
         return getClientQueryable3();
     }

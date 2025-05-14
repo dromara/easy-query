@@ -26,7 +26,7 @@ import java.util.Iterator;
  * @author xuejiaming
  * @FileName: ColumnCollectionPredicate.java
  * @Description: 表达式集合判断
- * @Date: 2023/2/14 23:34
+ * create time 2023/2/14 23:34
  */
 public class ColumnCollectionPredicate implements ValuesPredicate, ShardingPredicate {
     private final Collection<ColumnValue2Segment> collection;

@@ -8,7 +8,7 @@ import com.easy.query.core.util.EasyBeanUtil;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/2/28 20:47
+ * create time 2023/2/28 20:47
  */
 public final class PropertySQLParameter implements BeanSQLParameter {
     private final TableAvailable table;

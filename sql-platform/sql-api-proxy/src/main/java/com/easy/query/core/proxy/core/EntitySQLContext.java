@@ -8,7 +8,7 @@ import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.builder.Setter;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
@@ -103,7 +103,7 @@ public interface EntitySQLContext extends RuntimeContextAvailable {
         throw new UnsupportedOperationException();
     }
 
-    default void _executeNativeSql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+    default void _executeNativeSql(String sqlSegment, SQLActionExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         throw new UnsupportedOperationException();
     }
 

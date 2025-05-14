@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select.extension.queryable;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
 
 /**
@@ -12,9 +12,9 @@ import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
  */
 public interface Groupable1<T1> {
 
-    default ClientQueryable<T1> groupBy(SQLExpression1<ColumnGroupSelector<T1>> selectExpression) {
+    default ClientQueryable<T1> groupBy(SQLActionExpression1<ColumnGroupSelector<T1>> selectExpression) {
         return groupBy(true, selectExpression);
     }
 
-    ClientQueryable<T1> groupBy(boolean condition, SQLExpression1<ColumnGroupSelector<T1>> selectExpression);
+    ClientQueryable<T1> groupBy(boolean condition, SQLActionExpression1<ColumnGroupSelector<T1>> selectExpression);
 }

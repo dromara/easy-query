@@ -9,7 +9,7 @@ import java.util.Objects;
  * @author xuejiaming
  * @FileName: EntryState.java
  * @Description: 文件说明
- * @Date: 2023/3/18 21:22
+ * create time 2023/3/18 21:22
  */
 public class EntityValueState {
     private final ColumnMetadata columnMetadata;

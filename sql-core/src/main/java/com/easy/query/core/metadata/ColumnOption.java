@@ -45,7 +45,6 @@ public final class ColumnOption {
 
     private EncryptionStrategy encryptionStrategy;
     private boolean supportQueryLike = false;
-    private boolean large = false;
     private boolean autoSelect = true;
 
     private ValueConverter<?, ?> valueConverter;
@@ -161,14 +160,6 @@ public final class ColumnOption {
 
     public void setSupportQueryLike(boolean supportQueryLike) {
         this.supportQueryLike = supportQueryLike;
-    }
-
-    public boolean isLarge() {
-        return large;
-    }
-
-    public void setLarge(boolean large) {
-        this.large = large;
     }
 
     public boolean isAutoSelect() {

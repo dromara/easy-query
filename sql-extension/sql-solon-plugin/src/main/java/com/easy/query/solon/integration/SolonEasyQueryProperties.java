@@ -73,7 +73,6 @@ public class SolonEasyQueryProperties {
      */
     private final static long shardingExecuteTimeoutMillis = 60000L;
 
-    private final static boolean queryLargeColumn = true;
     /**
      * 当出现条件分片大于多少时报错默认128,
      * 就是比如select where update where delete where路由到过多的表就会报错
@@ -373,10 +372,6 @@ public class SolonEasyQueryProperties {
 
     public long getShardingExecuteTimeoutMillis() {
         return this.props.getLong("sharding-execute-timeout-millis", shardingExecuteTimeoutMillis);
-    }
-
-    public boolean isQueryLargeColumn() {
-        return this.props.getBool("query-large-column", queryLargeColumn);
     }
 
 

@@ -14,7 +14,7 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  * @author xuejiaming
  * @FileName: FuncColumnSegment.java
  * @Description: 文件说明
- * @Date: 2023/2/19 22:17
+ * create time 2023/2/19 22:17
  */
 public class FuncColumnSegmentImpl implements FuncColumnSegment {
 

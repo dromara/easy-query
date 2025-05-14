@@ -3,7 +3,7 @@ package com.easy.query.api.proxy.entity.delete.abstraction;
 import com.easy.query.api.proxy.entity.delete.ExpressionDeletable;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
@@ -17,7 +17,7 @@ import java.util.function.Function;
  * @author xuejiaming
  * @FileName: AbstractExpressionDelete.java
  * @Description: 文件说明
- * @Date: 2023/3/1 22:30
+ * create time 2023/3/1 22:30
  */
 public abstract class AbstractExpressionDeletable<TProxy extends ProxyEntity<TProxy, T>, T> implements ExpressionDeletable<TProxy, T> {
     private final TProxy tProxy;
@@ -52,7 +52,7 @@ public abstract class AbstractExpressionDeletable<TProxy extends ProxyEntity<TPr
 //    }
 
     @Override
-    public ExpressionDeletable<TProxy, T> where(boolean condition, SQLExpression1<TProxy> whereExpression) {
+    public ExpressionDeletable<TProxy, T> where(boolean condition, SQLActionExpression1<TProxy> whereExpression) {
         if (condition) {
             expressionObjectDeletable.where(where -> {
                 tProxy.getEntitySQLContext()._where(where.getFilter(), () -> {
@@ -172,7 +172,7 @@ public abstract class AbstractExpressionDeletable<TProxy extends ProxyEntity<TPr
     }
 
     @Override
-    public ExpressionDeletable<TProxy, T> configure(SQLExpression1<ContextConfigurer> configurer) {
+    public ExpressionDeletable<TProxy, T> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         expressionObjectDeletable.configure(configurer);
         return this;
     }

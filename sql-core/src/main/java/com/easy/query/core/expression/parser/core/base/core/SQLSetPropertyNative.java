@@ -1,6 +1,6 @@
 package com.easy.query.core.expression.parser.core.base.core;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.base.scec.SQLNativePropertyExpressionContext;
 
@@ -21,5 +21,5 @@ public interface SQLSetPropertyNative<TChain> extends SQLTableOwner {
      * @param contextConsume
      * @return
      */
-    TChain setSQLSegment(String property, String sqlSegment, SQLExpression1<SQLNativePropertyExpressionContext> contextConsume);
+    TChain setSQLSegment(String property, String sqlSegment, SQLActionExpression1<SQLNativePropertyExpressionContext> contextConsume);
 }

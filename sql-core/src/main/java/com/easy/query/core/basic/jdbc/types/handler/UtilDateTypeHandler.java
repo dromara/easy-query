@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 /**
  * @FileName: DateTypeHandler.java
  * @Description: 文件说明
- * @Date: 2023/2/17 21:56
+ * create time 2023/2/17 21:56
  * @author xuejiaming
  */
 public class UtilDateTypeHandler implements JdbcTypeHandler {

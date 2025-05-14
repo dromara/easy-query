@@ -2,7 +2,7 @@ package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Setter;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.InsertUpdateSetColumnSQLSegment;
 import com.easy.query.core.expression.segment.SQLNativeSegment;
@@ -101,7 +101,7 @@ public class SetterImpl implements Setter {
     }
 
     @Override
-    public Setter sqlNativeSegment(TableAvailable table, String property, String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
+    public Setter sqlNativeSegment(TableAvailable table, String property, String sqlSegment, SQLActionExpression1<SQLNativeExpressionContext> contextConsume) {
         Objects.requireNonNull(contextConsume, "sql native context consume cannot be null");
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityExpressionBuilder.getExpressionContext(), runtimeContext);
 //        sqlNativeExpressionContext.expression(table,property);
@@ -113,7 +113,7 @@ public class SetterImpl implements Setter {
     }
 
     @Override
-    public Setter sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
+    public Setter sqlNativeSegment(String sqlSegment, SQLActionExpression1<SQLNativeExpressionContext> contextConsume) {
 
         Objects.requireNonNull(contextConsume, "sql native context consume cannot be null");
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityExpressionBuilder.getExpressionContext(), runtimeContext);

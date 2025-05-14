@@ -2,7 +2,7 @@ package com.easy.query.test.entity.testrelation;
 
 import com.easy.query.core.basic.extension.navigate.NavigateBuilder;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
 import java.util.Objects;
@@ -15,12 +15,12 @@ import java.util.Objects;
  */
 public class JoinType implements NavigateExtraFilterStrategy {
     @Override
-    public SQLExpression1<WherePredicate<?>> getPredicateFilterExpression(NavigateBuilder builder) {
+    public SQLActionExpression1<WherePredicate<?>> getPredicateFilterExpression(NavigateBuilder builder) {
         return null;
     }
 
     @Override
-    public SQLExpression1<WherePredicate<?>> getPredicateMappingClassFilterExpression(NavigateBuilder builder) {
+    public SQLActionExpression1<WherePredicate<?>> getPredicateMappingClassFilterExpression(NavigateBuilder builder) {
 
         if(Objects.equals(builder.getNavigateOption().getEntityMetadata().getEntityClass(),TestUserEntity.class)&&Objects.equals("roles",builder.getNavigateOption().getPropertyName())){
             return (p)->p.eq("type",1);

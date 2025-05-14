@@ -4,7 +4,7 @@ import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.builder.OnlySelector;
 import com.easy.query.core.expression.builder.Selector;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
@@ -29,10 +29,10 @@ public class SQLNativeSegmentExpressionImpl implements PropTypeColumn<Object>, D
 
     private final EntitySQLContext entitySQLContext;
     private final String sqlSegment;
-    private final SQLExpression1<SQLNativeChainExpressionContext> consume;
+    private final SQLActionExpression1<SQLNativeChainExpressionContext> consume;
     private Class<?> propType;
 
-    public SQLNativeSegmentExpressionImpl(EntitySQLContext entitySQLContext, String sqlSegment, SQLExpression1<SQLNativeChainExpressionContext> consume){
+    public SQLNativeSegmentExpressionImpl(EntitySQLContext entitySQLContext, String sqlSegment, SQLActionExpression1<SQLNativeChainExpressionContext> consume){
         this.entitySQLContext = entitySQLContext;
         this.sqlSegment = sqlSegment;
         this.consume = consume;

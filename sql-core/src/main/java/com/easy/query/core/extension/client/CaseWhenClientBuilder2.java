@@ -1,6 +1,6 @@
 package com.easy.query.core.extension.client;
 
-import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
@@ -25,7 +25,7 @@ public class CaseWhenClientBuilder2<T1, T2, TR> {
         this.caseWhenBuilder = new CaseWhenBuilder(columnAsSelector1.getRuntimeContext(), columnAsSelector1.getExpressionContext());
     }
 
-    public CaseWhenClientBuilder2<T1, T2, TR> caseWhen(SQLExpression2<WherePredicate<T1>,WherePredicate<T2>> predicateExpression, Object then) {
+    public CaseWhenClientBuilder2<T1, T2, TR> caseWhen(SQLActionExpression2<WherePredicate<T1>,WherePredicate<T2>> predicateExpression, Object then) {
         caseWhenBuilder.caseWhen(filter -> {
             FilterContext filterContext = new FilterContext(filter,columnAsSelector1.getAsSelector().getEntityQueryExpressionBuilder());
             predicateExpression.apply(new WherePredicateImpl<>(columnAsSelector1.getTable(), filterContext),new WherePredicateImpl<>(columnAsSelector2.getTable(), filterContext));

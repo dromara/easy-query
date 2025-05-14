@@ -3,7 +3,7 @@ package com.easy.query.core.proxy.impl;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.OrderSelector;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 import com.easy.query.core.proxy.SQLOrderByExpression;
 import com.easy.query.core.proxy.SQLPredicateExpression;
@@ -18,9 +18,9 @@ import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContextImpl;
  */
 public class SQLEntityNativeSegmentImpl implements SQLOrderByExpression, SQLPredicateExpression, SQLAggregatePredicateExpression {
     private final String sqlSegment;
-    private final SQLExpression1<SQLNativeProxyExpressionContext> contextConsume;
+    private final SQLActionExpression1<SQLNativeProxyExpressionContext> contextConsume;
 
-    public SQLEntityNativeSegmentImpl(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+    public SQLEntityNativeSegmentImpl(String sqlSegment, SQLActionExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         this.sqlSegment = sqlSegment;
         this.contextConsume = contextConsume;
     }

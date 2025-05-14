@@ -27,16 +27,16 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.expression.builder.core.SQLNative;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLExpression10;
-import com.easy.query.core.expression.lambda.SQLExpression2;
-import com.easy.query.core.expression.lambda.SQLExpression3;
-import com.easy.query.core.expression.lambda.SQLExpression4;
-import com.easy.query.core.expression.lambda.SQLExpression5;
-import com.easy.query.core.expression.lambda.SQLExpression6;
-import com.easy.query.core.expression.lambda.SQLExpression7;
-import com.easy.query.core.expression.lambda.SQLExpression8;
-import com.easy.query.core.expression.lambda.SQLExpression9;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression10;
+import com.easy.query.core.expression.lambda.SQLActionExpression2;
+import com.easy.query.core.expression.lambda.SQLActionExpression3;
+import com.easy.query.core.expression.lambda.SQLActionExpression4;
+import com.easy.query.core.expression.lambda.SQLActionExpression5;
+import com.easy.query.core.expression.lambda.SQLActionExpression6;
+import com.easy.query.core.expression.lambda.SQLActionExpression7;
+import com.easy.query.core.expression.lambda.SQLActionExpression8;
+import com.easy.query.core.expression.lambda.SQLActionExpression9;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -96,7 +96,7 @@ import java.util.stream.Collectors;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/3/7 12:32
+ * create time 2023/3/7 12:32
  */
 public class EasySQLExpressionUtil {
     private EasySQLExpressionUtil() {
@@ -269,7 +269,7 @@ public class EasySQLExpressionUtil {
         return !sqlEntityExpression.hasLimit() && !sqlEntityExpression.hasHaving() && sqlEntityExpression.isDistinct() && !sqlEntityExpression.hasGroup();
     }
 
-    public static <T1, T2> ClientQueryable2<T1, T2> executeJoinOn(ClientQueryable2<T1, T2> queryable, SQLExpression2<WherePredicate<T1>, WherePredicate<T2>> on) {
+    public static <T1, T2> ClientQueryable2<T1, T2> executeJoinOn(ClientQueryable2<T1, T2> queryable, SQLActionExpression2<WherePredicate<T1>, WherePredicate<T2>> on) {
         FilterContext onWhereFilterContext = queryable.getSQLExpressionProvider1().getOnWhereFilterContext();
         WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate(onWhereFilterContext);
         WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate(onWhereFilterContext);
@@ -277,7 +277,7 @@ public class EasySQLExpressionUtil {
         return queryable;
     }
 
-    public static <T1, T2, T3> ClientQueryable3<T1, T2, T3> executeJoinOn(ClientQueryable3<T1, T2, T3> queryable, SQLExpression3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>> on) {
+    public static <T1, T2, T3> ClientQueryable3<T1, T2, T3> executeJoinOn(ClientQueryable3<T1, T2, T3> queryable, SQLActionExpression3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>> on) {
         FilterContext onWhereFilterContext = queryable.getSQLExpressionProvider1().getOnWhereFilterContext();
         WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate(onWhereFilterContext);
         WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate(onWhereFilterContext);
@@ -286,7 +286,7 @@ public class EasySQLExpressionUtil {
         return queryable;
     }
 
-    public static <T1, T2, T3, T4> ClientQueryable4<T1, T2, T3, T4> executeJoinOn(ClientQueryable4<T1, T2, T3, T4> queryable, SQLExpression4<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>> on) {
+    public static <T1, T2, T3, T4> ClientQueryable4<T1, T2, T3, T4> executeJoinOn(ClientQueryable4<T1, T2, T3, T4> queryable, SQLActionExpression4<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>> on) {
         FilterContext onWhereFilterContext = queryable.getSQLExpressionProvider1().getOnWhereFilterContext();
         WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate(onWhereFilterContext);
         WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate(onWhereFilterContext);
@@ -296,7 +296,7 @@ public class EasySQLExpressionUtil {
         return queryable;
     }
 
-    public static <T1, T2, T3, T4, T5> ClientQueryable5<T1, T2, T3, T4, T5> executeJoinOn(ClientQueryable5<T1, T2, T3, T4, T5> queryable, SQLExpression5<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>> on) {
+    public static <T1, T2, T3, T4, T5> ClientQueryable5<T1, T2, T3, T4, T5> executeJoinOn(ClientQueryable5<T1, T2, T3, T4, T5> queryable, SQLActionExpression5<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>> on) {
         FilterContext onWhereFilterContext = queryable.getSQLExpressionProvider1().getOnWhereFilterContext();
         WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate(onWhereFilterContext);
         WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate(onWhereFilterContext);
@@ -307,7 +307,7 @@ public class EasySQLExpressionUtil {
         return queryable;
     }
 
-    public static <T1, T2, T3, T4, T5, T6> ClientQueryable6<T1, T2, T3, T4, T5, T6> executeJoinOn(ClientQueryable6<T1, T2, T3, T4, T5, T6> queryable, SQLExpression6<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>> on) {
+    public static <T1, T2, T3, T4, T5, T6> ClientQueryable6<T1, T2, T3, T4, T5, T6> executeJoinOn(ClientQueryable6<T1, T2, T3, T4, T5, T6> queryable, SQLActionExpression6<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>> on) {
         FilterContext onWhereFilterContext = queryable.getSQLExpressionProvider1().getOnWhereFilterContext();
         WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate(onWhereFilterContext);
         WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate(onWhereFilterContext);
@@ -319,7 +319,7 @@ public class EasySQLExpressionUtil {
         return queryable;
     }
 
-    public static <T1, T2, T3, T4, T5, T6, T7> ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> executeJoinOn(ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> queryable, SQLExpression7<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>> on) {
+    public static <T1, T2, T3, T4, T5, T6, T7> ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> executeJoinOn(ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> queryable, SQLActionExpression7<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>> on) {
         FilterContext onWhereFilterContext = queryable.getSQLExpressionProvider1().getOnWhereFilterContext();
         WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate(onWhereFilterContext);
         WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate(onWhereFilterContext);
@@ -332,7 +332,7 @@ public class EasySQLExpressionUtil {
         return queryable;
     }
 
-    public static <T1, T2, T3, T4, T5, T6, T7, T8> ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> executeJoinOn(ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> queryable, SQLExpression8<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>> on) {
+    public static <T1, T2, T3, T4, T5, T6, T7, T8> ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> executeJoinOn(ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> queryable, SQLActionExpression8<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>> on) {
         FilterContext onWhereFilterContext = queryable.getSQLExpressionProvider1().getOnWhereFilterContext();
         WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate(onWhereFilterContext);
         WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate(onWhereFilterContext);
@@ -346,7 +346,7 @@ public class EasySQLExpressionUtil {
         return queryable;
     }
 
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9> ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> executeJoinOn(ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> queryable, SQLExpression9<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>, WherePredicate<T9>> on) {
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9> ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> executeJoinOn(ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> queryable, SQLActionExpression9<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>, WherePredicate<T9>> on) {
         FilterContext onWhereFilterContext = queryable.getSQLExpressionProvider1().getOnWhereFilterContext();
         WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate(onWhereFilterContext);
         WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate(onWhereFilterContext);
@@ -361,7 +361,7 @@ public class EasySQLExpressionUtil {
         return queryable;
     }
 
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> executeJoinOn(ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> queryable, SQLExpression10<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>, WherePredicate<T9>, WherePredicate<T10>> on) {
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> executeJoinOn(ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> queryable, SQLActionExpression10<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>, WherePredicate<T9>, WherePredicate<T10>> on) {
         FilterContext onWhereFilterContext = queryable.getSQLExpressionProvider1().getOnWhereFilterContext();
         WherePredicate<T1> sqlOnPredicate1 = queryable.getSQLExpressionProvider1().getOnPredicate(onWhereFilterContext);
         WherePredicate<T2> sqlOnPredicate2 = queryable.getSQLExpressionProvider2().getOnPredicate(onWhereFilterContext);
@@ -435,7 +435,7 @@ public class EasySQLExpressionUtil {
         if (isDistinct) {
             if (EasySQLSegmentUtil.isEmpty(entityQueryExpressionBuilder.getProjects())) {
                 Class<?> queryClass = entityQueryExpressionBuilder.getQueryClass();
-                SQLExpression1<ColumnAsSelector<?, ?>> selectExpression = ColumnAsSelector::columnAll;
+                SQLActionExpression1<ColumnAsSelector<?, ?>> selectExpression = ColumnAsSelector::columnAll;
                 SQLExpressionProvider<Object> sqlExpressionProvider = entityQueryExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory().createSQLExpressionProvider(0, entityQueryExpressionBuilder);
                 ColumnAsSelector<?, ?> columnAsSelector = sqlExpressionProvider.getColumnAsSelector(entityQueryExpressionBuilder.getProjects(), queryClass);
                 selectExpression.apply(columnAsSelector);

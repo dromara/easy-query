@@ -26,7 +26,6 @@ public class EasyQueryOptionBuilder {
     private EasyQueryShardingOption shardingOption;
     private String defaultDataSourceName;
     private int defaultDataSourceMergePoolSize;
-    private boolean queryLargeColumn;
     private int maxShardingRouteCount;
     private int executorQueueSize;
     /**
@@ -112,7 +111,6 @@ public class EasyQueryOptionBuilder {
         this.throwIfRouteNotMatch = true;
         this.shardingExecuteTimeoutMillis = 60000L;
         this.defaultDataSourceName = "ds0";
-        this.queryLargeColumn = true;
         this.maxShardingRouteCount = 128;
         this.executorQueueSize = 1024;
         this.multiConnWaitTimeoutMillis = 5000L;
@@ -186,10 +184,6 @@ public class EasyQueryOptionBuilder {
 
     public boolean isUseReplica() {
         return replicaOption != null;
-    }
-
-    public void setQueryLargeColumn(boolean queryLargeColumn) {
-        this.queryLargeColumn = queryLargeColumn;
     }
 
     public void setMaxShardingRouteCount(int maxShardingRouteCount) {
@@ -306,7 +300,6 @@ public class EasyQueryOptionBuilder {
                 this.replicaOption,
                 this.defaultDataSourceName,
                 this.defaultDataSourceMergePoolSize,
-                this.queryLargeColumn,
                 this.maxShardingRouteCount,
                 this.executorQueueSize,
                 this.multiConnWaitTimeoutMillis,

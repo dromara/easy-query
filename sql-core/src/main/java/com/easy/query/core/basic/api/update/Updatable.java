@@ -12,7 +12,7 @@ import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
  * @author xuejiaming
  * @FileName: Update.java
  * @Description: 文件说明
- * @Date: 2023/2/24 22:04
+ * create time 2023/2/24 22:04
  */
 public interface Updatable<T, TChain> extends SQLExecuteExpectRows,
         Interceptable<TChain>,

@@ -1,7 +1,7 @@
 package com.easy.query.core.proxy.extra;
 
 import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.extra.ExtraWhere;
@@ -14,9 +14,9 @@ import com.easy.query.core.util.EasyObjectUtil;
   * @author xuejiaming
   */
 public class EntityExtraWhere<TProxy> implements ExtraWhere {
-    private final SQLExpression1<TProxy> whereExpression;
+    private final SQLActionExpression1<TProxy> whereExpression;
 
-    public EntityExtraWhere(SQLExpression1<TProxy> whereExpression){
+    public EntityExtraWhere(SQLActionExpression1<TProxy> whereExpression){
         this.whereExpression = whereExpression;
     }
     @Override

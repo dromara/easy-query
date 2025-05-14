@@ -9,7 +9,7 @@ import java.util.Collection;
  * @author xuejiaming
  * @FileName: EasyEntityUpdate.java
  * @Description: 文件说明
- * @Date: 2023/3/6 12:20
+ * create time 2023/3/6 12:20
  */
 public class EasyClientEntityUpdatable<T> extends AbstractClientEntityUpdatable<T> {
 

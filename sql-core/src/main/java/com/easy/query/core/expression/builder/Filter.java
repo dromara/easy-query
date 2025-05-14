@@ -4,24 +4,20 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
-import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.PropColumn;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.MultiCollection;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.func.SQLFunction;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * create time 2023/6/22 14:39
@@ -736,14 +732,14 @@ public interface Filter extends SQLNative<Filter> {
     Filter and();
 
 
-    Filter and(SQLExpression1<Filter> sqlWherePredicateSQLExpression);
+    Filter and(SQLActionExpression1<Filter> sqlWherePredicateSQLExpression);
 //    Filter _and(SQLExpression1<Filter> sqlWherePredicateSQLExpression,boolean nextOr);
 
 
     Filter or();
 
 
-    Filter or(SQLExpression1<Filter> sqlWherePredicateSQLExpression);
+    Filter or(SQLActionExpression1<Filter> sqlWherePredicateSQLExpression);
 //    Filter _or(SQLExpression1<Filter> sqlWherePredicateSQLExpression,boolean nextOr);
 
     Filter create();

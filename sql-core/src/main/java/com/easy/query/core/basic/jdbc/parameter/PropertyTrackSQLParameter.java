@@ -13,7 +13,7 @@ import java.util.Objects;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/2/28 20:47
+ * create time 2023/2/28 20:47
  */
 public final class PropertyTrackSQLParameter implements BeanSQLParameter {
     private final TableAvailable table;

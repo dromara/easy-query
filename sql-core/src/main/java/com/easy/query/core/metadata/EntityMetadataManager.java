@@ -4,7 +4,7 @@ package com.easy.query.core.metadata;
  * 类元信息管理
  * @FileName: ClassMetadataManager.java
  * @Description: 文件说明
- * @Date: 2023/2/11 10:07
+ * create time 2023/2/11 10:07
  * @author xuejiaming
  */
 public interface EntityMetadataManager {

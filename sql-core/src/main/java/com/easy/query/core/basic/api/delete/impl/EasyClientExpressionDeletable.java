@@ -7,7 +7,7 @@ import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
  * @author xuejiaming
  * @FileName: EasyExpressionDeletable.java
  * @Description: 文件说明
- * @Date: 2023/3/6 13:21
+ * create time 2023/3/6 13:21
  */
 public class EasyClientExpressionDeletable<T> extends AbstractClientExpressionDeletable<T> {
     public EasyClientExpressionDeletable(Class<T> clazz, EntityDeleteExpressionBuilder entityDeleteExpression) {

@@ -9,7 +9,7 @@ import java.util.Collection;
  * @author xuejiaming
  * @FileName: EasyEntityDeletable.java
  * @Description: 文件说明
- * @Date: 2023/3/6 13:20
+ * create time 2023/3/6 13:20
  */
 public class EasyClientEntityDeletable<T> extends AbstractClientEntityDeletable<T> {
     public EasyClientEntityDeletable(Class<T> clazz,Collection<T> entities, EntityDeleteExpressionBuilder entityDeleteExpression) {

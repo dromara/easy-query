@@ -3,7 +3,7 @@ package com.easy.query.core.func;
 import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.SQLLikeEnum;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
@@ -55,9 +55,9 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
      * @param sqlExpression 属性选择函数
      * @return ifNull函数
      */
-    SQLFunction nullOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction nullOrDefault(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
-    SQLFunction equalsWith(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction equalsWith(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
     default SQLFunction orderByNullsMode(TableAvailable table, String property, boolean asc, @NotNull OrderByModeEnum orderByModeEnum) {
         return orderByNullsMode(o -> o.column(table,property), asc, orderByModeEnum);
@@ -67,7 +67,7 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
         return orderByNullsMode(o -> o.sqlFunc(sqlFunction), asc, orderByModeEnum);
     }
 
-    SQLFunction orderByNullsMode(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean asc, @NotNull OrderByModeEnum orderByModeEnum);
+    SQLFunction orderByNullsMode(SQLActionExpression1<ColumnFuncSelector> sqlExpression, boolean asc, @NotNull OrderByModeEnum orderByModeEnum);
 
     /**
      * 请使用nullOrDefault函数
@@ -76,7 +76,7 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
      * @return
      */
     @Deprecated
-    default SQLFunction valueOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    default SQLFunction valueOrDefault(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return nullOrDefault(sqlExpression);
     }
 
@@ -101,7 +101,7 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
         return abs(o -> o.column(tableOwner, property));
     }
 
-    SQLFunction abs(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction abs(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
     /**
      * 按照指定的小数位数进行四舍五入运算
@@ -142,19 +142,19 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
         return constValue(o -> o.value(val));
     }
 
-    SQLFunction constValue(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction constValue(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
     default SQLFunction subQueryValue(Query<?> query) {
         return subQueryValue(o -> o.subQuery(query));
     }
 
-    SQLFunction subQueryValue(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction subQueryValue(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
     default SQLFunction exists(Query<?> query) {
         return exists(o -> o.subQuery(query));
     }
 
-    SQLFunction exists(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction exists(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
     /**
      * 取反
@@ -180,15 +180,15 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
         });
     }
 
-    SQLFunction not(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction not(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
-    default SQLFunction nativeSql(String sqlSegemnt, SQLExpression1<SQLNativeChainExpressionContext> consume) {
+    default SQLFunction nativeSql(String sqlSegemnt, SQLActionExpression1<SQLNativeChainExpressionContext> consume) {
         return new NativeSegmentSQLFunction(sqlSegemnt, consume);
     }
 
-    SQLFunction like(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean like, SQLLikeEnum sqlLike);
+    SQLFunction like(SQLActionExpression1<ColumnFuncSelector> sqlExpression, boolean like, SQLLikeEnum sqlLike);
 
-    SQLFunction anySQLFunction(String sqlSegment, SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction anySQLFunction(String sqlSegment, SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
     SQLFunction booleanConstantSQLFunction(boolean trueOrFalse);
 }

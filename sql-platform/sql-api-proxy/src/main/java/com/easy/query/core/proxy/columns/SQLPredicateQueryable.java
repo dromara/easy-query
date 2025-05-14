@@ -1,6 +1,6 @@
 package com.easy.query.core.proxy.columns;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -27,29 +27,29 @@ public interface SQLPredicateQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>,
 
     SQLPredicateQueryable<T1Proxy, T1> distinct(boolean useDistinct);
 
-    default SQLPredicateQueryable<T1Proxy, T1> orderBy(SQLExpression1<T1Proxy> orderExpression) {
+    default SQLPredicateQueryable<T1Proxy, T1> orderBy(SQLActionExpression1<T1Proxy> orderExpression) {
         return orderBy(true, orderExpression);
     }
 
-    SQLPredicateQueryable<T1Proxy, T1> orderBy(boolean condition, SQLExpression1<T1Proxy> orderExpression);
+    SQLPredicateQueryable<T1Proxy, T1> orderBy(boolean condition, SQLActionExpression1<T1Proxy> orderExpression);
     T1Proxy element(int index);
     SQLPredicateQueryable<T1Proxy, T1> elements(int begin,int end);
 
-    SQLPredicateQueryable<T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression);
+    SQLPredicateQueryable<T1Proxy, T1> where(SQLActionExpression1<T1Proxy> whereExpression);
 
     /**
      * 存在任意一个满足条件
      *
      * @param whereExpression
      */
-    void any(SQLExpression1<T1Proxy> whereExpression);
+    void any(SQLActionExpression1<T1Proxy> whereExpression);
 
     /**
      * 存在任意一个满足条件
      */
     void any();
 
-    void none(SQLExpression1<T1Proxy> whereExpression);
+    void none(SQLActionExpression1<T1Proxy> whereExpression);
 
     void none();
 

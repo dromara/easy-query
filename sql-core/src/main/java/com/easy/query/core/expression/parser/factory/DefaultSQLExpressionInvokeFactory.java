@@ -19,7 +19,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
  * @author xuejiaming
  * @FileName: DefaultEasyQueryLambdaFactory.java
  * @Description: 文件说明
- * @Date: 2023/2/14 08:33
+ * create time 2023/2/14 08:33
  */
 public class DefaultSQLExpressionInvokeFactory implements SQLExpressionInvokeFactory {
     @Override

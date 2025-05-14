@@ -9,7 +9,7 @@ import com.easy.query.cache.core.impl.AbstractSingleCacheQueryable;
 import com.easy.query.cache.core.queryable.AllCacheQueryable;
 import com.easy.query.core.api.pagination.DefaultPageResult;
 import com.easy.query.core.api.pagination.EasyPageResult;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyStringUtil;
@@ -147,7 +147,7 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
 
     protected List<String> getCacheAllIndex0() {
 //        return new LinkedList<>();
-        SQLExpression1<ColumnAsSelector<TEntity, String>> idProperty = x -> x.column(getIdProperty());
+        SQLActionExpression1<ColumnAsSelector<TEntity, String>> idProperty = x -> x.column(getIdProperty());
         return easyQueryClient.queryable(entityClass)
                 .noInterceptor()
                 .asNoTracking()

@@ -3,7 +3,7 @@ package com.easy.query.test.mytest;
 /**
  * @FileName: TestUserMysqlGroup.java
  * @Description: 文件说明
- * @Date: 2023/2/19 22:15
+ * create time 2023/2/19 22:15
  * @author xuejiaming
  */
 public class TestUserMysqlGroup {

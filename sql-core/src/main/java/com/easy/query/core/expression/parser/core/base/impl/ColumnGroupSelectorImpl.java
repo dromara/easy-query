@@ -10,7 +10,7 @@ import com.easy.query.core.util.EasyObjectUtil;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/2/12 21:36
+ * create time 2023/2/12 21:36
  */
 public class ColumnGroupSelectorImpl<T1> implements ColumnGroupSelector<T1> {
     private final TableAvailable table;

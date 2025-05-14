@@ -13,7 +13,7 @@ import com.easy.query.core.util.EasySQLUtil;
  * @author xuejiaming
  * @FileName: ColumnPropertyPredicate.java
  * @Description: column和某个bean的值的断言节点
- * @Date: 2023/2/13 15:18
+ * create time 2023/2/13 15:18
  */
 public class UpdateMapColumnSegmentImpl implements InsertUpdateSetColumnSQLSegment {
 

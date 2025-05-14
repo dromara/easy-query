@@ -6,7 +6,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
 /**
  * @FileName: TableSegment.java
  * @Description:  [table | (table expression)]  [alias] | [on predicate] [where]
- * @Date: 2023/3/3 22:06
+ * create time 2023/3/3 22:06
  * @author xuejiaming
  */
 public interface TableExpressionBuilder extends ExpressionBuilder {

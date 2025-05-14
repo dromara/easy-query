@@ -14,7 +14,7 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.builder.impl.ConfigurerImpl;
 import com.easy.query.core.expression.builder.impl.OnlySelectorImpl;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnConfigurerImpl;
@@ -23,7 +23,6 @@ import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurerImpl;
-import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -41,7 +40,7 @@ import java.util.function.Predicate;
  * @author xuejiaming
  * @FileName: AbstractInsertable.java
  * @Description: 文件说明
- * @Date: 2023/2/20 12:30
+ * create time 2023/2/20 12:30
  */
 public abstract class AbstractClientInsertable<T> implements ClientInsertable<T> {
     protected final List<T> entities;
@@ -217,7 +216,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
-    public ClientInsertable<T> onConflictThen(SQLExpression1<ColumnOnlySelector<T>> updateSetSelector, Collection<String> constraintProperties) {
+    public ClientInsertable<T> onConflictThen(SQLActionExpression1<ColumnOnlySelector<T>> updateSetSelector, Collection<String> constraintProperties) {
         onConflictThen0(constraintProperties, updateSetSelector);
         return this;
     }
@@ -239,7 +238,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
-    public ClientInsertable<T> onConflictDoUpdate(Collection<String> constraintProperties, SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
+    public ClientInsertable<T> onConflictDoUpdate(Collection<String> constraintProperties, SQLActionExpression1<ColumnOnlySelector<T>> setColumnSelector) {
         onConflictThen0(constraintProperties, setColumnSelector);
         return this;
     }
@@ -251,7 +250,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
-    public ClientInsertable<T> configure(SQLExpression1<ContextConfigurer> configurer) {
+    public ClientInsertable<T> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         if (configurer != null) {
             configurer.apply(new ContextConfigurerImpl(entityInsertExpressionBuilder.getExpressionContext()));
         }
@@ -259,7 +258,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
-    public ClientInsertable<T> onConflictDoUpdate(SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
+    public ClientInsertable<T> onConflictDoUpdate(SQLActionExpression1<ColumnOnlySelector<T>> setColumnSelector) {
         onConflictThen0(null, setColumnSelector);
         return this;
     }
@@ -271,12 +270,12 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
-    public ClientInsertable<T> onDuplicateKeyUpdate(SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
+    public ClientInsertable<T> onDuplicateKeyUpdate(SQLActionExpression1<ColumnOnlySelector<T>> setColumnSelector) {
         onConflictThen0(null, setColumnSelector);
         return this;
     }
 
-    private void onConflictThen0(Collection<String> constraintProperties, SQLExpression1<ColumnOnlySelector<T>> setColumnSelector) {
+    private void onConflictThen0(Collection<String> constraintProperties, SQLActionExpression1<ColumnOnlySelector<T>> setColumnSelector) {
 
         if (EasyCollectionUtil.isNotEmpty(constraintProperties)) {
             for (String constraintProperty : constraintProperties) {
@@ -311,7 +310,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
-    public ClientInsertable<T> columnConfigure(SQLExpression1<ColumnConfigurer<T>> columnConfigureExpression) {
+    public ClientInsertable<T> columnConfigure(SQLActionExpression1<ColumnConfigurer<T>> columnConfigureExpression) {
         columnConfigureExpression.apply(new ColumnConfigurerImpl<>(entityTableExpressionBuilder.getEntityTable(), new ConfigurerImpl(entityInsertExpressionBuilder)));
         return this;
     }

@@ -3,7 +3,7 @@ package com.easy.query.core.basic.extension.logicdel.abstraction;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.metadata.LogicDeleteMetadata;
@@ -27,12 +27,12 @@ public abstract class AbstractLogicDeleteStrategy implements LogicDeleteStrategy
         if (!allowTypes.contains(propertyType)) {
             throw new EasyQueryException(EasyClassUtil.getSimpleName(builder.getEntityClass()) + "." + propertyName + " logic delete not support, property type not allowed");
         }
-        SQLExpression1<WherePredicate<Object>> predicateFilterExpression = getPredicateFilterExpression(builder, propertyName);
-        SQLExpression1<ColumnSetter<Object>> deletedSQLExpression = getDeletedSQLExpression(builder, propertyName);
+        SQLActionExpression1<WherePredicate<Object>> predicateFilterExpression = getPredicateFilterExpression(builder, propertyName);
+        SQLActionExpression1<ColumnSetter<Object>> deletedSQLExpression = getDeletedSQLExpression(builder, propertyName);
         return builder.build(predicateFilterExpression, deletedSQLExpression);
     }
 
-    protected abstract SQLExpression1<WherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, String propertyName);
+    protected abstract SQLActionExpression1<WherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, String propertyName);
 
     /**
      *
@@ -52,5 +52,5 @@ public abstract class AbstractLogicDeleteStrategy implements LogicDeleteStrategy
      * @param propertyName
      * @return
      */
-    protected abstract SQLExpression1<ColumnSetter<Object>> getDeletedSQLExpression(LogicDeleteBuilder builder, String propertyName);
+    protected abstract SQLActionExpression1<ColumnSetter<Object>> getDeletedSQLExpression(LogicDeleteBuilder builder, String propertyName);
 }

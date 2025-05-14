@@ -1,14 +1,12 @@
 package com.easy.query.core.expression.lambda;
 
 /**
- *
- * @FileName: OnFunction.java
- * @Description: 文件说明
- * @Date: 2023/2/4 22:31
+ * create time 2023/12/2 17:04
+ * 10个参数入参的代码块
  * @author xuejiaming
  */
 @FunctionalInterface
-public interface SQLExpression10<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10> {
+public interface SQLActionExpression10<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10> {
 
     void apply(T1 p1,T2 p2,T3 p3,T4 p4,T5 p5,T6 p6,T7 p7,T8 p8,T9 p9,T10 p10);
 }

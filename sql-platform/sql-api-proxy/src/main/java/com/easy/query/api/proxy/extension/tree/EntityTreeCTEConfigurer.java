@@ -1,7 +1,6 @@
 package com.easy.query.api.proxy.extension.tree;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 
 /**
@@ -41,5 +40,5 @@ public interface EntityTreeCTEConfigurer<T1Proxy extends ProxyEntity<T1Proxy, T1
      */
     void setDeepColumnName(String deepColumnName);
 
-    void setChildFilter(SQLExpression1<T1Proxy> whereExpression);
+    void setChildFilter(SQLActionExpression1<T1Proxy> whereExpression);
 }

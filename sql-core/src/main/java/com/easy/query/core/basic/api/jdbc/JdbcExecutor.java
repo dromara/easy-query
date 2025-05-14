@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @FileName: EasyJDBC.java
  * @Description: 文件说明
- * @Date: 2023/3/12 22:41
+ * create time 2023/3/12 22:41
  * @author xuejiaming
  */
 public interface JdbcExecutor {

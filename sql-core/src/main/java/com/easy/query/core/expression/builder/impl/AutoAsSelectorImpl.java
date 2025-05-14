@@ -8,7 +8,7 @@ import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.core.ResultColumnInfo;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
@@ -122,7 +122,6 @@ public class AutoAsSelectorImpl extends AbstractAsSelector<AsSelector> implement
             columnAnonymousAll((AnonymousEntityTableExpressionBuilder) tableExpressionBuilder);
         } else {
             //只查询当前对象返回结果属性名称匹配
-            boolean queryLargeColumn = entityQueryExpressionBuilder.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
             EntityMetadata targetEntityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
             EntityMetadata sourceEntityMetadata = tableExpressionBuilder.getEntityMetadata();
 
@@ -135,15 +134,8 @@ public class AutoAsSelectorImpl extends AbstractAsSelector<AsSelector> implement
 //                    continue;
 //                }
 
-                if (ignoreColumnIfLargeNotQuery(queryLargeColumn, sourceColumnMetadata)) {
-                    continue;
-                }
                 ColumnMetadata targetColumnMetadata = entityMappingRule.getColumnMetadataBySourcColumnMetadata(sourceEntityMetadata, sourceColumnMetadata, targetEntityMetadata);
                 if (targetColumnMetadata != null) {
-
-                    if (ignoreColumnIfLargeNotQuery(queryLargeColumn, targetColumnMetadata)) {
-                        continue;
-                    }
                     String targetColumnName = targetColumnMetadata.getName();
                     //如果当前属性和查询对象属性一致那么就返回对应的列名，对应的列名如果不一样就返回对应返回结果对象的属性上的列名
                     String alias = Objects.equals(sourceColumnMetadata.getName(), targetColumnName) ? null : targetColumnName;
@@ -158,7 +150,7 @@ public class AutoAsSelectorImpl extends AbstractAsSelector<AsSelector> implement
     }
 
     @Override
-    public AsSelector sqlNativeSegment(String sqlSegment, SQLExpression1<SQLNativeExpressionContext> contextConsume) {
+    public AsSelector sqlNativeSegment(String sqlSegment, SQLActionExpression1<SQLNativeExpressionContext> contextConsume) {
         Objects.requireNonNull(contextConsume, "sql native context consume cannot be null");
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(expressionContext, runtimeContext);
         sqlNativeExpressionContext.setResultEntityMetadata(resultEntityMetadata);

@@ -5,7 +5,7 @@ import com.easy.query.core.basic.extension.interceptor.PredicateFilterIntercepto
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.RelationTableKey;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.RelationTableAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -37,7 +37,7 @@ import java.util.function.Predicate;
 
 /**
  * @author xuejiaming
- * @Date: 2023/3/15 21:58
+ * create time 2023/3/15 21:58
  */
 public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractEntityExpressionBuilder implements LambdaEntityExpressionBuilder {
     public AbstractPredicateEntityExpressionBuilder(ExpressionContext expressionContext,Class<?> queryClass) {
@@ -132,7 +132,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
                 }
             }
         }
-        SQLExpression1<WherePredicate<Object>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();
+        SQLActionExpression1<WherePredicate<Object>> logicDeleteQueryFilterExpression = table.getLogicDeleteQueryFilterExpression();
         if(logicDeleteQueryFilterExpression!=null){
             logicDeleteQueryFilterExpression.apply(sqlPredicate);
         }

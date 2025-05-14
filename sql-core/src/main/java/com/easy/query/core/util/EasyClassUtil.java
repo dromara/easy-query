@@ -33,7 +33,7 @@ import java.util.Set;
  * @author xuejiaming
  * @FileName: ClassUtil.java
  * @Description: 文件说明
- * @Date: 2023/2/11 13:03
+ * create time 2023/2/11 13:03
  */
 public class EasyClassUtil {
     private final static Log log = LogFactory.getLog(EasyClassUtil.class);

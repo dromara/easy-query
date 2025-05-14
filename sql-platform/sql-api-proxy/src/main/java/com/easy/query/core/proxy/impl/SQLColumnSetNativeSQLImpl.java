@@ -3,7 +3,7 @@ package com.easy.query.core.proxy.impl;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.builder.Setter;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.SQLColumnSetExpression;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
@@ -20,9 +20,9 @@ public class SQLColumnSetNativeSQLImpl implements SQLColumnSetExpression {
     private final TableAvailable table;
     private final String property;
     private final String sqlSegment;
-    private final SQLExpression1<SQLNativeProxyExpressionContext> contextConsume;
+    private final SQLActionExpression1<SQLNativeProxyExpressionContext> contextConsume;
 
-    public SQLColumnSetNativeSQLImpl(TableAvailable table, String property, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume){
+    public SQLColumnSetNativeSQLImpl(TableAvailable table, String property, String sqlSegment, SQLActionExpression1<SQLNativeProxyExpressionContext> contextConsume){
         this.table = table;
         this.property = property;
         this.sqlSegment = sqlSegment;

@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
  * @author xuejiaming
  * @FileName: EasyQueryProperties.java
  * @Description: 文件说明
- * @Date: 2023/3/11 14:25
+ * create time 2023/3/11 14:25
  */
 @ConfigurationProperties(prefix = "easy-query")
 public class EasyQueryProperties {
@@ -75,7 +75,6 @@ public class EasyQueryProperties {
      */
     private long shardingExecuteTimeoutMillis = 60000L;
 
-    private boolean queryLargeColumn = true;
     /**
      * 当出现条件分片大于多少时报错默认128,
      * 就是比如select where update where delete where路由到过多的表就会报错
@@ -270,14 +269,6 @@ public class EasyQueryProperties {
 
     public void setShardingExecuteTimeoutMillis(long shardingExecuteTimeoutMillis) {
         this.shardingExecuteTimeoutMillis = shardingExecuteTimeoutMillis;
-    }
-
-    public boolean isQueryLargeColumn() {
-        return queryLargeColumn;
-    }
-
-    public void setQueryLargeColumn(boolean queryLargeColumn) {
-        this.queryLargeColumn = queryLargeColumn;
     }
 
     public int getMaxShardingRouteCount() {

@@ -1,6 +1,6 @@
 package com.easy.query.core.func;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
@@ -52,7 +52,7 @@ public interface SQLDateTimeFunc {
     default SQLFunction dateTimeFormat(SQLTableOwner tableOwner, String property, String javaFormat){
         return dateTimeFormat(x->x.column(tableOwner,property),javaFormat);
     }
-    SQLFunction dateTimeFormat(SQLExpression1<ColumnFuncSelector> sqlExpression, String javaFormat);
+    SQLFunction dateTimeFormat(SQLActionExpression1<ColumnFuncSelector> sqlExpression, String javaFormat);
 
     /**
      * 对时间格式的列进行格式化
@@ -111,9 +111,9 @@ public interface SQLDateTimeFunc {
      * @param timeUnit
      * @return 时间格式添加函数
      */
-    SQLFunction plusDateTime(SQLExpression1<ColumnFuncSelector> sqlExpression, long duration, TimeUnit timeUnit);
+    SQLFunction plusDateTime(SQLActionExpression1<ColumnFuncSelector> sqlExpression, long duration, TimeUnit timeUnit);
 
-    SQLFunction plusDateTime2(SQLExpression1<ColumnFuncSelector> sqlExpression, TimeUnitEnum timeUnit);
+    SQLFunction plusDateTime2(SQLActionExpression1<ColumnFuncSelector> sqlExpression, TimeUnitEnum timeUnit);
 
     /**
      * 时间格式添加函数
@@ -150,7 +150,7 @@ public interface SQLDateTimeFunc {
      * @return 时间格式添加函数
      */
     @Deprecated
-    SQLFunction plusDateTimeMonths(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction plusDateTimeMonths(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
     /**
      * 时间格式添加函数
@@ -187,7 +187,7 @@ public interface SQLDateTimeFunc {
      * @return 时间格式添加函数
      */
     @Deprecated
-    SQLFunction plusDateTimeYears(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction plusDateTimeYears(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
 
     /**
@@ -222,7 +222,7 @@ public interface SQLDateTimeFunc {
      * @param sqlExpression
      * @return 时间格式添加函数
      */
-    SQLFunction dateTimeProperty(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeUnitEnum dateTimeUnitEnum);
+    SQLFunction dateTimeProperty(SQLActionExpression1<ColumnFuncSelector> sqlExpression, DateTimeUnitEnum dateTimeUnitEnum);
 
     /**
      * 相差时间函数
@@ -342,8 +342,8 @@ public interface SQLDateTimeFunc {
      * @return 相差时间函数
      */
     @Deprecated
-    SQLFunction duration(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum);
-    SQLFunction duration2(SQLExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum);
+    SQLFunction duration(SQLActionExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum);
+    SQLFunction duration2(SQLActionExpression1<ColumnFuncSelector> sqlExpression, DateTimeDurationEnum durationEnum);
 
 //
 //    /**

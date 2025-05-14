@@ -4,7 +4,7 @@ import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.extra.ExtraConfigure;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -17,9 +17,9 @@ import com.easy.query.core.util.EasyObjectUtil;
  */
 public class EntityExtraConfigure<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> implements ExtraConfigure {
 
-    private final SQLExpression1<EntityQueryable<TProxy, TEntity>> queryableConfigureExpression;
+    private final SQLActionExpression1<EntityQueryable<TProxy, TEntity>> queryableConfigureExpression;
 
-    public EntityExtraConfigure(SQLExpression1<EntityQueryable<TProxy, TEntity>> queryableConfigureExpression) {
+    public EntityExtraConfigure(SQLActionExpression1<EntityQueryable<TProxy, TEntity>> queryableConfigureExpression) {
         this.queryableConfigureExpression = queryableConfigureExpression;
     }
 

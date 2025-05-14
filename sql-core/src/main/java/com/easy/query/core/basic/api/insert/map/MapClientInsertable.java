@@ -1,8 +1,7 @@
 package com.easy.query.core.basic.api.insert.map;
 
-import com.easy.query.core.basic.api.insert.ClientInsertable;
 import com.easy.query.core.basic.api.insert.Insertable;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 
 import java.util.Collection;
@@ -26,5 +25,5 @@ public interface MapClientInsertable<T> extends Insertable<T, MapClientInsertabl
         }
         return this;
     }
-    MapClientInsertable<T> columnConfigure(SQLExpression1<ColumnConfigurer<T>> columnConfigureExpression);
+    MapClientInsertable<T> columnConfigure(SQLActionExpression1<ColumnConfigurer<T>> columnConfigureExpression);
 }

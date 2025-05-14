@@ -81,9 +81,7 @@ public class EasyExpressionContext implements ExpressionContext {
         //如果他是不查询大列的就去掉
         this.easyBehavior = new EasyBehavior();
         EasyQueryOption easyQueryOption = queryConfiguration.getEasyQueryOption();
-        if (!easyQueryOption.isQueryLargeColumn()) {
-            easyBehavior.removeBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
-        }
+
         if (easyQueryOption.isDefaultTrack()) {
             easyBehavior.addBehavior(EasyBehaviorEnum.USE_TRACKING);
         }

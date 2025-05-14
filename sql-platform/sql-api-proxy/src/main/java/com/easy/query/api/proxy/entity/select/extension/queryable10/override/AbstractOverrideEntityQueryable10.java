@@ -7,7 +7,7 @@ import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.select.ClientQueryable10;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.proxy.ProxyEntity;
 
@@ -42,7 +42,7 @@ public abstract class AbstractOverrideEntityQueryable10<T1Proxy extends ProxyEnt
     }
 
     @Override
-    public EntityQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> orderBy(boolean condition, SQLExpression1<T1Proxy> selectExpression) {
+    public EntityQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> orderBy(boolean condition, SQLActionExpression1<T1Proxy> selectExpression) {
         super.orderBy(condition, selectExpression);
         return getQueryable10();
     }
@@ -72,12 +72,12 @@ public abstract class AbstractOverrideEntityQueryable10<T1Proxy extends ProxyEnt
     }
 
     @Override
-    public EntityQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> where(boolean condition, SQLExpression1<T1Proxy> whereExpression) {
+    public EntityQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> where(boolean condition, SQLActionExpression1<T1Proxy> whereExpression) {
         super.where(condition, whereExpression);
         return getQueryable10();
     }
     @Override
-    public EntityQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> having(boolean condition, SQLExpression1<T1Proxy> predicateExpression) {
+    public EntityQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> having(boolean condition, SQLActionExpression1<T1Proxy> predicateExpression) {
         super.having(condition, predicateExpression);
         return getQueryable10();
     }
@@ -148,12 +148,6 @@ public abstract class AbstractOverrideEntityQueryable10<T1Proxy extends ProxyEnt
     }
 
     @Override
-    public EntityQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> queryLargeColumn(boolean queryLarge) {
-        super.queryLargeColumn(queryLarge);
-        return getQueryable10();
-    }
-
-    @Override
     public EntityQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
         super.useShardingConfigure(maxShardingQueryLimit, connectionMode);
         return getQueryable10();
@@ -211,7 +205,7 @@ public abstract class AbstractOverrideEntityQueryable10<T1Proxy extends ProxyEnt
         return getQueryable10();
     }
     @Override
-    public EntityQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> configure(SQLExpression1<ContextConfigurer> configurer) {
+    public EntityQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         super.configure(configurer);
         return getQueryable10();
     }

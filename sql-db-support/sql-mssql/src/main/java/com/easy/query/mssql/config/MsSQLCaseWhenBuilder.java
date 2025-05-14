@@ -3,7 +3,7 @@ package com.easy.query.mssql.config;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.Filter;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.segment.scec.expression.ColumnConstParamExpression;
 import com.easy.query.core.expression.segment.scec.expression.ColumnConstParameterExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
@@ -35,7 +35,7 @@ public class MsSQLCaseWhenBuilder extends DefaultCaseWhenBuilder {
     }
 
     @Override
-    public SQLCaseWhenBuilder caseWhen(SQLExpression1<Filter> predicate, ParamExpression paramExpression) {
+    public SQLCaseWhenBuilder caseWhen(SQLActionExpression1<Filter> predicate, ParamExpression paramExpression) {
         return super.caseWhen(predicate, processorConstBigDecimal(paramExpression));
     }
 

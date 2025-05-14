@@ -8,7 +8,7 @@ import com.easy.query.core.expression.segment.index.SegmentIndex;
 /**
  * @FileName: PredicateSegment.java
  * @Description: 文件说明
- * @Date: 2023/3/2 22:04
+ * create time 2023/3/2 22:04
  * @author xuejiaming
  */
 public interface PredicateSegment extends SQLSegment {

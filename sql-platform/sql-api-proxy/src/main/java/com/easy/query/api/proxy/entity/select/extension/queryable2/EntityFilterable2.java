@@ -2,8 +2,8 @@ package com.easy.query.api.proxy.entity.select.extension.queryable2;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.core.common.tuple.MergeTuple2;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
 
 /**
@@ -38,7 +38,7 @@ public interface EntityFilterable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param whereExpression 入参两个参数分别为from表和join表
      * @return 返回表达式自身
      */
-    default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> where(SQLExpression2<T1Proxy, T2Proxy> whereExpression) {
+    default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> where(SQLActionExpression2<T1Proxy, T2Proxy> whereExpression) {
         return where(true, whereExpression);
     }
 
@@ -67,7 +67,7 @@ public interface EntityFilterable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param whereExpression 入参两个参数分别为from表和join表
      * @return 返回表达式自身
      */
-    default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> where(boolean condition, SQLExpression2<T1Proxy, T2Proxy> whereExpression) {
+    default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> where(boolean condition, SQLActionExpression2<T1Proxy, T2Proxy> whereExpression) {
         if (condition) {
             getClientQueryable2().where((wherePredicate1, wherePredicate2) -> {
                 get1Proxy().getEntitySQLContext()._where(wherePredicate1.getFilter(),()->{
@@ -102,7 +102,7 @@ public interface EntityFilterable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param whereExpression 入参为join的from表和join表组成的tuple元组
      * @return 返回表达式自身
      */
-    default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> whereMerge(SQLExpression1<MergeTuple2<T1Proxy, T2Proxy>> whereExpression) {
+    default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> whereMerge(SQLActionExpression1<MergeTuple2<T1Proxy, T2Proxy>> whereExpression) {
         return whereMerge(true, whereExpression);
     }
     /**
@@ -130,7 +130,7 @@ public interface EntityFilterable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param whereExpression 入参为join的from表和join表组成的tuple元组
      * @return 返回表达式自身
      */
-    default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> whereMerge(boolean condition, SQLExpression1<MergeTuple2<T1Proxy, T2Proxy>> whereExpression) {
+    default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> whereMerge(boolean condition, SQLActionExpression1<MergeTuple2<T1Proxy, T2Proxy>> whereExpression) {
         return where(condition, (t1, t2) -> {
             whereExpression.apply(new MergeTuple2<>(t1, t2));
         });

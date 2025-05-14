@@ -3,7 +3,7 @@ package com.easy.query.core.enums;
 
 /**
  * @Description: 文件说明
- * @Date: 2023/2/13 21:40
+ * create time 2023/2/13 21:40
  * @author xuejiaming
  */
 public enum SQLPredicateCompareEnum implements SQLPredicateCompare {

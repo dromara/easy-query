@@ -1,7 +1,7 @@
 package com.easy.query.core.proxy.extra;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.extra.ExtraConfigure;
 import com.easy.query.core.expression.parser.core.extra.ExtraWhere;
@@ -21,13 +21,13 @@ public class EntityExtraAutoIncludeConfigureImpl<TProxy extends ProxyEntity<TPro
     private ExtraSelect extraSelect;
 
     @Override
-    public EntityExtraAutoIncludeConfigure<TProxy, TEntity> configure(SQLExpression1<EntityQueryable<TProxy,TEntity>> queryableConfigureExpression) {
+    public EntityExtraAutoIncludeConfigure<TProxy, TEntity> configure(SQLActionExpression1<EntityQueryable<TProxy,TEntity>> queryableConfigureExpression) {
         this.extraConfigure = new EntityExtraConfigure<>(queryableConfigureExpression);
         return this;
     }
 
     @Override
-    public EntityExtraAutoIncludeConfigure<TProxy, TEntity> where(SQLExpression1<TProxy> whereExpression) {
+    public EntityExtraAutoIncludeConfigure<TProxy, TEntity> where(SQLActionExpression1<TProxy> whereExpression) {
         this.extraWhere = new EntityExtraWhere<>(whereExpression);
         return this;
     }

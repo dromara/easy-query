@@ -10,18 +10,16 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurerImpl;
-import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -30,7 +28,7 @@ import java.util.function.Function;
  * @author xuejiaming
  * @FileName: AbstractEntityDelete.java
  * @Description: 文件说明
- * @Date: 2023/2/28 12:33
+ * create time 2023/2/28 12:33
  */
 public abstract class AbstractClientEntityDeletable<T> extends AbstractSQLExecuteRows<ClientEntityDeletable<T>> implements ClientEntityDeletable<T> {
     protected final List<T> entities = new ArrayList<>();
@@ -109,7 +107,7 @@ public abstract class AbstractClientEntityDeletable<T> extends AbstractSQLExecut
         return this;
     }
     @Override
-    public ClientEntityDeletable<T> configure(SQLExpression1<ContextConfigurer> configurer) {
+    public ClientEntityDeletable<T> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         if(configurer!=null){
             configurer.apply(new ContextConfigurerImpl(entityDeleteExpressionBuilder.getExpressionContext()));
         }

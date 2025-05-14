@@ -12,7 +12,7 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
 /**
  * @FileName: ColumnValuePredicate.java
  * @Description: 文件说明
- * @Date: 2023/2/14 23:34
+ * create time 2023/2/14 23:34
  * @author xuejiaming
  */
 public class ColumnWithColumnPredicate implements Predicate {

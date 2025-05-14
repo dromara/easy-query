@@ -27,8 +27,8 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLConsumer;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
@@ -385,7 +385,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 //    }
 
     @Override
-    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> include(boolean condition, SQLFuncExpression1<T1Proxy, TPropertyProxy> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
+    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> include(boolean condition, SQLFuncExpression1<T1Proxy, TPropertyProxy> navigateIncludeSQLExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
         if (condition) {
 
             T1Proxy proxy = getQueryable().get1Proxy();
@@ -402,7 +402,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(boolean condition, SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
+    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(boolean condition, SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
         if (condition) {
 
             T1Proxy proxy = getQueryable().get1Proxy();
@@ -417,7 +417,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return this;
     }
 
-    private <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> include0(String navValue, SQLExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
+    private <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> include0(String navValue, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
 
         Objects.requireNonNull(navValue, "include [navValue] is null");
 
@@ -540,7 +540,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 //    }
 
     @Override
-    public EntityQueryable<T1Proxy, T1> asTreeCTE(SQLExpression1<EntityTreeCTEConfigurer<T1Proxy, T1>> treeExpression) {
+    public EntityQueryable<T1Proxy, T1> asTreeCTE(SQLActionExpression1<EntityTreeCTEConfigurer<T1Proxy, T1>> treeExpression) {
         ClientQueryable<T1> clientQueryable = getClientQueryable().asTreeCTE(treeConfigurer -> {
             treeExpression.apply(new EntityTreeCTEConfigurerImpl<>(t1Proxy, treeConfigurer));
         });
@@ -548,7 +548,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public EntityQueryable<T1Proxy, T1> asTreeCTECustom(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, ?>> codePropertyExpression, SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, ?>> parentCodePropertyExpression, SQLExpression1<TreeCTEConfigurer> treeExpression) {
+    public EntityQueryable<T1Proxy, T1> asTreeCTECustom(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, ?>> codePropertyExpression, SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, ?>> parentCodePropertyExpression, SQLActionExpression1<TreeCTEConfigurer> treeExpression) {
         ClientQueryable<T1> clientQueryable = getClientQueryable().asTreeCTECustom(codePropertyExpression.apply(get1Proxy()).getValue(), parentCodePropertyExpression.apply(get1Proxy()).getValue(), treeExpression);
         return new EasyEntityQueryable<>(get1Proxy(), clientQueryable);
     }
@@ -577,7 +577,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 //    }
 
     @Override
-    public EntityQueryable<T1Proxy, T1> where(boolean condition, SQLExpression1<T1Proxy> whereExpression) {
+    public EntityQueryable<T1Proxy, T1> where(boolean condition, SQLActionExpression1<T1Proxy> whereExpression) {
         if (condition) {
             clientQueryable.where(wherePredicate -> {
                 t1Proxy.getEntitySQLContext()._where(wherePredicate.getFilter(), () -> {
@@ -648,7 +648,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public EntityQueryable<T1Proxy, T1> having(boolean condition, SQLExpression1<T1Proxy> aggregateFilterSQLExpression) {
+    public EntityQueryable<T1Proxy, T1> having(boolean condition, SQLActionExpression1<T1Proxy> aggregateFilterSQLExpression) {
         if (condition) {
             clientQueryable.having(whereAggregatePredicate -> {
                 get1Proxy().getEntitySQLContext()._having(whereAggregatePredicate.getAggregateFilter(), () -> {
@@ -661,7 +661,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public EntityQueryable<T1Proxy, T1> orderBy(boolean condition, SQLExpression1<T1Proxy> selectExpression) {
+    public EntityQueryable<T1Proxy, T1> orderBy(boolean condition, SQLActionExpression1<T1Proxy> selectExpression) {
         if (condition) {
             clientQueryable.orderBy(columnSelector -> {
                 get1Proxy().getEntitySQLContext()._orderBy(columnSelector.getOrderSelector(), () -> {
@@ -763,13 +763,13 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(Class<T2> joinClass, SQLExpression2<T1Proxy, T2Proxy> on) {
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(Class<T2> joinClass, SQLActionExpression2<T1Proxy, T2Proxy> on) {
         T2Proxy t2Proxy = EntityQueryProxyManager.create(joinClass);
         return leftJoin(t2Proxy, on);
     }
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(T2Proxy t2Proxy, SQLExpression2<T1Proxy, T2Proxy> onExpression) {
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(T2Proxy t2Proxy, SQLActionExpression2<T1Proxy, T2Proxy> onExpression) {
         ClientQueryable2<T1, T2> entityQueryable2 = clientQueryable.leftJoin(t2Proxy.getEntityClass(), (t, t1) -> {
             t1Proxy.getEntitySQLContext()._where(t.getFilter(), () -> {
                 onExpression.apply(t1Proxy, t2Proxy.create(t1.getTable(), t1Proxy.getEntitySQLContext()));
@@ -779,7 +779,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLExpression2<T1Proxy, T2Proxy> on) {
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLActionExpression2<T1Proxy, T2Proxy> on) {
         ClientQueryable<T2> clientQueryable = joinQueryable.getClientQueryable();
         ClientQueryable2<T1, T2> entityQueryable2 = this.clientQueryable.leftJoin(clientQueryable, (t, t1) -> {
             t1Proxy.getEntitySQLContext()._where(t.getFilter(), () -> {
@@ -790,13 +790,13 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(Class<T2> joinClass, SQLExpression2<T1Proxy, T2Proxy> on) {
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(Class<T2> joinClass, SQLActionExpression2<T1Proxy, T2Proxy> on) {
         T2Proxy t2Proxy = EntityQueryProxyManager.create(joinClass);
         return rightJoin(t2Proxy, on);
     }
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(T2Proxy t2Proxy, SQLExpression2<T1Proxy, T2Proxy> onExpression) {
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(T2Proxy t2Proxy, SQLActionExpression2<T1Proxy, T2Proxy> onExpression) {
 
         ClientQueryable2<T1, T2> entityQueryable2 = clientQueryable.rightJoin(t2Proxy.getEntityClass(), (t, t1) -> {
             t1Proxy.getEntitySQLContext()._where(t.getFilter(), () -> {
@@ -807,7 +807,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLExpression2<T1Proxy, T2Proxy> on) {
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLActionExpression2<T1Proxy, T2Proxy> on) {
         ClientQueryable<T2> clientQueryable = joinQueryable.getClientQueryable();
         ClientQueryable2<T1, T2> entityQueryable2 = this.clientQueryable.rightJoin(clientQueryable, (t, t1) -> {
             t1Proxy.getEntitySQLContext()._where(t.getFilter(), () -> {
@@ -818,13 +818,13 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(Class<T2> joinClass, SQLExpression2<T1Proxy, T2Proxy> on) {
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(Class<T2> joinClass, SQLActionExpression2<T1Proxy, T2Proxy> on) {
         T2Proxy t2Proxy = EntityQueryProxyManager.create(joinClass);
         return innerJoin(t2Proxy, on);
     }
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(T2Proxy t2Proxy, SQLExpression2<T1Proxy, T2Proxy> onExpression) {
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(T2Proxy t2Proxy, SQLActionExpression2<T1Proxy, T2Proxy> onExpression) {
         ClientQueryable2<T1, T2> entityQueryable2 = clientQueryable.innerJoin(t2Proxy.getEntityClass(), (t, t1) -> {
             t1Proxy.getEntitySQLContext()._where(t.getFilter(), () -> {
                 onExpression.apply(t1Proxy, t2Proxy.create(t1.getTable(), t1Proxy.getEntitySQLContext()));
@@ -834,7 +834,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLExpression2<T1Proxy, T2Proxy> on) {
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLActionExpression2<T1Proxy, T2Proxy> on) {
         ClientQueryable<T2> clientQueryable = joinQueryable.getClientQueryable();
         ClientQueryable2<T1, T2> entityQueryable2 = this.clientQueryable.innerJoin(clientQueryable, (t, t1) -> {
             t1Proxy.getEntitySQLContext()._where(t.getFilter(), () -> {
@@ -1054,12 +1054,6 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return this;
     }
 
-    @Override
-    public EntityQueryable<T1Proxy, T1> queryLargeColumn(boolean queryLarge) {
-        clientQueryable.queryLargeColumn(queryLarge);
-        return this;
-    }
-
 //    @Override
 //    public EntityQueryable<T1Proxy, T1> conditionConfigure(ConditionAccepter conditionAccepter) {
 //        entityQueryable.conditionConfigure(conditionAccepter);
@@ -1079,7 +1073,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public EntityQueryable<T1Proxy, T1> configure(SQLExpression1<ContextConfigurer> configurer) {
+    public EntityQueryable<T1Proxy, T1> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         clientQueryable.configure(configurer);
         return this;
     }

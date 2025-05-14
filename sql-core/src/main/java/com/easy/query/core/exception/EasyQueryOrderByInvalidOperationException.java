@@ -3,7 +3,7 @@ package com.easy.query.core.exception;
 /**
  * @FileName: EasyQueryOrderByNoPropertyExcpetion.java
  * @Description: 文件说明
- * @Date: 2023/3/23 21:28
+ * create time 2023/3/23 21:28
  * @author xuejiaming
  */
 public class EasyQueryOrderByInvalidOperationException extends EasyQueryException {

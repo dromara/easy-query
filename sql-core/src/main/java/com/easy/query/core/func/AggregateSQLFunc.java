@@ -1,6 +1,6 @@
 package com.easy.query.core.func;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 
@@ -37,7 +37,7 @@ public interface AggregateSQLFunc {
      * @param sqlExpression 属性选择函数
      * @return 求和函数
      */
-    DistinctDefaultSQLFunction sum(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    DistinctDefaultSQLFunction sum(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
     /**
      * 数量统计函数
      * @param property 属性列
@@ -64,7 +64,7 @@ public interface AggregateSQLFunc {
      * @param sqlExpression 属性选择函数
      * @return 数量统计函数
      */
-    DistinctDefaultSQLFunction count(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    DistinctDefaultSQLFunction count(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
     /**
      * 最大值函数
      * @param property 属性列
@@ -91,7 +91,7 @@ public interface AggregateSQLFunc {
      * @param sqlExpression 属性选择函数
      * @return 最大值函数
      */
-    SQLFunction max(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction max(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
     /**
      * 最小值函数
      * @param property 属性列
@@ -118,7 +118,7 @@ public interface AggregateSQLFunc {
      * @param sqlExpression 属性选择函数
      * @return 最小值函数
      */
-    SQLFunction min(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction min(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
     /**
      * 平均值函数
      * @param property 属性列
@@ -145,5 +145,5 @@ public interface AggregateSQLFunc {
      * @param sqlExpression 属性选择函数
      * @return 平均值函数
      */
-    DistinctDefaultSQLFunction avg(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    DistinctDefaultSQLFunction avg(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 }

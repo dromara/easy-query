@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author xuejiaming
  * @FileName: TrackUtil.java
  * @Description: 文件说明
- * @Date: 2023/3/19 21:36
+ * create time 2023/3/19 21:36
  */
 public class EasyTrackUtil {
     private static final ConcurrentHashMap<Class<?>, TrackKeyFunc<Object>> trackKeyFuncMap = new ConcurrentHashMap<>();

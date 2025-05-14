@@ -2,7 +2,7 @@ package com.easy.query.core.expression.sql.include;
 
 
 import com.easy.query.core.expression.builder.AsSelector;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 /**
@@ -15,9 +15,9 @@ public class ColumnIncludeExpression {
     private final TableAvailable table;
     private final String selfProperty;
     private final String aliasProperty;
-    private final SQLExpression1<AsSelector> includeSelectorExpression;
+    private final SQLActionExpression1<AsSelector> includeSelectorExpression;
 
-    public ColumnIncludeExpression(TableAvailable table, String selfProperty, String aliasProperty, SQLExpression1<AsSelector> includeSelectorExpression){
+    public ColumnIncludeExpression(TableAvailable table, String selfProperty, String aliasProperty, SQLActionExpression1<AsSelector> includeSelectorExpression){
 
         this.table = table;
         this.selfProperty = selfProperty;
@@ -37,7 +37,7 @@ public class ColumnIncludeExpression {
         return aliasProperty;
     }
 
-    public SQLExpression1<AsSelector> getIncludeSelectorExpression() {
+    public SQLActionExpression1<AsSelector> getIncludeSelectorExpression() {
         return includeSelectorExpression;
     }
 }

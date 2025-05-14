@@ -1,21 +1,18 @@
 package com.easy.query.api.proxy.entity.update.impl;
 
 import com.easy.query.api.proxy.entity.insert.extension.ProxyColumnConfigurer;
-import com.easy.query.api.proxy.entity.insert.extension.ProxyColumnConfigurerImpl;
 import com.easy.query.api.proxy.entity.update.EntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
-import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.util.EasyCollectionUtil;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -123,13 +120,13 @@ public class EasyEmptyEntityUpdatable<TProxy extends ProxyEntity<TProxy, T>, T> 
     }
 
     @Override
-    public EntityUpdatable<TProxy, T> configure(SQLExpression1<ContextConfigurer> configurer) {
+    public EntityUpdatable<TProxy, T> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         return this;
     }
 
 
     @Override
-    public EntityUpdatable<TProxy, T> columnConfigure(SQLExpression2<TProxy, ProxyColumnConfigurer<TProxy, T>> columnConfigureExpression) {
+    public EntityUpdatable<TProxy, T> columnConfigure(SQLActionExpression2<TProxy, ProxyColumnConfigurer<TProxy, T>> columnConfigureExpression) {
         return this;
     }
 

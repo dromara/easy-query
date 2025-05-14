@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 /**
  * @FileName: Cache.java
  * @Description: 文件说明
- * @Date: 2023/2/11 10:08
+ * create time 2023/2/11 10:08
  * @author xuejiaming
  */
 public interface Cache<K, V> {

@@ -6,7 +6,7 @@ import java.sql.SQLException;
  * @author xuejiaming
  * @FileName: EasyQuerySQLException.java
  * @Description: 文件说明
- * @Date: 2023/3/11 23:23
+ * create time 2023/3/11 23:23
  */
 public class EasyQuerySQLStatementException extends SQLException {
 

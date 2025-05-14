@@ -20,7 +20,7 @@ import java.util.List;
  * @author xuejiaming
  * @FileName: DefaultConnectionManager.java
  * @Description: 文件说明
- * @Date: 2023/2/21 08:57
+ * create time 2023/2/21 08:57
  */
 public class DefaultConnectionManager implements ConnectionManager {
     protected final ThreadLocal<Transaction> threadTx = ThreadLocal.withInitial(() -> null);

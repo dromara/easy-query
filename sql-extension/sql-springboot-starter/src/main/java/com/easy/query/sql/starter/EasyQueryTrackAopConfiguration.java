@@ -29,7 +29,7 @@ import java.util.Set;
  * @author xuejiaming
  * @FileName: EasyQueryTrackAopConfiguration.java
  * @Description: 文件说明
- * @Date: 2023/3/20 20:58
+ * create time 2023/3/20 20:58
  */
 @Aspect
 @Configuration

@@ -1,10 +1,9 @@
 package com.easy.query.core.proxy.grouping;
 
 import com.easy.query.api.proxy.extension.casewhen.CaseWhenEntityBuilder;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.PropTypeColumn;
-import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
@@ -24,12 +23,12 @@ import java.math.BigDecimal;
  * @author xuejiaming
  */
 public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProxy> {
-    protected final SQLExpression1<TProxy> predicate;
+    protected final SQLActionExpression1<TProxy> predicate;
     protected final TProxy groupTable;
     protected final EntitySQLContext entitySQLContext;
     protected boolean distinct = false;
 
-    public DefaultSQLGroupQueryable(TProxy groupTable, EntitySQLContext entitySQLContext, SQLExpression1<TProxy> predicate) {
+    public DefaultSQLGroupQueryable(TProxy groupTable, EntitySQLContext entitySQLContext, SQLActionExpression1<TProxy> predicate) {
         this.groupTable = groupTable;
         this.entitySQLContext = entitySQLContext;
         this.predicate = predicate;

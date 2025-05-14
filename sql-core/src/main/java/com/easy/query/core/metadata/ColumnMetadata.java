@@ -91,10 +91,6 @@ public class ColumnMetadata {
      */
     private final boolean supportQueryLike;
     /**
-     * 是否是大列
-     */
-    private final boolean large;
-    /**
      * 是否自动查询结果
      */
     private final boolean autoSelect;
@@ -154,7 +150,6 @@ public class ColumnMetadata {
         this.updateSetInTrackDiff = columnOption.isUpdateSetInTrackDiff();
         this.encryptionStrategy = columnOption.getEncryptionStrategy();
         this.supportQueryLike = columnOption.isSupportQueryLike();
-        this.large = columnOption.isLarge();
 //        this.nullable=columnOption.isNullable();
         this.autoSelect = columnOption.isAutoSelect();
         this.valueConverter = columnOption.getValueConverter();
@@ -233,11 +228,6 @@ public class ColumnMetadata {
 
     public boolean isSupportQueryLike() {
         return supportQueryLike;
-    }
-
-
-    public boolean isLarge() {
-        return large;
     }
 
     public boolean isAutoSelect() {

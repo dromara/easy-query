@@ -7,7 +7,7 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.core.ResultColumnInfo;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.ColumnSegment;
@@ -117,23 +117,23 @@ public abstract class AbstractSelector<TChain> {
     public TChain column(TableAvailable table, String property) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
         String alias = table.getEntityMetadata() instanceof MapEntityMetadata ? property : null;
-        appendColumnMetadata(table, columnMetadata, true, false, false, alias);
+        appendColumnMetadata(table, columnMetadata, false, false, alias);
         return castChain();
     }
 
     public TChain columnAs(TableAvailable table, String property, String propertyAlias) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
         String alias = propertyAlias == null ? null : table.getEntityMetadata().getColumnNotNull(propertyAlias).getName();
-        appendColumnMetadata(table, columnMetadata, true, false, false, alias);
+        appendColumnMetadata(table, columnMetadata, false, false, alias);
         return castChain();
     }
     public TChain columnFixedAs(TableAvailable table, String property, String propertyAlias) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
-        appendColumnMetadata(table, columnMetadata, true, false, false, propertyAlias);
+        appendColumnMetadata(table, columnMetadata, false, false, propertyAlias);
         return castChain();
     }
 
-    public TChain columnInclude(TableAvailable table, String selfProperty, String aliasProperty, SQLExpression1<AsSelector> includeSelectorExpression) {
+    public TChain columnInclude(TableAvailable table, String selfProperty, String aliasProperty, SQLActionExpression1<AsSelector> includeSelectorExpression) {
 //        TableAvailable entityTable = entityQueryExpressionBuilder.getTable(0).getEntityTable();
 //        if(expressionContext.getIncludes().stream().noneMatch(o->o.getIncludeNavigateParams().getTable()==entityTable&&Objects.equals(o.getIncludeNavigateParams().getNavigateMetadata().getPropertyName(),selfProperty))){
 //            //不存在就自动columnInclude
@@ -246,11 +246,10 @@ public abstract class AbstractSelector<TChain> {
             }
             columnAnonymousAll((AnonymousEntityTableExpressionBuilder) entityTableExpressionBuilder);
         } else {
-            boolean queryLargeColumn = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.QUERY_LARGE_COLUMN);
             EntityMetadata entityMetadata = table.getEntityMetadata();
             Collection<ColumnMetadata> columns = entityMetadata.getColumns();
             for (ColumnMetadata columnMetadata : columns) {
-                appendColumnMetadata(table, columnMetadata, queryLargeColumn, true, true, null);
+                appendColumnMetadata(table, columnMetadata, true, true, null);
             }
             autoColumnInclude(table, entityMetadata);
         }
@@ -260,24 +259,20 @@ public abstract class AbstractSelector<TChain> {
     /**
      * @param table
      * @param columnMetadata
-     * @param queryLargeColumn
      * @param checkAutoSelect   是否需要检查
      * @param ignoreValueObject 是否忽略valueObject
      */
-    protected void appendColumnMetadata(TableAvailable table, ColumnMetadata columnMetadata, boolean queryLargeColumn, boolean checkAutoSelect, boolean ignoreValueObject, String alias) {
+    protected void appendColumnMetadata(TableAvailable table, ColumnMetadata columnMetadata, boolean checkAutoSelect, boolean ignoreValueObject, String alias) {
 
         if (columnMetadata.isValueObject()) {
             if (!ignoreValueObject) {
                 for (ColumnMetadata metadata : columnMetadata.getValueObjectColumnMetadataList()) {
-                    appendColumnMetadata(table, metadata, queryLargeColumn, checkAutoSelect, false, alias);
+                    appendColumnMetadata(table, metadata, checkAutoSelect, false, alias);
                 }
             }
             return;
         }
         if (checkAutoSelect && !columnMetadata.isAutoSelect()) {
-            return;
-        }
-        if (ignoreColumnIfLargeNotQuery(queryLargeColumn, columnMetadata)) {
             return;
         }
         ColumnSegment columnSegment = sqlSegmentFactory.createSelectColumnSegment(table, columnMetadata, expressionContext, alias);
@@ -335,22 +330,6 @@ public abstract class AbstractSelector<TChain> {
         }
         return castChain();
     }
-
-    /**
-     * 是否忽略当前列
-     *
-     * @param queryLargeColumn
-     * @param columnMetadata
-     * @return
-     */
-    protected boolean ignoreColumnIfLargeNotQuery(boolean queryLargeColumn, ColumnMetadata columnMetadata) {
-        //如果不查询的情况下当列是非大列才可以查询
-        if (!queryLargeColumn) {//如果不查询large列那么当前是large列就忽略
-            return columnMetadata.isLarge();
-        }
-        return false;
-    }
-
     public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }

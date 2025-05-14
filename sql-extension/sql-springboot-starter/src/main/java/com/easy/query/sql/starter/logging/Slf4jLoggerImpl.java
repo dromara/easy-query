@@ -7,7 +7,7 @@ import org.slf4j.Logger;
  * @author xuejiaming
  * @FileName: Slf4jLoggerImpl.java
  * @Description: 文件说明
- * @Date: 2023/3/11 14:05
+ * create time 2023/3/11 14:05
  */
 public class Slf4jLoggerImpl implements Log {
 

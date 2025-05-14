@@ -8,7 +8,7 @@ import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.func.DefaultColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -60,7 +60,7 @@ public interface AsSelector extends SelectorColumn<AsSelector>,SQLNative<AsSelec
      * @param includeSelectorExpression
      * @return
      */
-    AsSelector columnInclude(TableAvailable table, String selfProperty, String aliasProperty, SQLExpression1<AsSelector> includeSelectorExpression);
+    AsSelector columnInclude(TableAvailable table, String selfProperty, String aliasProperty, SQLActionExpression1<AsSelector> includeSelectorExpression);
 
     /**
      * 映射到TR的所有列上,按ColumnName进行映射,如果TR上没有对应的列名那么将不会映射查询列
@@ -78,7 +78,7 @@ public interface AsSelector extends SelectorColumn<AsSelector>,SQLNative<AsSelec
         return columnCountAs(table, property, null);
     }
 
-    default AsSelector columnCount(TableAvailable table, String property, SQLExpression1<ACSSelector> sqlExpression) {
+    default AsSelector columnCount(TableAvailable table, String property, SQLActionExpression1<ACSSelector> sqlExpression) {
         return columnCountAs(table, property, null, sqlExpression);
     }
 
@@ -87,7 +87,7 @@ public interface AsSelector extends SelectorColumn<AsSelector>,SQLNative<AsSelec
         });
     }
 
-    default AsSelector columnCountAs(TableAvailable table, String property, String propertyAlias, SQLExpression1<ACSSelector> sqlExpression) {
+    default AsSelector columnCountAs(TableAvailable table, String property, String propertyAlias, SQLActionExpression1<ACSSelector> sqlExpression) {
         DistinctDefaultSQLFunction count = getRuntimeContext().fx().count(o -> o.column(table, property));
         return columnFunc(table, property, count, propertyAlias, () -> {
             sqlExpression.apply(new DistinctDefaultSettingImpl(count));
@@ -98,7 +98,7 @@ public interface AsSelector extends SelectorColumn<AsSelector>,SQLNative<AsSelec
         return columnSumAs(table, property, null);
     }
 
-    default AsSelector columnSum(TableAvailable table, String property, SQLExpression1<ACSSelector> sqlExpression) {
+    default AsSelector columnSum(TableAvailable table, String property, SQLActionExpression1<ACSSelector> sqlExpression) {
         return columnSumAs(table, property, null, sqlExpression);
     }
 
@@ -107,7 +107,7 @@ public interface AsSelector extends SelectorColumn<AsSelector>,SQLNative<AsSelec
         });
     }
 
-    default AsSelector columnSumAs(TableAvailable table, String property, String propertyAlias, SQLExpression1<ACSSelector> sqlExpression) {
+    default AsSelector columnSumAs(TableAvailable table, String property, String propertyAlias, SQLActionExpression1<ACSSelector> sqlExpression) {
         DistinctDefaultSQLFunction sum = getRuntimeContext().fx().sum(o -> o.column(table, property));
         return columnFunc(table, property, sum, propertyAlias, () -> {
             sqlExpression.apply(new DistinctDefaultSettingImpl(sum));
@@ -139,7 +139,7 @@ public interface AsSelector extends SelectorColumn<AsSelector>,SQLNative<AsSelec
         });
     }
 
-    default AsSelector columnAvg(TableAvailable table, String property, SQLExpression1<ACSSelector> sqlExpression) {
+    default AsSelector columnAvg(TableAvailable table, String property, SQLActionExpression1<ACSSelector> sqlExpression) {
         return columnAvgAs(table, property, null, sqlExpression);
     }
 
@@ -148,7 +148,7 @@ public interface AsSelector extends SelectorColumn<AsSelector>,SQLNative<AsSelec
         });
     }
 
-    default AsSelector columnAvgAs(TableAvailable table, String property, String propertyAlias, SQLExpression1<ACSSelector> sqlExpression) {
+    default AsSelector columnAvgAs(TableAvailable table, String property, String propertyAlias, SQLActionExpression1<ACSSelector> sqlExpression) {
         DistinctDefaultSQLFunction avg = getRuntimeContext().fx().avg(o -> o.column(table, property));
         return columnFunc(table, property, avg, propertyAlias, () -> {
             sqlExpression.apply(new DistinctDefaultSettingImpl(avg));

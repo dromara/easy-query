@@ -6,7 +6,7 @@ import java.io.Serializable;
  *
  * @FileName: SFunction.java
  * @Description: 文件说明
- * @Date: 2023/2/4 22:16
+ * create time 2023/2/4 22:16
  * @author xuejiaming
  */
 @FunctionalInterface

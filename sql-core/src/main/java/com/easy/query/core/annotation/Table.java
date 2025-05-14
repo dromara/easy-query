@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
  * }</pre>
  * @FileName: Table.java
  * @Description: 添加实体对象和表名称的对应
- * @Date: 2023/2/10 22:59
+ * create time 2023/2/10 22:59
  * @author xuejiaming
  */
 @Documented

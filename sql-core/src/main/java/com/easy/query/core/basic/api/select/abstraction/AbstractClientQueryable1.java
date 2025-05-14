@@ -6,7 +6,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
  * @author xuejiaming
  * @FileName: AbstractQueryable1.java
  * @Description: 文件说明
- * @Date: 2023/3/4 14:12
+ * create time 2023/3/4 14:12
  */
 public abstract class AbstractClientQueryable1<T> extends AbstractClientQueryable<T> {
     public AbstractClientQueryable1(Class<T> tClass, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {

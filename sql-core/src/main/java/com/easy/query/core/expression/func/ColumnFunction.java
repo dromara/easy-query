@@ -4,7 +4,7 @@ package com.easy.query.core.expression.func;
  * @author xuejiaming
  * @FileName: IEasyAggregate.java
  * @Description: 文件说明
- * @Date: 2023/2/18 22:24
+ * create time 2023/2/18 22:24
  */
 public interface ColumnFunction {
     /**

@@ -151,7 +151,6 @@ public class DbManager {
                     builder.setExecutorCorePoolSize(solonEasyQueryProperties.getExecutorCorePoolSize());
                     builder.setThrowIfRouteNotMatch(solonEasyQueryProperties.isThrowIfRouteNotMatch());
                     builder.setShardingExecuteTimeoutMillis(solonEasyQueryProperties.getShardingExecuteTimeoutMillis());
-                    builder.setQueryLargeColumn(solonEasyQueryProperties.isQueryLargeColumn());
                     builder.setMaxShardingRouteCount(solonEasyQueryProperties.getMaxShardingRouteCount());
                     builder.setExecutorQueueSize(solonEasyQueryProperties.getExecutorQueueSize());
                     builder.setDefaultDataSourceName(solonEasyQueryProperties.getDefaultDataSourceName());

@@ -1,7 +1,7 @@
 package com.easy.query.core.metadata;
 
 import com.easy.query.core.enums.RelationTypeEnum;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.util.EasyClassUtil;
@@ -30,8 +30,8 @@ public class NavigateOption {
     private Class<?> mappingClass;
     private String[] selfMappingProperties;
     private String[] targetMappingProperties;
-    private SQLExpression1<WherePredicate<?>> predicateFilterExpression;
-    private SQLExpression1<WherePredicate<?>> predicateMappingClassFilterExpression;
+    private SQLActionExpression1<WherePredicate<?>> predicateFilterExpression;
+    private SQLActionExpression1<WherePredicate<?>> predicateMappingClassFilterExpression;
     private EntityRelationPropertyProvider entityRelationPropertyProvider;
     private boolean required = false;
     private boolean subQueryToGroupJoin = false;
@@ -110,19 +110,19 @@ public class NavigateOption {
         this.targetMappingProperties = targetMappingProperties;
     }
 
-    public SQLExpression1<WherePredicate<?>> getPredicateFilterExpression() {
+    public SQLActionExpression1<WherePredicate<?>> getPredicateFilterExpression() {
         return predicateFilterExpression;
     }
 
-    public void setPredicateFilterExpression(SQLExpression1<WherePredicate<?>> predicateFilterExpression) {
+    public void setPredicateFilterExpression(SQLActionExpression1<WherePredicate<?>> predicateFilterExpression) {
         this.predicateFilterExpression = predicateFilterExpression;
     }
 
-    public SQLExpression1<WherePredicate<?>> getPredicateMappingClassFilterExpression() {
+    public SQLActionExpression1<WherePredicate<?>> getPredicateMappingClassFilterExpression() {
         return predicateMappingClassFilterExpression;
     }
 
-    public void setPredicateMappingClassFilterExpression(SQLExpression1<WherePredicate<?>> predicateMappingClassFilterExpression) {
+    public void setPredicateMappingClassFilterExpression(SQLActionExpression1<WherePredicate<?>> predicateMappingClassFilterExpression) {
         this.predicateMappingClassFilterExpression = predicateMappingClassFilterExpression;
     }
 

@@ -2,7 +2,7 @@
  *
  * @FileName: SysUser.java
  * @Description: 文件说明
- * @Date: 2023/2/4 23:07
+ * create time 2023/2/4 23:07
  * @author xuejiaming
  */
 public class SysUser {

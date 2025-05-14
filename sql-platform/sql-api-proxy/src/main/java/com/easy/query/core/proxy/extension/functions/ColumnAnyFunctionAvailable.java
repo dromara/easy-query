@@ -1,6 +1,6 @@
 package com.easy.query.core.proxy.extension.functions;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
@@ -58,7 +58,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         });
     }
 
-    default ColumnFunctionCompareComparableAnyChainExpression<TProperty> concat(SQLExpression1<ProxyColumnFuncSelector> selector) {
+    default ColumnFunctionCompareComparableAnyChainExpression<TProperty> concat(SQLActionExpression1<ProxyColumnFuncSelector> selector) {
         return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);

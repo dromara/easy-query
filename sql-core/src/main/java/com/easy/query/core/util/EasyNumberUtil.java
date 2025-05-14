@@ -6,7 +6,7 @@ import java.math.BigInteger;
 /**
  * @FileName: NumberUtil.java
  * @Description: 文件说明
- * @Date: 2023/3/18 13:53
+ * create time 2023/3/18 13:53
  * @author xuejiaming
  */
 public class EasyNumberUtil {

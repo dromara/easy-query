@@ -12,7 +12,7 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
@@ -42,7 +42,7 @@ import java.util.function.Function;
  * @author xuejiaming
  * @FileName: AbstractExpressionDelete.java
  * @Description: 文件说明
- * @Date: 2023/3/1 22:30
+ * create time 2023/3/1 22:30
  */
 public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLExecuteRows<ClientExpressionDeletable<T>> implements ClientExpressionDeletable<T> {
     protected final Class<T> clazz;
@@ -87,7 +87,7 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
 //    }
 
     @Override
-    public ClientExpressionDeletable<T> where(boolean condition, SQLExpression1<WherePredicate<T>> whereExpression) {
+    public ClientExpressionDeletable<T> where(boolean condition, SQLActionExpression1<WherePredicate<T>> whereExpression) {
         if (condition) {
             FilterImpl filter = new FilterImpl(entityDeleteExpressionBuilder.getRuntimeContext(), entityDeleteExpressionBuilder.getExpressionContext(), entityDeleteExpressionBuilder.getWhere(), false, AnyValueFilter.DEFAULT);
             WherePredicateImpl<T> sqlPredicate = new WherePredicateImpl<>(tableExpressionBuilder.getEntityTable(), new FilterContext(filter, entityDeleteExpressionBuilder));
@@ -192,7 +192,7 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     }
 
     @Override
-    public ClientExpressionDeletable<T> configure(SQLExpression1<ContextConfigurer> configurer) {
+    public ClientExpressionDeletable<T> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         if (configurer != null) {
             configurer.apply(new ContextConfigurerImpl(entityDeleteExpressionBuilder.getExpressionContext()));
         }

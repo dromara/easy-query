@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * @author xuejiaming
  * @FileName: SelectCountSegment.java
  * @Description: 文件说明
- * @Date: 2023/3/3 12:52
+ * create time 2023/3/3 12:52
  */
 public class SelectCountDistinctSegmentImpl implements SelectCountDistinctSegment {
 

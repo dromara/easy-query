@@ -4,7 +4,7 @@ import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Configurer;
-import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContextImpl;
@@ -29,7 +29,7 @@ public class ConfigurerImpl implements Configurer {
         this.runtimeContext = entityColumnConfigurerExpressionBuilder.getRuntimeContext();
     }
     @Override
-    public Configurer column(TableAvailable table, String property, String sqlSegment, SQLExpression2<SQLNativeExpressionContext, SQLParameter> contextConsume) {
+    public Configurer column(TableAvailable table, String property, String sqlSegment, SQLActionExpression2<SQLNativeExpressionContext, SQLParameter> contextConsume) {
         Objects.requireNonNull(contextConsume,"sql native context consume cannot be null");
         SQLNativeExpressionContextImpl sqlNativeExpressionContext = new SQLNativeExpressionContextImpl(entityColumnConfigurerExpressionBuilder.getExpressionContext(),runtimeContext);
         PropertySQLParameter propertySQLParameter = new PropertySQLParameter(table, property);

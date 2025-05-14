@@ -1,12 +1,10 @@
 package com.easy.query.core.func;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
-import com.easy.query.core.func.def.impl.EmptySQLFunction;
-import com.easy.query.core.func.def.impl.NotEmptySQLFunction;
 import com.easy.query.core.util.EasyArrayUtil;
 
 import java.util.ArrayList;
@@ -46,7 +44,7 @@ public interface SQLStringFunc {
      * @param sqlExpression 指定多个属性列
      * @return 链接函数
      */
-    default SQLFunction concat(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    default SQLFunction concat(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         List<ColumnExpression> concatExpressions = new ArrayList<>();
         sqlExpression.apply(new ColumnFuncSelectorImpl(concatExpressions));
         return concat(concatExpressions);
@@ -68,7 +66,7 @@ public interface SQLStringFunc {
         return bank(o -> o.sqlFunc(sqlFunction));
     }
 
-    SQLFunction bank(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction bank(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
 
     default SQLFunction notBank(String property) {
@@ -79,7 +77,7 @@ public interface SQLStringFunc {
         return notBank(o -> o.sqlFunc(sqlFunction));
     }
 
-    SQLFunction notBank(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction notBank(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
 
     default SQLFunction empty(String property) {
@@ -90,7 +88,7 @@ public interface SQLStringFunc {
         return empty(o -> o.sqlFunc(sqlFunction));
     }
 
-    SQLFunction empty(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction empty(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
     default SQLFunction notEmpty(String property) {
         return notEmpty(o -> o.column(property));
@@ -100,7 +98,7 @@ public interface SQLStringFunc {
         return notEmpty(o -> o.sqlFunc(sqlFunction));
     }
 
-    SQLFunction notEmpty(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction notEmpty(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
     /**
      * 小写
@@ -132,7 +130,7 @@ public interface SQLStringFunc {
      * @param sqlExpression 属性选择函数
      * @return 小写函数
      */
-    SQLFunction toLower(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction toLower(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
     /**
      * 大写
@@ -164,7 +162,7 @@ public interface SQLStringFunc {
      * @param sqlExpression 属性选择函数
      * @return 大写函数
      */
-    SQLFunction toUpper(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction toUpper(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
 
     /**
@@ -201,8 +199,8 @@ public interface SQLStringFunc {
      * @param sqlExpression 属性选择函数
      * @return 截取字符串函数
      */
-    SQLFunction subString(SQLExpression1<ColumnFuncSelector> sqlExpression);
-    SQLFunction indexOf(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction subString(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction indexOf(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
     /**
      * 截取字符串
@@ -234,7 +232,7 @@ public interface SQLStringFunc {
      * @param sqlExpression 属性选择函数
      * @return 截取字符串函数
      */
-    SQLFunction trim(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction trim(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
 
     /**
@@ -267,7 +265,7 @@ public interface SQLStringFunc {
      * @param sqlExpression 属性选择函数
      * @return 截取字符串函数
      */
-    SQLFunction trimStart(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction trimStart(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
     /**
      * 截取字符串
@@ -299,7 +297,7 @@ public interface SQLStringFunc {
      * @param sqlExpression 属性选择函数
      * @return 截取字符串函数
      */
-    SQLFunction trimEnd(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction trimEnd(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
     /**
      * 替换字符串
@@ -339,7 +337,7 @@ public interface SQLStringFunc {
      * @param sqlExpression 属性选择函数
      * @return 替换字符串函数
      */
-    SQLFunction replace(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction replace(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
     /**
      * 替换字符串
@@ -403,7 +401,7 @@ public interface SQLStringFunc {
      * @param sqlExpression 属性选择函数
      * @return 替换字符串函数
      */
-    SQLFunction stringCompareTo(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction stringCompareTo(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
 
     /**
@@ -472,7 +470,7 @@ public interface SQLStringFunc {
      * @param sqlExpression 属性选择函数
      * @return 字符串补齐函数
      */
-    SQLFunction leftPad(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction leftPad(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
 
     /**
@@ -541,7 +539,7 @@ public interface SQLStringFunc {
      * @param sqlExpression 属性选择函数
      * @return 字符串补齐函数
      */
-    SQLFunction rightPad(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction rightPad(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
 
     /**
@@ -636,11 +634,11 @@ public interface SQLStringFunc {
      * @return 列组合函数
      */
     @Deprecated
-    default SQLFunction join(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean distinct) {
+    default SQLFunction join(SQLActionExpression1<ColumnFuncSelector> sqlExpression, boolean distinct) {
         return joining(sqlExpression, distinct);
     }
 
-    SQLFunction joining(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean distinct);
+    SQLFunction joining(SQLActionExpression1<ColumnFuncSelector> sqlExpression, boolean distinct);
 
     /**
      * 长度
@@ -672,7 +670,7 @@ public interface SQLStringFunc {
      * @param sqlExpression 属性选择函数
      * @return 列组合函数
      */
-    SQLFunction length(SQLExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction length(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
     /**
      * 转换函数
@@ -707,6 +705,6 @@ public interface SQLStringFunc {
      * @param targetClazz   目标类型
      * @return 转换函数
      */
-    SQLFunction cast(SQLExpression1<ColumnFuncSelector> sqlExpression, Class<?> targetClazz);
+    SQLFunction cast(SQLActionExpression1<ColumnFuncSelector> sqlExpression, Class<?> targetClazz);
 
 }

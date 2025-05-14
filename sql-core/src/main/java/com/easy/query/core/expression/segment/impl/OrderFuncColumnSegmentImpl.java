@@ -16,7 +16,7 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
 /**
  * @FileName: FuncColumnSegment.java
  * @Description: 文件说明
- * @Date: 2023/2/19 22:17
+ * create time 2023/2/19 22:17
  * @author xuejiaming
  */
 public class OrderFuncColumnSegmentImpl implements OrderFuncColumnSegment, ReverseOrderBySegment {

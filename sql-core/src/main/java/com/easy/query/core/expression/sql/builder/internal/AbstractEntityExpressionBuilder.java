@@ -24,7 +24,7 @@ import java.util.function.Function;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/3/6 08:58
+ * create time 2023/3/6 08:58
  */
 public abstract class AbstractEntityExpressionBuilder implements EntityExpressionBuilder {
     protected final ExpressionContext expressionContext;

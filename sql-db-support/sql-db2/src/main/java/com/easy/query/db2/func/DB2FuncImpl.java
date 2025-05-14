@@ -1,6 +1,6 @@
 package com.easy.query.db2.func;
 
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.func.SQLFuncImpl;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class DB2FuncImpl extends SQLFuncImpl {
     @Override
-    public SQLFunction nullOrDefault(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public SQLFunction nullOrDefault(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new DB2NullDefaultSQLFunction(getColumnExpressions(sqlExpression));
     }
 
@@ -41,27 +41,27 @@ public class DB2FuncImpl extends SQLFuncImpl {
     }
 
     @Override
-    public DistinctDefaultSQLFunction sum(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public DistinctDefaultSQLFunction sum(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new DB2SumSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public DistinctDefaultSQLFunction count(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public DistinctDefaultSQLFunction count(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new DB2CountSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public DistinctDefaultSQLFunction avg(SQLExpression1<ColumnFuncSelector> sqlExpression) {
+    public DistinctDefaultSQLFunction avg(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new DB2AvgSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction joining(SQLExpression1<ColumnFuncSelector> sqlExpression, boolean distinct) {
+    public SQLFunction joining(SQLActionExpression1<ColumnFuncSelector> sqlExpression, boolean distinct) {
         return new DB2JoiningSQLFunction(getColumnExpressions(sqlExpression),distinct);
     }
 
     @Override
-    public SQLFunction cast(SQLExpression1<ColumnFuncSelector> sqlExpression, Class<?> targetClazz) {
+    public SQLFunction cast(SQLActionExpression1<ColumnFuncSelector> sqlExpression, Class<?> targetClazz) {
         return new DB2CastSQLFunction(getColumnExpressions(sqlExpression), targetClazz);
     }
 }

@@ -9,7 +9,7 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/3/17 17:14
+ * create time 2023/3/17 17:14
  */
 public abstract class AbstractSQLExecuteRows<TChain> implements SQLExecuteExpectRows, Interceptable<TChain>, LogicDeletable<TChain> {
     private final EntityExpressionBuilder entityExpressionBuilder;

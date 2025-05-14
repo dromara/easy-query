@@ -12,7 +12,7 @@ import java.util.Set;
  * @author xuejiaming
  * @FileName: ObjectOrderBuilder.java
  * @Description: 文件说明
- * @Date: 2023/3/23 17:24
+ * create time 2023/3/23 17:24
  */
 public class ObjectSortBuilderImpl implements ObjectSortBuilder {
     private final Map<String, ObjectSortEntry> orderPropertyMap = new LinkedHashMap<>();

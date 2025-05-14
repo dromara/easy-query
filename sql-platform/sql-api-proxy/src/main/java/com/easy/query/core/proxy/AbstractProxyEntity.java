@@ -5,8 +5,8 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLExpression2;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -85,26 +85,26 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 支持where having order
-     * 请使用{@link #expression()}或者{@link Expression#sql(String, SQLExpression1)}
+     * 请使用{@link #expression()}或者{@link Expression#sql(String, SQLActionExpression1)}
      *
      * @param sqlSegment
      * @param contextConsume
      */
     @Deprecated
-    public void executeSQL(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+    public void executeSQL(String sqlSegment, SQLActionExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         executeSQL(true, sqlSegment, contextConsume);
     }
 
     /**
      * 支持where having order
-     * 请使用{@link #expression()}或者{@link Expression#sql(boolean, String, SQLExpression1)}
+     * 请使用{@link #expression()}或者{@link Expression#sql(boolean, String, SQLActionExpression1)}
      *
      * @param condition
      * @param sqlSegment
      * @param contextConsume
      */
     @Deprecated
-    public void executeSQL(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+    public void executeSQL(boolean condition, String sqlSegment, SQLActionExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         if (condition) {
             getEntitySQLContext()._executeNativeSql(sqlSegment, contextConsume);
         }
@@ -354,57 +354,6 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
     /**
-     * {@link #expression()}或者{@link Expression#exists(Supplier)}
-     * where exists(....)
-     *
-     * @param subQueryFunc 子查询创建方法
-     */
-    @Deprecated
-    public void exists(Supplier<Query<?>> subQueryFunc) {
-        exists(true, subQueryFunc);
-    }
-
-    /**
-     * {@link #expression()}或者{@link Expression#exists(boolean, Supplier)}
-     * where exists(....)
-     *
-     * @param condition    为true是exists生效
-     * @param subQueryFunc 子查询创建方法
-     */
-    @Deprecated
-    public void exists(boolean condition, Supplier<Query<?>> subQueryFunc) {
-        if (condition) {
-            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(subQueryFunc.get())));
-        }
-    }
-
-    /**
-     * {@link #expression()}或者{@link Expression#notExists(Supplier)}
-     * where not exists(....)
-     *
-     * @param subQueryFunc 子查询创建方法
-     */
-    @Deprecated
-    public void notExists(Supplier<Query<?>> subQueryFunc) {
-        notExists(true, subQueryFunc);
-    }
-
-
-    /**
-     * {@link #expression()}或者{@link Expression#notExists(boolean, Supplier)}
-     * where exists(....)
-     *
-     * @param condition    为true是not exists生效
-     * @param subQueryFunc 子查询创建方法
-     */
-    @Deprecated
-    public void notExists(boolean condition, Supplier<Query<?>> subQueryFunc) {
-        if (condition) {
-            getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notExists(subQueryFunc.get())));
-        }
-    }
-
-    /**
      * 请使用SQLConstant方法
      *
      * @return 数据库常量值构建方法
@@ -451,7 +400,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      * @param <TPropertyProxy>
      * @param <TProperty>
      */
-    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> void set(TPropertyProxy columnProxy, SQLExpression2<TProxy, TPropertyProxy> navigateSelectExpression) {
+    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> void set(TPropertyProxy columnProxy, SQLActionExpression2<TProxy, TPropertyProxy> navigateSelectExpression) {
         DefaultSubquerySQLQueryableFactory.dslNavigateSet(columnProxy);
         TProxy tProxy = create(null, this.getEntitySQLContext());
         getCurrentEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(((RelationEntityTableAvailable) columnProxy.getTable()).getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy, tProxy, navigateSelectExpression));

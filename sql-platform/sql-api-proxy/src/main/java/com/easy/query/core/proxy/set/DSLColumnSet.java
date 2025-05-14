@@ -2,9 +2,8 @@ package com.easy.query.core.proxy.set;
 
 import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.core.basic.api.select.Query;
-import com.easy.query.core.expression.lambda.SQLExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.ChainCast;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -20,11 +19,8 @@ import com.easy.query.core.proxy.impl.SQLColumnSetNativeSQLImpl;
 import com.easy.query.core.proxy.impl.SQLColumnSetPropColumnImpl;
 import com.easy.query.core.proxy.impl.SQLColumnSetSubQueryImpl;
 import com.easy.query.core.proxy.impl.SQLColumnSetValueImpl;
-import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
 import com.easy.query.core.util.EasyObjectUtil;
-
-import java.util.function.Consumer;
 
 /**
  * create time 2023/12/8 10:46
@@ -121,12 +117,12 @@ public interface DSLColumnSet<TProxy, TProperty> extends PropTypeColumn<TPropert
         });
     }
 
-    default TProxy setSQL(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+    default TProxy setSQL(String sqlSegment, SQLActionExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         return setSQL(true, sqlSegment, contextConsume);
     }
 
 
-    default TProxy setSQL(boolean condition, String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
+    default TProxy setSQL(boolean condition, String sqlSegment, SQLActionExpression1<SQLNativeProxyExpressionContext> contextConsume) {
         if (condition) {
             getCurrentEntitySQLContext().accept(new SQLColumnSetNativeSQLImpl(getTable(), getValue(), sqlSegment, contextConsume));
         }

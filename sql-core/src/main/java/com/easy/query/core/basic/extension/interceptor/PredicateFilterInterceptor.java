@@ -6,7 +6,7 @@ import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
 /**
  * @FileName: GlobalQueryFilterInterceptor.java
  * @Description: 文件说明
- * @Date: 2023/3/7 22:25
+ * create time 2023/3/7 22:25
  * @author xuejiaming
  */
 public interface PredicateFilterInterceptor extends Interceptor {

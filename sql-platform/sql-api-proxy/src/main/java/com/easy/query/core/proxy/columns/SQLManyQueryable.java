@@ -1,27 +1,13 @@
 package com.easy.query.core.proxy.columns;
 
-import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
-import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.basic.api.internal.ExpressionConfigurable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
-import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.common.OffsetLimitEntry;
-import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.expression.lambda.SQLExpression1;
-import com.easy.query.core.expression.lambda.SQLExpression2;
-import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.metadata.IncludeNavigateParams;
-import com.easy.query.core.metadata.NavigateMetadata;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.columns.impl.DefaultSubquerySQLQueryableFactory;
 import com.easy.query.core.proxy.impl.SQLColumnIncludeColumn2Impl;
-import com.easy.query.core.util.EasyNavigateUtil;
-import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * create time 2024/6/5 08:26
@@ -54,15 +40,15 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
     SQLQueryable<T1Proxy, T1> elements(boolean condition, int fromIndex, int toIndex);
 
 
-    default SQLManyQueryable<TProxy, T1Proxy, T1> orderBy(SQLExpression1<T1Proxy> orderExpression) {
+    default SQLManyQueryable<TProxy, T1Proxy, T1> orderBy(SQLActionExpression1<T1Proxy> orderExpression) {
         return orderBy(true, orderExpression);
     }
 
-    SQLManyQueryable<TProxy, T1Proxy, T1> orderBy(boolean condition, SQLExpression1<T1Proxy> orderExpression);
+    SQLManyQueryable<TProxy, T1Proxy, T1> orderBy(boolean condition, SQLActionExpression1<T1Proxy> orderExpression);
 
 //    SQLQueryable<T1Proxy, T1> elements(int begin,int end);
 
-    SQLManyQueryable<TProxy, T1Proxy, T1> where(SQLExpression1<T1Proxy> whereExpression);
+    SQLManyQueryable<TProxy, T1Proxy, T1> where(SQLActionExpression1<T1Proxy> whereExpression);
 
     /**
      * 仅子查询配置生效
@@ -71,7 +57,7 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
      * @param configureExpression
      * @return
      */
-    default SQLManyQueryable<TProxy, T1Proxy, T1> configure(SQLExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression) {
+    default SQLManyQueryable<TProxy, T1Proxy, T1> configure(SQLActionExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression) {
         this.getSubQueryContext().appendConfigureExpression(configureExpression);
         return this;
     }
@@ -101,7 +87,7 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
      * @param <TPropertyProxy>
      * @param <TProperty>
      */
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> TProxy set(SQLQueryable<TPropertyProxy, TProperty> columnProxy, SQLExpression2<T1Proxy, TPropertyProxy> navigateSelectExpression) {
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> TProxy set(SQLQueryable<TPropertyProxy, TProperty> columnProxy, SQLActionExpression2<T1Proxy, TPropertyProxy> navigateSelectExpression) {
         DefaultSubquerySQLQueryableFactory.dslNavigatesSet(columnProxy);
 
         T1Proxy propertyProxy = this.getSubQueryContext().getPropertyProxy();

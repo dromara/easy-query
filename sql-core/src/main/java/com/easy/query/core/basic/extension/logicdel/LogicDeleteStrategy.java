@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * @FileName: EasyLogicDeleteStrategy.java
  * @Description: 文件说明
- * @Date: 2023/3/7 07:59
+ * create time 2023/3/7 07:59
  * @author xuejiaming
  */
 public interface LogicDeleteStrategy {

@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 /**
  * @author xuejiaming
  * @Description: 文件说明
- * @Date: 2023/2/13 12:49
+ * create time 2023/2/13 12:49
  */
 public interface SQLBuilderSegment extends SQLSegment {
     List<SQLSegment> getSQLSegments();

@@ -53,7 +53,7 @@ import com.easy.query.core.sharding.router.manager.TableRouteManager;
  * @author xuejiaming
  * @FileName: DefaultJQDCRuntimeContext.java
  * @Description: 文件说明
- * @Date: 2023/2/11 13:47
+ * create time 2023/2/11 13:47
  */
 public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final ServiceProvider serviceProvider;

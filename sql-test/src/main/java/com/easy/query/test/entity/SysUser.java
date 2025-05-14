@@ -29,7 +29,7 @@ public class SysUser extends BaseEntity implements ProxyEntityAvailable<SysUser 
     @Encryption(strategy = DefaultAesEasyEncryptionStrategy.class, supportQueryLike = true)
     private String idCard;
     @Encryption(strategy = DefaultAesEasyEncryptionStrategy.class, supportQueryLike = true)
-    @Column(large = true)
+    @Column(autoSelect = false)
     private String address;
 
     @Navigate(value = RelationTypeEnum.OneToMany, targetProperty = "title")
