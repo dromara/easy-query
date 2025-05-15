@@ -2,8 +2,6 @@ package com.easy.query.test.h2;
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.api4j.client.DefaultEasyQuery;
-import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
@@ -48,9 +46,7 @@ public class H2BaseTest {
     public static DataSource defDataSource;
     public static DataSource orderShardingDataSource;
     public static EasyQueryShardingOption easyQueryShardingOption;
-    public static EasyQuery easyQuery;
     public static EasyEntityQuery easyEntityQuery;
-    public static EasyQuery easyQueryOrder;
     public static ListenerContextManager listenerContextManager;
 
     static {
@@ -124,9 +120,8 @@ public class H2BaseTest {
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
                 .useDatabaseConfigure(new H2DatabaseConfiguration())
                 .build();
-        easyQuery = new DefaultEasyQuery(easyQueryClient);
         easyEntityQuery=new DefaultEasyEntityQuery(easyQueryClient);
-        QueryRuntimeContext runtimeContext1 = easyQuery.getRuntimeContext();
+        QueryRuntimeContext runtimeContext1 = easyEntityQuery.getRuntimeContext();
         QueryConfiguration queryConfiguration1 = runtimeContext1.getQueryConfiguration();
         queryConfiguration1.applyShardingInitializer(new AllTYPEShardingInitializer());
         queryConfiguration1.applyNavigateExtraFilterStrategy(new TbOrder.NameXMTbAccountExtraFilter());
@@ -147,8 +142,7 @@ public class H2BaseTest {
                     op.setDefaultDataSourceMergePoolSize(20);
                 })
                 .build();
-        easyQueryOrder = new DefaultEasyQuery(easyQueryClientOrder);
-        QueryRuntimeContext runtimeContext = easyQueryOrder.getRuntimeContext();
+        QueryRuntimeContext runtimeContext = easyQueryClientOrder.getRuntimeContext();
         QueryConfiguration queryConfiguration = runtimeContext.getQueryConfiguration();
         queryConfiguration.applyShardingInitializer(new H2OrderShardingInitializer());
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
@@ -156,7 +150,7 @@ public class H2BaseTest {
     }
 
     public static void initData() {
-        boolean any = easyQuery.queryable(DefTable.class)
+        boolean any = easyEntityQuery.queryable(DefTable.class)
                 .any();
         if (!any) {
             LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 0, 0, 0);
@@ -220,14 +214,14 @@ public class H2BaseTest {
                 defTableLeft3.setCreated(begin.plusDays(i));
                 defTable3s.add(defTableLeft3);
             }
-            easyQuery.insertable(defTables).executeRows();
-            easyQuery.insertable(defTable1s).executeRows();
-            easyQuery.insertable(defTable2s).executeRows();
-            easyQuery.insertable(defTable3s).executeRows();
+            easyEntityQuery.insertable(defTables).executeRows();
+            easyEntityQuery.insertable(defTable1s).executeRows();
+            easyEntityQuery.insertable(defTable2s).executeRows();
+            easyEntityQuery.insertable(defTable3s).executeRows();
         }
 
 
-        boolean orderExists = easyQueryOrder.queryable(H2Order.class)
+        boolean orderExists = easyEntityQuery.queryable(H2Order.class)
                 .any();
         if (!orderExists) {
 
@@ -239,7 +233,7 @@ public class H2BaseTest {
                 h2Order.setCreated(String.valueOf(i));
                 h2Orders.add(h2Order);
             }
-            easyQueryOrder.insertable(h2Orders).executeRows();
+            easyEntityQuery.insertable(h2Orders).executeRows();
         }
 
 
@@ -273,7 +267,7 @@ public class H2BaseTest {
         alltype.setNumberLongBasic(12345678911L);
         alltype.setNumberByteBasic(new Byte("-1"));
         alltype.setEnableBasic(true);
-        long l = easyQuery.insertable(alltype).executeRows();
+        long l = easyEntityQuery.insertable(alltype).executeRows();
     }
 
 }

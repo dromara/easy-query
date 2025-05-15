@@ -1,7 +1,10 @@
 package com.easy.query.test.h2.domain;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.h2.domain.proxy.DefTableProxy;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -15,7 +18,8 @@ import java.time.LocalDateTime;
  */
 @Table("t_def_table")
 @Data
-public class DefTable {
+@EntityProxy
+public class DefTable implements ProxyEntityAvailable<DefTable , DefTableProxy> {
     @Column(primaryKey = true)
     private String id;
     private String userName;

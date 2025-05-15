@@ -2,7 +2,6 @@ package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
-import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.flat.MapQueryable;
@@ -501,42 +500,6 @@ public class QueryTest15 extends BaseTest {
                         );
                     }).toList();
         }
-
-//        List<Draft1<String>> list = easyEntityQuery.queryable(Topic.class)
-//                .where(t -> {
-//                    t.createTime().lt(LocalDateTime.now().plusDays(-7));
-//                })
-//                .select(t -> {
-//
-//                    Expression expression = t.expression();
-//                    SQLConstantExpression constant = expression.constant();
-//
-//                    return Select.DRAFT.of(
-////                            constant.valueOf(1).devide(constant.valueOf(2))
-//                            t.createTime().plus(1, TimeUnit.DAYS).format("yyyy-MM")
-//                    );
-//                }).toList();
-
-//        List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
-//                .includes(s -> s.schoolStudents(), x -> {
-//                    x.leftJoin(Topic.class, (s, t2) -> s.id().eq(t2.id()))
-//                            .select(SchoolStudentVO.class, (s1, t2) -> Select.of(
-//                                    s1.FETCHER.allFields(),
-//                                    t2.FETCHER.id().as(SchoolStudentVO::getName)
-//                            ));
-//                })
-//                .select(o->new SchoolClassProxy().adapter(r->{
-//                    r.selectAll(o);
-//                    r.schoolStudents().set(o.schoolStudents(),x->new );
-//                }))
-//                .toList();
-
-
-        Query<Integer> integerQuery = easyEntityQuery.queryable(Topic.class)
-                .select(t -> Select.DRAFT.of(t.stars()))
-                .selectSum(i -> i.value1());
-
-        System.out.println(1);
     }
 
     @Test
@@ -721,11 +684,11 @@ public class QueryTest15 extends BaseTest {
                 .replaceService(SQLParameterPrintFormat.class, MyBatisSQLParameterPrintFormat.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
-        DefaultEasyQuery easyQuery = new DefaultEasyQuery(easyQueryClient);
-        List<Topic> list = easyQuery.queryable(Topic.class)
+        DefaultEasyEntityQuery entityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+        List<Topic> list = entityQuery.queryable(Topic.class)
 
-                .where(t -> t.eq(Topic::getId, 1))
-                .where(t -> t.eq(Topic::getId, 1))
+                .where(t -> t.id().eq("1"))
+                .where(t -> t.id().eq("1"))
                 .toList();
         System.out.println(list);
     }
@@ -1012,37 +975,6 @@ public class QueryTest15 extends BaseTest {
                 }))
                 .toList();
 
-    }
-
-    @Test
-    public void test1c() {
-        Topic xxx = easyQuery.queryable(Topic.class).firstNotNull(() -> new BusinessException("xxx"));
-        ListenerContext listenerContext = new ListenerContext();
-        listenerContextManager.startListen(listenerContext);
-
-        List<BlogEntity> title = easyQuery.queryable(Topic.class)
-                .groupBy(t -> t.column(Topic::getId))
-                .select(BlogEntity.class, t -> {
-                    SQLFunction titleFunc = t.fx().join(Topic::getTitle, ",");
-                    t.column(Topic::getId).sqlFuncAs(titleFunc, BlogEntity::getTitle);
-                }).toList();
-        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,GROUP_CONCAT(t.`title` SEPARATOR ?) AS `title` FROM `t_topic` t GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals(",(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-        listenerContextManager.clear();
-
-//        SQLNumberColumn<?,?> x=null;
-//        DatabaseConfiguration service = x.getEntitySQLContext().getRuntimeContext().getService(DatabaseConfiguration.class);
-//        if(service instanceof OracleDatabaseConfiguration){
-//
-//        }
-//
-//        easyEntityQuery.queryable(BlogEntity.class)
-//                .where(b -> {
-//                    b.title().asx();
-//                    b.title().subString()
-//                });
     }
 
 

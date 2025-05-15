@@ -1,6 +1,6 @@
 package com.easy.query.test;
 
-import com.easy.query.api4j.update.EntityUpdatable;
+import com.easy.query.api.proxy.entity.update.EntityUpdatable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.parameter.BeanSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
@@ -21,6 +21,7 @@ import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.blogtest.UserRole;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.SysUserProxy;
+import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.vo.GenericDTO;
@@ -183,7 +184,7 @@ public class QueryTest24 extends BaseTest {
         topic.setTitle("title123");
         topic.setStars(1);
         topic.setCreateTime(LocalDateTime.now());
-        EntityUpdatable<Topic> updatable = easyQuery.updatable(topic);
+        EntityUpdatable<TopicProxy, Topic> updatable = easyEntityQuery.updatable(topic);
         String sql1 = updatable.toSQL(topic);
         System.out.println("sql:" + sql1);
         ToSQLResult sqlResult1 = updatable.getClientUpdate().toSQLResult(topic);

@@ -1,13 +1,14 @@
 package com.easy.query.test.h2;
 
-import com.easy.query.api4j.select.Queryable;
-import com.easy.query.api4j.select.Queryable2;
-import com.easy.query.api4j.select.Queryable3;
-import com.easy.query.api4j.select.Queryable4;
+import com.easy.query.api.proxy.entity.select.EntityQueryable2;
+import com.easy.query.api.proxy.entity.select.EntityQueryable3;
+import com.easy.query.api.proxy.entity.select.EntityQueryable4;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.core.proxy.sql.GroupKeys;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.h2.domain.ALLTYPE;
 import com.easy.query.test.h2.domain.ALLTYPE1;
@@ -19,6 +20,10 @@ import com.easy.query.test.h2.domain.DefTableLeft3;
 import com.easy.query.test.h2.domain.H2BookTest;
 import com.easy.query.test.h2.domain.proxy.ALLTYPE1Proxy;
 import com.easy.query.test.h2.domain.proxy.ALLTYPEProxy;
+import com.easy.query.test.h2.domain.proxy.DefTableLeft1Proxy;
+import com.easy.query.test.h2.domain.proxy.DefTableLeft2Proxy;
+import com.easy.query.test.h2.domain.proxy.DefTableLeft3Proxy;
+import com.easy.query.test.h2.domain.proxy.DefTableProxy;
 import com.easy.query.test.h2.vo.ALLTYPEVO1;
 import com.easy.query.test.h2.vo.proxy.ALLTYPEVO1Proxy;
 import org.junit.Assert;
@@ -45,9 +50,12 @@ public class H2QueryTest extends H2BaseTest {
     @Test
     public void leftJoin1() {
 
-        Queryable2<DefTable, DefTableLeft1> where = easyQuery.queryable(DefTable.class)
-                .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
-                .where((t, t1) -> t.eq(DefTable::getId, "1").then(t1).eq(DefTableLeft1::getId, "1"));
+        EntityQueryable2<DefTableProxy, DefTable, DefTableLeft1Proxy, DefTableLeft1> where = easyEntityQuery.queryable(DefTable.class)
+                .leftJoin(DefTableLeft1.class, (t, t1) -> t.id().eq(t1.defId()))
+                .where((t, t1) -> {
+                    t.id().eq("1");
+                    t1.id().eq("1");
+                });
         List<DefTable> list = where.cloneQueryable()
                 .toList();
         Assert.assertEquals(1, list.size());
@@ -57,9 +65,9 @@ public class H2QueryTest extends H2BaseTest {
 
     @Test
     public void leftJoin1_1() {
-        Queryable2<DefTable, DefTableLeft1> where = easyQuery.queryable(DefTable.class)
-                .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
-                .where(t -> t.eq(DefTable::getId, "1"));
+        EntityQueryable2<DefTableProxy, DefTable, DefTableLeft1Proxy, DefTableLeft1> where = easyEntityQuery.queryable(DefTable.class)
+                .leftJoin(DefTableLeft1.class, (t, t1) -> t.id().eq(t1.defId()))
+                .where(t -> t.id().eq("1"));
         List<DefTable> list = where.cloneQueryable()
                 .toList();
         Assert.assertEquals(1, list.size());
@@ -69,11 +77,14 @@ public class H2QueryTest extends H2BaseTest {
 
     @Test
     public void leftJoin2() {
-        Queryable3<DefTable, DefTableLeft1, DefTableLeft2> where = easyQuery.queryable(DefTable.class)
-                .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
-                .leftJoin(DefTableLeft2.class, (t, t1,t2) -> t.eq(t2, DefTable::getId, DefTableLeft2::getDef1Id))
-                .where((t, t1,t2) -> t.eq(DefTable::getId, "1").then(t1).eq(DefTableLeft1::getId, "1")
-                        .then(t2).eq(DefTableLeft2::getId, "1"));
+        EntityQueryable3<DefTableProxy, DefTable, DefTableLeft1Proxy, DefTableLeft1, DefTableLeft2Proxy, DefTableLeft2> where = easyEntityQuery.queryable(DefTable.class)
+                .leftJoin(DefTableLeft1.class, (t, t1) -> t.id().eq(t1.defId()))
+                .leftJoin(DefTableLeft2.class, (t, t1, t2) -> t.id().eq(t2.def1Id()))
+                .where((t, t1, t2) -> {
+                    t.id().eq("1");
+                    t1.id().eq("1");
+                    t2.id().eq("1");
+                });
         List<DefTable> list = where.cloneQueryable()
                 .toList();
         Assert.assertEquals(1, list.size());
@@ -83,10 +94,10 @@ public class H2QueryTest extends H2BaseTest {
 
     @Test
     public void leftJoin2_1() {
-        Queryable3<DefTable, DefTableLeft1, DefTableLeft2> where = easyQuery.queryable(DefTable.class)
-                .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
-                .leftJoin(DefTableLeft2.class, (t, t1,t2) -> t.eq(t2, DefTable::getId, DefTableLeft2::getDef1Id))
-                .where(t -> t.eq(DefTable::getId, "1"));
+        EntityQueryable3<DefTableProxy, DefTable, DefTableLeft1Proxy, DefTableLeft1, DefTableLeft2Proxy, DefTableLeft2> where = easyEntityQuery.queryable(DefTable.class)
+                .leftJoin(DefTableLeft1.class, (t, t1) -> t.id().eq(t1.defId()))
+                .leftJoin(DefTableLeft2.class, (t, t1, t2) -> t.id().eq(t2.def1Id()))
+                .where(t -> t.id().eq("1"));
         List<DefTable> list = where.cloneQueryable()
                 .toList();
         Assert.assertEquals(1, list.size());
@@ -96,11 +107,14 @@ public class H2QueryTest extends H2BaseTest {
 
     @Test
     public void leftJoin3() {
-        Queryable3<DefTable, DefTableLeft1, DefTableLeft3> where = easyQuery.queryable(DefTable.class)
-                .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
-                .leftJoin(DefTableLeft3.class, (t, t1, t3) -> t.eq(t3, DefTable::getId, DefTableLeft3::getDef2Id))
-                .where((t, t1,t2) -> t.eq(DefTable::getId, "1").then(t1).eq(DefTableLeft1::getId, "1")
-                        .then(t2).eq(DefTableLeft3::getId, "1"));
+        EntityQueryable3<DefTableProxy, DefTable, DefTableLeft1Proxy, DefTableLeft1, DefTableLeft3Proxy, DefTableLeft3> where = easyEntityQuery.queryable(DefTable.class)
+                .leftJoin(DefTableLeft1.class, (t, t1) -> t.id().eq(t1.defId()))
+                .leftJoin(DefTableLeft3.class, (t, t1, t3) -> t.id().eq(t3.def2Id()))
+                .where((t, t1, t2) -> {
+                    t.id().eq("1");
+                    t1.id().eq("1");
+                    t2.id().eq("1");
+                });
         List<DefTable> list = where.cloneQueryable()
                 .toList();
         Assert.assertEquals(1, list.size());
@@ -110,10 +124,10 @@ public class H2QueryTest extends H2BaseTest {
 
     @Test
     public void leftJoin3_1() {
-        Queryable3<DefTable, DefTableLeft1, DefTableLeft3> where = easyQuery.queryable(DefTable.class)
-                .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
-                .leftJoin(DefTableLeft3.class, (t, t1, t3) -> t.eq(t3, DefTable::getId, DefTableLeft3::getDef2Id))
-                .where(t -> t.eq(DefTable::getId, "1"));
+        EntityQueryable3<DefTableProxy, DefTable, DefTableLeft1Proxy, DefTableLeft1, DefTableLeft3Proxy, DefTableLeft3> where = easyEntityQuery.queryable(DefTable.class)
+                .leftJoin(DefTableLeft1.class, (t, t1) -> t.id().eq(t1.defId()))
+                .leftJoin(DefTableLeft3.class, (t, t1, t3) -> t.id().eq(t3.def2Id()))
+                .where(t -> t.id().eq("1"));
         List<DefTable> list = where.cloneQueryable()
                 .toList();
         Assert.assertEquals(1, list.size());
@@ -123,12 +137,16 @@ public class H2QueryTest extends H2BaseTest {
 
     @Test
     public void leftJoin4() {
-        Queryable4<DefTable, DefTableLeft1, DefTableLeft2, DefTableLeft3> where = easyQuery.queryable(DefTable.class)
-                .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
-                .leftJoin(DefTableLeft2.class, (t, t1,t2) -> t.eq(t2, DefTable::getId, DefTableLeft2::getDef1Id))
-                .leftJoin(DefTableLeft3.class, (t, t1,t2, t3) -> t.eq(t3, DefTable::getId, DefTableLeft3::getDef2Id))
-                .where((t, t1,t2, t3) -> t.eq(DefTable::getId, "1").then(t1).eq(DefTableLeft1::getId, "1")
-                        .then(t2).eq(DefTableLeft2::getId, "1").then(t3).eq(DefTableLeft3::getId, "1"));
+        EntityQueryable4<DefTableProxy, DefTable, DefTableLeft1Proxy, DefTableLeft1, DefTableLeft2Proxy, DefTableLeft2, DefTableLeft3Proxy, DefTableLeft3> where = easyEntityQuery.queryable(DefTable.class)
+                .leftJoin(DefTableLeft1.class, (t, t1) -> t.id().eq(t1.defId()))
+                .leftJoin(DefTableLeft2.class, (t, t1, t2) -> t.id().eq(t2.def1Id()))
+                .leftJoin(DefTableLeft3.class, (t, t1, t2, t3) -> t.id().eq(t3.def2Id()))
+                .where((t, t1, t2, t3) -> {
+                    t.id().eq("1");
+                    t1.id().eq("1");
+                    t2.id().eq("1");
+                    t3.id().eq("1");
+                });
         List<DefTable> list = where.cloneQueryable()
                 .toList();
         Assert.assertEquals(1, list.size());
@@ -138,11 +156,11 @@ public class H2QueryTest extends H2BaseTest {
 
     @Test
     public void leftJoin4_1() {
-        Queryable4<DefTable, DefTableLeft1, DefTableLeft2, DefTableLeft3> where = easyQuery.queryable(DefTable.class)
-                .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
-                .leftJoin(DefTableLeft2.class, (t, t1,t2) -> t.eq(t2, DefTable::getId, DefTableLeft2::getDef1Id))
-                .leftJoin(DefTableLeft3.class, (t, t1,t2, t3) -> t.eq(t3, DefTable::getId, DefTableLeft3::getDef2Id))
-                .where(t -> t.eq(DefTable::getId, "1"));
+        EntityQueryable4<DefTableProxy, DefTable, DefTableLeft1Proxy, DefTableLeft1, DefTableLeft2Proxy, DefTableLeft2, DefTableLeft3Proxy, DefTableLeft3> where = easyEntityQuery.queryable(DefTable.class)
+                .leftJoin(DefTableLeft1.class, (t, t1) -> t.id().eq(t1.defId()))
+                .leftJoin(DefTableLeft2.class, (t, t1, t2) -> t.id().eq(t2.def1Id()))
+                .leftJoin(DefTableLeft3.class, (t, t1, t2, t3) -> t.id().eq(t3.def2Id()))
+                .where(t -> t.id().eq("1"));
         List<DefTable> list = where.cloneQueryable()
                 .toList();
         Assert.assertEquals(1, list.size());
@@ -181,9 +199,9 @@ public class H2QueryTest extends H2BaseTest {
         alltype.setNumberLongBasic(12345678911L);
         alltype.setNumberByteBasic(new Byte("-1"));
         alltype.setEnableBasic(true);
-        long l = easyQuery.insertable(alltype).executeRows();
+        long l = easyEntityQuery.insertable(alltype).executeRows();
         Assert.assertEquals(1, l);
-        ALLTYPE alltype1 = easyQuery.queryable(ALLTYPE.class)
+        ALLTYPE alltype1 = easyEntityQuery.queryable(ALLTYPE.class)
                 .whereById("123").firstOrNull();
         Assert.assertNotNull(alltype1);
         Assert.assertEquals(alltype1.getId(), alltype.getId());
@@ -244,9 +262,9 @@ public class H2QueryTest extends H2BaseTest {
         alltype.setNumberLongBasic(12345678911L);
         alltype.setNumberByteBasic(new Byte("-1"));
         alltype.setEnableBasic(true);
-        long l = easyQuery.insertable(alltype).executeRows();
+        long l = easyEntityQuery.insertable(alltype).executeRows();
         Assert.assertEquals(1, l);
-        ALLTYPE1 alltype1 = easyQuery.queryable(ALLTYPE1.class)
+        ALLTYPE1 alltype1 = easyEntityQuery.queryable(ALLTYPE1.class)
                 .whereById("1234x").firstOrNull();
         Assert.assertNotNull(alltype1);
         Assert.assertEquals(alltype1.getId(), alltype.getId());
@@ -307,9 +325,9 @@ public class H2QueryTest extends H2BaseTest {
         alltype.setNumberLongBasic(12345678911L);
         alltype.setNumberByteBasic(new Byte("-1"));
         alltype.setEnableBasic(true);
-        long l = easyQuery.insertable(alltype).executeRows();
+        long l = easyEntityQuery.insertable(alltype).executeRows();
         Assert.assertEquals(1, l);
-        ALLTYPEVO1 alltype1 = easyQuery.queryable(ALLTYPE1.class)
+        ALLTYPEVO1 alltype1 = easyEntityQuery.queryable(ALLTYPE1.class)
                 .whereById("1235").select(ALLTYPEVO1.class).firstOrNull();
         Assert.assertNotNull(alltype1);
         Assert.assertEquals(alltype1.getId(), alltype.getId());
@@ -374,9 +392,9 @@ public class H2QueryTest extends H2BaseTest {
             alltypeSharding.setEnableBasic(true);
             alltypeShardings.add(alltypeSharding);
         }
-        long l = easyQuery.insertable(alltypeShardings).executeRows();
+        long l = easyEntityQuery.insertable(alltypeShardings).executeRows();
         Assert.assertEquals(13, l);
-        List<ALLTYPESharding> alltypes = easyQuery.queryable(ALLTYPESharding.class).toList();
+        List<ALLTYPESharding> alltypes = easyEntityQuery.queryable(ALLTYPESharding.class).toList();
         Assert.assertEquals(13, alltypes.size());
 
         for (ALLTYPESharding alltype : alltypes) {
@@ -410,7 +428,7 @@ public class H2QueryTest extends H2BaseTest {
         }
         {
 
-            List<ALLTYPESharding> list = easyQuery.queryable(ALLTYPESharding.class).orderByDesc(o -> o.column(ALLTYPESharding::getNumberInteger)).toList();
+            List<ALLTYPESharding> list = easyEntityQuery.queryable(ALLTYPESharding.class).orderBy(o -> o.numberInteger().desc()).toList();
             Assert.assertEquals(13, list.size());
             int i = 12;
             for (ALLTYPESharding alltype : list) {
@@ -446,7 +464,7 @@ public class H2QueryTest extends H2BaseTest {
         }
         {
 
-            List<ALLTYPESharding> list = easyQuery.queryable(ALLTYPESharding.class).orderByDesc(o -> o.column(ALLTYPESharding::getNumberInteger)).limit(3, 10).toList();
+            List<ALLTYPESharding> list = easyEntityQuery.queryable(ALLTYPESharding.class).orderBy(o -> o.numberInteger().desc()).limit(3, 10).toList();
             Assert.assertEquals(10, list.size());
             int i = 9;
             for (ALLTYPESharding alltype : list) {
@@ -482,13 +500,14 @@ public class H2QueryTest extends H2BaseTest {
         }
         {
 
-            List<ALLTYPESharding> list = easyQuery.queryable(ALLTYPESharding.class)
-                    .groupBy(o -> o.column(ALLTYPESharding::getValue))
-                    .select(ALLTYPESharding.class, o -> o.column(ALLTYPESharding::getValue)
-                            .columnSum(ALLTYPESharding::getNumberDecimal)
-                            .columnSum(ALLTYPESharding::getNumberFloat)
-                            .columnSum(ALLTYPESharding::getNumberDouble)
-                    )
+            List<ALLTYPESharding> list = easyEntityQuery.queryable(ALLTYPESharding.class)
+                    .groupBy(a -> GroupKeys.of(a.value()))
+                    .select(ALLTYPESharding.class, group -> Select.of(
+                            group.key1(),
+                            group.sum(s -> s.numberDecimal()),
+                            group.sum(s -> s.numberFloat()),
+                            group.sum(s -> s.numberDouble())
+                    ))
                     .toList();
             Assert.assertEquals(1, list.size());
             ALLTYPESharding alltype = list.get(0);
@@ -690,180 +709,50 @@ public class H2QueryTest extends H2BaseTest {
     }
 
     @Test
-    public void nativeSQLTest1() {
-        String sql = easyQuery.queryable(H2BookTest.class)
-                .select(o -> o.columnAll()
-                        .sqlNativeSegment("rank() over(order by {0} desc) as rank1", it -> it.expression(H2BookTest::getPrice))
-                        .sqlNativeSegment("rank() over(partition by {0} order by {1} desc) as rank2", it -> it
-                                .expression(H2BookTest::getStoreId)
-                                .expression(H2BookTest::getPrice)
-                        )
-                ).toSQL();
-        Assert.assertEquals("SELECT id,name,edition,price,store_id,rank() over(order by price desc) as rank1,rank() over(partition by store_id order by price desc) as rank2 FROM t_book_test", sql);
-    }
-    @Test
-    public void nativeSQLTest1_1() {
-        String sql = easyQuery.queryable(H2BookTest.class)
-                .select(o -> o.columnAll()
-                        .sqlNativeSegment("rank() over(order by {0} desc) as rank1", it -> it.expression(H2BookTest::getPrice))
-                        .sqlNativeSegment("rank() over(partition by {0} order by {1} desc) as rank2", it -> it
-                                .expression(H2BookTest::getStoreId)
-                                .expression(H2BookTest::getPrice)
-                        )
-                ).toSQL();
-        Assert.assertEquals("SELECT id,name,edition,price,store_id,rank() over(order by price desc) as rank1,rank() over(partition by store_id order by price desc) as rank2 FROM t_book_test", sql);
-    }
-
-    @Test
-    public void nativeSQLTest2() {
-        String sql = easyQuery.queryable(H2BookTest.class)
-                .asAlias("x")
-                .select(o -> o.columnAll()
-                        .sqlNativeSegment("rank() over(order by {0} desc) as rank1", it -> it.expression(H2BookTest::getPrice))
-                        .sqlNativeSegment("rank() over(partition by {0} order by {1} desc) as rank2", it -> it
-                                .expression(H2BookTest::getStoreId)
-                                .expression(H2BookTest::getPrice)
-                        )
-                ).toSQL();
-        Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by x.store_id order by x.price desc) as rank2 FROM t_book_test x", sql);
-    }
-    @Test
-    public void nativeSQLTest2_1() {
-        Queryable<H2BookTest> x = easyQuery.queryable(H2BookTest.class)
-                .asAlias("x")
-                .select(o -> o.columnAll()
-                        .sqlNativeSegment("rank() over(order by {0} desc) as rank1", it -> it.expression(H2BookTest::getPrice))
-                        .sqlNativeSegment("rank() over(partition by {0} order by {0} desc) as rank2", it -> it
-                                .value(1)
-                        )
-                );
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(x.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
-        String sql =x.toSQL(toSQLContext);
-        Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by ? order by ? desc) as rank2 FROM t_book_test x", sql);
-        List<SQLParameter> parameters = toSQLContext.getParameters();
-        Assert.assertEquals(parameters.size(),2);
-    }
-    @Test
-    public void nativeSQLTest2_2() {
-        Queryable<H2BookTest> x = easyQuery.queryable(H2BookTest.class)
-                .asAlias("x")
-                .select(o -> o.columnAll()
-                        .sqlNativeSegment("rank() over(order by {0} desc) as rank1", it -> it.expression(H2BookTest::getPrice))
-                        .sqlNativeSegment("rank() over(partition by {0} {1} order by {1}{0} desc) as rank2", it -> it
-                                .value(1).value(2)
-                        )
-                );
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(x.getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
-        String sql =x.toSQL(toSQLContext);
-        Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by ? ? order by ?? desc) as rank2 FROM t_book_test x", sql);
-        List<SQLParameter> parameters = toSQLContext.getParameters();
-        Assert.assertEquals(parameters.size(),4);
-        Assert.assertEquals(1,parameters.get(0).getValue());
-        Assert.assertEquals(2,parameters.get(1).getValue());
-        Assert.assertEquals(2,parameters.get(2).getValue());
-        Assert.assertEquals(1,parameters.get(3).getValue());
-    }
-
-    @Test
-    public void nativeSQLTest3() {
-        String sql = easyQuery.queryable(H2BookTest.class)
-                .asAlias("x")
-                .select(o -> o.columnAll()
-                        .sqlNativeSegment("rank() over(order by {0} desc) as rank1", it -> it.expression(H2BookTest::getPrice))
-                        .sqlNativeSegment("rank() over(partition by {0} order by {0} desc) as rank2", it -> it
-                                .expression(H2BookTest::getStoreId)
-                        )
-                ).toSQL();
-        Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by x.store_id order by x.store_id desc) as rank2 FROM t_book_test x", sql);
-    }
-
-    @Test
-    public void nativeSQLTest4() {
-        String sql = easyQuery.queryable(H2BookTest.class)
-                .asAlias("x")
-                .select(o -> o.columnAll()
-                        .sqlNativeSegment("rank() over(order by {0} desc) as rank1,rank() over(partition by {1} order by {2} desc) as rank2",
-                                it -> it.expression(H2BookTest::getPrice)
-                                        .expression(H2BookTest::getStoreId)
-                                        .expression(H2BookTest::getPrice)
-                        )
-                ).toSQL();
-        Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by x.store_id order by x.price desc) as rank2 FROM t_book_test x", sql);
-    }
-    @Test
-    public void nativeSQLTest4_1() {
-        String sql = easyQuery.queryable(H2BookTest.class)
-                .asAlias("x")
-                .select(o -> o.columnAll()
-                        .sqlNativeSegment("rank() over(order by x.price desc) as rank1,rank() over(partition by x.store_id order by x.price desc) as rank2")
-                ).toSQL();
-        Assert.assertEquals("SELECT x.id,x.name,x.edition,x.price,x.store_id,rank() over(order by x.price desc) as rank1,rank() over(partition by x.store_id order by x.price desc) as rank2 FROM t_book_test x", sql);
-    }
-
-    @Test
-    public void nativeSQLTest5() {
-        String sql = easyQuery.queryable(H2BookTest.class)
-                .where(o -> o.sqlNativeSegment("regexp_like({0},{1})", it -> it.expression(H2BookTest::getPrice)
-                        .value("^Ste(v|ph)en$")))
-                .select(o -> o.columnAll()
-                ).toSQL();
-        Assert.assertEquals("SELECT id,name,edition,price,store_id FROM t_book_test WHERE regexp_like(price,?)", sql);
-    }
-    @Test
-    public void nativeSQLTest6() {
-        String sql = easyQuery.queryable(H2BookTest.class)
-                .leftJoin(DefTable.class,(t, t1)->t.eq(t1,H2BookTest::getPrice,DefTable::getMobile))
-                .where((o,o1) -> o.sqlNativeSegment("regexp_like({0},{1}) AND regexp_like({2},{1})", it -> it
-                        .expression(H2BookTest::getPrice)
-                        .value("^Ste(v|ph)en$").expression(o1,DefTable::getAvatar)))
-                .select(o -> o.columnAll()
-                ).toSQL();
-        Assert.assertEquals("SELECT t.id,t.name,t.edition,t.price,t.store_id FROM t_book_test t LEFT JOIN t_def_table t1 ON t.price = t1.mobile WHERE regexp_like(t.price,?) AND regexp_like(t1.avatar,?)", sql);
-    }
-    @Test
-    public void conditionTest1(){
-        String id="";
-        String userName=null;
-        String nickname="BBB";
-        Boolean leftEnable=true;
+    public void conditionTest1() {
+        String id = "";
+        String userName = null;
+        String nickname = "BBB";
+        Boolean leftEnable = true;
 
         {
 
-            String sql = easyQuery.queryable(DefTable.class)
-                    .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
+            String sql = easyEntityQuery.queryable(DefTable.class)
+                    .leftJoin(DefTableLeft1.class, (t, t1) -> t.id().eq(t1.defId()))
                     .filterConfigure((t, p, v) -> {
                         if ("id".equals(p)) {
                             return true;
                         }
                         return NotNullOrEmptyValueFilter.DEFAULT.accept(t, p, v);
                     })
-                    .where((t, t1) -> t
-                            .eq(DefTable::getId, id)
-                            .eq(DefTable::getUserName, userName)
-                            .eq(DefTable::getNickname, nickname)
-                            .then(t1).eq(DefTableLeft1::getEnable, leftEnable)).toSQL();
-            Assert.assertEquals("SELECT t.id,t.user_name,t.nickname,t.enable,t.score,t.mobile,t.avatar,t.number,t.status,t.created,t.options FROM t_def_table t LEFT JOIN t_def_table_left1 t1 ON t.id = t1.def_id WHERE t.id = ? AND t.nickname = ? AND t1.enable = ?",sql);
+                    .where((t, t1) -> {
+                        t.id().eq(id);
+                        t.userName().eq(userName);
+                        t.nickname().eq(nickname);
+                        t1.enable().eq(leftEnable);
+                    }).toSQL();
+            Assert.assertEquals("SELECT t.id,t.user_name,t.nickname,t.enable,t.score,t.mobile,t.avatar,t.number,t.status,t.created,t.options FROM t_def_table t LEFT JOIN t_def_table_left1 t1 ON t.id = t1.def_id WHERE t.id = ? AND t.nickname = ? AND t1.enable = ?", sql);
         }
 
         {
 
-            String sql = easyQuery.queryable(DefTable.class)
-                    .leftJoin(DefTableLeft1.class, (t, t1) -> t.eq(t1, DefTable::getId, DefTableLeft1::getDefId))
+            String sql = easyEntityQuery.queryable(DefTable.class)
+                    .leftJoin(DefTableLeft1.class, (t, t1) -> t.id().eq(t1.defId()))
                     .filterConfigure((t, p, v) -> {
                         if ("enable".equals(p)) {
                             return false;
                         }
                         return NotNullOrEmptyValueFilter.DEFAULT.accept(t, p, v);
                     })
-                    .where((t, t1) -> t
-                            .eq(DefTable::getId, id)
-                            .eq(DefTable::getUserName, userName)
-                            .eq(DefTable::getNickname, nickname)
-                            .then(t1).eq(DefTableLeft1::getEnable, leftEnable)).toSQL();
-            Assert.assertEquals("SELECT t.id,t.user_name,t.nickname,t.enable,t.score,t.mobile,t.avatar,t.number,t.status,t.created,t.options FROM t_def_table t LEFT JOIN t_def_table_left1 t1 ON t.id = t1.def_id WHERE t.nickname = ?",sql);
+                    .where((t, t1) -> {
+                        t.id().eq(id);
+                        t.userName().eq(userName);
+                        t.nickname().eq(nickname);
+                        t1.enable().eq(leftEnable);
+                    }).toSQL();
+            Assert.assertEquals("SELECT t.id,t.user_name,t.nickname,t.enable,t.score,t.mobile,t.avatar,t.number,t.status,t.created,t.options FROM t_def_table t LEFT JOIN t_def_table_left1 t1 ON t.id = t1.def_id WHERE t.nickname = ?", sql);
         }
     }
-
 
 
 }

@@ -3,7 +3,6 @@ package com.easy.query.test;
 import com.bestvike.linq.Linq;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable2;
-import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.DefaultPageResult;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -141,23 +140,6 @@ public class QueryTest18 extends BaseTest {
                 .where(s -> {
                     s.id().in(Arrays.asList("1", "2"));
                 }).toList();
-    }
-
-    @Test
-    public void testxxx() {
-
-//        String sql="";
-//        easyEntityQuery.queryable(Topic.class)
-//                .where(t -> {
-//                    if(EasyStringUtil.isNotBlank(sql)){
-//                        t.expression().sql(sql);
-//                    }
-//                })
-//                .where(EasyStringUtil.isNotBlank(sql),t -> {
-//                    t.expression().sql(sql);
-//                })
-
-        Queryable<TestUserAAA> queryable = easyQuery.queryable(TestUserAAA.class);
     }
 
     @Test
@@ -498,7 +480,7 @@ public class QueryTest18 extends BaseTest {
         MyTestPrimaryKey myTestPrimaryKey = new MyTestPrimaryKey();
         Assert.assertNull(myTestPrimaryKey.getId());
         try {
-            easyQuery.insertable(myTestPrimaryKey).executeRows();
+            easyEntityQuery.insertable(myTestPrimaryKey).executeRows();
         } catch (Exception exception) {
 
         }
@@ -751,12 +733,14 @@ public class QueryTest18 extends BaseTest {
 
     @Test
     public void testDraft() {
-        Class<Draft2<String, String>> draft2Class = EasyObjectUtil.typeCastNullable(Draft2.class);
-        List<Draft2<String, String>> list = easyQuery.queryable(Topic.class)
+        List<Draft2<String, String>> list = easyEntityQuery.queryable(Topic.class)
                 .limit(true, 100)
                 .where(t -> {
-                    t.ne(Topic::getId, "123");
-                }).select(draft2Class, t -> t.columnAs(Topic::getId, Draft2::getValue1).columnAs(Topic::getTitle, Draft2::getValue2))
+                    t.id().ne( "123");
+                }).select( t -> Select.DRAFT.of(
+                        t.id(),
+                        t.title()
+                ))
                 .toList();
         for (Draft2<String, String> stringLocalDateTimeDraft2 : list) {
             String value1 = stringLocalDateTimeDraft2.getValue1();
@@ -764,25 +748,6 @@ public class QueryTest18 extends BaseTest {
             System.out.println(value1);
             System.out.println(value2);
         }
-//        int limit=100;
-//        List<Topic> list1 = easyEntityQuery.queryable(Topic.class)
-//                .where(t -> {
-//                    t.id().eq("123");
-//                })
-//                .limit(limit>0, limit).toList();
-//
-//        EntityQueryable<TopicProxy, Topic> where = easyEntityQuery.queryable(Topic.class)
-//                .where(t -> {
-//                    t.id().eq("123");
-//                });
-//        EntityQueryable<TopicProxy, Topic> topicProxyTopicEntityQueryable1 = where.cloneQueryable();
-//        EntityQueryable<TopicProxy, Topic> topicProxyTopicEntityQueryable2 = where.cloneQueryable();
-//
-//
-//        EasyPageResult<Topic> pageResult = getQuery().toPageResult(1, 2);
-//        processVOList(pageResult.getData());
-//        List<Topic> list2 = getQuery().toList();
-//        processVOList(list2);
     }
 
     private EasyPageResult<Topic> pageOrExport(int limit) {
@@ -932,7 +897,7 @@ public class QueryTest18 extends BaseTest {
 //                    b.star().eq(1);
 //                }).toSQL();
 
-        QueryConfiguration queryConfiguration = easyQuery.getRuntimeContext().getQueryConfiguration();
+        QueryConfiguration queryConfiguration = easyEntityQuery.getRuntimeContext().getQueryConfiguration();
         Assert.assertTrue(queryConfiguration instanceof MyQueryConfiguration);
         System.out.println(queryConfiguration);
     }
@@ -1010,12 +975,6 @@ public class QueryTest18 extends BaseTest {
                 .selectColumn(b -> b.createTime().format("yyyy年MM约-dd HH小时mm分钟ss秒"))
                 .firstOrNull();
         System.out.println(s);
-
-        String s1 = easyQuery.queryable(BlogEntity.class)
-                .select(String.class, b -> {
-                    b.sqlFunc(b.fx().dateTimeFormat(BlogEntity::getCreateTime, "yyyy年MM约-dd HH小时mm分钟ss秒"));
-                }).firstOrNull();
-        System.out.println(s1);
     }
 
     @Test
@@ -1146,8 +1105,8 @@ public class QueryTest18 extends BaseTest {
 
     @Test
     public void autoFalse() {
-        List<TopicAutoFalse> list = easyQuery.queryable(Topic.class)
-                .select(TopicAutoFalse.class, t -> t.columnAll())
+        List<TopicAutoFalse> list = easyEntityQuery.queryable(Topic.class)
+                .select(TopicAutoFalse.class)
                 .toList();
     }
 

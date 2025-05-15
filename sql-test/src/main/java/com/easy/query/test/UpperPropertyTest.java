@@ -1,8 +1,6 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
-import com.easy.query.api4j.client.DefaultEasyQuery;
-import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
@@ -20,7 +18,6 @@ import com.easy.query.test.entity.MyALLTYPE;
 import com.easy.query.test.entity.UpperTopic;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
-import com.easy.query.test.parser.MyLambdaParser;
 import com.easy.query.test.testvo.MyTopicTestDTO;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Assert;
@@ -41,7 +38,6 @@ public class UpperPropertyTest {
     public static HikariDataSource dataSource;
     public static ListenerContextManager listenerContextManager;
     public static EasyQueryClient easyQueryClient;
-    public static DefaultEasyQuery easyQuery;
     public static DefaultEasyEntityQuery easyEntityQuery;
     static {
 //        EasyBeanUtil.FAST_BEAN_FUNCTION = ReflectBean::new;
@@ -51,7 +47,6 @@ public class UpperPropertyTest {
 
     }
     public static void init() {
-        EasyLambdaUtil.replaceParser(new MyLambdaParser());
         initDatasource();
         initEasyQuery();
     }
@@ -86,7 +81,6 @@ public class UpperPropertyTest {
 //                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
-        easyQuery = new DefaultEasyQuery(easyQueryClient);
         easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
 
 

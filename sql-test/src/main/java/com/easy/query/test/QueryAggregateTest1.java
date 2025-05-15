@@ -1,16 +1,17 @@
 package com.easy.query.test;
 
-import com.easy.query.api4j.select.Queryable10;
-import com.easy.query.api4j.select.Queryable3;
-import com.easy.query.api4j.select.Queryable4;
-import com.easy.query.api4j.select.Queryable5;
-import com.easy.query.api4j.select.Queryable6;
-import com.easy.query.api4j.select.Queryable7;
-import com.easy.query.api4j.select.Queryable8;
-import com.easy.query.api4j.select.Queryable9;
+import com.easy.query.api.proxy.entity.select.EntityQueryable10;
+import com.easy.query.api.proxy.entity.select.EntityQueryable3;
+import com.easy.query.api.proxy.entity.select.EntityQueryable4;
+import com.easy.query.api.proxy.entity.select.EntityQueryable5;
+import com.easy.query.api.proxy.entity.select.EntityQueryable6;
+import com.easy.query.api.proxy.entity.select.EntityQueryable7;
+import com.easy.query.api.proxy.entity.select.EntityQueryable8;
+import com.easy.query.api.proxy.entity.select.EntityQueryable9;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.proxy.TopicProxy;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,80 +26,80 @@ import java.util.function.Supplier;
  */
 public class QueryAggregateTest1 extends BaseTest{
 
-    public Queryable10<Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic> join1(){
-        Queryable10<Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic> query = easyQuery.queryable(Topic.class)
-                .rightJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t2(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t3(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t4(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t5(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t6(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t7(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t8(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t9(), Topic::getId, Topic::getId));
+    public  EntityQueryable10<TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic> join1(){
+        EntityQueryable10<TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic> query = easyEntityQuery.queryable(Topic.class)
+                .rightJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t3.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t4.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t5.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t6.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t7.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t8.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t9.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t10.id()));
         return query;
     }
-    public Queryable9<Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic> join2(){
-        Queryable9<Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic> query = easyQuery.queryable(Topic.class)
-                .rightJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t2(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t3(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t4(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t5(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t6(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t7(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t8(), Topic::getId, Topic::getId));
+    public EntityQueryable9<TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic> join2(){
+        EntityQueryable9<TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic> query = easyEntityQuery.queryable(Topic.class)
+                .rightJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t3.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t4.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t5.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t6.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t7.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t8.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t9.id()));
         return query;
     }
-    public Queryable8<Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic> join3(){
-        Queryable8<Topic, Topic, Topic, Topic, Topic, Topic, Topic, Topic> query = easyQuery.queryable(Topic.class)
-                .rightJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t2(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t3(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t4(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t5(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t6(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t7(), Topic::getId, Topic::getId));
+    public EntityQueryable8<TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic> join3(){
+        EntityQueryable8<TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic> query = easyEntityQuery.queryable(Topic.class)
+                .rightJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t3.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t4.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t5.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t6.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t7.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t8.id()));
         return query;
     }
-    public Queryable7<Topic, Topic, Topic, Topic, Topic, Topic, Topic> join4(){
-        Queryable7<Topic, Topic, Topic, Topic, Topic, Topic, Topic> query = easyQuery.queryable(Topic.class)
-                .rightJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t2(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t3(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t4(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t5(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t6(), Topic::getId, Topic::getId));
+    public EntityQueryable7<TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic> join4(){
+        EntityQueryable7<TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic> query = easyEntityQuery.queryable(Topic.class)
+                .rightJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t3.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t4.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t5.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t6.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t7.id()));
         return query;
     }
-    public Queryable6<Topic, Topic, Topic, Topic, Topic, Topic> join5(){
-        Queryable6<Topic, Topic, Topic, Topic, Topic, Topic> query = easyQuery.queryable(Topic.class)
-                .rightJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t2(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t3(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t4(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t5(), Topic::getId, Topic::getId));
+    public EntityQueryable6<TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic> join5(){
+        EntityQueryable6<TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic> query = easyEntityQuery.queryable(Topic.class)
+                .rightJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t3.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t4.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t5.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t6.id()));
         return query;
     }
-    public  Queryable5<Topic, Topic, Topic, Topic, Topic> join6(){
-        Queryable5<Topic, Topic, Topic, Topic, Topic> query = easyQuery.queryable(Topic.class)
-                .rightJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t2(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t3(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t4(), Topic::getId, Topic::getId));
+    public   EntityQueryable5<TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic> join6(){
+        EntityQueryable5<TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic> query = easyEntityQuery.queryable(Topic.class)
+                .rightJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t3.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t4.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t5.id()));
         return query;
     }
-    public Queryable4<Topic, Topic, Topic, Topic> join7(){
-        Queryable4<Topic, Topic, Topic, Topic> query = easyQuery.queryable(Topic.class)
-                .rightJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t2(), Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t3(), Topic::getId, Topic::getId));
+    public EntityQueryable4<TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic> join7(){
+        EntityQueryable4<TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic> query = easyEntityQuery.queryable(Topic.class)
+                .rightJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t3.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t4.id()));
         return query;
     }
-    public Queryable3<Topic, Topic, Topic> join8(){
-        Queryable3<Topic, Topic, Topic> query = easyQuery.queryable(Topic.class)
-                .rightJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
-                .rightJoinMerge(Topic.class, o -> o.t().eq(o.t2(), Topic::getId, Topic::getId));
+    public EntityQueryable3<TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic> join8(){
+        EntityQueryable3<TopicProxy, Topic, TopicProxy, Topic, TopicProxy, Topic> query = easyEntityQuery.queryable(Topic.class)
+                .rightJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
+                .rightJoinMerge(Topic.class, o -> o.t1.id().eq(o.t3.id()));
         return query;
     }
 
@@ -108,7 +109,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join1().asTable("abcv").sumOrDefault((t,t1,t2,t3,t4,t5,t6,t7,t8,t9)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -128,7 +129,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join1().asTable("abcv").sumOrNull((t,t1,t2,t3,t4,t5,t6,t7,t8,t9)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -148,7 +149,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join1().asTable("abcv").sumBigDecimalOrDefault((t,t1,t2,t3,t4,t5,t6,t7,t8,t9)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     }, BigDecimal.ZERO);
                 }catch (Exception ex){
                     return ex;
@@ -168,7 +169,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join1().asTable("abcv").sumBigDecimalOrNull((t,t1,t2,t3,t4,t5,t6,t7,t8,t9)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -188,7 +189,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join1().asTable("abcv").maxOrNull((t,t1,t2,t3,t4,t5,t6,t7,t8,t9)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -208,7 +209,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join1().asTable("abcv").maxOrDefault((t,t1,t2,t3,t4,t5,t6,t7,t8,t9)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -228,7 +229,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join1().asTable("abcv").minOrNull((t,t1,t2,t3,t4,t5,t6,t7,t8,t9)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -248,7 +249,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join1().asTable("abcv").minOrDefault((t,t1,t2,t3,t4,t5,t6,t7,t8,t9)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -268,7 +269,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join1().asTable("abcv").avgOrNull((t,t1,t2,t3,t4,t5,t6,t7,t8,t9)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -288,7 +289,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join1().asTable("abcv").avgBigDecimalOrNull((t,t1,t2,t3,t4,t5,t6,t7,t8,t9)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -308,7 +309,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join1().asTable("abcv").avgFloatOrNull((t,t1,t2,t3,t4,t5,t6,t7,t8,t9)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -329,7 +330,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join1().asTable("abcv").avgOrDefault((t,t1,t2,t3,t4,t5,t6,t7,t8,t9)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1d);
                 }catch (Exception ex){
                     return ex;
@@ -349,7 +350,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join1().asTable("abcv").avgBigDecimalOrDefault((t,t1,t2,t3,t4,t5,t6,t7,t8,t9)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },BigDecimal.ZERO);
                 }catch (Exception ex){
                     return ex;
@@ -369,7 +370,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join1().asTable("abcv").avgFloatOrDefault((t,t1,t2,t3,t4,t5,t6,t7,t8,t9)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1f);
                 }catch (Exception ex){
                     return ex;
@@ -393,7 +394,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join2().asTable("abcv").sumOrDefault((t,t1,t2,t3,t4,t5,t6,t7,t8)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -413,7 +414,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join2().asTable("abcv").sumOrNull((t,t1,t2,t3,t4,t5,t6,t7,t8)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -433,7 +434,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join2().asTable("abcv").sumBigDecimalOrDefault((t,t1,t2,t3,t4,t5,t6,t7,t8)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     }, BigDecimal.ZERO);
                 }catch (Exception ex){
                     return ex;
@@ -453,7 +454,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join2().asTable("abcv").sumBigDecimalOrNull((t,t1,t2,t3,t4,t5,t6,t7,t8)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -473,7 +474,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join2().asTable("abcv").maxOrNull((t,t1,t2,t3,t4,t5,t6,t7,t8)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -493,7 +494,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join2().asTable("abcv").maxOrDefault((t,t1,t2,t3,t4,t5,t6,t7,t8)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -513,7 +514,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join2().asTable("abcv").minOrNull((t,t1,t2,t3,t4,t5,t6,t7,t8)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -533,7 +534,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join2().asTable("abcv").minOrDefault((t,t1,t2,t3,t4,t5,t6,t7,t8)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -553,7 +554,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join2().asTable("abcv").avgOrNull((t,t1,t2,t3,t4,t5,t6,t7,t8)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -573,7 +574,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join2().asTable("abcv").avgBigDecimalOrNull((t,t1,t2,t3,t4,t5,t6,t7,t8)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -593,7 +594,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join2().asTable("abcv").avgFloatOrNull((t,t1,t2,t3,t4,t5,t6,t7,t8)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -614,7 +615,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join2().asTable("abcv").avgOrDefault((t,t1,t2,t3,t4,t5,t6,t7,t8)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1d);
                 }catch (Exception ex){
                     return ex;
@@ -634,7 +635,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join2().asTable("abcv").avgBigDecimalOrDefault((t,t1,t2,t3,t4,t5,t6,t7,t8)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },BigDecimal.ZERO);
                 }catch (Exception ex){
                     return ex;
@@ -654,7 +655,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join2().asTable("abcv").avgFloatOrDefault((t,t1,t2,t3,t4,t5,t6,t7,t8)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1f);
                 }catch (Exception ex){
                     return ex;
@@ -679,7 +680,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join3().asTable("abcv").sumOrDefault((t,t1,t2,t3,t4,t5,t6,t7)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -699,7 +700,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join3().asTable("abcv").sumOrNull((t,t1,t2,t3,t4,t5,t6,t7)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -719,7 +720,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join3().asTable("abcv").sumBigDecimalOrDefault((t,t1,t2,t3,t4,t5,t6,t7)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     }, BigDecimal.ZERO);
                 }catch (Exception ex){
                     return ex;
@@ -739,7 +740,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join3().asTable("abcv").sumBigDecimalOrNull((t,t1,t2,t3,t4,t5,t6,t7)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -759,7 +760,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join3().asTable("abcv").maxOrNull((t,t1,t2,t3,t4,t5,t6,t7)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -779,7 +780,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join3().asTable("abcv").maxOrDefault((t,t1,t2,t3,t4,t5,t6,t7)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -799,7 +800,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join3().asTable("abcv").minOrNull((t,t1,t2,t3,t4,t5,t6,t7)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -819,7 +820,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join3().asTable("abcv").minOrDefault((t,t1,t2,t3,t4,t5,t6,t7)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -839,7 +840,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join3().asTable("abcv").avgOrNull((t,t1,t2,t3,t4,t5,t6,t7)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -859,7 +860,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join3().asTable("abcv").avgBigDecimalOrNull((t,t1,t2,t3,t4,t5,t6,t7)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -879,7 +880,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join3().asTable("abcv").avgFloatOrNull((t,t1,t2,t3,t4,t5,t6,t7)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -900,7 +901,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join3().asTable("abcv").avgOrDefault((t,t1,t2,t3,t4,t5,t6,t7)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1d);
                 }catch (Exception ex){
                     return ex;
@@ -920,7 +921,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join3().asTable("abcv").avgBigDecimalOrDefault((t,t1,t2,t3,t4,t5,t6,t7)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },BigDecimal.ZERO);
                 }catch (Exception ex){
                     return ex;
@@ -940,7 +941,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join3().asTable("abcv").avgFloatOrDefault((t,t1,t2,t3,t4,t5,t6,t7)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1f);
                 }catch (Exception ex){
                     return ex;
@@ -965,7 +966,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join4().asTable("abcv").sumOrDefault((t,t1,t2,t3,t4,t5,t6)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -985,7 +986,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join4().asTable("abcv").sumOrNull((t,t1,t2,t3,t4,t5,t6)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1005,7 +1006,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join4().asTable("abcv").sumBigDecimalOrDefault((t,t1,t2,t3,t4,t5,t6)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     }, BigDecimal.ZERO);
                 }catch (Exception ex){
                     return ex;
@@ -1025,7 +1026,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join4().asTable("abcv").sumBigDecimalOrNull((t,t1,t2,t3,t4,t5,t6)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1045,7 +1046,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join4().asTable("abcv").maxOrNull((t,t1,t2,t3,t4,t5,t6)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1065,7 +1066,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join4().asTable("abcv").maxOrDefault((t,t1,t2,t3,t4,t5,t6)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -1085,7 +1086,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join4().asTable("abcv").minOrNull((t,t1,t2,t3,t4,t5,t6)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1105,7 +1106,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join4().asTable("abcv").minOrDefault((t,t1,t2,t3,t4,t5,t6)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -1125,7 +1126,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join4().asTable("abcv").avgOrNull((t,t1,t2,t3,t4,t5,t6)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1145,7 +1146,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join4().asTable("abcv").avgBigDecimalOrNull((t,t1,t2,t3,t4,t5,t6)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1165,7 +1166,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join4().asTable("abcv").avgFloatOrNull((t,t1,t2,t3,t4,t5,t6)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1186,7 +1187,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join4().asTable("abcv").avgOrDefault((t,t1,t2,t3,t4,t5,t6)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1d);
                 }catch (Exception ex){
                     return ex;
@@ -1206,7 +1207,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join4().asTable("abcv").avgBigDecimalOrDefault((t,t1,t2,t3,t4,t5,t6)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },BigDecimal.ZERO);
                 }catch (Exception ex){
                     return ex;
@@ -1226,7 +1227,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join4().asTable("abcv").avgFloatOrDefault((t,t1,t2,t3,t4,t5,t6)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1f);
                 }catch (Exception ex){
                     return ex;
@@ -1250,7 +1251,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join5().asTable("abcv").sumOrDefault((t,t1,t2,t3,t4,t5)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -1270,7 +1271,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join5().asTable("abcv").sumOrNull((t,t1,t2,t3,t4,t5)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1290,7 +1291,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join5().asTable("abcv").sumBigDecimalOrDefault((t,t1,t2,t3,t4,t5)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     }, BigDecimal.ZERO);
                 }catch (Exception ex){
                     return ex;
@@ -1310,7 +1311,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join5().asTable("abcv").sumBigDecimalOrNull((t,t1,t2,t3,t4,t5)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1330,7 +1331,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join5().asTable("abcv").maxOrNull((t,t1,t2,t3,t4,t5)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1350,7 +1351,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join5().asTable("abcv").maxOrDefault((t,t1,t2,t3,t4,t5)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -1370,7 +1371,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join5().asTable("abcv").minOrNull((t,t1,t2,t3,t4,t5)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1390,7 +1391,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join5().asTable("abcv").minOrDefault((t,t1,t2,t3,t4,t5)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -1410,7 +1411,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join5().asTable("abcv").avgOrNull((t,t1,t2,t3,t4,t5)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1430,7 +1431,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join5().asTable("abcv").avgBigDecimalOrNull((t,t1,t2,t3,t4,t5)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1450,7 +1451,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join5().asTable("abcv").avgFloatOrNull((t,t1,t2,t3,t4,t5)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1471,7 +1472,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join5().asTable("abcv").avgOrDefault((t,t1,t2,t3,t4,t5)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1d);
                 }catch (Exception ex){
                     return ex;
@@ -1491,7 +1492,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join5().asTable("abcv").avgBigDecimalOrDefault((t,t1,t2,t3,t4,t5)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },BigDecimal.ZERO);
                 }catch (Exception ex){
                     return ex;
@@ -1511,7 +1512,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join5().asTable("abcv").avgFloatOrDefault((t,t1,t2,t3,t4,t5)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1f);
                 }catch (Exception ex){
                     return ex;
@@ -1535,7 +1536,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join6().asTable("abcv").sumOrDefault((t,t1,t2,t3,t4)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -1555,7 +1556,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join6().asTable("abcv").sumOrNull((t,t1,t2,t3,t4)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1575,7 +1576,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join6().asTable("abcv").sumBigDecimalOrDefault((t,t1,t2,t3,t4)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     }, BigDecimal.ZERO);
                 }catch (Exception ex){
                     return ex;
@@ -1595,7 +1596,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join6().asTable("abcv").sumBigDecimalOrNull((t,t1,t2,t3,t4)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1615,7 +1616,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join6().asTable("abcv").maxOrNull((t,t1,t2,t3,t4)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1635,7 +1636,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join6().asTable("abcv").maxOrDefault((t,t1,t2,t3,t4)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -1655,7 +1656,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join6().asTable("abcv").minOrNull((t,t1,t2,t3,t4)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1675,7 +1676,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join6().asTable("abcv").minOrDefault((t,t1,t2,t3,t4)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -1695,7 +1696,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join6().asTable("abcv").avgOrNull((t,t1,t2,t3,t4)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1715,7 +1716,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join6().asTable("abcv").avgBigDecimalOrNull((t,t1,t2,t3,t4)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1735,7 +1736,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join6().asTable("abcv").avgFloatOrNull((t,t1,t2,t3,t4)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1756,7 +1757,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join6().asTable("abcv").avgOrDefault((t,t1,t2,t3,t4)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1d);
                 }catch (Exception ex){
                     return ex;
@@ -1776,7 +1777,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join6().asTable("abcv").avgBigDecimalOrDefault((t,t1,t2,t3,t4)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },BigDecimal.ZERO);
                 }catch (Exception ex){
                     return ex;
@@ -1796,7 +1797,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join6().asTable("abcv").avgFloatOrDefault((t,t1,t2,t3,t4)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1f);
                 }catch (Exception ex){
                     return ex;
@@ -1820,7 +1821,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join7().asTable("abcv").sumOrDefault((t,t1,t2,t3)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -1840,7 +1841,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join7().asTable("abcv").sumOrNull((t,t1,t2,t3)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1860,7 +1861,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join7().asTable("abcv").sumBigDecimalOrDefault((t,t1,t2,t3)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     }, BigDecimal.ZERO);
                 }catch (Exception ex){
                     return ex;
@@ -1880,7 +1881,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join7().asTable("abcv").sumBigDecimalOrNull((t,t1,t2,t3)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1900,7 +1901,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join7().asTable("abcv").maxOrNull((t,t1,t2,t3)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1920,7 +1921,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join7().asTable("abcv").maxOrDefault((t,t1,t2,t3)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -1940,7 +1941,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join7().asTable("abcv").minOrNull((t,t1,t2,t3)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -1960,7 +1961,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join7().asTable("abcv").minOrDefault((t,t1,t2,t3)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -1980,7 +1981,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join7().asTable("abcv").avgOrNull((t,t1,t2,t3)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -2000,7 +2001,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join7().asTable("abcv").avgBigDecimalOrNull((t,t1,t2,t3)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -2020,7 +2021,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join7().asTable("abcv").avgFloatOrNull((t,t1,t2,t3)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -2041,7 +2042,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join7().asTable("abcv").avgOrDefault((t,t1,t2,t3)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1d);
                 }catch (Exception ex){
                     return ex;
@@ -2061,7 +2062,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join7().asTable("abcv").avgBigDecimalOrDefault((t,t1,t2,t3)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },BigDecimal.ZERO);
                 }catch (Exception ex){
                     return ex;
@@ -2081,7 +2082,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join7().asTable("abcv").avgFloatOrDefault((t,t1,t2,t3)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1f);
                 }catch (Exception ex){
                     return ex;
@@ -2105,7 +2106,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join8().asTable("abcv").sumOrDefault((t,t1,t2)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -2125,7 +2126,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join8().asTable("abcv").sumOrNull((t,t1,t2)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -2145,7 +2146,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join8().asTable("abcv").sumBigDecimalOrDefault((t,t1,t2)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     }, BigDecimal.ZERO);
                 }catch (Exception ex){
                     return ex;
@@ -2165,7 +2166,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join8().asTable("abcv").sumBigDecimalOrNull((t,t1,t2)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -2185,7 +2186,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join8().asTable("abcv").maxOrNull((t,t1,t2)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -2205,7 +2206,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join8().asTable("abcv").maxOrDefault((t,t1,t2)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -2225,7 +2226,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join8().asTable("abcv").minOrNull((t,t1,t2)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -2245,7 +2246,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join8().asTable("abcv").minOrDefault((t,t1,t2)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1);
                 }catch (Exception ex){
                     return ex;
@@ -2265,7 +2266,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join8().asTable("abcv").avgOrNull((t,t1,t2)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -2285,7 +2286,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join8().asTable("abcv").avgBigDecimalOrNull((t,t1,t2)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -2305,7 +2306,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join8().asTable("abcv").avgFloatOrNull((t,t1,t2)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     });
                 }catch (Exception ex){
                     return ex;
@@ -2326,7 +2327,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join8().asTable("abcv").avgOrDefault((t,t1,t2)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1d);
                 }catch (Exception ex){
                     return ex;
@@ -2346,7 +2347,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join8().asTable("abcv").avgBigDecimalOrDefault((t,t1,t2)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },BigDecimal.ZERO);
                 }catch (Exception ex){
                     return ex;
@@ -2366,7 +2367,7 @@ public class QueryAggregateTest1 extends BaseTest{
             Supplier<Exception> f = () -> {
                 try {
                     join8().asTable("abcv").avgFloatOrDefault((t,t1,t2)->{
-                        t.column(Topic::getStars);
+                        return t.stars();
                     },1f);
                 }catch (Exception ex){
                     return ex;

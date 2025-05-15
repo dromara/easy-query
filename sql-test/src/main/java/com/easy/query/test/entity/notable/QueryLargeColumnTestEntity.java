@@ -1,7 +1,10 @@
 package com.easy.query.test.entity.notable;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.notable.proxy.QueryLargeColumnTestEntityProxy;
 import lombok.Data;
 
 /**
@@ -12,11 +15,12 @@ import lombok.Data;
  */
 @Data
 @Table("query_large_column_test")
-public class QueryLargeColumnTestEntity {
+@EntityProxy
+public class QueryLargeColumnTestEntity implements ProxyEntityAvailable<QueryLargeColumnTestEntity , QueryLargeColumnTestEntityProxy> {
     @Column(primaryKey = true)
     private String id;
 
     private String name;
-    @Column(large = true)
+    @Column(exist = false)
     private String content;
 }

@@ -1,7 +1,5 @@
 package com.easy.query.test;
 
-import com.easy.query.api4j.select.Queryable;
-import com.easy.query.api4j.select.Queryable2;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
@@ -186,7 +184,7 @@ public class GenericTest extends BaseTest {
 
     @Test
     public void queryLargeColumnTest1() {
-        String sql = easyQuery.queryable(QueryLargeColumnTestEntity.class).toSQL();
+        String sql = easyEntityQuery.queryable(QueryLargeColumnTestEntity.class).toSQL();
         Assert.assertEquals("SELECT `id`,`name`,`content` FROM `query_large_column_test`", sql);
     }
 
@@ -195,7 +193,7 @@ public class GenericTest extends BaseTest {
         try {
 
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-            long l = easyQuery.insertable(queryLargeColumnTestEntity).executeRows();
+            long l = easyEntityQuery.insertable(queryLargeColumnTestEntity).executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex.getMessage().startsWith("not found insert columns :"));
@@ -208,7 +206,7 @@ public class GenericTest extends BaseTest {
 
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
-            long l = easyQuery.insertable(queryLargeColumnTestEntity).executeRows();
+            long l = easyEntityQuery.insertable(queryLargeColumnTestEntity).executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
@@ -226,7 +224,7 @@ public class GenericTest extends BaseTest {
 
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
-            long l = easyQuery.insertable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.DEFAULT).executeRows();
+            long l = easyEntityQuery.insertable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.DEFAULT).executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
@@ -244,7 +242,7 @@ public class GenericTest extends BaseTest {
 
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
-            long l = easyQuery.insertable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ALL_COLUMNS).executeRows();
+            long l = easyEntityQuery.insertable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ALL_COLUMNS).executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
@@ -262,7 +260,7 @@ public class GenericTest extends BaseTest {
 
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
-            long l = easyQuery.insertable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
+            long l = easyEntityQuery.insertable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
@@ -280,7 +278,7 @@ public class GenericTest extends BaseTest {
 
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
-            long l = easyQuery.updatable(queryLargeColumnTestEntity).executeRows();
+            long l = easyEntityQuery.updatable(queryLargeColumnTestEntity).executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
@@ -296,7 +294,7 @@ public class GenericTest extends BaseTest {
     public void queryLargeColumnTest9() {
         QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
         queryLargeColumnTestEntity.setId("123");
-        long l = easyQuery.updatable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS).executeRows();
+        long l = easyEntityQuery.updatable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS).executeRows();
         Assert.assertEquals(0, l);
     }
 
@@ -307,7 +305,7 @@ public class GenericTest extends BaseTest {
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
             queryLargeColumnTestEntity.setName("123");
-            long l = easyQuery.updatable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS).executeRows();
+            long l = easyEntityQuery.updatable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS).executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
@@ -326,7 +324,7 @@ public class GenericTest extends BaseTest {
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
             queryLargeColumnTestEntity.setName("123");
-            long l = easyQuery.updatable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
+            long l = easyEntityQuery.updatable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
@@ -344,7 +342,7 @@ public class GenericTest extends BaseTest {
         queryLargeColumnTestEntity.setId("123");
         queryLargeColumnTestEntity.setName("123");
         queryLargeColumnTestEntity.setContent("123");
-        long l = easyQuery.updatable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
+        long l = easyEntityQuery.updatable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
         Assert.assertEquals(0, l);
     }
 
@@ -353,7 +351,7 @@ public class GenericTest extends BaseTest {
         try {
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
-            long l = easyQuery.deletable(queryLargeColumnTestEntity).executeRows();
+            long l = easyEntityQuery.deletable(queryLargeColumnTestEntity).executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
@@ -370,7 +368,7 @@ public class GenericTest extends BaseTest {
         try {
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
-            long l = easyQuery.deletable(queryLargeColumnTestEntity).asTable("aaa").executeRows();
+            long l = easyEntityQuery.deletable(queryLargeColumnTestEntity).asTable("aaa").executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
@@ -387,7 +385,7 @@ public class GenericTest extends BaseTest {
         try {
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
-            long l = easyQuery.deletable(queryLargeColumnTestEntity).asTable(o -> o + "aaa").asSchema("xxx").executeRows();
+            long l = easyEntityQuery.deletable(queryLargeColumnTestEntity).asTable(o -> o + "aaa").asSchema("xxx").executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
@@ -404,7 +402,7 @@ public class GenericTest extends BaseTest {
         try {
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
-            long l = easyQuery.deletable(queryLargeColumnTestEntity).asTable(o -> o + "aaa").asSchema(o -> "xxx").executeRows();
+            long l = easyEntityQuery.deletable(queryLargeColumnTestEntity).asTable(o -> o + "aaa").asSchema(o -> "xxx").executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
@@ -421,7 +419,7 @@ public class GenericTest extends BaseTest {
         try {
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
-            long l = easyQuery.deletable(queryLargeColumnTestEntity).allowDeleteStatement(false).executeRows();
+            long l = easyEntityQuery.deletable(queryLargeColumnTestEntity).allowDeleteStatement(false).executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
@@ -433,7 +431,7 @@ public class GenericTest extends BaseTest {
     public void queryLargeColumnTest15() {
         QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
         queryLargeColumnTestEntity.setId("123");
-        String sql = easyQuery.deletable(queryLargeColumnTestEntity).toSQL();
+        String sql = easyEntityQuery.deletable(queryLargeColumnTestEntity).toSQL();
         Assert.assertEquals("DELETE FROM `query_large_column_test` WHERE `id` = ?", sql);
     }
 
@@ -454,7 +452,7 @@ public class GenericTest extends BaseTest {
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
             queryLargeColumnTestEntity.setName("123");
-            long l = easyQuery.updatable(queryLargeColumnTestEntity)
+            long l = easyEntityQuery.updatable(queryLargeColumnTestEntity)
                     .asTable("abc")
                     .asSchema("xxx").setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
         } catch (Exception ex) {
@@ -475,7 +473,7 @@ public class GenericTest extends BaseTest {
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
             queryLargeColumnTestEntity.setName("123");
-            long l = easyQuery.updatable(queryLargeColumnTestEntity)
+            long l = easyEntityQuery.updatable(queryLargeColumnTestEntity)
                     .asTable(o -> o + "abc")
                     .asSchema("xcv").setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
         } catch (Exception ex) {
@@ -496,7 +494,7 @@ public class GenericTest extends BaseTest {
             QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
             queryLargeColumnTestEntity.setId("123");
             queryLargeColumnTestEntity.setName("123");
-            long l = easyQuery.updatable(queryLargeColumnTestEntity)
+            long l = easyEntityQuery.updatable(queryLargeColumnTestEntity)
                     .asTable("")
                     .asSchema("xcv").setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
         } catch (Exception ex) {
@@ -509,7 +507,7 @@ public class GenericTest extends BaseTest {
     public void queryLargeColumnTest22() {
         try {
 
-            long l = easyQuery.updatable(QueryLargeColumnTestEntity.class)
+            long l = easyEntityQuery.updatable(QueryLargeColumnTestEntity.class)
                     .asTable(o -> o + "abc")
                     .asSchema("xcv")
                     .set(QueryLargeColumnTestEntity::getId, "123")
@@ -527,7 +525,7 @@ public class GenericTest extends BaseTest {
     public void queryLargeColumnTest23() {
         try {
 
-            long l = easyQuery.updatable(QueryLargeColumnTestEntity.class)
+            long l = easyEntityQuery.updatable(QueryLargeColumnTestEntity.class)
                     .set(QueryLargeColumnTestEntity::getId, "123")
                     .set(QueryLargeColumnTestEntity::getName, "123")
                     .set(QueryLargeColumnTestEntity::getContent, "123")
@@ -548,7 +546,7 @@ public class GenericTest extends BaseTest {
     public void updateTest24() {
         try {
 
-            long l = easyQuery.updatable(BlogEntity.class)
+            long l = easyEntityQuery.updatable(BlogEntity.class)
                     .asTable("x_t_blog")
                     .setIncrement(BlogEntity::getStar)
                     .whereById("123")
@@ -568,7 +566,7 @@ public class GenericTest extends BaseTest {
     public void updateTest25() {
         try {
 
-            long l = easyQuery.updatable(BlogEntity.class)
+            long l = easyEntityQuery.updatable(BlogEntity.class)
                     .asTable("x_t_blog")
                     .setIncrement(BlogEntity::getStar, 2)
                     .whereById("123")
@@ -588,7 +586,7 @@ public class GenericTest extends BaseTest {
     public void updateTest26() {
         try {
 
-            long l = easyQuery.updatable(BlogEntity.class)
+            long l = easyEntityQuery.updatable(BlogEntity.class)
                     .asTable("x_t_blog")
                     .setIncrement(false, BlogEntity::getStar, 2)
                     .setIncrement(BlogEntity::getScore, 2)
@@ -609,7 +607,7 @@ public class GenericTest extends BaseTest {
     public void updateTest27() {
         try {
 
-            long l = easyQuery.updatable(BlogEntity.class)
+            long l = easyEntityQuery.updatable(BlogEntity.class)
                     .asTable("x_t_blog")
                     .setDecrement(BlogEntity::getStar, 2)
                     .whereById("123")
@@ -629,7 +627,7 @@ public class GenericTest extends BaseTest {
     public void updateTest28() {
         try {
 
-            long l = easyQuery.updatable(BlogEntity.class)
+            long l = easyEntityQuery.updatable(BlogEntity.class)
                     .asTable("x_t_blog")
                     .setIncrement(false, BlogEntity::getStatus, 1)
                     .setIncrement(true, BlogEntity::getStar, 2)
@@ -650,7 +648,7 @@ public class GenericTest extends BaseTest {
     public void updateTest29() {
         try {
 
-            long l = easyQuery.updatable(UnknownTable.class)
+            long l = easyEntityQuery.updatable(UnknownTable.class)
                     .setIncrement(false, UnknownTable::getMoney1, 2L)
                     .setIncrement(true, UnknownTable::getMoney, 2L)
                     .whereById("123")
@@ -670,7 +668,7 @@ public class GenericTest extends BaseTest {
     public void updateTest30() {
         try {
 
-            long l = easyQuery.updatable(NoKeyEntity.class)
+            long l = easyEntityQuery.updatable(NoKeyEntity.class)
                     .set(NoKeyEntity::getName, "123")
                     .whereById("123")
                     .executeRows();
@@ -684,7 +682,7 @@ public class GenericTest extends BaseTest {
     public void updateTest31() {
         try {
 
-            long l = easyQuery.updatable(UnknownTable.class)
+            long l = easyEntityQuery.updatable(UnknownTable.class)
                     .setWithColumn(UnknownTable::getMoney1, UnknownTable::getMoney)
                     .setWithColumn(false, UnknownTable::getAge, UnknownTable::getAge1)
                     .setWithColumn(true, UnknownTable::getBirthday, UnknownTable::getBirthday1)
@@ -705,7 +703,7 @@ public class GenericTest extends BaseTest {
     public void updateTest32() {
         try {
 
-            long l = easyQuery.updatable(QueryLargeColumnTestEntity.class)
+            long l = easyEntityQuery.updatable(QueryLargeColumnTestEntity.class)
                     .set(false, QueryLargeColumnTestEntity::getId, "123")
                     .set(true, QueryLargeColumnTestEntity::getName, "123")
                     .set(QueryLargeColumnTestEntity::getContent, "123")
@@ -726,7 +724,7 @@ public class GenericTest extends BaseTest {
     public void updateTest33() {
         try {
 
-            long l = easyQuery.updatable(BlogEntity.class)
+            long l = easyEntityQuery.updatable(BlogEntity.class)
                     .asTable("x_t_blog")
                     .setDecrement(false, BlogEntity::getStatus, 1)
                     .setDecrement(true, BlogEntity::getStar, 2)
@@ -871,7 +869,7 @@ public class GenericTest extends BaseTest {
 
     @Test
     public void cloneTest1(){
-        Queryable2<Topic, BlogEntity> topicBlogEntityQueryable2 = easyQuery.queryable(Topic.class)
+        Queryable2<Topic, BlogEntity> topicBlogEntityQueryable2 = easyEntityQuery.queryable(Topic.class)
                 .leftJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId));
         Queryable2<Topic, BlogEntity> topicBlogEntityQueryable21 = topicBlogEntityQueryable2.cloneQueryable();
         Queryable2<Topic, BlogEntity> topicBlogEntityQueryable22 = topicBlogEntityQueryable2.cloneQueryable();
@@ -1297,12 +1295,12 @@ public class GenericTest extends BaseTest {
         Map<String, Field> staticFields = new HashMap<>();
         Collection<Field> allFields = EasyClassUtil.getAllFields(MyUserDTO.class, staticFields);
 
-        Queryable<MyUserDTO> queryable = easyQuery.queryable(MyUserDTO.class);
+        Queryable<MyUserDTO> queryable = easyEntityQuery.queryable(MyUserDTO.class);
     }
 
     @Test
     public void testPrintSQL1(){
-        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(easyQuery.getRuntimeContext());
+        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(easyEntityQuery.getRuntimeContext());
         easyExpressionContext.setPrintSQL(false);
         easyExpressionContext.setPrintNavSQL(false);
         ExpressionContext expressionContext = easyExpressionContext.cloneExpressionContext();
@@ -1311,7 +1309,7 @@ public class GenericTest extends BaseTest {
     }
     @Test
     public void testPrintSQL2(){
-        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(easyQuery.getRuntimeContext());
+        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(easyEntityQuery.getRuntimeContext());
         easyExpressionContext.setPrintSQL(null);
         easyExpressionContext.setPrintNavSQL(true);
         ExpressionContext expressionContext = easyExpressionContext.cloneExpressionContext();

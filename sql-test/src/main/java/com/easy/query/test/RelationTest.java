@@ -1,15 +1,10 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.StringProxy;
-import com.easy.query.api4j.update.EntityUpdatable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.basic.extension.track.TrackManager;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.proxy.core.draft.Draft1;
-import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -46,10 +41,8 @@ import com.easy.query.test.entity.school.SchoolClassTeacher;
 import com.easy.query.test.entity.school.SchoolStudent;
 import com.easy.query.test.entity.school.SchoolStudent2;
 import com.easy.query.test.entity.school.SchoolStudentAddress;
-import com.easy.query.test.entity.school.SchoolStudentExtendsVO;
 import com.easy.query.test.entity.school.SchoolTeacher;
 import com.easy.query.test.entity.school.dto.SchoolClass1VO;
-import com.easy.query.test.entity.school.dto.SchoolClassExtendsVO;
 import com.easy.query.test.entity.school.dto.SchoolClassOnlyVO;
 import com.easy.query.test.entity.school.dto.SchoolClassVO;
 import com.easy.query.test.entity.school.dto.SchoolStudentOnlyVO;
@@ -57,7 +50,6 @@ import com.easy.query.test.entity.school.dto.SchoolStudentVO;
 import com.easy.query.test.entity.school.dto.SchoolTeacherVO;
 import com.easy.query.test.entity.school.dto.proxy.SchoolClassVOProxy;
 import com.easy.query.test.entity.school.dto.proxy.SchoolStudentVOProxy;
-import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
 import com.easy.query.test.listener.ListenerContext;
 import lombok.var;
 import org.junit.Assert;
@@ -78,18 +70,18 @@ public class RelationTest extends BaseTest {
 
     public void relationInit(List<String> ids) {
 
-        easyQuery.deletable(SchoolStudent.class)
+        easyEntityQuery.deletable(SchoolStudent.class)
                 .whereByIds(ids).executeRows();
-        easyQuery.deletable(SchoolStudentAddress.class)
-                .where(o -> o.in(SchoolStudentAddress::getStudentId, ids)).executeRows();
-        easyQuery.deletable(SchoolClass.class)
-                .where(o -> o.in(SchoolClass::getId, Arrays.asList("class1", "class2", "class3"))).executeRows();
-        easyQuery.deletable(SchoolTeacher.class)
-                .where(o -> o.in(SchoolTeacher::getId, Arrays.asList("teacher1", "teacher2"))).executeRows();
-        easyQuery.deletable(SchoolClassTeacher.class)
-                .where(o -> o.in(SchoolClassTeacher::getClassId, Arrays.asList("class1", "class2", "class3"))).executeRows();
-        easyQuery.deletable(SchoolClassTeacher.class)
-                .where(o -> o.in(SchoolClassTeacher::getTeacherId, Arrays.asList("teacher1", "teacher2"))).executeRows();
+        easyEntityQuery.deletable(SchoolStudentAddress.class)
+                .where(o -> o.studentId().in(ids)).executeRows();
+        easyEntityQuery.deletable(SchoolClass.class)
+                .where(o -> o.id().in(Arrays.asList("class1", "class2", "class3"))).executeRows();
+        easyEntityQuery.deletable(SchoolTeacher.class)
+                .where(o -> o.id().in(Arrays.asList("teacher1", "teacher2"))).executeRows();
+        easyEntityQuery.deletable(SchoolClassTeacher.class)
+                .where(o -> o.classId().in(Arrays.asList("class1", "class2", "class3"))).executeRows();
+        easyEntityQuery.deletable(SchoolClassTeacher.class)
+                .where(o -> o.teacherId().in(Arrays.asList("teacher1", "teacher2"))).executeRows();
         ArrayList<SchoolStudent> schoolStudents = new ArrayList<>();
         ArrayList<SchoolClass> schoolClasses = new ArrayList<>();
         ArrayList<SchoolStudentAddress> schoolStudentAddresses = new ArrayList<>();
@@ -165,26 +157,26 @@ public class RelationTest extends BaseTest {
         }
 
 
-        easyQuery.insertable(schoolStudents).executeRows();
-        easyQuery.insertable(schoolClasses).executeRows();
-        easyQuery.insertable(schoolStudentAddresses).executeRows();
-        easyQuery.insertable(schoolTeachers).executeRows();
-        easyQuery.insertable(schoolClassTeachers).executeRows();
+        easyEntityQuery.insertable(schoolStudents).executeRows();
+        easyEntityQuery.insertable(schoolClasses).executeRows();
+        easyEntityQuery.insertable(schoolStudentAddresses).executeRows();
+        easyEntityQuery.insertable(schoolTeachers).executeRows();
+        easyEntityQuery.insertable(schoolClassTeachers).executeRows();
     }
 
     public void relationRemove(List<String> ids) {
-        easyQuery.deletable(SchoolStudent.class)
+        easyEntityQuery.deletable(SchoolStudent.class)
                 .whereByIds(ids).executeRows();
-        easyQuery.deletable(SchoolStudentAddress.class)
-                .where(o -> o.in(SchoolStudentAddress::getStudentId, ids)).executeRows();
-        easyQuery.deletable(SchoolClass.class)
-                .where(o -> o.in(SchoolClass::getId, Arrays.asList("class1", "class2", "class3"))).executeRows();
-        easyQuery.deletable(SchoolTeacher.class)
-                .where(o -> o.in(SchoolTeacher::getId, Arrays.asList("teacher1", "teacher2"))).executeRows();
-        easyQuery.deletable(SchoolClassTeacher.class)
-                .where(o -> o.in(SchoolClassTeacher::getClassId, Arrays.asList("class1", "class2", "class3"))).executeRows();
-        easyQuery.deletable(SchoolClassTeacher.class)
-                .where(o -> o.in(SchoolClassTeacher::getTeacherId, Arrays.asList("teacher1", "teacher2"))).executeRows();
+        easyEntityQuery.deletable(SchoolStudentAddress.class)
+                .where(o -> o.studentId().in(ids)).executeRows();
+        easyEntityQuery.deletable(SchoolClass.class)
+                .where(o -> o.id().in(Arrays.asList("class1", "class2", "class3"))).executeRows();
+        easyEntityQuery.deletable(SchoolTeacher.class)
+                .where(o -> o.id().in(Arrays.asList("teacher1", "teacher2"))).executeRows();
+        easyEntityQuery.deletable(SchoolClassTeacher.class)
+                .where(o -> o.classId().in(Arrays.asList("class1", "class2", "class3"))).executeRows();
+        easyEntityQuery.deletable(SchoolClassTeacher.class)
+                .where(o -> o.teacherId().in(Arrays.asList("teacher1", "teacher2"))).executeRows();
     }
 
     @Test
@@ -192,27 +184,6 @@ public class RelationTest extends BaseTest {
         List<String> ids = Arrays.asList("1", "2", "3");
         try {
             relationInit(ids);
-
-//            {
-//
-//
-//                ListenerContext listenerContext = new ListenerContext();
-//                listenerContextManager.startListen(listenerContext);
-//
-//                try {
-//
-//                    List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-//                            .includes(o -> o.schoolStudents(), x -> x.limit(2))
-//                            .toList();
-//                }catch (Exception ex){
-//
-//                }
-//                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-//                Assert.assertEquals("SELECT t2.`id` AS `id`,t2.`class_id` AS `class_id`,t2.`name` AS `name` FROM (SELECT t1.`id` AS `id`,t1.`class_id` AS `class_id`,t1.`name` AS `name` FROM (SELECT t.`id`,t.`class_id`,t.`name`,(ROW_NUMBER() OVER (PARTITION BY t.`class_id`)) AS `__row__` FROM `school_student` t LIMIT 2) t1 WHERE t1.`__row__` >= ? AND t1.`__row__` <= ?) t2", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//                Assert.assertEquals("1(Long),3(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-//                listenerContextManager.clear();
-//            }
             {
 
 
@@ -281,17 +252,17 @@ public class RelationTest extends BaseTest {
             }
 
             {
-                Exception e=null;
+                Exception e = null;
                 try {
 
                     List<SchoolStudentDTOAO222> list = easyEntityQuery.queryable(SchoolStudent2.class)
                             .selectAutoInclude(SchoolStudentDTOAO222.class)
                             .toList();
-                }catch (Exception ex){
-                    e=ex;
+                } catch (Exception ex) {
+                    e = ex;
                 }
                 Assert.assertNotNull(e);
-                Assert.assertEquals("The relationship value ‘SingleRelationValue{value=class1}’ appears to have duplicates: [SchoolStudentDTOAO222]. Please confirm whether the data represents a One or Many relationship.",e.getMessage());
+                Assert.assertEquals("The relationship value ‘SingleRelationValue{value=class1}’ appears to have duplicates: [SchoolStudentDTOAO222]. Please confirm whether the data represents a One or Many relationship.", e.getMessage());
             }
             {
                 System.out.println("92");
@@ -299,7 +270,7 @@ public class RelationTest extends BaseTest {
                 listenerContextManager.startListen(listenerContext);
                 int i = 0;
                 List<SchoolClassAOProp15> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .configure(s->s.setPrintNavSQL(false))
+                        .configure(s -> s.setPrintNavSQL(false))
                         .selectAutoInclude(SchoolClassAOProp15.class)
                         .toList();
                 for (SchoolClassAOProp15 schoolClassAOProp5 : list) {
@@ -348,7 +319,7 @@ public class RelationTest extends BaseTest {
                 listenerContextManager.startListen(listenerContext);
                 int i = 0;
                 List<SchoolClassAOProp14> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .configure(s->s.setPrintNavSQL(false))
+                        .configure(s -> s.setPrintNavSQL(false))
                         .selectAutoInclude(SchoolClassAOProp14.class)
                         .toList();
                 for (SchoolClassAOProp14 schoolClassAOProp5 : list) {
@@ -476,8 +447,8 @@ public class RelationTest extends BaseTest {
                 for (String s : list) {
                     System.out.println(s);
                 }
-                Assert.assertEquals("老师1",list.get(0));
-                Assert.assertEquals("老师2",list.get(1));
+                Assert.assertEquals("老师1", list.get(0));
+                Assert.assertEquals("老师2", list.get(1));
             }
             {
                 System.out.println("4");
@@ -642,7 +613,7 @@ public class RelationTest extends BaseTest {
                 listenerContextManager.startListen(listenerContext);
                 List<SchoolClassAOProp9> list = easyEntityQuery.queryable(SchoolClass.class)
                         .where(s -> {
-                            s.or(()->{
+                            s.or(() -> {
                                 s.topic().title().ne("123xxxxx123");
                                 s.topic().id().isNull();
                             });
@@ -2163,7 +2134,7 @@ public class RelationTest extends BaseTest {
                 listenerContextManager.clear();
             }
             {
-                List<SchoolStudent> list = easyQuery.queryable(SchoolStudent.class).toList();
+                List<SchoolStudent> list = easyEntityQuery.queryable(SchoolStudent.class).toList();
                 Assert.assertEquals(3, list.size());
                 for (SchoolStudent schoolStudent : list) {
                     Assert.assertNull(schoolStudent.getSchoolStudentAddress());
@@ -2179,8 +2150,8 @@ public class RelationTest extends BaseTest {
 
 
             {
-                List<SchoolStudent> list1 = easyQuery.queryable(SchoolStudent.class)
-                        .include(o -> o.one(SchoolStudent::getSchoolClass, 1))
+                List<SchoolStudent> list1 = easyEntityQuery.queryable(SchoolStudent.class)
+                        .include(o -> o.schoolClass(), 1)
                         .toList();
                 for (SchoolStudent schoolStudent : list1) {
                     Assert.assertNotNull(schoolStudent.getSchoolClass());
@@ -2204,29 +2175,16 @@ public class RelationTest extends BaseTest {
             }
             {
                 //todo alias
-                List<SchoolStudentVO> list1 = easyQuery.queryable(SchoolStudent.class)
-                        .include(o -> o.one(SchoolStudent::getSchoolClass))
-                        .select(SchoolStudentVO.class, o -> o
-                                .columnAll()
-                                .columnInclude(SchoolStudent::getSchoolClass, SchoolStudentVO::getSchoolClass)
-                        )
+                List<SchoolStudentVO> list1 = easyEntityQuery.queryable(SchoolStudent.class)
+                        .include(o -> o.schoolClass())
+                        .select(s -> {
+                            SchoolStudentVOProxy r = new SchoolStudentVOProxy();
+                            r.selectAll(s);
+                            r.schoolClass().set(s.schoolClass());
+                            return r;
+                        })
                         .toList();
                 for (SchoolStudentVO schoolStudent : list1) {
-                    Assert.assertNotNull(schoolStudent.getSchoolClass());
-                    Assert.assertEquals(schoolStudent.getClassId(), schoolStudent.getSchoolClass().getId());
-                    Assert.assertNotNull(schoolStudent.getSchoolClass().getName());
-                }
-            }
-            {
-                //todo alias
-                List<SchoolStudentExtendsVO> list1 = easyQuery.queryable(SchoolStudent.class)
-                        .include(o -> o.one(SchoolStudent::getSchoolClass))
-                        .select(SchoolStudentExtendsVO.class, o -> o
-                                .columnAll()
-                                .columnInclude(SchoolStudent::getSchoolClass, SchoolStudentExtendsVO::getSchoolClass)
-                        )
-                        .toList();
-                for (SchoolStudentExtendsVO schoolStudent : list1) {
                     Assert.assertNotNull(schoolStudent.getSchoolClass());
                     Assert.assertEquals(schoolStudent.getClassId(), schoolStudent.getSchoolClass().getId());
                     Assert.assertNotNull(schoolStudent.getSchoolClass().getName());
@@ -2271,12 +2229,12 @@ public class RelationTest extends BaseTest {
             }
             {
                 //todo alias
-                List<SchoolStudentVO> list1 = easyQuery.queryable(SchoolStudent.class)
-                        .include(o -> o.one(SchoolStudent::getSchoolClass, 1))
-                        .select(SchoolStudentVO.class, o -> o
-                                .columnAll()
-                                .columnInclude(SchoolStudent::getSchoolClass, SchoolStudentVO::getSchoolClass)
-                        )
+                List<SchoolStudentVO> list1 = easyEntityQuery.queryable(SchoolStudent.class)
+                        .include(s -> s.schoolClass(),1)
+                        .select(s -> new SchoolStudentVOProxy().adapter(r->{
+                            r.selectAll(s);
+                            r.schoolClass().set(s.schoolClass());
+                        }))
                         .toList();
                 for (SchoolStudentVO schoolStudent : list1) {
                     Assert.assertNotNull(schoolStudent.getSchoolClass());
@@ -2286,12 +2244,16 @@ public class RelationTest extends BaseTest {
             }
             {
                 //todo alias
-                List<SchoolStudentVO> list1 = easyQuery.queryable(SchoolStudent.class)
-                        .include(o -> o.one(SchoolStudent::getSchoolClass))
-                        .select(SchoolStudentVO.class, o -> o
-                                .columnAll()
-                                .columnInclude(SchoolStudent::getSchoolClass, SchoolStudentVO::getSchoolClass, s -> s.column(SchoolClassVO::getId))
-                        )
+                List<SchoolStudentVO> list1 = easyEntityQuery.queryable(SchoolStudent.class)
+                        .include(o -> o.schoolClass())
+                        .select(s -> {
+                            SchoolStudentVOProxy schoolStudentVO = new SchoolStudentVOProxy();
+                            schoolStudentVO.selectAll(s);
+                            schoolStudentVO.schoolClass().set(s.schoolClass(), (self, target) -> {
+                                self.id().set(target.id());
+                            });
+                            return schoolStudentVO;
+                        })
                         .toList();
                 for (SchoolStudentVO schoolStudent : list1) {
                     Assert.assertNotNull(schoolStudent.getSchoolClass());
@@ -2300,8 +2262,8 @@ public class RelationTest extends BaseTest {
                 }
             }
             {
-                List<SchoolStudent> list1 = easyQuery.queryable(SchoolStudent.class)
-                        .include(o -> o.one(SchoolStudent::getSchoolStudentAddress).asTracking().disableLogicDelete())
+                List<SchoolStudent> list1 = easyEntityQuery.queryable(SchoolStudent.class)
+                        .include(s -> s.schoolStudentAddress(), sq -> sq.asTracking().disableLogicDelete())
                         .toList();
                 for (SchoolStudent schoolStudent : list1) {
                     Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
@@ -2309,10 +2271,12 @@ public class RelationTest extends BaseTest {
             }
             {
                 //todo alias
-                List<SchoolStudentVO> list1 = easyQuery.queryable(SchoolStudent.class)
-                        .include(o -> o.one(SchoolStudent::getSchoolStudentAddress).asTracking().disableLogicDelete())
-                        .select(SchoolStudentVO.class, o -> o.columnAll()
-                                .columnInclude(SchoolStudent::getSchoolStudentAddress, SchoolStudentVO::getSchoolStudentAddress))
+                List<SchoolStudentVO> list1 = easyEntityQuery.queryable(SchoolStudent.class)
+                        .include(o -> o.schoolStudentAddress(), sq -> sq.asTracking().disableLogicDelete())
+                        .select(s -> new SchoolStudentVOProxy().adapter(r -> {
+                            r.selectAll(s);
+                            r.schoolStudentAddress().set(s.schoolStudentAddress());
+                        }))
                         .toList();
                 for (SchoolStudentVO schoolStudent : list1) {
                     Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
@@ -2348,8 +2312,8 @@ public class RelationTest extends BaseTest {
             {
 //                easyQueryClient.queryable(SchoolClass.class)
 //                        .include(o-> o.with("schoolStudents"))
-                List<SchoolClass> list1 = easyQuery.queryable(SchoolClass.class)
-                        .include(o -> o.many(SchoolClass::getSchoolStudents, 1))
+                List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
+                        .includes(s -> s.schoolStudents(), 1)
                         .toList();
                 for (SchoolClass schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());
@@ -2358,32 +2322,23 @@ public class RelationTest extends BaseTest {
             }
             {
                 //todo alias
-                List<SchoolClassVO> list1 = easyQuery.queryable(SchoolClass.class)
-                        .include(o -> o.many(SchoolClass::getSchoolStudents))
-                        .select(SchoolClassVO.class, o -> o.columnAll()
-                                .columnIncludeMany(SchoolClass::getSchoolStudents, SchoolClassVO::getSchoolStudents))
+                List<SchoolClassVO> list1 = easyEntityQuery.queryable(SchoolClass.class)
+                        .includes(s -> s.schoolStudents())
+                        .select(s -> new SchoolClassVOProxy().adapter(r -> {
+                            r.selectAll(s);
+                            r.schoolStudents().set(s.schoolStudents());
+                        }))
                         .toList();
                 for (SchoolClassVO schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());
                     Assert.assertTrue(schoolClass.getSchoolStudents().size() >= 0);
                 }
             }
-            {
-                //todo alias
-                List<SchoolClassExtendsVO> list1 = easyQuery.queryable(SchoolClass.class)
-                        .include(o -> o.many(SchoolClass::getSchoolStudents).where(x -> x.isNotNull(SchoolStudent::getId)))
-                        .select(SchoolClassExtendsVO.class, o -> o.columnAll()
-                                .columnIncludeMany(SchoolClass::getSchoolStudents, SchoolClassExtendsVO::getSchoolStudents))
-                        .toList();
-                for (SchoolClassExtendsVO schoolClass : list1) {
-                    Assert.assertNotNull(schoolClass.getSchoolStudents());
-                    Assert.assertTrue(schoolClass.getSchoolStudents().size() >= 0);
-                }
-            }
 
-            List<SchoolStudent> list1 = easyQuery.queryable(SchoolStudent.class)
-                    .include(o -> o.one(SchoolStudent::getSchoolStudentAddress))
-                    .include(o -> o.one(SchoolStudent::getSchoolClass)).toList();
+            List<SchoolStudent> list1 = easyEntityQuery.queryable(SchoolStudent.class)
+                    .include(s -> s.schoolStudentAddress())
+                    .include(s -> s.schoolClass())
+                    .toList();
             Assert.assertEquals(3, list1.size());
             for (SchoolStudent schoolStudent : list1) {
                 Assert.assertNotNull(schoolStudent.getSchoolClass());
@@ -2392,10 +2347,10 @@ public class RelationTest extends BaseTest {
             }
             {
 
-                SchoolStudent schoolStudent = easyQuery.queryable(SchoolStudent.class)
-                        .include(o -> o.one(SchoolStudent::getSchoolStudentAddress).include(x -> x.one(SchoolStudentAddress::getSchoolStudent)))
-                        .include(o -> o.one(SchoolStudent::getSchoolClass))
-                        .where(o -> o.eq(SchoolStudent::getId, "3")).firstOrNull();
+                SchoolStudent schoolStudent = easyEntityQuery.queryable(SchoolStudent.class)
+                        .include(s -> s.schoolStudentAddress(), sq -> sq.include(x -> x.schoolStudent()))
+                        .include(s -> s.schoolClass())
+                        .where(o -> o.id().eq("3")).firstOrNull();
                 Assert.assertNotNull(schoolStudent);
                 Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
                 Assert.assertNotNull(schoolStudent.getSchoolStudentAddress().getSchoolStudent());
@@ -2403,17 +2358,17 @@ public class RelationTest extends BaseTest {
             }
             {
 
-                SchoolStudent schoolStudent = easyQuery.queryable(SchoolStudent.class)
-                        .include(o -> o.one(SchoolStudent::getSchoolStudentAddress).where(x -> x.eq(SchoolStudentAddress::getId, "x")))
-                        .include(o -> o.one(SchoolStudent::getSchoolClass))
-                        .where(o -> o.eq(SchoolStudent::getId, "3")).firstOrNull();
+                SchoolStudent schoolStudent = easyEntityQuery.queryable(SchoolStudent.class)
+                        .include(s -> s.schoolStudentAddress(),sq->sq.where(x -> x.id().eq("x")))
+                        .include(s -> s.schoolClass())
+                        .where(o -> o.id().eq("3")).firstOrNull();
                 Assert.assertNotNull(schoolStudent);
                 Assert.assertNull(schoolStudent.getSchoolStudentAddress());
             }
             {
-                List<SchoolStudent> list2 = easyQuery.queryable(SchoolStudent.class)
-                        .innerJoin(SchoolClass.class, (t1, t2) -> t1.eq(t2, SchoolStudent::getClassId, SchoolClass::getId))
-                        .include(t -> t.one(SchoolStudent::getSchoolStudentAddress))
+                List<SchoolStudent> list2 = easyEntityQuery.queryable(SchoolStudent.class)
+                        .include(t -> t.schoolStudentAddress())
+                        .innerJoin(SchoolClass.class, (t1, t2) -> t1.classId().eq(t2.id()))
                         .toList();
                 Assert.assertEquals(3, list2.size());
                 for (SchoolStudent schoolStudent : list2) {
@@ -2424,8 +2379,8 @@ public class RelationTest extends BaseTest {
 
             {
 
-                List<SchoolClass> list2 = easyQuery.queryable(SchoolClass.class)
-                        .include(o -> o.many(SchoolClass::getSchoolTeachers, 1))
+                List<SchoolClass> list2 = easyEntityQuery.queryable(SchoolClass.class)
+                        .includes(o -> o.schoolTeachers(),1)
                         .toList();
                 for (SchoolClass schoolClass : list2) {
                     Assert.assertNotNull(schoolClass.getSchoolTeachers());
@@ -2434,10 +2389,12 @@ public class RelationTest extends BaseTest {
 
             {
                 //todo alias
-                List<SchoolClassVO> list2 = easyQuery.queryable(SchoolClass.class)
-                        .include(o -> o.many(SchoolClass::getSchoolTeachers))
-                        .select(SchoolClassVO.class, o -> o.columnAll()
-                                .columnIncludeMany(SchoolClass::getSchoolTeachers, SchoolClassVO::getSchoolTeachers))
+                List<SchoolClassVO> list2 = easyEntityQuery.queryable(SchoolClass.class)
+                        .includes(s -> s.schoolTeachers())
+                        .select(s -> new SchoolClassVOProxy().adapter(r->{
+                            r.selectAll(s);
+                            s.schoolTeachers().set(s.schoolStudents());
+                        }))
                         .toList();
                 for (SchoolClassVO schoolClass : list2) {
                     Assert.assertNotNull(schoolClass.getSchoolTeachers());
@@ -2456,9 +2413,9 @@ public class RelationTest extends BaseTest {
                 }
             }
 
-            List<SchoolClass> list2 = easyQuery.queryable(SchoolClass.class)
-                    .include(o -> o.many(SchoolClass::getSchoolTeachers))
-                    .include(o -> o.many(SchoolClass::getSchoolStudents))
+            List<SchoolClass> list2 = easyEntityQuery.queryable(SchoolClass.class)
+                    .includes(o -> o.schoolTeachers())
+                    .includes(o -> o.schoolStudents())
                     .toList();
             Assert.assertEquals(3, list2.size());
 
@@ -2478,8 +2435,8 @@ public class RelationTest extends BaseTest {
                 }
             }
 
-            List<SchoolTeacher> list3 = easyQuery.queryable(SchoolTeacher.class)
-                    .include(o -> o.many(SchoolTeacher::getSchoolClasses))
+            List<SchoolTeacher> list3 = easyEntityQuery.queryable(SchoolTeacher.class)
+                    .includes(o -> o.schoolClasses())
                     .toList();
             Assert.assertEquals(2, list3.size());
             for (SchoolTeacher schoolTeacher : list3) {
@@ -2500,8 +2457,8 @@ public class RelationTest extends BaseTest {
 
     @Test
     public void provinceTest() {
-        List<Province> list = easyQuery.queryable(Province.class)
-                .include(o -> o.many(Province::getCities).include(x -> x.many(City::getAreas)))
+        List<Province> list = easyEntityQuery.queryable(Province.class)
+                .includes(o -> o.cities(),cq->cq.includes(s-> s.areas()))
                 .toList();
         Assert.assertEquals(2, list.size());
         for (Province province : list) {
@@ -2519,8 +2476,8 @@ public class RelationTest extends BaseTest {
 
     @Test
     public void provinceTest6() {
-        EasyPageResult<Province> page = easyQuery.queryable(Province.class)
-                .include(o -> o.many(Province::getCities).include(x -> x.many(City::getAreas)))
+        EasyPageResult<Province> page = easyEntityQuery.queryable(Province.class)
+                .includes(o -> o.cities(),cq->cq.includes(s-> s.areas()))
                 .toPageResult(1, 100);
         List<Province> list = page.getData();
         Assert.assertEquals(2, list.size());
@@ -2539,8 +2496,8 @@ public class RelationTest extends BaseTest {
 
     @Test
     public void provinceTest7() {
-        EasyPageResult<Province> page = easyQuery.queryable(Province.class)
-                .include(o -> o.many(Province::getCities).include(x -> x.many(City::getAreas)))
+        EasyPageResult<Province> page = easyEntityQuery.queryable(Province.class)
+                .includes(o -> o.cities(),cq->cq.includes(s-> s.areas()))
                 .toPageResult(1, 1);
         List<Province> list = page.getData();
         Assert.assertEquals(1, list.size());
@@ -2560,9 +2517,13 @@ public class RelationTest extends BaseTest {
     @Test
     public void provinceTest1() {
 
-        List<Province> list = easyQuery.queryable(Province.class)
-                .include(o -> o.many(Province::getCities).where(x -> x.eq(City::getCode, "3306"))
-                        .include(x -> x.many(City::getAreas).where(y -> y.eq(Area::getCode, "330602"))))
+        List<Province> list = easyEntityQuery.queryable(Province.class)
+                .includes(p -> p.cities(),pq->{
+                    pq.includes(s->s.areas(),aq->{
+                        aq.where(x-> x.code().eq("330602"));
+                    });
+                    pq.where(x->x.code().eq("3306"));
+                })
                 .toList();
 
         Assert.assertEquals(2, list.size());
@@ -2585,9 +2546,9 @@ public class RelationTest extends BaseTest {
     @Test
     public void provinceTest5() {
 
-        List<Province> list = easyQuery.queryable(Province.class)
+        List<Province> list = easyEntityQuery.queryable(Province.class)
                 .whereById("33")
-                .include(o -> o.many(Province::getCities))
+                .includes(o -> o.cities())
                 .toList();
         Assert.assertEquals(1, list.size());
     }
@@ -2595,9 +2556,15 @@ public class RelationTest extends BaseTest {
     @Test
     public void provinceTest61() {
 
-        List<Province> list = easyQuery.queryable(Province.class)
+        List<Province> list = easyEntityQuery.queryable(Province.class)
                 .whereById("33")
-                .include(o -> o.many(Province::getCities).leftJoin(Topic.class, (x, y) -> x.eq(y, City::getCode, Topic::getId)).where((x, y) -> y.like(Topic::getTitle, "title")))
+                .includes(p -> p.cities(),cq->{
+                    cq.leftJoin(Topic.class,(x,y)->{
+                        x.code().eq(y.id());
+                    }).where((c1, t_topic) -> {
+                        t_topic.title().like("title");
+                    });
+                })
                 .toList();
         Assert.assertEquals(1, list.size());
     }
@@ -2776,6 +2743,7 @@ public class RelationTest extends BaseTest {
         }
 
     }
+
     @Test
     public void schoolTest8_1() {
         {
@@ -2904,17 +2872,17 @@ public class RelationTest extends BaseTest {
 
     @Test
     public void provinceTest2() {
-        List<Province> list = easyQuery.queryable(Province.class)
+        List<Province> list = easyEntityQuery.queryable(Province.class)
                 .fillMany(() -> {
-                    return easyQuery.queryable(City.class).where(c -> c.eq(City::getCode, "3306"));
+                    return easyEntityQuery.queryable(City.class).where(c -> c.code().eq("3306"));
                 }, "provinceCode", "code", (x, y) -> {
                     x.setCities(new ArrayList<>(y));
                 }, false).toList();
 
 
-        List<City> list1 = easyQuery.queryable(City.class)
+        List<City> list1 = easyEntityQuery.queryable(City.class)
                 .fillOne(() -> {
-                    return easyQuery.queryable(Province.class);
+                    return easyEntityQuery.queryable(Province.class);
                 }, "code", "provinceCode", (x, y) -> {
                     x.setProvince(y);
                 }, false)
@@ -2936,17 +2904,17 @@ public class RelationTest extends BaseTest {
 
     @Test
     public void provinceTest3() {
-        List<Province> list = easyQuery.queryable(Province.class)
+        List<Province> list = easyEntityQuery.queryable(Province.class)
                 .fillMany(() -> {
-                    return easyQuery.queryable(City.class).where(c -> c.eq(City::getCode, "3306"));
+                    return easyEntityQuery.queryable(City.class).where(c -> c.code().eq("3306"));
                 }, CityProxy.TABLE.provinceCode().getValue(), ProvinceProxy.TABLE.code().getValue(), (x, y) -> {
                     x.setCities(new ArrayList<>(y));
                 }, false).toList();
 
 
-        List<City> list1 = easyQuery.queryable(City.class)
+        List<City> list1 = easyEntityQuery.queryable(City.class)
                 .fillOne(() -> {
-                    return easyQuery.queryable(Province.class);
+                    return easyEntityQuery.queryable(Province.class);
                 }, "code", "provinceCode", (x, y) -> {
                     x.setProvince(y);
                 }, false)
@@ -2972,9 +2940,9 @@ public class RelationTest extends BaseTest {
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
 
-        List<Province> list = easyQuery.queryable(Province.class)
+        List<Province> list = easyEntityQuery.queryable(Province.class)
                 .fillMany(() -> {
-                    return easyQuery.queryable(City.class).where(c -> c.eq(City::getCode, "3306")).limit(2);
+                    return easyEntityQuery.queryable(City.class).where(c -> c.code().eq("3306")).limit(2);
                 }, CityProxy.TABLE.provinceCode().getValue(), ProvinceProxy.TABLE.code().getValue(), (x, y) -> {
                     x.setCities(new ArrayList<>(y));
                 }, false).toList();
@@ -2987,9 +2955,9 @@ public class RelationTest extends BaseTest {
         Assert.assertEquals("3306(String),3306(String),33(String)", EasySQLUtil.sqlParameterToString(listenerContext.getJdbcExecuteAfterArgs().get(1).getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 //
-        List<City> list1 = easyQuery.queryable(City.class)
+        List<City> list1 = easyEntityQuery.queryable(City.class)
                 .fillOne(() -> {
-                    return easyQuery.queryable(Province.class);
+                    return easyEntityQuery.queryable(Province.class);
                 }, "code", "provinceCode", (x, y) -> {
                     x.setProvince(y);
                 }, false)
@@ -3011,7 +2979,7 @@ public class RelationTest extends BaseTest {
 //    @Test
 //    public void provinceTest3() {
 //
-//        EasyPageResult<City> pageResult = easyQuery.queryable(City.class)
+//        EasyPageResult<City> pageResult = easyEntityQuery.queryable(City.class)
 //                .fillOne(x -> x.consumeNull(false).with(Province.class), Province::getCode, City::getProvinceCode, (x, y) -> {
 //                    x.setProvince(y);
 //                })
@@ -3024,7 +2992,7 @@ public class RelationTest extends BaseTest {
 //        }
 //        {
 //
-//            EasyPageResult<Province> pageResult1 = easyQuery.queryable(Province.class)
+//            EasyPageResult<Province> pageResult1 = easyEntityQuery.queryable(Province.class)
 //                    .fillMany(x -> x.with(City.class).where(y -> y.eq(City::getCode, "3306"))
 //                            , City::getProvinceCode
 //                            , Province::getCode
@@ -3078,7 +3046,7 @@ public class RelationTest extends BaseTest {
 //            {
 //
 //
-//                EasyPageResult<Province> pageResult1 = easyQuery.queryable(Province.class)
+//                EasyPageResult<Province> pageResult1 = easyEntityQuery.queryable(Province.class)
 //                        .fillMany(x -> x.with(City.class).where(y -> y.eq(City::getCode, "3306"))
 //                                , City::getProvinceCode
 //                                , Province::getCode
@@ -3118,7 +3086,7 @@ public class RelationTest extends BaseTest {
 //        }
 //        {
 //
-//            EasyPageResult<Province> pageResult1 = easyQuery.queryable(Province.class)
+//            EasyPageResult<Province> pageResult1 = easyEntityQuery.queryable(Province.class)
 //                    .fillMany(x -> x.consumeNull(true).with(City.class).where(y -> y.eq(City::getCode, "3306"))
 //                            , City::getProvinceCode
 //                            , Province::getCode
@@ -3139,7 +3107,7 @@ public class RelationTest extends BaseTest {
 //        }
 //        {
 //
-//            EasyPageResult<Province> pageResult1 = easyQuery.queryable(Province.class)
+//            EasyPageResult<Province> pageResult1 = easyEntityQuery.queryable(Province.class)
 //                    .fillMany(x -> x.consumeNull(true).with(City.class).where(y -> y.eq(City::getCode, "3306")).select(CityVO.class)
 //                            , CityVO::getProvinceCode
 //                            , Province::getCode

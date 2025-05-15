@@ -5,8 +5,7 @@ import com.easy.query.api.proxy.base.LongProxy;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.api4j.select.Queryable;
-import com.easy.query.api4j.select.Queryable2;
+import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
@@ -22,6 +21,7 @@ import com.easy.query.test.dto.BlogEntityTest;
 import com.easy.query.test.dto.BlogEntityTest2;
 import com.easy.query.test.dto.TopicSubQueryBlog;
 import com.easy.query.test.dto.proxy.BlogEntityTest2Proxy;
+import com.easy.query.test.dto.proxy.BlogEntityTestProxy;
 import com.easy.query.test.dto.proxy.TopicSubQueryBlogProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
@@ -56,17 +56,19 @@ public class QueryTest11 extends BaseTest {
     @Test
     public void testx() {
 
-        Queryable<BlogEntity> where1 = easyQuery.queryable(BlogEntity.class)
-                .where(o -> o.eq(BlogEntity::getId, "1"));
-        List<Topic> x = easyQuery
-                .queryable(Topic.class).where(o -> o.exists(where1.where(q -> q.eq(o, BlogEntity::getId, Topic::getId)))).toList();
+        EntityQueryable<BlogEntityProxy, BlogEntity> where1 = easyEntityQuery.queryable(BlogEntity.class)
+                .where(o -> o.id().eq("1")).toCteAs();
+        List<Topic> x = easyEntityQuery
+                .queryable(Topic.class).where(o -> o.expression().exists(()->{
+                    return where1.where(q -> q.id().eq(o.id()));
+                })).toList();
 
 
         EntityQueryable<BlogEntityProxy, BlogEntity> where = easyEntityQuery.queryable(BlogEntity.class)
                 .where(o -> o.id().eq("1"));
         List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
-                    o.exists(() -> where.where(q -> q.id().eq(o.id())));
+                    o.expression().exists(() -> where.where(q -> q.id().eq(o.id())));
                 }).toList();
 
         EntityQueryable<StringProxy, String> idQuery = easyEntityQuery.queryable(BlogEntity.class)
@@ -113,20 +115,24 @@ public class QueryTest11 extends BaseTest {
     @Test
     public void testx9() {
         {
-            Queryable<Topic> query = easyQuery.queryable(Topic.class)
+            EntityQueryable<TopicProxy, Topic> query = easyEntityQuery.queryable(Topic.class)
                     .limit(100);
-            Queryable2<Topic, BlogEntity> join = query.select(Topic.class, o -> o.column(Topic::getId).column(Topic::getStars))
-                    .innerJoin(BlogEntity.class, (t, t1) -> t.eq(t1, Topic::getId, BlogEntity::getId));
-            Queryable2<BlogEntityTest, BlogEntity> join2 = join.select(BlogEntityTest.class, (t, t1) -> {
-                        t.columnAs(Topic::getId, BlogEntityTest::getUrl);
-                        t1.column(BlogEntity::getTitle);
+            EntityQueryable2<TopicProxy, Topic, BlogEntityProxy, BlogEntity> join = query.select(o -> o.FETCHER.id().stars().fetchProxy())
+                    .innerJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()));
+            EntityQueryable2<BlogEntityTestProxy, BlogEntityTest, BlogEntityProxy, BlogEntity> join2 = join.select((t, t1) -> {
+                        BlogEntityTestProxy r = new BlogEntityTestProxy();
+                        r.url().set(t.id());
+                        r.title().set(t1.title());
+                        return r;
                     })
                     .innerJoin(BlogEntity.class, (t, t1) -> {
-                        t.eq(t1, BlogEntityTest::getUrl, BlogEntity::getId);
+                        t.url().eq(t1.id());
                     });
             List<BlogEntity> list = join2.select(BlogEntity.class, (t, t1) -> {
-                t.columnAs(BlogEntityTest::getUrl, BlogEntity::getUrl);
-                t1.columnAs(BlogEntity::getTitle, BlogEntity::getContent);
+                return Select.of(
+                        t.url().as(BlogEntityTest::getUrl),
+                        t.title().as(BlogEntity::getContent)
+                );
             }).toList();
 
 //            var query = rep.GetLambdaQuery().Take(100);
@@ -161,7 +167,7 @@ public class QueryTest11 extends BaseTest {
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
-                        o.exists(() -> {
+                        o.expression().exists(() -> {
                             return easyEntityQuery.queryable(Topic.class)
                                     .where(x -> x.id().eq(o.id()));
                         });
@@ -363,7 +369,7 @@ public class QueryTest11 extends BaseTest {
                 .where(o -> o.id().eq("1"));
 
         List<Topic> list = easyEntityQuery.queryable(Topic.class)
-                .where(o -> o.exists(() -> {
+                .where(o -> o.expression().exists(() -> {
                     return subQueryable.where(q -> q.id().eq(o.id()));
                 })).toList();
 
@@ -384,7 +390,7 @@ public class QueryTest11 extends BaseTest {
                 .where(o -> o.id().eq("1"));
 
         List<Topic> list = easyEntityQuery.queryable(Topic.class)
-                .where(o -> o.notExists(() -> {
+                .where(o -> o.expression().notExists(() -> {
                     return subQueryable.where(q -> q.id().eq(o.id()));
                 })).toList();
 
@@ -524,9 +530,9 @@ public class QueryTest11 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<TopicTypeTest1> list = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
-            o.SQLParameter().valueOf(begin).le(o.createTime());
+            o.expression().constant(begin).le(o.createTime());
             o.createTime().le(end);
-            o.createTime().le(o.SQLParameter().valueOf(end).plusMonths(-3));
+            o.createTime().le(o.expression().constant(end).plusMonths(-3));
         }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -540,11 +546,11 @@ public class QueryTest11 extends BaseTest {
 
         LocalDateTime end = LocalDateTime.of(2022, 1, 1, 1, 1);
         List<TopicTypeTest1> list1 = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
-            o.SQLParameter().valueOf(end).le(o.SQLParameter().valueOf(end).plusMonths(-3));
+            o.expression().constant(end).le(o.expression().constant(end).plusMonths(-3));
         }).toList();
         Assert.assertEquals(0, list1.size());
         List<TopicTypeTest1> list2 = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
-            o.SQLParameter().valueOf(end).ge(o.SQLParameter().valueOf(end).plusMonths(-3));
+            o.expression().constant(end).ge(o.expression().constant(end).plusMonths(-3));
         }).toList();
         Assert.assertTrue(list2.size() > 0);
     }
@@ -554,11 +560,11 @@ public class QueryTest11 extends BaseTest {
 
         LocalDateTime end = LocalDateTime.of(2022, 1, 1, 1, 1);
         List<TopicTypeTest1> list1 = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
-            o.SQLParameter().valueOf(end).le(o.SQLParameter().valueOf(end).plusMonths(-3));
+            o.expression().constant(end).le(o.expression().constant(end).plusMonths(-3));
         }).toList();
         Assert.assertEquals(0, list1.size());
         List<TopicTypeTest1> list2 = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
-            o.SQLParameter().valueOf(end).ge(o.SQLParameter().valueOf(end).plusMonths(-3));
+            o.expression().constant(end).ge(o.expression().constant(end).plusMonths(-3));
         }).toList();
         Assert.assertTrue(list2.size() > 0);
         ListenerContext listenerContext = new ListenerContext();
@@ -583,30 +589,6 @@ public class QueryTest11 extends BaseTest {
         private Long count;
     }
 
-    @Test
-    public void testx19() {
-        ListenerContext listenerContext = new ListenerContext();
-        listenerContextManager.startListen(listenerContext);
-
-        //SELECT 'type1' AS `type`,COUNT(t.`id`) AS `count` FROM `t_topic` t WHERE t.`title` = ?
-        Queryable<TopicCount> select1 = easyQuery.queryable(Topic.class)
-                .where(o -> o.eq(Topic::getTitle, "123"))
-                .select(TopicCount.class, o -> o.sqlNativeSegment("'type1'", c -> c.setPropertyAlias(TopicCount::getType)).columnCountAs(Topic::getId, TopicCount::getCount));
-        //SELECT 'type1' AS `type`,COUNT(t.`id`) AS `count` FROM `t_topic` t WHERE t.`title` = ?
-        Queryable<TopicCount> select2 = easyQuery.queryable(Topic.class)
-                .where(o -> o.eq(Topic::getTitle, "123"))
-                .select(TopicCount.class, o -> o.sqlNativeSegment("'type2'", c -> c.setPropertyAlias(TopicCount::getType)).columnCountAs(Topic::getId, TopicCount::getCount));
-        //SELECT 'type1' AS `type`,COUNT(t.`id`) AS `count` FROM `t_topic` t WHERE t.`title` = ?
-        Queryable<TopicCount> select3 = easyQuery.queryable(Topic.class)
-                .where(o -> o.eq(Topic::getTitle, "123"))
-                .select(TopicCount.class, o -> o.sqlNativeSegment("'type3'", c -> c.setPropertyAlias(TopicCount::getType)).columnCountAs(Topic::getId, TopicCount::getCount));
-        List<TopicCount> list = select1.unionAll(select2, select3).toList();
-        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t6.`type` AS `type`,t6.`count` AS `count` FROM ( (SELECT 'type1' AS `type`,COUNT(t.`id`) AS `count` FROM `t_topic` t WHERE t.`title` = ?)  UNION ALL  (SELECT 'type2' AS `type`,COUNT(t2.`id`) AS `count` FROM `t_topic` t2 WHERE t2.`title` = ?)  UNION ALL  (SELECT 'type3' AS `type`,COUNT(t4.`id`) AS `count` FROM `t_topic` t4 WHERE t4.`title` = ?) ) t6", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("123(String),123(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-        listenerContextManager.clear();
-    }
 
     @Test
     public void testx20() {
@@ -617,7 +599,7 @@ public class QueryTest11 extends BaseTest {
         EntityQueryable<Draft2Proxy<String, Long>, Draft2<String, Long>> select1 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.title().eq("123"))
                 .select(o -> Select.DRAFT.of(
-                        o.SQLParameter().valueOf("type1"),
+                        o.expression().constant("type1"),
                         o.expression().count()
                 ));
         EntityQueryable<Draft2Proxy<String, Long>, Draft2<String, Long>> select2 = easyEntityQuery.queryable(Topic.class)

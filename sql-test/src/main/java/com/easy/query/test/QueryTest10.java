@@ -1,8 +1,6 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.MapProxy;
-import com.easy.query.api4j.select.Queryable;
-import com.easy.query.api4j.select.Queryable2;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.proxy.core.draft.Draft1;
@@ -194,8 +192,8 @@ public class QueryTest10 extends BaseTest{
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
-                        o.exists(() -> {
-                            return easyEntityQuery.queryable(Topic.class)
+                        o.expression().exists(() -> {
+                            return o.expression().subQueryable(Topic.class)
                                     .where(x -> x.id().eq(o.id()));
                         });
                     })
@@ -235,8 +233,8 @@ public class QueryTest10 extends BaseTest{
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().in(tenantIds);
-                        o.exists(() -> {
-                            return easyEntityQuery.queryable(Topic.class)
+                        o.expression().exists(() -> {
+                            return o.expression().subQueryable(Topic.class)
                                     .where(x -> x.id().eq(o.id()))
                                     .where(x -> x.id().in(roleIds));
                         });
@@ -272,8 +270,8 @@ public class QueryTest10 extends BaseTest{
                         o.id().in(tenantIds);
                         o.createTime().format("yyyy-MM-dd").likeMatchLeft("123");
                         o.createTime().format("yyyy-MM-dd").likeMatchRight("123");
-                        o.exists(() -> {
-                            return easyEntityQuery.queryable(Topic.class)
+                        o.expression().exists(() -> {
+                            return o.expression().subQueryable(Topic.class)
                                     .where(x -> x.id().eq(o.id()))
                                     .where(x -> x.id().in(roleIds));
                         });
@@ -1073,7 +1071,6 @@ public class QueryTest10 extends BaseTest{
                 .groupBy(o -> GroupKeys.of(o.content().subString(0, 8)))
                 .select(o -> Select.DRAFT.of(o.key1()))
                 .toList();
-        query(q->q.whereObject(new Object()));
 //        easyEntityQuery.queryable(BlogEntity.class)
 //                .groupBy1(k->k.of(k.groupTable().createTime()))
     }
@@ -1118,8 +1115,4 @@ public class QueryTest10 extends BaseTest{
         listenerContextManager.clear();
     }
 
-    public Queryable<Topic> query(Function<Queryable<Topic>,Queryable<Topic>> queryableFunction){
-        Queryable<Topic> topicQueryable = easyQuery.queryable(Topic.class);
-        return queryableFunction.apply(topicQueryable).select(Topic.class);
-    }
 }

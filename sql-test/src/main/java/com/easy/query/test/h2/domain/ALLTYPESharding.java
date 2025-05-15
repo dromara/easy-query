@@ -1,8 +1,11 @@
 package com.easy.query.test.h2.domain;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.ShardingTableKey;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.h2.domain.proxy.ALLTYPEShardingProxy;
 import com.easy.query.test.h2.sharding.AllTYPEShardingInitializer;
 import lombok.Data;
 
@@ -22,7 +25,8 @@ import java.util.UUID;
  */
 @Data
 @Table(value = "t_all_type_sharding", shardingInitializer = AllTYPEShardingInitializer.class)
-public class ALLTYPESharding {
+@EntityProxy
+public class ALLTYPESharding implements ProxyEntityAvailable<ALLTYPESharding , ALLTYPEShardingProxy> {
     @Column(primaryKey = true)
     @ShardingTableKey
     private String id;

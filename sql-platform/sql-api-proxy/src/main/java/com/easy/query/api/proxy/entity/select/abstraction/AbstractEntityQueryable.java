@@ -234,30 +234,6 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public <TMember extends Number> Query<TMember> selectSum(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
-        SQLColumn<T1Proxy, TMember> sqlColumn = columnSelector.apply(get1Proxy());
-        return getClientQueryable().selectSum(EasyObjectUtil.typeCastNullable(sqlColumn.getPropertyType()), sqlColumn.getValue());
-    }
-
-    @Override
-    public <TMember extends Number> Query<BigDecimal> selectAvg(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
-        SQLColumn<T1Proxy, TMember> sqlColumn = columnSelector.apply(get1Proxy());
-        return getClientQueryable().selectAvg(sqlColumn.getValue());
-    }
-
-    @Override
-    public <TMember> Query<TMember> selectMax(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
-        SQLColumn<T1Proxy, TMember> sqlColumn = columnSelector.apply(get1Proxy());
-        return getClientQueryable().selectMax(EasyObjectUtil.typeCastNullable(sqlColumn.getPropertyType()), sqlColumn.getValue());
-    }
-
-    @Override
-    public <TMember> Query<TMember> selectMin(SQLFuncExpression1<T1Proxy, SQLColumn<T1Proxy, TMember>> columnSelector) {
-        SQLColumn<T1Proxy, TMember> sqlColumn = columnSelector.apply(get1Proxy());
-        return getClientQueryable().selectMin(EasyObjectUtil.typeCastNullable(sqlColumn.getPropertyType()), sqlColumn.getValue());
-    }
-
-    @Override
     public EntityQueryable<T1Proxy, T1> fetchBy(SQLFuncExpression1<T1Proxy, SQLSelectExpression> selectExpression) {
         ClientQueryable<T1> select = getClientQueryable().select(get1Proxy().getEntityClass(), columnSelector -> {
             SQLSelectExpression sqlSelect = selectExpression.apply(get1Proxy());
