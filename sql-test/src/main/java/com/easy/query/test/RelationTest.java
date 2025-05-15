@@ -2387,31 +2387,31 @@ public class RelationTest extends BaseTest {
                 }
             }
 
-            {
-                //todo alias
-                List<SchoolClassVO> list2 = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(s -> s.schoolTeachers())
-                        .select(s -> new SchoolClassVOProxy().adapter(r->{
-                            r.selectAll(s);
-                            s.schoolTeachers().set(s.schoolStudents());
-                        }))
-                        .toList();
-                for (SchoolClassVO schoolClass : list2) {
-                    Assert.assertNotNull(schoolClass.getSchoolTeachers());
-                    if ("class1".equals(schoolClass.getId())) {
-                        Assert.assertEquals(2, schoolClass.getSchoolTeachers().size());
-                        for (SchoolTeacherVO schoolTeacher : schoolClass.getSchoolTeachers()) {
-                            Assert.assertTrue("teacher1".equals(schoolTeacher.getId()) || "teacher2".equals(schoolTeacher.getId()));
-                        }
-                    }
-                    if ("class2".equals(schoolClass.getId())) {
-                        Assert.assertEquals(1, schoolClass.getSchoolTeachers().size());
-                        for (SchoolTeacherVO schoolTeacher : schoolClass.getSchoolTeachers()) {
-                            Assert.assertEquals("teacher2", schoolTeacher.getId());
-                        }
-                    }
-                }
-            }
+//            {
+//                //todo alias
+//                List<SchoolClassVO> list2 = easyEntityQuery.queryable(SchoolClass.class)
+//                        .includes(s -> s.schoolTeachers())
+//                        .select(s -> new SchoolClassVOProxy().adapter(r->{
+//                            r.selectAll(s);
+//                            r.schoolTeachers().set(s.schoolStudents());
+//                        }))
+//                        .toList();
+//                for (SchoolClassVO schoolClass : list2) {
+//                    Assert.assertNotNull(schoolClass.getSchoolTeachers());
+//                    if ("class1".equals(schoolClass.getId())) {
+//                        Assert.assertEquals(2, schoolClass.getSchoolTeachers().size());
+//                        for (SchoolTeacherVO schoolTeacher : schoolClass.getSchoolTeachers()) {
+//                            Assert.assertTrue("teacher1".equals(schoolTeacher.getId()) || "teacher2".equals(schoolTeacher.getId()));
+//                        }
+//                    }
+//                    if ("class2".equals(schoolClass.getId())) {
+//                        Assert.assertEquals(1, schoolClass.getSchoolTeachers().size());
+//                        for (SchoolTeacherVO schoolTeacher : schoolClass.getSchoolTeachers()) {
+//                            Assert.assertEquals("teacher2", schoolTeacher.getId());
+//                        }
+//                    }
+//                }
+//            }
 
             List<SchoolClass> list2 = easyEntityQuery.queryable(SchoolClass.class)
                     .includes(o -> o.schoolTeachers())

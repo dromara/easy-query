@@ -4,6 +4,8 @@ import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
+import com.easy.query.core.configuration.bean.entity.EntityPropertyDescriptorMatcher;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
 import com.easy.query.core.logging.LogFactory;
@@ -55,6 +57,7 @@ public abstract class MsSQLRowNumberBaseTest {
                 })
                 .useDatabaseConfigure(new MsSQLRowNumberDatabaseConfiguration())
                 .replaceService(NameConversion.class, UpperCamelCaseNameConversion.class)
+                .replaceService(PropertyDescriptorMatcher.class, new EntityPropertyDescriptorMatcher())
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
         entityQuery = new DefaultEasyEntityQuery(easyQueryClient);

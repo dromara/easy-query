@@ -114,7 +114,7 @@ public class InsertTest extends PgSQLBaseTest {
         topicAuto.setTitle("title" + 999);
         topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
         Assert.assertNull(topicAuto.getId());
-        EntityInsertable<TopicAutoProxy, TopicAuto> insertable = entityQuery.insertable(topicAuto).onConflictThen(null, s -> s.title());
+        EntityInsertable<TopicAutoProxy, TopicAuto> insertable = entityQuery.insertable(topicAuto).onConflictThen(s->s.FETCHER.allFields(), s -> s.title());
         String sql = insertable.toSQL(topicAuto);
         Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"title\") DO UPDATE SET \"stars\" = EXCLUDED.\"stars\", \"create_time\" = EXCLUDED.\"create_time\"", sql);
 

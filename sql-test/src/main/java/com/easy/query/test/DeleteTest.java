@@ -168,18 +168,18 @@ public class DeleteTest extends BaseTest {
     @Test
     public void deleteTest14() {
         Topic topic = null;
-        String sql = easyEntityQuery.deletable(topic).toSQL();
+        String sql = easyEntityQuery.getEasyQueryClient().deletable(topic).toSQL();
         Assert.assertNull(sql);
-        String sql1 = easyEntityQuery.deletable(topic).useLogicDelete(false)
+        String sql1 = easyEntityQuery.getEasyQueryClient().deletable(topic).useLogicDelete(false)
                 .noInterceptor().noInterceptor("1")
                 .useInterceptor().useInterceptor("1")
                 .allowDeleteStatement(true).toSQL();
         Assert.assertNull(sql1);
-        ExpressionContext expressionContext = easyEntityQuery.deletable(topic).getExpressionContext();
+        ExpressionContext expressionContext = easyEntityQuery.getEasyQueryClient().deletable(topic).getExpressionContext();
         Assert.assertNull(expressionContext);
-        long l = easyEntityQuery.deletable(topic).executeRows();
+        long l = easyEntityQuery.getEasyQueryClient().deletable(topic).executeRows();
         Assert.assertEquals(0, l);
-        easyEntityQuery.deletable(topic).executeRows(0, "123");
+        easyEntityQuery.getEasyQueryClient().deletable(topic).executeRows(0, "123");
         String sql2 = easyQueryClient.deletable(topic).toSQL();
         Assert.assertNull(sql2);
         String sql3 = easyQueryClient.deletable(topic).toSQL(null);

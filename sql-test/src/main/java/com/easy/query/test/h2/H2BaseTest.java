@@ -47,6 +47,7 @@ public class H2BaseTest {
     public static DataSource orderShardingDataSource;
     public static EasyQueryShardingOption easyQueryShardingOption;
     public static EasyEntityQuery easyEntityQuery;
+    public static EasyEntityQuery easyEntityQuery2;
     public static ListenerContextManager listenerContextManager;
 
     static {
@@ -120,7 +121,7 @@ public class H2BaseTest {
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
                 .useDatabaseConfigure(new H2DatabaseConfiguration())
                 .build();
-        easyEntityQuery=new DefaultEasyEntityQuery(easyQueryClient);
+        easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
         QueryRuntimeContext runtimeContext1 = easyEntityQuery.getRuntimeContext();
         QueryConfiguration queryConfiguration1 = runtimeContext1.getQueryConfiguration();
         queryConfiguration1.applyShardingInitializer(new AllTYPEShardingInitializer());
@@ -144,6 +145,7 @@ public class H2BaseTest {
                 .build();
         QueryRuntimeContext runtimeContext = easyQueryClientOrder.getRuntimeContext();
         QueryConfiguration queryConfiguration = runtimeContext.getQueryConfiguration();
+        easyEntityQuery2 = new DefaultEasyEntityQuery(easyQueryClientOrder);
         queryConfiguration.applyShardingInitializer(new H2OrderShardingInitializer());
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         tableRouteManager.addRoute(new H2OrderRoute());
@@ -221,7 +223,7 @@ public class H2BaseTest {
         }
 
 
-        boolean orderExists = easyEntityQuery.queryable(H2Order.class)
+        boolean orderExists = easyEntityQuery2.queryable(H2Order.class)
                 .any();
         if (!orderExists) {
 
@@ -233,9 +235,8 @@ public class H2BaseTest {
                 h2Order.setCreated(String.valueOf(i));
                 h2Orders.add(h2Order);
             }
-            easyEntityQuery.insertable(h2Orders).executeRows();
+            easyEntityQuery2.insertable(h2Orders).executeRows();
         }
-
 
 
         ALLTYPE alltype = new ALLTYPE();

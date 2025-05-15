@@ -192,7 +192,7 @@ public class InsertTest extends BaseTest {
     @Test
     public void insertTest9() {
         TopicAuto topicAuto = null;
-        long l = easyEntityQuery.insertable(topicAuto)
+        long l = easyEntityQuery.getEasyQueryClient().insertable(topicAuto)
                 .noInterceptor().useInterceptor("11")
                 .useInterceptor("11").useInterceptor()
                 .asAlias("a")
@@ -213,7 +213,7 @@ public class InsertTest extends BaseTest {
         topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
         Assert.assertNull(topicAuto.getId());
         EntityInsertable<TopicAutoProxy, TopicAuto> insertable = easyEntityQuery.insertable(topicAuto)
-                .onConflictThen(null);
+                .onConflictThen(s->s.FETCHER.allFields());
         String sql = insertable.toSQL(topicAuto);
         Assert.assertEquals("INSERT INTO `t_topic_auto` (`stars`,`title`,`create_time`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE `stars` = VALUES(`stars`), `title` = VALUES(`title`), `create_time` = VALUES(`create_time`)", sql);
     }
@@ -280,7 +280,7 @@ public class InsertTest extends BaseTest {
 
         blog.setContent("abc");
         long l2 = easyEntityQuery.insertable(blog)
-                .onConflictThen(null)
+                .onConflictThen(s->s.FETCHER.allFields())
                 .executeRows();
         Assert.assertEquals(2, l2);
         BlogEntity blogEntity = easyEntityQuery.queryable(BlogEntity.class)

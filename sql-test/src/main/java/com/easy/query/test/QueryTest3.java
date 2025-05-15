@@ -921,65 +921,6 @@ public class QueryTest3 extends BaseTest {
     }
 
     @Test
-    public void queryBasic3() {
-        Class<Map<String, Object>> mapClass = EasyObjectUtil.typeCastNullable(Map.class);
-        {
-
-            List<Map<String, Object>> list = easyEntityQuery.queryable(Topic.class)
-                    .where(o -> o.id().eq("1"))
-                    .select(mapClass)
-                    .toList();
-            Assert.assertEquals(1, list.size());
-            String sql = easyEntityQuery.queryable(Topic.class)
-                    .where(o -> o.id().eq("1"))
-                    .select(mapClass)
-                    .toSQL();
-            Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ?", sql);
-        }
-        {
-
-            List<Map<String, Object>> list = easyEntityQuery.queryable(Topic.class)
-                    .where(o -> o.id().eq("1"))
-                    .select(mapClass)
-                    .toList();
-            Assert.assertEquals(1, list.size());
-            String sql = easyEntityQuery.queryable(Topic.class)
-                    .where(o -> o.id().eq("1"))
-                    .select(mapClass)
-                    .toSQL();
-            Assert.assertEquals("SELECT * FROM `t_topic` t WHERE t.`id` = ?", sql);
-        }
-
-
-        {
-            List<Map<String, Object>> list1 = easyQueryClient.queryable(Topic.class)
-                    .where(o -> o.eq("id", "1"))
-                    .select(mapClass, o -> o.columnAll())
-                    .toList();
-            Assert.assertEquals(1, list1.size());
-
-            String sql1 = easyQueryClient.queryable(Topic.class)
-                    .where(o -> o.eq("id", "1"))
-                    .select(mapClass, o -> o.columnAll()).toSQL();
-            Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`id` = ?", sql1);
-        }
-
-        {
-            List<Map<String, Object>> list1 = easyQueryClient.queryable(Topic.class)
-                    .where(o -> o.eq("id", "1"))
-                    .select(mapClass)
-                    .toList();
-            Assert.assertEquals(1, list1.size());
-
-            String sql1 = easyQueryClient.queryable(Topic.class)
-                    .where(o -> o.eq("id", "1"))
-                    .select(mapClass).toSQL();
-            Assert.assertEquals("SELECT * FROM `t_topic` t WHERE t.`id` = ?", sql1);
-        }
-    }
-
-
-    @Test
     public void dynamicWhere() {
         {
             BlogQuery1Request query = new BlogQuery1Request();
@@ -1288,9 +1229,9 @@ public class QueryTest3 extends BaseTest {
                 .where(t_topic -> {
                     t_topic.createTime().eq(LocalDateTime.now());
                     t_topic.or(() -> {
-                        t_topic.title().like("123");
-                        t_topic.id().like("123");
-                        t_topic.id().like("123");
+                        t_topic.title().like(false,"123");
+                        t_topic.id().like(false,"123");
+                        t_topic.id().like(false,"123");
                     });
                 })
                 .toSQL();

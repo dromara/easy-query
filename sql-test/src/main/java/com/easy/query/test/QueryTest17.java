@@ -920,7 +920,7 @@ public class QueryTest17 extends BaseTest {
                         t.expression().sql("IFNULL({0},{1}) DESC", c -> {
                             c.expression(t.stars()).value(1);
                         });
-                        t.expression().sql("RAND");
+                        t.expression().sql("RAND()");
                     }).toList();
 
             listenerContextManager.clear();

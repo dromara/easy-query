@@ -85,7 +85,7 @@ public class LogicDeleteTest extends BaseTest {
         ExpressionUpdatable<LogicDelTopicProxy, LogicDelTopic> logicDelTopicExpressionUpdatable = easyEntityQuery.updatable(LogicDelTopic.class)
                 .disableLogicDelete()
                 .setColumns(l -> {
-                    l.title().set(l.title());
+                    l.title().set(logicDelTopic.getTitle());
                 })
                 .whereById(logicDelTopic.getId());
         String s = logicDelTopicExpressionUpdatable.toSQL();

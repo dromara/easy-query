@@ -19,7 +19,7 @@ public class TopicAutoFalse {
     private String title;
     private LocalDateTime createTime;
 
-    @Column(autoSelect = false)
+    @Column(autoSelect  = false)
     private String alias;
 //    @Column(value = "C_USER_NAME")
 }

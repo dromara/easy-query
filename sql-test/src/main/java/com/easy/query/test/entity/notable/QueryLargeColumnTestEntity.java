@@ -21,6 +21,5 @@ public class QueryLargeColumnTestEntity implements ProxyEntityAvailable<QueryLar
     private String id;
 
     private String name;
-    @Column(exist = false)
     private String content;
 }
