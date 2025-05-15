@@ -54,16 +54,6 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
 
     SQLFunction orderByNullsMode(SQLActionExpression1<ColumnFuncSelector> sqlExpression, boolean asc, @NotNull OrderByModeEnum orderByModeEnum);
 
-    /**
-     * 请使用nullOrDefault函数
-     *
-     * @param sqlExpression
-     * @return
-     */
-    @Deprecated
-    default SQLFunction valueOrDefault(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
-        return nullOrDefault(sqlExpression);
-    }
 
     /**
      * 获取绝对值

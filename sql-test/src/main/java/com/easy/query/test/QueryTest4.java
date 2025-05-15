@@ -1,27 +1,20 @@
 package com.easy.query.test;
 
-import com.easy.query.api.proxy.base.StringProxy;
-import com.easy.query.api4j.func.LambdaSQLFunc;
-import com.easy.query.api4j.select.Queryable;
-import com.easy.query.core.common.anonymous.AnonymousType2;
-import com.easy.query.core.common.anonymous.AnonymousType3;
-import com.easy.query.core.common.anonymous.AnonymousType4;
-import com.easy.query.core.enums.AggregatePredicateCompare;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.exception.EasyQueryFirstNotNullException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.exception.EasyQuerySingleNotNullException;
-import com.easy.query.core.util.EasyObjectUtil;
-import com.easy.query.core.util.EasyTypeUtil;
+import com.easy.query.core.proxy.sql.GroupKeys;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.test.dto.TopicRequest;
-import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeArrayJson;
 import com.easy.query.test.entity.TopicTypeJsonValue;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
-import com.easy.query.test.provider.MySQLLambdaProviderImpl;
 import com.easy.query.test.provider.MySQLProviderImpl;
 import org.junit.Assert;
 import org.junit.Test;
@@ -42,67 +35,67 @@ public class QueryTest4 extends BaseTest {
     @Test
     public void query1233() {
         {
-            Queryable<LocalDateTime> maxCreateTimeQuery = easyQuery.queryable(Topic.class)
-                    .select(LocalDateTime.class, x -> x.columnMax(Topic::getCreateTime));
-            String sql = easyQuery.queryable(Topic.class)
+            Query<LocalDateTime> maxCreateTimeQuery = easyEntityQuery.queryable(Topic.class)
+                    .selectColumn(x -> x.createTime().max());
+            String sql = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
 //                        o.getWherePredicate().in("id", Arrays.asList("1","2"));
 
-                        o.eq(Topic::getCreateTime, maxCreateTimeQuery);
-                        o.eq(Topic::getCreateTime, "1");
+                        o.createTime().eq(maxCreateTimeQuery);
+                        o.createTime().asStr().eq("1");
                     }).toSQL();
             Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` = (SELECT MAX(t1.`create_time`) AS `create_time` FROM `t_topic` t1) AND t.`create_time` = ?", sql);
         }
         {
-            Queryable<LocalDateTime> maxCreateTimeQuery = easyQuery.queryable(Topic.class)
-                    .select(LocalDateTime.class, x -> x.columnMax(Topic::getCreateTime));
-            String sql = easyQuery.queryable(Topic.class)
+            Query<LocalDateTime> maxCreateTimeQuery = easyEntityQuery.queryable(Topic.class)
+                    .selectColumn(x -> x.createTime().max());
+            String sql = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
-                        o.ge(Topic::getCreateTime, maxCreateTimeQuery);
-                        o.eq(Topic::getCreateTime, "1");
+                        o.createTime().ge(maxCreateTimeQuery);
+                        o.createTime().asStr().eq("1");
                     }).toSQL();
             Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` >= (SELECT MAX(t1.`create_time`) AS `create_time` FROM `t_topic` t1) AND t.`create_time` = ?", sql);
         }
         {
-//            Integer integer = easyQuery.queryable(Topic.class)
+//            Integer integer = easyEntityQuery.queryable(Topic.class)
 //                    .where(o -> o.eq(Topic::getTitle, 111))
 //                    .sumOrDefault(Topic::getStars, 0);
-            Queryable<LocalDateTime> maxCreateTimeQuery = easyQuery.queryable(Topic.class)
-                    .select(LocalDateTime.class, x -> x.columnMax(Topic::getCreateTime));
-            String sql = easyQuery.queryable(Topic.class)
+            Query<LocalDateTime> maxCreateTimeQuery = easyEntityQuery.queryable(Topic.class)
+                    .selectColumn(x -> x.createTime().max());
+            String sql = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
-                        o.gt(Topic::getCreateTime, maxCreateTimeQuery);
-                        o.eq(Topic::getCreateTime, "1");
+                        o.createTime().gt(maxCreateTimeQuery);
+                        o.createTime().asStr().eq("1");
                     }).toSQL();
             Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` > (SELECT MAX(t1.`create_time`) AS `create_time` FROM `t_topic` t1) AND t.`create_time` = ?", sql);
         }
         {
-            Queryable<LocalDateTime> maxCreateTimeQuery = easyQuery.queryable(Topic.class)
-                    .select(LocalDateTime.class, x -> x.columnMax(Topic::getCreateTime));
-            String sql = easyQuery.queryable(Topic.class)
+            Query<LocalDateTime> maxCreateTimeQuery = easyEntityQuery.queryable(Topic.class)
+                    .selectColumn(x -> x.createTime().max());
+            String sql = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
-                        o.ne(Topic::getCreateTime, maxCreateTimeQuery);
-                        o.eq(Topic::getCreateTime, "1");
+                        o.createTime().ne(maxCreateTimeQuery);
+                        o.createTime().asStr().eq("1");
                     }).toSQL();
             Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` <> (SELECT MAX(t1.`create_time`) AS `create_time` FROM `t_topic` t1) AND t.`create_time` = ?", sql);
         }
         {
-            Queryable<LocalDateTime> maxCreateTimeQuery = easyQuery.queryable(Topic.class)
-                    .select(LocalDateTime.class, x -> x.columnMax(Topic::getCreateTime));
-            String sql = easyQuery.queryable(Topic.class)
+            Query<LocalDateTime> maxCreateTimeQuery = easyEntityQuery.queryable(Topic.class)
+                    .selectColumn(x -> x.createTime().max());
+            String sql = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
-                        o.le(Topic::getCreateTime, maxCreateTimeQuery);
-                        o.eq(Topic::getCreateTime, "1");
+                        o.createTime().le(maxCreateTimeQuery);
+                        o.createTime().asStr().eq("1");
                     }).toSQL();
             Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` <= (SELECT MAX(t1.`create_time`) AS `create_time` FROM `t_topic` t1) AND t.`create_time` = ?", sql);
         }
         {
-            Queryable<LocalDateTime> maxCreateTimeQuery = easyQuery.queryable(Topic.class)
-                    .select(LocalDateTime.class, x -> x.columnMax(Topic::getCreateTime));
-            String sql = easyQuery.queryable(Topic.class)
+            Query<LocalDateTime> maxCreateTimeQuery = easyEntityQuery.queryable(Topic.class)
+                    .selectColumn(x -> x.createTime().max());
+            String sql = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
-                        o.lt(Topic::getCreateTime, maxCreateTimeQuery);
-                        o.eq(Topic::getCreateTime, "1");
+                        o.createTime().lt(maxCreateTimeQuery);
+                        o.createTime().asStr().eq("1");
                     }).toSQL();
             Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` < (SELECT MAX(t1.`create_time`) AS `create_time` FROM `t_topic` t1) AND t.`create_time` = ?", sql);
         }
@@ -110,13 +103,13 @@ public class QueryTest4 extends BaseTest {
 
     @Test
     public void testJson1() {
-        TopicTypeArrayJson topicType = easyQuery.queryable(TopicTypeArrayJson.class)
+        TopicTypeArrayJson topicType = easyEntityQuery.queryable(TopicTypeArrayJson.class)
                 .whereById("1231").firstOrNull();
         if (topicType != null) {
-            long l = easyQuery.deletable(topicType).executeRows();
+            long l = easyEntityQuery.deletable(topicType).executeRows();
             Assert.assertEquals(1, l);
         }
-        topicType = easyQuery.queryable(TopicTypeArrayJson.class)
+        topicType = easyEntityQuery.queryable(TopicTypeArrayJson.class)
                 .whereById("1231").firstOrNull();
         Assert.assertNull(topicType);
         TopicTypeArrayJson topicType1 = new TopicTypeArrayJson();
@@ -135,10 +128,10 @@ public class QueryTest4 extends BaseTest {
 
         topicType1.setTopicType(TopicTypeEnum.CLASSER.getCode());
         topicType1.setCreateTime(LocalDateTime.now());
-        long l = easyQuery.insertable(topicType1).executeRows();
+        long l = easyEntityQuery.insertable(topicType1).executeRows();
         Assert.assertEquals(1, l);
 
-        TopicTypeArrayJson topicTypeVO = easyQuery.queryable(TopicTypeArrayJson.class)
+        TopicTypeArrayJson topicTypeVO = easyEntityQuery.queryable(TopicTypeArrayJson.class)
                 .whereById("1231")
                 .firstOrNull();
         Assert.assertNotNull(topicTypeVO);
@@ -159,13 +152,13 @@ public class QueryTest4 extends BaseTest {
     @Test
     public void testJson2() {
         String id = "1231";
-        TopicTypeArrayJson topicType = easyQuery.queryable(TopicTypeArrayJson.class)
+        TopicTypeArrayJson topicType = easyEntityQuery.queryable(TopicTypeArrayJson.class)
                 .whereById(id).firstOrNull();
         if (topicType != null) {
-            long l = easyQuery.deletable(topicType).executeRows();
+            long l = easyEntityQuery.deletable(topicType).executeRows();
             Assert.assertEquals(1, l);
         }
-        topicType = easyQuery.queryable(TopicTypeArrayJson.class)
+        topicType = easyEntityQuery.queryable(TopicTypeArrayJson.class)
                 .whereById(id).firstOrNull();
         Assert.assertNull(topicType);
         TopicTypeArrayJson topicType1 = new TopicTypeArrayJson();
@@ -194,10 +187,10 @@ public class QueryTest4 extends BaseTest {
 
         topicType1.setTopicType(TopicTypeEnum.CLASSER.getCode());
         topicType1.setCreateTime(LocalDateTime.now());
-        long l = easyQuery.insertable(topicType1).executeRows();
+        long l = easyEntityQuery.insertable(topicType1).executeRows();
         Assert.assertEquals(1, l);
 
-        TopicTypeArrayJson topicTypeVO = easyQuery.queryable(TopicTypeArrayJson.class)
+        TopicTypeArrayJson topicTypeVO = easyEntityQuery.queryable(TopicTypeArrayJson.class)
                 .whereById(id)
                 .firstOrNull();
         Assert.assertNotNull(topicTypeVO);
@@ -219,14 +212,14 @@ public class QueryTest4 extends BaseTest {
 
     //    @Test
 //    public void testBean1(){
-//        List<TestBean> list = easyQuery.queryable(TestBean.class)
+//        List<TestBean> list = easyEntityQuery.queryable(TestBean.class)
 //                .toList();
 //    }
     @Test
     public void testSQLFunc1() {
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.sqlFunc(o.fx().valueOrDefault("id", "1"))).toSQL();
+                .select(String.class, o -> o.sqlFunc(o.fx().nullOrDefault("id", "1"))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
@@ -234,7 +227,7 @@ public class QueryTest4 extends BaseTest {
     public void testSQLFunc2() {
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.sqlFunc(o.fx().valueOrDefault("id", "1"))).toSQL();
+                .select(String.class, o -> o.sqlFunc(o.fx().nullOrDefault("id", "1"))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
@@ -246,7 +239,7 @@ public class QueryTest4 extends BaseTest {
                     MySQLProviderImpl<Topic> mySQLProvider = new MySQLProviderImpl<>(o);
                     mySQLProvider.findInSet(c -> c.value("1"), c -> c.expression("id"));
                 })
-                .select(String.class, o -> o.sqlFunc(o.fx().valueOrDefault("id", "1"))).toSQL();
+                .select(String.class, o -> o.sqlFunc(o.fx().nullOrDefault("id", "1"))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ? AND FIND_IN_SET(?,t.`id`)", sql1);
     }
 
@@ -273,16 +266,6 @@ public class QueryTest4 extends BaseTest {
                     .select(String.class, o -> o.column("id")).toSQL();
             Assert.assertEquals("SELECT t.`id` FROM `t_topic` t WHERE t.`id` = ? AND FIND_IN_SET(?,t.`id`)", sql1);
         }
-        {
-            String sql1 = easyQuery.queryable(Topic.class)
-                    .where(o -> {
-                        o.eq(Topic::getId, "1");
-                        MySQLLambdaProviderImpl<Topic> mySQLProvider = new MySQLLambdaProviderImpl<>(o);
-                        mySQLProvider.findInSet(c -> c.value("1"), c -> c.expression(Topic::getId));
-                    })
-                    .select(String.class, o -> o.column(Topic::getId)).toSQL();
-            Assert.assertEquals("SELECT t.`id` FROM `t_topic` t WHERE t.`id` = ? AND FIND_IN_SET(?,t.`id`)", sql1);
-        }
     }
 
     @Test
@@ -291,7 +274,7 @@ public class QueryTest4 extends BaseTest {
                 .where(o -> {
                     o.eq("id", "1");//.use(new MySQLWherePredicater<>()).findInSet();
                 })
-                .select(String.class, o -> o.sqlFunc(o.fx().valueOrDefault("id", "1"))).toSQL();
+                .select(String.class, o -> o.sqlFunc(o.fx().nullOrDefault("id", "1"))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
@@ -299,7 +282,7 @@ public class QueryTest4 extends BaseTest {
     public void testSQLFunc2_1() {
         String sql1 = easyQueryClient.queryable(Topic.class)
                 .where(o -> o.eq("id", "1"))
-                .select(String.class, o -> o.sqlFunc(o.fx().valueOrDefault(x -> x.column("id").column("title").value("1")))).toSQL();
+                .select(String.class, o -> o.sqlFunc(o.fx().nullOrDefault(x -> x.column("id").column("title").value("1")))).toSQL();
         Assert.assertEquals("SELECT IFNULL(t.`id`,t.`title`,?) FROM `t_topic` t WHERE t.`id` = ?", sql1);
     }
 
@@ -347,21 +330,26 @@ public class QueryTest4 extends BaseTest {
 
     @Test
     public void testSQLFunc7() {
-        List<Topic> list = easyQuery.queryable(Topic.class)
-                .where(o -> o.eq(Topic::getId, "1")
+        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                .where(o -> o.id().eq( "1")
                         //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
                 )
-                .orderByDesc(o -> o.column(Topic::getCreateTime))
-                .select(Topic.class, o -> o.sqlFuncAs(o.fx().dateTimeFormat(Topic::getCreateTime, "yyyy-MM-dd"), Topic::getTitle)).toList();
+                .orderBy(o -> o.createTime().desc())
+                .select(Topic.class, t_topic -> Select.of(
+                        t_topic.createTime().format("yyyy-MM-dd").as(Topic::getTitle)
+                ))
+                .toList();
         for (Topic s : list) {
             Assert.assertEquals("2023-05-25", s.getTitle());
         }
-        String sql = easyQuery.queryable(Topic.class)
-                .where(o -> o.eq(Topic::getId, "1")
+        String sql = easyEntityQuery.queryable(Topic.class)
+                .where(o -> o.id().eq( "1")
                         //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
                 )
-                .orderByDesc(o -> o.column(Topic::getCreateTime))
-                .select(Topic.class, o -> o.sqlFuncAs(o.fx().dateTimeFormat(Topic::getCreateTime, "yyyy-MM-dd"), Topic::getTitle)).toSQL();
+                .orderBy(o -> o.createTime().desc())
+                .select(Topic.class, t_topic -> Select.of(
+                        t_topic.createTime().format("yyyy-MM-dd").as(Topic::getTitle)
+                )).toSQL();
         Assert.assertEquals("SELECT DATE_FORMAT(t.`create_time`,'%Y-%m-%d') AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC", sql);
     }
 
@@ -387,18 +375,6 @@ public class QueryTest4 extends BaseTest {
                     .select(Topic.class, o -> o.sqlFuncAs(o.fx().round("stars", 1), "title")).toSQL();
             Assert.assertEquals("SELECT ROUND(t.`stars`,1) AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC", sql);
         }
-        {
-            String sql = easyQuery.queryable(Topic.class)
-                    .where(o -> o.eq(Topic::getId, "1")
-                            //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
-                    )
-                    .orderByDesc(o -> o.column(Topic::getCreateTime))
-                    .select(Topic.class, o -> {
-                        LambdaSQLFunc<Topic> sqlFunc = o.fx();
-                        o.sqlFuncAs(sqlFunc.round(Topic::getStars, 1), Topic::getTitle);
-                    }).toSQL();
-            Assert.assertEquals("SELECT ROUND(t.`stars`,1) AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC", sql);
-        }
     }
 
     @Test
@@ -412,49 +388,8 @@ public class QueryTest4 extends BaseTest {
                     .select(Topic.class, o -> o.sqlFuncAs(o.fx().concat("stars", "id"), "title")).toSQL();
             Assert.assertEquals("SELECT CONCAT(t.`stars`,t.`id`) AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC", sql);
         }
-        {
-            String sql = easyQuery.queryable(Topic.class)
-                    .where(o -> o.eq(Topic::getId, "1")
-                            //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
-                    )
-                    .orderByDesc(o -> o.column(Topic::getCreateTime))
-                    .select(Topic.class, o -> {
-                        LambdaSQLFunc<Topic> sqlFunc = o.fx();
-                        o.sqlFuncAs(sqlFunc.concat(Topic::getStars, Topic::getId), Topic::getTitle);
-                    }).toSQL();
-            Assert.assertEquals("SELECT CONCAT(t.`stars`,t.`id`) AS `title` FROM `t_topic` t WHERE t.`id` = ? ORDER BY t.`create_time` DESC", sql);
-        }
     }
 
-
-    @Test
-    public void testSQLFunc11() {
-
-        Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
-                .where(o -> {
-                    LambdaSQLFunc<SysUser> userSqlFunc = o.fx();
-                    o.eq(userSqlFunc.valueOrDefault(SysUser::getId, "123"), userSqlFunc.valueOrDefault(x -> x.column(SysUser::getIdCard).value("1243")));
-                });
-        String sql = queryable.toSQL();
-        Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE IFNULL(`id`,?) = IFNULL(`id_card`,?)", sql);
-        SysUser sysUser = queryable.firstOrNull();
-        Assert.assertNull(sysUser);
-    }
-
-
-    @Test
-    public void testSQLFunc11_1() {
-
-        Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
-                .where(o -> {
-                    LambdaSQLFunc<SysUser> userSqlFunc = o.fx();
-                    o.eq(userSqlFunc.valueOrDefault(SysUser::getId, "123"), "abc");
-                });
-        String sql = queryable.toSQL();
-        Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE IFNULL(`id`,?) = ?", sql);
-        SysUser sysUser = queryable.firstOrNull();
-        Assert.assertNull(sysUser);
-    }
 
     @Test
     public void testSQLFunc12() {
@@ -464,13 +399,6 @@ public class QueryTest4 extends BaseTest {
                         t_topic.id().nullOrDefault("123").eq(t_topic.createTime().nullOrDefault((LocalDateTime) null));
                     }).toSQL();
             Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) = IFNULL(`create_time`,?)", sql);
-        }
-        {
-            String sql = easyQuery.queryable(Topic.class)
-                    .where(o -> o.eq(o.fx().valueOrDefault(Topic::getId, "123"), o.fx().valueOrDefault(Topic::getTitle, "456")))
-                    .toSQL();
-            Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`id`,?) = IFNULL(`title`,?)", sql);
-
         }
     }
 
@@ -492,9 +420,9 @@ public class QueryTest4 extends BaseTest {
         {
             try {
 
-                Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                Query<SysUser> queryable = easyEntityQuery.queryable(SysUser.class)
                         .asTable("sys_123")
-                        .where(o -> o.eq(SysUser::getId, "123xxx"));
+                        .where(o -> o.id().eq( "123xxx"));
                 SysUser sysUser = queryable.firstOrNull();
                 Assert.assertNull(sysUser);
             } catch (Exception e) {
@@ -509,9 +437,9 @@ public class QueryTest4 extends BaseTest {
 
             try {
 
-                Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class)
+                Query<SysUser> queryable = easyEntityQuery.queryable(SysUser.class)
                         .asTable("sys_123")
-                        .where(o -> o.eq(SysUser::getId, "123xxx"));
+                        .where(o -> o.id().eq( "123xxx"));
                 SysUser sysUser = queryable.singleOrNull();
                 Assert.assertNull(sysUser);
             } catch (Exception e) {
@@ -526,7 +454,7 @@ public class QueryTest4 extends BaseTest {
 
             try {
 
-                Queryable<SysUser> queryable = easyQuery.queryable(SysUser.class);
+                Query<SysUser> queryable = easyEntityQuery.queryable(SysUser.class);
                 SysUser sysUser = queryable.singleOrNull();
                 Assert.assertNull(sysUser);
             } catch (Exception e) {
@@ -534,64 +462,20 @@ public class QueryTest4 extends BaseTest {
             }
         }
     }
-
-    @Test
-    public void queryTest4() {
-        Class<AnonymousType3<String, String, String>> resultClass = EasyTypeUtil.cast(AnonymousType3.class);
-
-        Queryable<AnonymousType3<String, String, String>> select = easyQuery.queryable(SysUser.class)
-                .select(resultClass, o -> o.columnAs(SysUser::getId, AnonymousType3::getP1).columnAs(SysUser::getIdCard, AnonymousType2::getP2));
-        String sql = select.toSQL();
-        Assert.assertEquals("SELECT t.`id` AS `anonymous_type_p1`,t.`id_card` AS `anonymous_type_p2` FROM `easy-query-test`.`t_sys_user` t", sql);
-        AnonymousType3<String, String, String> sysUser = select.firstOrNull();
-        Assert.assertNotNull(sysUser);
-    }
-
-    @Test
-    public void queryTest5() {
-
-        Class<AnonymousType4<String, Integer, String, String>> resultClass = EasyObjectUtil.typeCastNullable(AnonymousType4.class);
-        Queryable<AnonymousType4<String, Integer, String, String>> select = easyQuery.queryable(BlogEntity.class)
-                .select(resultClass, o -> o.columnAs(BlogEntity::getId, AnonymousType4::getP1).columnAs(BlogEntity::getStar, AnonymousType4::getP2));
-        String sql = select.toSQL();
-        Assert.assertEquals("SELECT t.`id` AS `anonymous_type_p1`,t.`star` AS `anonymous_type_p2` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
-        AnonymousType4<String, Integer, String, String> blog = select.firstOrNull();
-        Assert.assertNotNull(blog);
-        Assert.assertNotNull(blog.getP1());
-        Assert.assertNotNull(blog.getP2());
-    }
-
-    @Test
-    public void queryTest6() {
-
-        Class<AnonymousType4<String, Integer, String, String>> resultClass = EasyObjectUtil.typeCastNullable(AnonymousType4.class);
-        Queryable<AnonymousType4<String, Integer, String, String>> select = easyQuery.queryable(BlogEntity.class)
-                .select(resultClass, o -> o
-                        .columnAs(BlogEntity::getId, AnonymousType4::getP1)
-                        .columnAs(BlogEntity::getStar, AnonymousType4::getP2)
-                );
-        String sql = select.toSQL();
-        Assert.assertEquals("SELECT t.`id` AS `anonymous_type_p1`,t.`star` AS `anonymous_type_p2` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
-        AnonymousType4<String, Integer, String, String> blog = select.firstOrNull();
-        Assert.assertNotNull(blog);
-        Assert.assertNotNull(blog.getP1());
-        Assert.assertNotNull(blog.getP2());
-    }
-
     @Test
     public void queryTest7() {
         {
 
-            Topic topic = easyQuery.queryable(Topic.class)
-                    .where(o -> o.eq(Topic::getId, "123"))
+            Topic topic = easyEntityQuery.queryable(Topic.class)
+                    .where(o -> o.id().eq( "123"))
                     .firstOrNull();
             Assert.assertNull(topic);
         }
         {
 
-            Topic topic = easyQuery.queryable(Topic.class)
-                    .where(o -> o.eq(Topic::getId, "1"))
-                    .select(o -> o.column(Topic::getId).column(Topic::getTitle))
+            Topic topic = easyEntityQuery.queryable(Topic.class)
+                    .where(o -> o.id().eq( "1"))
+                    .select(t_topic -> t_topic.FETCHER.id().title())
                     .firstOrNull();
             Assert.assertNotNull(topic);
             Assert.assertNotNull(topic.getId());
@@ -601,14 +485,14 @@ public class QueryTest4 extends BaseTest {
         }
         {
 
-            Queryable<Topic> query = easyQuery.queryable(Topic.class)
-                    .where(o -> o.eq(Topic::getId, "1"))
-                    .select(Topic.class, o -> o.column(Topic::getId).column(Topic::getTitle));
+            EntityQueryable<TopicProxy, Topic> query = easyEntityQuery.queryable(Topic.class)
+                    .where(o -> o.id().eq("1"))
+                    .select(o -> o.FETCHER.id().title().fetchProxy());
 
-            List<Topic> list = query.leftJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
+            List<Topic> list = query.leftJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
                     .where((t, t1) -> {
-                        t1.eq(Topic::getId, "123");
-                        t.eq(Topic::getId, "456");
+                        t1.id().eq("123");
+                        t.id().eq( "456");
                     }).toList();
 
 
@@ -617,8 +501,8 @@ public class QueryTest4 extends BaseTest {
         }
         {
 
-            Topic topic = easyQuery.queryable(Topic.class)
-                    .where(o -> o.eq(Topic::getId, "123"))
+            Topic topic = easyEntityQuery.queryable(Topic.class)
+                    .where(o -> o.id().eq( "123"))
                     .singleOrNull();
             Assert.assertNull(topic);
         }
@@ -643,8 +527,8 @@ public class QueryTest4 extends BaseTest {
 
         try {
 
-            Topic topic = easyQuery.queryable(Topic.class)
-                    .where(o -> o.eq(Topic::getId, "123"))
+            Topic topic = easyEntityQuery.queryable(Topic.class)
+                    .where(o -> o.id().eq( "123"))
                     .firstNotNull("未找到对应的数据");
         } catch (Exception ex) {
             return ex;
@@ -656,8 +540,8 @@ public class QueryTest4 extends BaseTest {
 
         try {
 
-            Topic topic = easyQuery.queryable(Topic.class)
-                    .where(o -> o.eq(Topic::getId, id))
+            Topic topic = easyEntityQuery.queryable(Topic.class)
+                    .where(o -> o.id().eq( id))
                     .singleNotNull("未找到对应的数据");
         } catch (Exception ex) {
             return ex;
@@ -669,18 +553,18 @@ public class QueryTest4 extends BaseTest {
     public void joinTest1() {
         TopicRequest topicRequest = new TopicRequest();
         topicRequest.setCreateTimeBegin(LocalDateTime.now());
-        String sql = easyQuery.queryable(Topic.class)
-                .leftJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2) -> t.eq(t2, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4) -> t.eq(t4, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5) -> t.eq(t5, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6) -> t.eq(t6, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6, t7) -> t.eq(t7, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6, t7, t8) -> t.eq(t8, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6, t7, t8, t9) -> t.eq(t9, Topic::getId, Topic::getId))
-                .where(o -> o.eq(Topic::getId, 1))
-                .where(false, o -> o.eq(Topic::getId, 1))
+        String sql = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
+                .leftJoin(Topic.class, (t, t1, t2) -> t.id().eq(t2.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3) -> t.id().eq(t3.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4) -> t.id().eq(t4.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5) -> t.id().eq(t5.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6) -> t.id().eq(t6.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6, t7) -> t.id().eq(t7.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6, t7, t8) -> t.id().eq(t8.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6, t7, t8, t9) -> t.id().eq(t9.id()))
+                .where(o -> o.id().eq( "1"))
+                .where(false, o -> o.id().eq( "1"))
                 .whereById("1")
                 .whereById(false, "1")
                 .whereById(Collections.singletonList("1"))
@@ -688,48 +572,47 @@ public class QueryTest4 extends BaseTest {
                 .whereObject(topicRequest)
                 .whereObject(false, topicRequest)
                 .whereMerge(o -> {
-                    o.t().eq(Topic::getId, "1");
-                    o.t().eq(false, Topic::getId, "1");
-                    o.t().ne(Topic::getId, "1");
-                    o.t().ne(false, Topic::getId, "1");
-                    o.t().ge(Topic::getId, "1");
-                    o.t().ge(false, Topic::getId, "1");
-                    o.t().gt(Topic::getId, "1");
-                    o.t().gt(false, Topic::getId, "1");
-                    o.t().le(Topic::getId, "1");
-                    o.t().le(false, Topic::getId, "1");
-                    o.t().lt(Topic::getId, "1");
-                    o.t().lt(false, Topic::getId, "1");
-                    o.t().like(Topic::getId, "1");
-                    o.t().like(false, Topic::getId, "1");
-                    o.t().notLike(Topic::getId, "1");
-                    o.t().notLike(false, Topic::getId, "1");
-                    o.t().likeMatchLeft(Topic::getId, "1");
-                    o.t().likeMatchLeft(false, Topic::getId, "1");
-                    o.t().likeMatchRight(Topic::getId, "1");
-                    o.t().likeMatchRight(false, Topic::getId, "1");
-                    o.t().notLikeMatchLeft(Topic::getId, "1");
-                    o.t().notLikeMatchLeft(false, Topic::getId, "1");
-                    o.t().notLikeMatchRight(Topic::getId, "1");
-                    o.t().notLikeMatchRight(false, Topic::getId, "1");
+                    o.t1.id().eq( "1");
+                    o.t1.id().eq(false,  "1");
+                    o.t1.id().ne( "1");
+                    o.t1.id().ne(false,  "1");
+                    o.t1.id().ge( "1");
+                    o.t1.id().ge(false,  "1");
+                    o.t1.id().gt( "1");
+                    o.t1.id().gt(false,  "1");
+                    o.t1.id().le( "1");
+                    o.t1.id().le(false,  "1");
+                    o.t1.id().lt( "1");
+                    o.t1.id().lt(false,  "1");
+                    o.t1.id().like( "1");
+                    o.t1.id().like(false,  "1");
+                    o.t1.id().notLike( "1");
+                    o.t1.id().notLike(false,  "1");
+                    o.t1.id().likeMatchLeft( "1");
+                    o.t1.id().likeMatchLeft(false,  "1");
+                    o.t1.id().likeMatchRight( "1");
+                    o.t1.id().likeMatchRight(false,  "1");
+                    o.t1.id().notLikeMatchLeft( "1");
+                    o.t1.id().notLikeMatchLeft(false,  "1");
+                    o.t1.id().notLikeMatchRight( "1");
+                    o.t1.id().notLikeMatchRight(false,  "1");
                 })
                 .limit(1, 2)
-                .orderByAsc(o -> o.column(Topic::getCreateTime))
-                .orderByDesc(o -> o.column(Topic::getCreateTime))
-                .orderByAsc(false, o -> o.column(Topic::getCreateTime))
-                .orderByDesc(false, o -> o.column(Topic::getCreateTime))
-                .orderByAscMerge(o -> o.t().column(Topic::getCreateTime))
-                .orderByDescMerge(o -> o.t().column(Topic::getCreateTime))
-                .orderByAscMerge(false, o -> o.t().column(Topic::getCreateTime))
-                .orderByDescMerge(false, o -> o.t().column(Topic::getCreateTime))
-                .groupByMerge(o -> o.t().column(Topic::getId))
-                .groupByMerge(false, o -> o.t().column(Topic::getId))
-                .havingMerge(o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .selectMerge(Topic.class, o -> {
-                    o.t().column(Topic::getId);
-                    o.t().columnCountAs(Topic::getId, Topic::getStars);
-                }).toSQL();
+                .orderBy(o -> o.createTime().asc())
+                .orderBy(o -> o.createTime().desc())
+                .orderBy(false, o -> o.createTime().asc())
+                .orderBy(false, o -> o.createTime().desc())
+                .orderByMerge(o -> o.t1.createTime().asc())
+                .orderByMerge(o -> o.t1.createTime().desc())
+                .orderByMerge(false,o -> o.t1.createTime().asc())
+                .orderByMerge(false,o -> o.t1.createTime().desc())
+                .groupByMerge(o -> GroupKeys.of(o.t1.id()))
+                .having(o -> o.groupTable().t1.id().count().ge(1L))
+                .having(false,o -> o.groupTable().t1.id().count().ge(1L))
+                .select(Topic.class, o -> Select.of(
+                    o.groupTable().t1.id(),
+                    o.groupTable().t1.id().count().as(Topic::getStars)
+                )).toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t7.`id` LEFT JOIN `t_topic` t8 ON t.`id` = t8.`id` LEFT JOIN `t_topic` t9 ON t.`id` = t9.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
 
@@ -737,17 +620,17 @@ public class QueryTest4 extends BaseTest {
     public void joinTest2() {
         TopicRequest topicRequest = new TopicRequest();
         topicRequest.setCreateTimeBegin(LocalDateTime.now());
-        String sql = easyQuery.queryable(Topic.class)
-                .leftJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2) -> t.eq(t2, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4) -> t.eq(t4, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5) -> t.eq(t5, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6) -> t.eq(t6, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6, t7) -> t.eq(t7, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6, t7, t8) -> t.eq(t8, Topic::getId, Topic::getId))
-                .where(o -> o.eq(Topic::getId, 1))
-                .where(false, o -> o.eq(Topic::getId, 1))
+        String sql = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
+                .leftJoin(Topic.class, (t, t1, t2) -> t.id().eq(t2.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3) -> t.id().eq(t3.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4) -> t.id().eq(t4.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5) -> t.id().eq(t5.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6) -> t.id().eq(t6.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6, t7) -> t.id().eq(t7.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6, t7, t8) -> t.id().eq(t8.id()))
+                .where(o -> o.id().eq( "1"))
+                .where(false, o -> o.id().eq( "1"))
                 .whereById("1")
                 .whereById(false, "1")
                 .whereById(Collections.singletonList("1"))
@@ -755,48 +638,47 @@ public class QueryTest4 extends BaseTest {
                 .whereObject(topicRequest)
                 .whereObject(false, topicRequest)
                 .whereMerge(o -> {
-                    o.t().eq(Topic::getId, "1");
-                    o.t().eq(false, Topic::getId, "1");
-                    o.t().ne(Topic::getId, "1");
-                    o.t().ne(false, Topic::getId, "1");
-                    o.t().ge(Topic::getId, "1");
-                    o.t().ge(false, Topic::getId, "1");
-                    o.t().gt(Topic::getId, "1");
-                    o.t().gt(false, Topic::getId, "1");
-                    o.t().le(Topic::getId, "1");
-                    o.t().le(false, Topic::getId, "1");
-                    o.t().lt(Topic::getId, "1");
-                    o.t().lt(false, Topic::getId, "1");
-                    o.t().like(Topic::getId, "1");
-                    o.t().like(false, Topic::getId, "1");
-                    o.t().notLike(Topic::getId, "1");
-                    o.t().notLike(false, Topic::getId, "1");
-                    o.t().likeMatchLeft(Topic::getId, "1");
-                    o.t().likeMatchLeft(false, Topic::getId, "1");
-                    o.t().likeMatchRight(Topic::getId, "1");
-                    o.t().likeMatchRight(false, Topic::getId, "1");
-                    o.t().notLikeMatchLeft(Topic::getId, "1");
-                    o.t().notLikeMatchLeft(false, Topic::getId, "1");
-                    o.t().notLikeMatchRight(Topic::getId, "1");
-                    o.t().notLikeMatchRight(false, Topic::getId, "1");
+                    o.t1.id().eq( "1");
+                    o.t1.id().eq(false,  "1");
+                    o.t1.id().ne( "1");
+                    o.t1.id().ne(false,  "1");
+                    o.t1.id().ge( "1");
+                    o.t1.id().ge(false,  "1");
+                    o.t1.id().gt( "1");
+                    o.t1.id().gt(false,  "1");
+                    o.t1.id().le( "1");
+                    o.t1.id().le(false,  "1");
+                    o.t1.id().lt( "1");
+                    o.t1.id().lt(false,  "1");
+                    o.t1.id().like( "1");
+                    o.t1.id().like(false,  "1");
+                    o.t1.id().notLike( "1");
+                    o.t1.id().notLike(false,  "1");
+                    o.t1.id().likeMatchLeft( "1");
+                    o.t1.id().likeMatchLeft(false,  "1");
+                    o.t1.id().likeMatchRight( "1");
+                    o.t1.id().likeMatchRight(false,  "1");
+                    o.t1.id().notLikeMatchLeft( "1");
+                    o.t1.id().notLikeMatchLeft(false,  "1");
+                    o.t1.id().notLikeMatchRight( "1");
+                    o.t1.id().notLikeMatchRight(false,  "1");
                 })
                 .limit(1, 2)
-                .orderByAsc(o -> o.column(Topic::getCreateTime))
-                .orderByDesc(o -> o.column(Topic::getCreateTime))
-                .orderByAsc(false, o -> o.column(Topic::getCreateTime))
-                .orderByDesc(false, o -> o.column(Topic::getCreateTime))
-                .orderByAscMerge(o -> o.t().column(Topic::getCreateTime))
-                .orderByDescMerge(o -> o.t().column(Topic::getCreateTime))
-                .orderByAscMerge(false, o -> o.t().column(Topic::getCreateTime))
-                .orderByDescMerge(false, o -> o.t().column(Topic::getCreateTime))
-                .groupByMerge(o -> o.t().column(Topic::getId))
-                .groupByMerge(false, o -> o.t().column(Topic::getId))
-                .havingMerge(o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .selectMerge(Topic.class, o -> {
-                    o.t().column(Topic::getId);
-                    o.t().columnCountAs(Topic::getId, Topic::getStars);
-                }).toSQL();
+                .orderBy(o -> o.createTime().asc())
+                .orderBy(o -> o.createTime().desc())
+                .orderBy(false, o -> o.createTime().asc())
+                .orderBy(false, o -> o.createTime().desc())
+                .orderByMerge(o -> o.t1.createTime().asc())
+                .orderByMerge(o -> o.t1.createTime().desc())
+                .orderByMerge(false,o -> o.t1.createTime().asc())
+                .orderByMerge(false,o -> o.t1.createTime().desc())
+                .groupByMerge(o -> GroupKeys.of(o.t1.id()))
+                .having(o -> o.groupTable().t1.id().count().ge(1L))
+                .having(false,o -> o.groupTable().t1.id().count().ge(1L))
+                .select(Topic.class, o -> Select.of(
+                    o.groupTable().t1.id(),
+                    o.groupTable().t1.id().count().as(Topic::getStars)
+                )).toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t7.`id` LEFT JOIN `t_topic` t8 ON t.`id` = t8.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
 
@@ -804,16 +686,16 @@ public class QueryTest4 extends BaseTest {
     public void joinTest3() {
         TopicRequest topicRequest = new TopicRequest();
         topicRequest.setCreateTimeBegin(LocalDateTime.now());
-        String sql = easyQuery.queryable(Topic.class)
-                .leftJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2) -> t.eq(t2, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4) -> t.eq(t4, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5) -> t.eq(t5, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6) -> t.eq(t6, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6, t7) -> t.eq(t7, Topic::getId, Topic::getId))
-                .where(o -> o.eq(Topic::getId, 1))
-                .where(false, o -> o.eq(Topic::getId, 1))
+        String sql = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
+                .leftJoin(Topic.class, (t, t1, t2) -> t.id().eq(t2.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3) -> t.id().eq(t3.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4) -> t.id().eq(t4.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5) -> t.id().eq(t5.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6) -> t.id().eq(t6.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6, t7) -> t.id().eq(t7.id()))
+                .where(o -> o.id().eq( "1"))
+                .where(false, o -> o.id().eq( "1"))
                 .whereById("1")
                 .whereById(false, "1")
                 .whereById(Collections.singletonList("1"))
@@ -821,48 +703,47 @@ public class QueryTest4 extends BaseTest {
                 .whereObject(topicRequest)
                 .whereObject(false, topicRequest)
                 .whereMerge(o -> {
-                    o.t().eq(Topic::getId, "1");
-                    o.t().eq(false, Topic::getId, "1");
-                    o.t().ne(Topic::getId, "1");
-                    o.t().ne(false, Topic::getId, "1");
-                    o.t().ge(Topic::getId, "1");
-                    o.t().ge(false, Topic::getId, "1");
-                    o.t().gt(Topic::getId, "1");
-                    o.t().gt(false, Topic::getId, "1");
-                    o.t().le(Topic::getId, "1");
-                    o.t().le(false, Topic::getId, "1");
-                    o.t().lt(Topic::getId, "1");
-                    o.t().lt(false, Topic::getId, "1");
-                    o.t().like(Topic::getId, "1");
-                    o.t().like(false, Topic::getId, "1");
-                    o.t().notLike(Topic::getId, "1");
-                    o.t().notLike(false, Topic::getId, "1");
-                    o.t().likeMatchLeft(Topic::getId, "1");
-                    o.t().likeMatchLeft(false, Topic::getId, "1");
-                    o.t().likeMatchRight(Topic::getId, "1");
-                    o.t().likeMatchRight(false, Topic::getId, "1");
-                    o.t().notLikeMatchLeft(Topic::getId, "1");
-                    o.t().notLikeMatchLeft(false, Topic::getId, "1");
-                    o.t().notLikeMatchRight(Topic::getId, "1");
-                    o.t().notLikeMatchRight(false, Topic::getId, "1");
+                    o.t1.id().eq( "1");
+                    o.t1.id().eq(false,  "1");
+                    o.t1.id().ne( "1");
+                    o.t1.id().ne(false,  "1");
+                    o.t1.id().ge( "1");
+                    o.t1.id().ge(false,  "1");
+                    o.t1.id().gt( "1");
+                    o.t1.id().gt(false,  "1");
+                    o.t1.id().le( "1");
+                    o.t1.id().le(false,  "1");
+                    o.t1.id().lt( "1");
+                    o.t1.id().lt(false,  "1");
+                    o.t1.id().like( "1");
+                    o.t1.id().like(false,  "1");
+                    o.t1.id().notLike( "1");
+                    o.t1.id().notLike(false,  "1");
+                    o.t1.id().likeMatchLeft( "1");
+                    o.t1.id().likeMatchLeft(false,  "1");
+                    o.t1.id().likeMatchRight( "1");
+                    o.t1.id().likeMatchRight(false,  "1");
+                    o.t1.id().notLikeMatchLeft( "1");
+                    o.t1.id().notLikeMatchLeft(false,  "1");
+                    o.t1.id().notLikeMatchRight( "1");
+                    o.t1.id().notLikeMatchRight(false,  "1");
                 })
                 .limit(1, 2)
-                .orderByAsc(o -> o.column(Topic::getCreateTime))
-                .orderByDesc(o -> o.column(Topic::getCreateTime))
-                .orderByAsc(false, o -> o.column(Topic::getCreateTime))
-                .orderByDesc(false, o -> o.column(Topic::getCreateTime))
-                .orderByAscMerge(o -> o.t().column(Topic::getCreateTime))
-                .orderByDescMerge(o -> o.t().column(Topic::getCreateTime))
-                .orderByAscMerge(false, o -> o.t().column(Topic::getCreateTime))
-                .orderByDescMerge(false, o -> o.t().column(Topic::getCreateTime))
-                .groupByMerge(o -> o.t().column(Topic::getId))
-                .groupByMerge(false, o -> o.t().column(Topic::getId))
-                .havingMerge(o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .selectMerge(Topic.class, o -> {
-                    o.t().column(Topic::getId);
-                    o.t().columnCountAs(Topic::getId, Topic::getStars);
-                }).toSQL();
+                .orderBy(o -> o.createTime().asc())
+                .orderBy(o -> o.createTime().desc())
+                .orderBy(false, o -> o.createTime().asc())
+                .orderBy(false, o -> o.createTime().desc())
+                .orderByMerge(o -> o.t1.createTime().asc())
+                .orderByMerge(o -> o.t1.createTime().desc())
+                .orderByMerge(false,o -> o.t1.createTime().asc())
+                .orderByMerge(false,o -> o.t1.createTime().desc())
+                .groupByMerge(o -> GroupKeys.of(o.t1.id()))
+                .having(o -> o.groupTable().t1.id().count().ge(1L))
+                .having(false,o -> o.groupTable().t1.id().count().ge(1L))
+                .select(Topic.class, o -> Select.of(
+                    o.groupTable().t1.id(),
+                    o.groupTable().t1.id().count().as(Topic::getStars)
+                )).toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t7.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
 
@@ -870,15 +751,15 @@ public class QueryTest4 extends BaseTest {
     public void joinTest4() {
         TopicRequest topicRequest = new TopicRequest();
         topicRequest.setCreateTimeBegin(LocalDateTime.now());
-        String sql = easyQuery.queryable(Topic.class)
-                .leftJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2) -> t.eq(t2, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4) -> t.eq(t4, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5) -> t.eq(t5, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6) -> t.eq(t6, Topic::getId, Topic::getId))
-                .where(o -> o.eq(Topic::getId, 1))
-                .where(false, o -> o.eq(Topic::getId, 1))
+        String sql = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
+                .leftJoin(Topic.class, (t, t1, t2) -> t.id().eq(t2.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3) -> t.id().eq(t3.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4) -> t.id().eq(t4.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5) -> t.id().eq(t5.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6) -> t.id().eq(t6.id()))
+                .where(o -> o.id().eq( "1"))
+                .where(false, o -> o.id().eq( "1"))
                 .whereById("1")
                 .whereById(false, "1")
                 .whereById(Collections.singletonList("1"))
@@ -886,48 +767,47 @@ public class QueryTest4 extends BaseTest {
                 .whereObject(topicRequest)
                 .whereObject(false, topicRequest)
                 .whereMerge(o -> {
-                    o.t().eq(Topic::getId, "1");
-                    o.t().eq(false, Topic::getId, "1");
-                    o.t().ne(Topic::getId, "1");
-                    o.t().ne(false, Topic::getId, "1");
-                    o.t().ge(Topic::getId, "1");
-                    o.t().ge(false, Topic::getId, "1");
-                    o.t().gt(Topic::getId, "1");
-                    o.t().gt(false, Topic::getId, "1");
-                    o.t().le(Topic::getId, "1");
-                    o.t().le(false, Topic::getId, "1");
-                    o.t().lt(Topic::getId, "1");
-                    o.t().lt(false, Topic::getId, "1");
-                    o.t().like(Topic::getId, "1");
-                    o.t().like(false, Topic::getId, "1");
-                    o.t().notLike(Topic::getId, "1");
-                    o.t().notLike(false, Topic::getId, "1");
-                    o.t().likeMatchLeft(Topic::getId, "1");
-                    o.t().likeMatchLeft(false, Topic::getId, "1");
-                    o.t().likeMatchRight(Topic::getId, "1");
-                    o.t().likeMatchRight(false, Topic::getId, "1");
-                    o.t().notLikeMatchLeft(Topic::getId, "1");
-                    o.t().notLikeMatchLeft(false, Topic::getId, "1");
-                    o.t().notLikeMatchRight(Topic::getId, "1");
-                    o.t().notLikeMatchRight(false, Topic::getId, "1");
+                    o.t1.id().eq( "1");
+                    o.t1.id().eq(false,  "1");
+                    o.t1.id().ne( "1");
+                    o.t1.id().ne(false,  "1");
+                    o.t1.id().ge( "1");
+                    o.t1.id().ge(false,  "1");
+                    o.t1.id().gt( "1");
+                    o.t1.id().gt(false,  "1");
+                    o.t1.id().le( "1");
+                    o.t1.id().le(false,  "1");
+                    o.t1.id().lt( "1");
+                    o.t1.id().lt(false,  "1");
+                    o.t1.id().like( "1");
+                    o.t1.id().like(false,  "1");
+                    o.t1.id().notLike( "1");
+                    o.t1.id().notLike(false,  "1");
+                    o.t1.id().likeMatchLeft( "1");
+                    o.t1.id().likeMatchLeft(false,  "1");
+                    o.t1.id().likeMatchRight( "1");
+                    o.t1.id().likeMatchRight(false,  "1");
+                    o.t1.id().notLikeMatchLeft( "1");
+                    o.t1.id().notLikeMatchLeft(false,  "1");
+                    o.t1.id().notLikeMatchRight( "1");
+                    o.t1.id().notLikeMatchRight(false,  "1");
                 })
                 .limit(1, 2)
-                .orderByAsc(o -> o.column(Topic::getCreateTime))
-                .orderByDesc(o -> o.column(Topic::getCreateTime))
-                .orderByAsc(false, o -> o.column(Topic::getCreateTime))
-                .orderByDesc(false, o -> o.column(Topic::getCreateTime))
-                .orderByAscMerge(o -> o.t().column(Topic::getCreateTime))
-                .orderByDescMerge(o -> o.t().column(Topic::getCreateTime))
-                .orderByAscMerge(false, o -> o.t().column(Topic::getCreateTime))
-                .orderByDescMerge(false, o -> o.t().column(Topic::getCreateTime))
-                .groupByMerge(o -> o.t().column(Topic::getId))
-                .groupByMerge(false, o -> o.t().column(Topic::getId))
-                .havingMerge(o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .selectMerge(Topic.class, o -> {
-                    o.t().column(Topic::getId);
-                    o.t().columnCountAs(Topic::getId, Topic::getStars);
-                }).toSQL();
+                .orderBy(o -> o.createTime().asc())
+                .orderBy(o -> o.createTime().desc())
+                .orderBy(false, o -> o.createTime().asc())
+                .orderBy(false, o -> o.createTime().desc())
+                .orderByMerge(o -> o.t1.createTime().asc())
+                .orderByMerge(o -> o.t1.createTime().desc())
+                .orderByMerge(false,o -> o.t1.createTime().asc())
+                .orderByMerge(false,o -> o.t1.createTime().desc())
+                .groupByMerge(o -> GroupKeys.of(o.t1.id()))
+                .having(o -> o.groupTable().t1.id().count().ge(1L))
+                .having(false,o -> o.groupTable().t1.id().count().ge(1L))
+                .select(Topic.class, o -> Select.of(
+                    o.groupTable().t1.id(),
+                    o.groupTable().t1.id().count().as(Topic::getStars)
+                )).toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
 
@@ -935,14 +815,14 @@ public class QueryTest4 extends BaseTest {
     public void joinTest5() {
         TopicRequest topicRequest = new TopicRequest();
         topicRequest.setCreateTimeBegin(LocalDateTime.now());
-        String sql = easyQuery.queryable(Topic.class)
-                .leftJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2) -> t.eq(t2, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4) -> t.eq(t4, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5) -> t.eq(t5, Topic::getId, Topic::getId))
-                .where(o -> o.eq(Topic::getId, 1))
-                .where(false, o -> o.eq(Topic::getId, 1))
+        String sql = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
+                .leftJoin(Topic.class, (t, t1, t2) -> t.id().eq(t2.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3) -> t.id().eq(t3.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4) -> t.id().eq(t4.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5) -> t.id().eq(t5.id()))
+                .where(o -> o.id().eq( "1"))
+                .where(false, o -> o.id().eq( "1"))
                 .whereById("1")
                 .whereById(false, "1")
                 .whereById(Collections.singletonList("1"))
@@ -950,48 +830,47 @@ public class QueryTest4 extends BaseTest {
                 .whereObject(topicRequest)
                 .whereObject(false, topicRequest)
                 .whereMerge(o -> {
-                    o.t().eq(Topic::getId, "1");
-                    o.t().eq(false, Topic::getId, "1");
-                    o.t().ne(Topic::getId, "1");
-                    o.t().ne(false, Topic::getId, "1");
-                    o.t().ge(Topic::getId, "1");
-                    o.t().ge(false, Topic::getId, "1");
-                    o.t().gt(Topic::getId, "1");
-                    o.t().gt(false, Topic::getId, "1");
-                    o.t().le(Topic::getId, "1");
-                    o.t().le(false, Topic::getId, "1");
-                    o.t().lt(Topic::getId, "1");
-                    o.t().lt(false, Topic::getId, "1");
-                    o.t().like(Topic::getId, "1");
-                    o.t().like(false, Topic::getId, "1");
-                    o.t().notLike(Topic::getId, "1");
-                    o.t().notLike(false, Topic::getId, "1");
-                    o.t().likeMatchLeft(Topic::getId, "1");
-                    o.t().likeMatchLeft(false, Topic::getId, "1");
-                    o.t().likeMatchRight(Topic::getId, "1");
-                    o.t().likeMatchRight(false, Topic::getId, "1");
-                    o.t().notLikeMatchLeft(Topic::getId, "1");
-                    o.t().notLikeMatchLeft(false, Topic::getId, "1");
-                    o.t().notLikeMatchRight(Topic::getId, "1");
-                    o.t().notLikeMatchRight(false, Topic::getId, "1");
+                    o.t1.id().eq( "1");
+                    o.t1.id().eq(false,  "1");
+                    o.t1.id().ne( "1");
+                    o.t1.id().ne(false,  "1");
+                    o.t1.id().ge( "1");
+                    o.t1.id().ge(false,  "1");
+                    o.t1.id().gt( "1");
+                    o.t1.id().gt(false,  "1");
+                    o.t1.id().le( "1");
+                    o.t1.id().le(false,  "1");
+                    o.t1.id().lt( "1");
+                    o.t1.id().lt(false,  "1");
+                    o.t1.id().like( "1");
+                    o.t1.id().like(false,  "1");
+                    o.t1.id().notLike( "1");
+                    o.t1.id().notLike(false,  "1");
+                    o.t1.id().likeMatchLeft( "1");
+                    o.t1.id().likeMatchLeft(false,  "1");
+                    o.t1.id().likeMatchRight( "1");
+                    o.t1.id().likeMatchRight(false,  "1");
+                    o.t1.id().notLikeMatchLeft( "1");
+                    o.t1.id().notLikeMatchLeft(false,  "1");
+                    o.t1.id().notLikeMatchRight( "1");
+                    o.t1.id().notLikeMatchRight(false,  "1");
                 })
                 .limit(1, 2)
-                .orderByAsc(o -> o.column(Topic::getCreateTime))
-                .orderByDesc(o -> o.column(Topic::getCreateTime))
-                .orderByAsc(false, o -> o.column(Topic::getCreateTime))
-                .orderByDesc(false, o -> o.column(Topic::getCreateTime))
-                .orderByAscMerge(o -> o.t().column(Topic::getCreateTime))
-                .orderByDescMerge(o -> o.t().column(Topic::getCreateTime))
-                .orderByAscMerge(false, o -> o.t().column(Topic::getCreateTime))
-                .orderByDescMerge(false, o -> o.t().column(Topic::getCreateTime))
-                .groupByMerge(o -> o.t().column(Topic::getId))
-                .groupByMerge(false, o -> o.t().column(Topic::getId))
-                .havingMerge(o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .selectMerge(Topic.class, o -> {
-                    o.t().column(Topic::getId);
-                    o.t().columnCountAs(Topic::getId, Topic::getStars);
-                }).toSQL();
+                .orderBy(o -> o.createTime().asc())
+                .orderBy(o -> o.createTime().desc())
+                .orderBy(false, o -> o.createTime().asc())
+                .orderBy(false, o -> o.createTime().desc())
+                .orderByMerge(o -> o.t1.createTime().asc())
+                .orderByMerge(o -> o.t1.createTime().desc())
+                .orderByMerge(false,o -> o.t1.createTime().asc())
+                .orderByMerge(false,o -> o.t1.createTime().desc())
+                .groupByMerge(o -> GroupKeys.of(o.t1.id()))
+                .having(o -> o.groupTable().t1.id().count().ge(1L))
+                .having(false,o -> o.groupTable().t1.id().count().ge(1L))
+                .select(Topic.class, o -> Select.of(
+                    o.groupTable().t1.id(),
+                    o.groupTable().t1.id().count().as(Topic::getStars)
+                )).toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
 
@@ -999,13 +878,13 @@ public class QueryTest4 extends BaseTest {
     public void joinTest6() {
         TopicRequest topicRequest = new TopicRequest();
         topicRequest.setCreateTimeBegin(LocalDateTime.now());
-        String sql = easyQuery.queryable(Topic.class)
-                .leftJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2) -> t.eq(t2, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3, t4) -> t.eq(t4, Topic::getId, Topic::getId))
-                .where(o -> o.eq(Topic::getId, 1))
-                .where(false, o -> o.eq(Topic::getId, 1))
+        String sql = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
+                .leftJoin(Topic.class, (t, t1, t2) -> t.id().eq(t2.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3) -> t.id().eq(t3.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3, t4) -> t.id().eq(t4.id()))
+                .where(o -> o.id().eq( "1"))
+                .where(false, o -> o.id().eq( "1"))
                 .whereById("1")
                 .whereById(false, "1")
                 .whereById(Collections.singletonList("1"))
@@ -1013,48 +892,47 @@ public class QueryTest4 extends BaseTest {
                 .whereObject(topicRequest)
                 .whereObject(false, topicRequest)
                 .whereMerge(o -> {
-                    o.t().eq(Topic::getId, "1");
-                    o.t().eq(false, Topic::getId, "1");
-                    o.t().ne(Topic::getId, "1");
-                    o.t().ne(false, Topic::getId, "1");
-                    o.t().ge(Topic::getId, "1");
-                    o.t().ge(false, Topic::getId, "1");
-                    o.t().gt(Topic::getId, "1");
-                    o.t().gt(false, Topic::getId, "1");
-                    o.t().le(Topic::getId, "1");
-                    o.t().le(false, Topic::getId, "1");
-                    o.t().lt(Topic::getId, "1");
-                    o.t().lt(false, Topic::getId, "1");
-                    o.t().like(Topic::getId, "1");
-                    o.t().like(false, Topic::getId, "1");
-                    o.t().notLike(Topic::getId, "1");
-                    o.t().notLike(false, Topic::getId, "1");
-                    o.t().likeMatchLeft(Topic::getId, "1");
-                    o.t().likeMatchLeft(false, Topic::getId, "1");
-                    o.t().likeMatchRight(Topic::getId, "1");
-                    o.t().likeMatchRight(false, Topic::getId, "1");
-                    o.t().notLikeMatchLeft(Topic::getId, "1");
-                    o.t().notLikeMatchLeft(false, Topic::getId, "1");
-                    o.t().notLikeMatchRight(Topic::getId, "1");
-                    o.t().notLikeMatchRight(false, Topic::getId, "1");
+                    o.t1.id().eq( "1");
+                    o.t1.id().eq(false,  "1");
+                    o.t1.id().ne( "1");
+                    o.t1.id().ne(false,  "1");
+                    o.t1.id().ge( "1");
+                    o.t1.id().ge(false,  "1");
+                    o.t1.id().gt( "1");
+                    o.t1.id().gt(false,  "1");
+                    o.t1.id().le( "1");
+                    o.t1.id().le(false,  "1");
+                    o.t1.id().lt( "1");
+                    o.t1.id().lt(false,  "1");
+                    o.t1.id().like( "1");
+                    o.t1.id().like(false,  "1");
+                    o.t1.id().notLike( "1");
+                    o.t1.id().notLike(false,  "1");
+                    o.t1.id().likeMatchLeft( "1");
+                    o.t1.id().likeMatchLeft(false,  "1");
+                    o.t1.id().likeMatchRight( "1");
+                    o.t1.id().likeMatchRight(false,  "1");
+                    o.t1.id().notLikeMatchLeft( "1");
+                    o.t1.id().notLikeMatchLeft(false,  "1");
+                    o.t1.id().notLikeMatchRight( "1");
+                    o.t1.id().notLikeMatchRight(false,  "1");
                 })
                 .limit(1, 2)
-                .orderByAsc(o -> o.column(Topic::getCreateTime))
-                .orderByDesc(o -> o.column(Topic::getCreateTime))
-                .orderByAsc(false, o -> o.column(Topic::getCreateTime))
-                .orderByDesc(false, o -> o.column(Topic::getCreateTime))
-                .orderByAscMerge(o -> o.t().column(Topic::getCreateTime))
-                .orderByDescMerge(o -> o.t().column(Topic::getCreateTime))
-                .orderByAscMerge(false, o -> o.t().column(Topic::getCreateTime))
-                .orderByDescMerge(false, o -> o.t().column(Topic::getCreateTime))
-                .groupByMerge(o -> o.t().column(Topic::getId))
-                .groupByMerge(false, o -> o.t().column(Topic::getId))
-                .havingMerge(o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .selectMerge(Topic.class, o -> {
-                    o.t().column(Topic::getId);
-                    o.t().columnCountAs(Topic::getId, Topic::getStars);
-                }).toSQL();
+                .orderBy(o -> o.createTime().asc())
+                .orderBy(o -> o.createTime().desc())
+                .orderBy(false, o -> o.createTime().asc())
+                .orderBy(false, o -> o.createTime().desc())
+                .orderByMerge(o -> o.t1.createTime().asc())
+                .orderByMerge(o -> o.t1.createTime().desc())
+                .orderByMerge(false,o -> o.t1.createTime().asc())
+                .orderByMerge(false,o -> o.t1.createTime().desc())
+                .groupByMerge(o -> GroupKeys.of(o.t1.id()))
+                .having(o -> o.groupTable().t1.id().count().ge(1L))
+                .having(false,o -> o.groupTable().t1.id().count().ge(1L))
+                .select(Topic.class, o -> Select.of(
+                    o.groupTable().t1.id(),
+                    o.groupTable().t1.id().count().as(Topic::getStars)
+                )).toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
 
@@ -1062,12 +940,12 @@ public class QueryTest4 extends BaseTest {
     public void joinTest7() {
         TopicRequest topicRequest = new TopicRequest();
         topicRequest.setCreateTimeBegin(LocalDateTime.now());
-        String sql = easyQuery.queryable(Topic.class)
-                .leftJoin(Topic.class, (t, t1) -> t.eq(t1, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2) -> t.eq(t2, Topic::getId, Topic::getId))
-                .leftJoin(Topic.class, (t, t1, t2, t3) -> t.eq(t3, Topic::getId, Topic::getId))
-                .where(o -> o.eq(Topic::getId, 1))
-                .where(false, o -> o.eq(Topic::getId, 1))
+        String sql = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
+                .leftJoin(Topic.class, (t, t1, t2) -> t.id().eq(t2.id()))
+                .leftJoin(Topic.class, (t, t1, t2, t3) -> t.id().eq(t3.id()))
+                .where(o -> o.id().eq( "1"))
+                .where(false, o -> o.id().eq( "1"))
                 .whereById("1")
                 .whereById(false, "1")
                 .whereById(Collections.singletonList("1"))
@@ -1075,48 +953,47 @@ public class QueryTest4 extends BaseTest {
                 .whereObject(topicRequest)
                 .whereObject(false, topicRequest)
                 .whereMerge(o -> {
-                    o.t().eq(Topic::getId, "1");
-                    o.t().eq(false, Topic::getId, "1");
-                    o.t().ne(Topic::getId, "1");
-                    o.t().ne(false, Topic::getId, "1");
-                    o.t().ge(Topic::getId, "1");
-                    o.t().ge(false, Topic::getId, "1");
-                    o.t().gt(Topic::getId, "1");
-                    o.t().gt(false, Topic::getId, "1");
-                    o.t().le(Topic::getId, "1");
-                    o.t().le(false, Topic::getId, "1");
-                    o.t().lt(Topic::getId, "1");
-                    o.t().lt(false, Topic::getId, "1");
-                    o.t().like(Topic::getId, "1");
-                    o.t().like(false, Topic::getId, "1");
-                    o.t().notLike(Topic::getId, "1");
-                    o.t().notLike(false, Topic::getId, "1");
-                    o.t().likeMatchLeft(Topic::getId, "1");
-                    o.t().likeMatchLeft(false, Topic::getId, "1");
-                    o.t().likeMatchRight(Topic::getId, "1");
-                    o.t().likeMatchRight(false, Topic::getId, "1");
-                    o.t().notLikeMatchLeft(Topic::getId, "1");
-                    o.t().notLikeMatchLeft(false, Topic::getId, "1");
-                    o.t().notLikeMatchRight(Topic::getId, "1");
-                    o.t().notLikeMatchRight(false, Topic::getId, "1");
+                    o.t1.id().eq( "1");
+                    o.t1.id().eq(false,  "1");
+                    o.t1.id().ne( "1");
+                    o.t1.id().ne(false,  "1");
+                    o.t1.id().ge( "1");
+                    o.t1.id().ge(false,  "1");
+                    o.t1.id().gt( "1");
+                    o.t1.id().gt(false,  "1");
+                    o.t1.id().le( "1");
+                    o.t1.id().le(false,  "1");
+                    o.t1.id().lt( "1");
+                    o.t1.id().lt(false,  "1");
+                    o.t1.id().like( "1");
+                    o.t1.id().like(false,  "1");
+                    o.t1.id().notLike( "1");
+                    o.t1.id().notLike(false,  "1");
+                    o.t1.id().likeMatchLeft( "1");
+                    o.t1.id().likeMatchLeft(false,  "1");
+                    o.t1.id().likeMatchRight( "1");
+                    o.t1.id().likeMatchRight(false,  "1");
+                    o.t1.id().notLikeMatchLeft( "1");
+                    o.t1.id().notLikeMatchLeft(false,  "1");
+                    o.t1.id().notLikeMatchRight( "1");
+                    o.t1.id().notLikeMatchRight(false,  "1");
                 })
                 .limit(1, 2)
-                .orderByAsc(o -> o.column(Topic::getCreateTime))
-                .orderByDesc(o -> o.column(Topic::getCreateTime))
-                .orderByAsc(false, o -> o.column(Topic::getCreateTime))
-                .orderByDesc(false, o -> o.column(Topic::getCreateTime))
-                .orderByAscMerge(o -> o.t().column(Topic::getCreateTime))
-                .orderByDescMerge(o -> o.t().column(Topic::getCreateTime))
-                .orderByAscMerge(false, o -> o.t().column(Topic::getCreateTime))
-                .orderByDescMerge(false, o -> o.t().column(Topic::getCreateTime))
-                .groupByMerge(o -> o.t().column(Topic::getId))
-                .groupByMerge(false, o -> o.t().column(Topic::getId))
-                .havingMerge(o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .havingMerge(false, o -> o.t().count(Topic::getId, AggregatePredicateCompare.GE, 1))
-                .selectMerge(Topic.class, o -> {
-                    o.t().column(Topic::getId);
-                    o.t().columnCountAs(Topic::getId, Topic::getStars);
-                }).toSQL();
+                .orderBy(o -> o.createTime().asc())
+                .orderBy(o -> o.createTime().desc())
+                .orderBy(false, o -> o.createTime().asc())
+                .orderBy(false, o -> o.createTime().desc())
+                .orderByMerge(o -> o.t1.createTime().asc())
+                .orderByMerge(o -> o.t1.createTime().desc())
+                .orderByMerge(false,o -> o.t1.createTime().asc())
+                .orderByMerge(false,o -> o.t1.createTime().desc())
+                .groupByMerge(o -> GroupKeys.of(o.t1.id()))
+                .having(o -> o.groupTable().t1.id().count().ge(1L))
+                .having(false,o -> o.groupTable().t1.id().count().ge(1L))
+                .select(Topic.class, o -> Select.of(
+                    o.groupTable().t1.id(),
+                    o.groupTable().t1.id().count().as(Topic::getStars)
+                )).toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
 
