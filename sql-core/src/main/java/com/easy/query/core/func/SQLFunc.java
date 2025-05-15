@@ -34,21 +34,6 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
     }
 
     /**
-     * 请使用 nullOrDefault
-     *
-     * @param property
-     * @param def
-     * @return
-     */
-    @Deprecated
-    default SQLFunction valueOrDefault(String property, Object def) {
-        return nullOrDefault(s -> {
-            s.column(property)
-                    .value(def);
-        });
-    }
-
-    /**
      * 如果property对应的值为null则返回默认值
      * o.fx().nullOrDefault(x->x.column("title").value("123").column("content"))
      *

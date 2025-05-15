@@ -2,7 +2,9 @@ package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.entity.base.BaseGenericEntity;
+import com.easy.query.test.entity.proxy.TopicGenericKeyProxy;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -16,7 +18,7 @@ import java.time.LocalDateTime;
 @Data
 @Table("t_topic")
 @EntityProxy
-public class TopicGenericKey extends BaseGenericEntity<String> {
+public class TopicGenericKey extends BaseGenericEntity<String> implements ProxyEntityAvailable<TopicGenericKey , TopicGenericKeyProxy> {
 
     private Integer stars;
     private String title;
