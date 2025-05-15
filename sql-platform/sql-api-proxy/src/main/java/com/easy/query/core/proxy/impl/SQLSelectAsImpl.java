@@ -24,6 +24,10 @@ public class SQLSelectAsImpl extends SQLSelectImpl implements SQLSelectAsExpress
     private final TableAvailable table;
     private final  String property;
 
+    public SQLSelectAsImpl(Consumer<Selector> selectorConsumer, Consumer<AsSelector> asSelectConsumer) {
+        this(selectorConsumer,asSelectConsumer,null,null,null,null);
+    }
+
     public SQLSelectAsImpl(Consumer<Selector> selectorConsumer, Consumer<AsSelector> asSelectConsumer, Consumer<GroupSelector> groupSelectorConsumer) {
         this(selectorConsumer,asSelectConsumer,groupSelectorConsumer,null,null,null);
     }

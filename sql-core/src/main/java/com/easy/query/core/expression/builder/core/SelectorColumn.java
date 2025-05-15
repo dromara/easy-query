@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.builder.core;
 
+import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 
