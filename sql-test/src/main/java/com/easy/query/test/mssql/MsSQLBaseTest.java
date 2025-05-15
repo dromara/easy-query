@@ -5,6 +5,8 @@ import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
+import com.easy.query.core.configuration.bean.entity.EntityPropertyDescriptorMatcher;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
 import com.easy.query.core.logging.LogFactory;
@@ -65,6 +67,7 @@ public abstract class MsSQLBaseTest {
                 .useDatabaseConfigure(new MsSQLDatabaseConfiguration())
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
                 .replaceService(NameConversion.class, UpperCamelCaseNameConversion.class)
+                .replaceService(PropertyDescriptorMatcher.class, EntityPropertyDescriptorMatcher.class)
 //                .replaceService(SQLCaseWhenBuilderFactory.class, MyMsSQLCaseWhenBuilderFactory.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();

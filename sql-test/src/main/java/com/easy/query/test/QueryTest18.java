@@ -1106,7 +1106,7 @@ public class QueryTest18 extends BaseTest {
     @Test
     public void autoFalse() {
         List<TopicAutoFalse> list = easyEntityQuery.queryable(Topic.class)
-                .select(TopicAutoFalse.class)
+                .select(TopicAutoFalse.class,s->s.FETCHER.allFields())
                 .toList();
     }
 

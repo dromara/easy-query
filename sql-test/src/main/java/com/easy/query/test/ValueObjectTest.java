@@ -229,7 +229,7 @@ public class ValueObjectTest extends BaseTest {
         Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
         EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
         String sql = easyQuerySQLStatementException.getSQL();
-        Assert.assertEquals("SELECT `province` FROM `company_a`", sql);
+        Assert.assertEquals("SELECT t.`province` FROM `company_a` t", sql);
     }
 
     @Test
@@ -255,7 +255,7 @@ public class ValueObjectTest extends BaseTest {
         Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
         EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
         String sql = easyQuerySQLStatementException.getSQL();
-        Assert.assertEquals("SELECT `province`,`city`,`area` FROM `company_a`", sql);
+        Assert.assertEquals("SELECT t.`province`,t.`city`,t.`area` FROM `company_a` t", sql);
     }
 
     @Test
@@ -283,7 +283,7 @@ public class ValueObjectTest extends BaseTest {
         Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
         EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
         String sql = easyQuerySQLStatementException.getSQL();
-        Assert.assertEquals("SELECT `province`,`city`,`area` FROM `company_a` WHERE `area` = ? AND `province` = ?", sql);
+        Assert.assertEquals("SELECT t.`province`,t.`city`,t.`area` FROM `company_a` t WHERE t.`area` = ? AND t.`province` = ?", sql);
     }
 
     @Test

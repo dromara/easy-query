@@ -504,7 +504,7 @@ public class MyTest1 extends BaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id` AS `value1`,t.`title` AS `value2`,t.`create_time` AS `value3`,(SELECT t2.`title` FROM `t_blog` t2 WHERE t2.`deleted` = ? AND t2.`id` = t.`id`) AS `value4` FROM `t_topic` t WHERE t.`title` LIKE ? AND EXISTS (SELECT 1 FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = t.`id`) AND timestampdiff(DAY, ?, t.`create_time`) <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id` AS `value1`,t.`title` AS `value2`,t.`create_time` AS `value3`,(SELECT t2.`title` FROM `t_blog` t2 WHERE t2.`deleted` = ? AND t2.`id` = t.`id`) AS `value4` FROM `t_topic` t WHERE t.`title` LIKE ? AND EXISTS (SELECT 1 FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = t.`id`) AND timestampdiff(DAY, t.`create_time`, ?) <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),%123%(String),false(Boolean),2021-01-01T01:01(LocalDateTime),0(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 

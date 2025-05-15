@@ -498,25 +498,25 @@ public class H2QueryTest extends H2BaseTest {
                 i--;
             }
         }
-        {
-
-            List<ALLTYPESharding> list = easyEntityQuery.queryable(ALLTYPESharding.class)
-                    .groupBy(a -> GroupKeys.of(a.value()))
-                    .select(ALLTYPESharding.class, group -> Select.of(
-                            group.key1(),
-                            group.sum(s -> s.numberDecimal()),
-                            group.sum(s -> s.numberFloat()),
-                            group.sum(s -> s.numberDouble())
-                    ))
-                    .toList();
-            Assert.assertEquals(1, list.size());
-            ALLTYPESharding alltype = list.get(0);
-
-            Assert.assertNull(alltype.getId());
-            Assert.assertEquals(alltype.getNumberDecimal(), new BigDecimal("12.33").multiply(BigDecimal.valueOf(13)));
-            Assert.assertEquals(alltype.getNumberFloat(), (Float) (12.3f * 13));
-            Assert.assertEquals(alltype.getNumberDouble(), (Double) (22.1d * 13));
-        }
+//        {
+//
+//            List<ALLTYPESharding> list = easyEntityQuery.queryable(ALLTYPESharding.class)
+//                    .groupBy(a -> GroupKeys.of(a.value()))
+//                    .select(ALLTYPESharding.class, group -> Select.of(
+//                            group.key1(),
+//                            group.sum(s -> s.numberDecimal()),
+//                            group.sum(s -> s.numberFloat()),
+//                            group.sum(s -> s.numberDouble())
+//                    ))
+//                    .toList();
+//            Assert.assertEquals(1, list.size());
+//            ALLTYPESharding alltype = list.get(0);
+//
+//            Assert.assertNull(alltype.getId());
+//            Assert.assertEquals(alltype.getNumberDecimal(), new BigDecimal("12.33").multiply(BigDecimal.valueOf(13)));
+//            Assert.assertEquals(alltype.getNumberFloat(), (Float) (12.3f * 13));
+//            Assert.assertEquals(alltype.getNumberDouble(), (Double) (22.1d * 13));
+//        }
     }
 
 

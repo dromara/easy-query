@@ -457,7 +457,7 @@ public class QueryTest5 extends BaseTest {
     public void joinTest1() {
         String sql = baseQueryable1().select(Topic.class, o -> Select.of(
                 o.key1(),
-                o.count(s -> s.t1.stars()).as(Topic::getStars)
+                o.count(s -> s.t1.id()).as(Topic::getStars)
         )).toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t7.`id` LEFT JOIN `t_topic` t8 ON t.`id` = t8.`id` LEFT JOIN `t_topic` t9 ON t.`id` = t9.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
 
@@ -686,7 +686,7 @@ public class QueryTest5 extends BaseTest {
             String sql = easyEntityQuery.queryable(Topic.class)
                     .select(o -> o.FETCHER.allFields()).toSQL();
 
-            Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic`", sql);
+            Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t", sql);
         }
         {
             String sql = easyEntityQuery.queryable(Topic.class)
@@ -698,7 +698,7 @@ public class QueryTest5 extends BaseTest {
             String sql = easyEntityQuery.queryable(Topic.class)
                     .select(o -> o.FETCHER.allFields().alias()).toSQL();
 
-            Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time`,`alias` FROM `t_topic`", sql);
+            Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,t.`alias` FROM `t_topic` t", sql);
         }
         {
             String sql = easyEntityQuery.queryable(Topic.class).toSQL();
@@ -830,7 +830,7 @@ public class QueryTest5 extends BaseTest {
         EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
         Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
         EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
-        Assert.assertEquals("SELECT COUNT(t2.`id`) AS `id` FROM (SELECT DISTINCT IFNULL(t1.`id`,'') AS `id`,SUM(t1.`score`) AS `score` FROM `a123` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY IFNULL(t1.`id`,'')) t2 LIMIT 1", easyQuerySQLStatementException.getSQL());
+        Assert.assertEquals("SELECT COUNT(t2.`id`) FROM (SELECT DISTINCT IFNULL(t1.`id`,?) AS `id`,SUM(t1.`score`) AS `score` FROM `a123` t INNER JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`title` IS NOT NULL GROUP BY IFNULL(t1.`id`,?)) t2 LIMIT 1", easyQuerySQLStatementException.getSQL());
     }
 
     @Test

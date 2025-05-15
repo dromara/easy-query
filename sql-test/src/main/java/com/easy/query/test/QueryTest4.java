@@ -44,7 +44,7 @@ public class QueryTest4 extends BaseTest {
                         o.createTime().eq(maxCreateTimeQuery);
                         o.createTime().asStr().eq("1");
                     }).toSQL();
-            Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` = (SELECT MAX(t1.`create_time`) AS `create_time` FROM `t_topic` t1) AND t.`create_time` = ?", sql);
+            Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` = (SELECT MAX(t1.`create_time`) FROM `t_topic` t1) AND t.`create_time` = ?", sql);
         }
         {
             Query<LocalDateTime> maxCreateTimeQuery = easyEntityQuery.queryable(Topic.class)
@@ -54,7 +54,7 @@ public class QueryTest4 extends BaseTest {
                         o.createTime().ge(maxCreateTimeQuery);
                         o.createTime().asStr().eq("1");
                     }).toSQL();
-            Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` >= (SELECT MAX(t1.`create_time`) AS `create_time` FROM `t_topic` t1) AND t.`create_time` = ?", sql);
+            Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE t.`create_time` >= (SELECT MAX(t1.`create_time`) FROM `t_topic` t1) AND t.`create_time` = ?", sql);
         }
         {
 //            Integer integer = easyEntityQuery.queryable(Topic.class)

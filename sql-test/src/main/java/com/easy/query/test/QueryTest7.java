@@ -87,7 +87,7 @@ public class QueryTest7 extends BaseTest {
                 .groupByMerge(o -> GroupKeys.of(o.t1.id()))
                 .having(o -> o.groupTable().t1.id().count().ge(1L))
                 .having(false, o -> o.groupTable().t1.id().count().ge(1L))
-                .distinct().useInterceptor("A").noInterceptor().useInterceptor("b").noInterceptor("b")
+                .useInterceptor("A").noInterceptor().useInterceptor("b").noInterceptor("b")
                 .disableLogicDelete().enableLogicDelete().asTracking().asNoTracking()
                 .select(Topic.class, o -> {
                     return Select.of(
@@ -95,7 +95,8 @@ public class QueryTest7 extends BaseTest {
                             o.count(s -> s.t1.id()).as(Topic::getStars)
                     );
                 }).toSQL();
-        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t INNER JOIN `t_topic` t1 ON t.`id` = t1.`id` INNER JOIN `t_topic` t2 ON t.`id` = t2.`id` INNER JOIN `t_topic` t3 ON t.`id` = t3.`id` INNER JOIN `t_topic` t4 ON t.`id` = t4.`id` INNER JOIN `t_topic` t5 ON t.`id` = t5.`id` INNER JOIN `t_topic` t6 ON t.`id` = t6.`id` INNER JOIN `t_topic` t7 ON t.`id` = t7.`id` INNER JOIN `t_topic` t8 ON t.`id` = t8.`id` INNER JOIN `t_topic` t9 ON t.`id` = t9.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
+        System.out.println(sql);
+        Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t INNER JOIN `t_topic` t1 ON t.`id` = t1.`id` INNER JOIN `t_topic` t2 ON t.`id` = t2.`id` INNER JOIN `t_topic` t3 ON t.`id` = t3.`id` INNER JOIN `t_topic` t4 ON t.`id` = t4.`id` INNER JOIN `t_topic` t5 ON t.`id` = t5.`id` INNER JOIN `t_topic` t6 ON t.`id` = t6.`id` INNER JOIN `t_topic` t7 ON t.`id` = t7.`id` INNER JOIN `t_topic` t8 ON t.`id` = t8.`id` INNER JOIN `t_topic` t9 ON t.`id` = t9.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` IN (?) AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
 
     @Test
@@ -157,7 +158,7 @@ public class QueryTest7 extends BaseTest {
                 .groupByMerge(o -> GroupKeys.of(o.t1.id()))
                 .having(o -> o.groupTable().t1.id().count().ge(1L))
                 .having(false, o -> o.groupTable().t1.id().count().ge(1L))
-                .distinct().useInterceptor("A").noInterceptor().useInterceptor("b").noInterceptor("b")
+                .useInterceptor("A").noInterceptor().useInterceptor("b").noInterceptor("b")
                 .disableLogicDelete().enableLogicDelete().asTracking().asNoTracking()
                 .select(Topic.class, o -> {
                     return Select.of(
@@ -165,6 +166,7 @@ public class QueryTest7 extends BaseTest {
                             o.count(s -> s.t1.id()).as(Topic::getStars)
                     );
                 }).toSQL();
+        System.out.println(sql);
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t INNER JOIN `t_topic` t1 ON t.`id` = t1.`id` INNER JOIN `t_topic` t2 ON t.`id` = t2.`id` INNER JOIN `t_topic` t3 ON t.`id` = t3.`id` INNER JOIN `t_topic` t4 ON t.`id` = t4.`id` INNER JOIN `t_topic` t5 ON t.`id` = t5.`id` INNER JOIN `t_topic` t6 ON t.`id` = t6.`id` INNER JOIN `t_topic` t7 ON t.`id` = t7.`id` INNER JOIN `t_topic` t8 ON t.`id` = t8.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
 
@@ -226,7 +228,7 @@ public class QueryTest7 extends BaseTest {
                 .groupByMerge(o -> GroupKeys.of(o.t1.id()))
                 .having(o -> o.groupTable().t1.id().count().ge(1L))
                 .having(false, o -> o.groupTable().t1.id().count().ge(1L))
-                .distinct().useInterceptor("A").noInterceptor().useInterceptor("b").noInterceptor("b")
+                .useInterceptor("A").noInterceptor().useInterceptor("b").noInterceptor("b")
                 .disableLogicDelete().enableLogicDelete().asTracking().asNoTracking()
                 .select(Topic.class, o -> {
                     return Select.of(
@@ -234,6 +236,7 @@ public class QueryTest7 extends BaseTest {
                             o.count(s -> s.t1.id()).as(Topic::getStars)
                     );
                 }).toSQL();
+        System.out.println(sql);
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t INNER JOIN `t_topic` t1 ON t.`id` = t1.`id` INNER JOIN `t_topic` t2 ON t.`id` = t2.`id` INNER JOIN `t_topic` t3 ON t.`id` = t3.`id` INNER JOIN `t_topic` t4 ON t.`id` = t4.`id` INNER JOIN `t_topic` t5 ON t.`id` = t5.`id` INNER JOIN `t_topic` t6 ON t.`id` = t6.`id` INNER JOIN `t_topic` t7 ON t.`id` = t7.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
 
@@ -294,7 +297,7 @@ public class QueryTest7 extends BaseTest {
                 .groupByMerge(o -> GroupKeys.of(o.t1.id()))
                 .having(o -> o.groupTable().t1.id().count().ge(1L))
                 .having(false, o -> o.groupTable().t1.id().count().ge(1L))
-                .distinct().useInterceptor("A").noInterceptor().useInterceptor("b").noInterceptor("b")
+                .useInterceptor("A").noInterceptor().useInterceptor("b").noInterceptor("b")
                 .disableLogicDelete().enableLogicDelete().asTracking().asNoTracking()
                 .select(Topic.class, o -> {
                     return Select.of(
@@ -361,7 +364,7 @@ public class QueryTest7 extends BaseTest {
                 .groupByMerge(o -> GroupKeys.of(o.t1.id()))
                 .having(o -> o.groupTable().t1.id().count().ge(1L))
                 .having(false, o -> o.groupTable().t1.id().count().ge(1L))
-                .distinct().useInterceptor("A").noInterceptor().useInterceptor("b").noInterceptor("b")
+                .useInterceptor("A").noInterceptor().useInterceptor("b").noInterceptor("b")
                 .disableLogicDelete().enableLogicDelete().asTracking().asNoTracking()
                 .select(Topic.class, o -> {
                     return Select.of(
@@ -427,7 +430,7 @@ public class QueryTest7 extends BaseTest {
                 .groupByMerge(o -> GroupKeys.of(o.t1.id()))
                 .having(o -> o.groupTable().t1.id().count().ge(1L))
                 .having(false, o -> o.groupTable().t1.id().count().ge(1L))
-                .distinct().useInterceptor("A").noInterceptor().useInterceptor("b").noInterceptor("b")
+                .useInterceptor("A").noInterceptor().useInterceptor("b").noInterceptor("b")
                 .disableLogicDelete().enableLogicDelete().asTracking().asNoTracking()
                 .select(Topic.class, o -> {
                     return Select.of(
@@ -492,7 +495,7 @@ public class QueryTest7 extends BaseTest {
                 .groupByMerge(o -> GroupKeys.of(o.t1.id()))
                 .having(o -> o.groupTable().t1.id().count().ge(1L))
                 .having(false, o -> o.groupTable().t1.id().count().ge(1L))
-                .distinct().useInterceptor("A").noInterceptor().useInterceptor("b").noInterceptor("b")
+                .useInterceptor("A").noInterceptor().useInterceptor("b").noInterceptor("b")
                 .disableLogicDelete().enableLogicDelete().asTracking().asNoTracking()
                 .select(Topic.class, o -> {
                     return Select.of(
@@ -740,7 +743,7 @@ public class QueryTest7 extends BaseTest {
                 .innerJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
                 .where((t, t1) -> t1.title().isNotNull())
                 .groupBy((t, t1) -> GroupKeys.of(t1.id()))
-                .having(true, group -> group.sumBigDecimal(s -> s.t2.score()).ge(BigDecimal.valueOf(1L)))
+                .having(true, group -> group.sumBigDecimal(s -> s.t2.score()).eq(BigDecimal.valueOf(1L)))
                 .having(false, group -> group.sumBigDecimal(s -> s.t2.score()).ge(BigDecimal.valueOf(1L)))
                 .select(BlogEntity.class, group -> Select.of(
                         group.key1(),
@@ -757,8 +760,8 @@ public class QueryTest7 extends BaseTest {
                 .innerJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
                 .where((t, t1) -> t1.title().isNotNull())
                 .groupBy((t, t1) -> GroupKeys.of(t1.id()))
-                .having(true, group -> group.distinct().sumBigDecimal(s -> s.t2.score()).ge(BigDecimal.valueOf(1L)))
-                .having(false, group -> group.distinct().sumBigDecimal(s -> s.t2.score()).ge(BigDecimal.valueOf(1L)))
+                .having(true, group -> group.distinct().sumBigDecimal(s -> s.t2.score()).eq(BigDecimal.valueOf(1L)))
+                .having(false, group -> group.distinct().sumBigDecimal(s -> s.t2.score()).eq(BigDecimal.valueOf(1L)))
                 .select(BlogEntity.class, group -> Select.of(
                         group.key1(),
                         group.sum(s -> s.t2.score()).as(BlogEntity::getScore)

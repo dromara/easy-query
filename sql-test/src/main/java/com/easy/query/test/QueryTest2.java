@@ -669,7 +669,7 @@ public class QueryTest2 extends BaseTest {
                     .distinct()
                     .select(o -> new TopicProxy().id().set(o.key1()))
                     .selectColumn(o -> o.id().count()).toSQL();
-            Assert.assertEquals("SELECT COUNT(t3.`id`) AS `id` FROM (SELECT DISTINCT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` INNER JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t2.`order` ASC) t3", sql);
+            Assert.assertEquals("SELECT COUNT(t3.`id`) FROM (SELECT DISTINCT t.`id` AS `id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` INNER JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t2.`order` ASC) t3", sql);
         }
     }
 
@@ -685,7 +685,7 @@ public class QueryTest2 extends BaseTest {
                         o.min(s -> s.order()).as(BlogEntityGroup::getOrderMin),
                         o.avg(s -> s.status()).as(BlogEntityGroup::getStatusAvg)
                 )).toSQL();
-        Assert.assertEquals("SELECT t.`id` AS `id`,SUM(t.`score`) AS `score_sum`,COUNT(t.`id`) AS `id_count`,LENGTH(t.`title`) AS `title_length`,MAX(t.`publish_time`) AS `publish_time_max`,MIN(t.`order`) AS `order_min`,AVG(t.`status`) AS `status_avg` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", sql);
+        Assert.assertEquals("SELECT t.`id` AS `id`,COUNT(t.`id`) AS `id_count`,SUM(t.`score`) AS `score_sum`,MAX(t.`publish_time`) AS `publish_time_max`,MIN(t.`order`) AS `order_min`,AVG(t.`status`) AS `status_avg` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", sql);
     }
 
     @Test
@@ -725,7 +725,7 @@ public class QueryTest2 extends BaseTest {
                         o.distinct().count(s -> s.order()),
                         o.distinct().avg(s -> s.status())
                 )).toSQL();
-        Assert.assertEquals("SELECT t.`id` AS `id`,SUM(DISTINCT t.`score`) AS `score`,COUNT(DISTINCT t.`order`) AS `order`,AVG(DISTINCT t.`status`) AS `status` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", sql);
+        Assert.assertEquals("SELECT t.`id` AS `id`,SUM(DISTINCT t.`score`),COUNT(DISTINCT t.`order`),AVG(DISTINCT t.`status`) FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", sql);
     }
 
     @Test
@@ -751,7 +751,7 @@ public class QueryTest2 extends BaseTest {
                         group.distinct().count(s -> s.order()).asBigDecimal().nullOrDefault(BigDecimal.ZERO).as(BlogEntity::getOrder),
                         group.distinct().avg(s -> s.status()).nullOrDefault(BigDecimal.ZERO).as(BlogEntity::getStatus)
                 )).toSQL();
-        Assert.assertEquals("SELECT t.`id` AS `id`,SUM(DISTINCT IFNULL(t.`score`,?)) AS `score`,COUNT(DISTINCT IFNULL(t.`order`,?)) AS `order`,AVG(DISTINCT IFNULL(t.`status`,?)) AS `status` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", sql);
+        Assert.assertEquals("SELECT t.`id` AS `id`,IFNULL(SUM(DISTINCT t.`score`),?) AS `score`,IFNULL(COUNT(DISTINCT t.`order`),?) AS `order`,IFNULL(AVG(DISTINCT t.`status`),?) AS `status` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", sql);
     }
 
     @Test
@@ -1139,7 +1139,7 @@ public class QueryTest2 extends BaseTest {
                         .id().set(group.key1())
                         .idCount().set(group.groupTable().id().intCount()));
         String sql = topicGroupTestDTOQueryable.toSQL();
-        Assert.assertEquals("SELECT t1.`rad` AS `rad`,t1.`id` AS `id`,t1.`id_count` AS `id_count` FROM (SELECT RAND() AS `rad`,t.`id` AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY RAND()) t1 ORDER BY RAND() ASC", sql);
+        Assert.assertEquals("SELECT RAND() AS `id`,COUNT(t.`id`) AS `id_count` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? GROUP BY RAND() ORDER BY RAND() ASC", sql);
         List<TopicGroupTestDTO> list = topicGroupTestDTOQueryable.toList();
         Assert.assertEquals(1, list.size());
     }
@@ -1320,7 +1320,7 @@ public class QueryTest2 extends BaseTest {
                     .orderByObject(blogSortRequest)
                     .select(o -> o.FETCHER.id().title().content())
                     .toSQL();
-            Assert.assertEquals("SELECT `id`,`title`,`content` FROM `t_blog` WHERE `deleted` = ? ORDER BY `title` ASC", sql);
+            Assert.assertEquals("SELECT t.`id`,t.`title`,t.`content` FROM `t_blog` t WHERE t.`deleted` = ? ORDER BY t.`title` ASC", sql);
         }
         {
 
@@ -1331,7 +1331,7 @@ public class QueryTest2 extends BaseTest {
                     .orderByObject(blogSortRequest)
                     .select(o -> o.FETCHER.id().title().content())
                     .toSQL();
-            Assert.assertEquals("SELECT `id`,`title`,`content` FROM `t_blog` WHERE `deleted` = ? ORDER BY `title` DESC", sql);
+            Assert.assertEquals("SELECT t.`id`,t.`title`,t.`content` FROM `t_blog` t WHERE t.`deleted` = ? ORDER BY t.`title` DESC", sql);
         }
         {
 
@@ -1373,7 +1373,7 @@ public class QueryTest2 extends BaseTest {
                     .orderByObject(blogSortRequest)
                     .select(o -> o.FETCHER.id().title().content())
                     .toSQL();
-            Assert.assertEquals("SELECT `id`,`title`,`content` FROM `t_blog` WHERE `deleted` = ? ORDER BY `title` ASC,`star` DESC", sql);
+            Assert.assertEquals("SELECT t.`id`,t.`title`,t.`content` FROM `t_blog` t WHERE t.`deleted` = ? ORDER BY t.`title` ASC,t.`star` DESC", sql);
         }
     }
 
