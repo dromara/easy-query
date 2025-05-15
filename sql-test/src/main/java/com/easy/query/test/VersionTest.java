@@ -24,7 +24,7 @@ public class VersionTest extends BaseTest {
     @Test
     public void test1() {
         String id = "1";
-        long l1 = easyQuery.deletable(SysUserVersionLong.class)
+        long l1 = easyEntityQuery.deletable(SysUserVersionLong.class)
                 .whereById(id).ignoreVersion().executeRows();
         SysUserVersionLong sysUserVersionLong = new SysUserVersionLong();
         sysUserVersionLong.setId(id);
@@ -34,19 +34,19 @@ public class VersionTest extends BaseTest {
         sysUserVersionLong.setPhone("13232323232");
         sysUserVersionLong.setIdCard("0000000000");
         sysUserVersionLong.setAddress("浙江省绍兴市越城区城市广场");
-        long l = easyQuery.insertable(sysUserVersionLong).executeRows();
+        long l = easyEntityQuery.insertable(sysUserVersionLong).executeRows();
         Assert.assertEquals(1, l);
-        SysUserVersionLong sysUserVersionLong1 = easyQuery.queryable(SysUserVersionLong.class)
+        SysUserVersionLong sysUserVersionLong1 = easyEntityQuery.queryable(SysUserVersionLong.class)
                 .whereById(id).firstOrNull();
         Assert.assertNotNull(sysUserVersionLong1);
-        long l2 = easyQuery.updatable(sysUserVersionLong1).executeRows();
+        long l2 = easyEntityQuery.updatable(sysUserVersionLong1).executeRows();
         Assert.assertEquals(1, l2);
     }
 
     @Test
     public void test2() {
         String id = "2";
-        long l1 = easyQuery.deletable(SysUserVersionLong.class)
+        long l1 = easyEntityQuery.deletable(SysUserVersionLong.class)
                 .whereById(id).ignoreVersion().executeRows();
         SysUserVersionLong sysUserVersionLong = new SysUserVersionLong();
         sysUserVersionLong.setId(id);
@@ -56,14 +56,14 @@ public class VersionTest extends BaseTest {
         sysUserVersionLong.setPhone("13232323232");
         sysUserVersionLong.setIdCard("0000000000");
         sysUserVersionLong.setAddress("浙江省绍兴市越城区城市广场");
-        long l = easyQuery.insertable(sysUserVersionLong).executeRows();
+        long l = easyEntityQuery.insertable(sysUserVersionLong).executeRows();
         Assert.assertEquals(1, l);
 
         {
             try {
 
-                long l2 = easyQuery.updatable(SysUserVersionLong.class)
-                        .set(SysUserVersionLong::getPhone, "123")
+                long l2 = easyEntityQuery.updatable(SysUserVersionLong.class)
+                        .setColumns(s -> s.phone().set("123"))
                         .whereById(id)
                         .executeRows();
                 Assert.assertEquals(1, l2);
@@ -73,23 +73,23 @@ public class VersionTest extends BaseTest {
         }
         {
 
-            long l2 = easyQuery.updatable(SysUserVersionLong.class)
-                    .set(SysUserVersionLong::getPhone, "123")
+            long l2 = easyEntityQuery.updatable(SysUserVersionLong.class)
+                    .setColumns(s -> s.phone().set("123"))
                     .whereById(id)
                     .ignoreVersion()
                     .executeRows();
             Assert.assertEquals(1, l2);
         }
-        long l3 = easyQuery.updatable(SysUserVersionLong.class)
-                .set(SysUserVersionLong::getPhone, "123")
-                .where(o -> o.eq(SysUserVersionLong::getId, id))
+        long l3 = easyEntityQuery.updatable(SysUserVersionLong.class)
+                .setColumns(s -> s.phone().set("123"))
+                .where(o -> o.id().eq( id))
                 .withVersion(1L)
                 .executeRows();
         Assert.assertEquals(1, l3);
-        long l4 = easyQuery.updatable(SysUserVersionLong.class)
-                .set(SysUserVersionLong::getPhone, "123")
+        long l4 = easyEntityQuery.updatable(SysUserVersionLong.class)
+                .setColumns(s -> s.phone().set("123"))
                 .withVersion(2L)
-                .where(o -> o.eq(SysUserVersionLong::getId, id))
+                .where(o -> o.id().eq( id))
                 .executeRows();
         Assert.assertEquals(1, l4);
     }
@@ -97,40 +97,40 @@ public class VersionTest extends BaseTest {
     @Test
     public void test3() {
         String id = "2";
-        String s = easyQuery.updatable(SysUserVersionLong.class)
-                .set(SysUserVersionLong::getPhone, "123")
+        String s = easyEntityQuery.updatable(SysUserVersionLong.class)
+                .setColumns(sx -> sx.phone().set("123"))
                 .whereById(id).ignoreVersion()
                 .toSQL();
         Assert.assertEquals("UPDATE `t_sys_user_version` SET `phone` = ? WHERE `id` = ?", s);
-        String s1 = easyQuery.updatable(SysUserVersionLong.class)
-                .set(SysUserVersionLong::getPhone, "123").ignoreVersion()
-                .where(o -> o.eq(SysUserVersionLong::getId, id)).toSQL();
+        String s1 = easyEntityQuery.updatable(SysUserVersionLong.class)
+                .setColumns(sx -> sx.phone().set("123")).ignoreVersion()
+                .where(o -> o.id().eq( id)).toSQL();
         Assert.assertEquals("UPDATE `t_sys_user_version` SET `phone` = ? WHERE `id` = ?", s1);
-        String s2 = easyQuery.updatable(SysUserVersionLong.class)
-                .set(SysUserVersionLong::getPhone, "123")
+        String s2 = easyEntityQuery.updatable(SysUserVersionLong.class)
+                .setColumns(sx -> sx.phone().set("123"))
                 .withVersion(1L)
                 .ignoreVersion(false)
-                .where(o -> o.eq(SysUserVersionLong::getId, id))
+                .where(o -> o.id().eq( id))
                 .toSQL();
         Assert.assertEquals("UPDATE `t_sys_user_version` SET `phone` = ?,`version` = ? WHERE `version` = ? AND `id` = ?", s2);
     }
     @Test
     public void test3_1() {
-        String s2 = easyQuery.updatable(SysUserVersionLong.class)
-                .set(SysUserVersionLong::getPhone, "123")
+        String s2 = easyEntityQuery.updatable(SysUserVersionLong.class)
+                .setColumns(s -> s.phone().set("123"))
                 .withVersion(true,1L)
                 .ignoreVersion(false)
-                .where(o -> o.eq(SysUserVersionLong::getId, "id"))
+                .where(o -> o.id().eq( "id"))
                 .toSQL();
         Assert.assertEquals("UPDATE `t_sys_user_version` SET `phone` = ?,`version` = ? WHERE `version` = ? AND `id` = ?", s2);
     }
     @Test
     public void test3_2() {
-        String s2 = easyQuery.updatable(SysUserVersionLong.class)
-                .set(SysUserVersionLong::getPhone, "123")
+        String s2 = easyEntityQuery.updatable(SysUserVersionLong.class)
+                .setColumns(s -> s.phone().set("123"))
                 .withVersion(false,1L)
                 .ignoreVersion(true)
-                .where(o -> o.eq(SysUserVersionLong::getId, "id"))
+                .where(o -> o.id().eq( "id"))
                 .toSQL();
         Assert.assertEquals("UPDATE `t_sys_user_version` SET `phone` = ? WHERE `id` = ?", s2);
     }
@@ -139,11 +139,11 @@ public class VersionTest extends BaseTest {
         Exception ex=null;
         try {
 
-            String s2 = easyQuery.updatable(SysUserVersionLong.class)
-                    .set(SysUserVersionLong::getPhone, "123")
+            String s2 = easyEntityQuery.updatable(SysUserVersionLong.class)
+                    .setColumns(s -> s.phone().set("123"))
                     .withVersion(false,1L)
                     .ignoreVersion(false)
-                    .where(o -> o.eq(SysUserVersionLong::getId, "id"))
+                    .where(o -> o.id().eq( "id"))
                     .toSQL();
         }catch (Exception e){
             ex=e;
@@ -156,7 +156,7 @@ public class VersionTest extends BaseTest {
     @Test
     public void test4() {
         String id = "4";
-        long l1 = easyQuery.deletable(SysUserVersionLongLogicDel.class)
+        long l1 = easyEntityQuery.deletable(SysUserVersionLongLogicDel.class)
                 .whereById(id).ignoreVersion().disableLogicDelete().executeRows();
         SysUserVersionLongLogicDel sysUserVersionLongLogicDel = new SysUserVersionLongLogicDel();
         sysUserVersionLongLogicDel.setId(id);
@@ -167,16 +167,16 @@ public class VersionTest extends BaseTest {
         sysUserVersionLongLogicDel.setIdCard("0000000000");
         sysUserVersionLongLogicDel.setAddress("浙江省绍兴市越城区城市广场");
         sysUserVersionLongLogicDel.setDeleted(false);
-        long l = easyQuery.insertable(sysUserVersionLongLogicDel).executeRows();
+        long l = easyEntityQuery.insertable(sysUserVersionLongLogicDel).executeRows();
         Assert.assertEquals(1, l);
-        long l2 = easyQuery.deletable(sysUserVersionLongLogicDel).executeRows();
+        long l2 = easyEntityQuery.deletable(sysUserVersionLongLogicDel).executeRows();
         Assert.assertEquals(1, l2);
     }
 
     @Test
     public void test5() {
         String id = "5";
-        long l1 = easyQuery.deletable(SysUserVersionLongLogicDel.class)
+        long l1 = easyEntityQuery.deletable(SysUserVersionLongLogicDel.class)
                 .whereById(id).ignoreVersion().disableLogicDelete().executeRows();
         SysUserVersionLongLogicDel sysUserVersionLongLogicDel = new SysUserVersionLongLogicDel();
         sysUserVersionLongLogicDel.setId(id);
@@ -187,9 +187,9 @@ public class VersionTest extends BaseTest {
         sysUserVersionLongLogicDel.setIdCard("0000000000");
         sysUserVersionLongLogicDel.setAddress("浙江省绍兴市越城区城市广场");
         sysUserVersionLongLogicDel.setDeleted(false);
-        long l = easyQuery.insertable(sysUserVersionLongLogicDel).executeRows();
+        long l = easyEntityQuery.insertable(sysUserVersionLongLogicDel).executeRows();
         Assert.assertEquals(1, l);
-        long l2 = easyQuery.deletable(SysUserVersionLongLogicDel.class)
+        long l2 = easyEntityQuery.deletable(SysUserVersionLongLogicDel.class)
                 .ignoreVersion(false)
                 .withVersion(1L)
                 .whereById(id).executeRows();
@@ -199,7 +199,7 @@ public class VersionTest extends BaseTest {
     @Test
     public void test6() {
         String id = "56";
-        String sql = easyQuery.deletable(SysUserVersionLongLogicDel.class)
+        String sql = easyEntityQuery.deletable(SysUserVersionLongLogicDel.class)
                 .withVersion(1L)
                 .whereById(id).toSQL();
         Assert.assertEquals("UPDATE `t_sys_user_version_del` SET `deleted` = ?,`version` = ? WHERE `deleted` = ? AND `version` = ? AND `id` = ?", sql);
@@ -213,7 +213,7 @@ public class VersionTest extends BaseTest {
                 SysUserVersionLongLogicDel sysUserVersionLongLogicDel = new SysUserVersionLongLogicDel();
                 sysUserVersionLongLogicDel.setId("1x1");
                 sysUserVersionLongLogicDel.setUsername("aaaa");
-                easyQuery.updatable(sysUserVersionLongLogicDel)
+                easyEntityQuery.updatable(sysUserVersionLongLogicDel)
                         .asTable("aaa")
                         .ignoreVersion()
                         .executeRows();
@@ -241,7 +241,7 @@ public class VersionTest extends BaseTest {
                 SysUserVersionLongLogicDel sysUserVersionLongLogicDel = new SysUserVersionLongLogicDel();
                 sysUserVersionLongLogicDel.setId("1x1");
                 sysUserVersionLongLogicDel.setUsername("aaaa");
-                easyQuery.updatable(sysUserVersionLongLogicDel)
+                easyEntityQuery.updatable(sysUserVersionLongLogicDel)
                         .executeRows();
             }catch (Exception ex){
                 return ex;
@@ -263,9 +263,9 @@ public class VersionTest extends BaseTest {
                 sysUserVersionLongLogicDel.setId("1x1");
                 sysUserVersionLongLogicDel.setUsername("aaaa");
                 sysUserVersionLongLogicDel.setVersion(1L);
-                easyQuery.updatable(sysUserVersionLongLogicDel)
+                easyEntityQuery.updatable(sysUserVersionLongLogicDel)
                         .setColumns(o->{
-                            o.column(SysUserVersionLongLogicDel::getUsername);
+                            return o.username();
                         })
                         .asTable("AXX")
                         .executeRows();
@@ -295,9 +295,9 @@ public class VersionTest extends BaseTest {
                 sysUserVersionLongLogicDel.setUsername("aaaa");
                 sysUserVersionLongLogicDel.setPhone("1333");
                 sysUserVersionLongLogicDel.setVersion(1L);
-                easyQuery.updatable(sysUserVersionLongLogicDel)
+                easyEntityQuery.updatable(sysUserVersionLongLogicDel)
                         .setColumns(o->{
-                            o.column(SysUserVersionLongLogicDel::getUsername);
+                            return o.username();
                         })
                         .asTable("AXX")
                         .executeRows();

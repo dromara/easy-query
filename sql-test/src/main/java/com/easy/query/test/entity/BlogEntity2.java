@@ -30,7 +30,6 @@ public class BlogEntity2  extends BaseEntity implements ProxyEntityAvailable<Blo
     /**
      * 内容
      */
-    @Column(large = true)
     private String content;
     /**
      * 博客链接

@@ -3,7 +3,6 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.api.proxy.util.EasyProxyUtil;
-import com.easy.query.api4j.func.LambdaSQLFunc;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
@@ -34,14 +33,11 @@ import com.easy.query.test.entity.MyTopic;
 import com.easy.query.test.entity.MyTopic4;
 import com.easy.query.test.entity.MyTopic5;
 import com.easy.query.test.entity.MyTopicx;
-import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeTest1;
 import com.easy.query.test.entity.base.Province;
 import com.easy.query.test.entity.base.ProvinceVO;
 import com.easy.query.test.entity.base.proxy.ProvinceVOProxy;
-import com.easy.query.test.entity.proxy.BlogEntityProxy;
-import com.easy.query.test.entity.proxy.SysUserProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
 import com.easy.query.test.entity.school.proxy.SchoolStudentAddressProxy;
@@ -105,62 +101,6 @@ public class QueryTest17 extends BaseTest {
         Assert.assertEquals("false(Boolean),123(String),123(String),456(String),123(String),789(String),abc(String),def(String),a(String),b(String),c(String),123(String),456(String),aaa(String),a(String),aa(String),a(String),aa(String),1(Integer),aaaa(String),0(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 
-    @Test
-    public void test2() {
-
-
-        ListenerContext listenerContext = new ListenerContext();
-        listenerContextManager.startListen(listenerContext);
-
-
-        List<BlogEntity> list = easyQuery.queryable(BlogEntity.class)
-                .where(b -> {
-                    LambdaSQLFunc<BlogEntity> fx = b.fx();
-                    SQLFunction nullOrDefault = fx.nullOrDefault(BlogEntity::getId, "123");
-                    b.eq(nullOrDefault, "123");
-
-                    SQLFunction subString = fx.subString(BlogEntity::getId, 1, 20);
-                    b.eq(subString, "456");
-
-                    SQLFunction concat = fx.concat(x -> x.column(BlogEntity::getContent).value("123").column(BlogEntity::getId));
-                    b.eq(concat, "789");
-
-                    SQLFunction upper = fx.toUpper(BlogEntity::getContent);
-                    b.eq(upper, "abc");
-                    SQLFunction lower = fx.toLower(BlogEntity::getContent);
-                    b.eq(lower, "def");
-
-                    SQLFunction trim = fx.trim(BlogEntity::getContent);
-                    b.eq(trim, "a");
-
-                    SQLFunction trimStart = fx.trimStart(BlogEntity::getContent);
-                    b.eq(trimStart, "b");
-                    SQLFunction trimEnd = fx.trimEnd(BlogEntity::getContent);
-                    b.eq(trimEnd, "c");
-
-                    SQLFunction replace = fx.replace(BlogEntity::getContent, "123", "456");
-                    b.eq(replace, "aaa");
-
-                    SQLFunction leftPad = fx.leftPad(BlogEntity::getContent, 2, 'a');
-                    b.eq(leftPad, "aa");
-
-                    SQLFunction rightPad = fx.rightPad(BlogEntity::getContent, 2, 'a');
-                    b.eq(rightPad, "aa");
-
-                    SQLFunction length = fx.length(BlogEntity::getContent);
-                    b.eq(length, 1);
-
-                    SQLFunction stringCompareTo = fx.stringCompareTo(BlogEntity::getContent, "aaaa");
-                    b.ge(stringCompareTo, 0);
-                }).toList();
-
-        listenerContextManager.clear();
-
-        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND IFNULL(`id`,?) = ? AND SUBSTR(`id`,2,20) = ? AND CONCAT(`content`,?,`id`) = ? AND UPPER(`content`) = ? AND LOWER(`content`) = ? AND TRIM(`content`) = ? AND LTRIM(`content`) = ? AND RTRIM(`content`) = ? AND REPLACE(`content`,?,?) = ? AND LPAD(`content`, 2, ?) = ? AND RPAD(`content`, 2, ?) = ? AND CHAR_LENGTH(`content`) = ? AND STRCMP(`content`,?) >= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("false(Boolean),123(String),123(String),456(String),123(String),789(String),abc(String),def(String),a(String),b(String),c(String),123(String),456(String),aaa(String),a(String),aa(String),a(String),aa(String),1(Integer),aaaa(String),0(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-    }
 
     @Test
     public void test3() {
@@ -905,18 +845,18 @@ public class QueryTest17 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list = easyQuery.queryable(Topic.class)
+            List<Topic> list = easyEntityQuery.queryable(Topic.class)
                     .where(b -> {
-                        b.eq(Topic::getId, "123");
-                    }).orderByAsc(t -> {
-                        t.sqlNativeSegment("RAND()");
+                        b.id().eq("123");
+                    }).orderBy(t -> {
+                        t.expression().sqlSegment("RAND()").asc();
                     }).toList();
 
             listenerContextManager.clear();
 
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ? ORDER BY RAND()", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ? ORDER BY RAND() ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
         }
@@ -973,14 +913,14 @@ public class QueryTest17 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list = easyQuery.queryable(Topic.class)
+            List<Topic> list = easyEntityQuery.queryable(Topic.class)
                     .where(b -> {
-                        b.eq(Topic::getId, "123");
-                    }).orderByAsc(t -> {
-                        t.sqlNativeSegment("IFNULL({0},{1}) DESC", c -> {
-                            c.expression(Topic::getStars).value(1);
+                        b.id().eq("123");
+                    }).orderBy(t -> {
+                        t.expression().sql("IFNULL({0},{1}) DESC", c -> {
+                            c.expression(t.stars()).value(1);
                         });
-                        t.sqlNativeSegment("RAND()");
+                        t.expression().sql("RAND");
                     }).toList();
 
             listenerContextManager.clear();
@@ -1050,17 +990,17 @@ public class QueryTest17 extends BaseTest {
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
 
-            List<Topic> list = easyQuery.queryable(Topic.class)
+            List<Topic> list = easyEntityQuery.queryable(Topic.class)
                     .where(b -> {
-                        b.eq(Topic::getId, "123");
-                        b.sqlNativeSegment("{0}!={1}", c -> {
-                            c.expression(Topic::getStars).expression(Topic::getCreateTime);
+                        b.id().eq("123");
+                        b.expression().sql("{0}!={1}", c -> {
+                            c.expression(b.stars()).expression(b.createTime());
                         });
-                    }).orderByAsc(t -> {
-                        t.sqlNativeSegment("IFNULL({0},{1}) DESC", c -> {
-                            c.expression(Topic::getStars).value(1);
+                    }).orderBy(t -> {
+                        t.expression().sql("IFNULL({0},{1}) DESC", c -> {
+                            c.expression(t.stars()).value(1);
                         });
-                        t.sqlNativeSegment("RAND()");
+                        t.expression().sql("RAND()");
                     }).toList();
 
             listenerContextManager.clear();

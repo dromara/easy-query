@@ -1,9 +1,12 @@
 package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.Version;
 import com.easy.query.core.basic.extension.version.VersionLongStrategy;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.proxy.SysUserVersionLongProxy;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -16,7 +19,8 @@ import java.time.LocalDateTime;
  */
 @Data
 @Table(value = "t_sys_user_version")
-public class SysUserVersionLong {
+@EntityProxy
+public class SysUserVersionLong implements ProxyEntityAvailable<SysUserVersionLong , SysUserVersionLongProxy> {
     @Column(primaryKey = true)
     private String id;
     private String username;

@@ -1,7 +1,10 @@
 package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.proxy.TopicAutoNativeProxy;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -14,7 +17,8 @@ import java.time.LocalDateTime;
  */
 @Data
 @Table("t_topic_auto1")
-public class TopicAutoNative {
+@EntityProxy
+public class TopicAutoNative implements ProxyEntityAvailable<TopicAutoNative , TopicAutoNativeProxy> {
 
     @Column(primaryKey = true)
     private Integer id;

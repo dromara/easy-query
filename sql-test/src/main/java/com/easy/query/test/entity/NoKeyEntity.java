@@ -1,6 +1,9 @@
 package com.easy.query.test.entity;
 
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.proxy.NoKeyEntityProxy;
 import lombok.Data;
 
 /**
@@ -10,8 +13,9 @@ import lombok.Data;
  * @author xuejiaming
  */
 @Data
+@EntityProxy
 @Table("t_nokey")
-public class NoKeyEntity {
+public class NoKeyEntity implements ProxyEntityAvailable<NoKeyEntity , NoKeyEntityProxy> {
     private String id;
     private String name;
 }

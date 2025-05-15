@@ -2,16 +2,11 @@ package com.easy.query.test;
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.api4j.client.DefaultEasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.configuration.QueryConfiguration;
-import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
-import com.easy.query.core.configuration.bean.entity.EntityPropertyDescriptorMatcher;
-import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;

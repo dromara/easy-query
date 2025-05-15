@@ -1,7 +1,8 @@
 package com.easy.query.test.pgsql;
 
-import com.easy.query.api4j.select.Queryable;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
@@ -14,6 +15,7 @@ import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.BlogPartitionVO;
+import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -34,8 +36,8 @@ public class QueryTest extends PgSQLBaseTest {
 
     @Test
     public void query1() {
-        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
-                .where(o -> o.eq(BlogEntity::getId, "123"));
+        EntityQueryable<BlogEntityProxy, BlogEntity> queryable = entityQuery.queryable(BlogEntity.class)
+                .where(o -> o.id().eq("123"));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT \"id\",\"create_time\",\"update_time\",\"create_by\",\"update_by\",\"deleted\",\"title\",\"content\",\"url\",\"star\",\"publish_time\",\"score\",\"status\",\"order\",\"is_top\",\"top\" FROM \"t_blog\" WHERE \"deleted\" = ? AND \"id\" = ?", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
@@ -45,8 +47,8 @@ public class QueryTest extends PgSQLBaseTest {
 
     @Test
     public void query2() {
-        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
-                .where(o -> o.eq(BlogEntity::getId, "97"));
+        EntityQueryable<BlogEntityProxy, BlogEntity> queryable = entityQuery.queryable(BlogEntity.class)
+                .where(o -> o.id().eq( "97"));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT \"id\",\"create_time\",\"update_time\",\"create_by\",\"update_by\",\"deleted\",\"title\",\"content\",\"url\",\"star\",\"publish_time\",\"score\",\"status\",\"order\",\"is_top\",\"top\" FROM \"t_blog\" WHERE \"deleted\" = ? AND \"id\" = ?", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
@@ -56,8 +58,8 @@ public class QueryTest extends PgSQLBaseTest {
 
     @Test
     public void query3() {
-        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
-                .where(o -> o.eq(BlogEntity::getId, "97")).limit(1).select(" 1 ");
+        EntityQueryable<BlogEntityProxy, BlogEntity> queryable = entityQuery.queryable(BlogEntity.class)
+                .where(o -> o.id().eq( "97")).limit(1).select(" 1 ");
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT  1  FROM \"t_blog\" WHERE \"deleted\" = ? AND \"id\" = ? LIMIT 1", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
@@ -67,8 +69,8 @@ public class QueryTest extends PgSQLBaseTest {
 
     @Test
     public void query4() {
-        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
-                .where(o -> o.eq(BlogEntity::getId, "97")).limit(1).select("1 as id");
+        EntityQueryable<BlogEntityProxy, BlogEntity> queryable = entityQuery.queryable(BlogEntity.class)
+                .where(o -> o.id().eq( "97")).limit(1).select("1 as id");
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT 1 as id FROM \"t_blog\" WHERE \"deleted\" = ? AND \"id\" = ? LIMIT 1", sql);
         BlogEntity blogEntity = queryable.firstOrNull();
@@ -78,8 +80,8 @@ public class QueryTest extends PgSQLBaseTest {
 
     @Test
     public void query5() {
-        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
-                .where(o -> o.in(BlogEntity::getId, Arrays.asList("97", "98")));
+        EntityQueryable<BlogEntityProxy, BlogEntity> queryable = entityQuery.queryable(BlogEntity.class)
+                .where(o -> o.id().in(Arrays.asList("97", "98")));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT \"id\",\"create_time\",\"update_time\",\"create_by\",\"update_by\",\"deleted\",\"title\",\"content\",\"url\",\"star\",\"publish_time\",\"score\",\"status\",\"order\",\"is_top\",\"top\" FROM \"t_blog\" WHERE \"deleted\" = ? AND \"id\" IN (?,?)", sql);
         List<BlogEntity> blogs = queryable.toList();
@@ -93,7 +95,7 @@ public class QueryTest extends PgSQLBaseTest {
 
     @Test
     public void query6() {
-        Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class)
+        EntityQueryable<BlogEntityProxy, BlogEntity> queryable = entityQuery.queryable(BlogEntity.class)
                 .whereById("97");
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT \"id\",\"create_time\",\"update_time\",\"create_by\",\"update_by\",\"deleted\",\"title\",\"content\",\"url\",\"star\",\"publish_time\",\"score\",\"status\",\"order\",\"is_top\",\"top\" FROM \"t_blog\" WHERE \"deleted\" = ? AND \"id\" = ?", sql);
@@ -107,7 +109,7 @@ public class QueryTest extends PgSQLBaseTest {
 
     @Test
     public void query7() {
-        List<BlogEntity> blogEntities = easyQuery.queryable(BlogEntity.class).orderByAsc(o -> o.column(BlogEntity::getCreateTime)).toList();
+        List<BlogEntity> blogEntities = entityQuery.queryable(BlogEntity.class).orderBy(o -> o.createTime().asc()).toList();
         LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 1, 1, 1);
         int i = 0;
         for (BlogEntity blog : blogEntities) {
@@ -134,9 +136,9 @@ public class QueryTest extends PgSQLBaseTest {
 
     @Test
     public void query8() {
-        Queryable<String> queryable = easyQuery.queryable(BlogEntity.class)
-                .where(o -> o.eq(BlogEntity::getId, "97"))
-                .select(String.class,o->o.sqlFunc(o.fx().concat(BlogEntity::getId,BlogEntity::getId)));
+        Query<String> queryable = entityQuery.queryable(BlogEntity.class)
+                .where(o -> o.id().eq("97"))
+                .selectColumn(s -> s.id().concat(s.id()));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT CONCAT(t.\"id\",t.\"id\") FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ?", sql);
         String blogEntity = queryable.firstOrNull();
@@ -145,9 +147,9 @@ public class QueryTest extends PgSQLBaseTest {
     }
     @Test
     public void query9() {
-        Queryable<String> queryable = easyQuery.queryable(BlogEntity.class)
-                .where(o -> o.eq(BlogEntity::getId, "97"))
-                .select(String.class,o->o.sqlFunc(o.fx().concat(BlogEntity::getId,BlogEntity::getTitle)));
+        Query<String> queryable = entityQuery.queryable(BlogEntity.class)
+                .where(o -> o.id().eq( "97"))
+                .selectColumn(s -> s.id().concat(s.title()));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT CONCAT(t.\"id\",t.\"title\") FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ?", sql);
         String blogEntity = queryable.firstOrNull();
@@ -156,8 +158,8 @@ public class QueryTest extends PgSQLBaseTest {
     }
 //    @Test
 //    public void query10() {
-//        Queryable<String> queryable = easyQuery.queryable(BlogEntity.class)
-//                .where(o -> o.eq(BlogEntity::getId, "97"))
+//        Queryable<String> queryable = entityQuery.queryable(BlogEntity.class)
+//                .where(o -> o.id().eq( "97"))
 //                .select(String.class,o->o.func(o.sqlFunc().join(",",BlogEntity::getId,BlogEntity::getTitle)));
 //        String sql = queryable.toSQL();
 //        Assert.assertEquals("SELECT t.\"id\" || ? || t.\"title\" FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ?", sql);
@@ -167,9 +169,9 @@ public class QueryTest extends PgSQLBaseTest {
 //    }
 @Test
 public void query10() {
-    Queryable<String> queryable = easyQuery.queryable(BlogEntity.class)
-            .where(o -> o.eq(BlogEntity::getId, "97"))
-            .select(String.class,o->o.sqlFunc(o.fx().valueOrDefault(BlogEntity::getId,"1")));
+    Query<String> queryable = entityQuery.queryable(BlogEntity.class)
+            .where(o -> o.id().eq( "97"))
+            .selectColumn(t_blog -> t_blog.id().nullOrDefault("1"));
     String sql = queryable.toSQL();
     Assert.assertEquals("SELECT COALESCE(t.\"id\",?) FROM \"t_blog\" t WHERE t.\"deleted\" = ? AND t.\"id\" = ?", sql);
 }
@@ -364,7 +366,7 @@ public void query10() {
 
         List<Part1<BlogEntity, Long>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().rowNumberOver().partitionBy(b.title()).orderBy(b.createTime())
                 )).where(partition -> {
@@ -396,7 +398,7 @@ public void query10() {
 
         List<Draft2<Long, String>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().rowNumberOver().partitionBy(b.title()).orderBy(b.createTime())
                 )).where(partition -> {
@@ -428,7 +430,7 @@ public void query10() {
 
         List<Part1<BlogEntity, Long>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().rankOver().partitionBy(b.title()).orderBy(b.createTime())
                 )).where(partition -> {
@@ -460,7 +462,7 @@ public void query10() {
 
         List<Part1<BlogEntity, Long>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().rankOver().partitionBy(b.title()).orderBy(b.createTime().nullOrDefault(LocalDateTime.of(2020, 1, 1, 1, 1)))
                 )).where(partition -> {
@@ -492,7 +494,7 @@ public void query10() {
 
         List<BlogPartitionVO> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().rankOver().partitionBy(b.title()).orderBy(b.createTime().nullOrDefault(LocalDateTime.of(2020, 1, 1, 1, 1)))
                 )).where(partition -> {
@@ -524,7 +526,7 @@ public void query10() {
 
         List<Draft2<Long, String>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().rankOver().partitionBy(b.title()).orderBy(b.createTime())
                 )).where(partition -> {
@@ -557,7 +559,7 @@ public void query10() {
 
         List<Part1<BlogEntity, Long>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().denseRankOver().partitionBy(b.title()).orderBy(b.createTime())
                 )).where(partition -> {
@@ -589,7 +591,7 @@ public void query10() {
 
         List<Draft2<Long, String>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().denseRankOver().partitionBy(b.title()).orderBy(b.createTime())
                 )).where(partition -> {
@@ -622,7 +624,7 @@ public void query10() {
 
         List<Part1<BlogEntity, Integer>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().sumOver(b.star()).partitionBy(b.title()).orderBy(b.createTime())
                 )).where(partition -> {
@@ -654,7 +656,7 @@ public void query10() {
 
         List<Draft2<Integer, String>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().sumOver(b.star()).partitionBy(b.title()).orderBy(b.createTime())
                 )).where(partition -> {
@@ -686,7 +688,7 @@ public void query10() {
 
         List<Part1<BlogEntity, BigDecimal>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().avgOver(b.star()).partitionBy(b.title()).orderBy(b.createTime())
                 )).where(partition -> {
@@ -718,7 +720,7 @@ public void query10() {
 
         List<Draft2<BigDecimal, String>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().avgOver(b.star()).partitionBy(b.title()).orderBy(b.createTime())
                 )).where(partition -> {
@@ -751,7 +753,7 @@ public void query10() {
 
         List<Part1<BlogEntity, Integer>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().maxOver(b.star()).partitionBy(b.title()).orderBy(b.createTime())
                 )).where(partition -> {
@@ -783,7 +785,7 @@ public void query10() {
 
         List<Draft2<Integer, String>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().maxOver(b.star()).partitionBy(b.title()).orderBy(b.createTime())
                 )).where(partition -> {
@@ -814,7 +816,7 @@ public void query10() {
 
         List<Part1<BlogEntity, Integer>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().minOver(b.star()).partitionBy(b.title()).orderBy(b.createTime())
                 )).where(partition -> {
@@ -846,7 +848,7 @@ public void query10() {
 
         List<Draft2<Integer, String>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().minOver(b.star()).partitionBy(b.title()).orderBy(b.createTime())
                 )).where(partition -> {
@@ -878,7 +880,7 @@ public void query10() {
 
         List<Part1<BlogEntity, Long>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().countOver(b.star()).partitionBy(b.title()).orderBy(b.createTime())
                 )).where(partition -> {
@@ -910,7 +912,7 @@ public void query10() {
 
         List<Draft2<Long, String>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().countOver(b.star()).partitionBy(b.title()).orderBy(b.createTime())
                 )).where(partition -> {
@@ -940,7 +942,7 @@ public void query10() {
 
         List<Draft2<Long, String>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().countOver(b.star()).partitionBy(b.title())
                 )).where(partition -> {

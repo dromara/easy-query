@@ -257,7 +257,7 @@ public class UpdateTest1 extends BaseTest {
 //    @Test
 //    public void testUpdate3_1() {
 //
-//        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+//        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
 //        try {
 //            trackManager.begin();
 //
@@ -306,7 +306,7 @@ public class UpdateTest1 extends BaseTest {
 //    @Test
 //    public void testUpdate3_2() {
 //
-//        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+//        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
 //        try {
 //            trackManager.begin();
 //
@@ -354,7 +354,7 @@ public class UpdateTest1 extends BaseTest {
 //    @Test
 //    public void testUpdate3_3() {
 //
-//        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+//        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
 //        try {
 //            trackManager.begin();
 //
@@ -401,7 +401,7 @@ public class UpdateTest1 extends BaseTest {
 //    @Test
 //    public void testUpdate3_4() {
 //
-//        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+//        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
 //        try {
 //            trackManager.begin();
 //            List<TopicConcurrent> topics=new ArrayList<TopicConcurrent>();
@@ -557,14 +557,14 @@ public class UpdateTest1 extends BaseTest {
 
     @Test
     public void updateTest51() {
-        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
         try {
 
             trackManager.begin();
-            Topic topic = easyQuery.queryable(Topic.class).asTracking()
+            Topic topic = easyEntityQuery.queryable(Topic.class).asTracking()
                     .whereById("1").firstNotNull();
 
-            long l = easyQuery.updatable(topic).executeRows();
+            long l = easyEntityQuery.updatable(topic).executeRows();
             Assert.assertEquals(0, l);
         } finally {
 

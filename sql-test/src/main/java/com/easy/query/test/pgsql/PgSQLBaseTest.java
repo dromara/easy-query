@@ -2,8 +2,6 @@ package com.easy.query.test.pgsql;
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.api4j.client.DefaultEasyQuery;
-import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
@@ -47,8 +45,8 @@ import java.util.List;
  */
 public class PgSQLBaseTest {
     public static HikariDataSource dataSource;
-    public static EasyQuery easyQuery;
     public static EasyEntityQuery entityQuery;
+    public static EasyQueryClient easyQueryClient;
     public static ListenerContextManager listenerContextManager;
 
     static {
@@ -76,7 +74,7 @@ public class PgSQLBaseTest {
     public static void initEasyQuery() {
         listenerContextManager = new ListenerContextManager();
         MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
-        EasyQueryClient easyObjectQuery = EasyQueryBootstrapper.defaultBuilderConfiguration()
+        easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .optionConfigure(op -> {
                     op.setDeleteThrowError(false);
@@ -87,9 +85,8 @@ public class PgSQLBaseTest {
                 .useDatabaseConfigure(new PgSQLDatabaseConfiguration())
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
                 .build();
-        easyQuery = new DefaultEasyQuery(easyObjectQuery);
-        entityQuery = new DefaultEasyEntityQuery(easyObjectQuery);
-        QueryRuntimeContext runtimeContext = easyQuery.getRuntimeContext();
+        entityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+        QueryRuntimeContext runtimeContext = entityQuery.getRuntimeContext();
         QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
         configuration.applyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());
         configuration.applyEncryptionStrategy(new Base64EncryptionStrategy());
@@ -109,7 +106,7 @@ public class PgSQLBaseTest {
 
     public static void initData() {
 
-        boolean any = easyQuery.queryable(BlogEntity.class).any();
+        boolean any = entityQuery.queryable(BlogEntity.class).any();
         if (!any) {
 
             LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 1, 1, 1);
@@ -134,7 +131,7 @@ public class PgSQLBaseTest {
                 blog.setDeleted(false);
                 blogs.add(blog);
             }
-            easyQuery.insertable(blogs).executeRows();
+            entityQuery.insertable(blogs).executeRows();
         }
 
     }

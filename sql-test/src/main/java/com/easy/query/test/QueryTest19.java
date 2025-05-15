@@ -461,7 +461,7 @@ public class QueryTest19 extends BaseTest {
 
         try {
 
-            List<MyUserHome2> list = easyQuery.queryable(MyUserHome2.class)
+            List<MyUserHome2> list = easyEntityQuery.queryable(MyUserHome2.class)
                     .toList();
         } catch (Exception e) {
 

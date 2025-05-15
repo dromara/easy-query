@@ -1,6 +1,6 @@
 package com.easy.query.test.dameng;
 
-import com.easy.query.api4j.select.Queryable;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
@@ -13,7 +13,7 @@ import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.dameng.entity.DamengMyTopic;
 import com.easy.query.test.dameng.entity.DamengMyTopicDTO;
-import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.dameng.entity.proxy.DamengMyTopicProxy;
 import com.easy.query.test.listener.ListenerContext;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
@@ -36,8 +36,8 @@ public class DamengQueryTest extends DamengBaseTest {
 
     @Test
     public void query0() {
-        Queryable<DamengMyTopic> queryable = easyQuery.queryable(DamengMyTopic.class)
-                .where(o -> o.eq(DamengMyTopic::getId, "123xxx"));
+        EntityQueryable<DamengMyTopicProxy, DamengMyTopic> queryable = entityQuery.queryable(DamengMyTopic.class)
+                .where(o -> o.id().eq("123xxx"));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT \"ID\",\"STARS\",\"TITLE\",\"CREATE_TIME\" FROM \"MY_TOPIC\" WHERE \"ID\" = ?", sql);
         DamengMyTopic msSQLMyTopic = queryable.firstOrNull();
@@ -46,16 +46,16 @@ public class DamengQueryTest extends DamengBaseTest {
 
     @Test
     public void query0_1() {
-        Queryable<DamengMyTopic> queryable = easyQuery.queryable(DamengMyTopic.class)
-                .where(o -> o.eq(DamengMyTopic::getId, "123xxx")).limit(1);
+        EntityQueryable<DamengMyTopicProxy, DamengMyTopic> queryable = entityQuery.queryable(DamengMyTopic.class)
+                .where(o -> o.id().eq( "123xxx")).limit(1);
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT \"ID\",\"STARS\",\"TITLE\",\"CREATE_TIME\" FROM \"MY_TOPIC\" WHERE \"ID\" = ? AND ROWNUM < 2", sql);
     }
 
     @Test
     public void query1() {
-        Queryable<DamengMyTopic> queryable = easyQuery.queryable(DamengMyTopic.class)
-                .where(o -> o.eq(DamengMyTopic::getId, "123xxx")).limit(10, 10);
+        EntityQueryable<DamengMyTopicProxy, DamengMyTopic> queryable = entityQuery.queryable(DamengMyTopic.class)
+                .where(o -> o.id().eq( "123xxx")).limit(10, 10);
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT rt.* FROM(SELECT \"ID\",\"STARS\",\"TITLE\",\"CREATE_TIME\", ROWNUM AS \"__rownum__\" FROM \"MY_TOPIC\" WHERE \"ID\" = ? AND ROWNUM < 21) rt WHERE rt.\"__rownum__\" > 10", sql);
         List<DamengMyTopic> msSQLMyTopic = queryable.toList();
@@ -64,8 +64,8 @@ public class DamengQueryTest extends DamengBaseTest {
 
     @Test
     public void query2() {
-        Queryable<DamengMyTopic> queryable = easyQuery.queryable(DamengMyTopic.class)
-                .where(o -> o.eq(DamengMyTopic::getId, "123xxx")).limit(10, 10).orderByAsc(o -> o.column(DamengMyTopic::getCreateTime));
+        EntityQueryable<DamengMyTopicProxy, DamengMyTopic> queryable = entityQuery.queryable(DamengMyTopic.class)
+                .where(o -> o.id().eq( "123xxx")).limit(10, 10).orderBy(o -> o.createTime().asc());
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS \"__rownum__\" FROM (SELECT \"ID\",\"STARS\",\"TITLE\",\"CREATE_TIME\" FROM \"MY_TOPIC\" WHERE \"ID\" = ? ORDER BY \"CREATE_TIME\" ASC) rt WHERE ROWNUM < 21) rt1 WHERE rt1.\"__rownum__\" > 10", sql);
         List<DamengMyTopic> msSQLMyTopic = queryable.toList();
@@ -74,8 +74,8 @@ public class DamengQueryTest extends DamengBaseTest {
 
     @Test
     public void query3() {
-        Queryable<DamengMyTopic> queryable = easyQuery.queryable(DamengMyTopic.class)
-                .where(o -> o.eq(DamengMyTopic::getId, "123xxx")).limit(0, 10).orderByAsc(o -> o.column(DamengMyTopic::getCreateTime));
+        EntityQueryable<DamengMyTopicProxy, DamengMyTopic> queryable = entityQuery.queryable(DamengMyTopic.class)
+                .where(o -> o.id().eq( "123xxx")).limit(0, 10).orderBy(o -> o.createTime().asc());
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT rt.* FROM (SELECT \"ID\",\"STARS\",\"TITLE\",\"CREATE_TIME\" FROM \"MY_TOPIC\" WHERE \"ID\" = ? ORDER BY \"CREATE_TIME\" ASC) rt WHERE ROWNUM < 11", sql);
         List<DamengMyTopic> msSQLMyTopic = queryable.toList();
@@ -86,9 +86,9 @@ public class DamengQueryTest extends DamengBaseTest {
     @Test
     public void query4() {
 
-        EasyPageResult<DamengMyTopic> topicPageResult = easyQuery
+        EasyPageResult<DamengMyTopic> topicPageResult = entityQuery
                 .queryable(DamengMyTopic.class)
-                .where(o -> o.isNotNull(DamengMyTopic::getId))
+                .where(o -> o.id().isNotNull())
                 .toPageResult(2, 20);
         List<DamengMyTopic> data = topicPageResult.getData();
         Assert.assertEquals(20, data.size());
@@ -97,11 +97,14 @@ public class DamengQueryTest extends DamengBaseTest {
     @Test
     public void query5() {
 
-        EasyPageResult<DamengMyTopicDTO> topicPageResult = easyQuery
+        EasyPageResult<DamengMyTopicDTO> topicPageResult = entityQuery
                 .queryable(DamengMyTopic.class)
-                .where(o -> o.isNotNull(DamengMyTopic::getId).ne(DamengMyTopic::getId,"xxasdasda"))
-                .orderByAsc(o -> o.column(DamengMyTopic::getId))
-                .select(DamengMyTopicDTO.class,s->s.columnAs(DamengMyTopic::getId, DamengMyTopicDTO::getTitle))
+                .where(o -> o.id().isNotNull())
+                .where(o -> o.id().ne("xxasdasda"))
+                .orderBy(o -> o.id().asc())
+                .select(DamengMyTopicDTO.class,s->Select.of(
+                        s.id().as(DamengMyTopicDTO::getTitle)
+                ))
                 .toPageResult(2, 20);
         List<DamengMyTopicDTO> data = topicPageResult.getData();
         Assert.assertEquals(20, data.size());
@@ -109,12 +112,12 @@ public class DamengQueryTest extends DamengBaseTest {
 
     @Test
     public void query6() {
-        List<DamengMyTopic> list = easyQuery
+        List<DamengMyTopic> list = entityQuery
                 .queryable(DamengMyTopic.class).toList();
-        EasyPageResult<DamengMyTopic> topicPageResult = easyQuery
+        EasyPageResult<DamengMyTopic> topicPageResult = entityQuery
                 .queryable(DamengMyTopic.class)
-                .where(o -> o.isNotNull(DamengMyTopic::getId))
-                .orderByAsc(o -> o.column(DamengMyTopic::getStars))
+                .where(o -> o.id().isNotNull())
+                .orderBy(o -> o.stars().asc())
                 .toPageResult(2, 20);
         List<DamengMyTopic> data = topicPageResult.getData();
         Assert.assertEquals(20, data.size());
@@ -127,7 +130,7 @@ public class DamengQueryTest extends DamengBaseTest {
 
     @Test
     public void query7() {
-        List<DamengMyTopic> list = easyQuery.getEasyQueryClient()
+        List<DamengMyTopic> list = entityQuery.getEasyQueryClient()
                 .queryable(DamengMyTopic.class)
                 .where(o -> o.eq("id", "1"))
                 .asTreeCTE()
@@ -273,7 +276,7 @@ public class DamengQueryTest extends DamengBaseTest {
 //            damengMyTopics.add(damengMyTopic);
 //        }
 //        long begin = System.currentTimeMillis();
-//        long l = easyQuery.insertable(damengMyTopics).batch().executeRows();
+//        long l = entityQuery.insertable(damengMyTopics).batch().executeRows();
 //        long end = System.currentTimeMillis();
 //        String s = "插入:" + damengMyTopics.size() + "条,用时:" + (end - begin) + "(ms)";
 //        System.out.println(s);
@@ -281,12 +284,12 @@ public class DamengQueryTest extends DamengBaseTest {
 
     @Test
     public void test1() {
-        List<DamengMyTopic> list = easyQuery.queryable(DamengMyTopic.class)
-                .where(d -> d.ge(DamengMyTopic::getCreateTime, LocalDateTime.now()))
+        List<DamengMyTopic> list = entityQuery.queryable(DamengMyTopic.class)
+                .where(d -> d.createTime().ge(LocalDateTime.now()))
                 .toList();
         List<DamengMyTopic> list1 = entityQuery.queryable(DamengMyTopic.class)
                 .where(x -> {
-                    x.expression().constant().valueOf(LocalDateTime.now()).duration(x.createTime()).toSeconds().gt(100L);
+                    x.expression().constant(LocalDateTime.now()).duration(x.createTime()).toSeconds().gt(100L);
                 }).toList();
     }
 
@@ -463,30 +466,13 @@ public class DamengQueryTest extends DamengBaseTest {
 
     @Test
     public void testEasyQuery(){
-        List<DamengMyTopic> list = easyQuery.queryable(DamengMyTopic.class)
+        List<DamengMyTopic> list = entityQuery.queryable(DamengMyTopic.class)
                 .where(d -> {
-                    d.isNull(DamengMyTopic::getId);
+                    d.id().isNull();
                 })
-                .groupBy(d -> d.column(DamengMyTopic::getTitle))
+                .groupBy(d -> GroupKeys.of(d.title()))
                 .select(DamengMyTopic.class, o -> {
-                    o.columnAs(DamengMyTopic::getTitle, DamengMyTopic::getTitle);
+                   return o.key1().as(DamengMyTopic::getTitle);
                 }).limit(0, 9).toList();
     }
-
-//    @Data
-//    @FieldNameConstants
-//    public static class TestVO {
-//        private Integer status;
-//
-//        public void setStatus(Integer status) {
-//            if (status == 1) {
-//                this.statusName = "正常";
-//            } else {
-//                this.statusName = "不正常";
-//            }
-//            this.status = status;
-//        }
-//
-//        private String statusName;
-//    }
 }

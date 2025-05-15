@@ -3,18 +3,13 @@ package com.easy.query.test.mysql8;
 import com.bestvike.linq.Linq;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.api4j.client.DefaultEasyQuery;
-import com.easy.query.api4j.client.EasyQuery;
-import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
-import com.easy.query.core.basic.jdbc.executor.DefaultEntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
-import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
@@ -25,7 +20,6 @@ import com.easy.query.test.common.MockEntityExpressionExecutor;
 import com.easy.query.test.common.MyQueryConfiguration;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
-import com.easy.query.test.mypage.MyEasyPageResultProvider;
 import com.easy.query.test.mysql8.entity.M8Child;
 import com.easy.query.test.mysql8.entity.M8Comment;
 import com.easy.query.test.mysql8.entity.M8Parent;
@@ -34,9 +28,7 @@ import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.bank.SysUserBook;
-import com.easy.query.test.parser.MyLambdaParser;
 import com.zaxxer.hikari.HikariDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -53,7 +45,6 @@ import java.util.UUID;
 public class BaseTest {
     public static HikariDataSource dataSource;
     public static EasyQueryClient easyQueryClient;
-    public static EasyQuery easyQuery;
     public static EasyEntityQuery easyEntityQuery;
     public static ListenerContextManager listenerContextManager;
 
@@ -67,7 +58,6 @@ public class BaseTest {
 
 
     public static void init() {
-        EasyLambdaUtil.replaceParser(new MyLambdaParser());
         initDatasource();
         initEasyQuery();
     }
@@ -109,7 +99,6 @@ public class BaseTest {
         QueryConfiguration queryConfiguration = easyQueryClient.getRuntimeContext().getQueryConfiguration();
         queryConfiguration.applyRelationPropertyProvider(FindInSetRelationToImplicitProvider.INSTANCE);
         queryConfiguration.applyInterceptor(new M8Interceptor());
-        easyQuery = new DefaultEasyQuery(easyQueryClient);
         easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
         beforex();
     }

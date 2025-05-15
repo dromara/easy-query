@@ -36,6 +36,7 @@ public interface EntityIncludeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
     }
 
     /**
+     *
      * <blockquote><pre>
      * {@code
      * easyEntityQuery.queryable(SchoolStudent.class)

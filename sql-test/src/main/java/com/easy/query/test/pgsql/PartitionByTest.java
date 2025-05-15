@@ -28,7 +28,7 @@ public class PartitionByTest  extends PgSQLBaseTest{
 
         List<Draft3<Long, Long, String>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().countOver(b.star()).partitionBy(b.title()),
                         b.expression().rowNumberOver().partitionBy(b.title()).orderBy(b.createTime())
@@ -62,7 +62,7 @@ public class PartitionByTest  extends PgSQLBaseTest{
 
         List<Draft3<Long, Long, String>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().countOver(b.star()).partitionBy(b.title()),
                         b.expression().rowNumberOver().partitionBy(b.title()).orderBy(false,b.createTime()).orderBy(b.createTime())
@@ -96,7 +96,7 @@ public class PartitionByTest  extends PgSQLBaseTest{
 
         List<Draft3<Long, Long, String>> list = entityQuery.queryable(BlogEntity.class)
                 .where(b -> b.createTime().gt(LocalDateTime.of(2020, 1, 1, 1, 1)))
-                .select(b -> Select.PARTITION.of(
+                .select(b -> Select.PART.of(
                         b,
                         b.expression().countOver(b.star()).partitionBy(b.title()),
                         b.expression().rowNumberOver().partitionBy(b.title()).orderBy(true,b.createTime()).orderBy(b.updateTime())

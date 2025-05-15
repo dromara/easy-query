@@ -1,7 +1,10 @@
 package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.proxy.UnknownTableProxy;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -14,7 +17,8 @@ import java.time.LocalDateTime;
  */
 @Data
 @Table("t_unknown")
-public class UnknownTable {
+@EntityProxy
+public class UnknownTable implements ProxyEntityAvailable<UnknownTable , UnknownTableProxy> {
     @Column(primaryKey = true)
     private String id;
     private Integer age;

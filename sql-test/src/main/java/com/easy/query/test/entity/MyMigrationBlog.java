@@ -32,7 +32,7 @@ public class MyMigrationBlog extends BaseEntity implements ProxyEntityAvailable<
     /**
      * 内容
      */
-    @Column(large = true,comment = "内容")
+    @Column(comment = "内容")
     private String content;
     /**
      * 博客链接

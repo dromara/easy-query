@@ -1,7 +1,10 @@
 package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.entity.proxy.CustomIncrementProxy;
 import com.easy.query.test.increment.MyDatabaseIncrementSQLColumnGenerator;
 import lombok.Data;
 
@@ -15,7 +18,8 @@ import java.time.LocalDateTime;
  */
 @Data
 @Table("custom_increment")
-public class CustomIncrement {
+@EntityProxy
+public class CustomIncrement implements ProxyEntityAvailable<CustomIncrement , CustomIncrementProxy> {
     @Column(primaryKey = true,generatedKey = true, generatedSQLColumnGenerator = MyDatabaseIncrementSQLColumnGenerator.class)
     private String id;
     private String name;

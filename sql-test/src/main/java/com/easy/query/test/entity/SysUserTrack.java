@@ -2,8 +2,11 @@ package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.Encryption;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
+import com.easy.query.test.entity.proxy.SysUserTrackProxy;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -16,7 +19,8 @@ import java.time.LocalDateTime;
  */
 @Data
 @Table(value = "t_sys_user_track")
-public class SysUserTrack{
+@EntityProxy
+public class SysUserTrack implements ProxyEntityAvailable<SysUserTrack , SysUserTrackProxy> {
     @Column(primaryKey = true)
     private String id;
     private String username;

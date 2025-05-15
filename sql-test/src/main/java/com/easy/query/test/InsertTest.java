@@ -1,6 +1,6 @@
 package com.easy.query.test;
 
-import com.easy.query.api4j.insert.EntityInsertable;
+import com.easy.query.api.proxy.entity.insert.EntityInsertable;
 import com.easy.query.core.basic.jdbc.parameter.BeanSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
@@ -19,6 +19,8 @@ import com.easy.query.test.entity.TestInc;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAuto;
 import com.easy.query.test.entity.TopicAutoNative;
+import com.easy.query.test.entity.proxy.SysUserSQLEncryptionProxy;
+import com.easy.query.test.entity.proxy.TopicAutoProxy;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,7 +43,7 @@ public class InsertTest extends BaseTest {
 
     @Test
     public void insertTest() {
-        List<TopicAuto> topicAutos = easyQuery.queryable(TopicAuto.class).where(o -> o.lt(TopicAuto::getStars, 999)).toList();
+        List<TopicAuto> topicAutos = easyEntityQuery.queryable(TopicAuto.class).where(o -> o.stars().lt(999)).toList();
         Assert.assertEquals(10, topicAutos.size());
         int i = 1;
         for (TopicAuto topicAuto : topicAutos) {
@@ -53,14 +55,14 @@ public class InsertTest extends BaseTest {
 
     @Test
     public void insertTest1() {
-        long l = easyQuery.insertable(null).executeRows();
+        long l = easyQueryClient.insertable(null).executeRows();
         Assert.assertEquals(0, l);
-        long l1 = easyQuery.insertable(null).insert(null).executeRows();
+        long l1 = easyQueryClient.insertable(null).insert(null).executeRows();
         Assert.assertEquals(0, l1);
         Object en = null;
-        long l3 = easyQuery.insertable(null).insert(en).executeRows();
+        long l3 = easyQueryClient.insertable(null).insert(en).executeRows();
         Assert.assertEquals(0, l3);
-        long l2 = easyQuery.insertable(null).useInterceptor().noInterceptor().useInterceptor("1").noInterceptor("1").executeRows();
+        long l2 = easyQueryClient.insertable(null).useInterceptor().noInterceptor().useInterceptor("1").noInterceptor("1").executeRows();
         Assert.assertEquals(0, l2);
     }
 
@@ -72,7 +74,7 @@ public class InsertTest extends BaseTest {
         topicAuto.setTitle("title" + 999);
         topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
         Assert.assertNull(topicAuto.getId());
-        long l = easyQuery.insertable(topicAuto).executeRows(true);
+        long l = easyEntityQuery.insertable(topicAuto).executeRows(true);
         Assert.assertEquals(1, l);
         Assert.assertNotNull(topicAuto.getId());
     }
@@ -85,7 +87,7 @@ public class InsertTest extends BaseTest {
         topicAuto.setTitle("title" + 999);
         topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
         Assert.assertNull(topicAuto.getId());
-        EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).asTable("aaa").asSchema(o -> "xxx");
+        EntityInsertable<TopicAutoProxy, TopicAuto> insertable = easyEntityQuery.insertable(topicAuto).asTable("aaa").asSchema(o -> "xxx");
         String sql = insertable.toSQL(topicAuto);
         Assert.assertEquals("INSERT INTO `xxx`.`aaa` (`stars`,`title`,`create_time`) VALUES (?,?,?)", sql);
     }
@@ -98,7 +100,7 @@ public class InsertTest extends BaseTest {
         topicAuto.setTitle("title" + 999);
         topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
         Assert.assertNull(topicAuto.getId());
-        EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).asTable(o -> o + "aaa").asSchema("xxx");
+        EntityInsertable<TopicAutoProxy, TopicAuto> insertable = easyEntityQuery.insertable(topicAuto).asTable(o -> o + "aaa").asSchema("xxx");
         String sql = insertable.toSQL(topicAuto);
         Assert.assertEquals("INSERT INTO `xxx`.`t_topic_autoaaa` (`stars`,`title`,`create_time`) VALUES (?,?,?)", sql);
     }
@@ -113,7 +115,7 @@ public class InsertTest extends BaseTest {
             topicAuto.setTitle("title" + 999);
             topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
             Assert.assertNull(topicAuto.getId());
-            EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).useInterceptor("Topic1Interceptor").asTable(o -> o + "aaa").asSchema("xxx");
+            EntityInsertable<TopicAutoProxy, TopicAuto> insertable = easyEntityQuery.insertable(topicAuto).useInterceptor("Topic1Interceptor").asTable(o -> o + "aaa").asSchema("xxx");
             long l = insertable.executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
@@ -134,7 +136,7 @@ public class InsertTest extends BaseTest {
             topicAuto.setTitle("title" + 999);
             topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
             Assert.assertNull(topicAuto.getId());
-            EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).useInterceptor("Topic1Interceptor").noInterceptor().asTable(o -> o + "aaa").asSchema("xxx");
+            EntityInsertable<TopicAutoProxy, TopicAuto> insertable = easyEntityQuery.insertable(topicAuto).useInterceptor("Topic1Interceptor").noInterceptor().asTable(o -> o + "aaa").asSchema("xxx");
             long l = insertable.executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
@@ -155,7 +157,7 @@ public class InsertTest extends BaseTest {
             topicAuto.setTitle("title" + 999);
             topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
             Assert.assertNull(topicAuto.getId());
-            EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).noInterceptor().useInterceptor("Topic1Interceptor").asTable(o -> o + "aaa").asSchema("xxx");
+            EntityInsertable<TopicAutoProxy, TopicAuto> insertable = easyEntityQuery.insertable(topicAuto).noInterceptor().useInterceptor("Topic1Interceptor").asTable(o -> o + "aaa").asSchema("xxx");
             long l = insertable.executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
@@ -176,7 +178,7 @@ public class InsertTest extends BaseTest {
             topicAuto.setTitle("title" + 999);
             topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
             Assert.assertNull(topicAuto.getId());
-            EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).onDuplicateKeyIgnore().noInterceptor().useInterceptor("Topic1Interceptor").asTable(o -> o + "aaa").asSchema("xxx");
+            EntityInsertable<TopicAutoProxy, TopicAuto> insertable = easyEntityQuery.insertable(topicAuto).onDuplicateKeyIgnore().noInterceptor().useInterceptor("Topic1Interceptor").asTable(o -> o + "aaa").asSchema("xxx");
             long l = insertable.executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
@@ -190,7 +192,7 @@ public class InsertTest extends BaseTest {
     @Test
     public void insertTest9() {
         TopicAuto topicAuto = null;
-        long l = easyQuery.insertable(topicAuto)
+        long l = easyEntityQuery.insertable(topicAuto)
                 .noInterceptor().useInterceptor("11")
                 .useInterceptor("11").useInterceptor()
                 .asAlias("a")
@@ -210,7 +212,8 @@ public class InsertTest extends BaseTest {
         topicAuto.setTitle("title" + 999);
         topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
         Assert.assertNull(topicAuto.getId());
-        EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).onDuplicateKeyUpdate();
+        EntityInsertable<TopicAutoProxy, TopicAuto> insertable = easyEntityQuery.insertable(topicAuto)
+                .onConflictThen(null);
         String sql = insertable.toSQL(topicAuto);
         Assert.assertEquals("INSERT INTO `t_topic_auto` (`stars`,`title`,`create_time`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE `stars` = VALUES(`stars`), `title` = VALUES(`title`), `create_time` = VALUES(`create_time`)", sql);
     }
@@ -223,7 +226,8 @@ public class InsertTest extends BaseTest {
         topicAuto.setTitle("title" + 999);
         topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
         Assert.assertNull(topicAuto.getId());
-        EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).onDuplicateKeyUpdate(t -> t.column(TopicAuto::getStars).column(TopicAuto::getTitle));
+        EntityInsertable<TopicAutoProxy, TopicAuto> insertable = easyEntityQuery.insertable(topicAuto)
+                .onConflictThen(s->s.FETCHER.stars().title());
         String sql = insertable.toSQL(topicAuto);
         Assert.assertEquals("INSERT INTO `t_topic_auto` (`stars`,`title`,`create_time`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE `stars` = VALUES(`stars`), `title` = VALUES(`title`)", sql);
     }
@@ -231,7 +235,7 @@ public class InsertTest extends BaseTest {
 
     @Test
     public void insertTestx() {
-        easyQuery.deletable(BlogEntity.class)
+        easyEntityQuery.deletable(BlogEntity.class)
                 .disableLogicDelete()
                 .allowDeleteStatement(true)
                 .whereById("200")
@@ -254,36 +258,36 @@ public class InsertTest extends BaseTest {
         blog.setIsTop(false);
         blog.setTop(false);
         blog.setDeleted(false);
-        long l = easyQuery.insertable(blog)
-                .onDuplicateKeyUpdate()
+        long l = easyEntityQuery.insertable(blog)
+                .onConflictThen(null)
                 .executeRows();
         Assert.assertEquals(1, l);
-        long l3 = easyQuery.insertable(blog)
-                .onDuplicateKeyUpdate(t -> t.column(BlogEntity::getStar).column(BlogEntity::getContent))
+        long l3 = easyEntityQuery.insertable(blog)
+                .onConflictThen(s->s.FETCHER.star().content())
                 .executeRows();
 
         Assert.assertEquals(1, l3);
         blog.setContent("xxx");
-        long l4 = easyQuery.insertable(blog)
-                .onDuplicateKeyUpdate(t -> t.column(BlogEntity::getStar).column(BlogEntity::getContent))
+        long l4 = easyEntityQuery.insertable(blog)
+                .onConflictThen(s->s.FETCHER.star().content())
                 .executeRows();
 
         Assert.assertEquals(2, l4);
-        long l1 = easyQuery.insertable(blog)
-                .onDuplicateKeyIgnore()
+        long l1 = easyEntityQuery.insertable(blog)
+                .onConflictThen(null)
                 .executeRows();
         Assert.assertEquals(0, l1);
 
         blog.setContent("abc");
-        long l2 = easyQuery.insertable(blog)
-                .onDuplicateKeyUpdate()
+        long l2 = easyEntityQuery.insertable(blog)
+                .onConflictThen(null)
                 .executeRows();
         Assert.assertEquals(2, l2);
-        BlogEntity blogEntity = easyQuery.queryable(BlogEntity.class)
+        BlogEntity blogEntity = easyEntityQuery.queryable(BlogEntity.class)
                 .whereById("200")
                 .firstNotNull("xxx");
         Assert.assertEquals("abc", blogEntity.getContent());
-        easyQuery.deletable(BlogEntity.class)
+        easyEntityQuery.deletable(BlogEntity.class)
                 .whereById("200")
                 .executeRows();
     }
@@ -291,7 +295,7 @@ public class InsertTest extends BaseTest {
     @Test
     public void insertBatch() {
 
-        easyQuery.deletable(BlogEntity.class)
+        easyEntityQuery.deletable(BlogEntity.class)
                 .disableLogicDelete()
                 .allowDeleteStatement(true)
                 .whereByIds(Arrays.asList("500", "300", "400")).executeRows();
@@ -357,16 +361,16 @@ public class InsertTest extends BaseTest {
             blog.setDeleted(false);
             r.add(blog);
         }
-        long l = easyQuery.insertable(r).executeRows();
+        long l = easyEntityQuery.insertable(r).executeRows();
         Assert.assertEquals(3, l);
-        easyQuery.deletable(BlogEntity.class)
+        easyEntityQuery.deletable(BlogEntity.class)
                 .disableLogicDelete()
                 .allowDeleteStatement(true)
                 .whereByIds(Arrays.asList("500", "300", "400")).executeRows();
         List<List<BlogEntity>> partition = EasyCollectionUtil.partition(r, 200);
-        long l2 = easyQuery.insertable(r).batch().executeRows();
+        long l2 = easyEntityQuery.insertable(r).batch().executeRows();
         Assert.assertEquals(-3, l2);
-        easyQuery.deletable(BlogEntity.class)
+        easyEntityQuery.deletable(BlogEntity.class)
                 .disableLogicDelete()
                 .allowDeleteStatement(true)
                 .whereByIds(Arrays.asList("500", "300", "400")).executeRows();
@@ -378,11 +382,13 @@ public class InsertTest extends BaseTest {
         topicAuto.setStars(1);
         try {
 
-            easyQuery.insertable(topicAuto)
+            easyEntityQuery.insertable(topicAuto)
                     .asTable("xxxxx")
-                    .columnConfigure(o -> o.column(TopicAutoNative::getId, "sde.next_rowid('sde',{0})", (context, sqlParameter) -> {
-                        context.value(sqlParameter);
-                    })).executeRows();
+                    .columnConfigure((topic,configurer)->{
+                        configurer.column(topic.id(), "sde.next_rowid('sde',{0})", (context, sqlParameter) -> {
+                            context.value(sqlParameter);
+                        });
+                    }).executeRows();
         } catch (Exception ex) {
             Throwable cause = ex.getCause();
             Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
@@ -399,11 +405,13 @@ public class InsertTest extends BaseTest {
         topicAuto.setId(0);
         try {
 
-            easyQuery.insertable(topicAuto)
+            easyEntityQuery.insertable(topicAuto)
                     .asTable("xxxxx")
-                    .columnConfigure(o -> o.column(TopicAutoNative::getId, "sde.next_rowid('sde',{0})", (context, sqlParameter) -> {
-                        context.value(sqlParameter);
-                    })).executeRows();
+                    .columnConfigure((topic,configurer)->{
+                        configurer.column(topic.id(), "sde.next_rowid('sde',{0})", (context, sqlParameter) -> {
+                            context.value(sqlParameter);
+                        });
+                    }).executeRows();
         } catch (Exception ex) {
             Throwable cause = ex.getCause();
             Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
@@ -426,7 +434,7 @@ public class InsertTest extends BaseTest {
             user.setIdCard("12345678");
             user.setAddress("xxxxxxx");
             user.setCreateTime(LocalDateTime.now());
-            easyQuery.insertable(user)
+            easyEntityQuery.insertable(user)
                     .asTable("xxxxx").executeRows();
         } catch (Exception ex) {
             Throwable cause = ex.getCause();
@@ -448,7 +456,7 @@ public class InsertTest extends BaseTest {
         user.setAddress("xxxxxxx");
         LocalDateTime now = LocalDateTime.now();
         user.setCreateTime(now);
-        EntityInsertable<SysUserSQLEncryption> insertable = easyQuery.insertable(user);
+        EntityInsertable<SysUserSQLEncryptionProxy, SysUserSQLEncryption> insertable = easyEntityQuery.insertable(user);
         ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(insertable.getEntityInsertExpressionBuilder().getExpressionContext().getTableContext());
         insertable.asTable("xxxxx").toSQL(user, toSQLContext);
         List<SQLParameter> parameters = toSQLContext.getParameters();
@@ -492,7 +500,7 @@ public class InsertTest extends BaseTest {
 
     @Test
     public void insertSQLConvert3() {
-        easyQuery.deletable(SysUserSQLEncryption.class).disableLogicDelete()
+        easyEntityQuery.deletable(SysUserSQLEncryption.class).disableLogicDelete()
                 .whereById("12345").executeRows();
 
         SysUserSQLEncryption user = new SysUserSQLEncryption();
@@ -502,9 +510,9 @@ public class InsertTest extends BaseTest {
         user.setIdCard("12345678");
         user.setAddress("xxxxxxx");
         user.setCreateTime(LocalDateTime.now());
-        long l = easyQuery.insertable(user).executeRows();
+        long l = easyEntityQuery.insertable(user).executeRows();
         Assert.assertEquals(1, l);
-        SysUserSQLEncryption sysUserSQLEncryption = easyQuery.queryable(SysUserSQLEncryption.class)
+        SysUserSQLEncryption sysUserSQLEncryption = easyEntityQuery.queryable(SysUserSQLEncryption.class)
                 .whereById("12345")
                 .firstOrNull();
         System.out.println(sysUserSQLEncryption);
@@ -523,22 +531,22 @@ public class InsertTest extends BaseTest {
         Assert.assertEquals(sysUserSQLEncryption.getCreateTime().getMinute(), user.getCreateTime().getMinute());
 
         sysUserSQLEncryption.setPhone("111123456");
-        long l2 = easyQuery.updatable(sysUserSQLEncryption).executeRows();
+        long l2 = easyEntityQuery.updatable(sysUserSQLEncryption).executeRows();
         Assert.assertEquals(1, l2);
-        long l1 = easyQuery.updatable(SysUserSQLEncryption.class)
-                .set(SysUserSQLEncryption::getPhone, "1111234")
+        long l1 = easyEntityQuery.updatable(SysUserSQLEncryption.class)
+                .setColumns(s -> s.phone().set("1111234"))
                 .whereById("12345").executeRows();
         Assert.assertEquals(1, l1);
 
-        SysUserSQLEncryption sysUserSQLEncryption1 = easyQuery.queryable(SysUserSQLEncryption.class)
-                .leftJoin(Topic.class, (t1, t2) -> t1.eq(t2, SysUserSQLEncryption::getId, Topic::getId))
-                .where((t1, t2) -> t1.eq(SysUserSQLEncryption::getPhone, "1111234"))
-                .select(SysUserSQLEncryption.class, (t1, t2) -> t1.columnAll())
+        SysUserSQLEncryption sysUserSQLEncryption1 = easyEntityQuery.queryable(SysUserSQLEncryption.class)
+                .leftJoin(Topic.class, (t1, t2) -> t1.id().eq(t2.id()))
+                .where((t1, t2) -> t1.phone().eq("1111234"))
+                .select(SysUserSQLEncryption.class, (t1, t2) -> t1.FETCHER.allFields())
                 .firstOrNull();
         Assert.assertNotNull(sysUserSQLEncryption1);
 
 
-        easyQuery.deletable(SysUserSQLEncryption.class).disableLogicDelete()
+        easyEntityQuery.deletable(SysUserSQLEncryption.class).disableLogicDelete()
                 .whereById("12345").executeRows();
     }
 
@@ -549,7 +557,7 @@ public class InsertTest extends BaseTest {
             CustomIncrement customIncrement = new CustomIncrement();
             customIncrement.setName("name");
             customIncrement.setAddress("address");
-            easyQuery.insertable(customIncrement)
+            easyEntityQuery.insertable(customIncrement)
                     .executeRows();
         } catch (Exception ex) {
             Throwable cause = ex.getCause();
@@ -567,7 +575,7 @@ public class InsertTest extends BaseTest {
             customIncrement.setId("id");
             customIncrement.setName("name");
             customIncrement.setAddress("address");
-            easyQuery.insertable(customIncrement)
+            easyEntityQuery.insertable(customIncrement)
                     .executeRows();
         } catch (Exception ex) {
             Throwable cause = ex.getCause();
@@ -585,7 +593,7 @@ public class InsertTest extends BaseTest {
         Map<String, Object> stringObjectHashMap = new LinkedHashMap<>();
         stringObjectHashMap.put("id", 123);
         stringObjectHashMap.put("name", "小明");
-            String sql = easyQuery.mapInsertable(Collections.emptyMap())
+            String sql = easyEntityQuery.mapInsertable(Collections.emptyMap())
                     .asTable("aaaaa")
                     .toSQL(stringObjectHashMap);
             Assert.assertEquals("INSERT INTO `aaaaa` (`id`,`name`) VALUES (?,?)", sql);
@@ -595,7 +603,7 @@ public class InsertTest extends BaseTest {
             Map<String, Object> stringObjectHashMap = new LinkedHashMap<>();
             stringObjectHashMap.put("id", 123);
             stringObjectHashMap.put("name", "小明");
-            easyQuery.mapInsertable(Arrays.asList(stringObjectHashMap))
+            easyEntityQuery.mapInsertable(Arrays.asList(stringObjectHashMap))
                     .asTable("aaaaa")
                     .batch()
                     .executeRows();
@@ -610,7 +618,7 @@ public class InsertTest extends BaseTest {
             Map<String, Object> stringObjectHashMap = new LinkedHashMap<>();
             stringObjectHashMap.put("id", 123);
             stringObjectHashMap.put("name", "小明");
-            easyQuery.mapInsertable(stringObjectHashMap)
+            easyEntityQuery.mapInsertable(stringObjectHashMap)
                     .asTable("aaaaa")
                     .executeRows();
         } catch (Exception ex) {
@@ -630,7 +638,7 @@ public class InsertTest extends BaseTest {
             stringObjectHashMap.put("name", "小明");
             stringObjectHashMap.put("name1", "小明");
             stringObjectHashMap.put("name2", null);
-            easyQuery.mapInsertable(stringObjectHashMap)
+            easyEntityQuery.mapInsertable(stringObjectHashMap)
                     .asTable("aaaaa")
                     .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
                     .executeRows();
@@ -651,7 +659,7 @@ public class InsertTest extends BaseTest {
             stringObjectHashMap.put("name", "小明");
             stringObjectHashMap.put("name1", "小明");
             stringObjectHashMap.put("name2", null);
-            easyQuery.mapInsertable(stringObjectHashMap)
+            easyEntityQuery.mapInsertable(stringObjectHashMap)
                     .asTable("aaaaa")
                     .setSQLStrategy(SQLExecuteStrategyEnum.ALL_COLUMNS)
                     .executeRows();
@@ -705,7 +713,8 @@ public class InsertTest extends BaseTest {
             topicAuto.setTitle("title" + 999);
             topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
             Assert.assertNull(topicAuto.getId());
-            EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).asTableLink(o -> o + "1").onDuplicateKeyUpdate(t -> t.column(TopicAuto::getStars).column(TopicAuto::getTitle));
+            EntityInsertable<TopicAutoProxy, TopicAuto> insertable = easyEntityQuery.insertable(topicAuto).asTableLink(o -> o + "1")
+                    .onConflictThen(s->s.FETCHER.stars().title());
             String sql = insertable.toSQL(topicAuto);
             Assert.assertEquals("INSERT INTO 1`t_topic_auto` (`stars`,`title`,`create_time`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE `stars` = VALUES(`stars`), `title` = VALUES(`title`)", sql);
 
@@ -717,7 +726,8 @@ public class InsertTest extends BaseTest {
             topicAuto.setTitle("title" + 999);
             topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
             Assert.assertNull(topicAuto.getId());
-            EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).asTableLink("2").onDuplicateKeyUpdate(t -> t.column(TopicAuto::getStars).column(TopicAuto::getTitle));
+            EntityInsertable<TopicAutoProxy, TopicAuto> insertable = easyEntityQuery.insertable(topicAuto).asTableLink("2")
+                    .onConflictThen(s->s.FETCHER.stars().title());
             String sql = insertable.toSQL(topicAuto);
             Assert.assertEquals("INSERT INTO 2`t_topic_auto` (`stars`,`title`,`create_time`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE `stars` = VALUES(`stars`), `title` = VALUES(`title`)", sql);
 
@@ -726,7 +736,7 @@ public class InsertTest extends BaseTest {
 
     @Test
     public void testIncrement() {
-        easyQuery.sqlExecute("truncate table t_test_inc;");
+        easyEntityQuery.sqlExecute("truncate table t_test_inc;");
         {
             ArrayList<TestInc> testIncs = new ArrayList<>(100);
             for (int i = 0; i < 100; i++) {
@@ -736,7 +746,7 @@ public class InsertTest extends BaseTest {
                 testInc.setTitle("");
                 testIncs.add(testInc);
             }
-            long l = easyQuery.insertable(testIncs).batch().executeRows(true);
+            long l = easyEntityQuery.insertable(testIncs).batch().executeRows(true);
             for (int i = 0; i < 100; i++) {
                 TestInc testInc = testIncs.get(i);
                 Assert.assertEquals(i+1,(int)testInc.getId());
@@ -753,7 +763,7 @@ public class InsertTest extends BaseTest {
                 testInc.setTitle("");
                 testInc1s.add(testInc);
             }
-            long l1 = easyQuery.insertable(testInc1s).batch().executeRows(true);
+            long l1 = easyEntityQuery.insertable(testInc1s).batch().executeRows(true);
             for (int i = 0; i < 1191; i++) {
                 TestInc testInc = testInc1s.get(i);
                 Assert.assertEquals(i+100+1,(int)testInc.getId());
@@ -769,7 +779,7 @@ public class InsertTest extends BaseTest {
                 testInc.setTitle("");
                 testInc1s.add(testInc);
             }
-            long l1 = easyQuery.insertable(testInc1s).batch().executeRows(true);
+            long l1 = easyEntityQuery.insertable(testInc1s).batch().executeRows(true);
             for (int i = 0; i < 2991; i++) {
                 TestInc testInc = testInc1s.get(i);
                 Assert.assertEquals(i+100+1191+1,(int)testInc.getId());
@@ -785,7 +795,7 @@ public class InsertTest extends BaseTest {
                 testInc.setTitle("");
                 testInc1s.add(testInc);
             }
-            long l1 = easyQuery.insertable(testInc1s).batch().executeRows(true);
+            long l1 = easyEntityQuery.insertable(testInc1s).batch().executeRows(true);
             for (int i = 0; i < 2999; i++) {
                 TestInc testInc = testInc1s.get(i);
                 Assert.assertEquals(i+100+1191+2991+1,(int)testInc.getId());
@@ -801,7 +811,7 @@ public class InsertTest extends BaseTest {
                 testInc.setTitle("");
                 testInc1s.add(testInc);
             }
-            long l1 = easyQuery.insertable(testInc1s).batch().executeRows(true);
+            long l1 = easyEntityQuery.insertable(testInc1s).batch().executeRows(true);
             for (int i = 0; i < 1000; i++) {
                 TestInc testInc = testInc1s.get(i);
                 Assert.assertEquals(i+100+1191+2991+2999+1,(int)testInc.getId());
@@ -818,7 +828,7 @@ public class InsertTest extends BaseTest {
                 testInc1s.add(testInc);
             }
             long begin = System.currentTimeMillis();
-            long l1 = easyQuery.insertable(testInc1s).batch().executeRows(true);
+            long l1 = easyEntityQuery.insertable(testInc1s).batch().executeRows(true);
             long end = System.currentTimeMillis();
             long times = end - begin;
             System.out.println("耗时:"+times);

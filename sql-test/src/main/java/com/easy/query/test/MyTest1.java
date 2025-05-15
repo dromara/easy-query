@@ -3,11 +3,9 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.base.BigDecimalProxy;
 import com.easy.query.api.proxy.base.LongProxy;
 import com.easy.query.api.proxy.base.StringProxy;
-import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
-import com.easy.query.core.proxy.SQLMathExpression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
@@ -485,18 +483,18 @@ public class MyTest1 extends BaseTest {
         List<Draft4<String, String, LocalDateTime, String>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().like("123");
-                    o.exists(() -> {
+                    o.expression().exists(() -> {
                         return easyEntityQuery.queryable(BlogEntity.class)
                                 .where(x -> x.id().eq(o.id()));
                     });
                     //创建时间和现在的相差天数现在小于0
-                    o.createTime().duration(LocalDateTime.of(2021, 1, 1, 1, 1), DateTimeDurationEnum.Days).le(0L);
+                    o.createTime().duration(LocalDateTime.of(2021, 1, 1, 1, 1)).toDays().le(0L);
                 })
                 .select(o -> Select.DRAFT.of(
                         o.id(),
                         o.title(),
                         o.createTime(),
-                        o.subQuery(() -> {
+                        o.expression().subQuery(() -> {
                             return easyEntityQuery.queryable(BlogEntity.class)
                                     .where(x -> x.id().eq(o.id()))
                                     .select(x -> new StringProxy(x.title()));
@@ -511,58 +509,6 @@ public class MyTest1 extends BaseTest {
         listenerContextManager.clear();
 
     }
-
-    @Test
-    public void testQuerySub1() {
-        {
-            Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class);
-            List<TopicSubQueryBlog> list = easyQuery
-                    .queryable(Topic.class)
-                    .where(t -> t.isNotNull(Topic::getTitle))
-                    .select(TopicSubQueryBlog.class, o -> o.columnAll().columnSubQueryAs(() -> {
-                        return queryable.where(x -> x.eq(o, BlogEntity::getId, Topic::getId)).select(Long.class, x -> x.columnCount(BlogEntity::getId));
-                    }, TopicSubQueryBlog::getBlogCount)).toList();
-        }
-        {
-
-            List<TopicSubQueryBlog> list = easyEntityQuery.queryable(Topic.class)
-                    .where(o -> o.title().isNotNull())
-                    .select(o -> new TopicSubQueryBlogProxy().adapter(r -> {
-                        r.selectAll(o);
-                        r.blogCount().setSubQuery(easyEntityQuery.queryable(BlogEntity.class).where(x -> x.id().eq(o.id())).selectCount());
-                    })).toList();
-        }
-        {
-            Queryable<BlogEntity> queryable = easyQuery.queryable(BlogEntity.class);
-            List<TopicSubQueryBlog> list = easyQuery
-                    .queryable(Topic.class)
-                    .where(t -> t.isNotNull(Topic::getTitle))
-                    .select(TopicSubQueryBlog.class, o -> o.columnAll().columnSubQueryAs(() -> {
-                        return queryable.where(x -> x.eq(o, BlogEntity::getId, Topic::getId)).select(Long.class, x -> x.columnSum(BlogEntity::getStar));
-                    }, TopicSubQueryBlog::getBlogCount)).toList();
-        }
-        {
-
-            ListenerContext listenerContext = new ListenerContext();
-            listenerContextManager.startListen(listenerContext);
-
-
-            List<TopicSubQueryBlog> list = easyEntityQuery.queryable(Topic.class)
-                    .where(o -> o.title().isNotNull())
-                    .select(o -> new TopicSubQueryBlogProxy().adapter(r -> {
-
-                        r.selectAll(o);
-                        r.blogCount().setSubQuery(easyEntityQuery.queryable(BlogEntity.class)
-                                .where(x -> x.id().eq(o.id())).select(x -> new LongProxy(x.star().sum().asAnyType(Long.class))));
-                    })).toList();
-            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,(SELECT SUM(t1.`star`) FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = t.`id`) AS `blog_count` FROM `t_topic` t WHERE t.`title` IS NOT NULL", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-            listenerContextManager.clear();
-        }
-    }
-
     @Test
     public void testSelect1() {
 

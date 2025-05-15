@@ -23,6 +23,8 @@ public class BlogEntity2Proxy extends AbstractProxyEntity<BlogEntity2Proxy, Blog
 
     private static final Class<BlogEntity2> entityClass = BlogEntity2.class;
 
+    public static final BlogEntity2Proxy TABLE = createTable().createEmpty();
+
     public static BlogEntity2Proxy createTable() {
         return new BlogEntity2Proxy();
     }

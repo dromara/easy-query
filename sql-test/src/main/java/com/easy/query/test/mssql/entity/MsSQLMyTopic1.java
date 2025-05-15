@@ -1,7 +1,10 @@
 package com.easy.query.test.mssql.entity;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.mssql.entity.proxy.MsSQLMyTopic1Proxy;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -14,7 +17,8 @@ import java.time.LocalDateTime;
  */
 @Data
 @Table(value = "MyTopic")
-public class MsSQLMyTopic1 {
+@EntityProxy
+public class MsSQLMyTopic1 implements ProxyEntityAvailable<MsSQLMyTopic1 , MsSQLMyTopic1Proxy> {
 
     @Column(primaryKey = true)
     private String Id;

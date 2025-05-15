@@ -1,11 +1,9 @@
 package com.easy.query.test.mssql;
 
-import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.key.MapKey;
 import com.easy.query.api.proxy.key.MapKeys;
-import com.easy.query.api4j.select.Queryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
@@ -15,12 +13,13 @@ import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.dameng.entity.DamengMyTopic;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mssql.entity.MsSQLCalc;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic1;
 import com.easy.query.test.mssql.entity.proxy.MsSQLCalcProxy;
+import com.easy.query.test.mssql.entity.proxy.MsSQLMyTopic1Proxy;
+import com.easy.query.test.mssql.entity.proxy.MsSQLMyTopicProxy;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,8 +68,8 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
 
     @Test
     public void query0() {
-        Queryable<MsSQLMyTopic> queryable = easyQuery.queryable(MsSQLMyTopic.class)
-                .where(o -> o.eq(MsSQLMyTopic::getId, "123xxx"));
+        EntityQueryable<MsSQLMyTopicProxy, MsSQLMyTopic> queryable = entityQuery.queryable(MsSQLMyTopic.class)
+                .where(o -> o.id().eq("123xxx"));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Id] = ?", sql);
         MsSQLMyTopic msSQLMyTopic = queryable.firstOrNull();
@@ -78,8 +77,8 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
     }
     @Test
     public void query1() {
-        Queryable<MsSQLMyTopic> queryable = easyQuery.queryable(MsSQLMyTopic.class)
-                .where(o -> o.eq(MsSQLMyTopic::getId, "1"));
+        EntityQueryable<MsSQLMyTopicProxy, MsSQLMyTopic> queryable = entityQuery.queryable(MsSQLMyTopic.class)
+                .where(o -> o.id().eq( "1"));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Id] = ?", sql);
         MsSQLMyTopic msSQLMyTopic = queryable.firstOrNull();
@@ -91,8 +90,8 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
     }
     @Test
     public void query2() {
-        Queryable<MsSQLMyTopic1> queryable = easyQuery.queryable(MsSQLMyTopic1.class)
-                .where(o -> o.eq(MsSQLMyTopic1::getId, "123xxx"));
+        EntityQueryable<MsSQLMyTopic1Proxy, MsSQLMyTopic1> queryable = entityQuery.queryable(MsSQLMyTopic1.class)
+                .where(o -> o.Id().eq("123xxx"));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Id] = ?", sql);
         MsSQLMyTopic1 msSQLMyTopic = queryable.firstOrNull();
@@ -100,8 +99,8 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
     }
     @Test
     public void query3() {
-        Queryable<MsSQLMyTopic1> queryable = easyQuery.queryable(MsSQLMyTopic1.class)
-                .where(o -> o.eq(MsSQLMyTopic1::getId, "1"));
+        EntityQueryable<MsSQLMyTopic1Proxy, MsSQLMyTopic1> queryable = entityQuery.queryable(MsSQLMyTopic1.class)
+                .where(o -> o.Id().eq( "1"));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Id] = ?", sql);
         MsSQLMyTopic1 msSQLMyTopic = queryable.firstOrNull();
@@ -114,9 +113,9 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
     @Test
     public void query4() {
 
-        EasyPageResult<MsSQLMyTopic> topicPageResult = easyQuery
+        EasyPageResult<MsSQLMyTopic> topicPageResult = entityQuery
                 .queryable(MsSQLMyTopic.class)
-                .where(o -> o.isNotNull(MsSQLMyTopic::getId))
+                .where(o -> o.id().isNotNull())
                 .toPageResult(2, 20);
         List<MsSQLMyTopic> data = topicPageResult.getData();
         Assert.assertEquals(20, data.size());
@@ -124,10 +123,10 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
     @Test
     public void query5() {
 
-        EasyPageResult<MsSQLMyTopic> topicPageResult = easyQuery
+        EasyPageResult<MsSQLMyTopic> topicPageResult = entityQuery
                 .queryable(MsSQLMyTopic.class)
-                .where(o -> o.isNotNull(MsSQLMyTopic::getId))
-                .orderByAsc(o->o.column(MsSQLMyTopic::getId))
+                .where(o -> o.id().isNotNull())
+                .orderBy(o->o.id().asc())
                 .toPageResult(2, 20);
         List<MsSQLMyTopic> data = topicPageResult.getData();
         Assert.assertEquals(20, data.size());
@@ -135,10 +134,10 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
     @Test
     public void query6() {
 
-        EasyPageResult<MsSQLMyTopic> topicPageResult = easyQuery
+        EasyPageResult<MsSQLMyTopic> topicPageResult = entityQuery
                 .queryable(MsSQLMyTopic.class)
-                .where(o -> o.isNotNull(MsSQLMyTopic::getId))
-                .orderByAsc(o->o.column(MsSQLMyTopic::getStars))
+                .where(o -> o.id().isNotNull())
+                .orderBy(o->o.stars().asc())
                 .toPageResult(2, 20);
         List<MsSQLMyTopic> data = topicPageResult.getData();
         Assert.assertEquals(20, data.size());
@@ -187,11 +186,11 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
     }
     @Test
     public void query9(){
-//        String sql = easyQuery.queryable("select * from t_order", Map.class)
+//        String sql = entityQuery.queryable("select * from t_order", Map.class)
 //                .limit(10, 20).toSQL();
 //        {
 //
-//            List<Map> list = easyQuery.queryable("select * from t_order", Map.class)
+//            List<Map> list = entityQuery.queryable("select * from t_order", Map.class)
 //                    .limit(10,20).toList();
 //        }
 

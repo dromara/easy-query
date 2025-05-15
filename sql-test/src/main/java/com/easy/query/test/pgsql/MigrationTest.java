@@ -22,7 +22,7 @@ public class MigrationTest extends PgSQLBaseTest{
     @Test
     public void test1(){
 
-        MigrationsSQLGenerator migrationsSQLGenerator = easyQuery.getRuntimeContext().getMigrationsSQLGenerator();
+        MigrationsSQLGenerator migrationsSQLGenerator = entityQuery.getRuntimeContext().getMigrationsSQLGenerator();
         MigrationContext migrationContext = new MigrationContext(Arrays.asList(Topic.class, BlogEntity.class, MyMigrationBlog.class));
         List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateMigrationSQL(migrationContext);
         for (MigrationCommand migrationCommand : migrationCommands) {

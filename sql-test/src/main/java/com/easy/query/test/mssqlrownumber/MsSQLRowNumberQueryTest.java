@@ -1,6 +1,6 @@
 package com.easy.query.test.mssqlrownumber;
 
-import com.easy.query.api4j.select.Queryable;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.proxy.core.draft.Draft3;
@@ -8,6 +8,8 @@ import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic1;
+import com.easy.query.test.mssql.entity.proxy.MsSQLMyTopic1Proxy;
+import com.easy.query.test.mssql.entity.proxy.MsSQLMyTopicProxy;
 import com.easy.query.test.mssqlrownumber.entity.MsSQLRowNumberMyTopic;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,12 +32,12 @@ public class MsSQLRowNumberQueryTest extends MsSQLRowNumberBaseTest {
 //
 //        {
 //
-//            List<Map> list = easyQuery.queryable("select * from t_order", Map.class)
+//            List<Map> list = entityQuery.queryable("select * from t_order", Map.class)
 //                    .limit(10,20).toList();
 //        }
 
-        Queryable<MsSQLMyTopic> queryable = easyQuery.queryable(MsSQLMyTopic.class)
-                .where(o -> o.eq(MsSQLMyTopic::getId, "123xxx"));
+        EntityQueryable<MsSQLMyTopicProxy, MsSQLMyTopic> queryable = entityQuery.queryable(MsSQLMyTopic.class)
+                .where(o -> o.id().eq("123xxx"));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Id] = ?", sql);
         MsSQLMyTopic msSQLMyTopic = queryable.firstOrNull();
@@ -43,8 +45,8 @@ public class MsSQLRowNumberQueryTest extends MsSQLRowNumberBaseTest {
     }
     @Test
     public void query1() {
-        Queryable<MsSQLMyTopic> queryable = easyQuery.queryable(MsSQLMyTopic.class)
-                .where(o -> o.eq(MsSQLMyTopic::getId, "1"));
+        EntityQueryable<MsSQLMyTopicProxy, MsSQLMyTopic> queryable = entityQuery.queryable(MsSQLMyTopic.class)
+                .where(o -> o.id().eq( "1"));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Id] = ?", sql);
         MsSQLMyTopic msSQLMyTopic = queryable.firstOrNull();
@@ -56,8 +58,8 @@ public class MsSQLRowNumberQueryTest extends MsSQLRowNumberBaseTest {
     }
     @Test
     public void query2() {
-        Queryable<MsSQLMyTopic1> queryable = easyQuery.queryable(MsSQLMyTopic1.class)
-                .where(o -> o.eq(MsSQLMyTopic1::getId, "123xxx"));
+        EntityQueryable<MsSQLMyTopic1Proxy, MsSQLMyTopic1> queryable = entityQuery.queryable(MsSQLMyTopic1.class)
+                .where(o -> o.Id().eq("123xxx"));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Id] = ?", sql);
         MsSQLMyTopic1 msSQLMyTopic = queryable.firstOrNull();
@@ -65,8 +67,8 @@ public class MsSQLRowNumberQueryTest extends MsSQLRowNumberBaseTest {
     }
     @Test
     public void query3() {
-        Queryable<MsSQLMyTopic1> queryable = easyQuery.queryable(MsSQLMyTopic1.class)
-                .where(o -> o.eq(MsSQLMyTopic1::getId, "1"));
+        EntityQueryable<MsSQLMyTopic1Proxy, MsSQLMyTopic1> queryable = entityQuery.queryable(MsSQLMyTopic1.class)
+                .where(o -> o.Id().eq( "1"));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Id] = ?", sql);
         MsSQLMyTopic1 msSQLMyTopic = queryable.firstOrNull();
@@ -79,28 +81,28 @@ public class MsSQLRowNumberQueryTest extends MsSQLRowNumberBaseTest {
     @Test
     public void query4_1() {
 
-        List<MsSQLMyTopic> list = easyQuery
+        List<MsSQLMyTopic> list = entityQuery
                 .queryable(MsSQLMyTopic.class)
-                .where(o -> o.isNotNull(MsSQLMyTopic::getId))
+                .where(o -> o.id().isNotNull())
                 .limit(20).toList();
         Assert.assertEquals(20, list.size());
     }
     @Test
     public void query4_2() {
 
-        List<MsSQLMyTopic> list = easyQuery
+        List<MsSQLMyTopic> list = entityQuery
                 .queryable(MsSQLMyTopic.class)
-                .where(o -> o.isNotNull(MsSQLMyTopic::getId))
-                .orderByAsc(o->o.column(MsSQLMyTopic::getId))
+                .where(o -> o.id().isNotNull())
+                .orderBy(o->o.id().asc())
                 .limit(20).toList();
         Assert.assertEquals(20, list.size());
     }
     @Test
     public void query4() {
 
-        EasyPageResult<MsSQLMyTopic> topicPageResult = easyQuery
+        EasyPageResult<MsSQLMyTopic> topicPageResult = entityQuery
                 .queryable(MsSQLMyTopic.class)
-                .where(o -> o.isNotNull(MsSQLMyTopic::getId))
+                .where(o -> o.id().isNotNull())
                 .toPageResult(2, 20);
         List<MsSQLMyTopic> data = topicPageResult.getData();
         Assert.assertEquals(20, data.size());
@@ -108,10 +110,10 @@ public class MsSQLRowNumberQueryTest extends MsSQLRowNumberBaseTest {
     @Test
     public void query5_1() {
 
-        EasyPageResult<MsSQLMyTopic> topicPageResult = easyQuery
+        EasyPageResult<MsSQLMyTopic> topicPageResult = entityQuery
                 .queryable(MsSQLMyTopic.class)
-                .where(o -> o.isNotNull(MsSQLMyTopic::getId))
-                .orderByAsc(o->o.column(MsSQLMyTopic::getId))
+                .where(o -> o.id().isNotNull())
+                .orderBy(o->o.id().asc())
                 .toPageResult(1, 20);
         List<MsSQLMyTopic> data = topicPageResult.getData();
         Assert.assertEquals(20, data.size());
@@ -119,10 +121,10 @@ public class MsSQLRowNumberQueryTest extends MsSQLRowNumberBaseTest {
     @Test
     public void query5() {
 
-        EasyPageResult<MsSQLMyTopic> topicPageResult = easyQuery
+        EasyPageResult<MsSQLMyTopic> topicPageResult = entityQuery
                 .queryable(MsSQLMyTopic.class)
-                .where(o -> o.isNotNull(MsSQLMyTopic::getId))
-                .orderByAsc(o->o.column(MsSQLMyTopic::getId))
+                .where(o -> o.id().isNotNull())
+                .orderBy(o->o.id().asc())
                 .toPageResult(2, 20);
         List<MsSQLMyTopic> data = topicPageResult.getData();
         Assert.assertEquals(20, data.size());
@@ -131,29 +133,29 @@ public class MsSQLRowNumberQueryTest extends MsSQLRowNumberBaseTest {
     @Test
     public void query5_2() {
 
-        String sql = easyQuery
+        String sql = entityQuery
                 .queryable(MsSQLMyTopic.class)
-                .where(o -> o.isNotNull(MsSQLMyTopic::getId))
-                .orderByAsc(o -> o.column(MsSQLMyTopic::getId))
+                .where(o -> o.id().isNotNull())
+                .orderBy(o->o.id().asc())
                 .limit(40, 20).toSQL();
         Assert.assertEquals("WITH rt AS ( SELECT [Id],[Stars],[Title],[CreateTime], ROW_NUMBER() OVER( ORDER BY [Id] ASC ) AS __rownum__ FROM [MyTopic] WHERE [Id] IS NOT NULL ) SELECT rt.* FROM rt where rt.__rownum__ BETWEEN 41 AND 60",sql);
     }
     @Test
     public void query5_3() {
 
-        String sql = easyQuery
+        String sql = entityQuery
                 .queryable(MsSQLMyTopic.class)
-                .where(o -> o.isNotNull(MsSQLMyTopic::getId))
+                .where(o -> o.id().isNotNull())
                 .limit(40, 20).toSQL();
         Assert.assertEquals("WITH rt AS ( SELECT [Id],[Stars],[Title],[CreateTime], ROW_NUMBER() OVER( ORDER BY [Id] ) AS __rownum__ FROM [MyTopic] WHERE [Id] IS NOT NULL ) SELECT rt.* FROM rt where rt.__rownum__ BETWEEN 41 AND 60",sql);
     }
     @Test
     public void query6() {
 
-        EasyPageResult<MsSQLMyTopic> topicPageResult = easyQuery
+        EasyPageResult<MsSQLMyTopic> topicPageResult = entityQuery
                 .queryable(MsSQLMyTopic.class)
-                .where(o -> o.isNotNull(MsSQLMyTopic::getId))
-                .orderByAsc(o->o.column(MsSQLMyTopic::getStars))
+                .where(o -> o.id().isNotNull())
+                .orderBy(o-> o.stars().asc())
                 .toPageResult(2, 20);
         List<MsSQLMyTopic> data = topicPageResult.getData();
         Assert.assertEquals(20, data.size());

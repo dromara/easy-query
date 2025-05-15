@@ -2,9 +2,12 @@ package com.easy.query.test.entity;
 
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.Encryption;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.MyEncryptionStrategy;
+import com.easy.query.test.entity.proxy.SysUserEncryptionProxy;
 import lombok.Data;
 
 /**
@@ -15,7 +18,8 @@ import lombok.Data;
  */
 @Data
 @Table("t_sys_user_encryption")
-public class SysUserEncryption {
+@EntityProxy
+public class SysUserEncryption implements ProxyEntityAvailable<SysUserEncryption , SysUserEncryptionProxy> {
     @Column(primaryKey = true)
     private String id;
     private String name;

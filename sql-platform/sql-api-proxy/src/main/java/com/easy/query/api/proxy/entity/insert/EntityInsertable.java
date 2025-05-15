@@ -27,5 +27,18 @@ public interface EntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T> exte
     EntityInsertable<TProxy,T> insert(Collection<T> entities);
 
 
+    /**
+     *
+     * <blockquote><pre>
+     * {@code
+     *
+     *  .columnConfigure((t, o) -> o.column(t.stars(), "ifnull({0},0)+{1}", (context, sqlParameter) -> {
+     *      context.expression(t.stars())
+     *      .value(sqlParameter);
+     *   }))
+     * }</pre></blockquote>
+     * @param columnConfigureExpression
+     * @return
+     */
     EntityInsertable<TProxy,T> columnConfigure(SQLActionExpression2<TProxy,ProxyColumnConfigurer<TProxy,T>> columnConfigureExpression);
 }

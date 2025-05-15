@@ -1,6 +1,6 @@
 package com.easy.query.test.pgsql;
 
-import com.easy.query.api4j.insert.EntityInsertable;
+import com.easy.query.api.proxy.entity.insert.EntityInsertable;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.test.entity.BlogEntity;
@@ -27,7 +27,7 @@ public class InsertTest extends PgSQLBaseTest {
             topicAuto.setTitle("title" + 999);
             topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
             Assert.assertNull(topicAuto.getId());
-            EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).onConflictDoNothing().noInterceptor().asTable(o -> o + "aaa").asSchema("xxx");
+            EntityInsertable<TopicAutoProxy, TopicAuto> insertable = entityQuery.insertable(topicAuto).onConflictDoNothing().noInterceptor().asTable(o -> o + "aaa").asSchema("xxx");
             long l = insertable.executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
@@ -40,7 +40,7 @@ public class InsertTest extends PgSQLBaseTest {
 
     @Test
     public void insertTest2() {
-        easyQuery.deletable(BlogEntity.class)
+        entityQuery.deletable(BlogEntity.class)
                 .whereById("200")
                 .executeRows();
         LocalDateTime begin = LocalDateTime.of(2000, 1, 1, 1, 1, 1);
@@ -61,68 +61,71 @@ public class InsertTest extends PgSQLBaseTest {
         blog.setIsTop(1 % 2 == 0);
         blog.setTop(1 % 2 == 0);
         blog.setDeleted(false);
-        long l = easyQuery.insertable(blog)
+        long l = entityQuery.insertable(blog)
                 .onConflictDoUpdate()
                 .executeRows();
-        Assert.assertEquals(1,l);
+        Assert.assertEquals(1, l);
         blog.setContent("abc");
-        long l2 = easyQuery.insertable(blog)
+        long l2 = entityQuery.insertable(blog)
                 .onConflictDoUpdate()
                 .executeRows();
-        Assert.assertEquals(1,l2);
-        BlogEntity blogEntity = easyQuery.queryable(BlogEntity.class)
+        Assert.assertEquals(1, l2);
+        BlogEntity blogEntity = entityQuery.queryable(BlogEntity.class)
                 .whereById("200")
                 .firstNotNull("xxx");
-        Assert.assertEquals("abc",blogEntity.getContent());
-        easyQuery.deletable(BlogEntity.class)
+        Assert.assertEquals("abc", blogEntity.getContent());
+        entityQuery.deletable(BlogEntity.class)
                 .whereById("200")
                 .executeRows();
     }
 
     @Test
-    public void insertDuplicateKeyIgnore2(){
+    public void insertDuplicateKeyIgnore2() {
 
         TopicAuto topicAuto = new TopicAuto();
         topicAuto.setStars(999);
         topicAuto.setTitle("title" + 999);
         topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
         Assert.assertNull(topicAuto.getId());
-        EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).onConflictDoNothing();
+        EntityInsertable<TopicAutoProxy, TopicAuto> insertable = entityQuery.insertable(topicAuto).onConflictDoNothing();
         String sql = insertable.toSQL(topicAuto);
-        Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT DO NOTHING",sql);
+        Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT DO NOTHING", sql);
     }
+
     @Test
-    public void insertDuplicateKeyUpdate2(){
+    public void insertDuplicateKeyUpdate2() {
 
         TopicAuto topicAuto = new TopicAuto();
         topicAuto.setStars(999);
         topicAuto.setTitle("title" + 999);
         topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
         Assert.assertNull(topicAuto.getId());
-        EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).onConflictDoUpdate(TopicAuto::getTitle,t->t.column(TopicAuto::getStars).column(TopicAuto::getCreateTime));
+        EntityInsertable<TopicAutoProxy, TopicAuto> insertable = entityQuery.insertable(topicAuto)
+                .onConflictThen(s -> s.FETCHER.stars().createTime(), s -> s.title());
         String sql = insertable.toSQL(topicAuto);
-        Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"title\") DO UPDATE SET \"stars\" = EXCLUDED.\"stars\", \"create_time\" = EXCLUDED.\"create_time\"",sql);
+        Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"title\") DO UPDATE SET \"stars\" = EXCLUDED.\"stars\", \"create_time\" = EXCLUDED.\"create_time\"", sql);
     }
+
     @Test
-    public void insertDuplicateKeyUpdate3(){
+    public void insertDuplicateKeyUpdate3() {
 
         TopicAuto topicAuto = new TopicAuto();
         topicAuto.setStars(999);
         topicAuto.setTitle("title" + 999);
         topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
         Assert.assertNull(topicAuto.getId());
-        EntityInsertable<TopicAuto> insertable = easyQuery.insertable(topicAuto).onConflictDoUpdate(TopicAuto::getTitle);
+        EntityInsertable<TopicAutoProxy, TopicAuto> insertable = entityQuery.insertable(topicAuto).onConflictThen(null, s -> s.title());
         String sql = insertable.toSQL(topicAuto);
-        Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"title\") DO UPDATE SET \"stars\" = EXCLUDED.\"stars\", \"create_time\" = EXCLUDED.\"create_time\"",sql);
+        Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"title\") DO UPDATE SET \"stars\" = EXCLUDED.\"stars\", \"create_time\" = EXCLUDED.\"create_time\"", sql);
 
         {
 
             com.easy.query.api.proxy.entity.insert.EntityInsertable<TopicAutoProxy, TopicAuto> topicAutoProxyTopicAutoEntityInsertable =
                     entityQuery.insertable(topicAuto)
-                            .onConflictDoUpdate(o -> o.FETCHER.id().stars(), o -> o.FETCHER.id().title());
+                            .onConflictThen(o -> o.FETCHER.id().title(),o -> o.FETCHER.id().stars());
             String sql1 = topicAutoProxyTopicAutoEntityInsertable.toSQL(topicAuto);
 
-            Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"stars\") DO UPDATE SET \"title\" = EXCLUDED.\"title\"",sql1);
+            Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"stars\") DO UPDATE SET \"title\" = EXCLUDED.\"title\"", sql1);
 
         }
         {
@@ -132,7 +135,7 @@ public class InsertTest extends PgSQLBaseTest {
                             .onConflictDoUpdate(o -> o.FETCHER.id().stars(), o -> o.FETCHER.allFields());
             String sql1 = topicAutoProxyTopicAutoEntityInsertable.toSQL(topicAuto);
 
-            Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"stars\") DO UPDATE SET \"title\" = EXCLUDED.\"title\", \"create_time\" = EXCLUDED.\"create_time\"",sql1);
+            Assert.assertEquals("INSERT INTO \"t_topic_auto\" (\"stars\",\"title\",\"create_time\") VALUES (?,?,?) ON CONFLICT (\"stars\") DO UPDATE SET \"title\" = EXCLUDED.\"title\", \"create_time\" = EXCLUDED.\"create_time\"", sql1);
 
 //            long l = entityQuery.insertable(topicAuto)
 //                    .asTable("xxxaaa")

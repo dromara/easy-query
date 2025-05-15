@@ -16,17 +16,17 @@ import java.util.List;
 public class H2OrderTest extends H2BaseTest {
     @Test
     public void test1() {
-        List<H2Order> list = easyQueryOrder.queryable(H2Order.class)
-                .where(o -> o.in(H2Order::getId, Arrays.asList(1, 2, 6, 7)))
+        List<H2Order> list = easyEntityQuery.queryable(H2Order.class)
+                .where(o -> o.id().in(Arrays.asList(1, 2, 6, 7)))
                 .toList();
         Assert.assertEquals(4, list.size());
     }
 
     @Test
     public void test2() {
-        List<H2Order> list = easyQueryOrder.queryable(H2Order.class)
-                .where(o -> o.in(H2Order::getId, Arrays.asList(1, 2, 6, 7)))
-                .orderByDesc(o -> o.column(H2Order::getId))
+        List<H2Order> list = easyEntityQuery.queryable(H2Order.class)
+                .where(o -> o.id().in(Arrays.asList(1, 2, 6, 7)))
+                .orderBy(o -> o.id().desc())
                 .toList();
         Assert.assertEquals(4, list.size());
         Assert.assertEquals(7, (int) list.get(0).getId());

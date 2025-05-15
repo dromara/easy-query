@@ -1,12 +1,10 @@
 package com.easy.query.test;
 
-import com.easy.query.api4j.util.EasyLambdaUtil;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.test.dto.ValueCompanyDTO;
 import com.easy.query.test.entity.Company;
 import com.easy.query.test.entity.CompanyAddress;
@@ -15,7 +13,7 @@ import com.easy.query.test.entity.company.ValueCompany;
 import com.easy.query.test.entity.company.ValueCompanyAddress;
 import com.easy.query.test.entity.company.ValueCompanyLicense;
 import com.easy.query.test.entity.company.ValueCompanyLicenseExtra;
-import com.easy.query.test.entity.company.proxy.VCTable;
+import com.easy.query.test.entity.proxy.CompanyProxy;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -35,9 +33,8 @@ public class ValueObjectTest extends BaseTest {
     public void voTest1() {
         Supplier<Exception> f = () -> {
             try {
-                List<Company> list = easyQuery.queryable(Company.class)
+                List<Company> list = easyEntityQuery.queryable(Company.class)
                         .asTable("company_a")
-                        .select(o -> o.columnAll())
                         .toList();
             } catch (Exception ex) {
                 return ex;
@@ -58,7 +55,7 @@ public class ValueObjectTest extends BaseTest {
     public void voTest2() {
         Supplier<Exception> f = () -> {
             try {
-                List<Company> list = easyQuery.queryable(Company.class)
+                List<Company> list = easyEntityQuery.queryable(Company.class)
                         .asTable("company_a")
                         .toList();
             } catch (Exception ex) {
@@ -185,7 +182,7 @@ public class ValueObjectTest extends BaseTest {
 //    public void voTest7(){
 //        Supplier<Exception> f = () -> {
 //            try {
-//                List<Company> list = easyQuery.queryable(Company.class)
+//                List<Company> list = easyEntityQuery.queryable(Company.class)
 //                        .asTable("company_a")
 //                        //.select(o->o.column(Company::getAddress))
 //                        .select(o->{
@@ -211,11 +208,13 @@ public class ValueObjectTest extends BaseTest {
 
         Supplier<Exception> f = () -> {
             try {
-                List<Company> list = easyQuery.queryable(Company.class)
+                List<Company> list = easyEntityQuery.queryable(Company.class)
                         .asTable("company_a")
                         //.select(o->o.column(Company::getAddress))
                         .select(o -> {
-                            o.column(x -> x.getAddress().getProvince());
+                            CompanyProxy r = new CompanyProxy();
+                            r.selectExpression(o.address().province());
+                            return r;
                         })
                         .toList();
             } catch (Exception ex) {
@@ -238,10 +237,10 @@ public class ValueObjectTest extends BaseTest {
 
         Supplier<Exception> f = () -> {
             try {
-                List<Company> list = easyQuery.queryable(Company.class)
+                List<Company> list = easyEntityQuery.queryable(Company.class)
                         .asTable("company_a")
                         .select(o -> {
-                            o.column(Company::getAddress);
+                            return o.FETCHER.address().fetchProxy();
                         })
                         .toList();
             } catch (Exception ex) {
@@ -264,12 +263,12 @@ public class ValueObjectTest extends BaseTest {
 
         Supplier<Exception> f = () -> {
             try {
-                List<Company> list = easyQuery.queryable(Company.class)
+                List<Company> list = easyEntityQuery.queryable(Company.class)
                         .asTable("company_a")
-                        .where(o -> o.eq(x -> x.getAddress().getArea(), 1))
-                        .where(o -> o.eq(x -> x.getAddress().getProvince(), 2))
+                        .where(o -> o.address().area().eq("1"))
+                        .where(o -> o.address().province().eq("2"))
                         .select(o -> {
-                            o.column(Company::getAddress);
+                            return o.FETCHER.address();
                         })
                         .toList();
             } catch (Exception ex) {
@@ -302,7 +301,7 @@ public class ValueObjectTest extends BaseTest {
                 companyAddress.setCity(companyCity);
                 companyAddress.setArea("area");
                 company.setAddress(companyAddress);
-                long l = easyQuery.insertable(company).asTable("company_a").executeRows();
+                long l = easyEntityQuery.insertable(company).asTable("company_a").executeRows();
             } catch (Exception ex) {
                 return ex;
             }
@@ -330,7 +329,7 @@ public class ValueObjectTest extends BaseTest {
                 companyAddress.setProvince("province");
                 companyAddress.setArea("area");
                 company.setAddress(companyAddress);
-                long l = easyQuery.insertable(company).asTable("company_a").executeRows();
+                long l = easyEntityQuery.insertable(company).asTable("company_a").executeRows();
             } catch (Exception ex) {
                 return ex;
             }
@@ -354,7 +353,7 @@ public class ValueObjectTest extends BaseTest {
                 Company company = new Company();
                 company.setId("id");
                 company.setName("name");
-                long l = easyQuery.insertable(company).asTable("company_a").executeRows();
+                long l = easyEntityQuery.insertable(company).asTable("company_a").executeRows();
             } catch (Exception ex) {
                 return ex;
             }
@@ -370,31 +369,6 @@ public class ValueObjectTest extends BaseTest {
         Assert.assertEquals("INSERT INTO `company_a` (`id`,`name`) VALUES (?,?)", sql);
     }
 
-    @Test
-    public void voTest8() {
-
-        Property<Company, String> property = x -> x.getAddress().getProvince();
-//        Property<Company, ?> property1 = columTest1(Company::getAddress, CompanyAddress::getProvince);
-//        {
-//
-//            String propertyName = EasyLambdaUtil.getPropertyName(property1);
-//            System.out.println(propertyName);
-//        }
-        {
-
-            String propertyName = EasyLambdaUtil.getPropertyName(Company::getName);
-            System.out.println(propertyName);
-        }
-//        String propertyName = EasyLambdaUtil.getPropertyName(property);
-////        Type ret = Type.getReturnType(desc)
-//        String propertyPath = PropertyAnalyzer.analyzePropertyPath(company, property);
-//        System.out.println(propertyPath); // 输出 "province"
-        for (int i = 0; i < 100; i++) {
-            String propertyName2 = EasyLambdaUtil.getPropertyName(property);
-            System.out.println(propertyName2);
-        }
-
-    }
 //    public static  <T,T1,T2> Property<T,?> columTest1(Property<T,T1> column,Property<T1,T2> column1){
 //        StringBuilder sb = new StringBuilder();
 //        String propertyName = EasyLambdaUtil.getPropertyName(column);
@@ -459,7 +433,7 @@ public class ValueObjectTest extends BaseTest {
         company.setAddress(companyAddress);
         Supplier<Exception> queryF = () -> {
             try {
-                long l = easyQuery.updatable(company).asTable("company_a").executeRows();
+                long l = easyEntityQuery.updatable(company).asTable("company_a").executeRows();
                 System.out.println(l);
             } catch (Exception ex) {
                 return ex;
@@ -488,7 +462,7 @@ public class ValueObjectTest extends BaseTest {
         company.setAddress(companyAddress);
         Supplier<Exception> queryF = () -> {
             try {
-                long l = easyQuery.updatable(company).asTable("company_a").setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS).executeRows();
+                long l = easyEntityQuery.updatable(company).asTable("company_a").setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS).executeRows();
                 System.out.println(l);
             } catch (Exception ex) {
                 return ex;
@@ -515,16 +489,16 @@ public class ValueObjectTest extends BaseTest {
         companyAddress.setProvince("province");
         companyAddress.setArea("area");
         company.setAddress(companyAddress);
-        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
         Supplier<Exception> queryF = () -> {
             try {
                 trackManager.begin();
-                easyQuery.addTracking(company);
+                easyEntityQuery.addTracking(company);
                 CompanyCity companyCity = new CompanyCity();
                 companyCity.setCity("city1");
                 company.getAddress().setCity(companyCity);
 
-                long l = easyQuery.updatable(company).asTable("company_a").executeRows();
+                long l = easyEntityQuery.updatable(company).asTable("company_a").executeRows();
                 System.out.println(l);
             } catch (Exception ex) {
                 return ex;
@@ -553,17 +527,17 @@ public class ValueObjectTest extends BaseTest {
         companyAddress.setProvince("province");
         companyAddress.setArea("area");
         company.setAddress(companyAddress);
-        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
         Supplier<Exception> queryF = () -> {
             try {
                 trackManager.begin();
-                easyQuery.addTracking(company);
+                easyEntityQuery.addTracking(company);
 
                 CompanyCity companyCity = new CompanyCity();
                 companyCity.setCity("city1");
                 company.getAddress().setCity(companyCity);
 
-                long l = easyQuery.updatable(company).asTable("company_a").whereColumns(o -> o.columnKeys().column(Company::getAddress)).executeRows();
+                long l = easyEntityQuery.updatable(company).asTable("company_a").whereColumns(o -> o.FETCHER.columnKeys().address()).executeRows();
                 System.out.println(l);
             } catch (Exception ex) {
                 return ex;
@@ -585,7 +559,7 @@ public class ValueObjectTest extends BaseTest {
     @Test
     public void voTest19() {
 
-        easyQuery.deletable(Company.class)
+        easyEntityQuery.deletable(Company.class)
                 .whereById("123").executeRows();
         Company company = new Company();
         company.setId("123");
@@ -594,9 +568,9 @@ public class ValueObjectTest extends BaseTest {
         companyAddress.setProvince("province");
         companyAddress.setArea("area");
         company.setAddress(companyAddress);
-        long l = easyQuery.insertable(company).executeRows();
+        long l = easyEntityQuery.insertable(company).executeRows();
         Assert.assertEquals(1, l);
-        Company company1 = easyQuery.queryable(Company.class)
+        Company company1 = easyEntityQuery.queryable(Company.class)
                 .firstOrNull();
         Assert.assertNotNull(company1);
         Assert.assertNotNull(company1.getAddress().getCity());
@@ -604,23 +578,23 @@ public class ValueObjectTest extends BaseTest {
         CompanyCity companyCity1 = new CompanyCity();
         companyCity1.setCity("city123");
         company1.getAddress().setCity(companyCity1);
-        long l1 = easyQuery.updatable(company1).executeRows();
+        long l1 = easyEntityQuery.updatable(company1).executeRows();
         Assert.assertEquals(1, l1);
 
-        Company company2 = easyQuery.queryable(Company.class)
+        Company company2 = easyEntityQuery.queryable(Company.class)
                 .firstOrNull();
         Assert.assertNotNull(company2);
         Assert.assertNotNull(company2.getAddress().getCity());
         Assert.assertNotNull(company2.getAddress().getCity().getCity());
         Assert.assertEquals("city123", company2.getAddress().getCity().getCity());
-        long l2 = easyQuery.updatable(Company.class)
-                .set(o -> o.getAddress().getCity().getCity(), "city456")
+        long l2 = easyEntityQuery.updatable(Company.class)
+                .setColumns(o -> o.address().city().city().set("city456"))
                 .whereById("123")
                 .executeRows();
         Assert.assertEquals(1, l2);
 
 
-        Company company3 = easyQuery.queryable(Company.class)
+        Company company3 = easyEntityQuery.queryable(Company.class)
                 .firstOrNull();
         Assert.assertNotNull(company3);
         Assert.assertNotNull(company3.getAddress().getCity());
@@ -643,67 +617,69 @@ public class ValueObjectTest extends BaseTest {
         company.setAddress(valueCompanyAddress);
         ValueCompanyLicense valueCompanyLicense = new ValueCompanyLicense();
         valueCompanyLicense.setLicenseNo("license1");
-        valueCompanyLicense.setLicenseDeadline(LocalDateTime.of(2023,1,1,0,0));
+        valueCompanyLicense.setLicenseDeadline(LocalDateTime.of(2023, 1, 1, 0, 0));
         ValueCompanyLicenseExtra valueCompanyLicenseExtra = new ValueCompanyLicenseExtra();
         valueCompanyLicenseExtra.setLicenseImage("www.baidu.com");
         valueCompanyLicenseExtra.setLicenseContent("it编程");
         valueCompanyLicense.setExtra(valueCompanyLicenseExtra);
         company.setLicense(valueCompanyLicense);
         long l = easyQueryClient.insertable(company).executeRows();
-        Assert.assertEquals(1,l);
+        Assert.assertEquals(1, l);
         List<ValueCompany> province1 = easyQueryClient.queryable(ValueCompany.class)
                 .where(o -> o.eq("address.province", "province1"))
                 .toList();
-        Assert.assertEquals(province1.toString(),"[ValueCompany(id=my1, name=myCompany1, address=ValueCompanyAddress(province=province1, city=city1, area=area1), license=ValueCompanyLicense(licenseNo=license1, licenseDeadline=2023-01-01T00:00, extra=ValueCompanyLicenseExtra(licenseImage=www.baidu.com, licenseContent=it编程)))]");
+        Assert.assertEquals(province1.toString(), "[ValueCompany(id=my1, name=myCompany1, address=ValueCompanyAddress(province=province1, city=city1, area=area1), license=ValueCompanyLicense(licenseNo=license1, licenseDeadline=2023-01-01T00:00, extra=ValueCompanyLicenseExtra(licenseImage=www.baidu.com, licenseContent=it编程)))]");
 
-        List<ValueCompany> province11 = easyQuery.queryable(ValueCompany.class)
-                .where(o -> o.eq(x -> x.getAddress().getProvince(), "province1"))
+        List<ValueCompany> province11 = easyEntityQuery.queryable(ValueCompany.class)
+                .where(o -> o.address().province().eq("province1"))
                 .toList();
-        Assert.assertEquals(province11.toString(),"[ValueCompany(id=my1, name=myCompany1, address=ValueCompanyAddress(province=province1, city=city1, area=area1), license=ValueCompanyLicense(licenseNo=license1, licenseDeadline=2023-01-01T00:00, extra=ValueCompanyLicenseExtra(licenseImage=www.baidu.com, licenseContent=it编程)))]");
+        Assert.assertEquals(province11.toString(), "[ValueCompany(id=my1, name=myCompany1, address=ValueCompanyAddress(province=province1, city=city1, area=area1), license=ValueCompanyLicense(licenseNo=license1, licenseDeadline=2023-01-01T00:00, extra=ValueCompanyLicenseExtra(licenseImage=www.baidu.com, licenseContent=it编程)))]");
 
 
         List<ValueCompany> province2 = easyQueryClient.queryable(ValueCompany.class)
                 .where(o -> o.eq("address.province", "province1"))
-                .select(o->o.columnAll().columnIgnore("license.extra"))
+                .select(o -> o.columnAll().columnIgnore("license.extra"))
                 .toList();
-        Assert.assertEquals(province2.toString(),"[ValueCompany(id=my1, name=myCompany1, address=ValueCompanyAddress(province=province1, city=city1, area=area1), license=ValueCompanyLicense(licenseNo=license1, licenseDeadline=2023-01-01T00:00, extra=null))]");
-
-        List<ValueCompany> province22 = easyQuery.queryable(ValueCompany.class)
-                .where(o -> o.eq(x -> x.getAddress().getProvince(), "province1"))
-                .select(o->o.columnAll().columnIgnore(x->x.getLicense().getExtra()))
-                .toList();
-        Assert.assertEquals(province22.toString(),"[ValueCompany(id=my1, name=myCompany1, address=ValueCompanyAddress(province=province1, city=city1, area=area1), license=ValueCompanyLicense(licenseNo=license1, licenseDeadline=2023-01-01T00:00, extra=null))]");
+        Assert.assertEquals(province2.toString(), "[ValueCompany(id=my1, name=myCompany1, address=ValueCompanyAddress(province=province1, city=city1, area=area1), license=ValueCompanyLicense(licenseNo=license1, licenseDeadline=2023-01-01T00:00, extra=null))]");
+//
+//        List<ValueCompany> province22 = easyEntityQuery.queryable(ValueCompany.class)
+//                .where(o -> o.address().province().eq("province1"))
+//                .select(o->o.columnAll().columnIgnore(x->x.getLicense().getExtra()))
+//                .toList();
+//        Assert.assertEquals(province22.toString(),"[ValueCompany(id=my1, name=myCompany1, address=ValueCompanyAddress(province=province1, city=city1, area=area1), license=ValueCompanyLicense(licenseNo=license1, licenseDeadline=2023-01-01T00:00, extra=null))]");
 
         List<ValueCompany> province4 = easyQueryClient.queryable(ValueCompany.class)
                 .where(o -> o.eq("address.province", "province1"))
-                .select(o->o.column("address").column("license.licenseNo"))
+                .select(o -> o.column("address").column("license.licenseNo"))
                 .toList();
 
-        Assert.assertEquals(province4.toString(),"[ValueCompany(id=null, name=null, address=ValueCompanyAddress(province=province1, city=city1, area=area1), license=ValueCompanyLicense(licenseNo=license1, licenseDeadline=null, extra=null))]");
-        List<ValueCompany> province44 = easyQuery.queryable(ValueCompany.class)
-                .where(o -> o.eq(x -> x.getAddress().getProvince(), "province1"))
-                .select(o->o.column(ValueCompany::getAddress).column(x->x.getLicense().getLicenseNo()))
-                .toList();
+        Assert.assertEquals(province4.toString(), "[ValueCompany(id=null, name=null, address=ValueCompanyAddress(province=province1, city=city1, area=area1), license=ValueCompanyLicense(licenseNo=license1, licenseDeadline=null, extra=null))]");
+//        List<ValueCompany> province44 = easyEntityQuery.queryable(ValueCompany.class)
+//                .where(o -> o.address().province().eq("province1"))
+//                .select(v -> {
+//                    new ValueCompany()
+//                })
+//                .select(o->o.column(ValueCompany::getAddress).column(x->x.getLicense().getLicenseNo()))
+//                .toList();
+//
+//        Assert.assertEquals(province44.toString(),"[ValueCompany(id=null, name=null, address=ValueCompanyAddress(province=province1, city=city1, area=area1), license=ValueCompanyLicense(licenseNo=license1, licenseDeadline=null, extra=null))]");
 
-        Assert.assertEquals(province44.toString(),"[ValueCompany(id=null, name=null, address=ValueCompanyAddress(province=province1, city=city1, area=area1), license=ValueCompanyLicense(licenseNo=license1, licenseDeadline=null, extra=null))]");
-
-        easyQuery.updatable(company).executeRows();
-        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        easyEntityQuery.updatable(company).executeRows();
+        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
         try {
             trackManager.begin();
-            easyQuery.addTracking(company);
+            easyEntityQuery.addTracking(company);
             company.getLicense().getExtra().setLicenseContent("it++++1");
-            easyQuery.updatable(company).executeRows();
+            easyEntityQuery.updatable(company).executeRows();
 
 
-            String s = easyQuery.queryable(ValueCompany.class)
-                    .where(o -> o.eq(ValueCompany::getId, "my1"))
-                    .select(String.class, o -> o.column(x -> x.getLicense().getExtra().getLicenseContent()))
+            String s = easyEntityQuery.queryable(ValueCompany.class)
+                    .where(o -> o.id().eq("my1"))
+                    .selectColumn(s1 -> s1.license().extra().licenseContent())
                     .singleOrNull();
             Assert.assertNotNull(s);
-            Assert.assertEquals("it++++1",s);
-        }
-        finally {
+            Assert.assertEquals("it++++1", s);
+        } finally {
             trackManager.release();
         }
 
@@ -711,7 +687,7 @@ public class ValueObjectTest extends BaseTest {
         {
 
             ValueCompanyDTO province12 = easyEntityQuery.queryable(ValueCompany.class)
-                    .where(o -> o.address().province().eq( "province1"))
+                    .where(o -> o.address().province().eq("province1"))
                     .select(ValueCompanyDTO.class)
                     .firstOrNull();
             Assert.assertNotNull(province12);

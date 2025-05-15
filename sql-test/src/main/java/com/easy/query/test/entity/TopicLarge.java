@@ -24,10 +24,8 @@ public class TopicLarge implements ProxyEntityAvailable<TopicLarge , TopicLargeP
     @Column(primaryKey = true)
     private String id;
     private Integer stars;
-    @Column(large = true)
     @UpdateIgnore(updateSetInTrackDiff = true)
     private String title;
-    @Column(large = true)
     @UpdateIgnore
     private String title1;
     private LocalDateTime createTime;

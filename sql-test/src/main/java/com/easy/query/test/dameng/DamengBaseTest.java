@@ -2,8 +2,6 @@ package com.easy.query.test.dameng;
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.api4j.client.DefaultEasyQuery;
-import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
@@ -31,7 +29,6 @@ import java.util.List;
  */
 public abstract class DamengBaseTest {
     public static HikariDataSource dataSource;
-    public static EasyQuery easyQuery;
     public static EasyEntityQuery entityQuery;
     public static ListenerContextManager listenerContextManager;
 
@@ -71,7 +68,6 @@ public abstract class DamengBaseTest {
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
-        easyQuery = new DefaultEasyQuery(easyQueryClient);
         entityQuery = new DefaultEasyEntityQuery(easyQueryClient);
     }
 
@@ -80,8 +76,8 @@ public abstract class DamengBaseTest {
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DamengMyTopic.class));
         codeFirstCommand.executeWithTransaction(s->s.commit());
 
-        easyQuery.deletable(DamengMyTopic.class).where(d -> d.isNotNull(DamengMyTopic::getId)).allowDeleteStatement(true).disableLogicDelete().executeRows();
-        boolean topicAny = easyQuery.queryable(DamengMyTopic.class).any();
+        entityQuery.deletable(DamengMyTopic.class).where(d -> d.id().isNotNull()).allowDeleteStatement(true).disableLogicDelete().executeRows();
+        boolean topicAny = entityQuery.queryable(DamengMyTopic.class).any();
         if (!topicAny) {
             List<DamengMyTopic> topics = new ArrayList<>();
             for (int i = 0; i < 100; i++) {
@@ -92,7 +88,7 @@ public abstract class DamengBaseTest {
                 topic.setCreateTime(LocalDateTime.now().plusDays(i));
                 topics.add(topic);
             }
-            long l = easyQuery.insertable(topics).executeRows();
+            long l = entityQuery.insertable(topics).executeRows();
         }
 
     }

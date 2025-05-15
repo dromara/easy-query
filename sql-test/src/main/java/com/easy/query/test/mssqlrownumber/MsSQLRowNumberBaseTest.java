@@ -2,8 +2,6 @@ package com.easy.query.test.mssqlrownumber;
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.api4j.client.DefaultEasyQuery;
-import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
@@ -25,7 +23,6 @@ import java.util.List;
  */
 public abstract class MsSQLRowNumberBaseTest {
     public static HikariDataSource dataSource;
-    public static EasyQuery easyQuery;
     public static EasyEntityQuery entityQuery;
 
     static {
@@ -60,14 +57,13 @@ public abstract class MsSQLRowNumberBaseTest {
                 .replaceService(NameConversion.class, UpperCamelCaseNameConversion.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
-        easyQuery = new DefaultEasyQuery(easyQueryClient);
         entityQuery = new DefaultEasyEntityQuery(easyQueryClient);
     }
 
     public static void initData() {
 
 
-        boolean topicAny = easyQuery.queryable(MsSQLMyTopic.class).any();
+        boolean topicAny = entityQuery.queryable(MsSQLMyTopic.class).any();
         if (!topicAny) {
             List<MsSQLMyTopic> topics = new ArrayList<>();
             for (int i = 0; i < 100; i++) {
@@ -78,7 +74,7 @@ public abstract class MsSQLRowNumberBaseTest {
                 topic.setCreateTime(LocalDateTime.now().plusDays(i));
                 topics.add(topic);
             }
-            long l = easyQuery.insertable(topics).executeRows();
+            long l = entityQuery.insertable(topics).executeRows();
         }
 
     }

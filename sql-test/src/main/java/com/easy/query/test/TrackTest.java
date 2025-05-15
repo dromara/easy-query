@@ -17,7 +17,7 @@ public class TrackTest extends BaseTest {
 
     @Test
     public void track1() {
-        long l = easyQuery.deletable(SysUserTrack.class).whereById("1").executeRows();
+        long l = easyEntityQuery.deletable(SysUserTrack.class).whereById("1").executeRows();
         SysUserTrack sysUserTrack = new SysUserTrack();
         sysUserTrack.setId("1");
         sysUserTrack.setUsername("Username1");
@@ -25,19 +25,19 @@ public class TrackTest extends BaseTest {
         sysUserTrack.setIdCard("123456789000");
         sysUserTrack.setAddress("浙江省绍兴市越城区城市广场");
         sysUserTrack.setCreateTime(LocalDateTime.now());
-        long l1 = easyQuery.insertable(sysUserTrack).executeRows();
+        long l1 = easyEntityQuery.insertable(sysUserTrack).executeRows();
         Assert.assertEquals(1, l1);
-        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
         try {
             trackManager.begin();
-            SysUserTrack sysUserTrack1 = easyQuery.queryable(SysUserTrack.class).asTracking()
+            SysUserTrack sysUserTrack1 = easyEntityQuery.queryable(SysUserTrack.class).asTracking()
                     .whereById("1").firstOrNull();
-            boolean b = easyQuery.addTracking(sysUserTrack1);
+            boolean b = easyEntityQuery.addTracking(sysUserTrack1);
             Assert.assertTrue(b);
             sysUserTrack1.setPhone("9876543210");
-            long l2 = easyQuery.updatable(sysUserTrack1).executeRows();
+            long l2 = easyEntityQuery.updatable(sysUserTrack1).executeRows();
             Assert.assertEquals(1, l2);
-            SysUserTrack sysUserTrack2 = easyQuery.queryable(SysUserTrack.class)
+            SysUserTrack sysUserTrack2 = easyEntityQuery.queryable(SysUserTrack.class)
                     .whereById("1").firstOrNull();
             Assert.assertNotNull(sysUserTrack2);
             Assert.assertEquals("9876543210", sysUserTrack2.getPhone());
@@ -49,7 +49,7 @@ public class TrackTest extends BaseTest {
     @Test
     public void track2() {
 
-        long l = easyQuery.deletable(SysUserTrack.class).whereById("2").executeRows();
+        long l = easyEntityQuery.deletable(SysUserTrack.class).whereById("2").executeRows();
 
         SysUserTrack sysUserTrack = new SysUserTrack();
         sysUserTrack.setId("2");
@@ -58,19 +58,19 @@ public class TrackTest extends BaseTest {
         sysUserTrack.setIdCard("123456789000");
         sysUserTrack.setAddress("浙江省绍兴市越城区城市广场");
         sysUserTrack.setCreateTime(LocalDateTime.now());
-        long l1 = easyQuery.insertable(sysUserTrack).executeRows();
+        long l1 = easyEntityQuery.insertable(sysUserTrack).executeRows();
         Assert.assertEquals(1, l1);
-        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
         try {
             trackManager.begin();
-            SysUserTrack sysUserTrack1 = easyQuery.queryable(SysUserTrack.class)
+            SysUserTrack sysUserTrack1 = easyEntityQuery.queryable(SysUserTrack.class)
                     .whereById("2").firstOrNull();
-            boolean b = easyQuery.addTracking(sysUserTrack1);
+            boolean b = easyEntityQuery.addTracking(sysUserTrack1);
             Assert.assertTrue(b);
             sysUserTrack1.setPhone("9876543210");
-            long l2 = easyQuery.updatable(sysUserTrack1).executeRows();
+            long l2 = easyEntityQuery.updatable(sysUserTrack1).executeRows();
             Assert.assertEquals(1, l2);
-            SysUserTrack sysUserTrack2 = easyQuery.queryable(SysUserTrack.class)
+            SysUserTrack sysUserTrack2 = easyEntityQuery.queryable(SysUserTrack.class)
                     .whereById("2").firstOrNull();
             Assert.assertNotNull(sysUserTrack2);
             Assert.assertEquals("9876543210", sysUserTrack2.getPhone());
@@ -82,7 +82,7 @@ public class TrackTest extends BaseTest {
     @Test
     public void track3() {
 
-        long l = easyQuery.deletable(SysUserTrack.class).whereById("3").executeRows();
+        long l = easyEntityQuery.deletable(SysUserTrack.class).whereById("3").executeRows();
 
         SysUserTrack sysUserTrack = new SysUserTrack();
         sysUserTrack.setId("3");
@@ -91,19 +91,19 @@ public class TrackTest extends BaseTest {
         sysUserTrack.setIdCard("123456789000");
         sysUserTrack.setAddress("浙江省绍兴市越城区城市广场");
         sysUserTrack.setCreateTime(LocalDateTime.now());
-        long l1 = easyQuery.insertable(sysUserTrack).executeRows();
+        long l1 = easyEntityQuery.insertable(sysUserTrack).executeRows();
         Assert.assertEquals(1, l1);
 
-        SysUserTrack sysUserTrack1 = easyQuery.queryable(SysUserTrack.class)
+        SysUserTrack sysUserTrack1 = easyEntityQuery.queryable(SysUserTrack.class)
                 .whereById("2").firstOrNull();
-        boolean b = easyQuery.addTracking(sysUserTrack1);
+        boolean b = easyEntityQuery.addTracking(sysUserTrack1);
         Assert.assertFalse(b);
     }
 
     @Test
     public void track4() {
         String id = "5";
-        long l = easyQuery.deletable(SysUserTrack.class).whereById(id).executeRows();
+        long l = easyEntityQuery.deletable(SysUserTrack.class).whereById(id).executeRows();
 
         SysUserTrack sysUserTrack = new SysUserTrack();
         sysUserTrack.setId(id);
@@ -112,16 +112,16 @@ public class TrackTest extends BaseTest {
         sysUserTrack.setIdCard("123456789000");
         sysUserTrack.setAddress("浙江省绍兴市越城区城市广场");
         sysUserTrack.setCreateTime(LocalDateTime.now());
-        long l1 = easyQuery.insertable(sysUserTrack).executeRows();
+        long l1 = easyEntityQuery.insertable(sysUserTrack).executeRows();
         Assert.assertEquals(1, l1);
-        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
         try {
             trackManager.begin();
-            SysUserTrack sysUserTrack1 = easyQuery.queryable(SysUserTrack.class).asTracking()
+            SysUserTrack sysUserTrack1 = easyEntityQuery.queryable(SysUserTrack.class).asTracking()
                     .whereById(id).firstOrNull();
-            boolean b = easyQuery.addTracking(sysUserTrack1);
+            boolean b = easyEntityQuery.addTracking(sysUserTrack1);
             Assert.assertTrue(b);
-            long l2 = easyQuery.updatable(sysUserTrack1).executeRows();
+            long l2 = easyEntityQuery.updatable(sysUserTrack1).executeRows();
             Assert.assertEquals(0, l2);
 
         } finally {
@@ -131,7 +131,7 @@ public class TrackTest extends BaseTest {
     @Test
     public void track5() {
         String id = "6";
-        long l = easyQuery.deletable(SysUserTrack.class).whereById(id).executeRows();
+        long l = easyEntityQuery.deletable(SysUserTrack.class).whereById(id).executeRows();
 
         SysUserTrack sysUserTrack = new SysUserTrack();
         sysUserTrack.setId(id);
@@ -140,17 +140,17 @@ public class TrackTest extends BaseTest {
         sysUserTrack.setIdCard("123456789000");
         sysUserTrack.setAddress("浙江省绍兴市越城区城市广场");
         sysUserTrack.setCreateTime(LocalDateTime.now());
-        long l1 = easyQuery.insertable(sysUserTrack).executeRows();
+        long l1 = easyEntityQuery.insertable(sysUserTrack).executeRows();
         Assert.assertEquals(1, l1);
-        TrackManager trackManager = easyQuery.getRuntimeContext().getTrackManager();
+        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
         try {
             trackManager.begin();
-            SysUserTrack sysUserTrack1 = easyQuery.queryable(SysUserTrack.class)
+            SysUserTrack sysUserTrack1 = easyEntityQuery.queryable(SysUserTrack.class)
                     .whereById(id).firstOrNull();
             sysUserTrack1.setPhone("9876543210");
-            long l2 = easyQuery.updatable(sysUserTrack1).executeRows();
+            long l2 = easyEntityQuery.updatable(sysUserTrack1).executeRows();
             Assert.assertEquals(1, l2);
-            SysUserTrack sysUserTrack2 = easyQuery.queryable(SysUserTrack.class)
+            SysUserTrack sysUserTrack2 = easyEntityQuery.queryable(SysUserTrack.class)
                     .whereById(id).firstOrNull();
             Assert.assertNotNull(sysUserTrack2);
             Assert.assertEquals("9876543210", sysUserTrack2.getPhone());

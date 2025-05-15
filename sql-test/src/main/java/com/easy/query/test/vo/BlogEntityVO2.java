@@ -28,7 +28,6 @@ public class BlogEntityVO2 {
     /**
      * 内容
      */
-    @Column(large = true)
     private String content;
     /**
      * 博客链接

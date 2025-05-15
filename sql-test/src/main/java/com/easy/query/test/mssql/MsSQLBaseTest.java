@@ -2,14 +2,11 @@ package com.easy.query.test.mssql;
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
-import com.easy.query.api4j.client.DefaultEasyQuery;
-import com.easy.query.api4j.client.EasyQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
-import com.easy.query.core.extension.casewhen.SQLCaseWhenBuilderFactory;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
@@ -31,7 +28,6 @@ import java.util.Set;
  */
 public abstract class MsSQLBaseTest {
     public static HikariDataSource dataSource;
-    public static EasyQuery easyQuery;
     public static EasyEntityQuery entityQuery;
     public static ListenerContextManager listenerContextManager;
 
@@ -72,7 +68,6 @@ public abstract class MsSQLBaseTest {
 //                .replaceService(SQLCaseWhenBuilderFactory.class, MyMsSQLCaseWhenBuilderFactory.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
-        easyQuery = new DefaultEasyQuery(easyQueryClient);
         entityQuery = new DefaultEasyEntityQuery(easyQueryClient);
 
 
@@ -84,7 +79,7 @@ public abstract class MsSQLBaseTest {
     public static void initData() {
 
 
-        boolean topicAny = easyQuery.queryable(MsSQLMyTopic.class).any();
+        boolean topicAny = entityQuery.queryable(MsSQLMyTopic.class).any();
         if (!topicAny) {
             List<MsSQLMyTopic> topics = new ArrayList<>();
             for (int i = 0; i < 100; i++) {
@@ -95,7 +90,7 @@ public abstract class MsSQLBaseTest {
                 topic.setCreateTime(LocalDateTime.now().plusDays(i));
                 topics.add(topic);
             }
-            long l = easyQuery.insertable(topics).executeRows();
+            long l = entityQuery.insertable(topics).executeRows();
         }
 
     }
