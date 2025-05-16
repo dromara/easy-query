@@ -605,13 +605,13 @@ public class QueryTest11 extends BaseTest {
         EntityQueryable<Draft2Proxy<String, Long>, Draft2<String, Long>> select2 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.title().eq("123"))
                 .select(o -> Select.DRAFT.of(
-                        o.expression().constant().valueOf("type2"),
+                        o.expression().constant("type2"),
                         o.expression().count()
                 ));
         EntityQueryable<Draft2Proxy<String, Long>, Draft2<String, Long>> select3 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> o.title().eq("123"))
                 .select(o -> Select.DRAFT.of(
-                        o.expression().constant().valueOf("type3"),
+                        o.expression().constant("type3"),
                         o.expression().count()
                 ));
         List<Draft2<String, Long>> list1 = select1.unionAll(select2, select3).toList();
@@ -693,7 +693,7 @@ public class QueryTest11 extends BaseTest {
                     Query<Long> longQuery = easyEntityQuery.queryable(Topic.class)
                             .where(x -> x.id().eq(o.id())).selectCount();
 
-                    o.SQLConstant().valueOf(0L)
+                    o.expression().constant(0L)
                             .eq(longQuery);
 
                     Query<Integer> intQuery = easyEntityQuery.queryable(Topic.class)

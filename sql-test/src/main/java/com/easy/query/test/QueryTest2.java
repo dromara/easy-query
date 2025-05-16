@@ -826,7 +826,7 @@ public class QueryTest2 extends BaseTest {
                     t_blog.title().notLikeMatchLeft(false, "title");
                 });
         ToSQLResult sqlResult = queryable.toSQLResult();
-        String sql = sqlResult.getSql();
+        String sql = sqlResult.getSQL();
         ToSQLContext toSQLContext = sqlResult.getSqlContext();
         Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` NOT LIKE ? AND `content` NOT LIKE ?", sql);
         List<SQLParameter> parameters = toSQLContext.getParameters();

@@ -1407,11 +1407,10 @@ public class QueryTest12 extends BaseTest {
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .where(s -> {
                     Expression expression = s.expression();
-                    SQLConstantExpression constant = expression.constant();
                     expression.concat(
-                            constant.valueOf(","),
+                            expression.constant(","),
                             s.idCard(),
-                            constant.valueOf(",")
+                            expression.constant(",")
                     ).like(",2,");
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -1430,11 +1429,10 @@ public class QueryTest12 extends BaseTest {
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .where(s -> {
                     Expression expression = s.expression();
-                    SQLConstantExpression constant = expression.constant();
                     expression.concat(
-                            constant.valueOf(1),
+                            expression.constant(1),
                             s.idCard().toNumber(Integer.class),
-                            constant.valueOf(2)
+                            expression.constant(2)
                     ).like(",2,");
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());

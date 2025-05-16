@@ -1852,9 +1852,8 @@ public class QueryTest14 extends BaseTest {
         String format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.of(2020, 1, 1, 1, 1));
         List<Topic> list = easyEntityQuery.queryable(Topic.class)
                 .where(t -> {
-                    SQLConstantExpression constant = t.expression().constant();
                     t.createTime().lt(
-                            constant.valueOf(format).toDateTime(LocalDateTime.class).plus(1, TimeUnit.DAYS)
+                            t.expression().constant(format).toDateTime(LocalDateTime.class).plus(1, TimeUnit.DAYS)
                     );
                 }).toList();
 
@@ -1872,9 +1871,8 @@ public class QueryTest14 extends BaseTest {
         String format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.of(2020, 1, 1, 1, 1));
         List<Topic> list = easyEntityQuery.queryable(Topic.class)
                 .where(t -> {
-                    SQLConstantExpression constant = t.expression().constant();
                     t.createTime().lt(
-                            constant.valueOf(format).toDateTime(LocalDateTime.class).plus(1, TimeUnitEnum.DAYS)
+                            t.expression().constant(format).toDateTime(LocalDateTime.class).plus(1, TimeUnitEnum.DAYS)
                     );
                 }).toList();
 

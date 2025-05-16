@@ -18,14 +18,6 @@ public final class ToSQLResult {
         this.sqlContext = sqlContext;
     }
 
-    /**
-     * 请使用{@link #getSQL}
-     * @return
-     */
-    @Deprecated
-    public String getSql() {
-        return sql;
-    }
     public String getSQL() {
         return sql;
     }

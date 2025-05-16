@@ -494,9 +494,8 @@ public class QueryTest15 extends BaseTest {
             String format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
             List<Topic> list = easyEntityQuery.queryable(Topic.class)
                     .where(t -> {
-                        SQLConstantExpression constant = t.expression().constant();
                         t.createTime().lt(
-                                constant.valueOf(format).toDateTime(LocalDateTime.class).plus(1, TimeUnit.DAYS)
+                                t.expression().constant(format).toDateTime(LocalDateTime.class).plus(1, TimeUnit.DAYS)
                         );
                     }).toList();
         }

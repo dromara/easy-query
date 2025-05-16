@@ -28,7 +28,6 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
-import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelector;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelectorImpl;
@@ -44,7 +43,6 @@ import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctio
 import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableStringChainExpressionImpl;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
-import com.easy.query.core.proxy.impl.SQLConstantExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLNativeSegmentExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 import com.easy.query.core.proxy.sql.scec.SQLNativeProxyExpressionContext;
@@ -445,18 +443,6 @@ public class Expression {
 
     }
 
-
-
-    /**
-     * 创建常量值用于比较或者处理
-     * 请使用{@link #constant(String)}
-     *
-     * @return 数据库常量值构建方法
-     */
-    @Deprecated
-    public SQLConstantExpression constant() {
-        return new SQLConstantExpressionImpl(entitySQLContext);
-    }
 
     public ColumnFunctionCompareComparableDateTimeChainExpression<LocalDateTime> constant(LocalDateTime val) {
         return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.entitySQLContext, null, null, f -> f.constValue(val), LocalDateTime.class);

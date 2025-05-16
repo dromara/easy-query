@@ -190,13 +190,13 @@ public class DamengQueryTest extends DamengBaseTest {
             Draft1<BigDecimal> localDateTimeDraft12 = entityQuery.queryable(DamengMyTopic.class)
                     .whereById(id)
                     .select(o -> Select.DRAFT.of(
-                            o.expression().constant().valueOf(of).duration(o.expression().constant().valueOf(localDateTime), DateTimeDurationEnum.Seconds).asAnyType(BigDecimal.class)
+                            o.expression().constant(of).duration(o.expression().constant(localDateTime), DateTimeDurationEnum.Seconds).asAnyType(BigDecimal.class)
                     )).firstOrNull();
             Assert.assertEquals(BigDecimal.valueOf(-180).compareTo(localDateTimeDraft12.getValue1()), 0);
             Draft3<Long, LocalDateTime, LocalDateTime> draft31 = entityQuery.queryable(DamengMyTopic.class)
                     .whereById(id)
                     .select(o -> Select.DRAFT.of(
-                            o.createTime().duration(o.createTime().plus(1, TimeUnit.DAYS), DateTimeDurationEnum.Days),
+                            o.createTime().plus(1, TimeUnitEnum.DAYS).duration(o.createTime()).toDays(),
                             o.createTime().plus(2, TimeUnit.SECONDS),
                             o.createTime().plus(3, TimeUnit.MINUTES)
                     )).firstOrNull();
@@ -223,14 +223,14 @@ public class DamengQueryTest extends DamengBaseTest {
             Draft1<LocalDateTime> localDateTimeDraft1 = entityQuery.queryable(DamengMyTopic.class)
                     .whereById(id)
                     .select(o -> Select.DRAFT.of(
-                            o.expression().constant().valueOf(of).plus(3, TimeUnit.MINUTES)
+                            o.expression().constant(of).plus(3, TimeUnitEnum.MINUTES)
                     )).firstOrNull();
             Assert.assertEquals(localDateTimeDraft1.getValue1(), of.plusMinutes(3));
 
             Draft1<BigDecimal> localDateTimeDraft121 = entityQuery.queryable(DamengMyTopic.class)
                     .whereById(id)
                     .select(o -> Select.DRAFT.of(
-                            o.expression().constant().valueOf(of).duration(o.expression().constant().valueOf(of).plus(3, TimeUnit.MINUTES), DateTimeDurationEnum.Seconds).asAnyType(BigDecimal.class)
+                            o.expression().constant(of).duration(o.expression().constant(of).plus(3, TimeUnit.MINUTES), DateTimeDurationEnum.Seconds).asAnyType(BigDecimal.class)
                     )).firstOrNull();
 
             Assert.assertEquals(BigDecimal.valueOf(-180).compareTo(localDateTimeDraft121.getValue1()), 0);

@@ -42,7 +42,7 @@ public class EmptyDataSource implements DataSource {
                 .select(Map.class, m -> m.column("id").columnCountAs("id", "idCount")
                         .columnSumAs("age", "ageSum"))
                 .toSQLResult();
-        String sql1 = sqlResult.getSql();
+        String sql1 = sqlResult.getSQL();
         List<SQLParameter> parameters = sqlResult.getSqlContext().getParameters();
     }
     @Override

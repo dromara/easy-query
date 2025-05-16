@@ -696,8 +696,7 @@ public class QueryTest17 extends BaseTest {
 
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(b -> {
-                        SQLConstantExpression constant = b.expression().constant();
-                        b.title().like(constant.valueOf("ABc").toLower());
+                        b.title().like( b.expression().constant("ABc").toLower());
                     }).toList();
 
             listenerContextManager.clear();
