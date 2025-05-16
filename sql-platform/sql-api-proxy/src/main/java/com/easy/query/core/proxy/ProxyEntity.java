@@ -19,7 +19,6 @@ public interface ProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntit
      * @return
      */
     @Nullable
-    @Deprecated
     TableAvailable getTableOrNull();
 
     @Override

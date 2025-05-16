@@ -340,29 +340,6 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         }, String.class);
     }
 
-    /**
-     * 请使用{@link #joining(String)}
-     *
-     * @param delimiter
-     * @return
-     */
-    @Deprecated
-    default ColumnFunctionCompareComparableStringFilterChainExpression<TProperty> join(String delimiter) {
-        return joining(delimiter, false);
-    }
-
-    /**
-     * 请使用 {@link #joining(String, boolean)}
-     *
-     * @param delimiter
-     * @param distinct
-     * @return
-     */
-    @Deprecated
-    default ColumnFunctionCompareComparableStringFilterChainExpression<TProperty> join(String delimiter, boolean distinct) {
-        return joining(delimiter, distinct);
-    }
-
     default ColumnFunctionCompareComparableStringFilterChainExpression<TProperty> joining(String delimiter) {
         return joining(delimiter, false);
     }

@@ -412,7 +412,7 @@ public class QueryTest19 extends BaseTest {
                                         b.createTime().lt(LocalDateTime.now());
                                         b.id().eq(t.id());
                                     }).groupBy(b -> GroupKeys.of(b.title()))
-                                    .selectColumn(group -> group.groupTable().content().join("->"));
+                                    .selectColumn(group -> group.groupTable().content().joining("->"));
                         })
                 )).toList();
     }

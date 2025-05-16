@@ -20,15 +20,6 @@ public interface ColumnGroupSelector<T1> extends EntitySQLTableOwner<T1>, SQLPro
     }
     ColumnGroupSelector<T1> column(String property);
 
-    /**
-     * 请使用 sqlNativeSegment
-     * @param columnConst
-     * @return
-     */
-    @Deprecated
-    default ColumnGroupSelector<T1> columnConst(String columnConst){
-        return sqlNativeSegment(columnConst,c->{});
-    }
 
     ColumnGroupSelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction);
 

@@ -17,7 +17,6 @@ import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
-import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.GroupKeys;
@@ -1335,7 +1334,7 @@ public class QueryTest14 extends BaseTest {
                 .groupBy(t -> GroupKeys.of(t.title()))
                 .select(group -> Select.DRAFT.of(
                         group.key1(),
-                        group.groupTable().id().join(",")
+                        group.groupTable().id().joining(",")
                 )).toList();
 
         {

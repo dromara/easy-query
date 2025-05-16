@@ -984,7 +984,7 @@ public class MyTest1 extends BaseTest {
                             g.groupTable().stars().toNumber(BigDecimal.class).min()
                     );
                     r.content().set(
-                            g.groupTable().id().join(",")
+                            g.groupTable().id().joining(",")
                     );
                 })).toList();
 

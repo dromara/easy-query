@@ -233,16 +233,6 @@ public interface DSLColumnSet<TProxy, TProperty> extends PropTypeColumn<TPropert
         getCurrentEntitySQLContext().accept(new SQLColumnIncludeColumnImpl<>(column.getTable(), column.getValue(), getValue(), tSourcePropertyProxy, navigateSelectExpression));
         return castChain();
     }
-//
-//    default <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>> void setNavigate(TPropertyProxy columnProxy) {
-//        setNavigate(true, columnProxy);
-//    }
-//
-//    default <TPropertyProxy extends ProxyEntity<TPropertyProxy,TProperty>> void setNavigate(boolean condition, TPropertyProxy columnProxy) {
-//        if (condition) {
-//            getCurrentEntitySQLContext().accept(new SQLColumnSetColumnImpl(getTable(), getValue(), column));
-//        }
-//    }
 
     /**
      * 自增 a+1

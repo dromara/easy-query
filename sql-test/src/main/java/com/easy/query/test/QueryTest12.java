@@ -7,8 +7,6 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
-import com.easy.query.core.proxy.PropTypeColumn;
-import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.SQLMathExpression;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
@@ -246,7 +244,7 @@ public class QueryTest12 extends BaseTest {
                 .groupBy(o -> GroupKeys.of(o.content().subString(0, 8)))
                 .select(o -> Select.DRAFT.of(
                         o.key1(),
-                        o.groupTable().id().join(",")
+                        o.groupTable().id().joining(",")
                 ));
 
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
@@ -519,7 +517,7 @@ public class QueryTest12 extends BaseTest {
                 .where(b -> {
                     SQLMathExpression.floor(b.score()).eq(BigDecimal.ZERO);
                 })
-                .selectColumn(b -> b.title().join(","));
+                .selectColumn(b -> b.title().joining(","));
         List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
                 .where(b -> {
                     Expression expression = b.expression();
@@ -559,7 +557,7 @@ public class QueryTest12 extends BaseTest {
                                         x.id().eq("1");
                                         x.title().eq("2");
                                     })
-                                    .selectColumn(x -> x.title().join(",")));
+                                    .selectColumn(x -> x.title().joining(",")));
                         });
                         b.score().gt(BigDecimal.valueOf(1));
                     });

@@ -201,7 +201,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
                 .groupBy(o -> GroupKeys.of(o.title()))
                 .select(o -> Select.DRAFT.of(
                         o.key1(),
-                        o.groupTable().id().join(",")
+                        o.groupTable().id().joining(",")
                 )).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();

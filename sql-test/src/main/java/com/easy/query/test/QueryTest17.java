@@ -17,7 +17,6 @@ import com.easy.query.core.expression.sql.builder.EmptyEntityExpressionBuilder;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
-import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
@@ -1283,7 +1282,7 @@ public class QueryTest17 extends BaseTest {
                         ProvinceVOProxy provinceVOProxy = new ProvinceVOProxy();
                         provinceVOProxy.myCode().set(group.key1());
                         provinceVOProxy.myName().set(
-                                group.groupTable().t2.title().join(",")
+                                group.groupTable().t2.title().joining(",")
                         );
                         return provinceVOProxy;
                     }).toList();
@@ -1312,7 +1311,7 @@ public class QueryTest17 extends BaseTest {
                         ProvinceVOProxy provinceVOProxy = new ProvinceVOProxy();
                         provinceVOProxy.myCode().set(group.key1());
                         provinceVOProxy.myName().set(
-                                group.groupTable().t2.title().join(",", true)
+                                group.groupTable().t2.title().joining(",", true)
                         );
                         return provinceVOProxy;
                     }).toList();
