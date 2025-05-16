@@ -574,7 +574,7 @@ public class QueryTest10 extends BaseTest{
                     .queryable(BlogEntity.class)
                     .select(t -> Select.DRAFT.of(t.id(),
                             t.createTime(),
-                            t.expression().sqlType("1").asAnyType(String.class)
+                            t.expression().sqlSegment("1").asAnyType(String.class)
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -593,7 +593,7 @@ public class QueryTest10 extends BaseTest{
                     .queryable(BlogEntity.class)
                     .select(t -> Select.DRAFT.of(t.id(),
                             t.createTime(),
-                            t.expression().sqlType("IFNULL({0},'1')", c -> c.keepStyle().expression(t.title())).asAnyType(String.class)
+                            t.expression().sqlSegment("IFNULL({0},'1')", c -> c.keepStyle().expression(t.title())).asAnyType(String.class)
                     ))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -807,21 +807,21 @@ public class QueryTest10 extends BaseTest{
 
         List<Draft4<String, String, String, String>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
-                    o.title().trimStart().subString(1, 2).eq("123");
-                    o.title().trimStart().toLower().subString(1, 2).eq("123");
-                    o.title().toLower().trimStart().toUpper().toLower().subString(1, 2).eq("123");
+                    o.title().ltrim().subString(1, 2).eq("123");
+                    o.title().ltrim().toLower().subString(1, 2).eq("123");
+                    o.title().toLower().ltrim().toUpper().toLower().subString(1, 2).eq("123");
                     o.createTime()
                             .format("yyyy-MM")//日期先格式化
                             .toLower()//然后转成小写
                             .subString(1, 10)//分割从第一位
-                            .trimStart()
+                            .ltrim()
                             .like("023-01");
                 })
                 .select(o -> Select.DRAFT.of(
                         o.id(),
-                        o.title().toLower().trimStart(),
-                        o.title().trimStart().toUpper(),
-                        o.title().toLower().trimStart().subString(1, 2)
+                        o.title().toLower().ltrim(),
+                        o.title().ltrim().toUpper(),
+                        o.title().toLower().ltrim().subString(1, 2)
                 ))
                 .toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -840,21 +840,21 @@ public class QueryTest10 extends BaseTest{
 
         List<Draft4<String, String, String, String>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
-                    o.title().trimEnd().subString(1, 2).eq("123");
-                    o.title().trimEnd().toLower().subString(1, 2).eq("123");
-                    o.title().toLower().trimEnd().toUpper().toLower().subString(1, 2).eq("123");
+                    o.title().rtrim().subString(1, 2).eq("123");
+                    o.title().rtrim().toLower().subString(1, 2).eq("123");
+                    o.title().toLower().rtrim().toUpper().toLower().subString(1, 2).eq("123");
                     o.createTime()
                             .format("yyyy-MM")//日期先格式化
                             .toLower()//然后转成小写
                             .subString(1, 10)//分割从第一位
-                            .trimEnd()
+                            .rtrim()
                             .like("023-01");
                 })
                 .select(o -> Select.DRAFT.of(
                         o.id(),
-                        o.title().toLower().trimEnd(),
-                        o.title().trimEnd().toUpper(),
-                        o.title().toLower().trimEnd().subString(1, 2)
+                        o.title().toLower().rtrim(),
+                        o.title().rtrim().toUpper(),
+                        o.title().toLower().rtrim().subString(1, 2)
                 ))
                 .toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -873,7 +873,7 @@ public class QueryTest10 extends BaseTest{
 
         List<Draft2<String, String>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
-                    o.title().trimEnd().trimStart().eq(o.id().trimStart());
+                    o.title().rtrim().ltrim().eq(o.id().ltrim());
                     o.createTime().format("yyyy-MM-dd").subString(0, 4).eq("2021");
                 })
                 .select(o -> Select.DRAFT.of(
@@ -897,7 +897,7 @@ public class QueryTest10 extends BaseTest{
 
         List<Draft2<String, String>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
-                    o.title().trimEnd().trimStart().replace("title", "abc").like("abc");
+                    o.title().rtrim().ltrim().replace("title", "abc").like("abc");
                 })
                 .select(o -> Select.DRAFT.of(
                         o.id(),

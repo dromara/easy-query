@@ -555,7 +555,7 @@ public class QueryTest14 extends BaseTest {
                     s1.expression().sql("{0} = IFNULL({1},1)", c -> c.expression(s1.id()).expression(t2.title()));
                 })
                 .select((s1, t2) -> Select.DRAFT.of(
-                        s1.expression().sqlType("IFNULL({0},2)", c -> c.expression(s1.idCard())).asAnyType(String.class)
+                        s1.expression().sqlSegment("IFNULL({0},2)", c -> c.expression(s1.idCard())).asAnyType(String.class)
                 )).toList();
 
         List<TopicTypeVO> list2 = easyEntityQuery.queryable(SysUser.class)
@@ -566,7 +566,7 @@ public class QueryTest14 extends BaseTest {
                 })
                 .select((s1, t2) -> new TopicTypeVOProxy().adapter(r -> {
                     r.id().set(
-                            s1.expression().sqlType("IFNULL({0},2)", c -> c.expression(s1.idCard())).asAnyType(String.class)
+                            s1.expression().sqlSegment("IFNULL({0},2)", c -> c.expression(s1.idCard())).asAnyType(String.class)
                     );
                 })).toList();
 
@@ -1853,7 +1853,7 @@ public class QueryTest14 extends BaseTest {
         List<Topic> list = easyEntityQuery.queryable(Topic.class)
                 .where(t -> {
                     t.createTime().lt(
-                            t.expression().constant(format).toDateTime(LocalDateTime.class).plus(1, TimeUnit.DAYS)
+                            t.expression().constant(format).toDateTime(LocalDateTime.class).plus(1, TimeUnitEnum.DAYS)
                     );
                 }).toList();
 

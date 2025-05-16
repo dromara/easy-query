@@ -5,6 +5,9 @@ import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.core.draft.Draft4;
+import com.easy.query.core.proxy.core.draft.proxy.Draft4Proxy;
 import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
 import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.part.proxy.Part1Proxy;
@@ -16,7 +19,9 @@ import com.easy.query.test.mysql8.entity.M8Order;
 import com.easy.query.test.mysql8.entity.M8TestIndex;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
+import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysBankProxy;
+import lombok.var;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -243,5 +248,23 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals("ICBC(String),小明(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
+  /*  @Test
+     public void test111(){
+         var rankedSnapshots = easyEntityQuery.queryable(SysBankCard.class)
+                 .leftJoin(SysUser.class, (bank_card, user) -> bank_card.uid().eq(user.id()))
+                 .select((bank_card, user) -> Select.DRAFT.of(
+                         bank_card.code(),
+                         bank_card.type(),
+                         user.name(),
+                         bank_card.expression().rowNumberOver().partitionBy(bank_card.type()).orderBy(bank_card.openTime())
+                 )).toCteAs("RankedSnapshots");
+         List<Draft2<String, Long>> list = rankedSnapshots.cloneQueryable().where(s -> s.value4().eq(1L)).select(a -> a).toCteAs("lateSnapshot")
+                 .leftJoin(rankedSnapshots.cloneQueryable().where(s -> s.value4().eq(1L)), (lateSnapshot1, previousSnapshot1) -> lateSnapshot1.value1().eq(previousSnapshot1.value1()))
+                 .select((a, b) -> Select.DRAFT.of(
+                         a.value3(),
+                         b.value4()
+                 )).toList();
+     }*/
 
 }

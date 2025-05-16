@@ -165,57 +165,6 @@ public class Expression {
 //    }
 
 
-    /**
-     * 返回group或者selectDraft自定义sql片段
-     * <blockquote><pre>
-     * {@code
-     *
-     *  .select((t, t1, t2) -> new QueryVOProxy() {{
-     *      t.sqlType("now()");
-     *      //指定返回类型给draft类型进行明确
-     *      //t.sqlType("now()").setPropertyType(String.class);
-     *  }}).toList();
-     * }
-     * </blockquote></pre>
-     *
-     * @param sqlSegment
-     * @return
-     */
-    @Deprecated
-    public PropTypeColumn<Object> sqlType(String sqlSegment) {
-        return sqlType(sqlSegment, c -> {
-        });
-    }
-
-    /**
-     * 返回group或者selectDraft自定义sql片段
-     * <blockquote><pre>
-     * {@code
-     *
-     *  .select((t, t1, t2) -> new QueryVOProxy() {{
-     *      t.sqlType("IFNull({0},{1})",c->c.expression(t.id()).value("1"));
-     *      //指定返回类型给draft类型进行明确
-     *      //t.sqlType("IFNull({0},{1})",c->c.expression(t.id()).value("1")).setPropertyType(String.class);
-     *  }}).toList();
-     * }
-     * </blockquote></pre>
-     *
-     * @param sqlSegment     片段
-     * @param contextConsume 片段参数
-     * @return 返回元素sql片段
-     */
-    @Deprecated
-    public PropTypeColumn<Object> sqlType(String sqlSegment, SQLActionExpression1<SQLNativeProxyExpressionContext> contextConsume) {
-        return sqlType(sqlSegment, contextConsume, Object.class);
-    }
-
-    @Deprecated
-    public <T> PropTypeColumn<T> sqlType(String sqlSegment, SQLActionExpression1<SQLNativeProxyExpressionContext> contextConsume, Class<T> resultClass) {
-        return new SQLNativeSegmentExpressionImpl(entitySQLContext, sqlSegment, c -> {
-            contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c.getSQLNativeExpressionContext()));
-        }).asAnyType(resultClass);
-    }
-
 
     /**
      * 返回子查询

@@ -16,6 +16,7 @@ import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.expression.sql.builder.EmptyEntityExpressionBuilder;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.SQLConstantExpression;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.core.Expression;
@@ -84,8 +85,8 @@ public class QueryTest17 extends BaseTest {
                     b.content().toUpper().eq("abc");
                     b.content().toLower().eq("def");
                     b.content().trim().eq("a");
-                    b.content().trimStart().eq("b");
-                    b.content().trimEnd().eq("c");
+                    b.content().ltrim().eq("b");
+                    b.content().rtrim().eq("c");
                     b.content().replace("123", "456").eq("aaa");
                     b.content().leftPad(2, 'a').eq("aa");
                     b.content().rightPad(2, 'a').eq("aa");
@@ -594,9 +595,9 @@ public class QueryTest17 extends BaseTest {
     public void aaaa() {
         List<Draft1<LocalDateTime>> list = easyEntityQuery.queryable(Topic.class)
                 .where(t -> {
-                    t.createTime().plus(1, TimeUnit.DAYS).lt(LocalDateTime.now());
+                    t.createTime().plus(1, TimeUnitEnum.DAYS).lt(LocalDateTime.now());
                 }).select(t -> Select.DRAFT.of(
-                        t.createTime().plus(1, TimeUnit.DAYS)
+                        t.createTime().plus(1, TimeUnitEnum.DAYS)
                 )).toList();
 
         List<Draft1<LocalDateTime>> list1 = easyEntityQuery.queryable(Topic.class)
@@ -607,7 +608,7 @@ public class QueryTest17 extends BaseTest {
                     });
 
                 }).select(t -> Select.DRAFT.of(
-                        t.expression().sqlType("({0} + interval 1 day)", c -> {
+                        t.expression().sqlSegment("({0} + interval 1 day)", c -> {
                             c.expression(t.createTime());
                         }).asAnyType(LocalDateTime.class)
                 )).toList();
@@ -1067,8 +1068,8 @@ public class QueryTest17 extends BaseTest {
                     .where(b -> {
                         b.id().eq("123");
                     }).select(t -> Select.DRAFT.of(
-                            t.expression().sqlType("RAND()").asAnyType(Double.class),
-                            t.expression().sqlType("IFNULL({0},{1})", c -> {
+                            t.expression().sqlSegment("RAND()").asAnyType(Double.class),
+                            t.expression().sqlSegment("IFNULL({0},{1})", c -> {
                                 c.expression(t.stars()).value(1);
                             }).asAnyType(Integer.class)
                     )).toList();
@@ -1091,14 +1092,11 @@ public class QueryTest17 extends BaseTest {
                     .where(b -> {
                         b.id().eq("123");
                     }).select(Topic.class, t -> Select.of(
-                            t.expression().sqlType("RAND()", c -> {
-                                c.setAlias(t.stars());
-                            }).asAnyType(Double.class),
-                            t.expression().sqlType("IFNULL({0},{1})", c -> {
+                            t.expression().sqlSegment("RAND()").asAnyType(Double.class).as(t.stars()),
+                            t.expression().sqlSegment("IFNULL({0},{1})", c -> {
                                 c.expression(t.stars());
                                 c.value(1);
-                                c.setAlias(t.createTime());
-                            }).asAnyType(Integer.class)
+                            }).asAnyType(Integer.class).as(t.createTime())
                     )).toList();
 
             listenerContextManager.clear();

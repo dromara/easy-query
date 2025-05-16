@@ -190,24 +190,24 @@ public class DamengQueryTest extends DamengBaseTest {
             Draft1<BigDecimal> localDateTimeDraft12 = entityQuery.queryable(DamengMyTopic.class)
                     .whereById(id)
                     .select(o -> Select.DRAFT.of(
-                            o.expression().constant(of).duration(o.expression().constant(localDateTime), DateTimeDurationEnum.Seconds).asAnyType(BigDecimal.class)
+                            o.expression().constant(localDateTime).duration(o.expression().constant(of)).toSeconds().asAnyType(BigDecimal.class)
                     )).firstOrNull();
             Assert.assertEquals(BigDecimal.valueOf(-180).compareTo(localDateTimeDraft12.getValue1()), 0);
             Draft3<Long, LocalDateTime, LocalDateTime> draft31 = entityQuery.queryable(DamengMyTopic.class)
                     .whereById(id)
                     .select(o -> Select.DRAFT.of(
                             o.createTime().plus(1, TimeUnitEnum.DAYS).duration(o.createTime()).toDays(),
-                            o.createTime().plus(2, TimeUnit.SECONDS),
-                            o.createTime().plus(3, TimeUnit.MINUTES)
+                            o.createTime().plus(2, TimeUnitEnum.SECONDS),
+                            o.createTime().plus(3, TimeUnitEnum.MINUTES)
                     )).firstOrNull();
             {
 
                 Draft3<Long, Long, Long> draft3 = entityQuery.queryable(DamengMyTopic.class)
                         .whereById(id)
                         .select(o -> Select.DRAFT.of(
-                                o.createTime().duration(o.createTime().plus(1, TimeUnitEnum.DAYS), DateTimeDurationEnum.Days),
-                                o.createTime().duration(o.createTime().plus(2, TimeUnitEnum.SECONDS), DateTimeDurationEnum.Seconds),
-                                o.createTime().duration(o.createTime().plus(3, TimeUnitEnum.MINUTES), DateTimeDurationEnum.Minutes)
+                                o.createTime().plus(1, TimeUnitEnum.DAYS).duration(o.createTime()).toDays(),
+                                o.createTime().plus(2, TimeUnitEnum.SECONDS).duration(o.createTime()).toSeconds(),
+                                o.createTime().plus(3, TimeUnitEnum.MINUTES).duration(o.createTime()).toMinutes()
                         )).firstOrNull();
 
                 Assert.assertNotNull(draft3);
@@ -230,7 +230,7 @@ public class DamengQueryTest extends DamengBaseTest {
             Draft1<BigDecimal> localDateTimeDraft121 = entityQuery.queryable(DamengMyTopic.class)
                     .whereById(id)
                     .select(o -> Select.DRAFT.of(
-                            o.expression().constant(of).duration(o.expression().constant(of).plus(3, TimeUnit.MINUTES), DateTimeDurationEnum.Seconds).asAnyType(BigDecimal.class)
+                            o.expression().constant(of).plus(3, TimeUnitEnum.MINUTES).duration(o.expression().constant(of)).toSeconds().asAnyType(BigDecimal.class)
                     )).firstOrNull();
 
             Assert.assertEquals(BigDecimal.valueOf(-180).compareTo(localDateTimeDraft121.getValue1()), 0);
@@ -240,9 +240,9 @@ public class DamengQueryTest extends DamengBaseTest {
                 Draft3<Long, Long, Long> draft3 = entityQuery.queryable(DamengMyTopic.class)
                         .whereById(id)
                         .select(o -> Select.DRAFT.of(
-                                o.createTime().duration(o.createTime().plus(1, TimeUnit.DAYS), DateTimeDurationEnum.Days),
-                                o.createTime().duration(o.createTime().plus(2, TimeUnit.SECONDS), DateTimeDurationEnum.Seconds),
-                                o.createTime().duration(o.createTime().plus(1, TimeUnit.DAYS).plus(3, TimeUnit.MINUTES), DateTimeDurationEnum.Minutes)
+                                o.createTime().plus(1, TimeUnitEnum.DAYS).duration(o.createTime()).toDays(),
+                                o.createTime().plus(2, TimeUnitEnum.SECONDS).duration(o.createTime()).toSeconds(),
+                                o.createTime().plus(1, TimeUnitEnum.DAYS).plus(3, TimeUnitEnum.MINUTES).duration(o.createTime()).toMinutes()
                         )).firstOrNull();
 
 

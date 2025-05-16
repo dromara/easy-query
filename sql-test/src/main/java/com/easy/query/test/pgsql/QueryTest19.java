@@ -8,6 +8,7 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.key.MapKey;
 import com.easy.query.api.proxy.key.MapKeys;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
 import com.easy.query.core.proxy.grouping.Grouping1;
@@ -493,5 +494,13 @@ public class QueryTest19 extends PgSQLBaseTest {
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
+//    @Test
+//    public void test(){
+//        EntityMetadata entityMetadata = entityQuery.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(TestPgSQLEntity.class);
+//        String tableName = entityMetadata.getTableName();
+//        System.out.println("TestPgSQLEntity:"+tableName);
+//        List<TestPgSQLEntity> list = entityQuery.queryable(TestPgSQLEntity.class).toList();
+//    }
 
 }

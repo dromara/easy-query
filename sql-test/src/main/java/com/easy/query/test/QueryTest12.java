@@ -390,7 +390,7 @@ public class QueryTest12 extends BaseTest {
         List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
                 .select(b -> new BlogEntityProxy().adapter(r -> {
                     r.score().set(
-                            b.expression().sqlType("SUM({0})-SUM({1})", c -> {
+                            b.expression().sqlSegment("SUM({0})-SUM({1})", c -> {
                                 c.expression(b.score()).expression(b.score());
                             }).asAnyType(BigDecimal.class)
                     );
@@ -493,7 +493,7 @@ public class QueryTest12 extends BaseTest {
                 .where(b -> {
                     SQLMathExpression.floor(b.score()).eq(BigDecimal.ZERO);
                 })
-                .selectColumn(b -> b.expression().sqlType("GROUP_CONCAT({0})", c -> c.expression(b.title())).asAnyType(String.class));
+                .selectColumn(b -> b.expression().sqlSegment("GROUP_CONCAT({0})", c -> c.expression(b.title())).asAnyType(String.class));
         List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
                 .where(b -> {
                     Expression expression = b.expression();

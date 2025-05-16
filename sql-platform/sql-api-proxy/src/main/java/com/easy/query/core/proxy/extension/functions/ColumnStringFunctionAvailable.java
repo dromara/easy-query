@@ -239,16 +239,6 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         }, String.class);
     }
 
-    /**
-     * 去头部空格
-     * {@link #ltrim()}
-     *
-     * @return
-     */
-    @Deprecated
-    default ColumnFunctionCompareComparableStringChainExpression<String> trimStart() {
-        return ltrim();
-    }
 
     /**
      * 去头部空格
@@ -266,16 +256,6 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         }, String.class);
     }
 
-    /**
-     * 去尾部空格
-     * {@link #rtrim()}
-     *
-     * @return
-     */
-    @Deprecated
-    default ColumnFunctionCompareComparableStringChainExpression<String> trimEnd() {
-        return rtrim();
-    }
 
     /**
      * 去尾部空格
