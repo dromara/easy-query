@@ -146,22 +146,6 @@ public abstract class AbstractMapClientInsertable implements MapClientInsertable
     }
 
     @Override
-    public MapClientInsertable<Map<String,Object>> onDuplicateKeyIgnore() {
-        insertOrIgnoreBehavior();
-        return this;
-    }
-
-    private void insertOrIgnoreBehavior() {
-        entityInsertExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_UPDATE);
-        entityInsertExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_IGNORE);
-    }
-
-    private void insertOrUpdateBehavior() {
-        entityInsertExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_IGNORE);
-        entityInsertExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_UPDATE);
-    }
-
-    @Override
     public MapClientInsertable<Map<String,Object>> batch(boolean use) {
         if (use) {
             entityInsertExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.EXECUTE_NO_BATCH);

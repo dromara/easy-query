@@ -92,11 +92,6 @@ public class EasyEmptyMapClientInsertable implements MapClientInsertable<Map<Str
     }
 
     @Override
-    public MapClientInsertable<Map<String, Object>> onDuplicateKeyIgnore() {
-        return this;
-    }
-
-    @Override
     public MapClientInsertable<Map<String, Object>> asTable(Function<String, String> tableNameAs) {
         return this;
     }

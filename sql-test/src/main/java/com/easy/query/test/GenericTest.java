@@ -509,7 +509,7 @@ public class GenericTest extends BaseTest {
             long l = easyEntityQuery.updatable(QueryLargeColumnTestEntity.class)
                     .asTable(o -> o + "abc")
                     .asSchema("xcv")
-                    
+
                     .setColumns(q -> q.id().set("123"))
                     .setColumns(q -> q.name().set("123"))
                     .setColumns(q -> q.content().set("123"))
@@ -588,7 +588,7 @@ public class GenericTest extends BaseTest {
 
             long l = easyEntityQuery.updatable(BlogEntity.class)
                     .asTable("x_t_blog")
-                    .setColumns(t_blog -> t_blog.star().increment(2))
+                    .setColumns(false,t_blog -> t_blog.star().increment(2))
                     .setColumns(t_blog -> t_blog.score().increment(2))
                     .whereById("123")
                     .executeRows();
@@ -629,8 +629,8 @@ public class GenericTest extends BaseTest {
 
             long l = easyEntityQuery.updatable(BlogEntity.class)
                     .asTable("x_t_blog")
-                    .setColumns(false,t_blog -> t_blog.status().increment(1))
-                    .setColumns(true,t_blog -> t_blog.star().increment(2))
+                    .setColumns(false, t_blog -> t_blog.status().increment(1))
+                    .setColumns(true, t_blog -> t_blog.star().increment(2))
                     .whereById("123")
                     .executeRows();
         } catch (Exception ex) {
@@ -649,8 +649,8 @@ public class GenericTest extends BaseTest {
         try {
 
             long l = easyEntityQuery.updatable(UnknownTable.class)
-                    .setColumns(u -> u.money1().increment(2))
-                    .setColumns(u -> u.money().increment(2))
+                    .setColumns(false, u -> u.money1().increment(2))
+                    .setColumns(true, u -> u.money().increment(2))
                     .whereById("123")
                     .executeRows();
         } catch (Exception ex) {
@@ -684,8 +684,8 @@ public class GenericTest extends BaseTest {
         Supplier<Object> lambdaCreate = fastBean.getBeanConstructorCreator();
         Object o = lambdaCreate.get();
         Assert.assertNotNull(o);
-        Assert.assertTrue(o instanceof  BlogEntity);
-        BlogEntity blogEntity = (BlogEntity)o;
+        Assert.assertTrue(o instanceof BlogEntity);
+        BlogEntity blogEntity = (BlogEntity) o;
         Assert.assertNotNull(blogEntity);
         {
             long start = System.currentTimeMillis();
@@ -693,7 +693,7 @@ public class GenericTest extends BaseTest {
                 BlogEntity blogEntity1 = EasyClassUtil.newInstance(BlogEntity.class);
             }
             long end = System.currentTimeMillis();
-            System.out.println((end-start)+"(ms)");
+            System.out.println((end - start) + "(ms)");
         }
         {
             long start = System.currentTimeMillis();
@@ -701,14 +701,15 @@ public class GenericTest extends BaseTest {
                 BlogEntity blogEntity1 = EasyObjectUtil.typeCastNullable(lambdaCreate.get());
             }
             long end = System.currentTimeMillis();
-            System.out.println((end-start)+"(ms)");
+            System.out.println((end - start) + "(ms)");
         }
         Object o1 = lambdaCreate.get();
         Object o2 = lambdaCreate.get();
-        Assert.assertFalse(o1==o2);
+        Assert.assertFalse(o1 == o2);
     }
+
     @Test
-    public void repeatApply1(){
+    public void repeatApply1() {
         EasyQueryClient easyQueryClient1 = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .build();
@@ -716,51 +717,51 @@ public class GenericTest extends BaseTest {
         queryConfiguration.applyGeneratedKeySQLColumnGenerator(new MyDatabaseIncrementSQLColumnGenerator());
         try {
             queryConfiguration.applyGeneratedKeySQLColumnGenerator(new MyDatabaseIncrementSQLColumnGenerator());
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             String message = ex.getMessage();
-            Assert.assertEquals("generated key sql column generator:MyDatabaseIncrementSQLColumnGenerator,repeat",message);
+            Assert.assertEquals("generated key sql column generator:MyDatabaseIncrementSQLColumnGenerator,repeat", message);
         }
         queryConfiguration.applyInterceptor(new MyEntityInterceptor());
         try {
             queryConfiguration.applyInterceptor(new MyEntityInterceptor());
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             String message = ex.getMessage();
-            Assert.assertEquals("global interceptor:MyEntityInterceptor,repeat",message);
+            Assert.assertEquals("global interceptor:MyEntityInterceptor,repeat", message);
         }
         queryConfiguration.applyLogicDeleteStrategy(new MyLogicDelStrategy());
         try {
             queryConfiguration.applyLogicDeleteStrategy(new MyLogicDelStrategy());
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             String message = ex.getMessage();
-            Assert.assertEquals("global logic delete strategy:MyLogicDelStrategy,repeat",message);
+            Assert.assertEquals("global logic delete strategy:MyLogicDelStrategy,repeat", message);
         }
         queryConfiguration.applyEncryptionStrategy(new Base64EncryptionStrategy());
         try {
             queryConfiguration.applyEncryptionStrategy(new Base64EncryptionStrategy());
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQueryException);
             String message = ex.getMessage();
-            Assert.assertEquals("easy encryption strategy:Base64EncryptionStrategy,repeat",message);
+            Assert.assertEquals("easy encryption strategy:Base64EncryptionStrategy,repeat", message);
         }
     }
 
 
     @Test
-    public void nameConversionTest1(){
+    public void nameConversionTest1() {
         {
             LowerCamelCaseNameConversion lowerCamelCaseNameConversion = new LowerCamelCaseNameConversion();
             {
                 String nameConversion = "NameConversion";
                 String convert = lowerCamelCaseNameConversion.convert(nameConversion);
-                Assert.assertEquals("nameConversion",convert);
+                Assert.assertEquals("nameConversion", convert);
             }
             {
                 String nameConversion = "nameConversion";
                 String convert = lowerCamelCaseNameConversion.convert(nameConversion);
-                Assert.assertEquals("nameConversion",convert);
+                Assert.assertEquals("nameConversion", convert);
             }
         }
         {
@@ -769,12 +770,12 @@ public class GenericTest extends BaseTest {
             {
                 String nameConversion = "NameConversion";
                 String convert = upperCamelCaseNameConversion.convert(nameConversion);
-                Assert.assertEquals("NameConversion",convert);
+                Assert.assertEquals("NameConversion", convert);
             }
             {
                 String nameConversion = "nameConversion";
                 String convert = upperCamelCaseNameConversion.convert(nameConversion);
-                Assert.assertEquals("NameConversion",convert);
+                Assert.assertEquals("NameConversion", convert);
             }
         }
         {
@@ -782,12 +783,12 @@ public class GenericTest extends BaseTest {
             {
                 String nameConversion = "NameConversion";
                 String convert = underlinedNameConversion.convert(nameConversion);
-                Assert.assertEquals("name_conversion",convert);
+                Assert.assertEquals("name_conversion", convert);
             }
             {
                 String nameConversion = "nameConversion";
                 String convert = underlinedNameConversion.convert(nameConversion);
-                Assert.assertEquals("name_conversion",convert);
+                Assert.assertEquals("name_conversion", convert);
             }
         }
         {
@@ -795,23 +796,24 @@ public class GenericTest extends BaseTest {
             {
                 String nameConversion = "NameConversion";
                 String convert = upperUnderlinedNameConversion.convert(nameConversion);
-                Assert.assertEquals("NAME_CONVERSION",convert);
+                Assert.assertEquals("NAME_CONVERSION", convert);
             }
             {
                 String nameConversion = "nameConversion";
                 String convert = upperUnderlinedNameConversion.convert(nameConversion);
-                Assert.assertEquals("NAME_CONVERSION",convert);
+                Assert.assertEquals("NAME_CONVERSION", convert);
             }
         }
     }
+
     @Test
-     public void StringCharSegmentTest1(){
-         List<String> a = EasyStringUtil.getStringCharSegments("aaa啊啊a", 4, 1, 2);
+    public void StringCharSegmentTest1() {
+        List<String> a = EasyStringUtil.getStringCharSegments("aaa啊啊a", 4, 1, 2);
         String as = a.toString();
-        Assert.assertEquals("[aaa啊, aa啊, a啊啊, 啊啊, 啊a]",as);
+        Assert.assertEquals("[aaa啊, aa啊, a啊啊, 啊啊, 啊a]", as);
         List<String> a1 = EasyStringUtil.getStringCharSegments("aaa啊啊", 4, 1, 2);
         String a1s = a1.toString();
-        Assert.assertEquals("[aaa啊, aa啊, a啊啊, 啊啊]",a1s);
+        Assert.assertEquals("[aaa啊, aa啊, a啊啊, 啊啊]", a1s);
         String randomBase64 = "OTpIT+KDo+KdpDYq5Z6aIzMzek1A77iPMXlG8J+RqFNjXF5PXumHjDBY5ZyoMA==";
 //        String randomString = new String(EasyBase64Util.decode(randomBase64.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
         String randomString = "√在-`N*以\\字中d\\~_yb2❤USY\uD83D\uDC8A\uD83D\uDC68\uD83E\uDD21\uD83D\uDC685G*\uD83D\uDE08符T*9L^9oP可符F※,x·Z∝这4ェ(v\u200D";
@@ -897,29 +899,29 @@ public class GenericTest extends BaseTest {
 ////        }
 ////        return stringBuilder.toString();
 //
-            StringBuilder stringBuilder1 = new StringBuilder();
-            for (int i = 0; i < segments.size(); i++) {
-                String str = segments.get(i);
-                boolean last = i == (segments.size() - 1);
-                if (last) {
-                    stringBuilder1.append(str);
-                } else {
-                    stringBuilder1.append(str.charAt(0));
-                }
+        StringBuilder stringBuilder1 = new StringBuilder();
+        for (int i = 0; i < segments.size(); i++) {
+            String str = segments.get(i);
+            boolean last = i == (segments.size() - 1);
+            if (last) {
+                stringBuilder1.append(str);
+            } else {
+                stringBuilder1.append(str.charAt(0));
             }
-            String string = stringBuilder1.toString();
-            DefaultAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
+        }
+        String string = stringBuilder1.toString();
+        DefaultAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
 //        }
 
     }
 
 
     @Test
-    public void StringCharSegmentTest2(){
+    public void StringCharSegmentTest2() {
         DefaultAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
         for (int i = 0; i < 8000; i++) {
             int desiredLength = new Random().nextInt(40);
-            String randomString = generateRandomString(desiredLength+1);
+            String randomString = generateRandomString(desiredLength + 1);
             try {
 
                 Object encrypt = defaultAesEasyEncryptionStrategy.encrypt(null, null, randomString);
@@ -928,23 +930,24 @@ public class GenericTest extends BaseTest {
                 Assert.assertNotNull(decrypt);
                 String string = decrypt.toString();
                 boolean equals = randomString.equals(string);
-                if(!equals){
+                if (!equals) {
                     String s = new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
-                    System.out.println("随机串base64:"+s);
+                    System.out.println("随机串base64:" + s);
                 }
-                Assert.assertEquals(randomString,string);
-            }catch (Exception ex){
-                System.out.println("随机串:"+randomString);
+                Assert.assertEquals(randomString, string);
+            } catch (Exception ex) {
+                System.out.println("随机串:" + randomString);
                 throw ex;
             }
         }
     }
+
     @Test
-    public void StringCharSegmentTest7(){
+    public void StringCharSegmentTest7() {
         DefaultSafeAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultSafeAesEasyEncryptionStrategy();
         for (int i = 0; i < 20000; i++) {
             int desiredLength = new Random().nextInt(60);
-            String randomString = generateRandomString1(desiredLength+11);
+            String randomString = generateRandomString1(desiredLength + 11);
             try {
 
                 Object encrypt = defaultAesEasyEncryptionStrategy.encrypt(null, null, randomString);
@@ -953,22 +956,22 @@ public class GenericTest extends BaseTest {
                 Assert.assertNotNull(decrypt);
                 String string = decrypt.toString();
                 boolean equals = randomString.equals(string);
-                if(!equals){
+                if (!equals) {
                     String s = new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
-                    System.out.println("随机串base64:"+s);
+                    System.out.println("随机串base64:" + s);
                 }
-                Assert.assertEquals(randomString,string);
-            }catch (Exception ex){
-                System.out.println("随机串:"+randomString);
+                Assert.assertEquals(randomString, string);
+            } catch (Exception ex) {
+                System.out.println("随机串:" + randomString);
                 String s = new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
-                System.out.println("随机串base64:"+s);
+                System.out.println("随机串base64:" + s);
                 throw ex;
             }
         }
     }
 
     @Test
-    public void StringCharSegmentTest4(){
+    public void StringCharSegmentTest4() {
         String randomString = "qO)3\\{*h\uFE0F�MbjT";
         DefaultAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
 
@@ -978,16 +981,17 @@ public class GenericTest extends BaseTest {
         Assert.assertNotNull(decrypt);
         String string = decrypt.toString();
         boolean equals = randomString.equals(string);
-        if(!equals){
-            System.out.println("随机串base64:"+new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8));
+        if (!equals) {
+            System.out.println("随机串base64:" + new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
         }
-        Assert.assertEquals(randomString,string);
+        Assert.assertEquals(randomString, string);
 
     }
+
     @Test
-    public void StringCharSegmentTest5(){
+    public void StringCharSegmentTest5() {
         String randomBase64 = "NSxcLu+4j35ocjElWTEpTyUr5Y+ve+WKoDdiIFlkLj85L2An77iPTkM5UEI=";
-        String randomString = new String(EasyBase64Util.decode(randomBase64.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
+        String randomString = new String(EasyBase64Util.decode(randomBase64.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
         DefaultAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
 
         Object encrypt = defaultAesEasyEncryptionStrategy.encrypt(null, null, randomString);
@@ -996,17 +1000,18 @@ public class GenericTest extends BaseTest {
         Assert.assertNotNull(decrypt);
         String string = decrypt.toString();
         boolean equals = randomString.equals(string);
-        if(!equals){
-            System.out.println("随机串base64:"+new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8));
+        if (!equals) {
+            System.out.println("随机串base64:" + new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
 
         }
-        Assert.assertEquals(randomString,string);
+        Assert.assertEquals(randomString, string);
 
     }
+
     @Test
-    public void StringCharSegmentTest6(){
+    public void StringCharSegmentTest6() {
         String randomBase64 = "5Yqg5LulVOWtl1tfcSB9RmdfekIj4oOj5YqgXlzlk4g/diLkuK1eauKAjV9P5ZOIP3vwn5KKcVhe";
-        String randomString = new String(EasyBase64Util.decode(randomBase64.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
+        String randomString = new String(EasyBase64Util.decode(randomBase64.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
         DefaultSafeAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultSafeAesEasyEncryptionStrategy();
 
         Object encrypt = defaultAesEasyEncryptionStrategy.encrypt(null, null, randomString);
@@ -1015,16 +1020,17 @@ public class GenericTest extends BaseTest {
         Assert.assertNotNull(decrypt);
         String string = decrypt.toString();
         boolean equals = randomString.equals(string);
-        if(!equals){
-            System.out.println("随机串base64:"+new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8));
+        if (!equals) {
+            System.out.println("随机串base64:" + new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
         }
-        Assert.assertEquals(randomString,string);
+        Assert.assertEquals(randomString, string);
 
     }
+
     @Test
-    public void StringCharSegmentTest8(){
+    public void StringCharSegmentTest8() {
         String randomBase64 = "OTpIT+KDo+KdpDYq5Z6aIzMzek1A77iPMXlG8J+RqFNjXF5PXumHjDBY5ZyoMA==";
-        String randomString = new String(EasyBase64Util.decode(randomBase64.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
+        String randomString = new String(EasyBase64Util.decode(randomBase64.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
         DefaultSafeAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultSafeAesEasyEncryptionStrategy();
 
         Object encrypt = defaultAesEasyEncryptionStrategy.encrypt(null, null, randomString);
@@ -1033,14 +1039,15 @@ public class GenericTest extends BaseTest {
         Assert.assertNotNull(decrypt);
         String string = decrypt.toString();
         boolean equals = randomString.equals(string);
-        if(!equals){
-            System.out.println("随机串base64:"+new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8));
+        if (!equals) {
+            System.out.println("随机串base64:" + new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
         }
-        Assert.assertEquals(randomString,string);
+        Assert.assertEquals(randomString, string);
 
     }
+
     @Test
-    public void StringCharSegmentTest10(){
+    public void StringCharSegmentTest10() {
         String randomString = "√在-`N*以\\字中d\\~_yb2❤USY\uD83D\uDC8A\uD83D\uDC68\uD83E\uDD21\uD83D\uDC685G*\uD83D\uDE08符T*9L^9oP可符F※,x·Z∝这4ェ(v\u200D";
         DefaultSafeAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultSafeAesEasyEncryptionStrategy();
 
@@ -1050,19 +1057,20 @@ public class GenericTest extends BaseTest {
         Assert.assertNotNull(decrypt);
         String string = decrypt.toString();
         boolean equals = randomString.equals(string);
-        if(!equals){
-            System.out.println("随机串base64:"+new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8));
+        if (!equals) {
+            System.out.println("随机串base64:" + new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
         }
-        Assert.assertEquals(randomString,string);
+        Assert.assertEquals(randomString, string);
 
     }
+
     @Test
-    public void StringCharSegmentTest3(){
+    public void StringCharSegmentTest3() {
 
         DefaultAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
         for (int i = 0; i < 5000; i++) {
             int desiredLength = new Random().nextInt(70);
-            String randomString = generateRandomString(desiredLength+1)+"1\uFE0F⃣+✅+❤\uFE0F+❥(^_-)+O(∩_∩)O哈哈~";
+            String randomString = generateRandomString(desiredLength + 1) + "1\uFE0F⃣+✅+❤\uFE0F+❥(^_-)+O(∩_∩)O哈哈~";
             try {
 
                 Object encrypt = defaultAesEasyEncryptionStrategy.encrypt(null, null, randomString);
@@ -1070,14 +1078,13 @@ public class GenericTest extends BaseTest {
                 Object decrypt = defaultAesEasyEncryptionStrategy.decrypt(null, null, encrypt);
                 Assert.assertNotNull(decrypt);
                 String string = decrypt.toString();
-                Assert.assertEquals(randomString,string);
-            }catch (Exception ex){
-                System.out.println("随机串:"+randomString);
+                Assert.assertEquals(randomString, string);
+            } catch (Exception ex) {
+                System.out.println("随机串:" + randomString);
                 throw ex;
             }
         }
     }
-
 
 
     private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" +
@@ -1099,6 +1106,7 @@ public class GenericTest extends BaseTest {
 
         return stringBuilder.toString();
     }
+
     public static String generateRandomString1(int length) {
         Random random = new Random();
         StringBuilder stringBuilder = new StringBuilder();
@@ -1114,41 +1122,42 @@ public class GenericTest extends BaseTest {
 
 
     @Test
-    public void EnumValueTest1(){
+    public void EnumValueTest1() {
         MyEnum zj = EnumValueDeserializer.deserialize(MyEnum.class, 1);
-        Assert.assertEquals(MyEnum.ZJ,zj);
+        Assert.assertEquals(MyEnum.ZJ, zj);
         MyEnum js = EnumValueDeserializer.deserialize(MyEnum.class, 2);
-        Assert.assertEquals(MyEnum.JS,js);
+        Assert.assertEquals(MyEnum.JS, js);
         MyEnum sh = EnumValueDeserializer.deserialize(MyEnum.class, 3);
-        Assert.assertEquals(MyEnum.SH,sh);
+        Assert.assertEquals(MyEnum.SH, sh);
         MyEnum bj = EnumValueDeserializer.deserialize(MyEnum.class, 4);
-        Assert.assertEquals(MyEnum.BJ,bj);
+        Assert.assertEquals(MyEnum.BJ, bj);
     }
+
     @Test
-    public void EnumValueTest2(){
+    public void EnumValueTest2() {
         EnumValueConverter enumValueConverter = new EnumValueConverter();
         Number e1 = enumValueConverter.serialize(null, null);
         Assert.assertNull(e1);
         Number e2 = enumValueConverter.serialize(MyEnum.ZJ, null);
-        Assert.assertEquals(MyEnum.ZJ.getCode(),e2);
+        Assert.assertEquals(MyEnum.ZJ.getCode(), e2);
         Number e3 = enumValueConverter.serialize(MyEnum.JS, null);
-        Assert.assertEquals(MyEnum.JS.getCode(),e3);
+        Assert.assertEquals(MyEnum.JS.getCode(), e3);
         Number e4 = enumValueConverter.serialize(MyEnum.SH, null);
-        Assert.assertEquals(MyEnum.SH.getCode(),e4);
+        Assert.assertEquals(MyEnum.SH.getCode(), e4);
         Number e5 = enumValueConverter.serialize(MyEnum.BJ, null);
-        Assert.assertEquals(MyEnum.BJ.getCode(),e5);
+        Assert.assertEquals(MyEnum.BJ.getCode(), e5);
 
     }
 
     @Test
-    public void check(){
+    public void check() {
         {
 
             Supplier<Exception> f = () -> {
                 try {
-                    Object obj=null;
-                    EasyCheck.assertElse(obj!=null,"obj is null");
-                }catch (Exception ex){
+                    Object obj = null;
+                    EasyCheck.assertElse(obj != null, "obj is null");
+                } catch (Exception ex) {
                     return ex;
                 }
                 return null;
@@ -1161,9 +1170,9 @@ public class GenericTest extends BaseTest {
 
             Supplier<Exception> f = () -> {
                 try {
-                    Object obj=null;
-                    EasyCheck.assertElse(obj==null,"obj is not null");
-                }catch (Exception ex){
+                    Object obj = null;
+                    EasyCheck.assertElse(obj == null, "obj is not null");
+                } catch (Exception ex) {
                     return ex;
                 }
                 return null;
@@ -1175,9 +1184,9 @@ public class GenericTest extends BaseTest {
 
             Supplier<Exception> f = () -> {
                 try {
-                    Object obj=null;
-                    EasyCheck.assertArgumentElse(obj!=null);
-                }catch (Exception ex){
+                    Object obj = null;
+                    EasyCheck.assertArgumentElse(obj != null);
+                } catch (Exception ex) {
                     return ex;
                 }
                 return null;
@@ -1190,9 +1199,9 @@ public class GenericTest extends BaseTest {
 
             Supplier<Exception> f = () -> {
                 try {
-                    Object obj=null;
-                    EasyCheck.assertArgumentElse(obj==null);
-                }catch (Exception ex){
+                    Object obj = null;
+                    EasyCheck.assertArgumentElse(obj == null);
+                } catch (Exception ex) {
                     return ex;
                 }
                 return null;
@@ -1201,13 +1210,15 @@ public class GenericTest extends BaseTest {
             Assert.assertNull(exception);
         }
     }
-    public void test(){
+
+    public void test() {
         TopicShardingProxy table = TopicShardingProxy.createTable();
         SQLColumn<TopicShardingProxy, String> topicShardingProxyStringSQLColumn = table._title();
         TopicShardingProxy.TopicShardingProxyFetcher topicShardingProxyFetcher = table.FETCHER._title();
     }
+
     @Test
-    public void test1(){
+    public void test1() {
 
         BeanInfo beanInfo = null;
         try {
@@ -1222,21 +1233,22 @@ public class GenericTest extends BaseTest {
     }
 
     @Test
-    public void testPrintSQL1(){
+    public void testPrintSQL1() {
         EasyExpressionContext easyExpressionContext = new EasyExpressionContext(easyEntityQuery.getRuntimeContext());
         easyExpressionContext.setPrintSQL(false);
         easyExpressionContext.setPrintNavSQL(false);
         ExpressionContext expressionContext = easyExpressionContext.cloneExpressionContext();
-        Assert.assertEquals(false,expressionContext.getPrintSQL());
-        Assert.assertEquals(false,expressionContext.getPrintNavSQL());
+        Assert.assertEquals(false, expressionContext.getPrintSQL());
+        Assert.assertEquals(false, expressionContext.getPrintNavSQL());
     }
+
     @Test
-    public void testPrintSQL2(){
+    public void testPrintSQL2() {
         EasyExpressionContext easyExpressionContext = new EasyExpressionContext(easyEntityQuery.getRuntimeContext());
         easyExpressionContext.setPrintSQL(null);
         easyExpressionContext.setPrintNavSQL(true);
         ExpressionContext expressionContext = easyExpressionContext.cloneExpressionContext();
         Assert.assertNull(expressionContext.getPrintSQL());
-        Assert.assertEquals(true,expressionContext.getPrintNavSQL());
+        Assert.assertEquals(true, expressionContext.getPrintNavSQL());
     }
 }

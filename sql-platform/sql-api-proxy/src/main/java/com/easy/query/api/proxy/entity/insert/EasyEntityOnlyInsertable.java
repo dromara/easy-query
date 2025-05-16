@@ -97,13 +97,6 @@ public class EasyEntityOnlyInsertable<T> implements EntityOnlyInsertable<T> {
         clientInsertable.setSQLStrategy(sqlStrategy);
         return this;
     }
-
-    @Override
-    public EntityOnlyInsertable<T> onDuplicateKeyIgnore() {
-        clientInsertable.onDuplicateKeyIgnore();
-        return this;
-    }
-
     @Override
     public EntityOnlyInsertable<T> asTable(Function<String, String> tableNameAs) {
         clientInsertable.asTable(tableNameAs);

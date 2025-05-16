@@ -1688,7 +1688,7 @@ public class QueryTest extends BaseTest {
                 ));
         String sql = select.toSQL();
 
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,(SELECT SUM(t1.`star`) AS `star` FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = t.`id`) AS `blog_count` FROM `t_topic` t WHERE t.`title` IS NOT NULL", sql);
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time`,(SELECT SUM(t1.`star`) FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = t.`id`) AS `blog_count` FROM `t_topic` t WHERE t.`title` IS NOT NULL", sql);
         List<TopicSubQueryBlog> list = select.toList();
         Assert.assertEquals(99, list.size());
         for (TopicSubQueryBlog topicSubQueryBlog : list) {

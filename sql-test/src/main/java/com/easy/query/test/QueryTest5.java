@@ -711,7 +711,7 @@ public class QueryTest5 extends BaseTest {
                             o.expression().sqlSegment("ROW_NUMBER() OVER(ORDER BY {0})", c -> {
                                 c.expression(o.createTime());
                             }).as(TopicTypeVO::getTitle),
-                            o.FETCHER.allFields()
+                            o.FETCHER.allFieldsExclude(o.title())
                     )).toSQL();
 
             Assert.assertEquals("SELECT ROW_NUMBER() OVER(ORDER BY t.`create_time`) AS `title`,t.`id`,t.`stars`,t.`create_time` FROM `t_topic` t", sql);

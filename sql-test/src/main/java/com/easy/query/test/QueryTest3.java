@@ -501,7 +501,7 @@ public class QueryTest3 extends BaseTest {
                     .select(g -> new TopicProxy().id().set(g.key1()))
                     .where(o -> o.id().eq("x"))
                     .selectColumn(o -> o.id().count()).toSQL();
-            Assert.assertEquals("SELECT COUNT(t4.`id`) FROM (SELECT DISTINCT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` INNER JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` LEFT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t3.`order` ASC) t4 WHERE t4.`id` = ?", sql);
+            Assert.assertEquals("SELECT COUNT(t4.`id`) FROM (SELECT DISTINCT t.`id` AS `id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` INNER JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` LEFT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t3.`order` ASC) t4 WHERE t4.`id` = ?", sql);
         }
         {
             String sql = easyEntityQuery
@@ -515,7 +515,7 @@ public class QueryTest3 extends BaseTest {
                     .distinct()
                     .select(o -> new TopicProxy().id().set(o.key1()))
                     .select("count(1)").toSQL();
-            Assert.assertEquals("SELECT count(1) FROM (SELECT DISTINCT t.`id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` LEFT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t3.`order` ASC) t4", sql);
+            Assert.assertEquals("SELECT count(1) FROM (SELECT DISTINCT t.`id` AS `id` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` LEFT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` WHERE t.`id` IN (?,?,?) GROUP BY t.`id` ORDER BY t3.`order` ASC) t4", sql);
         }
         {
             String sql = easyEntityQuery
@@ -1546,8 +1546,8 @@ public class QueryTest3 extends BaseTest {
                 .select(BlogEntity.class, t_blog -> Select.of(
                         t_blog.id(),
                         t_blog.expression().sqlSegment("CONCAT({0},{1},{2})", c -> {
-                            c.format("MySQL")
-                                    .format("5.7-").expression(t_blog.id());
+                            c.format("'MySQL'")
+                                    .format("'5.7-'").expression(t_blog.id());
                         }).as(BlogEntity::getContent)
                 ))
                 .toPageResult(1, 20);

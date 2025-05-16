@@ -119,46 +119,12 @@ public class EasyEmptyClientInsertable<T> implements ClientInsertable<T> {
     }
 
     @Override
-    public ClientInsertable<T> onDuplicateKeyIgnore() {
-        return this;
-    }
-
-    @Override
-    public ClientInsertable<T> onConflictDoUpdate() {
-        return this;
-    }
-
-    @Override
-    public ClientInsertable<T> onConflictDoUpdate(Collection<String> constraintProperties) {
-        return this;
-    }
-    @Override
     public ClientInsertable<T> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         return this;
     }
 
     @Override
-    public ClientInsertable<T> onConflictDoUpdate(Collection<String> constraintProperties, SQLActionExpression1<ColumnOnlySelector<T>> setColumnSelector) {
-        return this;
-    }
-
-    @Override
-    public ClientInsertable<T> onConflictDoUpdate(SQLActionExpression1<ColumnOnlySelector<T>> setColumnSelector) {
-        return this;
-    }
-
-    @Override
     public ClientInsertable<T> batch(boolean use) {
-        return this;
-    }
-
-    @Override
-    public ClientInsertable<T> onDuplicateKeyUpdate() {
-        return this;
-    }
-
-    @Override
-    public ClientInsertable<T> onDuplicateKeyUpdate(SQLActionExpression1<ColumnOnlySelector<T>> setColumnSelector) {
         return this;
     }
 

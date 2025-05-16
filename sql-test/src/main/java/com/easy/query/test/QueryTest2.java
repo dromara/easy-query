@@ -1341,7 +1341,7 @@ public class QueryTest2 extends BaseTest {
                     .orderByObject(blogSortRequest)
                     .select(o -> o.FETCHER.id().title().content())
                     .toSQL();
-            Assert.assertEquals("SELECT `id`,`title`,`content` FROM `t_blog` WHERE `deleted` = ?", sql);
+            Assert.assertEquals("SELECT t.`id`,t.`title`,t.`content` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
         }
         {
 
@@ -1351,7 +1351,7 @@ public class QueryTest2 extends BaseTest {
                     .orderByObject(blogSortRequest)
                     .select(o -> o.FETCHER.id().title().content())
                     .toSQL();
-            Assert.assertEquals("SELECT `id`,`title`,`content` FROM `t_blog` WHERE `deleted` = ?", sql);
+            Assert.assertEquals("SELECT t.`id`,t.`title`,t.`content` FROM `t_blog` t WHERE t.`deleted` = ?", sql);
         }
     }
 

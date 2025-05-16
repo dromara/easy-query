@@ -97,7 +97,7 @@ public class InsertTest1 extends BaseTest {
             try {
                 easyEntityQuery.insertable(topic)
                         .asTable("t_topic_abc")
-                        .onDuplicateKeyUpdate()
+                        .onConflictThen(s->s.FETCHER.allFields())
                         .executeRows();
             } catch (Exception ex) {
                 return ex;

@@ -178,7 +178,7 @@ public class InsertTest extends BaseTest {
             topicAuto.setTitle("title" + 999);
             topicAuto.setCreateTime(LocalDateTime.now().plusDays(99));
             Assert.assertNull(topicAuto.getId());
-            EntityInsertable<TopicAutoProxy, TopicAuto> insertable = easyEntityQuery.insertable(topicAuto).onDuplicateKeyIgnore().noInterceptor().useInterceptor("Topic1Interceptor").asTable(o -> o + "aaa").asSchema("xxx");
+            EntityInsertable<TopicAutoProxy, TopicAuto> insertable = easyEntityQuery.insertable(topicAuto).onConflictThen(null).noInterceptor().useInterceptor("Topic1Interceptor").asTable(o -> o + "aaa").asSchema("xxx");
             long l = insertable.executeRows();
         } catch (Exception ex) {
             Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);

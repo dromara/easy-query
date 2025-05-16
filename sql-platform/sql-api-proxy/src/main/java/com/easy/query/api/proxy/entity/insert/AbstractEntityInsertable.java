@@ -93,12 +93,6 @@ public class AbstractEntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T> 
     }
 
     @Override
-    public EntityInsertable<TProxy, T> onDuplicateKeyIgnore() {
-        clientInsertable.onDuplicateKeyIgnore();
-        return this;
-    }
-
-    @Override
     public EntityInsertable<TProxy, T> asTable(Function<String, String> tableNameAs) {
         clientInsertable.asTable(tableNameAs);
         return this;
@@ -180,28 +174,6 @@ public class AbstractEntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T> 
         return this;
     }
 
-    @Override
-    public EntityInsertable<TProxy, T> onConflictDoUpdate() {
-        clientInsertable.onConflictDoUpdate();
-        return this;
-    }
-
-    @Override
-    public EntityInsertable<TProxy, T> onConflictDoUpdate(SQLFuncExpression1<TProxy, SQLSelectExpression> constraintPropertyExpression) {
-        Collection<String> constraintProperties = parseConstraintProperties(constraintPropertyExpression);
-        clientInsertable.onConflictDoUpdate(constraintProperties);
-        return this;
-    }
-
-    @Override
-    public EntityInsertable<TProxy, T> onConflictDoUpdate(SQLFuncExpression1<TProxy, SQLSelectExpression> constraintPropertyExpression, SQLFuncExpression1<TProxy, SQLSelectExpression> updatePropertyExpression) {
-        Collection<String> constraintProperties = parseConstraintProperties(constraintPropertyExpression);
-        clientInsertable.onConflictDoUpdate(constraintProperties,s->{
-            SQLSelectExpression sqlSelectExpression = updatePropertyExpression.apply(tProxy);
-            sqlSelectExpression.accept(s.getOnlySelector());
-        });
-        return this;
-    }
     private Collection<String> parseConstraintProperties(SQLFuncExpression1<TProxy, SQLSelectExpression> constraintPropertySelector){
         if(constraintPropertySelector!=null){
             SQLSelectExpression columnExpression = constraintPropertySelector.apply(tProxy);
@@ -213,20 +185,5 @@ public class AbstractEntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T> 
             }
         }
         return null;
-    }
-
-    @Override
-    public EntityInsertable<TProxy, T> onDuplicateKeyUpdate() {
-        clientInsertable.onDuplicateKeyUpdate();
-        return this;
-    }
-
-    @Override
-    public EntityInsertable<TProxy, T> onDuplicateKeyUpdate(SQLFuncExpression1<TProxy, SQLSelectExpression> updatePropertyExpression) {
-        clientInsertable.onDuplicateKeyUpdate(s->{
-            SQLSelectExpression sqlSelectExpression = updatePropertyExpression.apply(tProxy);
-            sqlSelectExpression.accept(s.getOnlySelector());
-        });
-        return this;
     }
 }

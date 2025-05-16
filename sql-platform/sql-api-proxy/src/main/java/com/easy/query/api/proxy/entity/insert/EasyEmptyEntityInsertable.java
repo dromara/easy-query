@@ -81,11 +81,6 @@ public class EasyEmptyEntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T>
     }
 
     @Override
-    public EntityInsertable<TProxy, T> onDuplicateKeyIgnore() {
-        return this;
-    }
-
-    @Override
     public EntityInsertable<TProxy, T> asTable(Function<String, String> tableNameAs) {
         return this;
     }
@@ -128,32 +123,6 @@ public class EasyEmptyEntityInsertable<TProxy extends ProxyEntity<TProxy, T>, T>
     public EntityInsertable<TProxy, T> onConflictThen(SQLFuncExpression1<TProxy, SQLSelectExpression> updateSetSelector, SQLFuncExpression1<TProxy, SQLSelectExpression> constraintPropertySelector) {
         return this;
     }
-
-    @Override
-    public EntityInsertable<TProxy, T> onConflictDoUpdate() {
-        return this;
-    }
-
-    @Override
-    public EntityInsertable<TProxy, T> onConflictDoUpdate(SQLFuncExpression1<TProxy, SQLSelectExpression> constraintPropertyExpression) {
-        return this;
-    }
-
-    @Override
-    public EntityInsertable<TProxy, T> onConflictDoUpdate(SQLFuncExpression1<TProxy, SQLSelectExpression> constraintPropertyExpression, SQLFuncExpression1<TProxy, SQLSelectExpression> updatePropertyExpression) {
-        return this;
-    }
-
-    @Override
-    public EntityInsertable<TProxy, T> onDuplicateKeyUpdate() {
-        return this;
-    }
-
-    @Override
-    public EntityInsertable<TProxy, T> onDuplicateKeyUpdate(SQLFuncExpression1<TProxy, SQLSelectExpression> updatePropertyExpression) {
-        return this;
-    }
-
     @Override
     public EntityInsertable<TProxy, T> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         return this;

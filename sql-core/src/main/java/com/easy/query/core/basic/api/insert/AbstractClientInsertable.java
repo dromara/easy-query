@@ -210,12 +210,6 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
-    public ClientInsertable<T> onDuplicateKeyIgnore() {
-        insertOrIgnoreBehavior();
-        return this;
-    }
-
-    @Override
     public ClientInsertable<T> onConflictThen(SQLActionExpression1<ColumnOnlySelector<T>> updateSetSelector, Collection<String> constraintProperties) {
         onConflictThen0(constraintProperties, updateSetSelector);
         return this;
@@ -232,46 +226,10 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     }
 
     @Override
-    public ClientInsertable<T> onConflictDoUpdate() {
-        onConflictThen0(null, x -> x.columnAll());
-        return this;
-    }
-
-    @Override
-    public ClientInsertable<T> onConflictDoUpdate(Collection<String> constraintProperties, SQLActionExpression1<ColumnOnlySelector<T>> setColumnSelector) {
-        onConflictThen0(constraintProperties, setColumnSelector);
-        return this;
-    }
-
-    @Override
-    public ClientInsertable<T> onConflictDoUpdate(Collection<String> constraintProperties) {
-        onConflictThen0(constraintProperties, x -> x.columnAll());
-        return this;
-    }
-
-    @Override
     public ClientInsertable<T> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         if (configurer != null) {
             configurer.apply(new ContextConfigurerImpl(entityInsertExpressionBuilder.getExpressionContext()));
         }
-        return this;
-    }
-
-    @Override
-    public ClientInsertable<T> onConflictDoUpdate(SQLActionExpression1<ColumnOnlySelector<T>> setColumnSelector) {
-        onConflictThen0(null, setColumnSelector);
-        return this;
-    }
-
-    @Override
-    public ClientInsertable<T> onDuplicateKeyUpdate() {
-        onConflictThen0(null, x -> x.columnAll());
-        return this;
-    }
-
-    @Override
-    public ClientInsertable<T> onDuplicateKeyUpdate(SQLActionExpression1<ColumnOnlySelector<T>> setColumnSelector) {
-        onConflictThen0(null, setColumnSelector);
         return this;
     }
 
