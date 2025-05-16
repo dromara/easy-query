@@ -1,4 +1,4 @@
-package com.easy.query.api.proxy.internal;
+package com.easy.query.api.proxy.extension.upsert;
 
 import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
