@@ -3,7 +3,6 @@ package com.easy.query.core.expression.segment.factory;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.Column2Segment;
@@ -22,14 +21,12 @@ import com.easy.query.core.expression.segment.SubQueryColumnSegment;
 import com.easy.query.core.expression.segment.impl.AnonymousColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.ColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.ColumnWithSelfSegmentImpl;
-import com.easy.query.core.expression.segment.impl.FuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.GroupBySQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.impl.GroupColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.InsertColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.InsertMapColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.OrderBySQLNativeSegment2Impl;
 import com.easy.query.core.expression.segment.impl.OrderBySQLNativeSegmentImpl;
-import com.easy.query.core.expression.segment.impl.OrderFuncColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SQLColumnAsSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SQLNativeSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SelectConstSegmentImpl;
@@ -124,22 +121,9 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     }
 
     @Override
-    public FuncColumnSegment createFuncColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, ColumnFunction columnFunction, String alias) {
-        Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
-        return new FuncColumnSegmentImpl(column2Segment, expressionContext, columnFunction, alias);
-    }
-
-    @Override
     public GroupByColumnSegment createGroupByColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext) {
         Column2Segment selectColumn2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
         return new GroupColumnSegmentImpl(selectColumn2Segment);
-    }
-
-
-    @Override
-    public OrderFuncColumnSegment createOrderFuncColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, ColumnFunction columnFunction, boolean asc) {
-        Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
-        return new OrderFuncColumnSegmentImpl(column2Segment, expressionContext, columnFunction, asc);
     }
 
     @Override

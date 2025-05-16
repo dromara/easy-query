@@ -2,7 +2,6 @@ package com.easy.query.core.expression.parser.core.base;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLPredicateCompare;
-import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLActionExpression2;
@@ -46,12 +45,6 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
     default QueryRuntimeContext getRuntimeContext() {
         return getFilter().getRuntimeContext();
     }
-    default WherePredicate<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
-        return columnFunc(true, columnPropertyFunction, sqlPredicateCompare, val);
-    }
-
-    WherePredicate<T1> columnFunc(boolean condition, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val);
-
 
     <T2> WherePredicate<T2> then(WherePredicate<T2> sub);
 

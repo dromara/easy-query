@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select.extension.queryable;
 
-import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.func.SQLFunction;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -77,6 +77,6 @@ public interface Aggregatable1<T1> {
 
     <TMember extends Number, TResult extends Number> TResult avgOrDefault(String property, TResult def, Class<TResult> resultClass);
 
-    <TMember> List<TMember> selectAggregateList(TableAvailable table, ColumnFunction columnFunction, String property, Class<TMember> resultClass);
+    <TMember> List<TMember> selectAggregateList(TableAvailable table, SQLFunction sqlFunction, String property, Class<TMember> resultClass);
 
 }

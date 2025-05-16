@@ -2,13 +2,10 @@ package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.OrderSelector;
-import com.easy.query.core.expression.func.ColumnFunction;
-import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.expression.segment.OrderBySegment;
-import com.easy.query.core.expression.segment.OrderFuncColumnSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
@@ -72,15 +69,6 @@ public class OrderSelectorImpl implements OrderSelector {
         contextConsume.apply(sqlConstExpressionContext);
         OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderBySQLNativeSegment(expressionContext, columnConst, sqlConstExpressionContext, asc);
         order.append(orderByColumnSegment);
-        return this;
-    }
-
-    @Override
-    public OrderSelector columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction) {
-        String propertyName = columnPropertyFunction.getPropertyName();
-        ColumnFunction columnFunction = columnPropertyFunction.getColumnFunction();
-        OrderFuncColumnSegment orderFuncColumnSegment = sqlSegmentFactory.createOrderFuncColumnSegment(table, propertyName, expressionContext, columnFunction, asc);
-        order.append(orderFuncColumnSegment);
         return this;
     }
 

@@ -53,7 +53,6 @@ import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.builder.impl.AsSelectorImpl;
-import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.include.IncludeProcessor;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
 import com.easy.query.core.expression.lambda.Property;
@@ -81,6 +80,7 @@ import com.easy.query.core.expression.segment.Column2Segment;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.ColumnValue2Segment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
@@ -88,6 +88,7 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
+import com.easy.query.core.expression.segment.impl.SQLFunctionColumnSegmentImpl;
 import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -98,6 +99,9 @@ import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.fill.FillParams;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
+import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.func.SQLFunctionTranslateImpl;
+import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -276,7 +280,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(String property, BigDecimal def) {
         setExecuteMethod(ExecuteMethodEnum.SUM);
-        ColumnFunction sumFunction = runtimeContext.getColumnFunctionFactory().createSumFunction(false);
+        SQLFunction sumFunction = runtimeContext.fx().sum(property);
         TableAvailable entityTable = entityQueryExpressionBuilder.getTable(0).getEntityTable();
         List<TMember> result = selectAggregateList(entityTable, sumFunction, property, null);
         TMember resultMember = EasyCollectionUtil.firstOrNull(result);
@@ -289,7 +293,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public <TMember extends Number> TMember sumOrDefault(String property, TMember def) {
         setExecuteMethod(ExecuteMethodEnum.SUM);
-        ColumnFunction sumFunction = runtimeContext.getColumnFunctionFactory().createSumFunction(false);
+        SQLFunction sumFunction = runtimeContext.fx().sum(property);
         TableAvailable entityTable = entityQueryExpressionBuilder.getTable(0).getEntityTable();
         List<TMember> result = selectAggregateList(entityTable, sumFunction, property, null);
         return EasyCollectionUtil.firstOrDefault(result, def);
@@ -299,7 +303,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public <TMember extends Comparable<?>> TMember maxOrDefault(String property, TMember def) {
 
         setExecuteMethod(ExecuteMethodEnum.MAX);
-        ColumnFunction maxFunction = runtimeContext.getColumnFunctionFactory().createMaxFunction();
+        SQLFunction maxFunction = runtimeContext.fx().max(property);
         TableAvailable entityTable = entityQueryExpressionBuilder.getTable(0).getEntityTable();
         List<TMember> result = selectAggregateList(entityTable, maxFunction, property, null);
         setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
@@ -318,7 +322,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public <TMember> TMember minOrDefault(String property, TMember def) {
         setExecuteMethod(ExecuteMethodEnum.MIN);
-        ColumnFunction minFunction = runtimeContext.getColumnFunctionFactory().createMinFunction();
+        SQLFunction minFunction = runtimeContext.fx().min(property);
         TableAvailable entityTable = entityQueryExpressionBuilder.getTable(0).getEntityTable();
         List<TMember> result = selectAggregateList(entityTable, minFunction, property, null);
         setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
@@ -333,57 +337,10 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         }
         return EasyObjectUtil.typeCastNullable(value);
     }
-
-
-//    @Override
-//    public <TMember extends Comparable<?>> TMember maxOrDefault(String property, TMember def) {
-//
-//        setExecuteMethod(ExecuteMethodEnum.MAX);
-////        ColumnFunction maxFunction1 = runtimeContext.getColumnFunctionFactory().createMaxFunction();
-//        TableAvailable entityTable = entityQueryExpressionBuilder.getTable(0).getEntityTable();
-//        ClientQueryable<T1> cloneQueryable = cloneQueryable();
-//        cloneQueryable.getSQLEntityExpressionBuilder().getProjects().clear();
-//        SQLFunction SQLFunction = runtimeContext.fx().max(property);
-//        ColumnMetadata columnMetadata = entityTable.getEntityMetadata().getColumnNotNull(property);
-//        List<TMember> result =  cloneQueryable.select(x->x.sqlFunc(SQLFunction)).toList((Class<TMember>)columnMetadata.getPropertyType());
-//        setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
-//        TMember tMember = EasyCollectionUtil.firstOrNull(result);
-//        if(tMember==null){
-//            return def;
-//        }
-//        Object value = EasyJdbcExecutorUtil.fromValue(new EntityResultColumnMetadata(0, entityTable.getEntityMetadata(), columnMetadata), tMember);
-//        if(value==null){
-//            return def;
-//        }
-//        return EasyObjectUtil.typeCastNullable(value);
-//    }
-//
-//    @Override
-//    public <TMember> TMember minOrDefault(String property, TMember def) {
-//        setExecuteMethod(ExecuteMethodEnum.MIN);
-
-    /// /        ColumnFunction maxFunction1 = runtimeContext.getColumnFunctionFactory().createMaxFunction();
-//        TableAvailable entityTable = entityQueryExpressionBuilder.getTable(0).getEntityTable();
-//        ClientQueryable<T1> cloneQueryable = cloneQueryable();
-//        cloneQueryable.getSQLEntityExpressionBuilder().getProjects().clear();
-//        SQLFunction minSQLFunction = runtimeContext.fx().min(property);
-//        ColumnMetadata columnMetadata = entityTable.getEntityMetadata().getColumnNotNull(property);
-//        List<TMember> result =  cloneQueryable.select(x->x.sqlFunc(minSQLFunction)).toList((Class<TMember>)columnMetadata.getPropertyType());
-//        setExecuteMethod(ExecuteMethodEnum.UNKNOWN);
-//        TMember tMember = EasyCollectionUtil.firstOrNull(result);
-//        if(tMember==null){
-//            return def;
-//        }
-//        Object value = EasyJdbcExecutorUtil.fromValue(new EntityResultColumnMetadata(0, entityTable.getEntityMetadata(), columnMetadata), tMember);
-//        if(value==null){
-//            return def;
-//        }
-//        return EasyObjectUtil.typeCastNullable(value);
-//    }
     @Override
     public <TMember extends Number, TResult extends Number> TResult avgOrDefault(String property, TResult def, Class<TResult> resultClass) {
         setExecuteMethod(ExecuteMethodEnum.AVG);
-        ColumnFunction avgFunction = runtimeContext.getColumnFunctionFactory().createAvgFunction(false);
+        SQLFunction avgFunction = runtimeContext.fx().avg(property);
 
         TableAvailable entityTable = entityQueryExpressionBuilder.getTable(0).getEntityTable();
         List<TResult> result = selectAggregateList(entityTable, avgFunction, property, resultClass);
@@ -391,10 +348,14 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public <TMember> List<TMember> selectAggregateList(TableAvailable table, ColumnFunction columnFunction, String property, Class<TMember> resultClass) {
+    public <TMember> List<TMember> selectAggregateList(TableAvailable table, SQLFunction sqlFunction, String property, Class<TMember> resultClass) {
 
         Class<TMember> tMemberClass = resultClass == null ? (Class<TMember>) table.getEntityMetadata().getColumnNotNull(property).getPropertyType() : resultClass;
-        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table, property, entityQueryExpressionBuilder.getExpressionContext(), columnFunction, null);
+        SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
+                .toSQLSegment(expressionContext, table, runtimeContext, null);
+        FuncColumnSegment funcColumnSegment = new SQLFunctionColumnSegmentImpl(table, null, runtimeContext, sqlSegment, sqlFunction.getAggregationType(), null);
+
+
         return cloneQueryable().select(funcColumnSegment, true).toList(tMemberClass);
     }
 

@@ -142,8 +142,8 @@ public class MyTest1 extends BaseTest {
         Assert.assertEquals(3, value1.getDayOfMonth());
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT date_add(t.`create_time`, interval (?) microsecond) AS `value1` FROM `t_blog` t WHERE t.`deleted` = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("172800000000(Long),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT date_add(t.`create_time`, interval (?) day) AS `value1` FROM `t_blog` t WHERE t.`deleted` = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2(Long),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 
@@ -184,8 +184,8 @@ public class MyTest1 extends BaseTest {
         Assert.assertEquals(2, value1.getDayOfMonth());
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT date_add(date_add(t.`create_time`, interval (?) month), interval (?) microsecond) AS `value1` FROM `t_blog` t WHERE t.`deleted` = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("12(Long),86400000000(Long),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT date_add(date_add(t.`create_time`, interval (?) month), interval (?) day) AS `value1` FROM `t_blog` t WHERE t.`deleted` = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("12(Long),1(Long),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 
@@ -245,8 +245,8 @@ public class MyTest1 extends BaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT date_add(date_add(t.`create_time`, interval (?) month), interval (?) microsecond) AS `value1`,date_add(t.`create_time`, interval (?) year) AS `value2`,date_add(t.`create_time`, interval (?) microsecond) AS `value3` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND date_add(t.`create_time`, interval (?) year) <= ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("12(Long),86400000000(Long),1(Long),3000000(Long),false(Boolean),123456zz(String),1(Long),2023-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT date_add(date_add(t.`create_time`, interval (?) month), interval (?) day) AS `value1`,date_add(t.`create_time`, interval (?) year) AS `value2`,date_add(t.`create_time`, interval (?) second) AS `value3` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? AND date_add(t.`create_time`, interval (?) year) <= ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("12(Long),1(Long),1(Long),3(Long),false(Boolean),123456zz(String),1(Long),2023-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
         easyEntityQuery.deletable(BlogEntity.class)
@@ -465,8 +465,8 @@ public class MyTest1 extends BaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT timestampdiff(DAY, t.`update_time`, t.`create_time`) AS `value1`,timestampdiff(HOUR, t.`update_time`, t.`create_time`) AS `value2`,timestampdiff(MINUTE, t.`update_time`, t.`create_time`) AS `value3`,timestampdiff(SECOND, t.`update_time`, t.`create_time`) AS `value4`,timestampdiff(DAY, date_add(t.`create_time`, interval (?) microsecond), t.`create_time`) AS `value5`,timestampdiff(SECOND, date_add(t.`create_time`, interval (?) microsecond), t.`create_time`) AS `value6`,timestampdiff(MINUTE, date_add(t.`create_time`, interval (?) microsecond), t.`create_time`) AS `value7` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("86400000000(Long),2000000(Long),180000000(Long),false(Boolean),123456zz9(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT timestampdiff(DAY, t.`update_time`, t.`create_time`) AS `value1`,timestampdiff(HOUR, t.`update_time`, t.`create_time`) AS `value2`,timestampdiff(MINUTE, t.`update_time`, t.`create_time`) AS `value3`,timestampdiff(SECOND, t.`update_time`, t.`create_time`) AS `value4`,timestampdiff(DAY, date_add(t.`create_time`, interval (?) day), t.`create_time`) AS `value5`,timestampdiff(SECOND, date_add(t.`create_time`, interval (?) second), t.`create_time`) AS `value6`,timestampdiff(MINUTE, date_add(t.`create_time`, interval (?) minute), t.`create_time`) AS `value7` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Long),2(Long),3(Long),false(Boolean),123456zz9(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
         easyEntityQuery.deletable(BlogEntity.class)
@@ -1260,8 +1260,8 @@ public class MyTest1 extends BaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT timestampdiff(DAY, t.`create_time`, t.`update_time`) AS `value1`,timestampdiff(HOUR, t.`create_time`, t.`update_time`) AS `value2`,timestampdiff(MINUTE, t.`create_time`, t.`update_time`) AS `value3`,timestampdiff(SECOND, t.`create_time`, t.`update_time`) AS `value4`,timestampdiff(DAY, t.`create_time`, date_add(t.`create_time`, interval (?) microsecond)) AS `value5`,timestampdiff(SECOND, t.`create_time`, date_add(t.`create_time`, interval (?) microsecond)) AS `value6`,timestampdiff(MINUTE, t.`create_time`, date_add(t.`create_time`, interval (?) microsecond)) AS `value7` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("86400000000(Long),2000000(Long),180000000(Long),false(Boolean),123456zz9xx1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT timestampdiff(DAY, t.`create_time`, t.`update_time`) AS `value1`,timestampdiff(HOUR, t.`create_time`, t.`update_time`) AS `value2`,timestampdiff(MINUTE, t.`create_time`, t.`update_time`) AS `value3`,timestampdiff(SECOND, t.`create_time`, t.`update_time`) AS `value4`,timestampdiff(DAY, t.`create_time`, date_add(t.`create_time`, interval (?) day)) AS `value5`,timestampdiff(SECOND, t.`create_time`, date_add(t.`create_time`, interval (?) second)) AS `value6`,timestampdiff(MINUTE, t.`create_time`, date_add(t.`create_time`, interval (?) minute)) AS `value7` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` = ? LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Long),2(Long),3(Long),false(Boolean),123456zz9xx1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
         easyEntityQuery.deletable(BlogEntity.class)

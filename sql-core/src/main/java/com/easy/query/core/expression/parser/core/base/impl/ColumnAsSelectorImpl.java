@@ -4,7 +4,6 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.core.SQLNative;
-import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -100,13 +99,6 @@ public class ColumnAsSelectorImpl<T1, TR> implements ColumnAsSelector<T1, TR> {
         asSelector.columnSubQueryAs(()->subQueryQuery,propertyAlias);
         return this;
     }
-
-    @Override
-    public ColumnAsSelector<T1, TR> columnFuncAs(ColumnPropertyFunction columnPropertyFunction, String propertyAlias) {
-        asSelector.columnFuncAs(table,columnPropertyFunction,propertyAlias);
-        return this;
-    }
-
     @Override
     public ColumnAsSelector<T1, TR> sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, String propertyAlias) {
         asSelector.sqlSegmentAs(sqlColumnSegment,propertyAlias);

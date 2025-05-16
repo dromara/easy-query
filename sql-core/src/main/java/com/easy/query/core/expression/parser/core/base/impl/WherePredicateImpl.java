@@ -6,7 +6,6 @@ import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.core.SQLNative;
-import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLActionExpression2;
@@ -50,14 +49,6 @@ public class WherePredicateImpl<T1> implements WherePredicate<T1> {
     @Override
     public EntityExpressionBuilder getEntityExpressionBuilder() {
         return filterContext.getEntityExpressionBuilder();
-    }
-
-    @Override
-    public WherePredicate<T1> columnFunc(boolean condition, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
-        if (condition) {
-            getFilter().columnFunc(table, columnPropertyFunction, sqlPredicateCompare, val);
-        }
-        return this;
     }
 
     @Override

@@ -24,7 +24,6 @@ import com.easy.query.core.datasource.DataSourceManager;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.expression.builder.core.ValueFilterFactory;
-import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
@@ -76,7 +75,6 @@ public interface QueryRuntimeContext {
     ShardingComparer getShardingComparer();
     ShardingQueryCountManager getShardingQueryCountManager();
     @Deprecated
-    ColumnFunctionFactory getColumnFunctionFactory();
     DataSourceUnitFactory getDataSourceUnitFactory();
 
     SQLSegmentFactory getSQLSegmentFactory();

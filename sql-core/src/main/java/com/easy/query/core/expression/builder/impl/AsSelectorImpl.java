@@ -7,8 +7,6 @@ import com.easy.query.core.enums.EntityMetadataTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.core.ResultColumnInfo;
-import com.easy.query.core.expression.func.ColumnFunction;
-import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
@@ -151,16 +149,6 @@ public class AsSelectorImpl extends AbstractAsSelector<AsSelector> implements As
             }
             autoColumnInclude(tableBuilder.getEntityTable(), entityMetadata);
         }
-        return this;
-    }
-
-    @Override
-    public AsSelector columnFuncAs(TableAvailable table, ColumnPropertyFunction columnPropertyFunction, String propertyAlias) {
-        String propertyName = columnPropertyFunction.getPropertyName();
-        ColumnFunction columnFunction = columnPropertyFunction.getColumnFunction();
-        String columnAsName = propertyAlias == null ? table.getColumnName(propertyName) : getResultColumnName(propertyAlias).getColumnAsName();
-        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table, propertyName, expressionContext, columnFunction, columnAsName);
-        sqlBuilderSegment.append(funcColumnSegment);
         return this;
     }
 

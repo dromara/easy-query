@@ -1,95 +1,26 @@
 package com.easy.query.core.expression.parser.core.base;
 
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.enums.AggregatePredicateCompare;
-import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.builder.AggregateFilter;
-import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.SQLFxAvailable;
 import com.easy.query.core.expression.parser.core.base.core.SQLPropertyNative;
 
 /**
- * @author xuejiaming
- * @FileName: AggregatePredicate.java
- * @Description: 文件说明
  * create time 2023/2/18 22:17
+ *
+ * @author xuejiaming
  */
 public interface WhereAggregatePredicate<T1> extends EntitySQLTableOwner<T1>, SQLPropertyNative<WhereAggregatePredicate<T1>>, SQLFxAvailable {
     AggregateFilter getAggregateFilter();
 
-    default QueryRuntimeContext getRuntimeContext(){
+    default QueryRuntimeContext getRuntimeContext() {
         return getAggregateFilter().getRuntimeContext();
     }
 
-    default WhereAggregatePredicate<T1> avg(String property, AggregatePredicateCompare compare, Object val) {
-        return avg(true, property, compare, val);
-    }
 
-    default WhereAggregatePredicate<T1> avg(boolean condition, String property, AggregatePredicateCompare compare, Object val) {
-        return func(condition, getRuntimeContext().getColumnFunctionFactory().createAvgFunction(false), property, compare, val);
-    }
-
-    default WhereAggregatePredicate<T1> avgDistinct(String property, AggregatePredicateCompare compare, Object val) {
-        return avgDistinct(true, property, compare, val);
-    }
-
-    default WhereAggregatePredicate<T1> avgDistinct(boolean condition, String property, AggregatePredicateCompare compare, Object val) {
-        return func(condition, getRuntimeContext().getColumnFunctionFactory().createAvgFunction(true), property, compare, val);
-    }
-
-    default WhereAggregatePredicate<T1> min(String property, AggregatePredicateCompare compare, Object val) {
-        return min(true, property, compare, val);
-    }
-
-    default WhereAggregatePredicate<T1> min(boolean condition, String property, AggregatePredicateCompare compare, Object val) {
-        return func(condition, getRuntimeContext().getColumnFunctionFactory().createMinFunction(), property, compare, val);
-    }
-
-    default WhereAggregatePredicate<T1> max(String property, AggregatePredicateCompare compare, Object val) {
-        return max(true, property, compare, val);
-    }
-
-    default WhereAggregatePredicate<T1> max(boolean condition, String property, AggregatePredicateCompare compare, Object val) {
-        return func(condition, getRuntimeContext().getColumnFunctionFactory().createMaxFunction(), property, compare, val);
-    }
-
-    default WhereAggregatePredicate<T1> sum(String property, AggregatePredicateCompare compare, Object val) {
-        return sum(true, property, compare, val);
-    }
-
-    default WhereAggregatePredicate<T1> sum(boolean condition, String property, AggregatePredicateCompare compare, Object val) {
-        return func(condition, getRuntimeContext().getColumnFunctionFactory().createSumFunction(false), property, compare, val);
-    }
-
-    default WhereAggregatePredicate<T1> sumDistinct(String property, AggregatePredicateCompare compare, Object val) {
-        return sumDistinct(true, property, compare, val);
-    }
-
-    default WhereAggregatePredicate<T1> sumDistinct(boolean condition, String property, AggregatePredicateCompare compare, Object val) {
-        return func(condition, getRuntimeContext().getColumnFunctionFactory().createSumFunction(true), property, compare, val);
-    }
-
-    default WhereAggregatePredicate<T1> countDistinct(String property, AggregatePredicateCompare compare, Object val) {
-        return countDistinct(true, property, compare, val);
-    }
-
-    default WhereAggregatePredicate<T1> countDistinct(boolean condition, String property, AggregatePredicateCompare compare, Object val) {
-        return func(condition, getRuntimeContext().getColumnFunctionFactory().createCountFunction(true), property, compare, val);
-    }
-
-    default WhereAggregatePredicate<T1> count(String property, AggregatePredicateCompare compare, Object val) {
-        return count(true, property, compare, val);
-    }
-
-    default WhereAggregatePredicate<T1> count(boolean condition, String property, SQLPredicateCompare compare, Object val) {
-        return func(condition, getRuntimeContext().getColumnFunctionFactory().createCountFunction(false), property, compare, val);
-    }
-
-    WhereAggregatePredicate<T1> func(boolean condition, ColumnFunction columnFunction, String property, SQLPredicateCompare compare, Object val);
-
- <T2> WhereAggregatePredicate<T2> then(WhereAggregatePredicate<T2> sub);
+    <T2> WhereAggregatePredicate<T2> then(WhereAggregatePredicate<T2> sub);
 
     default WhereAggregatePredicate<T1> and() {
         return and(true);

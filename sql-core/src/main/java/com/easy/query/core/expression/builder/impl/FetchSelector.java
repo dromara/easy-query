@@ -2,7 +2,6 @@ package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Selector;
-import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
@@ -59,12 +58,6 @@ public class FetchSelector implements Selector {
     public Selector columnFixedAs(TableAvailable table, String property, String propertyAlias) {
         throw new UnsupportedOperationException();
     }
-
-    @Override
-    public Selector columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction) {
-        throw new UnsupportedOperationException();
-    }
-
     @Override
     public Selector columnFunc(TableAvailable table, SQLFunction sqlFunction, String propertyAlias) {
         throw new UnsupportedOperationException();

@@ -2,7 +2,6 @@ package com.easy.query.core.expression.parser.core.base.impl;
 
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.builder.core.SQLNative;
-import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnOrderSelector;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -34,12 +33,6 @@ public class ColumnOrderSelectorImpl<T1> implements ColumnOrderSelector<T1> {
     @Override
     public ColumnOrderSelector<T1> column(String property) {
         orderSelector.column(table,property);
-        return this;
-    }
-
-    @Override
-    public ColumnOrderSelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
-        orderSelector.columnFunc(table,columnPropertyFunction);
         return this;
     }
 

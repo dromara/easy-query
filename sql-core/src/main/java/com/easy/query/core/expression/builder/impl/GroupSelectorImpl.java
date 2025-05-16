@@ -3,8 +3,6 @@ package com.easy.query.core.expression.builder.impl;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.GroupSelector;
-import com.easy.query.core.expression.func.ColumnFunction;
-import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
@@ -98,15 +96,6 @@ public class GroupSelectorImpl implements GroupSelector {
 //        sqlSegmentBuilder.append(groupByColumnSegment);
 //        return this;
 //    }
-
-    @Override
-    public GroupSelector columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction) {
-        String propertyName = columnPropertyFunction.getPropertyName();
-        ColumnFunction columnFunction = columnPropertyFunction.getColumnFunction();
-        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table, propertyName, entityQueryExpressionBuilder.getExpressionContext(), columnFunction, null);
-        sqlSegmentBuilder.append(funcColumnSegment);
-        return this;
-    }
 
     @Override
     public GroupSelector columnFunc(TableAvailable table, SQLFunction sqlFunction) {

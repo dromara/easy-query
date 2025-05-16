@@ -29,10 +29,10 @@ public class PgSQLDateTimeDuration2SQLFunction extends AbstractExpressionSQLFunc
             throw new IllegalArgumentException("date time duration sql arguments != 2");
         }
         switch (durationEnum){
-            case Days:return "floor(extract(epoch from ({1})::timestamp-({0})::timestamp)/86400)";
-            case Hours:return "floor(extract(epoch from ({1})::timestamp-({0})::timestamp)/3600)";
-            case Minutes:return "floor(extract(epoch from ({1})::timestamp-({0})::timestamp)/60)";
-            case Seconds:return "floor(extract(epoch from ({1})::timestamp-({0})::timestamp))";
+            case Days:return "(extract(epoch from ({1})::timestamp-({0})::timestamp)/86400)::int";
+            case Hours:return "(extract(epoch from ({1})::timestamp-({0})::timestamp)/3600)::int";
+            case Minutes:return "(extract(epoch from ({1})::timestamp-({0})::timestamp)/60)::int";
+            case Seconds:return "(extract(epoch from ({1})::timestamp-({0})::timestamp))::int";
         }
         throw new UnsupportedOperationException("不支持当前属性获取:"+ durationEnum);
     }

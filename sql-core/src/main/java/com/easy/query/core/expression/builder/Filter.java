@@ -6,7 +6,6 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.builder.core.ValueFilter;
-import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.PropColumn;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
@@ -177,23 +176,6 @@ public interface Filter extends SQLNative<Filter> {
     <T2> Filter notExists(Query<T2> subQuery);
 
     <T2> Filter none(Query<T2> subQuery);
-
-//    /**
-//     * 自定义范围
-//     * 一般用于范围比如时间,小的时间在前大的时间在后
-//     *
-//     * @param property
-//     * @param conditionLeft
-//     * @param valLeft
-//     * @param conditionRight
-//     * @param valRight
-//     * @param sqlRange
-//     * @return
-//     */
-//    Filter range(TableAvailable table, String property, boolean conditionLeft, Object valLeft, boolean conditionRight, Object valRight, SQLRangeEnum sqlRange);
-
-
-    Filter columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val);
 
     default Filter gt(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2) {
         return valueColumnFilter(leftTable, property1, rightTable, property2, SQLPredicateCompareEnum.GT);

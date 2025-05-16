@@ -4,9 +4,6 @@ import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.builder.core.SelectorColumn;
-import com.easy.query.core.expression.func.ColumnFunction;
-import com.easy.query.core.expression.func.ColumnPropertyFunction;
-import com.easy.query.core.expression.func.DefaultColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
@@ -160,9 +157,10 @@ public interface AsSelector extends SelectorColumn<AsSelector>,SQLNative<AsSelec
     }
 
     default AsSelector columnLenAs(TableAvailable table, String property, String propertyAlias) {
-        ColumnFunction countFunction = getRuntimeContext().getColumnFunctionFactory().createLenFunction();
-        ColumnPropertyFunction columnPropertyFunction = DefaultColumnPropertyFunction.createDefault(property, countFunction);
-        return columnFuncAs(table, columnPropertyFunction, propertyAlias);
+        SQLFunction sqlFunction = getRuntimeContext().fx().length(s -> {
+            s.column(table, property);
+        });
+        return columnFunc(table, sqlFunction, propertyAlias);
     }
 
     /**
@@ -177,8 +175,6 @@ public interface AsSelector extends SelectorColumn<AsSelector>,SQLNative<AsSelec
     AsSelector columnFunc(@Nullable TableAvailable table, @Nullable String property, SQLFunction sqlFunction, String propertyAlias, SQLActionExpression sqlActionExpression);
 
     AsSelector columnFunc(TableAvailable table, SQLFunction sqlFunction, String propertyAlias);
-    AsSelector columnFuncAs(TableAvailable table, ColumnPropertyFunction columnPropertyFunction, String propertyAlias);
-
     //    <T extends SQLFunction> void columnAppendSQLFunction(TableAvailable table, String property, T sqlFunction, String propertyAlias);
     AsSelector sqlSegmentAs(CloneableSQLSegment sqlColumnSegment, String propertyAlias);
 

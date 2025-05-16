@@ -1,9 +1,7 @@
 package com.easy.query.core.expression.parser.core.base.impl;
 
-import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.expression.builder.AggregateFilter;
 import com.easy.query.core.expression.builder.core.SQLNative;
-import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
@@ -31,14 +29,6 @@ public class WhereAggregatePredicateImpl<T1> implements WhereAggregatePredicate<
     @Override
     public TableAvailable getTable() {
         return table;
-    }
-
-    @Override
-    public WhereAggregatePredicate<T1> func(boolean condition, ColumnFunction columnFunction, String property, SQLPredicateCompare compare, Object val) {
-        if (condition) {
-            aggregateFilter.func0(table,columnFunction,property,compare,val);
-        }
-        return this;
     }
 
     @Override

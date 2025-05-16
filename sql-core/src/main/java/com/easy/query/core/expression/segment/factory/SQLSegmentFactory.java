@@ -3,7 +3,6 @@ package com.easy.query.core.expression.segment.factory;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.Column2Segment;
@@ -55,11 +54,6 @@ public interface SQLSegmentFactory {
     InsertUpdateSetColumnSQLSegment createUpdateColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, VersionStrategy versionStrategy);
     InsertUpdateSetColumnSQLSegment createUpdateSetColumnSegment(TableAvailable table, String propertyName, ExpressionContext expressionContext, Object val);
     InsertUpdateSetColumnSQLSegment createUpdateSetSelfColumnSegment(TableAvailable leftTable, String leftPropertyName, TableAvailable rightTable, String rightPropertyName, ExpressionContext expressionContext);
-    default FuncColumnSegment createFuncColumnSegment(TableAvailable table, String propertyName, ExpressionContext expressionContext, ColumnFunction columnFunction, String alias){
-        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
-        return createFuncColumnSegment(table,columnMetadata,expressionContext,columnFunction,alias);
-    }
-  FuncColumnSegment createFuncColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, ColumnFunction columnFunction, String alias);
     default GroupByColumnSegment createGroupByColumnSegment(TableAvailable table, String propertyName, ExpressionContext expressionContext){
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
         return createGroupByColumnSegment(table,columnMetadata,expressionContext);
@@ -77,11 +71,6 @@ public interface SQLSegmentFactory {
         return new OrderColumnSegmentImpl(column2Segment,asc);
     }
 
-   default OrderFuncColumnSegment createOrderFuncColumnSegment(TableAvailable table, String propertyName, ExpressionContext expressionContext, ColumnFunction columnFunction, boolean asc){
-       ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
-       return createOrderFuncColumnSegment(table,columnMetadata,expressionContext,columnFunction,asc);
-   }
-    OrderFuncColumnSegment createOrderFuncColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, ColumnFunction columnFunction, boolean asc);
     OrderBySegment createOrderBySQLNativeSegment(ExpressionContext expressionContext, String columnConst, SQLNativeExpression sqlNativeExpression, boolean asc);
     OrderBySegment createOrderBySQLNativeSegment2(ExpressionContext expressionContext, SQLSegment sqlSegment,Function<String,String> sqlSegmentFunction, SQLNativeExpression sqlNativeExpression, boolean asc);
     GroupByColumnSegment createGroupBySQLNativeSegment(ExpressionContext expressionContext, String columnConst, SQLNativeExpression sqlNativeExpression);

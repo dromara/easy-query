@@ -21,6 +21,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -211,6 +212,19 @@ public void query10() {
                         o.createTime().plus(2, TimeUnitEnum.SECONDS),
                         o.createTime().plus(3, TimeUnitEnum.MINUTES)
                 )).firstOrNull();
+
+        Duration between = Duration.between(blog.getUpdateTime(), blog.getCreateTime());
+        long days = between.toDays();
+        long hours = between.toHours();
+
+        long minutes = between.toMinutes();
+
+
+        Duration between1 = Duration.between(blog.getCreateTime(), blog.getUpdateTime());
+        long days1 = between1.toDays();
+        long hours1 = between1.toHours();
+
+        long minutes1 = between1.toMinutes();
 
         Draft7<Long, Long, Long, Long, Long, Long, Long> draft3 = entityQuery.queryable(BlogEntity.class)
                 .whereById(id)

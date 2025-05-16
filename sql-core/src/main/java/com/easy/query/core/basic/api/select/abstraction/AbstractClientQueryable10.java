@@ -6,8 +6,8 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.extension.queryable10.override.AbstractOverrideClientQueryable10;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.exception.EasyQueryException;
-import com.easy.query.core.expression.func.ColumnFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression10;
+import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
@@ -16,10 +16,10 @@ import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
-import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.math.BigDecimal;
@@ -112,7 +112,7 @@ public abstract class AbstractClientQueryable10<T1, T2, T3, T4,T5,T6,T7,T8,T9,T1
         return select(resultClass);
     }
 
-    private <TMember> List<TMember> selectAggregateList(SQLActionExpression10<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>, ColumnResultSelector<T5>, ColumnResultSelector<T6>, ColumnResultSelector<T7>, ColumnResultSelector<T8>, ColumnResultSelector<T9>, ColumnResultSelector<T10>> columnSelectorExpression, ColumnFunction columnFunction, Class<TMember> resultClass) {
+    private <TMember> List<TMember> selectAggregateList(SQLActionExpression10<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>, ColumnResultSelector<T5>, ColumnResultSelector<T6>, ColumnResultSelector<T7>, ColumnResultSelector<T8>, ColumnResultSelector<T9>, ColumnResultSelector<T10>> columnSelectorExpression, SQLFuncExpression2<TableAvailable,String, SQLFunction> sqlFunctionCreator, Class<TMember> resultClass) {
 
         ProjectSQLBuilderSegmentImpl projectSQLBuilderSegment = new ProjectSQLBuilderSegmentImpl();
 
@@ -134,17 +134,15 @@ public abstract class AbstractClientQueryable10<T1, T2, T3, T4,T5,T6,T7,T8,T9,T1
 
         TableAvailable table = sqlSegment.getTable();
         String propertyName = sqlSegment.getPropertyName();
-        Class<TMember> tMemberClass = resultClass == null ? (Class<TMember>) table.getEntityMetadata().getColumnNotNull(propertyName).getPropertyType() : resultClass;
-        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(table, propertyName, entityQueryExpressionBuilder.getExpressionContext(), columnFunction, null);
+        SQLFunction sqlFunction = sqlFunctionCreator.apply(table, propertyName);
 
-        return cloneQueryable().select(funcColumnSegment, true).toList(tMemberClass);
+        return selectAggregateList(table,sqlFunction,propertyName,resultClass);
     }
 
     @Override
     public <TMember extends Number> BigDecimal sumBigDecimalOrDefault(SQLActionExpression10<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>, ColumnResultSelector<T5>, ColumnResultSelector<T6>, ColumnResultSelector<T7>, ColumnResultSelector<T8>, ColumnResultSelector<T9>, ColumnResultSelector<T10>> columnSelectorExpression, BigDecimal def) {
 
-        ColumnFunction sumFunction = runtimeContext.getColumnFunctionFactory().createSumFunction(false);
-        List<TMember> result = selectAggregateList(columnSelectorExpression, sumFunction, null);
+        List<TMember> result = selectAggregateList(columnSelectorExpression, (table, prop) -> runtimeContext.fx().sum(s -> s.column(table, prop)), null);
         TMember resultMember = EasyCollectionUtil.firstOrNull(result);
         if (resultMember == null) {
             return def;
@@ -154,29 +152,29 @@ public abstract class AbstractClientQueryable10<T1, T2, T3, T4,T5,T6,T7,T8,T9,T1
 
     @Override
     public <TMember extends Number> TMember sumOrDefault(SQLActionExpression10<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>, ColumnResultSelector<T5>, ColumnResultSelector<T6>, ColumnResultSelector<T7>, ColumnResultSelector<T8>, ColumnResultSelector<T9>, ColumnResultSelector<T10>> columnSelectorExpression, TMember def) {
-        ColumnFunction sumFunction = runtimeContext.getColumnFunctionFactory().createSumFunction(false);
-        List<TMember> result = selectAggregateList(columnSelectorExpression, sumFunction, null);
+
+        List<TMember> result = selectAggregateList(columnSelectorExpression, (table, prop) -> runtimeContext.fx().sum(s -> s.column(table, prop)), null);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
     @Override
     public <TMember> TMember maxOrDefault(SQLActionExpression10<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>, ColumnResultSelector<T5>, ColumnResultSelector<T6>, ColumnResultSelector<T7>, ColumnResultSelector<T8>, ColumnResultSelector<T9>, ColumnResultSelector<T10>> columnSelectorExpression, TMember def) {
-        ColumnFunction maxFunction = runtimeContext.getColumnFunctionFactory().createMaxFunction();
-        List<TMember> result = selectAggregateList(columnSelectorExpression, maxFunction, null);
+
+        List<TMember> result = selectAggregateList(columnSelectorExpression, (table, prop) -> runtimeContext.fx().max(s -> s.column(table, prop)), null);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
     @Override
     public <TMember> TMember minOrDefault(SQLActionExpression10<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>, ColumnResultSelector<T5>, ColumnResultSelector<T6>, ColumnResultSelector<T7>, ColumnResultSelector<T8>, ColumnResultSelector<T9>, ColumnResultSelector<T10>> columnSelectorExpression, TMember def) {
-        ColumnFunction minFunction = runtimeContext.getColumnFunctionFactory().createMinFunction();
-        List<TMember> result = selectAggregateList(columnSelectorExpression, minFunction, null);
+
+        List<TMember> result = selectAggregateList(columnSelectorExpression, (table, prop) -> runtimeContext.fx().min(s -> s.column(table, prop)), null);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 
     @Override
     public <TMember extends Number, TResult extends Number> TResult avgOrDefault(SQLActionExpression10<ColumnResultSelector<T1>, ColumnResultSelector<T2>, ColumnResultSelector<T3>, ColumnResultSelector<T4>, ColumnResultSelector<T5>, ColumnResultSelector<T6>, ColumnResultSelector<T7>, ColumnResultSelector<T8>, ColumnResultSelector<T9>, ColumnResultSelector<T10>> columnSelectorExpression, TResult def, Class<TResult> resultClass) {
-        ColumnFunction avgFunction = runtimeContext.getColumnFunctionFactory().createAvgFunction(false);
-        List<TResult> result = selectAggregateList(columnSelectorExpression, avgFunction, resultClass);
+
+        List<TResult> result = selectAggregateList(columnSelectorExpression, (table, prop) -> runtimeContext.fx().avg(s -> s.column(table, prop)), resultClass);
         return EasyCollectionUtil.firstOrDefault(result, def);
     }
 

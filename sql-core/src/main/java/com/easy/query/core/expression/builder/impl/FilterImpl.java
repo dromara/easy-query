@@ -7,8 +7,6 @@ import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.core.ValueFilter;
-import com.easy.query.core.expression.func.ColumnFunction;
-import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
@@ -27,7 +25,6 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnRelation
 import com.easy.query.core.expression.segment.condition.predicate.ColumnTrueOrFalsePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnWithColumnPredicate;
-import com.easy.query.core.expression.segment.condition.predicate.FuncColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 import com.easy.query.core.expression.segment.condition.predicate.SQLNativePredicateImpl;
 import com.easy.query.core.expression.segment.condition.predicate.SQLNativesPredicateImpl;
@@ -129,14 +126,6 @@ public class FilterImpl implements Filter {
         nextPredicateSegment.setPredicate(new ColumnValuePredicate(column2Segment, compareValue2Segment, reallyPredicateCompare));
 //        Predicate columnPredicate = EasySQLExpressionUtil.getSQLOwnerPredicateSegmentColumnMetadata(expressionContext, table, columnMetadata, getReallyPredicateCompare(condition), val);
 //        nextPredicateSegment.setPredicate(columnPredicate);
-    }
-
-    protected void appendThisFuncPredicate(TableAvailable table, String propertyName, ColumnFunction func, SQLPredicateCompare compare, Object val) {
-
-        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
-        Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
-        ColumnValue2Segment compareValue2Segment = EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, val, compare.isLike());
-        nextPredicateSegment.setPredicate(new FuncColumnValuePredicate(column2Segment, func, compareValue2Segment, compare));
     }
 
     @Override
@@ -613,15 +602,6 @@ public class FilterImpl implements Filter {
 //        }
 //        return this;
 //    }
-
-    @Override
-    public Filter columnFunc(TableAvailable table, ColumnPropertyFunction columnPropertyFunction, SQLPredicateCompare sqlPredicateCompare, Object val) {
-        if (conditionAppend(table, columnPropertyFunction.getPropertyName(), val)) {
-            appendThisFuncPredicate(table, columnPropertyFunction.getPropertyName(), columnPropertyFunction.getColumnFunction(), getReallyPredicateCompare(sqlPredicateCompare), val);
-            next();
-        }
-        return this;
-    }
 
     @Override
     public Filter valueColumnFilter(TableAvailable leftTable, String property1, TableAvailable rightTable, String property2, SQLPredicateCompare sqlPredicateCompare) {

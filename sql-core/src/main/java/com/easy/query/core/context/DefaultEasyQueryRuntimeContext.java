@@ -26,7 +26,6 @@ import com.easy.query.core.datasource.DataSourceManager;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.expression.builder.core.ValueFilterFactory;
-import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
@@ -75,7 +74,6 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final DataSourceRouteManager dataSourceRouteManager;
     private final ShardingComparer shardingComparer;
     private final ShardingQueryCountManager shardingQueryCountManager;
-    private final ColumnFunctionFactory columnFunctionFactory;
     private final DataSourceUnitFactory dataSourceUnitFactory;
     private final SQLSegmentFactory sqlSegmentFactory;
     private final SQLClientApiFactory sqlEntityApiFactory;
@@ -123,7 +121,6 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           DataSourceRouteManager dataSourceRouteManager,
                                           ShardingComparer shardingComparer,
                                           ShardingQueryCountManager shardingQueryCountManager,
-                                          ColumnFunctionFactory columnFunctionFactory,
                                           DataSourceUnitFactory dataSourceUnitFactory,
                                           SQLSegmentFactory sqlSegmentFactory,
                                           SQLClientApiFactory sqlEntityApiFactory,
@@ -170,7 +167,6 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.dataSourceRouteManager = dataSourceRouteManager;
         this.shardingComparer = shardingComparer;
         this.shardingQueryCountManager = shardingQueryCountManager;
-        this.columnFunctionFactory = columnFunctionFactory;
         this.dataSourceUnitFactory = dataSourceUnitFactory;
         this.sqlSegmentFactory = sqlSegmentFactory;
         this.sqlEntityApiFactory = sqlEntityApiFactory;
@@ -295,12 +291,6 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     public ShardingQueryCountManager getShardingQueryCountManager() {
         return shardingQueryCountManager;
     }
-
-    @Override
-    public ColumnFunctionFactory getColumnFunctionFactory() {
-        return columnFunctionFactory;
-    }
-
 
     @Override
     public DataSourceUnitFactory getDataSourceUnitFactory() {

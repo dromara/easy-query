@@ -8,7 +8,6 @@ import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.SequenceParseResult;
 import com.easy.query.core.expression.func.AggregationType;
-import com.easy.query.core.expression.func.ColumnFunctionFactory;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
@@ -17,8 +16,12 @@ import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
+import com.easy.query.core.expression.segment.impl.SQLFunctionColumnSegmentImpl;
+import com.easy.query.core.expression.segment.impl.SQLNativeSegmentImpl;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
+import com.easy.query.core.func.SQLFunctionTranslateImpl;
+import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.ShardingInitConfig;
 import com.easy.query.core.metadata.ShardingSequenceConfig;
@@ -173,15 +176,19 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                     }
                     //如果存在avg那么分片必须要存在count或者sum不然无法计算avg
                     if(rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.COUNT)){
-                        ColumnFunctionFactory columnFunctionFactory = runtimeContext.getColumnFunctionFactory();
-                        SQLSegmentFactory sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
-                        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(rewriteStatusKvKey.getTable(), rewriteStatusKvKey.getPropertyName(), expressionContext, columnFunctionFactory.createCountFunction(false), rewriteStatusKvKey.getPropertyName() + "RewriteCount");
+                        DistinctDefaultSQLFunction sqlFunction = runtimeContext.fx().count(s -> s.column(rewriteStatusKvKey.getTable(), rewriteStatusKvKey.getPropertyName()));
+                        SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
+                                .toSQLSegment(expressionContext, rewriteStatusKvKey.getTable(), runtimeContext, null);
+                        FuncColumnSegment funcColumnSegment = new SQLFunctionColumnSegmentImpl(rewriteStatusKvKey.getTable(), null, runtimeContext, sqlSegment, sqlFunction.getAggregationType(), rewriteStatusKvKey.getPropertyName() + "RewriteCount");
                         easyEntityPredicateSQLExpression.getProjects().append(funcColumnSegment);
                     }
                     if(rewriteStatusKvKey.hasBehavior(GroupAvgBehaviorEnum.SUM)){
-                        ColumnFunctionFactory columnFunctionFactory = runtimeContext.getColumnFunctionFactory();
-                        SQLSegmentFactory sqlSegmentFactory = runtimeContext.getSQLSegmentFactory();
-                        FuncColumnSegment funcColumnSegment = sqlSegmentFactory.createFuncColumnSegment(rewriteStatusKvKey.getTable(), rewriteStatusKvKey.getPropertyName(), expressionContext, columnFunctionFactory.createSumFunction(false), rewriteStatusKvKey.getPropertyName() + "RewriteSum");
+
+                        DistinctDefaultSQLFunction sqlFunction = runtimeContext.fx().sum(s -> s.column(rewriteStatusKvKey.getTable(), rewriteStatusKvKey.getPropertyName()));
+                        SQLSegment sqlSegment = new SQLFunctionTranslateImpl(sqlFunction)
+                                .toSQLSegment(expressionContext, rewriteStatusKvKey.getTable(), runtimeContext, null);
+                        FuncColumnSegment funcColumnSegment = new SQLFunctionColumnSegmentImpl(rewriteStatusKvKey.getTable(), null, runtimeContext, sqlSegment, sqlFunction.getAggregationType(), rewriteStatusKvKey.getPropertyName() + "RewriteSum");
+
                         easyEntityPredicateSQLExpression.getProjects().append(funcColumnSegment);
                     }
                 }

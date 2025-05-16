@@ -66,8 +66,6 @@ import com.easy.query.core.expression.executor.parser.DefaultEasyPrepareParser;
 import com.easy.query.core.expression.executor.parser.EasyPrepareParser;
 import com.easy.query.core.expression.executor.query.DefaultExecutionContextFactory;
 import com.easy.query.core.expression.executor.query.ExecutionContextFactory;
-import com.easy.query.core.expression.func.ColumnFunctionFactory;
-import com.easy.query.core.expression.func.DefaultColumnFunctionFactory;
 import com.easy.query.core.expression.include.EasyIncludeProcessorFactory;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
 import com.easy.query.core.expression.parser.factory.DefaultSQLExpressionInvokeFactory;
@@ -192,7 +190,6 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(EasyConnectionFactory.class, DefaultEasyConnectionFactory.class)
                 .replaceService(DataSourceManager.class, DefaultDataSourceManager.class)
                 .replaceService(ShardingQueryCountManager.class, DefaultShardingQueryCountManager.class)
-                .replaceService(ColumnFunctionFactory.class, DefaultColumnFunctionFactory.class)
                 .replaceService(RouteDescriptorFactory.class, DefaultRouteDescriptorFactor.class)
                 .replaceService(DataSourceUnitFactory.class, DefaultDataSourceUnitFactory.class)
                 .replaceService(SQLSegmentFactory.class, DefaultSQLSegmentFactory.class)

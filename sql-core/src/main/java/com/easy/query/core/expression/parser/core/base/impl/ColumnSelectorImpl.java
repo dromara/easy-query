@@ -2,7 +2,6 @@ package com.easy.query.core.expression.parser.core.base.impl;
 
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.builder.core.SQLNative;
-import com.easy.query.core.expression.func.ColumnPropertyFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSelector;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -46,12 +45,6 @@ public class ColumnSelectorImpl<T1> implements ColumnSelector<T1> {
     @Override
     public ColumnSelector<T1> columnFixedAs(String property, String alias) {
         selector.columnFixedAs(table, property,alias);
-        return this;
-    }
-
-    @Override
-    public ColumnSelector<T1> columnFunc(ColumnPropertyFunction columnPropertyFunction) {
-        selector.columnFunc(table, columnPropertyFunction);
         return this;
     }
 
