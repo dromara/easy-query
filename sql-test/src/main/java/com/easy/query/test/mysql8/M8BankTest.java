@@ -159,7 +159,7 @@ public class M8BankTest extends BaseTest {
 
 
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
-                .manyJoin(x -> x.bankCards())
+                .subQueryToGroupJoin(x -> x.bankCards())
                 .where(user -> {
                     user.bankCards().where(card -> {
                         card.bank().name().eq("工商银行");

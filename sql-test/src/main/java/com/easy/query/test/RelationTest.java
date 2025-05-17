@@ -2079,7 +2079,7 @@ public class RelationTest extends BaseTest {
                 listenerContextManager.startListen(listenerContext);
                 List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
                         .includes(s -> s.schoolStudents())
-                        .fetchBy(s -> s.FETCHER.name())
+                        .select(s -> s.FETCHER.name())
                         .toList();
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -2088,7 +2088,7 @@ public class RelationTest extends BaseTest {
                 listenerContextManager.clear();
                 String sql1 = easyEntityQuery.queryable(SchoolClass.class)
                         .includes(s -> s.schoolStudents())
-                        .fetchBy(s -> s.FETCHER.name()).toSQL();
+                        .select(s -> s.FETCHER.name()).toSQL();
                 Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", sql1);
             }
             {

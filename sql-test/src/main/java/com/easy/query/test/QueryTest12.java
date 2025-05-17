@@ -576,7 +576,7 @@ public class QueryTest12 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<MySchoolStudent> list = easyEntityQuery.queryable(MySchoolStudent.class)
                 .where(m -> m.name().like("123"))
-                .fetchBy(b -> b.FETCHER.allFields()
+                .select(MySchoolStudent.class,b -> b.FETCHER.allFields()
                         ._concat(b.schoolClass().FETCHER.id().name())
                         ._concat(b.schoolStudentAddress().FETCHER.address()))
                 .toList();
@@ -594,7 +594,7 @@ public class QueryTest12 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<MySchoolStudent> list = easyEntityQuery.queryable(MySchoolStudent.class)
                 .where(m -> m.name().like("123"))
-                .fetchBy(b -> b.FETCHER.allFields()
+                .select(MySchoolStudent.class,b -> b.FETCHER.allFields()
                         ._concat(b.schoolClass().FETCHER.id().name())
                         ._concat(b.schoolStudentAddress().FETCHER.address()))
                 .toList();

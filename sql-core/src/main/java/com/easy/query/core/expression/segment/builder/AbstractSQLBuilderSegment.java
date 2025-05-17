@@ -47,18 +47,18 @@ public abstract class AbstractSQLBuilderSegment implements SQLBuilderSegment {
         }
     }
 
-    @Override
-    public boolean containsOnce(Class<?> entityClass, String propertyName) {
-        for (SQLSegment sqlSegment : sqlSegments) {
-            if(sqlSegment instanceof SQLEntitySegment){
-                SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) sqlSegment;
-                if(Objects.equals(sqlEntitySegment.getTable().getEntityClass(),entityClass)&&Objects.equals(sqlEntitySegment.getPropertyName(), propertyName)){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+//    @Override
+//    public boolean containsOnce(Class<?> entityClass, String propertyName) {
+//        for (SQLSegment sqlSegment : sqlSegments) {
+//            if(sqlSegment instanceof SQLEntitySegment){
+//                SQLEntitySegment sqlEntitySegment = (SQLEntitySegment) sqlSegment;
+//                if(Objects.equals(sqlEntitySegment.getTable().getEntityClass(),entityClass)&&Objects.equals(sqlEntitySegment.getPropertyName(), propertyName)){
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+//    }
 
     @Override
     public void visit(Consumer<EntitySegmentComparer> visitorConsumer) {

@@ -45,7 +45,7 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(o -> o.bankCards())
+                .subQueryToGroupJoin(o -> o.bankCards())
                 .where(user -> {
                     user.bankCards().where(x -> x.type().eq("123")).
                             sum(o -> o.code().toNumber(Integer.class))
@@ -101,7 +101,7 @@ public class QueryTest22 extends BaseTest {
 
 
         easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(o -> o.bankCards())
+                .subQueryToGroupJoin(o -> o.bankCards())
                 .where(user -> {
                     user.bankCards().where(x -> x.type().eq("123")).
                             sum(o -> o.code().toNumber(Integer.class))
@@ -175,7 +175,7 @@ public class QueryTest22 extends BaseTest {
 
 
         easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(o -> o.bankCards())
+                .subQueryToGroupJoin(o -> o.bankCards())
                 .where(user -> {
                     user.bankCards().where(x -> x.code().likeMatchLeft("400")).any();
                 })
@@ -203,7 +203,7 @@ public class QueryTest22 extends BaseTest {
 
 
         easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(o -> o.bankCards())
+                .subQueryToGroupJoin(o -> o.bankCards())
                 .where(user -> {
                     user.bankCards().count().eq(1L);
                     user.bankCards().count(o -> o.type()).ge(2L);
@@ -238,7 +238,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<Draft3<Long, Long, Long>> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(o -> o.bankCards())
+                .subQueryToGroupJoin(o -> o.bankCards())
                 .where(user -> {
                     user.bankCards().count().eq(1L);
                     user.bankCards().count(o -> o.type()).ge(2L);
@@ -282,7 +282,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<Draft2<Boolean, Boolean>> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(o -> o.bankCards())
+                .subQueryToGroupJoin(o -> o.bankCards())
                 .where(user -> {
                     user.bankCards().any();
                     user.bankCards().none();
@@ -316,7 +316,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(o -> o.bankCards())
+                .subQueryToGroupJoin(o -> o.bankCards())
                 .where(user -> {
                     user.bankCards().where(x -> x.type().eq("1")).any();
                     user.bankCards().where(x -> x.type().eq("1")).none();
@@ -339,7 +339,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(o -> o.bankCards())
+                .subQueryToGroupJoin(o -> o.bankCards())
                 .where(user -> {
                     user.bankCards().where(x -> x.type().eq("1")).sum(x -> x.code().toNumber(long.class));
                     user.bankCards().sum(x -> x.code().toNumber(long.class));
@@ -361,7 +361,7 @@ public class QueryTest22 extends BaseTest {
         Long c = null;
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
-                .manyJoin(o -> o.bankCards())
+                .subQueryToGroupJoin(o -> o.bankCards())
                 .where(user -> {
                     user.bankCards().count().eq(c);
                 })
@@ -382,7 +382,7 @@ public class QueryTest22 extends BaseTest {
         Long c = 1L;
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
-                .manyJoin(o -> o.bankCards())
+                .subQueryToGroupJoin(o -> o.bankCards())
                 .where(user -> {
                     user.bankCards().count().eq(c);
                 })
@@ -403,7 +403,7 @@ public class QueryTest22 extends BaseTest {
         Long c = 1L;
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
-                .manyJoin(false, o -> o.bankCards())
+                .subQueryToGroupJoin(false, o -> o.bankCards())
                 .where(user -> {
                     user.bankCards().count().eq(c);
                 })
@@ -424,7 +424,7 @@ public class QueryTest22 extends BaseTest {
         Long c = 1L;
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
-                .manyJoin(o -> o.bankCards())
+                .subQueryToGroupJoin(o -> o.bankCards())
                 .where(user -> {
                     user.bankCards().count().eq(c);
                 })
@@ -444,7 +444,7 @@ public class QueryTest22 extends BaseTest {
 
         Long c = 1L;
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(o -> o.bankCards())
+                .subQueryToGroupJoin(o -> o.bankCards())
                 .where(user -> {
                     user.bankCards().where(bc -> {
                         bc.user().phone().eq("12345");
@@ -463,7 +463,7 @@ public class QueryTest22 extends BaseTest {
 
         Long c = 1L;
         EntityQueryable<DocUserProxy, DocUser> where = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(o -> o.bankCards())
+                .subQueryToGroupJoin(o -> o.bankCards())
                 .where(user -> {
                     user.bankCards().where(bc -> {
                         bc.user().phone().eq("12345");
@@ -505,7 +505,7 @@ public class QueryTest22 extends BaseTest {
 
         Long c = 1L;
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(o -> o.bankCards())
+                .subQueryToGroupJoin(o -> o.bankCards())
                 .leftJoin(BlogEntity.class, (user, t_blog) -> {
                     user.bankCards().where(bc -> {
                         bc.user().phone().eq("12345");
@@ -532,8 +532,8 @@ public class QueryTest22 extends BaseTest {
 
         Long c = 1L;
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(o -> o.bankCards())
-                .manyConfigure(o -> o.bankCards(), bcq -> bcq.where(o -> o.code().likeMatchRight("coder")))
+                .subQueryToGroupJoin(o -> o.bankCards())
+                .subQueryConfigure(o -> o.bankCards(), bcq -> bcq.where(o -> o.code().likeMatchRight("coder")))
                 .where(user -> {
                     user.bankCards().where(bc -> {
                         bc.user().phone().eq("12345");
@@ -555,7 +555,7 @@ public class QueryTest22 extends BaseTest {
 
         Long c = 1L;
         List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
-                .manyJoin(o -> o.user().userBooks())
+                .subQueryToGroupJoin(o -> o.user().userBooks())
                 .where(user -> {
                     user.user().userBooks().where(bc -> {
                         bc.name().eq("12345");
@@ -597,7 +597,7 @@ public class QueryTest22 extends BaseTest {
 
         Long c = 1L;
         easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(user -> user.userBooks())
+                .subQueryToGroupJoin(user -> user.userBooks())
                 .where(user -> {
                     user.userBooks().flatElement().name().like("123");
 //                    user.userBooks().where(x->x.name().like("123")).any();
@@ -617,7 +617,7 @@ public class QueryTest22 extends BaseTest {
 
         Long c = 1L;
         easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(user -> user.userBooks())
+                .subQueryToGroupJoin(user -> user.userBooks())
                 .where(user -> {
                     user.userBooks().flatElement().name().like("123");
                     user.userBooks().where(x -> x.name().like("123")).any();
@@ -675,7 +675,7 @@ public class QueryTest22 extends BaseTest {
 
 //
 //        List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-////                .manyJoin(x->x.bankCards())
+////                .subQueryToGroupJoin(x->x.bankCards())
 //                .orderBy(user -> {
 //                    user.bankCards().where(bk -> bk.type().eq("建设"))
 //                            .sum(x -> x.parts().count()).asc();
@@ -684,7 +684,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list2 = easyEntityQuery.queryable(DocUser.class)
-//                .manyJoin(x->x.bankCards())
+//                .subQueryToGroupJoin(x->x.bankCards())
                 .orderBy(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设"))
                             .count(x -> x.bank().id()).asc();
@@ -701,7 +701,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-//                .manyJoin(x->x.bankCards())
+//                .subQueryToGroupJoin(x->x.bankCards())
                 .orderBy(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设"))
                             .sum(x -> x.parts().distinct().count(p -> p.id())).asc();
@@ -724,7 +724,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x -> x.bankCards())
+                .subQueryToGroupJoin(x -> x.bankCards())
                 .orderBy(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设"))
                             .sum(x -> x.parts().distinct().count(p -> p.id())).asc();
@@ -746,7 +746,7 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<DocUser> list2 = easyEntityQuery.queryable(DocUser.class)
-//                .manyJoin(x->x.bankCards())
+//                .subQueryToGroupJoin(x->x.bankCards())
                 .orderBy(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设"))
                             .distinct()
@@ -769,7 +769,7 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<DocUser> list2 = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x -> x.bankCards())
+                .subQueryToGroupJoin(x -> x.bankCards())
                 .orderBy(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设"))
                             .distinct()
@@ -793,7 +793,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-//                .manyJoin(x->x.bankCards())
+//                .subQueryToGroupJoin(x->x.bankCards())
                 .orderBy(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设")).distinct()
                             .sum(x -> x.parts().distinct().count(p -> p.id())).asc();
@@ -816,7 +816,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x -> x.bankCards())
+                .subQueryToGroupJoin(x -> x.bankCards())
                 .orderBy(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设")).distinct()
                             .sum(x -> x.parts().distinct().count(p -> p.id())).asc();
@@ -839,7 +839,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x -> x.bankCards())
+                .subQueryToGroupJoin(x -> x.bankCards())
                 .orderBy(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设")).distinct()
                             .sum(x -> x.parts().distinct().count(p -> p.id().nullOrDefault("x"))).asc();
@@ -862,7 +862,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x -> x.bankCards())
+                .subQueryToGroupJoin(x -> x.bankCards())
                 .orderBy(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设")).distinct()
                             .avg(x -> x.type().toNumber(long.class)).asc();
@@ -885,7 +885,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x -> x.bankCards())
+                .subQueryToGroupJoin(x -> x.bankCards())
                 .where(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设")).distinct()
                             .max(x -> x.type()).eq("maxtype");
@@ -908,7 +908,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x -> x.bankCards())
+                .subQueryToGroupJoin(x -> x.bankCards())
                 .where(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设"))
                             .max(x -> x.type()).eq("maxtype");
@@ -931,7 +931,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-//                .manyJoin(x->x.bankCards())
+//                .subQueryToGroupJoin(x->x.bankCards())
                 .where(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设"))
                             .max(x -> x.type()).eq("maxtype");
@@ -955,7 +955,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x -> x.bankCards())
+                .subQueryToGroupJoin(x -> x.bankCards())
                 .where(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设")).distinct()
                             .min(x -> x.type()).eq("maxtype");
@@ -978,7 +978,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x -> x.bankCards())
+                .subQueryToGroupJoin(x -> x.bankCards())
                 .where(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设"))
                             .min(x -> x.type()).eq("maxtype");
@@ -1001,7 +1001,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-//                .manyJoin(x->x.bankCards())
+//                .subQueryToGroupJoin(x->x.bankCards())
                 .where(user -> {
                     user.bankCards().where(bk -> bk.type().eq("建设"))
                             .min(x -> x.type()).eq("maxtype");
@@ -1024,7 +1024,7 @@ public class QueryTest22 extends BaseTest {
 
 
         List<DocUser> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x -> x.bankCards())
+                .subQueryToGroupJoin(x -> x.bankCards())
                 .where(user -> {
                     user.bankCards().none(bk -> bk.type().eq("建设"));
 
@@ -1101,7 +1101,7 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<Draft2<Long, Long>> list = easyEntityQuery.queryable(MyComUser.class)
-                .manyJoin(x -> x.mySignUps())
+                .subQueryToGroupJoin(x -> x.mySignUps())
                 .where(m -> {
                     m.mySignUps().where(x -> x.userId().eq("123")).count().eq(1L);
                 }).select(m -> Select.DRAFT.of(
@@ -1129,7 +1129,7 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<Draft2<String, String>> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x -> x.bankCards())
+                .subQueryToGroupJoin(x -> x.bankCards())
                 .select(user -> Select.DRAFT.of(
                         user.bankCards().where(o -> o.type().eq("123")).joining(x -> x.code(), ","),
                         user.bankCards().joining(x -> x.code(), ",")
@@ -1172,7 +1172,7 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<Draft2<String, String>> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x -> x.bankCards())
+                .subQueryToGroupJoin(x -> x.bankCards())
                 .select(user -> Select.DRAFT.of(
                         user.bankCards().where(o -> o.type().eq("123")).max(x -> x.code()),
                         user.bankCards().min(x -> x.type())
@@ -1194,7 +1194,7 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<DocUser> list2 = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x -> x.bankCards())
+                .subQueryToGroupJoin(x -> x.bankCards())
                 .where(user -> {
                     user.bankCards().any();
                     user.bankCards().where(x -> x.type().eq("123")).any();
@@ -1217,7 +1217,7 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<DocUser> list2 = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x -> x.bankCards())
+                .subQueryToGroupJoin(x -> x.bankCards())
                 .where(user -> {
                     user.bankCards().count().eq(0L);
                     user.bankCards().where(x -> x.type().eq("123")).count().gt(0L);

@@ -28,14 +28,46 @@ public interface SQLBuilderSegment extends SQLSegment {
 
     SQLBuilderSegment cloneSQLBuilder();
 
+//    /**
+//     * <blockquote><pre>
+//     *     {@code
+//     *   EntitySegmentComparer updateByComparer = new EntitySegmentComparer(entityClass, updateBy);
+//     *         EntitySegmentComparer updateTimeComparer = new EntitySegmentComparer(entityClass, updateTime);
+//     *         columnSetter.getSQLBuilderSegment().forEach(sqlSegment->{
+//     *             updateByComparer.sameWith(sqlSegment);
+//     *             updateTimeComparer.sameWith(sqlSegment);
+//     *             return updateByComparer.isInSegment()&&updateTimeComparer.isInSegment();
+//     *         });
+//     *
+//     *         //是否已经set了
+//     *         if (!updateByComparer.isInSegment()) {
+//     *             String userId = CurrentUserHelper.getUserId();
+//     *             columnSetter.set(updateBy, userId);
+//     *         }
+//     *         if (!updateTimeComparer.isInSegment()) {
+//     *             columnSetter.set(updateTime, LocalDateTime.now());
+//     *         }
+//     *      }
+//     * </pre></blockquote>
+//     * @param entityClass
+//     * @param propertyName
+//     * @return
+//     */
+//    @Deprecated
+//    boolean containsOnce(Class<?> entityClass, String propertyName);
+
+    @Deprecated
+    SegmentIndex buildSegmentIndex();
+     void visit(Consumer<EntitySegmentComparer> visitorConsumer);
+
     /**
      * <blockquote><pre>
      *     {@code
      *   EntitySegmentComparer updateByComparer = new EntitySegmentComparer(entityClass, updateBy);
      *         EntitySegmentComparer updateTimeComparer = new EntitySegmentComparer(entityClass, updateTime);
      *         columnSetter.getSQLBuilderSegment().forEach(sqlSegment->{
-     *             updateByComparer.sameWith(sqlSegment);
-     *             updateTimeComparer.sameWith(sqlSegment);
+     *             updateByComparer.visit(sqlSegment);
+     *             updateTimeComparer.visit(sqlSegment);
      *             return updateByComparer.isInSegment()&&updateTimeComparer.isInSegment();
      *         });
      *
@@ -49,17 +81,16 @@ public interface SQLBuilderSegment extends SQLSegment {
      *         }
      *      }
      * </pre></blockquote>
-     * @param entityClass
-     * @param propertyName
+     * @param consumer
      * @return
      */
-    @Deprecated
-    boolean containsOnce(Class<?> entityClass, String propertyName);
-
-    @Deprecated
-    SegmentIndex buildSegmentIndex();
-     void visit(Consumer<EntitySegmentComparer> visitorConsumer);
-
     boolean forEach(BreakConsumer<SQLSegment> consumer);
+    default boolean contains(EntitySegmentComparer entitySegmentComparer){
+        forEach(s->{
+            entitySegmentComparer.visit(s);
+            return entitySegmentComparer.isInSegment();
+        });
+        return entitySegmentComparer.isInSegment();
+    }
     void clear();
 }

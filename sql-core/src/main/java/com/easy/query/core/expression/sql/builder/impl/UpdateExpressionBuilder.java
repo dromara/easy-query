@@ -34,6 +34,7 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnEqualsPr
 import com.easy.query.core.expression.segment.condition.predicate.ColumnEqualsTrackPropertyPredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnNullAssertPredicate;
 import com.easy.query.core.expression.segment.impl.InsertUpdateColumnConfigureSegmentImpl;
+import com.easy.query.core.expression.segment.index.EntitySegmentComparer;
 import com.easy.query.core.expression.segment.index.SegmentIndex;
 import com.easy.query.core.expression.sql.builder.ColumnConfigurerContext;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -378,7 +379,8 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
                     continue;
                 }
             }
-            if (hasSetIgnoreColumns && setIgnoreColumns.containsOnce(entityClass, property)) {
+            EntitySegmentComparer entitySegmentComparer = new EntitySegmentComparer(entityClass, property);
+            if (hasSetIgnoreColumns && setIgnoreColumns.contains(entitySegmentComparer)) {
                 continue;
             }
             //如果是 track value

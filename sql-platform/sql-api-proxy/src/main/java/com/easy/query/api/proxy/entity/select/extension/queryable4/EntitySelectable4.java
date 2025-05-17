@@ -9,6 +9,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression4;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.fetcher.EntityFetcher;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -29,7 +30,13 @@ public interface EntitySelectable4<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, TRProxy> selectExpression) {
 
         TRProxy resultProxy = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy(), get4Proxy());
-        return Select.selectProxy(resultProxy, getClientQueryable4());
+        if (resultProxy instanceof EntityFetcher) {
+            EntityFetcher resultProxy1 = (EntityFetcher) resultProxy;
+            return Select.selectProxy(EasyObjectUtil.typeCastNullable(resultProxy1.fetchProxy()), getClientQueryable4());
+        }
+        EntityQueryable<TRProxy, TR> trProxyTREntityQueryable = Select.selectProxy(resultProxy, getClientQueryable4());
+        trProxyTREntityQueryable.get1Proxy().getEntitySQLContext().setContextHolder(get1Proxy().getEntitySQLContext().getContextHolder());
+        return trProxyTREntityQueryable;
     }
 
     default <TR> Query<TR> select(Class<TR> resultClass, SQLFuncExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy, SQLSelectAsExpression> selectExpression) {

@@ -21,15 +21,6 @@ public interface ColumnOrderSelector<T1> extends EntitySQLTableOwner<T1>, SQLPro
 
     ColumnOrderSelector<T1> column(String property);
 
-    /**
-     * 请使用 sqlNativeSegment
-     * @param columnConst
-     * @return
-     */
-    @Deprecated
-    default ColumnOrderSelector<T1> columnConst(String columnConst){
-        return sqlNativeSegment(columnConst,c->{});
-    }
     default <T2> ColumnOrderSelector<T2> then(ColumnOrderSelector<T2> sub) {
         return sub;
     }

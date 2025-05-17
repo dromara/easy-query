@@ -489,6 +489,22 @@ public class QueryTest9 extends BaseTest {
                 })
                 .firstOrNull();
 
+        {
+
+            Topic topic2 = easyEntityQuery.queryable(Topic.class)
+                    .leftJoin(Topic.class, (a, b) -> a.id().eq(b.id()))
+                    .where((a, b) -> {
+                        a.title().eq("1");
+                        b.createTime().ge(LocalDateTime.of(2021, 1, 1, 1, 1));
+                    })
+                    .orderBy((a, b) -> {
+                        a.title().asc();
+                    })
+                    //todo 修复select支持FETCHER
+                    .select(a -> a.FETCHER.title().stars())
+                    .firstOrNull();
+        }
+
         Topic topic2 = easyEntityQuery.queryable(Topic.class)
                 .leftJoin(Topic.class, (a, b) -> a.id().eq(b.id()))
                 .where((a, b) -> {
@@ -498,8 +514,10 @@ public class QueryTest9 extends BaseTest {
                 .orderBy((a, b) -> {
                     a.title().asc();
                 })
-                .fetchBy(o -> o.FETCHER.title().stars())
+                //todo 修复select支持FETCHER
+                .select((a, b) -> a.FETCHER.title().stars())
                 .firstOrNull();
+
         List<Topic> list1 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().eq("title");
@@ -952,7 +970,7 @@ public class QueryTest9 extends BaseTest {
                         o.createTime().format("yyyy/MM/dd").eq("2023/01/02");
                         o.id().nullOrDefault("yyyy/MM/dd2").eq("xxx1");
                     })
-                    .fetchBy(o -> o.FETCHER
+                    .select(o -> o.FETCHER
                             .allFieldsExclude(o.id(), o.title())
                             .id().as(o.title())
                             .id())
@@ -1217,7 +1235,7 @@ public class QueryTest9 extends BaseTest {
                     o.id().in(ids);
                     o.id().notIn(ids);
                 })
-                .fetchBy(o -> o.FETCHER.allFieldsExclude(o.title(), o.top())).toList();
+                .select(o -> o.FETCHER.allFieldsExclude(o.title(), o.top())).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top` FROM `t_blog` t WHERE t.`deleted` = ? AND 1 = 2 AND 1 = 1", jdbcExecuteAfterArg.getBeforeArg().getSql());

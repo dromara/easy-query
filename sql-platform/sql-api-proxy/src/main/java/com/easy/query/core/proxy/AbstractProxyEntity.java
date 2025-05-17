@@ -114,78 +114,6 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
 
-//    /**
-//     * 返回group或者selectDraft自定义sql片段
-//     * 请使用{@link #expression()}或者{@link Expression#sqlType(String)}
-//     * <blockquote><pre>
-//     * {@code
-//     *
-//     *  .select((t, t1, t2) -> new QueryVOProxy() {{
-//     *      t.sql("now()");
-//     *      //指定返回类型给draft类型进行明确
-//     *      //t.sql("now()").setPropertyType(String.class);
-//     *  }}).toList();
-//     * }
-//     * </blockquote></pre>
-//     * @param sqlSegment
-//     * @return
-//     */
-//    @Deprecated
-//    public PropTypeColumn<Object> sql(String sqlSegment) {
-//        return sql(sqlSegment, c->{});
-//    }
-
-//    /**
-//     * 返回group或者selectDraft自定义sql片段
-//     * 请使用{@link #expression()}或者{@link Expression#sqlType(String,SQLExpression1)}
-//     * <blockquote><pre>
-//     * {@code
-//     *
-//     *  .select((t, t1, t2) -> new QueryVOProxy() {{
-//     *      t.sql("IFNull({0},{1})",c->c.expression(t.id()).value("1"));
-//     *      //指定返回类型给draft类型进行明确
-//     *      //t.sql("IFNull({0},{1})",c->c.expression(t.id()).value("1")).setPropertyType(String.class);
-//     *  }}).toList();
-//     * }
-//     * </blockquote></pre>
-//     * @param sqlSegment 片段
-//     * @param contextConsume 片段参数
-//     * @return 返回元素sql片段
-//     */
-//    @Deprecated
-//    public PropTypeColumn<Object> sql(String sqlSegment, SQLExpression1<SQLNativeProxyExpressionContext> contextConsume) {
-//        return new SQLNativeDraftImpl(entitySQLContext,(alias, f) -> {
-//            f.sqlNativeSegment(sqlSegment, c -> {
-//                if (alias != null) {
-//                    c.setPropertyAlias(alias);
-//                }
-//                contextConsume.apply(new SQLNativeProxyExpressionContextImpl(c));
-//            });
-//        });
-//    }
-
-    /**
-     * 返回子查询
-     * 请使用 {@link #expression()}或者{@link Expression#subQuery(SQLFuncExpression)}
-     * <blockquote><pre>
-     * {@code
-     *      o.subQuery(()->{
-     *          return easyEntityQuery.queryable(x.class).select(x->new StringProxy(x.id()));
-     *      })
-     *  }
-     * </pre></blockquote>
-     *
-     * @param subQueryableFunc 创建子查询方法
-     * @param <TSubQuery>
-     * @return
-     */
-    @Deprecated
-    public <TSubQuery> PropTypeColumn<TSubQuery> subQuery(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc) {
-        Query<TSubQuery> subQueryQuery = subQueryableFunc.apply();
-        return new SQLDraftAsSelectImpl<>((alias, f) -> {
-            f.columnSubQueryAs(() -> subQueryQuery, alias);
-        }, subQueryQuery.queryClass());
-    }
 
     /**
      * 所有主键列
@@ -195,16 +123,6 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     public SQLSelectAsExpression columnKeys() {
         return new SQLSelectKeysImpl(this.getEntitySQLContext(), getTable());
     }
-
-//    /**
-//     * 请使用{@link #expression()}或者{@link Expression#now()}
-//     *
-//     * @return
-//     */
-//    @Deprecated
-//    public ColumnFunctionComparableDateTimeChainExpression<LocalDateTime> _now() {
-//        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), null, null, SQLFunc::now, LocalDateTime.class);
-//    }
 
     /**
      * 如果当前表示关联关系表则可以选择性的设置是否逻辑删除
@@ -221,17 +139,6 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
             }
         }
     }
-//
-//    /**
-//     * 请使用{@link #expression()}或者{@link Expression#utcNow()}
-//     *
-//     * @return
-//     */
-//    @Deprecated
-//    public ColumnFunctionComparableDateTimeChainExpression<LocalDateTime> _utcNow() {
-//        return new ColumnFunctionComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), null, null, SQLFunc::utcNow, LocalDateTime.class);
-//    }
-
     /**
      * 查询表所有属性字段,如果前面已经单独查询了那么会追加下去
      *
@@ -319,27 +226,6 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(), sqlTableOwner.getTable(), property, propertyAlias));
         return castChain();
     }
-
-
-//    /**
-//     * 快速选择表达式
-//     * <blockquote><pre>
-//     * {@code
-//     *
-//     *  .select(t -> {
-//     *         TopicProxy topicProxy = new TopicProxy();
-//     *         topicProxy.clientSelect(selector -> {
-//     *             selector.column(t.getTable(), "id");
-//     *             selector.column(t.getTable(), "title");
-//     *         });
-//     *         return topicProxy;
-//     *     })
-//     *  }
-//     * </pre></blockquote>
-//     **/
-//    public void clientSelect(Consumer<AsSelector> selectorConsumer) {
-//        entitySQLContext.accept(new SQLSelectAsOnlyImpl(this.getTable(),this.getEntitySQLContext(),selectorConsumer));
-//    }
 
     /**
      * 增强当前代理对象

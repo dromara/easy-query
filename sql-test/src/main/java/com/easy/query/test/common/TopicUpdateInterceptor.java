@@ -24,7 +24,8 @@ public class TopicUpdateInterceptor implements UpdateSetInterceptor, EntityInter
 
         String createTime = "createTime";
         //是否已经set了
-        if (!entityUpdateExpressionBuilder.getSetColumns().containsOnce(entityClass, createTime)) {
+        EntitySegmentComparer entitySegmentComparer = new EntitySegmentComparer(entityClass, createTime);
+        if (!entityUpdateExpressionBuilder.getSetColumns().contains(entitySegmentComparer)) {
             columnSetter.set(createTime, LocalDateTime.now());
         }
     }

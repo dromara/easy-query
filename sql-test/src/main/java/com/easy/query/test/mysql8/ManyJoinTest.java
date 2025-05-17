@@ -209,7 +209,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<Draft2<String, String>> list = easyEntityQuery.queryable(DocUser.class)
-                .manyJoin(x -> x.bankCards())
+                .subQueryToGroupJoin(x -> x.bankCards())
                 .select(user -> Select.DRAFT.of(
                         user.bankCards().where(o -> o.type().eq("123")).max(x -> x.code()),
                         user.bankCards().where(o -> o.type().eq("123")).element(0).type()
@@ -232,7 +232,7 @@ public class ManyJoinTest extends BaseTest {
         try {
 
             List<Draft2<String, String>> list = easyEntityQuery.queryable(DocUser.class)
-                    .manyJoin(x -> x.bankCards())
+                    .subQueryToGroupJoin(x -> x.bankCards())
                     .select(user -> Select.DRAFT.of(
                             user.bankCards().where(o -> o.type().eq("123")).elements(3, 5).max(x -> x.code()),
                             user.bankCards().where(o -> o.type().eq("123")).element(0).type()
@@ -257,7 +257,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
-                .manyJoin(x -> x.schoolTeachers())
+                .subQueryToGroupJoin(x -> x.schoolTeachers())
                 .where(s -> {
                     s.schoolTeachers().where(x -> x.name().like("小明")).orderBy(x -> {
                         x.name().asc();
@@ -280,7 +280,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<M8User> list = easyEntityQuery.queryable(M8User.class)
-                .manyJoin(x -> x.roles())
+                .subQueryToGroupJoin(x -> x.roles())
                 .where(s -> {
                     s.roles().where(x -> x.name().like("小明角色")).count().eq(123L);
                 }).toList();
@@ -301,7 +301,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<M8User2> list = easyEntityQuery.queryable(M8User2.class)
-                .manyJoin(x -> x.roles())
+                .subQueryToGroupJoin(x -> x.roles())
                 .where(s -> {
                     s.roles().where(x -> x.roleName().like("小明角色")).count().eq(123L);
                 }).toList();
@@ -322,7 +322,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<M8User2> list = easyEntityQuery.queryable(M8User2.class)
-                .manyJoin(x -> x.roles())
+                .subQueryToGroupJoin(x -> x.roles())
                 .where(s -> {
                     s.roles().where(x -> x.roleName().like("小明角色")).sum(x -> x.roleName().toNumber(Long.class)).eq(123L);
                 }).toList();
@@ -343,7 +343,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<M8User> list = easyEntityQuery.queryable(M8User.class)
-                .manyJoin(x -> x.roles())
+                .subQueryToGroupJoin(x -> x.roles())
                 .where(s -> {
                     s.roles().where(x -> x.name().like("小明角色")).orderBy(x -> {
                         x.name().asc();
@@ -366,7 +366,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<M8User2> list = easyEntityQuery.queryable(M8User2.class)
-                .manyJoin(x -> x.roles())
+                .subQueryToGroupJoin(x -> x.roles())
                 .where(s -> {
                     s.roles().where(x -> x.roleName().like("小明角色")).orderBy(x -> {
                         x.roleName().asc();
@@ -410,7 +410,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<M8User2> list = easyEntityQuery.queryable(M8User2.class)
-                .manyJoin(x -> x.books())
+                .subQueryToGroupJoin(x -> x.books())
                 .where(s -> {
                     s.books().where(x -> x.bookPrice().gt(BigDecimal.valueOf(100))).sum(x -> x.bookPrice()).eq(BigDecimal.ONE);
                 }).toList();
@@ -425,7 +425,7 @@ public class ManyJoinTest extends BaseTest {
     @Test
     public void testManyJoinGroup() {
         List<M8User2> list = easyEntityQuery.queryable(M8User2.class)
-                .manyJoin(x -> x.books())
+                .subQueryToGroupJoin(x -> x.books())
                 .where(m -> {
                     m.books().joining(x -> x.bookName(), ",").like("123");
                 }).toList();

@@ -26,16 +26,6 @@ public interface ColumnSelector<T1> extends EntitySQLTableOwner<T1>, SQLProperty
     ColumnSelector<T1> columnFixedAs(String property,String alias);
 
 
-    /**
-     * 请使用 sqlSegment
-     * @param sqlSegment
-     * @return
-     */
-    @Deprecated
-    default ColumnSelector<T1> columnConst(String sqlSegment){
-        return sqlNativeSegment(sqlSegment, c->{});
-    }
-
     ColumnSelector<T1> columnIgnore(String property);
 
     ColumnSelector<T1> columnAll();

@@ -234,15 +234,6 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public EntityQueryable<T1Proxy, T1> fetchBy(SQLFuncExpression1<T1Proxy, SQLSelectExpression> selectExpression) {
-        ClientQueryable<T1> select = getClientQueryable().select(get1Proxy().getEntityClass(), columnSelector -> {
-            SQLSelectExpression sqlSelect = selectExpression.apply(get1Proxy());
-            sqlSelect.accept(columnSelector.getAsSelector());
-        });
-        return new EasyEntityQueryable<>(get1Proxy(), select);
-    }
-
-    @Override
     public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression1<T1Proxy, TRProxy> selectExpression) {
         TRProxy resultProxy = selectExpression.apply(get1Proxy());
         if (resultProxy instanceof EntityFetcher) {

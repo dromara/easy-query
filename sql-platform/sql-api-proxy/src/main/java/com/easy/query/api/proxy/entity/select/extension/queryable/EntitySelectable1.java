@@ -22,21 +22,6 @@ import java.util.Collections;
  */
 public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
 
-    /**
-     * 请使用select
-     * 快速选择当前对象
-     * <blockquote><pre>
-     *     {@code
-     *          .select(t -> t.FETCHER.id().createTime().title().fetchProxy())
-     *      }
-     * </pre></blockquote>
-     *
-     * @param selectExpression 快速选择表达式
-     * @return
-     */
-    @Deprecated
-    EntityQueryable<T1Proxy, T1> fetchBy(SQLFuncExpression1<T1Proxy, SQLSelectExpression> selectExpression);
-
 
     /**
      * 返回自定义形状的结果代理对象,由{@link EntityProxy}或者{@link EntityFileProxy}生成

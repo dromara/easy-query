@@ -18,6 +18,7 @@ import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegment;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.segment.impl.SQLFunctionColumnSegmentImpl;
 import com.easy.query.core.expression.segment.impl.SQLNativeSegmentImpl;
+import com.easy.query.core.expression.segment.index.EntitySegmentComparer;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.func.SQLFunctionTranslateImpl;
@@ -89,7 +90,8 @@ public class DefaultRewriteContextFactory implements RewriteContextFactory {
                         if (firstSequenceProperty != null) {
                             OrderBySegment orderByColumnSegment = sqlSegmentFactory.createOrderByColumnSegment(table, firstSequenceProperty, expressionContext, !reverse);
                             easyEntityPredicateSQLExpression.getOrder().append(orderByColumnSegment);
-                            if (!easyEntityPredicateSQLExpression.getProjects().containsOnce(entityMetadata.getEntityClass(), firstSequenceProperty)) {
+                            EntitySegmentComparer comparer = new EntitySegmentComparer(entityMetadata.getEntityClass(), firstSequenceProperty);
+                            if (!easyEntityPredicateSQLExpression.getProjects().contains(comparer)) {
                                 ColumnSegment columnSegment = sqlSegmentFactory.createSelectColumnSegment(table, firstSequenceProperty, expressionContext, null);
                                 easyEntityPredicateSQLExpression.getProjects().append(columnSegment);
                             }
