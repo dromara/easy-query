@@ -1,0 +1,8 @@
+# EasyQuery 默认项目配置文件
+# 在此处添加您的自定义配置
+# 可配置的内容请参见 https://github.com/xuejmnet/easy-query-plugin
+# 配置语法参见 https://doc.hutool.cn/pages/setting/example
+
+# DTO是否保留Column注解 true/false
+## DTO是否保留 @Column 注解, 当字段映射为 属性优先/属性唯一 的时候可以不用保留 @Column 注解
+dto.keepAnnoColumn=true
