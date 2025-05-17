@@ -8,10 +8,10 @@ import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableBooleanChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.AnyTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.BooleanTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.NumberTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.StringTypeExpression;
 
 import java.math.BigDecimal;
 
@@ -75,37 +75,37 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
      *
      * @return
      */
-    ColumnFunctionCompareComparableBooleanChainExpression<Boolean> anyValue();
+    BooleanTypeExpression<Boolean> anyValue();
 
     /**
      * 返回boolean表示是否没有任意一项被匹配到
      *
      * @return
      */
-    ColumnFunctionCompareComparableBooleanChainExpression<Boolean> noneValue();
+    BooleanTypeExpression<Boolean> noneValue();
 
-    <TMember> ColumnFunctionCompareComparableNumberChainExpression<Long> count(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector);
+    <TMember> NumberTypeExpression<Long> count(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector);
 
-    ColumnFunctionCompareComparableNumberChainExpression<Long> count();
+    NumberTypeExpression<Long> count();
 
-    <TMember> ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector);
+    <TMember> NumberTypeExpression<Integer> intCount(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector);
 
-    ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount();
+    NumberTypeExpression<Integer> intCount();
 
-    <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<TMember> sum(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector);
+    <TMember extends Number> NumberTypeExpression<TMember> sum(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector);
 
-    <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector);
+    <TMember extends Number> NumberTypeExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector);
 
-    <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector);
+    <TMember extends Number> NumberTypeExpression<BigDecimal> avg(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector);
 
-    <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> max(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector);
+    <TMember> AnyTypeExpression<TMember> max(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector);
 
-    <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> min(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector);
+    <TMember> AnyTypeExpression<TMember> min(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector);
 
-    default ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<T1Proxy, PropTypeColumn<String>> columnSelector){
+    default StringTypeExpression<String> joining(SQLFuncExpression1<T1Proxy, PropTypeColumn<String>> columnSelector){
         return joining(columnSelector,",");
     }
-    ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<T1Proxy, PropTypeColumn<String>> columnSelector, String delimiter);
+    StringTypeExpression<String> joining(SQLFuncExpression1<T1Proxy, PropTypeColumn<String>> columnSelector, String delimiter);
 
     /**
      * 暂开集合元素

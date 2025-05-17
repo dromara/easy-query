@@ -5,27 +5,20 @@ import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.enums.EasyBehaviorEnum;
-import com.easy.query.core.proxy.core.draft.Draft2;
-import com.easy.query.core.proxy.core.draft.Draft4;
-import com.easy.query.core.proxy.core.draft.proxy.Draft4Proxy;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.NumberTypeExpression;
 import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.part.proxy.Part1Proxy;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.common.MD5Util;
 import com.easy.query.test.listener.ListenerContext;
-import com.easy.query.test.mysql8.entity.M8Order;
 import com.easy.query.test.mysql8.entity.M8TestIndex;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
-import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysBankProxy;
-import lombok.var;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -128,7 +121,7 @@ public class MySQL8Test2 extends BaseTest {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        EntityQueryable<Part1Proxy<ColumnFunctionCompareComparableNumberChainExpression<Long>, Long, SysBankProxy, SysBank>, Part1<SysBank, Long>> queryable = easyEntityQuery.queryable(SysBank.class)
+        EntityQueryable<Part1Proxy<NumberTypeExpression<Long>, Long, SysBankProxy, SysBank>, Part1<SysBank, Long>> queryable = easyEntityQuery.queryable(SysBank.class)
                 .where(bank -> {
                     bank.name().like("银行");
                 })
@@ -156,7 +149,7 @@ public class MySQL8Test2 extends BaseTest {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        EntityQueryable<Part1Proxy<ColumnFunctionCompareComparableNumberChainExpression<Long>, Long, SysBankProxy, SysBank>, Part1<SysBank, Long>> queryable = easyEntityQuery.queryable(SysBank.class)
+        EntityQueryable<Part1Proxy<NumberTypeExpression<Long>, Long, SysBankProxy, SysBank>, Part1<SysBank, Long>> queryable = easyEntityQuery.queryable(SysBank.class)
                 .where(bank -> {
                     bank.name().like("银行");
                 })
@@ -184,7 +177,7 @@ public class MySQL8Test2 extends BaseTest {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        EntityQueryable<Part1Proxy<ColumnFunctionCompareComparableNumberChainExpression<Long>, Long, SysBankProxy, SysBank>, Part1<SysBank, Long>> queryable = easyEntityQuery.queryable(SysBank.class)
+        EntityQueryable<Part1Proxy<NumberTypeExpression<Long>, Long, SysBankProxy, SysBank>, Part1<SysBank, Long>> queryable = easyEntityQuery.queryable(SysBank.class)
                 .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(bank -> {
                     bank.name().like("银行");

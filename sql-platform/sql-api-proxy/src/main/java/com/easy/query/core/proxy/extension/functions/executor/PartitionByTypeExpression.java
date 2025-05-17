@@ -8,14 +8,14 @@ import com.easy.query.core.proxy.PropTypeColumn;
  *
  * @author xuejiaming
  */
-public interface ColumnFunctionCompareComparablePartitionByChainExpression<T> extends ColumnFunctionCompareComparableAnyChainExpression<T> {
+public interface PartitionByTypeExpression<T> extends AnyTypeExpression<T> {
     /**
      * 排序列 ASC
      * @param propTypeColumn
      * @return
      * @param <TProperty>
      */
-    default <TProperty> ColumnFunctionCompareComparablePartitionByChainExpression<T> orderBy(PropTypeColumn<TProperty> propTypeColumn) {
+    default <TProperty> PartitionByTypeExpression<T> orderBy(PropTypeColumn<TProperty> propTypeColumn) {
         return orderBy(true, propTypeColumn);
     }
 
@@ -26,14 +26,14 @@ public interface ColumnFunctionCompareComparablePartitionByChainExpression<T> ex
      * @return
      * @param <TProperty>
      */
-    <TProperty> ColumnFunctionCompareComparablePartitionByChainExpression<T> orderBy(boolean condition, PropTypeColumn<TProperty> propTypeColumn);
+    <TProperty> PartitionByTypeExpression<T> orderBy(boolean condition, PropTypeColumn<TProperty> propTypeColumn);
     /**
      * 排序列 DESC
      * @param propTypeColumn
      * @return
      * @param <TProperty>
      */
-    default <TProperty> ColumnFunctionCompareComparablePartitionByChainExpression<T> orderByDescending(PropTypeColumn<TProperty> propTypeColumn) {
+    default <TProperty> PartitionByTypeExpression<T> orderByDescending(PropTypeColumn<TProperty> propTypeColumn) {
         return orderByDescending(true, propTypeColumn);
     }
 
@@ -44,5 +44,5 @@ public interface ColumnFunctionCompareComparablePartitionByChainExpression<T> ex
      * @return
      * @param <TProperty>
      */
-    <TProperty> ColumnFunctionCompareComparablePartitionByChainExpression<T> orderByDescending(boolean condition, PropTypeColumn<TProperty> propTypeColumn);
+    <TProperty> PartitionByTypeExpression<T> orderByDescending(boolean condition, PropTypeColumn<TProperty> propTypeColumn);
 }

@@ -7,33 +7,27 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
+import com.easy.query.core.proxy.columns.types.SQLIntegerTypeColumn;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
-import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
-import com.easy.query.core.proxy.part.Part1;
+import com.easy.query.core.proxy.extension.functions.executor.StringTypeExpression;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeTest1;
-import com.easy.query.test.entity.blogtest.UserRole;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.SysUserProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.vo.GenericDTO;
-import com.easy.query.test.vo.SysUserRoleMenuDTO;
-import com.easy.query.test.vo.proxy.GenericDTOProxy;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,6 +47,9 @@ public class QueryTest24 extends BaseTest {
 
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(t_blog -> {
+                    SQLIntegerTypeColumn<BlogEntityProxy> star = t_blog.star();
+                    StringTypeExpression<String> rtrim = t_blog.title().rtrim();
+                    StringTypeExpression<String> stringStringTypeExpression = t_blog.title().subString(1,2);
                     t_blog.star().asStr().contains("30%");
                     t_blog.star().nullOrDefault(1).asStr().startsWith("30%");
                     t_blog.title().contains(t_blog.expression().constant("30%"));
@@ -806,7 +803,7 @@ public class QueryTest24 extends BaseTest {
                 .where(s -> {
                     s.phone().startsWith("186");
                     SQLStringTypeColumn<SysUserProxy> phone = s.phone();
-                    ColumnFunctionCompareComparableStringChainExpression<String> stringColumnFunctionCompareComparableStringChainExpression = phone.subString(1, 2);
+                    StringTypeExpression<String> stringStringTypeExpression = phone.subString(1, 2);
                 })
                 .select(GenericDTO.class, s -> Select.of(
 //                        s.FETCHER.allFields(),//如果需要全字段映射

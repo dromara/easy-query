@@ -14,14 +14,14 @@ import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.core.ProxyFlatElementEntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableBooleanChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableAnyChainExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableBooleanChainExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableStringChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.AnyTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.BooleanTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.NumberTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.StringTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.AnyTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.impl.BooleanTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.impl.NumberTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.impl.StringTypeExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -145,83 +145,83 @@ public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
     }
 
     @Override
-    public ColumnFunctionCompareComparableBooleanChainExpression<Boolean> anyValue() {
+    public BooleanTypeExpression<Boolean> anyValue() {
         queryableAcceptExpression();
         Query<?> anyQuery = this.easyEntityQueryable.limit(1).select("1");
-        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.exists(anyQuery), Boolean.class);
+        return new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.exists(anyQuery), Boolean.class);
     }
 
     @Override
-    public ColumnFunctionCompareComparableBooleanChainExpression<Boolean> noneValue() {
+    public BooleanTypeExpression<Boolean> noneValue() {
         queryableAcceptExpression();
         Query<?> anyQuery = this.easyEntityQueryable.limit(1).select("1");
-        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.not(f.exists(anyQuery)), Boolean.class);
+        return new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.not(f.exists(anyQuery)), Boolean.class);
     }
 
     @Override
-    public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Long> count(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
+    public <TMember> NumberTypeExpression<Long> count(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
         queryableAcceptExpression();
         Query<TMember> longQuery = this.easyEntityQueryable.selectCount(columnSelector, isDistinct());
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.subQueryValue(longQuery), Long.class);
+        return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.subQueryValue(longQuery), Long.class);
     }
 
     @Override
-    public ColumnFunctionCompareComparableNumberChainExpression<Long> count() {
+    public NumberTypeExpression<Long> count() {
         queryableAcceptExpression();
         Query<?> longQuery = this.easyEntityQueryable.selectCount();
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.subQueryValue(longQuery), Long.class);
+        return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.subQueryValue(longQuery), Long.class);
     }
 
     @Override
-    public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
+    public <TMember> NumberTypeExpression<Integer> intCount(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
         return count(columnSelector).asAnyType(Integer.class);
     }
 
     @Override
-    public ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount() {
+    public NumberTypeExpression<Integer> intCount() {
         return count().asAnyType(Integer.class);
     }
 
     @Override
-    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<TMember> sum(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
+    public <TMember extends Number> NumberTypeExpression<TMember> sum(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
         queryableAcceptExpression();
         Query<TMember> sumQuery = staticSum(this.easyEntityQueryable, columnSelector, isDistinct(), null);
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.nullOrDefault(x -> x.subQuery(sumQuery).format(0)), sumQuery.queryClass());
+        return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.nullOrDefault(x -> x.subQuery(sumQuery).format(0)), sumQuery.queryClass());
     }
 
     @Override
-    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
+    public <TMember extends Number> NumberTypeExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
         queryableAcceptExpression();
         Query<TMember> sumQuery = staticSum(this.easyEntityQueryable, columnSelector, isDistinct(), BigDecimal.class);
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.nullOrDefault(x -> x.subQuery(sumQuery).format(0)), BigDecimal.class);
+        return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.nullOrDefault(x -> x.subQuery(sumQuery).format(0)), BigDecimal.class);
     }
 
     @Override
-    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
+    public <TMember extends Number> NumberTypeExpression<BigDecimal> avg(SQLFuncExpression1<T1Proxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
         queryableAcceptExpression();
         Query<BigDecimal> avgQuery = staticAvg(this.easyEntityQueryable, columnSelector, isDistinct());
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.nullOrDefault(x -> x.subQuery(avgQuery).format(0)), BigDecimal.class);
+        return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.nullOrDefault(x -> x.subQuery(avgQuery).format(0)), BigDecimal.class);
     }
 
     @Override
-    public <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> max(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
+    public <TMember> AnyTypeExpression<TMember> max(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
         queryableAcceptExpression();
         Query<TMember> maxQuery = staticMinOrMax(this.easyEntityQueryable, columnSelector, true);
         return minOrMax(maxQuery, this.getEntitySQLContext());
     }
 
     @Override
-    public <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> min(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
+    public <TMember> AnyTypeExpression<TMember> min(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
         queryableAcceptExpression();
         Query<TMember> minQuery = staticMinOrMax(this.easyEntityQueryable, columnSelector, false);
         return minOrMax(minQuery, this.getEntitySQLContext());
     }
 
     @Override
-    public ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<T1Proxy, PropTypeColumn<String>> columnSelector, String delimiter) {
+    public StringTypeExpression<String> joining(SQLFuncExpression1<T1Proxy, PropTypeColumn<String>> columnSelector, String delimiter) {
         queryableAcceptExpression();
         Query<String> joiningQuery = staticJoining(this.easyEntityQueryable, columnSelector, delimiter, isDistinct());
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.anySQLFunction("{0}", x -> x.subQuery(joiningQuery)), String.class);
+        return new StringTypeExpressionImpl<>(this.getEntitySQLContext(), null, null, f -> f.anySQLFunction("{0}", x -> x.subQuery(joiningQuery)), String.class);
     }
 
     @Override
@@ -248,7 +248,7 @@ public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
     static <TProxy extends ProxyEntity<TProxy, T>, T, TMember extends Number> Query<TMember> staticSum(EntityQueryable<TProxy, T> entityQueryable, SQLFuncExpression1<TProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector, boolean distinct, Class<?> propertyType) {
         return entityQueryable.selectColumn(s -> {
             ColumnNumberFunctionAvailable<TMember> apply = columnSelector.apply(s);
-            return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(s.getEntitySQLContext(), s.getTable(), s.getValue(), fx -> {
+            return new NumberTypeExpressionImpl<>(s.getEntitySQLContext(), s.getTable(), s.getValue(), fx -> {
                 return fx.sum(x -> {
                     PropTypeColumn.columnFuncSelector(x, apply);
                 }).distinct(distinct);
@@ -259,7 +259,7 @@ public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
     static <TProxy extends ProxyEntity<TProxy, T>, T, TMember extends Number> Query<String> staticJoining(EntityQueryable<TProxy, T> entityQueryable, SQLFuncExpression1<TProxy, PropTypeColumn<String>> columnSelector, String delimiter, boolean distinct) {
         return entityQueryable.selectColumn(s -> {
             PropTypeColumn<String> column = columnSelector.apply(s);
-            return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(s.getEntitySQLContext(), s.getTable(), s.getValue(), fx -> {
+            return new NumberTypeExpressionImpl<>(s.getEntitySQLContext(), s.getTable(), s.getValue(), fx -> {
                 return fx.joining(x -> {
                     x.value(delimiter);
                     PropTypeColumn.columnFuncSelector(x, column);
@@ -271,7 +271,7 @@ public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
     static <TProxy extends ProxyEntity<TProxy, T>, T, TMember extends Number> Query<BigDecimal> staticAvg(EntityQueryable<TProxy, T> entityQueryable, SQLFuncExpression1<TProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector, boolean distinct) {
         return entityQueryable.selectColumn(s -> {
             ColumnNumberFunctionAvailable<TMember> apply = columnSelector.apply(s);
-            return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(s.getEntitySQLContext(), s.getTable(), s.getValue(), fx -> {
+            return new NumberTypeExpressionImpl<>(s.getEntitySQLContext(), s.getTable(), s.getValue(), fx -> {
                 return fx.avg(x -> {
                     PropTypeColumn.columnFuncSelector(x, apply);
                 }).distinct(distinct);
@@ -282,7 +282,7 @@ public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
     static <TProxy extends ProxyEntity<TProxy, T>, T, TMember> Query<TMember> staticMinOrMax(EntityQueryable<TProxy, T> entityQueryable, SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector, boolean max) {
         return entityQueryable.selectColumn(s -> {
             PropTypeColumn<TMember> apply = columnSelector.apply(s);
-            return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(s.getEntitySQLContext(), s.getTable(), s.getValue(), fx -> {
+            return new AnyTypeExpressionImpl<>(s.getEntitySQLContext(), s.getTable(), s.getValue(), fx -> {
                 if (max) {
                     return fx.max(x -> {
                         PropTypeColumn.columnFuncSelector(x, apply);
@@ -296,10 +296,10 @@ public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
         });
     }
 
-    static <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> minOrMax(Query<TMember> subQuery, EntitySQLContext entitySQLContext) {
+    static <TMember> AnyTypeExpression<TMember> minOrMax(Query<TMember> subQuery, EntitySQLContext entitySQLContext) {
 
         boolean numberType = EasyClassUtil.isNumberType(subQuery.getClass());
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(entitySQLContext, null, null, f -> {
+        return new AnyTypeExpressionImpl<>(entitySQLContext, null, null, f -> {
             if (numberType) {
                 return f.nullOrDefault(x -> x.subQuery(subQuery).format(0));
             } else {

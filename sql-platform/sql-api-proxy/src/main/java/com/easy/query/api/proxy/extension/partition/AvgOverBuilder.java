@@ -3,8 +3,8 @@ package com.easy.query.api.proxy.extension.partition;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparablePartitionByChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparablePartitionByChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.PartitionByTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.PartitionByTypeExpressionImpl;
 import com.easy.query.core.util.EasyArrayUtil;
 
 import java.math.BigDecimal;
@@ -24,11 +24,11 @@ public class AvgOverBuilder {
         this.entitySQLContext = entitySQLContext;
     }
 
-    public ColumnFunctionCompareComparablePartitionByChainExpression<BigDecimal> partitionBy(PropTypeColumn<?>... columns) {
+    public PartitionByTypeExpression<BigDecimal> partitionBy(PropTypeColumn<?>... columns) {
         if(EasyArrayUtil.isEmpty(columns)){
             throw new EasyQueryInvalidOperationException("avg over partition by empty");
         }
-        return new ColumnFunctionCompareComparablePartitionByChainExpressionImpl<>(entitySQLContext, columns[0].getTable(), null, f -> {
+        return new PartitionByTypeExpressionImpl<>(entitySQLContext, columns[0].getTable(), null, f -> {
             return f.avgOver(x -> {
                 PropTypeColumn.columnFuncSelector(x, this.overColumn);
                 for (PropTypeColumn<?> column : columns) {

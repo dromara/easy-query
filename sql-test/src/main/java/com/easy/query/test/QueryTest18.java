@@ -17,12 +17,11 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.AnyTypeExpression;
 import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyArrayUtil;
-import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.common.MyQueryConfiguration;
 import com.easy.query.test.entity.Blog2Entity;
@@ -45,7 +44,6 @@ import com.easy.query.test.proxy.MyVOProxy;
 import com.easy.query.test.selectato.TopicAutoFalse;
 import com.easy.query.test.vo.BlogEntityVO1;
 import com.easy.query.test.vo.BlogEntityVO2;
-import com.easy.query.test.vo.TestUserAAA;
 import com.easy.query.test.vo.proxy.BlogEntityVO1Proxy;
 import lombok.Data;
 import lombok.var;
@@ -209,7 +207,7 @@ public class QueryTest18 extends BaseTest {
                 .select(o -> {
                     TopicProxy r = new TopicProxy();
                     r.title().set(o.stars().nullOrDefault(0).toStr());
-                    ColumnFunctionCompareComparableAnyChainExpression<String> nullProperty = o.expression().sqlSegment("IFNULL({0},'')", c -> {
+                    AnyTypeExpression<String> nullProperty = o.expression().sqlSegment("IFNULL({0},'')", c -> {
                         c.expression(o.id());
                     }, String.class);
                     r.alias().set(nullProperty);

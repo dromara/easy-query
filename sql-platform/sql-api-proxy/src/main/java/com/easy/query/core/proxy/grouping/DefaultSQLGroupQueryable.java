@@ -6,12 +6,12 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableAnyChainExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableStringChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.AnyTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.NumberTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.StringTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.AnyTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.impl.NumberTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.impl.StringTypeExpressionImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.math.BigDecimal;
@@ -41,15 +41,15 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     }
 
     @Override
-    public ColumnFunctionCompareComparableNumberChainExpression<Long> count() {
+    public NumberTypeExpression<Long> count() {
         if(predicate == null){
-            return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), null, null, fx -> {
+            return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), null, null, fx -> {
                 return fx.count(x -> {
                 }).distinct(distinct);
             }, Long.class);
         }else{
             PropTypeColumn<?> preColumn = new CaseWhenEntityBuilder(this.getEntitySQLContext()).caseWhen(() -> predicate.apply(groupTable)).then(1).elseEnd(null, Long.class);
-            return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
+            return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
                 return fx.count(x -> {
                     PropTypeColumn.columnFuncSelector(x, preColumn);
                 }).distinct(distinct);
@@ -58,10 +58,10 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     }
 
     @Override
-    public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Long> count(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector) {
+    public <TMember> NumberTypeExpression<Long> count(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector) {
         PropTypeColumn<TMember> column = columnSelector.apply(groupTable);
         PropTypeColumn<?> preColumn = predicate == null ? column : new CaseWhenEntityBuilder(this.getEntitySQLContext()).caseWhen(() -> predicate.apply(groupTable)).then(column).elseEnd(null, Long.class);
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
             return fx.count(x -> {
                 PropTypeColumn.columnFuncSelector(x, preColumn);
             }).distinct(distinct);
@@ -69,20 +69,20 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     }
 
     @Override
-    public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector) {
+    public <TMember> NumberTypeExpression<Integer> intCount(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector) {
         return count(columnSelector).asAnyType(Integer.class);
     }
 
     @Override
-    public ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount() {
+    public NumberTypeExpression<Integer> intCount() {
         return count().asAnyType(Integer.class);
     }
 
     @Override
-    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<TMember> sum(SQLFuncExpression1<TProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
+    public <TMember extends Number> NumberTypeExpression<TMember> sum(SQLFuncExpression1<TProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
         ColumnNumberFunctionAvailable<TMember> column = columnSelector.apply(groupTable);
         PropTypeColumn<?> preColumn = predicate == null ? column : new CaseWhenEntityBuilder(this.getEntitySQLContext()).caseWhen(() -> predicate.apply(groupTable)).then(column).elseEnd(0, column.getPropertyType());
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
             return fx.sum(x -> {
                 PropTypeColumn.columnFuncSelector(x, preColumn);
             }).distinct(distinct);
@@ -90,31 +90,31 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     }
 
     @Override
-    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<TProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
-        ColumnFunctionCompareComparableNumberChainExpression<TMember> sum = sum(columnSelector);
+    public <TMember extends Number> NumberTypeExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<TProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
+        NumberTypeExpression<TMember> sum = sum(columnSelector);
         sum._setPropertyType(BigDecimal.class);
         return EasyObjectUtil.typeCastNullable(sum);
     }
 
     @Override
-    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<Integer> sumInt(SQLFuncExpression1<TProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
-        ColumnFunctionCompareComparableNumberChainExpression<TMember> sum = sum(columnSelector);
+    public <TMember extends Number> NumberTypeExpression<Integer> sumInt(SQLFuncExpression1<TProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
+        NumberTypeExpression<TMember> sum = sum(columnSelector);
         sum._setPropertyType(Integer.class);
         return EasyObjectUtil.typeCastNullable(sum);
     }
 
     @Override
-    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<Long> sumLong(SQLFuncExpression1<TProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
-        ColumnFunctionCompareComparableNumberChainExpression<TMember> sum = sum(columnSelector);
+    public <TMember extends Number> NumberTypeExpression<Long> sumLong(SQLFuncExpression1<TProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
+        NumberTypeExpression<TMember> sum = sum(columnSelector);
         sum._setPropertyType(Long.class);
         return EasyObjectUtil.typeCastNullable(sum);
     }
 
     @Override
-    public <TMember extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg(SQLFuncExpression1<TProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
+    public <TMember extends Number> NumberTypeExpression<BigDecimal> avg(SQLFuncExpression1<TProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
         ColumnNumberFunctionAvailable<TMember> column = columnSelector.apply(groupTable);
         PropTypeColumn<?> preColumn = predicate == null ? column : new CaseWhenEntityBuilder(this.getEntitySQLContext()).caseWhen(() -> predicate.apply(groupTable)).then(column).elseEnd(null, column.getPropertyType());
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
             return fx.avg(x -> {
                 PropTypeColumn.columnFuncSelector(x, preColumn);
             }).distinct(distinct);
@@ -122,10 +122,10 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     }
 
     @Override
-    public <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> max(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector) {
+    public <TMember> AnyTypeExpression<TMember> max(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector) {
         PropTypeColumn<TMember> column = columnSelector.apply(groupTable);
         PropTypeColumn<?> preColumn = predicate == null ? column : new CaseWhenEntityBuilder(this.getEntitySQLContext()).caseWhen(() -> predicate.apply(groupTable)).then(column).elseEnd(null, column.getPropertyType());
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
+        return new AnyTypeExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
             return fx.max(x -> {
                 PropTypeColumn.columnFuncSelector(x, preColumn);
             });
@@ -133,10 +133,10 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     }
 
     @Override
-    public <TMember> ColumnFunctionCompareComparableAnyChainExpression<TMember> min(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector) {
+    public <TMember> AnyTypeExpression<TMember> min(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector) {
         PropTypeColumn<TMember> column = columnSelector.apply(groupTable);
         PropTypeColumn<?> preColumn = predicate == null ? column : new CaseWhenEntityBuilder(this.getEntitySQLContext()).caseWhen(() -> predicate.apply(groupTable)).then(column).elseEnd(null, column.getPropertyType());
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
+        return new AnyTypeExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
             return fx.min(x -> {
                 PropTypeColumn.columnFuncSelector(x, preColumn);
             });
@@ -144,10 +144,10 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     }
 
     @Override
-    public <TMember> ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector, String delimiter) {
+    public <TMember> StringTypeExpression<String> joining(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector, String delimiter) {
         PropTypeColumn<TMember> column = columnSelector.apply(groupTable);
         PropTypeColumn<?> preColumn = predicate == null ? column : new CaseWhenEntityBuilder(this.getEntitySQLContext()).caseWhen(() -> predicate.apply(groupTable)).then(column).elseEnd(null, column.getPropertyType());
-        return new ColumnFunctionCompareComparableStringChainExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
             return fx.joining(x -> {
                 x.value(delimiter);
                 PropTypeColumn.columnFuncSelector(x, preColumn);

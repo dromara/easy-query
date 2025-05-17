@@ -4,7 +4,6 @@ import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
-import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extension.functions.ColumnStringFunctionAvailable;
 import com.easy.query.core.proxy.impl.SQLAggregateNativeSQLPredicateImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
@@ -20,7 +19,7 @@ import com.easy.query.core.util.EasyObjectUtil;
  *
  * @author xuejiaming
  */
-public interface ColumnFunctionCompareComparableStringChainExpression<T> extends ColumnFunctionCompareComparableObjectChainExpression<T>,
+public interface StringTypeExpression<T> extends ObjectTypeExpression<T>,
         ColumnStringFunctionAvailable<T>,
         DSLStringAssertPredicate<T>,
         DSLSQLFunctionAvailable,
@@ -28,11 +27,11 @@ public interface ColumnFunctionCompareComparableStringChainExpression<T> extends
         DSLContainsPropPredicate {
 
     @Override
-    default <TR> ColumnFunctionCompareComparableStringChainExpression<TR> asAnyType(Class<TR> clazz) {
-        ColumnFunctionCompareComparableObjectChainExpression.super.asAnyType(clazz);
+    default <TR> StringTypeExpression<TR> asAnyType(Class<TR> clazz) {
+        ObjectTypeExpression.super.asAnyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }
-    default ColumnFunctionCompareComparableStringChainExpression<String> asStr() {
+    default StringTypeExpression<String> asStr() {
         return asAnyType(String.class);
     }
 

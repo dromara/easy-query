@@ -8,7 +8,7 @@ import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.filter.ColumnFunctionCompareComparableNumberFilterChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.filter.NumberFilterTypeExpression;
 
 /**
  * create time 2023/12/2 23:22
@@ -16,11 +16,11 @@ import com.easy.query.core.proxy.extension.functions.executor.filter.ColumnFunct
  *
  * @author xuejiaming
  */
-public class ColumnFunctionCompareComparableNumberSumFilterChainExpressionImpl<TProperty> extends AbstractAggregateFilterExpression<TProperty>
-        implements ColumnFunctionCompareComparableNumberFilterChainExpression<TProperty> {
+public class NumberSumFilterTypeExpressionImpl<TProperty> extends AbstractAggregateFilterExpression<TProperty>
+        implements NumberFilterTypeExpression<TProperty> {
 
 
-    public ColumnFunctionCompareComparableNumberSumFilterChainExpressionImpl(EntitySQLContext entitySQLContext, PropTypeColumn<?> self, TableAvailable table, String property, SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
+    public NumberSumFilterTypeExpressionImpl(EntitySQLContext entitySQLContext, PropTypeColumn<?> self, TableAvailable table, String property, SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
         super(entitySQLContext,self,table,property,func,propType);
     }
 

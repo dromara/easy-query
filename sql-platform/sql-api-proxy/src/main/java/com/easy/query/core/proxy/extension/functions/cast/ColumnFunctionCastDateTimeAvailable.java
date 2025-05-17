@@ -3,9 +3,8 @@ package com.easy.query.core.proxy.extension.functions.cast;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableDateTimeChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableDateTimeChainExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.DateTimeTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.DateTimeTypeExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.time.LocalDate;
@@ -20,8 +19,8 @@ import java.util.Date;
  */
 public interface ColumnFunctionCastDateTimeAvailable<TProperty> extends SQLSelectAsExpression, PropTypeColumn<TProperty> {
 
-    default <T> ColumnFunctionCompareComparableDateTimeChainExpression<T> toDateTime(Class<T> clazz){
-        return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+    default <T> DateTimeTypeExpression<T> toDateTime(Class<T> clazz){
+        return new DateTimeTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.cast(sqlFunction, clazz);
@@ -34,7 +33,7 @@ public interface ColumnFunctionCastDateTimeAvailable<TProperty> extends SQLSelec
      * 编译层面欺骗编译器将其视作LocalDateTime
      * @return
      */
-    default ColumnFunctionCompareComparableDateTimeChainExpression<LocalDateTime> asLocalDateTime() {
+    default DateTimeTypeExpression<LocalDateTime> asLocalDateTime() {
         return asDateTime(LocalDateTime.class);
     }
 
@@ -42,7 +41,7 @@ public interface ColumnFunctionCastDateTimeAvailable<TProperty> extends SQLSelec
      * 编译层面欺骗编译器将其视作LocalDate
      * @return
      */
-    default ColumnFunctionCompareComparableDateTimeChainExpression<LocalDate> asLocalDate() {
+    default DateTimeTypeExpression<LocalDate> asLocalDate() {
         return asDateTime(LocalDate.class);
     }
 
@@ -50,11 +49,11 @@ public interface ColumnFunctionCastDateTimeAvailable<TProperty> extends SQLSelec
      * 编译层面欺骗编译器将其视作Date
      * @return
      */
-    default ColumnFunctionCompareComparableDateTimeChainExpression<Date> asUtilDate() {
+    default DateTimeTypeExpression<Date> asUtilDate() {
         return asDateTime(Date.class);
     }
-    default <TR> ColumnFunctionCompareComparableDateTimeChainExpression<TR> asDateTime(Class<TR> clazz) {
-        return new ColumnFunctionCompareComparableDateTimeChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+    default <TR> DateTimeTypeExpression<TR> asDateTime(Class<TR> clazz) {
+        return new DateTimeTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 return ((DSLSQLFunctionAvailable) this).func().apply(fx);
             } else {

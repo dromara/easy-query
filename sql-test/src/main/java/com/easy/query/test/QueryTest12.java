@@ -12,7 +12,7 @@ import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.AnyTypeExpression;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -23,9 +23,6 @@ import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.relation.DynamicExtraFilter;
-import com.easy.query.test.entity.relation.MyRelationUser;
-import com.easy.query.test.entity.relation.MyRelationUserDTO;
-import com.easy.query.test.entity.relation.MyRelationUserDTO1;
 import com.easy.query.test.entity.relation.RelationTeacher;
 import com.easy.query.test.entity.relation.RelationUser;
 import com.easy.query.test.entity.school.MySchoolStudent;
@@ -648,7 +645,7 @@ public class QueryTest12 extends BaseTest {
                 .groupBy(b -> GroupKeys.of(b.id()))
                 .select(b -> {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
-                    ColumnFunctionCompareComparableAnyChainExpression<Integer> anyType = b.expression().sqlSegment("case {0} when {1} then 1 else 0 end",
+                    AnyTypeExpression<Integer> anyType = b.expression().sqlSegment("case {0} when {1} then 1 else 0 end",
                             c -> {
                                 c.expression(b.groupTable().score()).value(1);
                             }).asAnyType(Integer.class);
@@ -701,7 +698,7 @@ public class QueryTest12 extends BaseTest {
                 })
                 .select(b -> {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
-                    ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> b.id().eq("123"))
+                    AnyTypeExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> b.id().eq("123"))
                             .then(1)
                             .elseEnd("2").asAnyType(BigDecimal.class);
 
@@ -759,7 +756,7 @@ public class QueryTest12 extends BaseTest {
                 })
                 .select(b -> {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
-                    ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
+                    AnyTypeExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
                         b.id().eq("123");
                     }).then(1).elseEnd("2").asAnyType(BigDecimal.class);
                     blogEntityProxy.score().set(caseWhen);
@@ -787,7 +784,7 @@ public class QueryTest12 extends BaseTest {
                 })
                 .select(b -> {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
-                    ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
+                    AnyTypeExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
                         b.id().eq("123");
                     }).then(1).elseEnd("2").asAnyType(BigDecimal.class);
                     blogEntityProxy.score().set(caseWhen);
@@ -815,7 +812,7 @@ public class QueryTest12 extends BaseTest {
                 })
                 .select(b -> {
                     BlogEntityProxy blogEntityProxy = new BlogEntityProxy();
-                    ColumnFunctionCompareComparableAnyChainExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
+                    AnyTypeExpression<BigDecimal> caseWhen = b.expression().caseWhen(() -> {
                         b.id().eq("123");
                     }).then(1).elseEnd("2").asAnyType(BigDecimal.class);
                     blogEntityProxy.score().set(caseWhen);

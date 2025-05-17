@@ -6,8 +6,7 @@ import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.filter.ColumnFunctionCompareComparableDateTimeFilterChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.filter.ColumnFunctionCompareComparableNumberFilterChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.filter.StringFilterTypeExpression;
 
 /**
  * create time 2023/12/2 23:22
@@ -15,11 +14,11 @@ import com.easy.query.core.proxy.extension.functions.executor.filter.ColumnFunct
  *
  * @author xuejiaming
  */
-public class ColumnFunctionCompareComparableDateTimeFilterChainExpressionImpl<TProperty> extends AbstractAggregateFilterExpression<TProperty>
-        implements ColumnFunctionCompareComparableDateTimeFilterChainExpression<TProperty> {
+public class StringFilterTypeExpressionImpl<TProperty> extends AbstractAggregateFilterExpression<TProperty>
+        implements StringFilterTypeExpression<TProperty> {
 
 
-    public ColumnFunctionCompareComparableDateTimeFilterChainExpressionImpl(EntitySQLContext entitySQLContext, PropTypeColumn<?> self, TableAvailable table, String property, SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
+    public StringFilterTypeExpressionImpl(EntitySQLContext entitySQLContext, PropTypeColumn<?> self, TableAvailable table, String property, SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
         super(entitySQLContext,self,table,property,func,propType);
     }
 }

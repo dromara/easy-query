@@ -1,14 +1,12 @@
 package com.easy.query.core.proxy.impl.duration;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.extension.functions.ColumnAnyFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.ColumnDateTimeFunctionAvailable;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableAnyChainExpressionImpl;
-import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
+import com.easy.query.core.proxy.extension.functions.executor.AnyTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.AnyTypeExpressionImpl;
 
 import java.time.LocalDateTime;
 
@@ -34,9 +32,9 @@ public class DurationAnyExpression {
         this.afterColumn = afterColumn;
     }
 
-    private ColumnFunctionCompareComparableAnyChainExpression<Long> duration(DateTimeDurationEnum durationEnum) {
+    private AnyTypeExpression<Long> duration(DateTimeDurationEnum durationEnum) {
         if (afterConstant != null) {
-            return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(before.getEntitySQLContext(), before.getTable(), before.getValue(), fx -> {
+            return new AnyTypeExpressionImpl<>(before.getEntitySQLContext(), before.getTable(), before.getValue(), fx -> {
                 return fx.duration2(s -> {
                     PropTypeColumn.columnFuncSelector(s,before);
                     s.value(afterConstant);
@@ -44,7 +42,7 @@ public class DurationAnyExpression {
             }, Long.class);
         } else if (afterColumn != null) {
 
-            return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(before.getEntitySQLContext(), before.getTable(), before.getValue(), fx -> {
+            return new AnyTypeExpressionImpl<>(before.getEntitySQLContext(), before.getTable(), before.getValue(), fx -> {
                 return fx.duration2(s -> {
                     PropTypeColumn.columnFuncSelector(s,before);
                     PropTypeColumn.columnFuncSelector(s,afterColumn);
@@ -55,23 +53,23 @@ public class DurationAnyExpression {
         }
     }
 
-    public ColumnFunctionCompareComparableAnyChainExpression<Long> toDays() {
+    public AnyTypeExpression<Long> toDays() {
         return duration(DateTimeDurationEnum.Days);
     }
 
-    public ColumnFunctionCompareComparableAnyChainExpression<Long> toHours() {
+    public AnyTypeExpression<Long> toHours() {
         return duration(DateTimeDurationEnum.Hours);
     }
 
-    public ColumnFunctionCompareComparableAnyChainExpression<Long> toMinutes() {
+    public AnyTypeExpression<Long> toMinutes() {
         return duration(DateTimeDurationEnum.Minutes);
     }
 
-    public ColumnFunctionCompareComparableAnyChainExpression<Long> toSeconds() {
+    public AnyTypeExpression<Long> toSeconds() {
         return duration(DateTimeDurationEnum.Seconds);
     }
 
-    public ColumnFunctionCompareComparableAnyChainExpression<Long> toValues(DateTimeDurationEnum durationEnum) {
+    public AnyTypeExpression<Long> toValues(DateTimeDurationEnum durationEnum) {
         return duration(durationEnum);
     }
 }

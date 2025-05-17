@@ -10,7 +10,7 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.SQLFunctionExpressionUtil;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableDateTimeChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.DateTimeTypeExpression;
 import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
 
 import java.util.function.Function;
@@ -21,17 +21,17 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public class ColumnFunctionCompareComparableDateTimeChainExpressionImpl<TProperty> implements ColumnFunctionCompareComparableDateTimeChainExpression<TProperty> {
+public class DateTimeTypeExpressionImpl<TProperty> implements DateTimeTypeExpression<TProperty> {
     private final EntitySQLContext entitySQLContext;
     private final TableAvailable table;
     private final String property;
     private final Function<SQLFunc, SQLFunction> func;
     private Class<?> propType;
 
-    public ColumnFunctionCompareComparableDateTimeChainExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func) {
+    public DateTimeTypeExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func) {
         this(entitySQLContext,table,property,func,Object.class);
     }
-    public ColumnFunctionCompareComparableDateTimeChainExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
+    public DateTimeTypeExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
         this.entitySQLContext = entitySQLContext;
 
         this.table = table;

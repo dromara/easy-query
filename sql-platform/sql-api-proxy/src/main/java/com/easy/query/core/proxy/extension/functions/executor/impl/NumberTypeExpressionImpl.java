@@ -5,14 +5,12 @@ import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.SQLFunctionExpressionUtil;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableJsonMapChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.NumberTypeExpression;
 import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
 
 import java.util.function.Function;
@@ -23,19 +21,23 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public class ColumnFunctionCompareComparableJsonMapChainExpressionImpl<TProperty> implements ColumnFunctionCompareComparableJsonMapChainExpression<TProperty> {
+public class NumberTypeExpressionImpl<TProperty> implements NumberTypeExpression<TProperty> {
     private final EntitySQLContext entitySQLContext;
     private final TableAvailable table;
     private final String property;
     private final Function<SQLFunc, SQLFunction> func;
     private Class<?> propType;
-    public ColumnFunctionCompareComparableJsonMapChainExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
+
+    public NumberTypeExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func) {
+        this(entitySQLContext,table,property,func,Object.class);
+    }
+    public NumberTypeExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
         this.entitySQLContext = entitySQLContext;
 
         this.table = table;
         this.property = property;
         this.func = func;
-        this.propType = propType;
+        this.propType=propType;
     }
 
     @Override
@@ -50,32 +52,23 @@ public class ColumnFunctionCompareComparableJsonMapChainExpressionImpl<TProperty
 
     @Override
     public void accept(Selector s) {
-        SQLFunctionExpressionUtil.accept(s, getTable(), func);
+        SQLFunctionExpressionUtil.accept(s,getTable(),func);
     }
 
     @Override
     public void accept(AsSelector s) {
-        SQLFunctionExpressionUtil.accept(s, getTable(), func);
+        SQLFunctionExpressionUtil.accept(s,getTable(),func);
     }
 
     @Override
     public void accept(GroupSelector s) {
-        SQLFunctionExpressionUtil.accept(s, getTable(), func);
+        SQLFunctionExpressionUtil.accept(s,getTable(),func);
     }
 
     @Override
     public void accept(OrderSelector s) {
-        SQLFunctionExpressionUtil.accept(s, getTable(), func);
+        SQLFunctionExpressionUtil.accept(s,getTable(),func);
     }
-
-//    @Override
-//    public void asc(boolean condition) {
-//        if (condition) {
-//            getCurrentEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
-//                SQLFunctionExpressionUtil.accept(s, getTable(), func, true);
-//            }));
-//        }
-//    }
 
     @Override
     public void asc(boolean condition, OrderByModeEnum nullsModeEnum) {
@@ -94,15 +87,7 @@ public class ColumnFunctionCompareComparableJsonMapChainExpressionImpl<TProperty
             }));
         }
     }
-//
-//    @Override
-//    public void desc(boolean condition) {
-//        if (condition) {
-//            getCurrentEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
-//                SQLFunctionExpressionUtil.accept(s, getTable(), func, false);
-//            }));
-//        }
-//    }
+
     @Override
     public void desc(boolean condition, OrderByModeEnum nullsModeEnum) {
         if (condition) {
@@ -138,18 +123,9 @@ public class ColumnFunctionCompareComparableJsonMapChainExpressionImpl<TProperty
 
     @Override
     public <TR> void _setPropertyType(Class<TR> clazz) {
-        this.propType = clazz;
+        this.propType=clazz;
     }
 
-
-//    @Override
-//    public void eq(boolean condition,TProperty val) {
-//        if(val!=null&& EasyClassUtil.isBooleanType(val.getClass())){
-//            ColumnFunctionCompareComparableAnyChainExpression.super.eq(true,Expression.of(getEntitySQLContext()).sqlSegment("CAST(? AS JSON)",c->c.value(val)));;
-//        }else{
-//            ColumnFunctionCompareComparableAnyChainExpression.super.eq(val);
-//        }
-//    }
 }
 //        if(condition){
 //            return new SQLPredicateImpl(f->{

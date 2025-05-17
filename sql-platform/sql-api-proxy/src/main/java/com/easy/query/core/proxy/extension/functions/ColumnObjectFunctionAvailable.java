@@ -7,10 +7,10 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableBooleanChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.filter.ColumnFunctionCompareComparableNumberFilterChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableBooleanChainExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.filter.impl.ColumnFunctionCompareComparableNumberFilterChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.BooleanTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.filter.NumberFilterTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.BooleanTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.filter.impl.NumberFilterTypeExpressionImpl;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
@@ -26,23 +26,23 @@ import java.util.function.Function;
 public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSelectAsExpression, PropTypeColumn<TProperty> {
     TChain createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType);
 
-    default ColumnFunctionCompareComparableNumberFilterChainExpression<Long> count() {
+    default NumberFilterTypeExpression<Long> count() {
         return count(false);
     }
 
-    default ColumnFunctionCompareComparableNumberFilterChainExpression<Long> count(boolean distinct) {
-        return new ColumnFunctionCompareComparableNumberFilterChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+    default NumberFilterTypeExpression<Long> count(boolean distinct) {
+        return new NumberFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
             return fx.count(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             }).distinct(distinct);
         }, Long.class);
     }
 
-    default ColumnFunctionCompareComparableNumberFilterChainExpression<Integer> intCount() {
+    default NumberFilterTypeExpression<Integer> intCount() {
         return intCount(false);
     }
 
-    default ColumnFunctionCompareComparableNumberFilterChainExpression<Integer> intCount(boolean distinct) {
+    default NumberFilterTypeExpression<Integer> intCount(boolean distinct) {
         return count(distinct).asAnyType(Integer.class);
     }
 
@@ -88,18 +88,18 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
     }
 
 
-    default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> equalsWith(TProperty value) {
+    default BooleanTypeExpression<Boolean> equalsWith(TProperty value) {
         return equalsWith(x -> x.value(_toFunctionSerializeValue(value)));
     }
 
-    default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> equalsWith(PropTypeColumn<TProperty> propTypeColumn) {
+    default BooleanTypeExpression<Boolean> equalsWith(PropTypeColumn<TProperty> propTypeColumn) {
         return equalsWith(x -> {
             PropTypeColumn.columnFuncSelector(x.getColumnFuncSelector(), propTypeColumn);
         });
     }
 
-    default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> equalsWith(SQLActionExpression1<ProxyColumnFuncSelector> selector) {
-        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+    default BooleanTypeExpression<Boolean> equalsWith(SQLActionExpression1<ProxyColumnFuncSelector> selector) {
+        return new BooleanTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.equalsWith(o -> {
                 PropTypeColumn.columnFuncSelector(o, this);
                 selector.apply(new ProxyColumnFuncSelectorImpl(o));

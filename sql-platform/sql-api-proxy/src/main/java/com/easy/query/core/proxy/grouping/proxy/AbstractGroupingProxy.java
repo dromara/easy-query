@@ -10,9 +10,9 @@ import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLGroupByExpression;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableStringChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.AnyTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.NumberTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.StringTypeExpression;
 import com.easy.query.core.proxy.grouping.DefaultSQLGroupQueryable;
 import com.easy.query.core.proxy.grouping.SQLGroupQueryable;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
@@ -45,7 +45,7 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
         return tSourceProxy;
     }
     public abstract List<PropTypeColumn<?>> getKeys();
-    public ColumnFunctionCompareComparableNumberChainExpression<Long> count() {
+    public NumberTypeExpression<Long> count() {
         return where(null).count();
     }
 
@@ -53,7 +53,7 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
     public SQLGroupQueryable<TSourceProxy> distinct() {
         return where(null).distinct();
     }
-    public <TMember> ColumnFunctionCompareComparableNumberChainExpression<Long> count(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TMember>> columnSelector) {
+    public <TMember> NumberTypeExpression<Long> count(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TMember>> columnSelector) {
         return where(null).count(columnSelector);
     }
 
@@ -61,7 +61,7 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
     //    public <TProperty> ColumnFunctionComparableNumberChainExpression<Integer> intCount(ColumnObjectFunctionAvailable<TProperty, ?> column) {
 //        return column.intCount();
 //    }
-    public ColumnFunctionCompareComparableNumberChainExpression<Integer> intCount() {
+    public NumberTypeExpression<Integer> intCount() {
         return where(null).intCount();
     }
 
@@ -87,31 +87,31 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
         throw new UnsupportedOperationException();
     }
 
-    public <TProperty> ColumnFunctionCompareComparableAnyChainExpression<TProperty> max(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TProperty>> columnSelector) {
+    public <TProperty> AnyTypeExpression<TProperty> max(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TProperty>> columnSelector) {
         return where(null).max(columnSelector);
     }
 
-    public <TProperty> ColumnFunctionCompareComparableAnyChainExpression<TProperty> min(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TProperty>> columnSelector) {
+    public <TProperty> AnyTypeExpression<TProperty> min(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TProperty>> columnSelector) {
         return where(null).min(columnSelector);
     }
 
-    public <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<TProperty> sum(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TProperty>> columnSelector) {
+    public <TProperty extends Number> NumberTypeExpression<TProperty> sum(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TProperty>> columnSelector) {
         return where(null).sum(columnSelector);
     }
 
-    public <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TProperty>> columnSelector) {
+    public <TProperty extends Number> NumberTypeExpression<BigDecimal> sumBigDecimal(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TProperty>> columnSelector) {
         return where(null).sumBigDecimal(columnSelector);
     }
 
-    public <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TProperty>> columnSelector) {
+    public <TProperty extends Number> NumberTypeExpression<BigDecimal> avg(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TProperty>> columnSelector) {
         return where(null).avg(columnSelector);
     }
-    public <TProperty> ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TProperty>> columnSelector) {
+    public <TProperty> StringTypeExpression<String> joining(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TProperty>> columnSelector) {
         return where(null).joining(columnSelector, ",");
     }
 
 
-    public <TProperty> ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TProperty>> columnSelector, String delimiter) {
+    public <TProperty> StringTypeExpression<String> joining(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TProperty>> columnSelector, String delimiter) {
         return where(null).joining(columnSelector, delimiter);
     }
 

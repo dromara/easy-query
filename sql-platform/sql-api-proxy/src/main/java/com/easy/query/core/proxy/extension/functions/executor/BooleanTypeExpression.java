@@ -9,14 +9,14 @@ import com.easy.query.core.util.EasyObjectUtil;
  *
  * @author xuejiaming
  */
-public interface ColumnFunctionCompareComparableBooleanChainExpression<T> extends ColumnFunctionCompareComparableObjectChainExpression<T>,
+public interface BooleanTypeExpression<T> extends ObjectTypeExpression<T>,
         ColumnBooleanFunctionAvailable<T> {
     @Override
-    default <TR> ColumnFunctionCompareComparableBooleanChainExpression<TR> asAnyType(Class<TR> clazz) {
-        ColumnFunctionCompareComparableObjectChainExpression.super.asAnyType(clazz);
+    default <TR> BooleanTypeExpression<TR> asAnyType(Class<TR> clazz) {
+        ObjectTypeExpression.super.asAnyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }
-    default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> asBoolean() {
+    default BooleanTypeExpression<Boolean> asBoolean() {
         return asAnyType(Boolean.class);
     }
 }

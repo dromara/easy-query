@@ -6,7 +6,7 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.PartitionBySQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparablePartitionByChainExpression;
+import com.easy.query.core.proxy.extension.functions.executor.PartitionByTypeExpression;
 
 import java.util.function.Function;
 
@@ -16,7 +16,7 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public class ColumnFunctionCompareComparablePartitionByChainExpressionImpl<TProperty> extends ColumnFunctionCompareComparableAnyChainExpressionImpl<TProperty> implements ColumnFunctionCompareComparablePartitionByChainExpression<TProperty> {
+public class PartitionByTypeExpressionImpl<TProperty> extends AnyTypeExpressionImpl<TProperty> implements PartitionByTypeExpression<TProperty> {
     private final EntitySQLContext entitySQLContext;
     private final TableAvailable table;
     private final String property;
@@ -24,7 +24,7 @@ public class ColumnFunctionCompareComparablePartitionByChainExpressionImpl<TProp
     private Class<?> propType;
 
 
-    public ColumnFunctionCompareComparablePartitionByChainExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, PartitionBySQLFunction> func, Class<?> propType) {
+    public PartitionByTypeExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, PartitionBySQLFunction> func, Class<?> propType) {
         super(entitySQLContext,table,property,f->func.apply(f),propType);
         this.entitySQLContext = entitySQLContext;
 
@@ -35,9 +35,9 @@ public class ColumnFunctionCompareComparablePartitionByChainExpressionImpl<TProp
     }
 
     @Override
-    public <TProperty1> ColumnFunctionCompareComparablePartitionByChainExpression<TProperty> orderBy(boolean condition,PropTypeColumn<TProperty1> propTypeColumn) {
+    public <TProperty1> PartitionByTypeExpression<TProperty> orderBy(boolean condition, PropTypeColumn<TProperty1> propTypeColumn) {
         if(condition){
-            return new ColumnFunctionCompareComparablePartitionByChainExpressionImpl<>(entitySQLContext,table,property, f->{
+            return new PartitionByTypeExpressionImpl<>(entitySQLContext,table,property, f->{
                 PartitionBySQLFunction sqlFunction = func.apply(f);
                 SQLFunction orderFunction = f.anySQLFunction("{0} ASC", c -> {
                     PropTypeColumn.columnFuncSelector(c, propTypeColumn);
@@ -50,10 +50,10 @@ public class ColumnFunctionCompareComparablePartitionByChainExpressionImpl<TProp
     }
 
     @Override
-    public <TProperty1> ColumnFunctionCompareComparablePartitionByChainExpression<TProperty> orderByDescending(boolean condition,PropTypeColumn<TProperty1> propTypeColumn) {
+    public <TProperty1> PartitionByTypeExpression<TProperty> orderByDescending(boolean condition, PropTypeColumn<TProperty1> propTypeColumn) {
 
         if(condition){
-            return new ColumnFunctionCompareComparablePartitionByChainExpressionImpl<>(entitySQLContext,table,property, f->{
+            return new PartitionByTypeExpressionImpl<>(entitySQLContext,table,property, f->{
                 PartitionBySQLFunction sqlFunction = func.apply(f);
                 SQLFunction orderFunction = f.anySQLFunction("{0} DESC", c -> {
                     PropTypeColumn.columnFuncSelector(c, propTypeColumn);

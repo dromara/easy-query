@@ -7,8 +7,8 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.extension.casewhen.SQLCaseWhenBuilder;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableAnyChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableAnyChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.AnyTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.AnyTypeExpressionImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Objects;
@@ -40,13 +40,13 @@ public class CaseWhenEntityBuilder {
 //        },then);
 //        return this;
 //    }
-    public <TV, TProperty> ColumnFunctionCompareComparableAnyChainExpression<TProperty> elseEnd(TV elseValue) {
+    public <TV, TProperty> AnyTypeExpression<TProperty> elseEnd(TV elseValue) {
         return EasyObjectUtil.typeCastNullable(elseEnd(elseValue, Object.class));
     }
 
-    public <TV, TProperty> ColumnFunctionCompareComparableAnyChainExpression<TProperty> elseEnd(TV elseValue, Class<TProperty> resultClass) {
+    public <TV, TProperty> AnyTypeExpression<TProperty> elseEnd(TV elseValue, Class<TProperty> resultClass) {
         ParamExpression paramExpression = EasyParamExpressionUtil.getParamExpression(entitySQLContext, elseValue);
         SQLFunction sqlFunction = caseWhenBuilder.elseEnd(paramExpression);
-        return new ColumnFunctionCompareComparableAnyChainExpressionImpl<>(entitySQLContext, null, null, f -> sqlFunction, resultClass);
+        return new AnyTypeExpressionImpl<>(entitySQLContext, null, null, f -> sqlFunction, resultClass);
     }
 }

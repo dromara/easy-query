@@ -1,15 +1,10 @@
 package com.easy.query.core.proxy.impl.duration;
 
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.extension.functions.ColumnDateTimeFunctionAvailable;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
-import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
-
-import java.time.LocalDateTime;
+import com.easy.query.core.proxy.extension.functions.executor.NumberTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.NumberTypeExpressionImpl;
 
 
 /**
@@ -27,9 +22,9 @@ public class DurationExpression {
         this.afterColumn = afterColumn;
     }
 
-    private ColumnFunctionCompareComparableNumberChainExpression<Long> duration(DateTimeDurationEnum durationEnum) {
+    private NumberTypeExpression<Long> duration(DateTimeDurationEnum durationEnum) {
 
-        return new ColumnFunctionCompareComparableNumberChainExpressionImpl<>(before.getEntitySQLContext(), before.getTable(), before.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(before.getEntitySQLContext(), before.getTable(), before.getValue(), fx -> {
             return fx.duration2(s -> {
                 PropTypeColumn.columnFuncSelector(s,before);
                 PropTypeColumn.columnFuncSelector(s,afterColumn);
@@ -37,23 +32,23 @@ public class DurationExpression {
         }, Long.class);
     }
 
-    public ColumnFunctionCompareComparableNumberChainExpression<Long> toDays() {
+    public NumberTypeExpression<Long> toDays() {
         return duration(DateTimeDurationEnum.Days);
     }
 
-    public ColumnFunctionCompareComparableNumberChainExpression<Long> toHours() {
+    public NumberTypeExpression<Long> toHours() {
         return duration(DateTimeDurationEnum.Hours);
     }
 
-    public ColumnFunctionCompareComparableNumberChainExpression<Long> toMinutes() {
+    public NumberTypeExpression<Long> toMinutes() {
         return duration(DateTimeDurationEnum.Minutes);
     }
 
-    public ColumnFunctionCompareComparableNumberChainExpression<Long> toSeconds() {
+    public NumberTypeExpression<Long> toSeconds() {
         return duration(DateTimeDurationEnum.Seconds);
     }
 
-    public ColumnFunctionCompareComparableNumberChainExpression<Long> toValues(DateTimeDurationEnum durationEnum) {
+    public NumberTypeExpression<Long> toValues(DateTimeDurationEnum durationEnum) {
         return duration(durationEnum);
     }
 }

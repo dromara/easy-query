@@ -3,10 +3,8 @@ package com.easy.query.core.proxy.extension.functions.cast;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableBooleanChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.ColumnFunctionCompareComparableNumberChainExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableBooleanChainExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.ColumnFunctionCompareComparableNumberChainExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.executor.BooleanTypeExpression;
+import com.easy.query.core.proxy.extension.functions.executor.impl.BooleanTypeExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 /**
@@ -21,9 +19,9 @@ public interface ColumnFunctionCastBooleanAvailable<TProperty> extends SQLSelect
      * 使用数据库函数将其转成boolean类型
      * @return
      */
-    default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> toBoolean(){
+    default BooleanTypeExpression<Boolean> toBoolean(){
         Class<Boolean> clazz = Boolean.class;
-        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.cast(sqlFunction, clazz);
@@ -37,9 +35,9 @@ public interface ColumnFunctionCastBooleanAvailable<TProperty> extends SQLSelect
      * 编译层面欺骗编译器将其视作Boolean
      * @return
      */
-    default ColumnFunctionCompareComparableBooleanChainExpression<Boolean> asBoolean() {
+    default BooleanTypeExpression<Boolean> asBoolean() {
         Class<Boolean> clazz = Boolean.class;
-        return new ColumnFunctionCompareComparableBooleanChainExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 return ((DSLSQLFunctionAvailable) this).func().apply(fx);
             } else {
