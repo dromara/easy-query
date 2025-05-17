@@ -106,18 +106,6 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
     public <TProperty extends Number> ColumnFunctionCompareComparableNumberChainExpression<BigDecimal> avg(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TProperty>> columnSelector) {
         return where(null).avg(columnSelector);
     }
-
-    /**
-     * 请使用函数 {@link #joining(SQLFuncExpression1)}
-     * @param columnSelector
-     * @param delimiter
-     * @return
-     * @param <TProperty>
-     */
-    @Deprecated
-    public <TProperty> ColumnFunctionCompareComparableStringChainExpression<String> join(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TProperty>> columnSelector, String delimiter) {
-        return where(null).joining(columnSelector, delimiter);
-    }
     public <TProperty> ColumnFunctionCompareComparableStringChainExpression<String> joining(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TProperty>> columnSelector) {
         return where(null).joining(columnSelector, ",");
     }

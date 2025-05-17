@@ -70,45 +70,6 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         }
     }
 
-    /**
-     * 支持where having order
-     * 请使用{@link #expression()}或者{@link Expression#sql(String)}
-     *
-     * @param sqlSegment
-     */
-    @Deprecated
-    public void executeSQL(String sqlSegment) {
-        executeSQL(sqlSegment, c -> {
-        });
-    }
-
-    /**
-     * 支持where having order
-     * 请使用{@link #expression()}或者{@link Expression#sql(String, SQLActionExpression1)}
-     *
-     * @param sqlSegment
-     * @param contextConsume
-     */
-    @Deprecated
-    public void executeSQL(String sqlSegment, SQLActionExpression1<SQLNativeProxyExpressionContext> contextConsume) {
-        executeSQL(true, sqlSegment, contextConsume);
-    }
-
-    /**
-     * 支持where having order
-     * 请使用{@link #expression()}或者{@link Expression#sql(boolean, String, SQLActionExpression1)}
-     *
-     * @param condition
-     * @param sqlSegment
-     * @param contextConsume
-     */
-    @Deprecated
-    public void executeSQL(boolean condition, String sqlSegment, SQLActionExpression1<SQLNativeProxyExpressionContext> contextConsume) {
-        if (condition) {
-            getEntitySQLContext()._executeNativeSql(sqlSegment, contextConsume);
-        }
-    }
-
     protected <T, N> N __cast(T original) {
         return EasyObjectUtil.typeCastNullable(original);
     }

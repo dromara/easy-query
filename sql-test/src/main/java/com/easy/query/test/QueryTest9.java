@@ -597,7 +597,7 @@ public class QueryTest9 extends BaseTest {
                     })
                     .orderBy(o -> {
                         o.createTime().format("yyyy-MM-dd HH:mm:ss").desc();
-                        o.executeSQL("IFNULL({0},'') ASC", c -> {
+                        o.expression().sql("IFNULL({0},'') ASC", c -> {
                             c.keepStyle().expression(o.stars());
                         });
                     })
@@ -956,13 +956,13 @@ public class QueryTest9 extends BaseTest {
                         });
                         o.createTime().format("yyyy/MM/dd").eq("2023/01/01");
                         o.id().nullOrDefault("yyyy/MM/dd").eq("xxx");
-                        o.executeSQL("{0} != {1}", c -> {
+                        o.expression().sql("{0} != {1}", c -> {
                             c.expression(o.stars()).expression(o.createTime());
                         });
                         o.or(() -> {
                             o.createTime().format("yyyy/MM/dd").eq("2023/01/01");
                             o.id().nullOrDefault("yyyy/MM/dd").eq("xxx");
-                            o.executeSQL("{0} != {1}", c -> {
+                            o.expression().sql("{0} != {1}", c -> {
                                 c.expression(o.stars()).expression(o.createTime());
                             });
                         });

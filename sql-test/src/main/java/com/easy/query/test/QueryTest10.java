@@ -984,7 +984,7 @@ public class QueryTest10 extends BaseTest{
                 .groupBy(o-> GroupKeys.of(o.content().subString(0,8)))
                 .select(o -> Select.DRAFT.of(
                         o.key1(),
-                        o.join(x->x.id(),",")
+                        o.joining(x->x.id(),",")
                 )).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
