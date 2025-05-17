@@ -616,6 +616,23 @@ public class QueryTest7 extends BaseTest {
     }
 
     @Test
+    public void testCTE7() {
+        String sql = easyEntityQuery
+                .queryable(Topic.class)
+                .where(o -> o.id().isNotNull())
+                .asTreeCTE(o -> {//Topic::getId, Topic::getStars,
+                    o.setLimitDeep(0);
+                    o.setUp(true);
+                    o.setUnionAll(false);
+                    o.setCTETableName("abc");
+                    o.setDeepColumnName("xyz");
+                })
+                .toSQL();
+        System.out.println(sql);
+        Assert.assertEquals("WITH RECURSIVE `abc` AS ( (SELECT 0 AS `xyz`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL)  UNION  (SELECT t2.`xyz` + 1 AS `xyz`,t3.`id`,t3.`stars`,t3.`title`,t3.`create_time` FROM `abc` t2 INNER JOIN `t_topic` t3 ON t3.`id` = t2.`stars`) )  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `abc` t WHERE t.`xyz` <= ?", sql);
+    }
+
+    @Test
     public void testBank1() {
         String sql = easyEntityQuery
                 .queryable(Topic.class)

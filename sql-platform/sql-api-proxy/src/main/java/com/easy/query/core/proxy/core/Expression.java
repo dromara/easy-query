@@ -281,7 +281,6 @@ public class Expression {
     }
 
     /**
-     * 请使用 {@link #stringFormat(String, Object...)}
      * <blockquote><pre>
      * {@code
      *  // CONCAT(?,CAST(`id_card` AS SIGNED),?) LIKE ?
@@ -294,14 +293,14 @@ public class Expression {
      *    }
      * </pre></blockquote>
      *
-     * @param expressions 表达式
+     * @param args 表达式
      * @return
      */
-    @Deprecated
-    public ColumnFunctionCompareComparableStringChainExpression<String> concat(PropTypeColumn<?>... expressions) {
+    public ColumnFunctionCompareComparableStringChainExpression<String> concat(Object... args) {
         return concat(x -> {
-            for (PropTypeColumn<?> expression : expressions) {
-                x.expression(EasyObjectUtil.typeCastNullable(expression));
+            for (Object arg : args) {
+
+                ConcatExpressionSelector.accept(x,arg);
             }
         });
     }

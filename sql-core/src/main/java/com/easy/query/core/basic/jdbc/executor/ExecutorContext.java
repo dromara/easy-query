@@ -80,13 +80,6 @@ public class ExecutorContext {
         this.mapToBeanStrict = mapToBeanStrict;
     }
 
-    /**
-     * 可为空
-     * @return
-     */
-    public SQLConsumer<Statement> getConfigurer() {
-        return configurer;
-    }
 
     public void setConfigurer(SQLConsumer<Statement> configurer) {
         this.configurer = configurer;

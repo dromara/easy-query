@@ -1,6 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.entity.insert.EntityInsertable;
+import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.parameter.BeanSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
@@ -11,7 +12,9 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.CustomIncrement;
 import com.easy.query.test.entity.SysUserSQLEncryption;
@@ -19,8 +22,10 @@ import com.easy.query.test.entity.TestInc;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAuto;
 import com.easy.query.test.entity.TopicAutoNative;
+import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.SysUserSQLEncryptionProxy;
 import com.easy.query.test.entity.proxy.TopicAutoProxy;
+import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -860,5 +865,36 @@ public class InsertTest extends BaseTest {
 //                    t.id().eq("123");
 //                })
 //                .executeRows();
+    }
+
+
+
+    @Test
+    public void insertEmpty(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        ArrayList<BlogEntity> blogEntities = new ArrayList<>();
+
+        EntityInsertable<BlogEntityProxy, BlogEntity> tableSegment = easyEntityQuery.insertable(blogEntities).asSchema("asc")
+                .asTable("123")
+                .asAlias("x")
+                .asTableSegment("1")
+                .noInterceptor()
+                .useInterceptor()
+                .noInterceptor("x")
+                .useInterceptor("y")
+                .batch()
+                .batch(true)
+                .setSQLStrategy(SQLExecuteStrategyEnum.ALL_COLUMNS)
+                .setSQLStrategy(false,SQLExecuteStrategyEnum.ALL_COLUMNS)
+                .insert(blogEntities);
+        EntityInsertExpressionBuilder entityInsertExpressionBuilder = tableSegment.getEntityInsertExpressionBuilder();
+        List<BlogEntity> entities = tableSegment.getEntities();
+        Assert.assertEquals(blogEntities,entities);
+        Assert.assertNull(entityInsertExpressionBuilder);
+        tableSegment.executeRows();
+        Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
+        listenerContextManager.clear();
     }
 }

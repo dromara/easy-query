@@ -96,21 +96,6 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
             });
         }, String.class);
     }
-//
-//    default ColumnFunctionCompareComparableStringChainExpression<String> appendFormat(String format, Object... args) {
-//        Object[] newArgs = EasyArrayUtil.concat(args, new Object[]{this});
-//        return Expression.of(getEntitySQLContext()).stringFormat(String.format("{%s}" + format, args.length), newArgs);
-//    }
-
-    /**
-     * 请使用 nullOrEmpty
-     *
-     * @return
-     */
-    @Deprecated
-    default ColumnFunctionCompareComparableStringChainExpression<TProperty> nullEmpty() {
-        return nullOrDefault(o -> o.value(EasyStringUtil.EMPTY));
-    }
 
     default ColumnFunctionCompareComparableStringChainExpression<TProperty> nullOrEmpty() {
         return nullOrDefault(o -> o.value(EasyStringUtil.EMPTY));

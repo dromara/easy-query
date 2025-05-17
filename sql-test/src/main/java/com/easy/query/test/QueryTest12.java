@@ -1405,11 +1405,7 @@ public class QueryTest12 extends BaseTest {
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .where(s -> {
                     Expression expression = s.expression();
-                    expression.concat(
-                            expression.constant(","),
-                            s.idCard(),
-                            expression.constant(",")
-                    ).like(",2,");
+                    expression.stringFormat("{0}{1}{2}",",",s.idCard(),",").like(",2,");
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();

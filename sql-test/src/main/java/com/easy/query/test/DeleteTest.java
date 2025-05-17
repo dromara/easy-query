@@ -1,11 +1,13 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.entity.delete.EntityDeletable;
 import com.easy.query.api.proxy.entity.delete.ExpressionDeletable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
+import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
@@ -18,6 +20,7 @@ import org.junit.Test;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -379,4 +382,89 @@ public class DeleteTest extends BaseTest {
         Assert.assertEquals("123pppxxx1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(1)));
         listenerContextManager.clear();
     }
+
+    @Test
+    public void delete(){
+        ArrayList<Topic> topics = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            Topic topic = new Topic();
+            topic.setId("xxx111asdfgh"+i);
+            topic.setStars(i);
+            topic.setTitle("123");
+            topic.setCreateTime(LocalDateTime.now());
+            topics.add(topic);
+        }
+        EntityDeletable<TopicProxy, Topic> deletable = easyEntityQuery.deletable(topics);
+        ExpressionContext expressionContext = deletable.getExpressionContext();
+        List<Topic> entities = deletable.getEntities();
+        EntityDeleteExpressionBuilder deleteExpressionBuilder = deletable.getDeleteExpressionBuilder();
+        Assert.assertNotNull(expressionContext);
+        Assert.assertNotNull(deleteExpressionBuilder);
+        Assert.assertEquals(topics,entities);
+    }
+    @Test
+    public void deletex(){
+        BlogEntity blog = new BlogEntity();
+        blog.setId("xxx111asdfgh123");
+        blog.setTitle("123");
+        blog.setCreateTime(LocalDateTime.now());
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        easyEntityQuery.deletable(blog)
+                .useLogicDelete(false).executeRows();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("DELETE FROM `t_blog` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("xxx111asdfgh123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void deletex1(){
+        BlogEntity blog = new BlogEntity();
+        blog.setId("xxx111asdfgh123");
+        blog.setTitle("123");
+        blog.setCreateTime(LocalDateTime.now());
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        easyEntityQuery.deletable(blog)
+                .useLogicDelete(true).executeRows();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `t_blog` SET `deleted` = ? WHERE `deleted` = ? AND `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("true(Boolean),false(Boolean),xxx111asdfgh123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void deletex2(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        Exception ex1 = null;
+        try {
+
+            easyEntityQuery.deletable(BlogEntity.class)
+                    .noInterceptor()
+                    .noInterceptor("x")
+                    .useInterceptor("a")
+                    .asSchema("asv")
+                    .asAlias("xx")
+                    .configure(c->{
+                        c.setPrintSQL(true);
+                    })
+                    .where(t_blog -> {
+                        t_blog.id().eq("xxx111asdfgh123");
+                    }).executeRows(1,"2","3");
+        }catch (Exception ex){
+            ex1=ex;
+        }
+        Assert.assertNotNull(ex1);
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `asv`.`t_blog` xx SET xx.`deleted` = ? WHERE xx.`deleted` = ? AND xx.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("true(Boolean),false(Boolean),xxx111asdfgh123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
 }
