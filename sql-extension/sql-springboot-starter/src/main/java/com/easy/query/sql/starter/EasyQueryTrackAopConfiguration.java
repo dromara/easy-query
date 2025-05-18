@@ -26,10 +26,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author xuejiaming
- * @FileName: EasyQueryTrackAopConfiguration.java
- * @Description: 文件说明
  * create time 2023/3/20 20:58
+ * @author xuejiaming
  */
 @Aspect
 @Configuration
@@ -63,7 +61,7 @@ public class EasyQueryTrackAopConfiguration {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
         EasyQueryTrack easyQueryTrack = method.getAnnotation(EasyQueryTrack.class); //通过反射拿到注解对象
-        if (easyQueryTrack != null && easyQueryTrack.enable()) {
+        if (easyQueryTrack != null) {
             InvokeTryFinally trackInvokeTryFinally = getTrackInvokeTryFinally(easyQueryTrack.tag());
             try {
                 trackInvokeTryFinally.begin();

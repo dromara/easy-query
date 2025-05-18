@@ -3,6 +3,7 @@ package com.easy.query.solon.integration;
 import com.easy.query.core.annotation.EasyQueryTrack;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
+import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.solon.integration.holder.EasyQueryHolder;
 import com.easy.query.solon.integration.logging.Slf4jImpl;
@@ -50,7 +51,8 @@ public class XPluginImpl implements Plugin {
             try {
                 Class<?> aClass = Class.forName(logClass);
                 if (Log.class.isAssignableFrom(aClass)) {
-                    LogFactory.useCustomLogging((Class<? extends Log>) aClass);
+                    Class<? extends Log> logClass0 = EasyObjectUtil.typeCastNullable(aClass);
+                    LogFactory.useCustomLogging(logClass0);
                 } else {
                     LogFactory.useStdOutLogging();
                     System.out.println("cant found log:[" + logClass + "]!!!!!!");

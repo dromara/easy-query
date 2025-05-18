@@ -8,6 +8,7 @@ import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.columns.impl.DefaultSubquerySQLQueryableFactory;
 import com.easy.query.core.proxy.impl.SQLColumnIncludeColumn2Impl;
+import com.easy.query.core.util.EasyObjectUtil;
 
 /**
  * create time 2024/6/5 08:26
@@ -65,10 +66,11 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
 
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> TProxy set(SQLQueryable<TPropertyProxy, TProperty> columnProxy) {
         set(columnProxy, null);
-        return (TProxy) this.getSubQueryContext().getLeftTableProxy();
+        return EasyObjectUtil.typeCastNullable(this.getSubQueryContext().getLeftTableProxy());
     }
 
     /**
+     *
      * <blockquote><pre>
      * {@code
      *     new MyUserVOProxy()
@@ -93,40 +95,9 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
         T1Proxy propertyProxy = this.getSubQueryContext().getPropertyProxy();
         T1Proxy t1Proxy = propertyProxy.create(null, this.getEntitySQLContext());
         getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(columnProxy.getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy.getProxy(), t1Proxy, navigateSelectExpression));
-        return (TProxy) this.getSubQueryContext().getLeftTableProxy();
+        return EasyObjectUtil.typeCastNullable(this.getSubQueryContext().getLeftTableProxy());
     }
 
 
 
 }
-//        EntityExpressionBuilder entityExpressionBuilder = this.getSubQueryContext().getEntityExpressionBuilder();
-//        TableAvailable leftTable = this.getSubQueryContext().getLeftTable();
-//        String property = columnProxy.getValue();
-/// /            ExpressionContext expressionContext = entityQueryExpressionBuilder.getExpressionContext();
-//        QueryRuntimeContext runtimeContext = this.getSubQueryContext().getRuntimeContext();
-//        ConfigureArgument configureArgument = entityExpressionBuilder.getExpressionContext().getConfigureArgument();
-//        runtimeContext.getIncludeProvider().include(leftTable, leftTable.getEntityMetadata(), entityExpressionBuilder.getExpressionContext(), navigateInclude->{
-//
-//
-//            ClientQueryable<TProperty> queryable = navigateInclude.with(property, null);
-//            IncludeNavigateParams includeNavigateParams = navigateInclude.getIncludeNavigateParams();
-//            NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
-//            ClientQueryable<TProperty> clientQueryable = EasyNavigateUtil.navigateOrderBy(
-//                    queryable,
-//                    new OffsetLimitEntry(navigateMetadata.getOffset(), navigateMetadata.getLimit()),
-//                    navigateMetadata.getOrderProps(),
-//                    runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType()),
-//                    configureArgument,
-//                    runtimeContext);
-//            if (navigateSelectExpression != null) {
-//                includeNavigateParams.setAdapterExpression(innerQueryable -> {
-//                    ClientQueryable<?> cq = EasyObjectUtil.typeCastNullable(innerQueryable);
-//                    EasyEntityQueryable<?, ?> entityQueryable = new EasyEntityQueryable<>(EasyObjectUtil.typeCastNullable(EntityQueryProxyManager.create(EasyObjectUtil.typeCastNullable(cq.queryClass()))), cq);
-//                    includeAdapterExpression.apply(entityQueryable);
-//                });
-//                includeNavigateParams.getAdapterExpression().apply(clientQueryable);
-//                return clientQueryable;
-//            }
-//
-//            return queryable;
-//        });

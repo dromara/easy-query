@@ -23,7 +23,7 @@ public class SubQueryContext<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
     private final String property;
     private final String fullName;
     private final T1Proxy propertyProxy;
-    private final Object leftTableProxy;
+    private final ProxyEntity<?,?> leftTableProxy;
     private SQLActionExpression1<T1Proxy> whereExpression;
     private SQLActionExpression1<T1Proxy> orderByExpression;
     private SQLActionExpression1<ExpressionConfigurable<EntityQueryable<T1Proxy, T1>>> configureExpression;
@@ -31,7 +31,7 @@ public class SubQueryContext<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
     private int fromIndex;
     private int toIndex;
 
-    public SubQueryContext(EntityExpressionBuilder entityExpressionBuilder, EntitySQLContext entitySQLContext, TableAvailable leftTable, String property, String fullName, T1Proxy propertyProxy,Object leftTableProxy) {
+    public SubQueryContext(EntityExpressionBuilder entityExpressionBuilder, EntitySQLContext entitySQLContext, TableAvailable leftTable, String property, String fullName, T1Proxy propertyProxy,ProxyEntity<?,?> leftTableProxy) {
         this.entityExpressionBuilder = entityExpressionBuilder;
         this.entitySQLContext = entitySQLContext;
         this.leftTable = leftTable;
@@ -59,7 +59,7 @@ public class SubQueryContext<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
 //    }
 
 
-    public Object getLeftTableProxy() {
+    public ProxyEntity<?,?> getLeftTableProxy() {
         return leftTableProxy;
     }
 

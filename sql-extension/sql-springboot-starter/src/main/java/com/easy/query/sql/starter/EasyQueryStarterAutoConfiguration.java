@@ -19,6 +19,7 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.initializer.ShardingInitializer;
 import com.easy.query.core.sharding.route.datasource.DataSourceRoute;
 import com.easy.query.core.sharding.route.table.TableRoute;
+import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.sql.starter.config.EasyQueryInitializeOption;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
@@ -36,10 +37,9 @@ import javax.sql.DataSource;
 import java.util.Map;
 
 /**
- * @author xuejiaming
- * @FileName: EasyQueryStarter.java
- * @Description: 文件说明
  * create time 2023/3/11 12:47
+ *
+ * @author xuejiaming
  */
 @Configuration
 @EnableConfigurationProperties(EasyQueryProperties.class)
@@ -59,7 +59,8 @@ public class EasyQueryStarterAutoConfiguration {
             try {
                 Class<?> aClass = Class.forName(easyQueryProperties.getLogClass());
                 if (Log.class.isAssignableFrom(aClass)) {
-                    LogFactory.useCustomLogging((Class<? extends Log>) aClass);
+                    Class<? extends Log> logClass = EasyObjectUtil.typeCastNullable(aClass);
+                    LogFactory.useCustomLogging(logClass);
                 } else {
                     LogFactory.useStdOutLogging();
                     System.out.println("cant found log:[" + easyQueryProperties.getLogClass() + "]!!!!!!");

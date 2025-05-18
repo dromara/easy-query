@@ -18,7 +18,7 @@ public class QueryTrackInterceptor implements Interceptor {
     @Override
     public Object doIntercept(Invocation inv) throws Throwable {
         EasyQueryTrack easyQueryTrack =inv.method().getAnnotation(EasyQueryTrack.class); //通过反射拿到注解对象
-        if (easyQueryTrack!=null&&easyQueryTrack.enable()) {
+        if (easyQueryTrack!=null) {
 
             InvokeTryFinally trackInvokeTryFinally = DbManager.global().getTrackInvokeTryFinally(easyQueryTrack.tag());
             try {
