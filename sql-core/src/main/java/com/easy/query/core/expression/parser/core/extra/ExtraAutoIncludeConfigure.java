@@ -11,4 +11,5 @@ public interface ExtraAutoIncludeConfigure {
     ExtraWhere getExtraWhere();
     ExtraSelect getExtraSelect();
     ExtraConfigure getExtraConfigure();
+    boolean isIgnoreNavigateConfigure();
 }

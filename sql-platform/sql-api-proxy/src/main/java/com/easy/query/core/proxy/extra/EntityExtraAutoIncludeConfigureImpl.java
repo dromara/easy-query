@@ -19,10 +19,17 @@ public class EntityExtraAutoIncludeConfigureImpl<TProxy extends ProxyEntity<TPro
     private ExtraWhere extraWhere;
     private ExtraConfigure extraConfigure;
     private ExtraSelect extraSelect;
+    private boolean ignoreNavigateConfigure;
 
     @Override
-    public EntityExtraAutoIncludeConfigure<TProxy, TEntity> configure(SQLActionExpression1<EntityQueryable<TProxy,TEntity>> queryableConfigureExpression) {
+    public EntityExtraAutoIncludeConfigure<TProxy, TEntity> configure(SQLActionExpression1<EntityQueryable<TProxy, TEntity>> queryableConfigureExpression) {
         this.extraConfigure = new EntityExtraConfigure<>(queryableConfigureExpression);
+        return this;
+    }
+
+    @Override
+    public EntityExtraAutoIncludeConfigure<TProxy, TEntity> ignoreNavigateConfigure() {
+        this.ignoreNavigateConfigure = true;
         return this;
     }
 
@@ -51,5 +58,10 @@ public class EntityExtraAutoIncludeConfigureImpl<TProxy extends ProxyEntity<TPro
     @Override
     public ExtraConfigure getExtraConfigure() {
         return extraConfigure;
+    }
+
+    @Override
+    public boolean isIgnoreNavigateConfigure() {
+        return ignoreNavigateConfigure;
     }
 }

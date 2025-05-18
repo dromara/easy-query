@@ -23,6 +23,12 @@ public interface EntityExtraAutoIncludeConfigure<TProxy extends ProxyEntity<TPro
     EntityExtraAutoIncludeConfigure<TProxy,TEntity> configure(SQLActionExpression1<EntityQueryable<TProxy,TEntity>> queryableConfigureExpression);
 
     /**
+     * 不接受属性在实体上的配置比如:orderByProps、limit、offset等
+     * @return
+     */
+    EntityExtraAutoIncludeConfigure<TProxy,TEntity> ignoreNavigateConfigure();
+
+    /**
      * 额外的筛选
      * @param whereExpression
      * @return

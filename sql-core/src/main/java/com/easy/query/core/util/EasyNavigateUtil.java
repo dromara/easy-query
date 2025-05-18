@@ -1,7 +1,6 @@
 package com.easy.query.core.util;
 
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
-import com.easy.query.core.api.dynamic.executor.query.SelectAutoIncludeConfigurable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.common.OffsetLimitEntry;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -57,24 +56,17 @@ public class EasyNavigateUtil {
     }
 
     public static <T> ClientQueryable<T> navigateOrderBy(ClientQueryable<T> clientQueryable, OffsetLimitEntry offsetLimit, List<NavigateOrderProp> navigateOrderProps, EntityMetadata navigateEntityMetadata, ConfigureArgument configureArgument, QueryRuntimeContext runtimeContext) {
-        clientQueryable.configure(o->o.setConfigureArgument(configureArgument.getArg()));
-        if (SelectAutoIncludeConfigurable.class.isAssignableFrom(navigateEntityMetadata.getEntityClass())) {
-            SelectAutoIncludeConfigurable selectAutoIncludeConfigurable = (SelectAutoIncludeConfigurable) navigateEntityMetadata.getBeanConstructorCreator().get();
-
-            ClientQueryable<T> configureQueryable = selectAutoIncludeConfigurable.configure(clientQueryable, configureArgument);
-            if (!selectAutoIncludeConfigurable.isInheritedBehavior()) {
-                return configureQueryable;
-            }
-            return navigateOrderBy0(configureQueryable, offsetLimit, navigateOrderProps, runtimeContext);
-        } else if (navigateEntityMetadata.getExtraAutoIncludeConfigure() != null) {
+        clientQueryable.configure(o -> o.setConfigureArgument(configureArgument.getArg()));
+        if (navigateEntityMetadata.getExtraAutoIncludeConfigure() != null) {
             ExtraAutoIncludeConfigure extraAutoIncludeConfigure = navigateEntityMetadata.getExtraAutoIncludeConfigure();
             if (extraAutoIncludeConfigure.getExtraConfigure() != null) {
                 extraAutoIncludeConfigure.getExtraConfigure().configure(clientQueryable);
             }
             if (extraAutoIncludeConfigure.getExtraWhere() != null) {
-                return navigateOrderBy0(
-                        clientQueryable.where(extraAutoIncludeConfigure.getExtraWhere()::where)
-                        , offsetLimit, navigateOrderProps, runtimeContext);
+                clientQueryable.where(extraAutoIncludeConfigure.getExtraWhere()::where);
+            }
+            if (extraAutoIncludeConfigure.isIgnoreNavigateConfigure()) {
+                return clientQueryable;
             }
         }
         return navigateOrderBy0(clientQueryable, offsetLimit, navigateOrderProps, runtimeContext);

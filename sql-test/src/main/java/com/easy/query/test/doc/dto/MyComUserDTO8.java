@@ -3,10 +3,12 @@ package com.easy.query.test.doc.dto;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.OrderByProperty;
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
-import com.easy.query.core.api.dynamic.executor.query.SelectAutoIncludeConfigurable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.enums.OrderByPropertyModeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.expression.parser.core.extra.ExtraAutoIncludeConfigure;
+import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.test.doc.proxy.MySignUpProxy;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
@@ -37,22 +39,22 @@ public class MyComUserDTO8 {
      */
     @Data
     @FieldNameConstants
-    public static class InternalMySignUps implements SelectAutoIncludeConfigurable {
+    public static class InternalMySignUps {
+
+
+        private static final ExtraAutoIncludeConfigure EXTRA_AUTO_INCLUDE_CONFIGURE = MySignUpProxy.TABLE.EXTRA_AUTO_INCLUDE_CONFIGURE()
+                .where(o -> {
+                    o.time().asStr().eq("123123");
+                })
+                .configure(q->{
+                    q.orderBy(s->s.time().asc());
+                })
+                .ignoreNavigateConfigure();
+
         private String id;
         private LocalDateTime time;
         private String content;
 
-
-        @Override
-        public boolean isInheritedBehavior() {
-            return false;
-        }
-
-        @Override
-        public <T> ClientQueryable<T> configure(ClientQueryable<T> queryable, ConfigureArgument configureArgument) {
-            return queryable.where(o->o.eq(Fields.time,"123123"))
-                    .orderByAsc(o->o.column(Fields.time));
-        }
     }
 
 

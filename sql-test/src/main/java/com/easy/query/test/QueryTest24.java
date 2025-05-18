@@ -17,6 +17,8 @@ import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeTest1;
+import com.easy.query.test.entity.blogtest.SysRole;
+import com.easy.query.test.entity.blogtest.proxy.SysMenuProxy;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.SysUserProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
@@ -811,6 +813,20 @@ public class QueryTest24 extends BaseTest {
                         s.address().subString(1, 10).as(GenericDTO.Fields.value2)
                 )).toList();
 
+//        List<SysRole> list3 = easyEntityQuery.queryable(SysRole.class)
+//                .where(s -> {
+//                    SysMenuProxy first = s.menus().orderBy(menu -> menu.createTime().asc()).element(1);
+//
+//                    first.createTime().lt(LocalDateTime.of(2020, 1, 1, 0, 0));
+//                    first.route().startsWith("/admin");
+//
+//
+//                    s.menus().orderBy(menu -> menu.createTime().asc()).elements(0,2)
+//                            .any(menu->{
+//                                menu.route().startsWith("/admin");
+//                            });
+//
+//                }).toList();
 
 
     }

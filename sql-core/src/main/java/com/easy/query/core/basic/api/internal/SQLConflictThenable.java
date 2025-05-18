@@ -9,7 +9,7 @@ import java.util.Collections;
 
 /**
  * create time 2024/3/21 13:16
- * 出现争议后的处理
+ * 出现争议后的处理 常用于insertOrUpdate或者insertOrIgnore
  *
  * @author xuejiaming
  */

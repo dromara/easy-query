@@ -10,6 +10,7 @@ import com.easy.query.test.entity.blogtest.proxy.SysMenuProxy;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -28,6 +29,7 @@ public class SysMenu implements ProxyEntityAvailable<SysMenu , SysMenuProxy> {
     private String name;
     private String route;
     private String icon;
+    private LocalDateTime  createTime;
 
     @Navigate(value = RelationTypeEnum.ManyToMany,
             mappingClass = RoleMenu.class,
