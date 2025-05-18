@@ -1,4 +1,4 @@
-package com.easy.query.core.proxy.extension.functions.executor.filter.impl;
+package com.easy.query.core.proxy.extension.functions.type.filter.impl;
 
 import com.easy.query.api.proxy.extension.casewhen.CaseWhenEntityBuilder;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
@@ -8,7 +8,7 @@ import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.filter.NumberFilterTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.filter.NumberFilterTypeExpression;
 
 /**
  * create time 2023/12/2 23:22

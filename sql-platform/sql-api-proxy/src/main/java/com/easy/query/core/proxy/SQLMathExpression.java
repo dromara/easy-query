@@ -1,8 +1,8 @@
 package com.easy.query.core.proxy;
 
 import com.easy.query.core.func.def.enums.MathMethodEnum;
-import com.easy.query.core.proxy.extension.functions.executor.NumberTypeExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.NumberTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.impl.NumberTypeExpressionImpl;
 
 import java.math.BigDecimal;
 

@@ -34,7 +34,7 @@ public class EasyQueryProperties {
     private SQLExecuteStrategyEnum insertStrategy = SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
     private SQLExecuteStrategyEnum updateStrategy = SQLExecuteStrategyEnum.ALL_COLUMNS;
     private ConnectionModeEnum connectionMode = ConnectionModeEnum.SYSTEM_AUTO;
-    private PropertyModeEnum propertyMode = PropertyModeEnum.FIRST_LOWER;
+    private PropertyModeEnum propertyMode = PropertyModeEnum.SAME_AS_ENTITY;
     private ShardingQueryInTransactionEnum shardingQueryInTransaction = ShardingQueryInTransactionEnum.SERIALIZABLE;
     /**
      * 建议19
@@ -132,7 +132,7 @@ public class EasyQueryProperties {
     /**
      * sqlNativeSegment保持输入风格单引号自动改为双引号
      */
-    private boolean keepNativeStyle = false;
+    private boolean keepNativeStyle = true;
     /**
      * 参数映射丢失警告
      */
@@ -161,7 +161,7 @@ public class EasyQueryProperties {
     /**
      * 映射策略
      */
-    private EntityMappingStrategyEnum mappingStrategy = EntityMappingStrategyEnum.COLUMN_ONLY;
+    private EntityMappingStrategyEnum mappingStrategy = EntityMappingStrategyEnum.PROPERTY_FIRST;
 
     public Boolean getEnable() {
         return enable;

@@ -3,8 +3,8 @@ package com.easy.query.core.proxy.impl.duration;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.extension.functions.ColumnDateTimeFunctionAvailable;
-import com.easy.query.core.proxy.extension.functions.executor.NumberTypeExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.NumberTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.impl.NumberTypeExpressionImpl;
 
 
 /**

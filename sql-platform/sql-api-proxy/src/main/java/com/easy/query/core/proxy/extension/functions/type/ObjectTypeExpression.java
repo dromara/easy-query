@@ -1,7 +1,7 @@
-package com.easy.query.core.proxy.extension.functions.executor;
+package com.easy.query.core.proxy.extension.functions.type;
 
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.AnyTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.impl.AnyTypeExpressionImpl;
 
 /**
  * create time 2023/12/21 09:19

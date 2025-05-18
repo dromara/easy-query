@@ -15,10 +15,10 @@ import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastBool
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastDateTimeAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastNumberAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastStringAvailable;
-import com.easy.query.core.proxy.extension.functions.executor.AnyTypeExpression;
-import com.easy.query.core.proxy.extension.functions.executor.DateTimeTypeExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.AnyTypeExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.DateTimeTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.DateTimeTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.impl.AnyTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.impl.DateTimeTypeExpressionImpl;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.core.proxy.impl.duration.DurationAnyExpression;

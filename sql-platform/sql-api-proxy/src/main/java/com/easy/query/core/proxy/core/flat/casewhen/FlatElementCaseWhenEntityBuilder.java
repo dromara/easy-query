@@ -8,8 +8,8 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.AnyTypeExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.AnyTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.impl.AnyTypeExpressionImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Objects;

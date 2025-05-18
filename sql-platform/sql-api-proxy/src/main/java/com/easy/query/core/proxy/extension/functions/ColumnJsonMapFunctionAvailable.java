@@ -7,13 +7,14 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastBooleanAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastStringAvailable;
-import com.easy.query.core.proxy.extension.functions.executor.AnyTypeExpression;
-import com.easy.query.core.proxy.extension.functions.executor.BooleanTypeExpression;
-import com.easy.query.core.proxy.extension.functions.executor.JsonMapTypeExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.AnyTypeExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.BooleanTypeExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.JsonMapTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.JsonMapTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.impl.AnyTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.impl.BooleanTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.impl.JsonMapTypeExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.util.function.Function;
@@ -25,7 +26,8 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public interface ColumnJsonMapFunctionAvailable<TProperty> extends ColumnObjectFunctionAvailable<TProperty, AnyTypeExpression<TProperty>>, SQLSelectAsExpression, PropTypeColumn<TProperty>,
-        ColumnFunctionCastStringAvailable<TProperty> {
+        ColumnFunctionCastStringAvailable<TProperty>,
+        ColumnFunctionCastBooleanAvailable<TProperty> {
 
     @Override
     default AnyTypeExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
@@ -33,33 +35,39 @@ public interface ColumnJsonMapFunctionAvailable<TProperty> extends ColumnObjectF
     }
 
     default JsonMapTypeExpression<String> getField(String jsonKey) {
-        return getField(jsonKey,String.class);
+        return getField(jsonKey, String.class);
     }
+
+    default BooleanTypeExpression<Boolean> getBooleanField(String jsonKey) {
+        return getField(jsonKey, String.class).toBoolean();
+    }
+
     default <TP> JsonMapTypeExpression<TP> getField(String jsonKey, Class<TP> valueType) {
         String key = getJsonKey(getEntitySQLContext().getRuntimeContext(), jsonKey);
         return new JsonMapTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.jsonField(x->x.sqlFunc(sqlFunction).format(key));
+                return fx.jsonField(x -> x.sqlFunc(sqlFunction).format(key));
             } else {
-                return fx.jsonField(x->x.column(this.getValue()).format(key));
+                return fx.jsonField(x -> x.column(this.getValue()).format(key));
             }
         }, valueType);
     }
+
     default BooleanTypeExpression<TProperty> containsField(String jsonKey) {
         String key = getJsonKey(getEntitySQLContext().getRuntimeContext(), jsonKey);
         return new BooleanTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.containsField(x->x.sqlFunc(sqlFunction).format(key));
+                return fx.containsField(x -> x.sqlFunc(sqlFunction).format(key));
             } else {
-                return fx.containsField(x->x.column(this.getValue()).format(key));
+                return fx.containsField(x -> x.column(this.getValue()).format(key));
             }
         });
     }
 
 
-    static String getJsonKey(QueryRuntimeContext runtimeContext,String jsonKey){
+    static String getJsonKey(QueryRuntimeContext runtimeContext, String jsonKey) {
         return runtimeContext.getMapColumnNameChecker().checkColumnName(jsonKey);
     }
 

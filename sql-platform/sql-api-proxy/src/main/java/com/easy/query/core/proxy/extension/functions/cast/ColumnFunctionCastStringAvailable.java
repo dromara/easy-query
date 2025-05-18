@@ -3,8 +3,8 @@ package com.easy.query.core.proxy.extension.functions.cast;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
-import com.easy.query.core.proxy.extension.functions.executor.StringTypeExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.StringTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.impl.StringTypeExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 /**

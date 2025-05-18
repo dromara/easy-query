@@ -85,7 +85,7 @@ List<Company> companies = entityQuery.queryable(Company.class)
 ```java
 List<Company> companies = entityQuery.queryable(Company.class)
         // Two subqueries in where will be merged
-        .manyJoin(company -> company.users())
+        .subQueryToGroupJoin(company -> company.users())
         .where(company -> {
           company.users().any(u -> u.name().like("Xiao Ming"));
           company.users().where(u -> u.name().like("Xiao Ming"))
@@ -102,17 +102,37 @@ List<Company> companies = entityQuery.queryable(Company.class)
         }).toList();
 ```
 ### Implicit CASE WHEN Expression
+
 ```java
+import java.math.BigDecimal;
+
 List<Draft2<LocalDateTime, Long>> customVO = entityQuery.queryable(SysUser.class)
         .where(user -> {
-            user.birthday().lt(LocalDateTime.now());
+          user.birthday().lt(LocalDateTime.now());
         }).groupBy(user -> GroupKeys.of(user.companyId()))
         .select(group -> Select.DRAFT.of(
                 group.groupTable().birthday().max().filter(() -> {
-                    group.groupTable().name().like("Xiao Ming");
+                  group.groupTable().name().like("Xiao Ming");
                 }),
                 group.groupTable().id().count().filter(() -> {
-                    group.groupTable().birthday().ge(LocalDateTime.of(2024, 1, 1, 0, 0));
+                  group.groupTable().birthday().ge(LocalDateTime.of(2024, 1, 1, 0, 0));
+                })
+        )).toList();
+
+
+List<Draft3<Long, Long, BigDecimal>> result = entityQuery.queryable(SysUser.class)
+        .where(user -> {
+          user.birthday().lt(LocalDateTime.now());
+        })
+        .select(user -> Select.DRAFT.of(
+                user.id().count().filter(() -> {
+                  user.address().eq("Hangzhou");
+                }),
+                user.id().count().filter(() -> {
+                  user.address().eq("Beijing");
+                }),
+                user.age().avg().filter(() -> {
+                  user.address().eq("Beijing");
                 })
         )).toList();
 ```

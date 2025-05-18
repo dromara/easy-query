@@ -1,4 +1,4 @@
-package com.easy.query.core.proxy.extension.functions.executor.impl;
+package com.easy.query.core.proxy.extension.functions.type.impl;
 
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.GroupSelector;
@@ -10,7 +10,7 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.SQLFunctionExpressionUtil;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.JsonMapTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.JsonMapTypeExpression;
 import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
 
 import java.util.function.Function;

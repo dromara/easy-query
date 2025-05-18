@@ -3,8 +3,8 @@ package com.easy.query.api.proxy.extension.partition;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.PartitionByTypeExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.PartitionByTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.PartitionByTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.impl.PartitionByTypeExpressionImpl;
 import com.easy.query.core.util.EasyArrayUtil;
 
 

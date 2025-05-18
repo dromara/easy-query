@@ -1,4 +1,4 @@
-package com.easy.query.core.proxy.extension.functions.executor;
+package com.easy.query.core.proxy.extension.functions.type;
 
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.extension.functions.ColumnAnyFunctionAvailable;

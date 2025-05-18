@@ -90,7 +90,7 @@ List<Company> companies = entityQuery.queryable(Company.class)
 
 List<Company> companies = entityQuery.queryable(Company.class)
         //在where中的两个子查询会进行合并
-        .manyJoin(company -> company.users())
+        .subQueryToGroupJoin(company -> company.users())
         .where(company -> {
           company.users().any(u -> u.name().like("小明"));
           company.users().where(u -> u.name().like("小明")).max(u -> u.birthday()).gt(LocalDateTime.now());
@@ -120,6 +120,22 @@ List<Draft2<LocalDateTime, Long>> customVO = entityQuery.queryable(SysUser.class
                 }),
                 group.groupTable().id().count().filter(() -> {
                     group.groupTable().birthday().ge(LocalDateTime.of(2024, 1, 1, 0, 0));
+                })
+        )).toList();
+
+List<Draft3<Long, Long, BigDecimal>> result = entityQuery.queryable(SysUser.class)
+        .where(user -> {
+          user.birthday().lt(LocalDateTime.now());
+        })
+        .select(user -> Select.DRAFT.of(
+                user.id().count().filter(() -> {
+                  user.address().eq("Hangzhou");
+                }),
+                user.id().count().filter(() -> {
+                  user.address().eq("Beijing");
+                }),
+                user.age().avg().filter(() -> {
+                  user.address().eq("Beijing");
                 })
         )).toList();
 ```

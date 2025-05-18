@@ -1,4 +1,4 @@
-package com.easy.query.core.proxy.extension.functions.executor.impl;
+package com.easy.query.core.proxy.extension.functions.type.impl;
 
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.GroupSelector;
@@ -10,7 +10,7 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.SQLFunctionExpressionUtil;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.NumberTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
 import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
 
 import java.util.function.Function;
@@ -21,17 +21,17 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public class NumberTypeExpressionImpl<TProperty> implements NumberTypeExpression<TProperty> {
+public class BooleanTypeExpressionImpl<TProperty> implements BooleanTypeExpression<TProperty> {
     private final EntitySQLContext entitySQLContext;
     private final TableAvailable table;
     private final String property;
     private final Function<SQLFunc, SQLFunction> func;
     private Class<?> propType;
 
-    public NumberTypeExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func) {
+    public BooleanTypeExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func) {
         this(entitySQLContext,table,property,func,Object.class);
     }
-    public NumberTypeExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
+    public BooleanTypeExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
         this.entitySQLContext = entitySQLContext;
 
         this.table = table;
@@ -69,6 +69,16 @@ public class NumberTypeExpressionImpl<TProperty> implements NumberTypeExpression
     public void accept(OrderSelector s) {
         SQLFunctionExpressionUtil.accept(s,getTable(),func);
     }
+//
+//    @Override
+//    public void asc(boolean condition) {
+//        if(condition){
+//            getCurrentEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
+//                SQLFunctionExpressionUtil.accept(s,getTable(),func,true);
+//            }));
+//        }
+//
+//    }
 
     @Override
     public void asc(boolean condition, OrderByModeEnum nullsModeEnum) {
@@ -105,7 +115,6 @@ public class NumberTypeExpressionImpl<TProperty> implements NumberTypeExpression
             }));
         }
     }
-
     @Override
     public Function<SQLFunc, SQLFunction> func() {
         return this.func;

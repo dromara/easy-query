@@ -4,8 +4,8 @@ import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.core.flat.casewhen.FlatElementCaseWhenEntityBuilder;
-import com.easy.query.core.proxy.extension.functions.executor.NumberTypeExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.NumberTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.impl.NumberTypeExpressionImpl;
 
 /**
  * create time 2025/3/5 21:20

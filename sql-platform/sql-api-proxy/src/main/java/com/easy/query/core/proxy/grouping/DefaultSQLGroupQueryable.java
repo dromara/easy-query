@@ -6,12 +6,12 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
-import com.easy.query.core.proxy.extension.functions.executor.AnyTypeExpression;
-import com.easy.query.core.proxy.extension.functions.executor.NumberTypeExpression;
-import com.easy.query.core.proxy.extension.functions.executor.StringTypeExpression;
-import com.easy.query.core.proxy.extension.functions.executor.impl.AnyTypeExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.NumberTypeExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.StringTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.impl.AnyTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.impl.NumberTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.impl.StringTypeExpressionImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.math.BigDecimal;

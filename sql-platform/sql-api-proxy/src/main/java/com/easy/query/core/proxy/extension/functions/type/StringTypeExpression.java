@@ -1,4 +1,4 @@
-package com.easy.query.core.proxy.extension.functions.executor;
+package com.easy.query.core.proxy.extension.functions.type;
 
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.func.SQLFunc;

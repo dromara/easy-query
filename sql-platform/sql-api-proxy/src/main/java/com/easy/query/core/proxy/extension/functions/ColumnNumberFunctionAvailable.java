@@ -13,11 +13,11 @@ import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastBooleanAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastNumberAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastStringAvailable;
-import com.easy.query.core.proxy.extension.functions.executor.NumberTypeExpression;
-import com.easy.query.core.proxy.extension.functions.executor.filter.NumberFilterTypeExpression;
-import com.easy.query.core.proxy.extension.functions.executor.filter.impl.NumberSumFilterTypeExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.NumberTypeExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.filter.impl.NumberFilterTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.filter.NumberFilterTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.filter.impl.NumberSumFilterTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.impl.NumberTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.filter.impl.NumberFilterTypeExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.math.BigDecimal;

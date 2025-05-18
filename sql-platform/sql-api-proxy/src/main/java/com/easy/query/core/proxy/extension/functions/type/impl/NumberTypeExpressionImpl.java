@@ -1,119 +1,114 @@
-package com.easy.query.core.proxy.extension.functions.executor.filter.impl;
+package com.easy.query.core.proxy.extension.functions.type.impl;
 
-import com.easy.query.api.proxy.extension.casewhen.CaseWhenEntityBuilder;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.GroupSelector;
 import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.builder.Selector;
-import com.easy.query.core.expression.lambda.SQLActionExpression;
-import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
-import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLFunctionExpressionUtil;
-import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
 import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
 
 import java.util.function.Function;
 
 /**
- * create time 2025/3/6 08:27
+ * create time 2023/12/2 23:22
  * 文件说明
  *
  * @author xuejiaming
  */
-public class AbstractAggregateFilterExpression<TProperty> implements EntitySQLContextAvailable {
+public class NumberTypeExpressionImpl<TProperty> implements NumberTypeExpression<TProperty> {
     private final EntitySQLContext entitySQLContext;
-    protected PropTypeColumn<?> self;
     private final TableAvailable table;
     private final String property;
-    private final SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func;
+    private final Function<SQLFunc, SQLFunction> func;
     private Class<?> propType;
 
-    public AbstractAggregateFilterExpression(EntitySQLContext entitySQLContext, PropTypeColumn<?> self, TableAvailable table, String property, SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
+    public NumberTypeExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func) {
+        this(entitySQLContext,table,property,func,Object.class);
+    }
+    public NumberTypeExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
         this.entitySQLContext = entitySQLContext;
-        this.self = self;
 
         this.table = table;
         this.property = property;
         this.func = func;
-        this.propType = propType;
+        this.propType=propType;
     }
 
+    @Override
     public String getValue() {
         return property;
     }
 
+    @Override
     public TableAvailable getTable() {
         return table;
     }
 
+    @Override
     public void accept(Selector s) {
-        SQLFunctionExpressionUtil.accept(s, getTable(), fx -> func.apply(getSelf(), fx));
+        SQLFunctionExpressionUtil.accept(s,getTable(),func);
     }
 
+    @Override
     public void accept(AsSelector s) {
-        SQLFunctionExpressionUtil.accept(s, getTable(), fx -> func.apply(getSelf(), fx));
+        SQLFunctionExpressionUtil.accept(s,getTable(),func);
     }
 
+    @Override
     public void accept(GroupSelector s) {
-        SQLFunctionExpressionUtil.accept(s, getTable(), fx -> func.apply(getSelf(), fx));
+        SQLFunctionExpressionUtil.accept(s,getTable(),func);
     }
 
+    @Override
     public void accept(OrderSelector s) {
-        SQLFunctionExpressionUtil.accept(s, getTable(), fx -> func.apply(getSelf(), fx));
+        SQLFunctionExpressionUtil.accept(s,getTable(),func);
     }
 
-    //    @Override
-//    public void asc(boolean condition) {
-//        if(condition){
-//            getCurrentEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
-//                SQLFunctionExpressionUtil.accept(s,getTable(),func,true);
-//            }));
-//        }
-//
-//    }
+    @Override
     public void asc(boolean condition, OrderByModeEnum nullsModeEnum) {
         if (condition) {
 
             getCurrentEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
                 s.setAsc(true);
                 SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
-                SQLFunction sqlFunction = func.apply(getSelf(), fx);
+                SQLFunction sqlFunction = func.apply(fx);
                 if (nullsModeEnum != null) {
                     SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(sqlFunction, true, nullsModeEnum);
-                    s.func(this.getTable(), orderByNullsModeFunction, false);
+                    s.func(this.getTable(), orderByNullsModeFunction,false);
                 } else {
-                    s.func(this.getTable(), sqlFunction, true);
+                    s.func(this.getTable(), sqlFunction,true);
                 }
             }));
         }
     }
 
+    @Override
     public void desc(boolean condition, OrderByModeEnum nullsModeEnum) {
         if (condition) {
 
             getCurrentEntitySQLContext().accept(new SQLOrderSelectImpl(s -> {
                 s.setAsc(false);
                 SQLFunc fx = getEntitySQLContext().getRuntimeContext().fx();
-                SQLFunction sqlFunction = func.apply(getSelf(),fx);
+                SQLFunction sqlFunction = func.apply(fx);
                 if (nullsModeEnum != null) {
                     SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(sqlFunction, false, nullsModeEnum);
-                    s.func(this.getTable(), orderByNullsModeFunction, false);
+                    s.func(this.getTable(), orderByNullsModeFunction,false);
                 } else {
-                    s.func(this.getTable(), sqlFunction, true);
+                    s.func(this.getTable(), sqlFunction,true);
                 }
             }));
         }
     }
 
+    @Override
     public Function<SQLFunc, SQLFunction> func() {
-        return fx -> {
-            return func.apply(getSelf(), fx);
-        };
+        return this.func;
     }
 
     @Override
@@ -121,19 +116,23 @@ public class AbstractAggregateFilterExpression<TProperty> implements EntitySQLCo
         return entitySQLContext;
     }
 
+    @Override
     public Class<?> getPropertyType() {
         return propType;
     }
 
+    @Override
     public <TR> void _setPropertyType(Class<TR> clazz) {
-        this.propType = clazz;
+        this.propType=clazz;
     }
 
-    protected PropTypeColumn<?> getSelf(){
-        return this.self;
-    }
-
-    public void _toFilter(SQLActionExpression predicate) {
-        this.self = new CaseWhenEntityBuilder(this.getEntitySQLContext()).caseWhen(predicate).then(getSelf()).elseEnd(null, getPropertyType());
-    }
 }
+//        if(condition){
+//            return new SQLPredicateImpl(f->{
+//                SQLFunc fx = f.getRuntimeContext().fx();
+//                f.eq(this.table,func.apply(fx),val);
+//            });
+//        }
+//        return SQLPredicate.empty;
+//    }
+//}

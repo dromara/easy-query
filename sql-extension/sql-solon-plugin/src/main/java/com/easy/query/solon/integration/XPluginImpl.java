@@ -63,23 +63,6 @@ public class XPluginImpl implements Plugin {
             }
         }
     }
-//    private void builderAddDo(Class<?> clz, BeanWrap wrap, String annoValue) {
-//        if (clz.isInterface() == false) {
-//            return;
-//        }
-//
-//        if (Utils.isEmpty(annoValue)) {
-//            wrap.context().getWrapAsync(DataSource.class, (dsBw) -> {
-//                create0(clz, dsBw);
-//            });
-//        } else {
-//            wrap.context().getWrapAsync(annoValue, (dsBw) -> {
-//                if (dsBw.raw() instanceof DataSource) {
-//                    create0(clz, dsBw);
-//                }
-//            });
-//        }
-//    }
     private void injectorAddDo(VarHolder varH, String annoValue) {
         if (Utils.isEmpty(annoValue)) {
             varH.context().getWrapAsync(DataSource.class, (dsBw) -> {
@@ -93,11 +76,6 @@ public class XPluginImpl implements Plugin {
             });
         }
     }
-
-//    private void create0(Class<?> clz, BeanWrap dsBw) {
-//        Object raw = MybatisAdapterManager.get(dsBw).getMapper(clz);
-//        dsBw.context().wrapAndPut(clz, raw);
-//    }
     private void inject0(VarHolder varH, BeanWrap dsBw) {
         EasyQueryHolder holder = DbManager.get(dsBw);
         if (holder != null) {

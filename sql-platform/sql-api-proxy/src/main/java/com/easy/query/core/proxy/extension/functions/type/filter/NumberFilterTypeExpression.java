@@ -1,7 +1,7 @@
-package com.easy.query.core.proxy.extension.functions.executor.filter;
+package com.easy.query.core.proxy.extension.functions.type.filter;
 
 import com.easy.query.core.expression.lambda.SQLActionExpression;
-import com.easy.query.core.proxy.extension.functions.executor.NumberTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
 import com.easy.query.core.util.EasyObjectUtil;
 
 /**

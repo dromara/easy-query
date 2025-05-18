@@ -98,4 +98,16 @@ public class JsonTest extends BaseTest{
         Assert.assertEquals("200(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+    @Test
+    public void testJsonField4(){
+        List<Draft1<Boolean>> list1 = easyEntityQuery.queryable(TopicJson.class)
+                .where(t -> {
+                    t.extraJson().asJsonMap().getBooleanField("success").eq(true);
+                }).select(t -> Select.DRAFT.of(
+                        t.extraJson().asAny().getField("success", Boolean.class)
+                )).toList();
+        Assert.assertEquals(1,list1.size());
+        Draft1<Boolean> booleanDraft1 = list1.get(0);
+        Assert.assertTrue(booleanDraft1.getValue1());
+    }
 }

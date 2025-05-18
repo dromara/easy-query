@@ -1,4 +1,4 @@
-package com.easy.query.core.proxy.extension.functions.executor.filter.impl;
+package com.easy.query.core.proxy.extension.functions.type.filter.impl;
 
 import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -6,7 +6,7 @@ import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.filter.NumberFilterTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.filter.StringFilterTypeExpression;
 
 /**
  * create time 2023/12/2 23:22
@@ -14,11 +14,11 @@ import com.easy.query.core.proxy.extension.functions.executor.filter.NumberFilte
  *
  * @author xuejiaming
  */
-public class NumberFilterTypeExpressionImpl<TProperty> extends AbstractAggregateFilterExpression<TProperty>
-        implements NumberFilterTypeExpression<TProperty> {
+public class StringFilterTypeExpressionImpl<TProperty> extends AbstractAggregateFilterExpression<TProperty>
+        implements StringFilterTypeExpression<TProperty> {
 
 
-    public NumberFilterTypeExpressionImpl(EntitySQLContext entitySQLContext, PropTypeColumn<?> self, TableAvailable table, String property, SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
+    public StringFilterTypeExpressionImpl(EntitySQLContext entitySQLContext, PropTypeColumn<?> self, TableAvailable table, String property, SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
         super(entitySQLContext,self,table,property,func,propType);
     }
 }

@@ -8,10 +8,10 @@ import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastNumberAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastStringAvailable;
-import com.easy.query.core.proxy.extension.functions.executor.BooleanTypeExpression;
-import com.easy.query.core.proxy.extension.functions.executor.filter.BooleanFilterTypeExpression;
-import com.easy.query.core.proxy.extension.functions.executor.filter.impl.BooleanFilterTypeExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.executor.impl.BooleanTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.filter.BooleanFilterTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.filter.impl.BooleanFilterTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.impl.BooleanTypeExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.util.function.Function;

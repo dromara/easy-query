@@ -1,4 +1,4 @@
-package com.easy.query.core.proxy.extension.functions.executor.impl;
+package com.easy.query.core.proxy.extension.functions.type.impl;
 
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.GroupSelector;
@@ -10,7 +10,7 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.SQLFunctionExpressionUtil;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.extension.functions.executor.DateTimeTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
 import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
 
 import java.util.function.Function;
@@ -21,17 +21,17 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public class DateTimeTypeExpressionImpl<TProperty> implements DateTimeTypeExpression<TProperty> {
+public class StringTypeExpressionImpl<TProperty> implements StringTypeExpression<TProperty> {
     private final EntitySQLContext entitySQLContext;
     private final TableAvailable table;
     private final String property;
     private final Function<SQLFunc, SQLFunction> func;
     private Class<?> propType;
 
-    public DateTimeTypeExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func) {
-        this(entitySQLContext,table,property,func,Object.class);
+    public StringTypeExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func) {
+        this(entitySQLContext,table,property,func,String.class);
     }
-    public DateTimeTypeExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
+    public StringTypeExpressionImpl(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
         this.entitySQLContext = entitySQLContext;
 
         this.table = table;
@@ -39,7 +39,6 @@ public class DateTimeTypeExpressionImpl<TProperty> implements DateTimeTypeExpres
         this.func = func;
         this.propType=propType;
     }
-
     @Override
     public String getValue() {
         return property;
@@ -89,7 +88,7 @@ public class DateTimeTypeExpressionImpl<TProperty> implements DateTimeTypeExpres
                 SQLFunction sqlFunction = func.apply(fx);
                 if (nullsModeEnum != null) {
                     SQLFunction orderByNullsModeFunction = fx.orderByNullsMode(sqlFunction, true, nullsModeEnum);
-                    s.func(this.getTable(), orderByNullsModeFunction,false);
+                    s.func(this.getTable(), orderByNullsModeFunction,true);
                 } else {
                     s.func(this.getTable(), sqlFunction,true);
                 }
@@ -114,6 +113,7 @@ public class DateTimeTypeExpressionImpl<TProperty> implements DateTimeTypeExpres
             }));
         }
     }
+
     @Override
     public Function<SQLFunc, SQLFunction> func() {
         return this.func;
