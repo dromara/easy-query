@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.core.draft.proxy;
 
+import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SQLAnyColumn;
 import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
@@ -19,12 +20,15 @@ public class Draft6Proxy<T1,T2,T3,T4,T5,T6> extends AbstractDraftProxy<Draft6Pro
 
     private static final Class<Draft6> entityClass = Draft6.class;
 
-    public static <TR1,TR2,TR3,TR4,TR5,TR6> Draft6Proxy<TR1,TR2,TR3,TR4,TR5,TR6> createTable() {
-        return new Draft6Proxy<>();
-    }
-
-    public Draft6Proxy() {
+    public Draft6Proxy(PropTypeColumn<T1> column1, PropTypeColumn<T2> column2, PropTypeColumn<T3> column3,
+                       PropTypeColumn<T4> column4, PropTypeColumn<T5> column5, PropTypeColumn<T6> column6) {
         super(6);
+        fetch(0, column1, "value1");
+        fetch(1, column2, "value2");
+        fetch(2, column3, "value3");
+        fetch(3, column4, "value4");
+        fetch(4, column5, "value5");
+        fetch(5, column6, "value6");
     }
 
     /**

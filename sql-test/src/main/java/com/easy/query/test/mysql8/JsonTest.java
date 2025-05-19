@@ -53,15 +53,8 @@ public class JsonTest extends BaseTest{
 
     @Test
     public void testJsonField(){
-//        List<Map<String, Object>> maps = easyEntityQuery.sqlQueryMap("SELECT `id`,`name`,`extra_json` FROM `t_test_json` WHERE (`extra_json`->\"$.success\") =  CAST(? AS JSON)",Collections.singletonList(true));
-//        List<Map<String, Object>> maps1 = easyEntityQuery.sqlQueryMap("SELECT `id`,`name`,`extra_json` FROM `t_test_json` WHERE (`extra_json`->\"$.success\") =  ?",Collections.singletonList("true"));
-//        System.out.println(maps);
-//        System.out.println(maps1);
         List<TopicJson> list = easyEntityQuery.queryable(TopicJson.class)
                 .where(t -> {
-//                    t.extraJson().asAny().getJsonField("success").eq(true);
-//                    t.id().eq(t.expression().sqlSegment(" CAST({0} AS JSON)",c->c.format(true)));
-//                    t.extraJson().asAny().getJsonField("success").eq(t.expression().sqlSegment(" CAST({0} AS JSON)",c->c.value("true")));
                     t.extraJson().asJsonMap().getField("code").eq("200");
                     t.extraJson().asJsonMap().getField("success").eq("true");
                 }).toList();

@@ -21,28 +21,28 @@ import com.easy.query.core.proxy.ValueObjectProxyEntity;
  *
  * @author xuejiaming
  */
-public abstract class AbstractDraftProxy<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> extends AbstractProxyEntity<TProxy,TEntity> implements DraftProxy {
+public abstract class AbstractDraftProxy<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> extends AbstractProxyEntity<TProxy, TEntity> implements DraftProxy {
     private final ResultColumnMetadata[] propTypes;
-    public AbstractDraftProxy(int capacity){
-        this.propTypes=new ResultColumnMetadata[capacity];
+
+    public AbstractDraftProxy(int capacity) {
+        this.propTypes = new ResultColumnMetadata[capacity];
     }
-    @Override
-    public <TProperty> void fetch(int index, PropTypeColumn<TProperty> column, TablePropColumn tablePropColumn) {
-        SQLSelectAsExpression sqlSelectAsExpression = column.as(tablePropColumn);
+
+    protected  <TProperty> void fetch(int index, PropTypeColumn<TProperty> column, String alias) {
+        SQLSelectAsExpression sqlSelectAsExpression = column.as(alias);
         if (sqlSelectAsExpression instanceof ValueObjectProxyEntity) {
             throw new EasyQueryInvalidOperationException("draft result not support value object columns");
         }
-
-        if(column instanceof SQLColumn &&column.getTable()!=null){
+        if (column instanceof SQLColumn && column.getTable() != null) {
             EntityMetadata entityMetadata = column.getTable().getEntityMetadata();
             ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(column.getValue());
-            if(columnMetadata!=null){
-                propTypes[index]=new EntityResultColumnMetadata(index,entityMetadata,columnMetadata);
-            }else{
-                propTypes[index]=new BasicResultColumnMetadata(column.getPropertyType(),null,new BasicJdbcProperty(index,column.getPropertyType()));
+            if (columnMetadata != null) {
+                propTypes[index] = new EntityResultColumnMetadata(index, entityMetadata, columnMetadata);
+            } else {
+                propTypes[index] = new BasicResultColumnMetadata(column.getPropertyType(), null, new BasicJdbcProperty(index, column.getPropertyType()));
             }
-        }else{
-            propTypes[index]=new BasicResultColumnMetadata(column.getPropertyType(),null,new BasicJdbcProperty(index,column.getPropertyType()));
+        } else {
+            propTypes[index] = new BasicResultColumnMetadata(column.getPropertyType(), null, new BasicJdbcProperty(index, column.getPropertyType()));
         }
         selectExpression(sqlSelectAsExpression);
     }

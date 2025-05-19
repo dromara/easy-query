@@ -144,4 +144,7 @@ public class Select {
             return runtimeContext.getEntityMetadataManager().getEntityMetadata(resultProxy.getEntityClass());
         }
     }
+
+
+
 }

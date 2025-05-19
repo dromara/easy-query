@@ -11,6 +11,5 @@ import com.easy.query.core.proxy.TablePropColumn;
  * @author xuejiaming
  */
 public interface DraftProxy {
-    <TProperty> void fetch(int index, PropTypeColumn<TProperty> column, TablePropColumn tablePropColumn);
     ResultColumnMetadata[] getDraftPropTypes();
 }

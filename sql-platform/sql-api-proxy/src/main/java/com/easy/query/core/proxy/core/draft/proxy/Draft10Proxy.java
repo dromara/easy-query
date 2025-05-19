@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.core.draft.proxy;
 
+import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SQLAnyColumn;
 import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
@@ -20,12 +21,22 @@ public class Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10> extends AbstractDraftP
 
     private static final Class<Draft10> entityClass = Draft10.class;
 
-    public static <TR1,TR2,TR3,TR4,TR5,TR6,TR7,TR8,TR9,TR10> Draft10Proxy<TR1,TR2,TR3,TR4,TR5,TR6,TR7,TR8,TR9,TR10> createTable() {
-        return new Draft10Proxy<>();
-    }
 
-    public Draft10Proxy() {
+    public Draft10Proxy(PropTypeColumn<T1> column1, PropTypeColumn<T2> column2, PropTypeColumn<T3> column3,
+                        PropTypeColumn<T4> column4, PropTypeColumn<T5> column5, PropTypeColumn<T6> column6,
+                        PropTypeColumn<T7> column7, PropTypeColumn<T8> column8, PropTypeColumn<T9> column9, PropTypeColumn<T10> column10) {
         super(10);
+
+        fetch(0, column1, "value1");
+        fetch(1, column2, "value2");
+        fetch(2, column3, "value3");
+        fetch(3, column4, "value4");
+        fetch(4, column5, "value5");
+        fetch(5, column6, "value6");
+        fetch(6, column7, "value7");
+        fetch(7, column8, "value8");
+        fetch(8, column9, "value9");
+        fetch(9, column10, "value10");
     }
 
     /**
@@ -164,13 +175,13 @@ public class Draft10Proxy<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10> extends AbstractDraftP
         }
 
         /**
-         * {@link Draft9#getValue9}
+         * {@link Draft10#getValue9}
          */
         public Draft10ProxyFetcher<TF1,TF2,TF3,TF4,TF5,TF6,TF7,TF8,TF9,TF10> value9() {
             return add(getProxy().value9());
         }
         /**
-         * {@link Draft9#getValue10}
+         * {@link Draft10#getValue10}
          */
         public Draft10ProxyFetcher<TF1,TF2,TF3,TF4,TF5,TF6,TF7,TF8,TF9,TF10> value10() {
             return add(getProxy().value10());

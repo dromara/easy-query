@@ -1,6 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.entity.update.EntityUpdatable;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.parameter.BeanSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
@@ -9,9 +10,14 @@ import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.columns.types.SQLIntegerTypeColumn;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
+import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.core.draft.proxy.DraftProxy;
 import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
+import com.easy.query.core.proxy.sql.Draft;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.core.proxy.sql.draft.Draft1Builder;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
@@ -772,6 +778,8 @@ public class QueryTest24 extends BaseTest {
 
     @Test
     public void testx18() {
+        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
+
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
@@ -813,6 +821,29 @@ public class QueryTest24 extends BaseTest {
                         s.address().subString(1, 10).as(GenericDTO.Fields.value2)
                 )).toList();
 
+
+//        List<Draft2<String, Long>> list2 = easyEntityQuery.queryable(Topic.class)
+//                .innerJoin(BlogEntity.class, (t_topic, t_blog) -> t_blog.id().eq(t_blog.id()))
+//                .where((t_topic, t_blog) -> {
+//                    t_blog.title().startsWith("123");
+//                })
+//                .groupBy((t_topic, t_blog) -> GroupKeys.of(t_blog.title()))
+//                .select(group -> Select.DRAFT.of(
+//                        group.key1(),
+//                        group.count()
+//                )).toList();
+//       easyEntityQuery.queryable(Topic.class)
+//                .innerJoin(BlogEntity.class, (t_topic, t_blog) -> t_blog.id().eq(t_blog.id()))
+//                .where((t_topic, t_blog) -> {
+//                    t_blog.title().startsWith("123");
+//                })
+//                .groupBy((t_topic, t_blog) -> GroupKeys.of(t_blog.title()))
+//                .select(group -> new Draft()
+//                        .value1(group.key1())
+//                        .value2(group.count())
+//                        .build()
+//                ).toList();
+
 //        List<SysRole> list3 = easyEntityQuery.queryable(SysRole.class)
 //                .where(s -> {
 //                    SysMenuProxy first = s.menus().orderBy(menu -> menu.createTime().asc()).element(1);
@@ -829,6 +860,18 @@ public class QueryTest24 extends BaseTest {
 //                }).toList();
 
 
+    }
+
+    @Test
+     public void testdraft1(){
+        List<Draft1<String>> list = easyEntityQuery.queryable(Topic.class)
+                .select(t_topic -> Select.DRAFT
+                        .value1(
+                                t_topic.title().subString(1,2)
+                        )
+                        .build()
+                ).toList();
+        System.out.println(list);
     }
 
 }
