@@ -405,7 +405,6 @@ public class QueryTest15 extends BaseTest {
                 .setDefaultDataSource(new MysqlDataSource())
                 .optionConfigure(op -> {
                     op.setPrintSql(false);
-                    op.setKeepNativeStyle(true);
                 })
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
                 .build();
@@ -953,7 +952,6 @@ public class QueryTest15 extends BaseTest {
 
                     r.title().set(o.stars().nullOrDefault(0).toStr());
                     r.alias().setSQL("IFNULL({0},'')", c -> {
-                        c.keepStyle();
                         c.expression(o.id());
                     });
                 }))
@@ -965,7 +963,6 @@ public class QueryTest15 extends BaseTest {
                     r.title().set(o.stars().nullOrDefault(0).toStr());
 
                     PropTypeColumn<String> nullProperty = o.expression().sqlSegment("IFNULL({0},'')", c -> {
-                        c.keepStyle();
                         c.expression(o.id());
                     }).asAnyType(String.class);
 

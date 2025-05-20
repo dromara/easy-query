@@ -130,10 +130,6 @@ public class EasyQueryProperties {
      */
     private int relationGroupSize = 512;
     /**
-     * sqlNativeSegment保持输入风格单引号自动改为双引号
-     */
-    private boolean keepNativeStyle = true;
-    /**
      * 参数映射丢失警告
      */
     private boolean warningColumnMiss = true;
@@ -373,14 +369,6 @@ public class EasyQueryProperties {
 
     public void setRelationGroupSize(int relationGroupSize) {
         this.relationGroupSize = relationGroupSize;
-    }
-
-    public boolean isKeepNativeStyle() {
-        return keepNativeStyle;
-    }
-
-    public void setKeepNativeStyle(boolean keepNativeStyle) {
-        this.keepNativeStyle = keepNativeStyle;
     }
 
     public long getReverseOffsetThreshold() {

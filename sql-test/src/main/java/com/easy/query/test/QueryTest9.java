@@ -598,7 +598,7 @@ public class QueryTest9 extends BaseTest {
                     .orderBy(o -> {
                         o.createTime().format("yyyy-MM-dd HH:mm:ss").desc();
                         o.expression().sql("IFNULL({0},'') ASC", c -> {
-                            c.keepStyle().expression(o.stars());
+                            c.expression(o.stars());
                         });
                     })
                     .select(o -> new TopicProxy().selectExpression(o.FETCHER.title().id(), o.createTime().format("yyyy-MM-dd HH:mm:ss")))
@@ -670,7 +670,6 @@ public class QueryTest9 extends BaseTest {
 
                         r.title().set(o.stars().nullOrDefault(0).toStr());
                         r.alias().setSQL("IFNULL({0},'')", c -> {
-                            c.keepStyle();
                             c.expression(o.id());
                         });
                     }))
@@ -692,7 +691,6 @@ public class QueryTest9 extends BaseTest {
 
                         r.title().set(o.stars().nullOrDefault(0).toStr());
                         r.alias().setSQL("IFNULL({0},'')", c -> {
-                            c.keepStyle();
                             c.expression(o.id());
                         });
                     }))
@@ -714,7 +712,6 @@ public class QueryTest9 extends BaseTest {
 
                         r.title().set(o.stars().nullOrDefault(0).toStr());
                         r.alias().setSQL("IFNULL({0},'')", c -> {
-                            c.keepStyle();
                             c.expression(o.id());
                         });
                     }))

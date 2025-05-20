@@ -1366,7 +1366,6 @@ public class UpdateTest extends BaseTest {
                         o.title().set(o.createTime().format("yyyy/MM/dd"));
                         o.title().set(o.title().nullOrDefault("x"));
                         o.title().setSQL("IFNULL({0},{1})", c -> {
-                            c.keepStyle();
                             c.expression(o.title());
                             c.value("p");
                         });

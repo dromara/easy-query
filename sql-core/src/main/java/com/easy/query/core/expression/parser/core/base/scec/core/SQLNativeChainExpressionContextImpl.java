@@ -96,11 +96,6 @@ public class SQLNativeChainExpressionContextImpl implements SQLNativeChainExpres
     }
 
     @Override
-    public void keepStyle() {
-        sqlNativeExpressionContext.keepStyle();
-    }
-
-    @Override
     public void messageFormat() {
         sqlNativeExpressionContext.messageFormat();
     }

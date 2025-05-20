@@ -35,7 +35,6 @@ public interface ColumnFuncSelector {
         return column(tablePropColumn.getTable(),tablePropColumn.getValue());
     }
     ColumnFuncSelector value(Object val);
-    ColumnFuncSelector keepStyle();
     <T>ColumnFuncSelector collection(Collection<T> collections);
     ColumnFuncSelector sqlFuncExpression(TableAvailable table, Function<SQLFunc,SQLFunction> sqlFunctionCreator);
 //    ColumnFuncSelector sqlParameter(SQLParameter sqlParameter);

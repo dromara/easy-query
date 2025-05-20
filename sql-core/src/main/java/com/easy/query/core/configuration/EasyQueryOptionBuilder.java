@@ -62,11 +62,6 @@ public class EasyQueryOptionBuilder {
      */
     private int relationGroupSize;
     /**
-     * sqlNativeSegment单引号默认改为双引号
-     * 保持输入风格和输出一样
-     */
-    private boolean keepNativeStyle;
-    /**
      * 启用反向排序的偏移量阈值
      * 小于等于0表示不启用
      */
@@ -122,7 +117,6 @@ public class EasyQueryOptionBuilder {
         this.startTimeJob = false;
         this.defaultTrack = false;
         this.relationGroupSize = 512;
-        this.keepNativeStyle = false;
         this.reverseOffsetThreshold = 0;
         this.warningColumnMiss = true;
         this.shardingFetchSize = 1000;
@@ -242,10 +236,6 @@ public class EasyQueryOptionBuilder {
         this.relationGroupSize = relationGroupSize;
     }
 
-    public void setKeepNativeStyle(boolean keepNativeStyle) {
-        this.keepNativeStyle = keepNativeStyle;
-    }
-
     public void setReverseOffsetThreshold(long reverseOffsetThreshold) {
         this.reverseOffsetThreshold = reverseOffsetThreshold;
     }
@@ -310,7 +300,6 @@ public class EasyQueryOptionBuilder {
                 this.startTimeJob,
                 this.defaultTrack,
                 this.relationGroupSize,
-                this.keepNativeStyle,
                 this.reverseOffsetThreshold,
                 this.warningColumnMiss,
                 this.shardingFetchSize,

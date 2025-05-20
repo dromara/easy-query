@@ -224,7 +224,6 @@ public class QueryTest18 extends BaseTest {
                     TopicProxy r = new TopicProxy();
                     r.title().set(o.stars().nullOrDefault(0).toStr());
                     r.alias().setSQL("IFNULL({0},'')", c -> {
-                        c.keepStyle();
                         c.expression(o.id());
                     });
                     return r;

@@ -111,10 +111,6 @@ public class EasyQueryOption {
      */
     private final int relationGroupSize;
     /**
-     * 使用sqlNativeSegment时如果使用单引号默认改为双引号
-     */
-    private final boolean keepNativeStyle;
-    /**
      * 启用反向排序的偏移量阈值
      * 小于等于0表示不启用
      */
@@ -150,7 +146,7 @@ public class EasyQueryOption {
                            int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
                            boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold,
                            boolean printSql, boolean startTimeJob, boolean defaultTrack,
-                           int relationGroupSize, boolean keepNativeStyle, long reverseOffsetThreshold,
+                           int relationGroupSize,  long reverseOffsetThreshold,
                            boolean warningColumnMiss, int shardingFetchSize, boolean mapToBeanStrict,
                            String defaultSchema, long resultSizeLimit, boolean printNavSql,
                            ShardingQueryInTransactionEnum shardingQueryInTransaction, int mssqlMinBigDecimalScale,
@@ -216,7 +212,6 @@ public class EasyQueryOption {
         this.startTimeJob = startTimeJob;
         this.defaultTrack = defaultTrack;
         this.relationGroupSize = relationGroupSize;
-        this.keepNativeStyle = keepNativeStyle;
         this.reverseOffsetThreshold = reverseOffsetThreshold;
         this.warningColumnMiss = warningColumnMiss;
         this.shardingFetchSize = shardingFetchSize;
@@ -323,11 +318,6 @@ public class EasyQueryOption {
     public int getRelationGroupSize() {
         return relationGroupSize;
     }
-
-    public boolean isKeepNativeStyle() {
-        return keepNativeStyle;
-    }
-
     public boolean enableReverseOrder(long offset) {
         if (this.reverseOffsetThreshold <= 0) {
             return false;

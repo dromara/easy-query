@@ -13,6 +13,7 @@ import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.proxy.DraftProxy;
+import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
 import com.easy.query.core.proxy.sql.Draft;
 import com.easy.query.core.proxy.sql.GroupKeys;
@@ -791,6 +792,7 @@ public class QueryTest24 extends BaseTest {
                             t_blog.createTime().isAfter(LocalDateTime.of(2024, 1, 1, 0, 0));
                         });
                     });
+
                 }).toList();
 
 

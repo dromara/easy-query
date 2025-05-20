@@ -76,12 +76,6 @@ public class SQLAliasNativeProxyExpressionContextImpl<TRProxy extends ProxyEntit
     }
 
     @Override
-    public SQLAliasNativeProxyExpressionContext<TRProxy, TR> keepStyle() {
-        sqlNativeExpressionContext.keepStyle();
-        return this;
-    }
-
-    @Override
     public SQLAliasNativeProxyExpressionContext<TRProxy, TR> messageFormat() {
         sqlNativeExpressionContext.messageFormat();
         return this;

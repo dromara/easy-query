@@ -48,7 +48,7 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
         Objects.requireNonNull(runtimeContext, "runtimeContext cannot be null");
         this.expressionContext = expressionContext;
         this.runtimeContext = runtimeContext;
-        this.keep = runtimeContext.getQueryConfiguration().getEasyQueryOption().isKeepNativeStyle();
+        this.keep = true;
         this.nativePropertyInfo=false;
     }
 
@@ -158,11 +158,6 @@ public class SQLNativeExpressionContextImpl implements SQLNativeExpressionContex
 
     public void setAlias(String alias) {
         this.alias = alias;
-    }
-
-    @Override
-    public void keepStyle() {
-        keep = true;
     }
 
     @Override

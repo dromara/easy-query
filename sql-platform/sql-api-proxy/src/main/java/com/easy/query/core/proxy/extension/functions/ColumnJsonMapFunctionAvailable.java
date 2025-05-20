@@ -34,12 +34,12 @@ public interface ColumnJsonMapFunctionAvailable<TProperty> extends ColumnObjectF
         return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
     }
 
-    default JsonMapTypeExpression<String> getField(String jsonKey) {
-        return getField(jsonKey, String.class);
+    default JsonMapTypeExpression<Object> getField(String jsonKey) {
+        return getField(jsonKey, Object.class);
     }
 
     default BooleanTypeExpression<Boolean> getBooleanField(String jsonKey) {
-        return getField(jsonKey, String.class).toBoolean();
+        return getField(jsonKey).toBoolean();
     }
 
     default <TP> JsonMapTypeExpression<TP> getField(String jsonKey, Class<TP> valueType) {

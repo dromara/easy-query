@@ -45,13 +45,7 @@ public abstract class AbstractSQLFunction implements SQLFunction {
 
     @Override
     public void consume(SQLNativeChainExpressionContext context) {
-        context.keepStyle();
         consume0(context);
-//        if(EasyStringUtil.isNotBlank(alias)){
-//            context.setAlias(alias);
-//        }else if(EasyStringUtil.isNotBlank(propertyAlias)){
-//            context.setPropertyAlias(propertyAlias);
-//        }
     }
 
     protected abstract void consume0(SQLNativeChainExpressionContext context);

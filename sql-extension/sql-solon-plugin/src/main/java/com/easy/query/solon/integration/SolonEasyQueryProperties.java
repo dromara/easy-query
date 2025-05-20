@@ -127,7 +127,6 @@ public class SolonEasyQueryProperties {
      * 关联查询每组多少关联id
      */
     private final static int relationGroupSize = 512;
-    private final static boolean keepNativeStyle = true;
     private final static boolean warningColumnMiss = true;
     private final static int shardingFetchSize = 1000;
     private final static boolean mapToBeanStrict = true;
@@ -431,10 +430,6 @@ public class SolonEasyQueryProperties {
 
     public int getRelationGroupSize() {
         return this.props.getInt("relation-group-size", relationGroupSize);
-    }
-
-    public boolean isKeepNativeStyle() {
-        return this.props.getBool("keep-native-style", keepNativeStyle);
     }
 
     public boolean isWarningColumnMiss() {

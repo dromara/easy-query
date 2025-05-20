@@ -422,7 +422,7 @@ public class InsertTest extends BaseTest {
             Assert.assertTrue(cause instanceof EasyQuerySQLStatementException);
             EasyQuerySQLStatementException cause1 = (EasyQuerySQLStatementException) cause;
             String sql = cause1.getSQL();
-            Assert.assertEquals("INSERT INTO `xxxxx` (`id`,`stars`) VALUES (sde.next_rowid(sde,?),?)", sql);
+            Assert.assertEquals("INSERT INTO `xxxxx` (`id`,`stars`) VALUES (sde.next_rowid('sde',?),?)", sql);
         }
     }
 

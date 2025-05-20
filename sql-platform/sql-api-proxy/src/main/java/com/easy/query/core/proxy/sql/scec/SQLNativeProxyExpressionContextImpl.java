@@ -63,12 +63,6 @@ public class SQLNativeProxyExpressionContextImpl implements SQLNativeProxyExpres
     }
 
     @Override
-    public SQLNativeProxyExpressionContext keepStyle() {
-        sqlConstExpressionContext.keepStyle();
-        return this;
-    }
-
-    @Override
     public SQLNativeProxyExpressionContext messageFormat() {
         sqlConstExpressionContext.messageFormat();
         return this;

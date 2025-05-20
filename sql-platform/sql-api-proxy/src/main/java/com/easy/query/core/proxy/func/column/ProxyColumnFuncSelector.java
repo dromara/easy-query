@@ -20,11 +20,6 @@ import java.util.Collection;
 public interface ProxyColumnFuncSelector {
     ColumnFuncSelector getColumnFuncSelector();
 
-    default ProxyColumnFuncSelector keepStyle() {
-        getColumnFuncSelector().keepStyle();
-        return this;
-    }
-
     default <TProxy, T> ProxyColumnFuncSelector expression(SQLColumn<TProxy, T> sqlColumn) {
         return column(sqlColumn);
     }

@@ -104,12 +104,6 @@ public class SQLAliasNativePropertyExpressionContextImpl implements SQLAliasNati
     }
 
     @Override
-    public SQLAliasNativePropertyExpressionContext keepStyle() {
-        sqlNativeChainExpressionContext.keepStyle();
-        return this;
-    }
-
-    @Override
     public SQLAliasNativePropertyExpressionContext messageFormat() {
         sqlNativeChainExpressionContext.messageFormat();
         return this;

@@ -32,7 +32,6 @@ public class EasyColumnValueSQLConverter implements ColumnValueSQLConverter {
     }
 
     private void accept(TableAvailable table, SQLNativePropertyExpressionContext context) {
-        context.keepStyle();
         for (ExpArg expArg : expArgs) {
             if (expArg.argType == ExpArgTypeEnum.PROPERTY) {
                 context.expression(new SimpleSQLTableOwner(table), expArg.prop);

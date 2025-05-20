@@ -92,12 +92,6 @@ public class SQLNativePropertyExpressionContextImpl implements SQLNativeProperty
     }
 
     @Override
-    public SQLNativePropertyExpressionContext keepStyle() {
-        sqlNativeChainExpressionContext.keepStyle();
-        return this;
-    }
-
-    @Override
     public SQLNativePropertyExpressionContext messageFormat() {
         sqlNativeChainExpressionContext.messageFormat();
         return this;

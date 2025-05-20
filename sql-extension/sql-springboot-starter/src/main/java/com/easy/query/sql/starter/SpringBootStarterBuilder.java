@@ -149,7 +149,6 @@ public class SpringBootStarterBuilder {
                     builder.setStartTimeJob(easyQueryProperties.isStartTimeJob());
                     builder.setDefaultTrack(easyQueryProperties.isDefaultTrack());
                     builder.setRelationGroupSize(easyQueryProperties.getRelationGroupSize());
-                    builder.setKeepNativeStyle(easyQueryProperties.isKeepNativeStyle());
                     builder.setWarningColumnMiss(easyQueryProperties.isWarningColumnMiss());
                     builder.setShardingFetchSize(easyQueryProperties.getShardingFetchSize());
                     builder.setReverseOffsetThreshold(easyQueryProperties.getReverseOffsetThreshold());

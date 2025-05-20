@@ -10,7 +10,6 @@ import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncFormatExpression;
 import com.easy.query.core.func.column.ColumnFuncValueExpression;
 import com.easy.query.core.func.column.ColumnFunctionExpression;
-import com.easy.query.core.func.column.ColumnKeepStyleExpression;
 import com.easy.query.core.func.column.ColumnLazyFunctionExpression;
 import com.easy.query.core.func.column.ColumnMultiValueExpression;
 import com.easy.query.core.func.column.ColumnPropertyExpression;
@@ -52,9 +51,7 @@ public abstract class AbstractExpressionSQLFunction extends AbstractSQLFunction 
             } else {
                 context.expression(tableOrNull, concatColumnExpression.getProperty());
             }
-        } else if(columnExpression instanceof ColumnKeepStyleExpression){
-            context.keepStyle();
-        } else if (columnExpression instanceof ColumnFuncValueExpression) {
+        }else if (columnExpression instanceof ColumnFuncValueExpression) {
             ColumnFuncValueExpression concatValueExpression = (ColumnFuncValueExpression) columnExpression;
             context.value(concatValueExpression.getValue());
         } else if (columnExpression instanceof ColumnMultiValueExpression) {
