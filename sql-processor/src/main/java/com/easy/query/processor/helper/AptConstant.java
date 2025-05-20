@@ -1,5 +1,7 @@
 package com.easy.query.processor.helper;
 
+import com.easy.query.processor.generate.ClassProxyGenerator;
+
 /**
  * create time 2023/11/8 17:08
  * 文件说明
@@ -56,7 +58,6 @@ public class AptConstant {
             "    }" +
             "\n" +
             "}";
-
 
 
 
@@ -144,4 +145,19 @@ public class AptConstant {
             "           case \"@{property}\": return \"@{comment}\";";
     public static final String FIELD_STATIC_TEMPLATE =
             "        public static final String @{property} = \"@{property}\";\n";
+
+
+
+
+
+
+    public static final ClassProxyGenerator PROXY_TEMPLATE_GENERATOR =new ClassProxyGenerator(PROXY_TEMPLATE);
+    public static final ClassProxyGenerator FIELD_VALUE_OBJECT_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_VALUE_OBJECT_TEMPLATE);
+    public static final ClassProxyGenerator FIELD_NAVIGATES_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_NAVIGATES_TEMPLATE);
+    public static final ClassProxyGenerator FIELD_NAVIGATE_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_NAVIGATE_TEMPLATE);
+    public static final ClassProxyGenerator ANY_FIELD_TEMPLATE_GENERATOR=new ClassProxyGenerator(ANY_FIELD_TEMPLATE);
+    public static final ClassProxyGenerator FIELD_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_TEMPLATE);
+    public static final ClassProxyGenerator PROXY_SELECTOR_TEMPLATE_GENERATOR=new ClassProxyGenerator(PROXY_SELECTOR_TEMPLATE);
+    public static final ClassProxyGenerator FIELD_SELECTOR_PROPERTY_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_SELECTOR_PROPERTY_TEMPLATE);
+    public static final ClassProxyGenerator FIELD_VALUE_OBJECT_CLASS_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_VALUE_OBJECT_CLASS_TEMPLATE);
 }
