@@ -867,7 +867,7 @@ public class QueryTest24 extends BaseTest {
     @Test
     public void testdraft1() {
         List<Draft1<String>> list = easyEntityQuery.queryable(Topic.class)
-                .rightJoin(BlogEntity.class, (t_topic, t_blog) -> t_topic.equals(t_blog.id()))
+                .rightJoin(BlogEntity.class, (t_topic, t_blog) -> t_topic.id().eq(t_blog.id()))
                 .where((t_topic, t_blog) -> {
                     t_blog.score().eq(BigDecimal.ZERO);
                 })
@@ -878,25 +878,31 @@ public class QueryTest24 extends BaseTest {
                                 a.title().subString(1, 2)
                         )
                         .build()
-                ).toList();
+                ).limit(1).toList();
         System.out.println(list);
     }
 
     @Test
-    public void testdraft2() {
-        List<Draft1<String>> list = easyEntityQuery.queryable(Topic.class)
-                .rightJoin(BlogEntity.class, (t_topic, t_blog) -> t_topic.equals(t_blog.id()))
-                .leftJoin(Topic.class, (a,  c) -> a.stars().eq(c.stars()))
-                .where((a, b) -> {
-                    b.stars().isNotNull();
-                })
-                .select((a, b) -> Select.DRAFT
-                        .value1(
-                                a.title().subString(1, 2)
-                        )
-                        .build()
-                ).toList();
-        System.out.println(list);
+    public void testJoinParameterCount() {
+        Exception e=null;
+        try {
+
+            List<Draft1<String>> list = easyEntityQuery.queryable(Topic.class)
+                    .rightJoin(BlogEntity.class, (t_topic, t_blog) -> t_topic.id().eq(t_blog.id()))
+                    .leftJoin(Topic.class, (a,  c) -> a.stars().eq(c.stars()))
+                    .where((a, b) -> {
+                        b.stars().isNotNull();
+                    })
+                    .select((a, b) -> Select.DRAFT
+                            .value1(
+                                    a.title().subString(1, 2)
+                            )
+                            .build()
+                    ).toList();
+        }catch (Exception ex){
+            e=ex;
+        }
+        Assert.assertEquals("plz use three-parameter lambda expression (a, b, c) -> {}",e.getMessage());
     }
 
 }

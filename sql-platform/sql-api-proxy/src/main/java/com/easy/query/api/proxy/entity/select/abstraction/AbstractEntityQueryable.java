@@ -34,6 +34,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -53,6 +54,7 @@ import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyNavigateUtil;
 import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.math.BigDecimal;
@@ -687,12 +689,23 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(T2Proxy t2Proxy, SQLActionExpression2<T1Proxy, T2Proxy> onExpression) {
-        ClientQueryable2<T1, T2> entityQueryable2 = clientQueryable.leftJoin(t2Proxy.getEntityClass(), (t, t1) -> {
-            t1Proxy.getEntitySQLContext()._where(t.getFilter(), () -> {
-                onExpression.apply(t1Proxy, t2Proxy.create(t1.getTable(), t1Proxy.getEntitySQLContext()));
+        ClientQueryable<T1> joinBaseQueryable = getJoinBaseQueryable();
+        EntityTableExpressionBuilder table = joinBaseQueryable.getSQLEntityExpressionBuilder().getTable(0);
+        T1Proxy newT1Proxy = t1Proxy.create(table.getEntityTable(), joinBaseQueryable.getSQLEntityExpressionBuilder(), runtimeContext);
+        ClientQueryable2<T1, T2> entityQueryable2 = joinBaseQueryable.leftJoin(t2Proxy.getEntityClass(), (t, t1) -> {
+            newT1Proxy.getEntitySQLContext()._where(t.getFilter(), () -> {
+                onExpression.apply(newT1Proxy, t2Proxy.create(t1.getTable(), newT1Proxy.getEntitySQLContext()));
             });
         });
-        return new EasyEntityQueryable2<>(t1Proxy, t2Proxy, entityQueryable2);
+        return new EasyEntityQueryable2<>(newT1Proxy, t2Proxy, entityQueryable2);
+    }
+    private ClientQueryable<T1> getJoinBaseQueryable(){
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = this.clientQueryable.getSQLEntityExpressionBuilder();
+        if(EasySQLExpressionUtil.hasAnyOperate(sqlEntityExpressionBuilder)){
+            return this.clientQueryable.select(t1Proxy.getEntityClass());
+        }
+        return this.clientQueryable;
+
     }
 
     @Override
