@@ -58,7 +58,7 @@ public class QueryTest24 extends BaseTest {
                 .where(t_blog -> {
                     SQLIntegerTypeColumn<BlogEntityProxy> star = t_blog.star();
                     StringTypeExpression<String> rtrim = t_blog.title().rtrim();
-                    StringTypeExpression<String> stringStringTypeExpression = t_blog.title().subString(1,2);
+                    StringTypeExpression<String> stringStringTypeExpression = t_blog.title().subString(1, 2);
                     t_blog.star().asStr().contains("30%");
                     t_blog.star().nullOrDefault(1).asStr().startsWith("30%");
                     t_blog.title().contains(t_blog.expression().constant("30%"));
@@ -865,11 +865,34 @@ public class QueryTest24 extends BaseTest {
     }
 
     @Test
-     public void testdraft1(){
+    public void testdraft1() {
         List<Draft1<String>> list = easyEntityQuery.queryable(Topic.class)
-                .select(t_topic -> Select.DRAFT
+                .rightJoin(BlogEntity.class, (t_topic, t_blog) -> t_topic.equals(t_blog.id()))
+                .where((t_topic, t_blog) -> {
+                    t_blog.score().eq(BigDecimal.ZERO);
+                })
+                .leftJoin(Topic.class, (a, b) -> a.stars().eq(b.stars()))
+
+                .select((a, b) -> Select.DRAFT
                         .value1(
-                                t_topic.title().subString(1,2)
+                                a.title().subString(1, 2)
+                        )
+                        .build()
+                ).toList();
+        System.out.println(list);
+    }
+
+    @Test
+    public void testdraft2() {
+        List<Draft1<String>> list = easyEntityQuery.queryable(Topic.class)
+                .rightJoin(BlogEntity.class, (t_topic, t_blog) -> t_topic.equals(t_blog.id()))
+                .leftJoin(Topic.class, (a,  c) -> a.stars().eq(c.stars()))
+                .where((a, b) -> {
+                    b.stars().isNotNull();
+                })
+                .select((a, b) -> Select.DRAFT
+                        .value1(
+                                a.title().subString(1, 2)
                         )
                         .build()
                 ).toList();

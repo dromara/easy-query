@@ -678,56 +678,6 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return clientQueryable.getSQLEntityExpressionBuilder();
     }
 
-//    @Override
-//    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(T2Proxy joinProxy, SQLExpression3<ProxyFilter, T1Proxy, T2Proxy> on) {
-//        ClientQueryable2<T1, T2> entityQueryable2 = entityQueryable.leftJoin(joinProxy.getEntityClass(), (t, t1) -> {
-//            on.apply(new ProxyFilterImpl(t.getFilter()), t1Proxy, joinProxy.create(t1.getTable()));
-//        });
-//        return new EasyProxyQueryable2<>(t1Proxy, joinProxy, entityQueryable2);
-//    }
-//
-//    @Override
-//    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(ProxyQueryable<T2Proxy, T2> joinQueryable, SQLExpression3<ProxyFilter, T1Proxy, T2Proxy> on) {
-//        ClientQueryable2<T1, T2> entityQueryable2 = entityQueryable.leftJoin(joinQueryable.getClientQueryable(), (t, t1) -> {
-//            on.apply(new ProxyFilterImpl(t.getFilter()), t1Proxy, joinQueryable.get1Proxy());
-//        });
-//        return new EasyProxyQueryable2<>(t1Proxy, joinQueryable.get1Proxy(), entityQueryable2);
-//    }
-//
-//    @Override
-//    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(T2Proxy joinProxy, SQLExpression3<ProxyFilter, T1Proxy, T2Proxy> on) {
-//
-//        ClientQueryable2<T1, T2> entityQueryable2 = entityQueryable.rightJoin(joinProxy.getEntityClass(), (t, t1) -> {
-//            on.apply(new ProxyFilterImpl(t.getFilter()), t1Proxy, joinProxy.create(t1.getTable()));
-//        });
-//        return new EasyProxyQueryable2<>(t1Proxy, joinProxy, entityQueryable2);
-//    }
-//
-//    @Override
-//    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(ProxyQueryable<T2Proxy, T2> joinQueryable, SQLExpression3<ProxyFilter, T1Proxy, T2Proxy> on) {
-//        ClientQueryable2<T1, T2> entityQueryable2 = entityQueryable.rightJoin(joinQueryable.getClientQueryable(), (t, t1) -> {
-//            on.apply(new ProxyFilterImpl(t.getFilter()), t1Proxy, joinQueryable.get1Proxy());
-//        });
-//        return new EasyProxyQueryable2<>(t1Proxy, joinQueryable.get1Proxy(), entityQueryable2);
-//    }
-//
-//    @Override
-//    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(T2Proxy joinProxy, SQLExpression3<ProxyFilter, T1Proxy, T2Proxy> on) {
-//
-//        ClientQueryable2<T1, T2> entityQueryable2 = entityQueryable.innerJoin(joinProxy.getEntityClass(), (t, t1) -> {
-//            on.apply(new ProxyFilterImpl(t.getFilter()), t1Proxy, joinProxy.create(t1.getTable()));
-//        });
-//        return new EasyProxyQueryable2<>(t1Proxy, joinProxy, entityQueryable2);
-//    }
-//
-//    @Override
-//    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> ProxyQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(ProxyQueryable<T2Proxy, T2> joinQueryable, SQLExpression3<ProxyFilter, T1Proxy, T2Proxy> on) {
-//        ClientQueryable2<T1, T2> entityQueryable2 = entityQueryable.innerJoin(joinQueryable.getClientQueryable(), (t, t1) -> {
-//            on.apply(new ProxyFilterImpl(t.getFilter()), t1Proxy, joinQueryable.get1Proxy());
-//        });
-//        return new EasyProxyQueryable2<>(t1Proxy, joinQueryable.get1Proxy(), entityQueryable2);
-//    }
-
 
     @Override
     public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(Class<T2> joinClass, SQLActionExpression2<T1Proxy, T2Proxy> on) {

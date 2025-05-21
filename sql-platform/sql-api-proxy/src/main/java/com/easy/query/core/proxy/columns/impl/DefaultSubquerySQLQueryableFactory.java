@@ -165,7 +165,7 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
             return t1Proxy;
         }
 
-        throw new EasyQueryInvalidOperationException("not support");
+        throw new EasyQueryInvalidOperationException("not support partition by");
     }
 
 

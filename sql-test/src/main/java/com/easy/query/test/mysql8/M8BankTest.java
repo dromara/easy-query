@@ -189,7 +189,7 @@ public class M8BankTest extends BaseTest {
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .where(user -> {
                     //用户的银行卡中第一个开户银行卡是工商银行的
-                    user.bankCards().orderBy(x -> x.openTime().asc()).firstElement().bank().name().eq("工商银行");
+                    user.bankCards().orderBy(x -> x.openTime().asc()).first().bank().name().eq("工商银行");
                 }).toList();
 
         listenerContextManager.clear();
@@ -867,8 +867,8 @@ public class M8BankTest extends BaseTest {
                 })
                 .select(user -> Select.DRAFT.of(
                         user.name(),
-                        user.bankCards().orderBy(o -> o.openTime().asc()).firstElement().code(),
-                        user.bankCards().orderBy(o -> o.openTime().asc()).firstElement().bank().name()
+                        user.bankCards().orderBy(o -> o.openTime().asc()).first().code(),
+                        user.bankCards().orderBy(o -> o.openTime().asc()).first().bank().name()
                 )).toList();
 
         listenerContextManager.clear();

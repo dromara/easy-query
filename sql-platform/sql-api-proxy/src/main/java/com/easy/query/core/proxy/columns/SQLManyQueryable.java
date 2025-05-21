@@ -28,6 +28,11 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
     default T1Proxy firstElement() {
         return element(0);
     }
+
+    /**
+     * 一对多或者多对多子查询获取第一个元素
+     * @return
+     */
     default T1Proxy first() {
         return element(0);
     }

@@ -1,5 +1,7 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable3.override;
 
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api.proxy.entity.select.EntityQueryable3;
 import com.easy.query.api.proxy.entity.select.abstraction.AbstractEntityQueryable;
 import com.easy.query.api.proxy.entity.select.extension.queryable3.EntityQueryable3Available;
@@ -8,8 +10,10 @@ import com.easy.query.core.basic.api.select.ClientQueryable3;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
 
 import java.util.Collection;
 import java.util.function.BiFunction;
@@ -205,5 +209,49 @@ public abstract class AbstractOverrideEntityQueryable3<T1Proxy extends ProxyEnti
     public EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         super.configure(configurer);
         return getQueryable3();
+    }
+    @Override
+    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2 extends ProxyEntityAvailable<TR2, TR2Proxy>> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> leftJoin(Class<TR2> joinClass, SQLActionExpression2<T1Proxy, TR2Proxy> on) {
+        throw new UnsupportedOperationException("plz use four-parameter lambda expression (a, b, c, d) -> {}");
+    }
+
+    @Override
+    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> leftJoin(TR2Proxy t2Proxy, SQLActionExpression2<T1Proxy, TR2Proxy> onExpression) {
+        throw new UnsupportedOperationException("plz use four-parameter lambda expression (a, b, c, d) -> {}");
+    }
+
+    @Override
+    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> leftJoin(EntityQueryable<TR2Proxy, TR2> joinQueryable, SQLActionExpression2<T1Proxy, TR2Proxy> on) {
+        throw new UnsupportedOperationException("plz use four-parameter lambda expression (a, b, c, d) -> {}");
+    }
+
+    @Override
+    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2 extends ProxyEntityAvailable<TR2, TR2Proxy>> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> rightJoin(Class<TR2> joinClass, SQLActionExpression2<T1Proxy, TR2Proxy> on) {
+        throw new UnsupportedOperationException("plz use four-parameter lambda expression (a, b, c, d) -> {}");
+    }
+
+    @Override
+    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> rightJoin(TR2Proxy t2Proxy, SQLActionExpression2<T1Proxy, TR2Proxy> onExpression) {
+        throw new UnsupportedOperationException("plz use four-parameter lambda expression (a, b, c, d) -> {}");
+    }
+
+    @Override
+    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> rightJoin(EntityQueryable<TR2Proxy, TR2> joinQueryable, SQLActionExpression2<T1Proxy, TR2Proxy> on) {
+        throw new UnsupportedOperationException("plz use four-parameter lambda expression (a, b, c, d) -> {}");
+    }
+
+    @Override
+    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2 extends ProxyEntityAvailable<TR2, TR2Proxy>> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> innerJoin(Class<TR2> joinClass, SQLActionExpression2<T1Proxy, TR2Proxy> on) {
+        throw new UnsupportedOperationException("plz use four-parameter lambda expression (a, b, c, d) -> {}");
+    }
+
+    @Override
+    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> innerJoin(TR2Proxy t2Proxy, SQLActionExpression2<T1Proxy, TR2Proxy> onExpression) {
+        throw new UnsupportedOperationException("plz use four-parameter lambda expression (a, b, c, d) -> {}");
+    }
+
+    @Override
+    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> innerJoin(EntityQueryable<TR2Proxy, TR2> joinQueryable, SQLActionExpression2<T1Proxy, TR2Proxy> on) {
+        throw new UnsupportedOperationException("plz use four-parameter lambda expression (a, b, c, d) -> {}");
     }
 }
