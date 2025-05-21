@@ -44,7 +44,6 @@ public class TableSortWithRelationProcessor implements TableSortProcessor {
     @Override
     public List<EntityTableSQLExpression> getTables() {
         return tables.stream().sorted((a, b) -> getTableExpressionCompare(a, b)).map(o -> o.tableSQLExpression).collect(Collectors.toList());
-//        return EasyCollectionUtil.select(tables, (o, i) -> o.tableSQLExpression);
     }
 
     private int getTableExpressionCompare(TableExpressionAndVisitor a, TableExpressionAndVisitor b) {
