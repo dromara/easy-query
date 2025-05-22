@@ -14,6 +14,7 @@ import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.api.database.DefaultDatabaseCodeFirst;
 import com.easy.query.core.basic.entity.ColumnEntityMappingRule;
 import com.easy.query.core.basic.entity.EntityMappingRule;
+import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.formater.DefaultSQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.listener.EmptyJdbcExecutorListener;
@@ -214,7 +215,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(RelationValueColumnMetadataFactory.class, DefaultRelationValueColumnMetadataFactory.class)
                 .replaceService(PropertyDescriptorMatcher.class, DefaultPropertyDescriptorMatcher.class)
                 .replaceService(ValueFilterFactory.class, AnyValueFilterFactory.class)
-                .replaceService(EntityMappingRule.class, ColumnEntityMappingRule.class)
+                .replaceService(EntityMappingRule.class, PropertyFirstEntityMappingRule.class)
                 .replaceService(MigrationsSQLGenerator.class, DefaultMigrationsSQLGenerator.class)
                 .replaceService(DatabaseMigrationProvider.class, DefaultDatabaseMigrationProvider.class)
                 .replaceService(MigrationEntityParser.class, DefaultMigrationEntityParser.class)
