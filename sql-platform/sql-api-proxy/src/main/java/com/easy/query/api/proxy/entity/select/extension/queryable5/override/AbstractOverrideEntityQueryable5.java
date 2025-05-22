@@ -211,48 +211,4 @@ public abstract class AbstractOverrideEntityQueryable5<T1Proxy extends ProxyEnti
     }
 
 
-    @Override
-    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2 extends ProxyEntityAvailable<TR2, TR2Proxy>> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> leftJoin(Class<TR2> joinClass, SQLActionExpression2<T1Proxy, TR2Proxy> on) {
-        throw new UnsupportedOperationException("plz use six-parameter lambda expression (a, b, c, d, e, f) -> {}");
-    }
-
-    @Override
-    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> leftJoin(TR2Proxy t2Proxy, SQLActionExpression2<T1Proxy, TR2Proxy> onExpression) {
-        throw new UnsupportedOperationException("plz use six-parameter lambda expression (a, b, c, d, e, f) -> {}");
-    }
-
-    @Override
-    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> leftJoin(EntityQueryable<TR2Proxy, TR2> joinQueryable, SQLActionExpression2<T1Proxy, TR2Proxy> on) {
-        throw new UnsupportedOperationException("plz use six-parameter lambda expression (a, b, c, d, e, f) -> {}");
-    }
-
-    @Override
-    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2 extends ProxyEntityAvailable<TR2, TR2Proxy>> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> rightJoin(Class<TR2> joinClass, SQLActionExpression2<T1Proxy, TR2Proxy> on) {
-        throw new UnsupportedOperationException("plz use six-parameter lambda expression (a, b, c, d, e, f) -> {}");
-    }
-
-    @Override
-    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> rightJoin(TR2Proxy t2Proxy, SQLActionExpression2<T1Proxy, TR2Proxy> onExpression) {
-        throw new UnsupportedOperationException("plz use six-parameter lambda expression (a, b, c, d, e, f) -> {}");
-    }
-
-    @Override
-    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> rightJoin(EntityQueryable<TR2Proxy, TR2> joinQueryable, SQLActionExpression2<T1Proxy, TR2Proxy> on) {
-        throw new UnsupportedOperationException("plz use six-parameter lambda expression (a, b, c, d, e, f) -> {}");
-    }
-
-    @Override
-    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2 extends ProxyEntityAvailable<TR2, TR2Proxy>> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> innerJoin(Class<TR2> joinClass, SQLActionExpression2<T1Proxy, TR2Proxy> on) {
-        throw new UnsupportedOperationException("plz use six-parameter lambda expression (a, b, c, d, e, f) -> {}");
-    }
-
-    @Override
-    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> innerJoin(TR2Proxy t2Proxy, SQLActionExpression2<T1Proxy, TR2Proxy> onExpression) {
-        throw new UnsupportedOperationException("plz use six-parameter lambda expression (a, b, c, d, e, f) -> {}");
-    }
-
-    @Override
-    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> innerJoin(EntityQueryable<TR2Proxy, TR2> joinQueryable, SQLActionExpression2<T1Proxy, TR2Proxy> on) {
-        throw new UnsupportedOperationException("plz use six-parameter lambda expression (a, b, c, d, e, f) -> {}");
-    }
 }

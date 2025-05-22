@@ -866,43 +866,52 @@ public class QueryTest24 extends BaseTest {
 
     @Test
     public void testdraft1() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
         List<Draft1<String>> list = easyEntityQuery.queryable(Topic.class)
                 .rightJoin(BlogEntity.class, (t_topic, t_blog) -> t_topic.id().eq(t_blog.id()))
                 .where((t_topic, t_blog) -> {
                     t_blog.score().eq(BigDecimal.ZERO);
                 })
                 .leftJoin(Topic.class, (a, b) -> a.stars().eq(b.stars()))
-
                 .select((a, b) -> Select.DRAFT
                         .value1(
                                 a.title().subString(1, 2)
                         )
                         .build()
                 ).limit(1).toList();
-        System.out.println(list);
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT SUBSTR(t2.`title`,2,2) AS `value1` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t RIGHT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t1.`score` = ?) t2 LEFT JOIN `t_topic` t3 ON t2.`stars` = t3.`stars` LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),0(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 
     @Test
     public void testJoinParameterCount() {
-        Exception e=null;
-        try {
 
-            List<Draft1<String>> list = easyEntityQuery.queryable(Topic.class)
-                    .rightJoin(BlogEntity.class, (t_topic, t_blog) -> t_topic.id().eq(t_blog.id()))
-                    .leftJoin(Topic.class, (a,  c) -> a.stars().eq(c.stars()))
-                    .where((a, b) -> {
-                        b.stars().isNotNull();
-                    })
-                    .select((a, b) -> Select.DRAFT
-                            .value1(
-                                    a.title().subString(1, 2)
-                            )
-                            .build()
-                    ).toList();
-        }catch (Exception ex){
-            e=ex;
-        }
-        Assert.assertEquals("plz use three-parameter lambda expression (a, b, c) -> {}",e.getMessage());
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft1<String>> list = easyEntityQuery.queryable(Topic.class)
+                .rightJoin(BlogEntity.class, (t_topic, t_blog) -> t_topic.id().eq(t_blog.id()))
+                .leftJoin(Topic.class, (a,  c) -> a.stars().eq(c.stars()))
+                .where((a, b) -> {
+                    b.stars().isNotNull();
+                })
+                .select((a, b) -> Select.DRAFT
+                        .value1(
+                                a.title().subString(1, 2)
+                        )
+                        .build()
+                ).toList();
+
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT SUBSTR(t2.`title`,2,2) AS `value1` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t RIGHT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id`) t2 LEFT JOIN `t_topic` t3 ON t2.`stars` = t3.`stars` WHERE t3.`stars` IS NOT NULL", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 
 }

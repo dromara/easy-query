@@ -49,6 +49,9 @@ public interface EntityExpressionBuilder extends ExpressionBuilder, RuntimeConte
 
     List<EntityTableExpressionBuilder> getTables();
 
+    default EntityTableExpressionBuilder getFromTable() {
+        return getTable(0);
+    }
     default EntityTableExpressionBuilder getTable(int index) {
         return getTables().get(index);
     }

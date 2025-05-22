@@ -6,6 +6,7 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api.proxy.entity.select.abstraction.AbstractEntityQueryable;
 import com.easy.query.api.proxy.entity.select.extension.queryable2.EntityQueryable2Available;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable2;
+import com.easy.query.api.proxy.entity.select.join.join2.LeftJoinExpressionJoiner2;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable2;
@@ -209,51 +210,5 @@ public abstract class AbstractOverrideEntityQueryable2<T1Proxy extends ProxyEnti
     public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> configure(SQLActionExpression1<ContextConfigurer> configurer) {
         super.configure(configurer);
         return getQueryable2();
-    }
-
-
-    @Override
-    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2 extends ProxyEntityAvailable<TR2, TR2Proxy>> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> leftJoin(Class<TR2> joinClass, SQLActionExpression2<T1Proxy, TR2Proxy> on) {
-        throw new UnsupportedOperationException("plz use three-parameter lambda expression (a, b, c) -> {}");
-    }
-
-    @Override
-    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> leftJoin(TR2Proxy t2Proxy, SQLActionExpression2<T1Proxy, TR2Proxy> onExpression) {
-        throw new UnsupportedOperationException("plz use three-parameter lambda expression (a, b, c) -> {}");
-    }
-
-    @Override
-    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> leftJoin(EntityQueryable<TR2Proxy, TR2> joinQueryable, SQLActionExpression2<T1Proxy, TR2Proxy> on) {
-        throw new UnsupportedOperationException("plz use three-parameter lambda expression (a, b, c) -> {}");
-    }
-
-    @Override
-    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2 extends ProxyEntityAvailable<TR2, TR2Proxy>> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> rightJoin(Class<TR2> joinClass, SQLActionExpression2<T1Proxy, TR2Proxy> on) {
-        throw new UnsupportedOperationException("plz use three-parameter lambda expression (a, b, c) -> {}");
-    }
-
-    @Override
-    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> rightJoin(TR2Proxy t2Proxy, SQLActionExpression2<T1Proxy, TR2Proxy> onExpression) {
-        throw new UnsupportedOperationException("plz use three-parameter lambda expression (a, b, c) -> {}");
-    }
-
-    @Override
-    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> rightJoin(EntityQueryable<TR2Proxy, TR2> joinQueryable, SQLActionExpression2<T1Proxy, TR2Proxy> on) {
-        throw new UnsupportedOperationException("plz use three-parameter lambda expression (a, b, c) -> {}");
-    }
-
-    @Override
-    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2 extends ProxyEntityAvailable<TR2, TR2Proxy>> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> innerJoin(Class<TR2> joinClass, SQLActionExpression2<T1Proxy, TR2Proxy> on) {
-        throw new UnsupportedOperationException("plz use three-parameter lambda expression (a, b, c) -> {}");
-    }
-
-    @Override
-    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> innerJoin(TR2Proxy t2Proxy, SQLActionExpression2<T1Proxy, TR2Proxy> onExpression) {
-        throw new UnsupportedOperationException("plz use three-parameter lambda expression (a, b, c) -> {}");
-    }
-
-    @Override
-    public <TR2Proxy extends ProxyEntity<TR2Proxy, TR2>, TR2> EntityQueryable2<T1Proxy, T1, TR2Proxy, TR2> innerJoin(EntityQueryable<TR2Proxy, TR2> joinQueryable, SQLActionExpression2<T1Proxy, TR2Proxy> on) {
-        throw new UnsupportedOperationException("plz use three-parameter lambda expression (a, b, c) -> {}");
     }
 }

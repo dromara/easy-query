@@ -6,6 +6,9 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable2;
 import com.easy.query.api.proxy.entity.select.impl.EasySelectFlatQueryable;
+import com.easy.query.api.proxy.entity.select.join.join2.InnerJoinExpressionJoiner2;
+import com.easy.query.api.proxy.entity.select.join.join2.LeftJoinExpressionJoiner2;
+import com.easy.query.api.proxy.entity.select.join.join2.RightJoinExpressionJoiner2;
 import com.easy.query.api.proxy.extension.tree.EntityTreeCTEConfigurer;
 import com.easy.query.api.proxy.extension.tree.EntityTreeCTEConfigurerImpl;
 import com.easy.query.api.proxy.util.EasyProxyUtil;
@@ -55,6 +58,7 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyNavigateUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
+import com.easy.query.core.util.EasySQLJoinUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.math.BigDecimal;
@@ -283,8 +287,8 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         PropTypeColumn<TR> column = selectExpression.apply(get1Proxy());
         Objects.requireNonNull(column, "select column null result class");
 
-        ResultColumnMetadata resultColumnMetadata= column.getTableResultColumnMetadataOrNull(0);
-        if(resultColumnMetadata!=null){
+        ResultColumnMetadata resultColumnMetadata = column.getTableResultColumnMetadataOrNull(0);
+        if (resultColumnMetadata != null) {
             ResultColumnMetadata[] resultColumnMetadatas = new ResultColumnMetadata[]{resultColumnMetadata};
             clientQueryable.getSQLEntityExpressionBuilder().getExpressionContext().setResultPropTypes(resultColumnMetadatas);
         }
@@ -689,34 +693,12 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(T2Proxy t2Proxy, SQLActionExpression2<T1Proxy, T2Proxy> onExpression) {
-        ClientQueryable<T1> joinBaseQueryable = getJoinBaseQueryable();
-        EntityTableExpressionBuilder table = joinBaseQueryable.getSQLEntityExpressionBuilder().getTable(0);
-        T1Proxy newT1Proxy = t1Proxy.create(table.getEntityTable(), joinBaseQueryable.getSQLEntityExpressionBuilder(), runtimeContext);
-        ClientQueryable2<T1, T2> entityQueryable2 = joinBaseQueryable.leftJoin(t2Proxy.getEntityClass(), (t, t1) -> {
-            newT1Proxy.getEntitySQLContext()._where(t.getFilter(), () -> {
-                onExpression.apply(newT1Proxy, t2Proxy.create(t1.getTable(), newT1Proxy.getEntitySQLContext()));
-            });
-        });
-        return new EasyEntityQueryable2<>(newT1Proxy, t2Proxy, entityQueryable2);
-    }
-    private ClientQueryable<T1> getJoinBaseQueryable(){
-        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = this.clientQueryable.getSQLEntityExpressionBuilder();
-        if(EasySQLExpressionUtil.hasAnyOperate(sqlEntityExpressionBuilder)){
-            return this.clientQueryable.select(t1Proxy.getEntityClass());
-        }
-        return this.clientQueryable;
-
+        return new LeftJoinExpressionJoiner2<>(t1Proxy, this.clientQueryable).join(t2Proxy, onExpression);
     }
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLActionExpression2<T1Proxy, T2Proxy> on) {
-        ClientQueryable<T2> clientQueryable = joinQueryable.getClientQueryable();
-        ClientQueryable2<T1, T2> entityQueryable2 = this.clientQueryable.leftJoin(clientQueryable, (t, t1) -> {
-            t1Proxy.getEntitySQLContext()._where(t.getFilter(), () -> {
-                on.apply(t1Proxy, joinQueryable.get1Proxy().create(t1.getTable(), t1Proxy.getEntitySQLContext()));
-            });
-        });
-        return new EasyEntityQueryable2<>(t1Proxy, joinQueryable.get1Proxy(), entityQueryable2);
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> leftJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLActionExpression2<T1Proxy, T2Proxy> onExpression) {
+        return new LeftJoinExpressionJoiner2<>(t1Proxy, this.clientQueryable).join(joinQueryable, onExpression);
     }
 
     @Override
@@ -727,24 +709,12 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(T2Proxy t2Proxy, SQLActionExpression2<T1Proxy, T2Proxy> onExpression) {
-
-        ClientQueryable2<T1, T2> entityQueryable2 = clientQueryable.rightJoin(t2Proxy.getEntityClass(), (t, t1) -> {
-            t1Proxy.getEntitySQLContext()._where(t.getFilter(), () -> {
-                onExpression.apply(t1Proxy, t2Proxy.create(t1.getTable(), t1Proxy.getEntitySQLContext()));
-            });
-        });
-        return new EasyEntityQueryable2<>(t1Proxy, t2Proxy, entityQueryable2);
+        return new RightJoinExpressionJoiner2<>(t1Proxy, this.clientQueryable).join(t2Proxy, onExpression);
     }
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLActionExpression2<T1Proxy, T2Proxy> on) {
-        ClientQueryable<T2> clientQueryable = joinQueryable.getClientQueryable();
-        ClientQueryable2<T1, T2> entityQueryable2 = this.clientQueryable.rightJoin(clientQueryable, (t, t1) -> {
-            t1Proxy.getEntitySQLContext()._where(t.getFilter(), () -> {
-                on.apply(t1Proxy, joinQueryable.get1Proxy().create(t1.getTable(), t1Proxy.getEntitySQLContext()));
-            });
-        });
-        return new EasyEntityQueryable2<>(t1Proxy, joinQueryable.get1Proxy(), entityQueryable2);
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> rightJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLActionExpression2<T1Proxy, T2Proxy> onExpression) {
+        return new RightJoinExpressionJoiner2<>(t1Proxy, this.clientQueryable).join(joinQueryable, onExpression);
     }
 
     @Override
@@ -755,125 +725,13 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(T2Proxy t2Proxy, SQLActionExpression2<T1Proxy, T2Proxy> onExpression) {
-        ClientQueryable2<T1, T2> entityQueryable2 = clientQueryable.innerJoin(t2Proxy.getEntityClass(), (t, t1) -> {
-            t1Proxy.getEntitySQLContext()._where(t.getFilter(), () -> {
-                onExpression.apply(t1Proxy, t2Proxy.create(t1.getTable(), t1Proxy.getEntitySQLContext()));
-            });
-        });
-        return new EasyEntityQueryable2<>(t1Proxy, t2Proxy, entityQueryable2);
+        return new InnerJoinExpressionJoiner2<>(t1Proxy, this.clientQueryable).join(t2Proxy, onExpression);
     }
 
     @Override
-    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLActionExpression2<T1Proxy, T2Proxy> on) {
-        ClientQueryable<T2> clientQueryable = joinQueryable.getClientQueryable();
-        ClientQueryable2<T1, T2> entityQueryable2 = this.clientQueryable.innerJoin(clientQueryable, (t, t1) -> {
-            t1Proxy.getEntitySQLContext()._where(t.getFilter(), () -> {
-                on.apply(t1Proxy, joinQueryable.get1Proxy().create(t1.getTable(), t1Proxy.getEntitySQLContext()));
-            });
-        });
-        return new EasyEntityQueryable2<>(t1Proxy, joinQueryable.get1Proxy(), entityQueryable2);
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLActionExpression2<T1Proxy, T2Proxy> onExpression) {
+        return new InnerJoinExpressionJoiner2<>(t1Proxy, this.clientQueryable).join(joinQueryable, onExpression);
     }
-
-//
-//    @Override
-//    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> from(Class<T2> from2Class) {
-//        ClientQueryable2<T1, T2> clientQueryable2 = this.clientQueryable.from(from2Class);
-//        T2Proxy t2Proxy = EntityQueryProxyManager.create(from2Class);
-//        return new EasyEntityQueryable2<>(t1Proxy, t2Proxy, clientQueryable2);
-//    }
-//
-//    @Override
-//    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>, T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3, T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> from(Class<T2> from2Class, Class<T3> from3Class) {
-//        ClientQueryable3<T1, T2, T3> clientQueryable3 = this.clientQueryable.from(from2Class, from3Class);
-//        T2Proxy t2Proxy = EntityQueryProxyManager.create(from2Class);
-//        T3Proxy t3Proxy = EntityQueryProxyManager.create(from3Class);
-//        return new EasyEntityQueryable3<>(t1Proxy,t2Proxy,t3Proxy,clientQueryable3);
-//    }
-//
-//    @Override
-//    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>, T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3, T3Proxy>, T4Proxy extends ProxyEntity<T4Proxy, T4>, T4 extends ProxyEntityAvailable<T4, T4Proxy>> EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> from(Class<T2> from2Class, Class<T3> from3Class, Class<T4> from4Class) {
-//        ClientQueryable4<T1, T2, T3, T4> clientQueryable4 = this.clientQueryable.from(from2Class, from3Class, from4Class);
-//        T2Proxy t2Proxy = EntityQueryProxyManager.create(from2Class);
-//        T3Proxy t3Proxy = EntityQueryProxyManager.create(from3Class);
-//        T4Proxy t4Proxy = EntityQueryProxyManager.create(from4Class);
-//        return new EasyEntityQueryable4<>(t1Proxy,t2Proxy,t3Proxy,t4Proxy,clientQueryable4);
-//    }
-//
-//    @Override
-//    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>, T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3, T3Proxy>, T4Proxy extends ProxyEntity<T4Proxy, T4>, T4 extends ProxyEntityAvailable<T4, T4Proxy>, T5Proxy extends ProxyEntity<T5Proxy, T5>, T5 extends ProxyEntityAvailable<T5, T5Proxy>> EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> from(Class<T2> from2Class, Class<T3> from3Class, Class<T4> from4Class, Class<T5> from5Class) {
-//        ClientQueryable5<T1, T2, T3, T4, T5> clientQueryable5 = this.clientQueryable.from(from2Class, from3Class, from4Class, from5Class);
-//        T2Proxy t2Proxy = EntityQueryProxyManager.create(from2Class);
-//        T3Proxy t3Proxy = EntityQueryProxyManager.create(from3Class);
-//        T4Proxy t4Proxy = EntityQueryProxyManager.create(from4Class);
-//        T5Proxy t5Proxy = EntityQueryProxyManager.create(from5Class);
-//        return new EasyEntityQueryable5<>(t1Proxy,t2Proxy,t3Proxy,t4Proxy,t5Proxy,clientQueryable5);
-//    }
-//
-//    @Override
-//    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>, T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3, T3Proxy>, T4Proxy extends ProxyEntity<T4Proxy, T4>, T4 extends ProxyEntityAvailable<T4, T4Proxy>, T5Proxy extends ProxyEntity<T5Proxy, T5>, T5 extends ProxyEntityAvailable<T5, T5Proxy>, T6Proxy extends ProxyEntity<T6Proxy, T6>, T6 extends ProxyEntityAvailable<T6, T6Proxy>> EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> from(Class<T2> from2Class, Class<T3> from3Class, Class<T4> from4Class, Class<T5> from5Class, Class<T6> from6Class) {
-//        ClientQueryable6<T1, T2, T3, T4, T5, T6> clientQueryable6 = this.clientQueryable.from(from2Class, from3Class, from4Class, from5Class, from6Class);
-//        T2Proxy t2Proxy = EntityQueryProxyManager.create(from2Class);
-//        T3Proxy t3Proxy = EntityQueryProxyManager.create(from3Class);
-//        T4Proxy t4Proxy = EntityQueryProxyManager.create(from4Class);
-//        T5Proxy t5Proxy = EntityQueryProxyManager.create(from5Class);
-//        T6Proxy t6Proxy = EntityQueryProxyManager.create(from6Class);
-//        return new EasyEntityQueryable6<>(t1Proxy,t2Proxy,t3Proxy,t4Proxy,t5Proxy,t6Proxy,clientQueryable6);
-//
-//    }
-//
-//    @Override
-//    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>, T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3, T3Proxy>, T4Proxy extends ProxyEntity<T4Proxy, T4>, T4 extends ProxyEntityAvailable<T4, T4Proxy>, T5Proxy extends ProxyEntity<T5Proxy, T5>, T5 extends ProxyEntityAvailable<T5, T5Proxy>, T6Proxy extends ProxyEntity<T6Proxy, T6>, T6 extends ProxyEntityAvailable<T6, T6Proxy>, T7Proxy extends ProxyEntity<T7Proxy, T7>, T7 extends ProxyEntityAvailable<T7, T7Proxy>> EntityQueryable7<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7> from(Class<T2> from2Class, Class<T3> from3Class, Class<T4> from4Class, Class<T5> from5Class, Class<T6> from6Class, Class<T7> from7Class) {
-//        ClientQueryable7<T1, T2, T3, T4, T5, T6, T7> clientQueryable7 = this.clientQueryable.from(from2Class, from3Class, from4Class, from5Class, from6Class, from7Class);
-//        T2Proxy t2Proxy = EntityQueryProxyManager.create(from2Class);
-//        T3Proxy t3Proxy = EntityQueryProxyManager.create(from3Class);
-//        T4Proxy t4Proxy = EntityQueryProxyManager.create(from4Class);
-//        T5Proxy t5Proxy = EntityQueryProxyManager.create(from5Class);
-//        T6Proxy t6Proxy = EntityQueryProxyManager.create(from6Class);
-//        T7Proxy t7Proxy = EntityQueryProxyManager.create(from7Class);
-//        return new EasyEntityQueryable7<>(t1Proxy,t2Proxy,t3Proxy,t4Proxy,t5Proxy,t6Proxy,t7Proxy,clientQueryable7);
-//    }
-//
-//    @Override
-//    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>, T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3, T3Proxy>, T4Proxy extends ProxyEntity<T4Proxy, T4>, T4 extends ProxyEntityAvailable<T4, T4Proxy>, T5Proxy extends ProxyEntity<T5Proxy, T5>, T5 extends ProxyEntityAvailable<T5, T5Proxy>, T6Proxy extends ProxyEntity<T6Proxy, T6>, T6 extends ProxyEntityAvailable<T6, T6Proxy>, T7Proxy extends ProxyEntity<T7Proxy, T7>, T7 extends ProxyEntityAvailable<T7, T7Proxy>, T8Proxy extends ProxyEntity<T8Proxy, T8>, T8 extends ProxyEntityAvailable<T8, T8Proxy>> EntityQueryable8<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8> from(Class<T2> from2Class, Class<T3> from3Class, Class<T4> from4Class, Class<T5> from5Class, Class<T6> from6Class, Class<T7> from7Class, Class<T8> from8Class) {
-//        ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> clientQueryable8 = this.clientQueryable.from(from2Class, from3Class, from4Class, from5Class, from6Class, from7Class, from8Class);
-//        T2Proxy t2Proxy = EntityQueryProxyManager.create(from2Class);
-//        T3Proxy t3Proxy = EntityQueryProxyManager.create(from3Class);
-//        T4Proxy t4Proxy = EntityQueryProxyManager.create(from4Class);
-//        T5Proxy t5Proxy = EntityQueryProxyManager.create(from5Class);
-//        T6Proxy t6Proxy = EntityQueryProxyManager.create(from6Class);
-//        T7Proxy t7Proxy = EntityQueryProxyManager.create(from7Class);
-//        T8Proxy t8Proxy = EntityQueryProxyManager.create(from8Class);
-//        return new EasyEntityQueryable8<>(t1Proxy,t2Proxy,t3Proxy,t4Proxy,t5Proxy,t6Proxy,t7Proxy,t8Proxy,clientQueryable8);
-//    }
-//
-//    @Override
-//    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>, T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3, T3Proxy>, T4Proxy extends ProxyEntity<T4Proxy, T4>, T4 extends ProxyEntityAvailable<T4, T4Proxy>, T5Proxy extends ProxyEntity<T5Proxy, T5>, T5 extends ProxyEntityAvailable<T5, T5Proxy>, T6Proxy extends ProxyEntity<T6Proxy, T6>, T6 extends ProxyEntityAvailable<T6, T6Proxy>, T7Proxy extends ProxyEntity<T7Proxy, T7>, T7 extends ProxyEntityAvailable<T7, T7Proxy>, T8Proxy extends ProxyEntity<T8Proxy, T8>, T8 extends ProxyEntityAvailable<T8, T8Proxy>, T9Proxy extends ProxyEntity<T9Proxy, T9>, T9 extends ProxyEntityAvailable<T9, T9Proxy>> EntityQueryable9<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9> from(Class<T2> from2Class, Class<T3> from3Class, Class<T4> from4Class, Class<T5> from5Class, Class<T6> from6Class, Class<T7> from7Class, Class<T8> from8Class, Class<T9> from9Class) {
-//        ClientQueryable9<T1, T2, T3, T4, T5, T6, T7, T8, T9> clientQueryable9 = this.clientQueryable.from(from2Class, from3Class, from4Class, from5Class, from6Class, from7Class, from8Class, from9Class);
-//        T2Proxy t2Proxy = EntityQueryProxyManager.create(from2Class);
-//        T3Proxy t3Proxy = EntityQueryProxyManager.create(from3Class);
-//        T4Proxy t4Proxy = EntityQueryProxyManager.create(from4Class);
-//        T5Proxy t5Proxy = EntityQueryProxyManager.create(from5Class);
-//        T6Proxy t6Proxy = EntityQueryProxyManager.create(from6Class);
-//        T7Proxy t7Proxy = EntityQueryProxyManager.create(from7Class);
-//        T8Proxy t8Proxy = EntityQueryProxyManager.create(from8Class);
-//        T9Proxy t9Proxy = EntityQueryProxyManager.create(from9Class);
-//        return new EasyEntityQueryable9<>(t1Proxy,t2Proxy,t3Proxy,t4Proxy,t5Proxy,t6Proxy,t7Proxy,t8Proxy,t9Proxy,clientQueryable9);
-//    }
-//
-//    @Override
-//    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>, T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3, T3Proxy>, T4Proxy extends ProxyEntity<T4Proxy, T4>, T4 extends ProxyEntityAvailable<T4, T4Proxy>, T5Proxy extends ProxyEntity<T5Proxy, T5>, T5 extends ProxyEntityAvailable<T5, T5Proxy>, T6Proxy extends ProxyEntity<T6Proxy, T6>, T6 extends ProxyEntityAvailable<T6, T6Proxy>, T7Proxy extends ProxyEntity<T7Proxy, T7>, T7 extends ProxyEntityAvailable<T7, T7Proxy>, T8Proxy extends ProxyEntity<T8Proxy, T8>, T8 extends ProxyEntityAvailable<T8, T8Proxy>, T9Proxy extends ProxyEntity<T9Proxy, T9>, T9 extends ProxyEntityAvailable<T9, T9Proxy>, T10Proxy extends ProxyEntity<T10Proxy, T10>, T10 extends ProxyEntityAvailable<T10, T10Proxy>> EntityQueryable10<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8, T9Proxy, T9, T10Proxy, T10> from(Class<T2> from2Class, Class<T3> from3Class, Class<T4> from4Class, Class<T5> from5Class, Class<T6> from6Class, Class<T7> from7Class, Class<T8> from8Class, Class<T9> from9Class, Class<T10> from10Class) {
-//        ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> clientQueryable10 = this.clientQueryable.from(from2Class, from3Class, from4Class, from5Class, from6Class, from7Class, from8Class, from9Class, from10Class);
-//        T2Proxy t2Proxy = EntityQueryProxyManager.create(from2Class);
-//        T3Proxy t3Proxy = EntityQueryProxyManager.create(from3Class);
-//        T4Proxy t4Proxy = EntityQueryProxyManager.create(from4Class);
-//        T5Proxy t5Proxy = EntityQueryProxyManager.create(from5Class);
-//        T6Proxy t6Proxy = EntityQueryProxyManager.create(from6Class);
-//        T7Proxy t7Proxy = EntityQueryProxyManager.create(from7Class);
-//        T8Proxy t8Proxy = EntityQueryProxyManager.create(from8Class);
-//        T9Proxy t9Proxy = EntityQueryProxyManager.create(from9Class);
-//        T10Proxy t10Proxy = EntityQueryProxyManager.create(from10Class);
-//        return new EasyEntityQueryable10<>(t1Proxy,t2Proxy,t3Proxy,t4Proxy,t5Proxy,t6Proxy,t7Proxy,t8Proxy,t9Proxy,t10Proxy,clientQueryable10);
-//    }
 
     @Override
     public EntityQueryable<T1Proxy, T1> union(Collection<EntityQueryable<T1Proxy, T1>> unionQueries) {
