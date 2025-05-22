@@ -38,7 +38,7 @@ public class LikeSQLFunction extends AbstractLikeSQLFunction {
             Object value = columnFuncValueExpression.getValue();
             if (value instanceof String) {
                 String valueString = (String) value;
-                if (valueString.contains("%")) {
+                if (valueString.contains("%") || valueString.contains("_")) {
                     if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_RIGHT) {
                         return "LOCATE({1},{0}) = 1";
                     }
