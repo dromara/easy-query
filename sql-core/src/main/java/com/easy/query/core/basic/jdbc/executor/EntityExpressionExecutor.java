@@ -94,8 +94,7 @@ public interface EntityExpressionExecutor {
      * @param executorContext
      * @param entityPredicateExpressionBuilder
      * @return
-     * @param <T>
      */
-    <T> long executeRows(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder);
+    long executeRows(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder);
 
 }

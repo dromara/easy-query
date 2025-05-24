@@ -13,8 +13,8 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 public class OrderBySQLNativeSegmentImpl extends SQLNativeSegmentImpl implements OrderBySQLNativeSegment {
     protected final boolean asc;
 
-    public OrderBySQLNativeSegmentImpl(ExpressionContext expressionContext, String columnConst, SQLNativeExpression sqlNativeExpression, boolean asc){
-        super(expressionContext,columnConst,sqlNativeExpression);
+    public OrderBySQLNativeSegmentImpl(ExpressionContext expressionContext, String sqlSegment, SQLNativeExpression sqlNativeExpression, boolean asc){
+        super(expressionContext,sqlSegment,sqlNativeExpression);
 
         this.asc = asc;
     }

@@ -127,8 +127,8 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     }
 
     @Override
-    public OrderBySegment createOrderBySQLNativeSegment(ExpressionContext expressionContext, String columnConst, SQLNativeExpression sqlNativeExpression, boolean asc) {
-        return new OrderBySQLNativeSegmentImpl(expressionContext, columnConst, sqlNativeExpression, asc);
+    public OrderBySegment createOrderBySQLNativeSegment(ExpressionContext expressionContext, String sqlSegment, SQLNativeExpression sqlNativeExpression, boolean asc) {
+        return new OrderBySQLNativeSegmentImpl(expressionContext, sqlSegment, sqlNativeExpression, asc);
     }
 
     @Override
@@ -137,8 +137,8 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     }
 
     @Override
-    public GroupByColumnSegment createGroupBySQLNativeSegment(ExpressionContext expressionContext, String columnConst, SQLNativeExpression sqlNativeExpression) {
-        return new GroupBySQLNativeSegmentImpl(expressionContext, columnConst, sqlNativeExpression);
+    public GroupByColumnSegment createGroupBySQLNativeSegment(ExpressionContext expressionContext, String sqlSegment, SQLNativeExpression sqlNativeExpression) {
+        return new GroupBySQLNativeSegmentImpl(expressionContext, sqlSegment, sqlNativeExpression);
     }
 
     @Override

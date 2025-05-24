@@ -4,6 +4,8 @@ import com.easy.query.core.basic.jdbc.executor.DefaultEntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.expression.executor.parser.EasyPrepareParser;
+import com.easy.query.core.expression.executor.parser.ExecutionContext;
+import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.query.ExecutionContextFactory;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
@@ -25,7 +27,7 @@ public class MockEntityExpressionExecutor extends DefaultEntityExpressionExecuto
     }
 
     @Override
-    public <T> long executeRows(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder) {
+    public long executeRows(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder) {
         return super.executeRows(executorContext, entityPredicateExpressionBuilder);
     }
 

@@ -582,13 +582,13 @@ public class EasySQLExpressionUtil {
             for (Map.Entry<NavigateMetadata, IncludeNavigateExpression> navigateKV : includes.entrySet()) {
                 NavigateMetadata navigateMetadata = navigateKV.getKey();
                 String[] selfPropertiesOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
-                appSelfRelationColumn(projects, sqlNative, table, navigateMetadata, relationExtraMetadata, selfPropertiesOrPrimary);
-
+                appendSelfRelationColumn(projects, sqlNative, table, navigateMetadata, relationExtraMetadata, selfPropertiesOrPrimary);
             }
         }
     }
 
-    private static void appSelfRelationColumn(SQLBuilderSegment projects, SQLNative<?> sqlNative, TableAvailable table, NavigateMetadata navigateMetadata, RelationExtraMetadata relationExtraMetadata, String[] selfPropertiesOrPrimary) {
+
+    private static void appendSelfRelationColumn(SQLBuilderSegment projects, SQLNative<?> sqlNative, TableAvailable table, NavigateMetadata navigateMetadata, RelationExtraMetadata relationExtraMetadata, String[] selfPropertiesOrPrimary) {
         List<RelationColumnResult> relationColumnResults = EasyCollectionUtil.select(selfPropertiesOrPrimary, (selfPropertyOrPrimary, index) -> new RelationColumnResult(selfPropertyOrPrimary));
 
         if (EasySQLSegmentUtil.isNotEmpty(projects)) {
@@ -632,10 +632,30 @@ public class EasySQLExpressionUtil {
         RelationExtraMetadata relationExtraMetadata = expressionContext.getRelationExtraMetadata();
         String[] targetPropertiesOrPrimary = EasyArrayUtil.isEmpty(selfNavigateMetadata.getDirectMapping()) ? selfNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext) : selfNavigateMetadata.getDirectTargetPropertiesOrPrimary(runtimeContext);
         SQLBuilderSegment projects = entityQueryExpressionBuilder.getProjects();
-        appTargetRelationColumn(projects, sqlNative, table, selfNavigateMetadata, relationExtraMetadata, targetPropertiesOrPrimary);
+        appendTargetRelationColumn(projects, sqlNative, table, selfNavigateMetadata, relationExtraMetadata, targetPropertiesOrPrimary);
+//        appendMany2ManyOrderSelect(entityQueryExpressionBuilder, selfNavigateMetadata);
     }
 
-    private static void appTargetRelationColumn(SQLBuilderSegment projects, SQLNative<?> sqlNative, TableAvailable table, NavigateMetadata navigateMetadata, RelationExtraMetadata relationExtraMetadata, String[] targetPropertiesOrPrimary) {
+//    private static void appendMany2ManyOrderSelect(EntityQueryExpressionBuilder entityQueryExpressionBuilder, NavigateMetadata navigateMetadata) {
+//
+//        if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
+//            OrderBySQLBuilderSegment order = entityQueryExpressionBuilder.getOrder();
+//            int i = 1;
+//            for (SQLSegment sqlSegment : entityQueryExpressionBuilder.getOrder().getSQLSegments()) {
+//                if (sqlSegment instanceof OrderBySegment) {
+//                    OrderBySegment orderBySegment = (OrderBySegment) sqlSegment;
+//                    boolean asc = orderBySegment.isAsc();
+//                    SQLNativeSegment columnSegment = ((SQLNativeSegment) orderBySegment).cloneSQLColumnSegment();
+//                    columnSegment.setAlias(String.format("__relation__%s__%s__", i, asc ? "asc" : "desc"));
+//                    entityQueryExpressionBuilder.getProjects().append(columnSegment);
+//                }
+//                i++;
+//            }
+//            System.out.println(order);
+//        }
+//    }
+
+    private static void appendTargetRelationColumn(SQLBuilderSegment projects, SQLNative<?> sqlNative, TableAvailable table, NavigateMetadata navigateMetadata, RelationExtraMetadata relationExtraMetadata, String[] targetPropertiesOrPrimary) {
         List<RelationColumnResult> relationColumnResults = EasyCollectionUtil.select(targetPropertiesOrPrimary, (targetPropertyOrPrimary, index) -> new RelationColumnResult(targetPropertyOrPrimary));
         if (EasySQLSegmentUtil.isNotEmpty(projects)) {
             for (SQLSegment sqlSegment : projects.getSQLSegments()) {

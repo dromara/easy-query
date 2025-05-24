@@ -7,6 +7,8 @@ import com.easy.query.core.expression.visitor.TableVisitor;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
+import java.util.function.Function;
+
 /**
  * create time 2023/6/16 20:55
  * 文件说明
@@ -19,10 +21,10 @@ public class SQLNativeSegmentImpl extends AbstractSQLNativeSegmentImpl implement
     private String alias;
 
     public SQLNativeSegmentImpl(ExpressionContext expressionContext, String sqlSegment, SQLNativeExpression sqlNativeExpression) {
-        super(expressionContext,sqlSegment,sqlNativeExpression);
+        super(expressionContext, sqlSegment, sqlNativeExpression);
         this.sqlSegment = sqlSegment;
         this.sqlNativeExpression = sqlNativeExpression;
-        this.alias=sqlNativeExpression.getAlias();
+        this.alias = sqlNativeExpression.getAlias();
     }
 
     @Override
@@ -32,7 +34,7 @@ public class SQLNativeSegmentImpl extends AbstractSQLNativeSegmentImpl implement
 
     @Override
     public void setAlias(String alias) {
-        this.alias=alias;
+        this.alias = alias;
     }
 
     @Override
@@ -40,7 +42,7 @@ public class SQLNativeSegmentImpl extends AbstractSQLNativeSegmentImpl implement
         return new SQLNativeSegmentImpl(expressionContext, sqlSegment, sqlNativeExpression);
     }
 
-    public ColumnMetadata getColumnMetadata(){
+    public ColumnMetadata getColumnMetadata() {
         return null;
     }
 

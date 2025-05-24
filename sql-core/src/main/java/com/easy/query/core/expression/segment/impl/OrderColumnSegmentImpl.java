@@ -4,6 +4,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLKeywordEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.Column2Segment;
+import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.ReverseOrderBySegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;

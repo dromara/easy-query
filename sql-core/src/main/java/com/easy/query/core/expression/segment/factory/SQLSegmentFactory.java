@@ -71,9 +71,9 @@ public interface SQLSegmentFactory {
         return new OrderColumnSegmentImpl(column2Segment,asc);
     }
 
-    OrderBySegment createOrderBySQLNativeSegment(ExpressionContext expressionContext, String columnConst, SQLNativeExpression sqlNativeExpression, boolean asc);
+    OrderBySegment createOrderBySQLNativeSegment(ExpressionContext expressionContext, String sqlSegment, SQLNativeExpression sqlNativeExpression, boolean asc);
     OrderBySegment createOrderBySQLNativeSegment2(ExpressionContext expressionContext, SQLSegment sqlSegment,Function<String,String> sqlSegmentFunction, SQLNativeExpression sqlNativeExpression, boolean asc);
-    GroupByColumnSegment createGroupBySQLNativeSegment(ExpressionContext expressionContext, String columnConst, SQLNativeExpression sqlNativeExpression);
+    GroupByColumnSegment createGroupBySQLNativeSegment(ExpressionContext expressionContext, String sqlSegment, SQLNativeExpression sqlNativeExpression);
 
     SubQueryColumnSegment createSubQueryColumnSegment(TableAvailable table, Query<?> subQuery, String alias, QueryRuntimeContext runtimeContext);
     CloneableSQLSegment createSQLColumnAsSegment(CloneableSQLSegment sqlColumnSegment, String alias, QueryRuntimeContext runtimeContext);

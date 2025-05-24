@@ -13,6 +13,10 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.impl.NavigateIncludeImpl;
+import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.OrderBySegment;
+import com.easy.query.core.expression.segment.SQLNativeSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -58,6 +62,17 @@ public class DefaultIncludeProvider implements IncludeProvider {
         NavigateInclude navigateInclude = new NavigateIncludeImpl(table, entityMetadata, expressionContext.getRuntimeContext(), includeNavigateParams, expressionContext);
         ClientQueryable<TProperty> clientQueryable = navigateIncludeSQLExpression.apply(navigateInclude);
         boolean hasOrder = EasySQLSegmentUtil.isNotEmpty(clientQueryable.getSQLEntityExpressionBuilder().getOrder());
+//        int i=1;
+//        for (SQLSegment sqlSegment : clientQueryable.getSQLEntityExpressionBuilder().getOrder().getSQLSegments()) {
+//            if(sqlSegment instanceof OrderBySegment){
+//                OrderBySegment orderBySegment = (OrderBySegment) sqlSegment;
+//                boolean asc = orderBySegment.isAsc();
+//                SQLNativeSegment columnSegment = ((SQLNativeSegment)orderBySegment).cloneSQLColumnSegment();
+//                columnSegment.setAlias(String.format("__relation__%s__%s__",i,asc?"asc":"desc"));
+//                clientQueryable.getSQLEntityExpressionBuilder().getProjects().append(columnSegment);
+//            }
+//            i++;
+//        }
         includeNavigateParams.setHasOrder(hasOrder);
         boolean hasLimit = clientQueryable.getSQLEntityExpressionBuilder().hasLimit();
         NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
