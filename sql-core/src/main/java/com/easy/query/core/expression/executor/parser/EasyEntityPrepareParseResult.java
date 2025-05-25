@@ -20,14 +20,12 @@ public class EasyEntityPrepareParseResult implements EntityPrepareParseResult {
     private final TableEntityParseDescriptor tableEntityParseDescriptor;
     private final EntityExpressionBuilder entityExpressionBuilder;
     private final List<Object> entities;
-    private final boolean sharding;
 
     public EasyEntityPrepareParseResult(EntityParseContext entityPrepareParseContext, TableEntityParseDescriptor tableEntityParseDescriptor) {
         this.executorContext = entityPrepareParseContext.getExecutorContext();
         this.tableEntityParseDescriptor = tableEntityParseDescriptor;
         this.entityExpressionBuilder = entityPrepareParseContext.getEntityExpressionBuilder();
         this.entities = entityPrepareParseContext.getEntities();
-        this.sharding = EasyCollectionUtil.isNotEmpty(tableEntityParseDescriptor.getTables());
     }
 
     @Override
@@ -37,7 +35,7 @@ public class EasyEntityPrepareParseResult implements EntityPrepareParseResult {
 
     @Override
     public boolean isSharding() {
-        return sharding;
+        return true;
     }
 
     @Override

@@ -26,7 +26,14 @@ public class EasyQueryProperties {
 
     private Boolean enable = false;
     private Boolean build = true;
+    /**
+     * 删除是抛出错误
+     */
     private Boolean deleteThrow = true;
+    /**
+     * 是否启用分片
+     */
+    private Boolean sharding = false;
     private DatabaseEnum database = DatabaseEnum.DEFAULT;
     private SQLParameterPrintEnum sqlParameterPrint = SQLParameterPrintEnum.DEFAULT;
     private NameConversionEnum nameConversion = NameConversionEnum.UNDERLINED;
@@ -481,6 +488,14 @@ public class EasyQueryProperties {
 
     public void setIncludeLimitMode(IncludeLimitModeEnum includeLimitMode) {
         this.includeLimitMode = includeLimitMode;
+    }
+
+    public Boolean getSharding() {
+        return sharding;
+    }
+
+    public void setSharding(Boolean sharding) {
+        this.sharding = sharding;
     }
 
     public EasyQueryProperties() {

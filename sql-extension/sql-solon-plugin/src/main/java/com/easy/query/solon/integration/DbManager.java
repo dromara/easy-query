@@ -12,6 +12,9 @@ import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.track.InvokeTryFinally;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.ShardingEntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRouteUnit;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.bootstrapper.EasyQueryBuilderConfiguration;
@@ -187,6 +190,10 @@ public class DbManager {
         if (sqlParameterPrint == SQLParameterPrintEnum.MYBATIS) {
             easyQueryBuilderConfiguration
                     .replaceService(SQLParameterPrintFormat.class, MyBatisSQLParameterPrintFormat.class);
+        }
+        if(Boolean.TRUE.equals(solonEasyQueryProperties.getSharding())){
+            easyQueryBuilderConfiguration
+                    .replaceService(EntityExpressionExecutor.class, ShardingEntityExpressionExecutor.class);
         }
         easyQueryBuilderConfiguration
                 .replaceService(DataSourceUnitFactory.class, SolonDataSourceUnitFactory.class)

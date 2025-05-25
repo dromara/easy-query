@@ -21,7 +21,6 @@ public class EasyInsertPrepareParseResult implements InsertPrepareParseResult {
     private final EntityInsertExpressionBuilder entityInsertExpressionBuilder;
     private final List<Object> entities;
     private final boolean fillAutoIncrement;
-    private final boolean sharding;
 
     public EasyInsertPrepareParseResult(InsertEntityParseContext insertEntityPrepareParseContext, TableEntityParseDescriptor tableEntityParseDescriptor) {
         this.executorContext = insertEntityPrepareParseContext.getExecutorContext();
@@ -29,7 +28,6 @@ public class EasyInsertPrepareParseResult implements InsertPrepareParseResult {
         this.entityInsertExpressionBuilder = insertEntityPrepareParseContext.getEntityExpressionBuilder();
         this.entities = insertEntityPrepareParseContext.getEntities();
         this.fillAutoIncrement = insertEntityPrepareParseContext.getFillAutoIncrement();
-        this.sharding = EasyCollectionUtil.isNotEmpty(tableEntityParseDescriptor.getTables());
     }
 
     @Override
@@ -39,7 +37,7 @@ public class EasyInsertPrepareParseResult implements InsertPrepareParseResult {
 
     @Override
     public boolean isSharding() {
-        return sharding;
+        return true;
     }
 
     @Override

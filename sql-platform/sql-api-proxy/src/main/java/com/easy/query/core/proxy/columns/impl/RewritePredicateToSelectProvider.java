@@ -127,6 +127,10 @@ public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Prox
     }
 
 
+    /**
+     * 返回非null的boolean
+     * @return
+     */
     public BooleanTypeExpression<Boolean> anyValue() {
         NumberTypeExpression<Long> count = new DefaultSQLGroupQueryable<>(getPropertyProxy(), getPropertyProxy().getEntitySQLContext(), getSubQueryContext().getWhereExpression()).count();
         BooleanTypeExpressionImpl<Boolean> any = new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("(CASE WHEN {0} > 0 THEN {1} ELSE {2} END)", c -> {

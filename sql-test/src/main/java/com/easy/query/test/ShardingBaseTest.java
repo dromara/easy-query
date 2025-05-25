@@ -92,10 +92,10 @@ import java.util.UUID;
  * @Description: 基础单元测试类用于构建easy-query
  * create time 2023/3/16 16:47
  */
-public abstract class BaseTest {
+public abstract class ShardingBaseTest {
     public static HikariDataSource dataSource;
-    public static EasyQueryClient easyQueryClient;
     public static EasyQueryShardingOption easyQueryShardingOption;
+    public static EasyQueryClient easyQueryClient;
     public static EasyEntityQuery easyEntityQuery;
     public static ListenerContextManager listenerContextManager;
 
@@ -152,7 +152,6 @@ public abstract class BaseTest {
             shardingDataSources.add(new ShardingDataSource("ds2023", dataSource, 20));
         }
         easyQueryShardingOption = new EasyQueryShardingOption(shardingDataSources);
-
 //        postgres://postgres:postgrespw@localhost:55000
     }
 
@@ -163,7 +162,15 @@ public abstract class BaseTest {
                 .setDefaultDataSource(dataSource)
                 .optionConfigure(op -> {
                     op.setDeleteThrowError(false);
+                    op.setExecutorCorePoolSize(1);
+                    op.setExecutorMaximumPoolSize(0);
+                    op.setMaxShardingQueryLimit(10);
+                    op.setShardingOption(easyQueryShardingOption);
                     op.setDefaultDataSourceName("ds2020");
+                    op.setThrowIfRouteNotMatch(false);
+                    op.setMaxShardingRouteCount(512);
+                    op.setDefaultDataSourceMergePoolSize(20);
+                    op.setStartTimeJob(true);
                     op.setReverseOffsetThreshold(10);
                 })
 //                .replaceService(Column2MapKeyConversion.class, UpperColumn2MapKeyConversion.class)
@@ -174,6 +181,7 @@ public abstract class BaseTest {
 //                .replaceService(EntityMappingRule.class, PropertyEntityMappingRule.class)
                 .replaceService(EntityMappingRule.class, PropertyFirstEntityMappingRule.class)
                 .replaceService(PropertyDescriptorMatcher.class, EntityPropertyDescriptorMatcher.class)
+                .replaceService(EntityExpressionExecutor.class, ShardingEntityExpressionExecutor.class)
 //                .replaceService(EasyPageResultProvider.class,MyEasyPageResultProvider.class)
 //                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
@@ -195,6 +203,10 @@ public abstract class BaseTest {
         configuration.applyNavigateExtraFilterStrategy(new RoleJoin.RoleJoinType());
         configuration.applyPrimaryKeyGenerator(new MyTestPrimaryKeyGenerator());
 //        configuration.applyShardingInitializer(new FixShardingInitializer());
+        configuration.applyShardingInitializer(new DataSourceAndTableShardingInitializer());
+        configuration.applyShardingInitializer(new TopicShardingShardingInitializer());
+        configuration.applyShardingInitializer(new TopicShardingTimeShardingInitializer());
+        configuration.applyShardingInitializer(new DataSourceShardingInitializer());
         configuration.applyValueConverter(new EnumConverter());
         configuration.applyValueConverter(new JsonConverter());
         configuration.applyValueConverter(new EnumValueConverter());
@@ -208,128 +220,102 @@ public abstract class BaseTest {
         configuration.applyGeneratedKeySQLColumnGenerator(new MyDatabaseIncrementSQLColumnGenerator());
         configuration.applyNavigateValueSetter(new MyNavigateValueSetter());
         configuration.applyNavigateExtraFilterStrategy(new com.easy.query.test.entity.navf.RoleJoin.RoleJoinType());
+        TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
+        tableRouteManager.addRoute(new TopicShardingTableRoute());
+        tableRouteManager.addRoute(new TopicShardingTimeTableRoute());
+        tableRouteManager.addRoute(new TopicShardingDataSourceTimeTableRoute());
+        DataSourceRouteManager dataSourceRouteManager = runtimeContext.getDataSourceRouteManager();
+        dataSourceRouteManager.addRoute(new TopicShardingDataSourceTimeDataSourceRoute());
+        dataSourceRouteManager.addRoute(new TopicShardingDataSourceRoute());
 
         beforex();
 
     }
 
     public static void initData() {
-        easyEntityQuery.deletable(BlogEntity.class).where(o -> o.id().isNotBlank()).disableLogicDelete().allowDeleteStatement(true).executeRows();
-        boolean any = easyEntityQuery.queryable(BlogEntity.class).any();
-        if (!any) {
 
-            LocalDateTime begin = LocalDateTime.of(2020, 1, 1, 1, 1, 1);
-            List<BlogEntity> blogs = new ArrayList<>();
-            for (int i = 0; i < 100; i++) {
-                String indexStr = String.valueOf(i);
-                BlogEntity blog = new BlogEntity();
-                blog.setId(indexStr);
-                blog.setCreateBy(indexStr);
-                blog.setCreateTime(begin.plusDays(i));
-                blog.setUpdateBy(indexStr);
-                blog.setUpdateTime(begin.plusDays(i));
-                blog.setTitle("title" + indexStr);
-                blog.setContent("content" + indexStr);
-                blog.setUrl("http://blog.easy-query.com/" + indexStr);
-                blog.setStar(i);
-                blog.setScore(new BigDecimal("1.2"));
-                blog.setStatus(i % 3 == 0 ? 0 : 1);
-                blog.setOrder(new BigDecimal("1.2").multiply(BigDecimal.valueOf(i)));
-                blog.setIsTop(i % 2 == 0);
-                blog.setTop(i % 2 == 0);
-                blog.setDeleted(false);
-                blogs.add(blog);
+        boolean topicShardingAny = easyEntityQuery.queryable(TopicSharding.class).where(o -> o.stars().le(1000)).any();
+        if (!topicShardingAny) {
+
+            ArrayList<TopicSharding> topicShardings = new ArrayList<>(500);
+            for (int i = 0; i < 500; i++) {
+                TopicSharding topicSharding = new TopicSharding();
+                topicSharding.setId(String.valueOf(i));
+                topicSharding.setTitle("title" + i);
+                topicSharding.setStars(i);
+                topicSharding.setCreateTime(LocalDateTime.now().plusMinutes(i));
+                topicShardings.add(topicSharding);
             }
-            easyEntityQuery.insertable(blogs).executeRows();
+
+            long l = easyEntityQuery.insertable(topicShardings).executeRows();
+        }
+        boolean shardingTimeExists = easyEntityQuery.queryable(TopicShardingTime.class).any();
+        if (!shardingTimeExists) {
+
+            LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
+            LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
+            Duration between = Duration.between(beginTime, endTime);
+            long days = between.toDays();
+            ArrayList<TopicShardingTime> topicShardingTimes = new ArrayList<>(500);
+            for (int i = 0; i < days; i++) {
+                LocalDateTime now = beginTime.plusDays(i);
+                String month = now.format(DateTimeFormatter.ofPattern("yyyyMM"));
+                TopicShardingTime topicShardingTime = new TopicShardingTime();
+                topicShardingTime.setId(UUID.randomUUID().toString().replaceAll("-", "") + month);
+                topicShardingTime.setTitle("title" + month);
+                topicShardingTime.setStars(i);
+                topicShardingTime.setCreateTime(now);
+                topicShardingTimes.add(topicShardingTime);
+            }
+
+            long l = easyEntityQuery.insertable(topicShardingTimes).executeRows();
+            System.out.println("插入时间条数:" + l);
+        }
+        boolean shardingDataSourceTimeExists = easyEntityQuery.queryable(TopicShardingDataSourceTime.class).any();
+        System.out.println(shardingDataSourceTimeExists);
+        if (!shardingDataSourceTimeExists) {
+
+            LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
+            LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
+            Duration between = Duration.between(beginTime, endTime);
+            long days = between.toDays();
+            ArrayList<TopicShardingDataSourceTime> topicShardingDataSourceTimes = new ArrayList<>(500);
+            for (int i = 0; i < days; i++) {
+                LocalDateTime now = beginTime.plusDays(i);
+                String month = now.format(DateTimeFormatter.ofPattern("yyyyMM"));
+                TopicShardingDataSourceTime topicShardingDataSourceTime = new TopicShardingDataSourceTime();
+                topicShardingDataSourceTime.setId(UUID.randomUUID().toString().replaceAll("-", "") + month);
+                topicShardingDataSourceTime.setTitle("title" + month);
+                topicShardingDataSourceTime.setStars(i);
+                topicShardingDataSourceTime.setCreateTime(now);
+                topicShardingDataSourceTimes.add(topicShardingDataSourceTime);
+            }
+
+            long l = easyEntityQuery.insertable(topicShardingDataSourceTimes).executeRows();
+            System.out.println("插入时间条数:" + l);
         }
 
+        boolean any1 = easyEntityQuery.queryable(TopicShardingDataSource.class)
+                .any();
+        if (!any1) {
 
-        boolean topicAutoAny = easyEntityQuery.queryable(TopicAuto.class).any();
-        if (!topicAutoAny) {
-            List<TopicAuto> topicAutos = new ArrayList<>();
-            for (int i = 0; i < 10; i++) {
-                TopicAuto topicAuto = new TopicAuto();
-                topicAuto.setStars(i);
-                topicAuto.setTitle("title" + i);
-                topicAuto.setCreateTime(LocalDateTime.now().plusDays(i));
-                topicAutos.add(topicAuto);
+            LocalDateTime beginTime = LocalDateTime.of(2020, 1, 1, 1, 1);
+            LocalDateTime endTime = LocalDateTime.of(2023, 5, 1, 1, 1);
+            Duration between = Duration.between(beginTime, endTime);
+            long days = between.toDays();
+            ArrayList<TopicShardingDataSource> topicShardingDataSources = new ArrayList<>(500);
+            for (int i = 0; i < days; i++) {
+                LocalDateTime now = beginTime.plusDays(i);
+                String month = now.format(DateTimeFormatter.ofPattern("yyyyMM"));
+                TopicShardingDataSource topicShardingDataSource = new TopicShardingDataSource();
+                topicShardingDataSource.setId(UUID.randomUUID().toString().replaceAll("-", "") + month);
+                topicShardingDataSource.setTitle("title" + month);
+                topicShardingDataSource.setStars(i);
+                topicShardingDataSource.setCreateTime(now);
+                topicShardingDataSources.add(topicShardingDataSource);
             }
-            long l = easyEntityQuery.insertable(topicAutos).executeRows(true);
-        }
 
-
-        boolean topicAny = easyEntityQuery.queryable(Topic.class).any();
-        if (!topicAny) {
-            List<Topic> topics = new ArrayList<>();
-            for (int i = 0; i < 100; i++) {
-                Topic topic = new Topic();
-                topic.setId(String.valueOf(i));
-                topic.setStars(i + 100);
-                topic.setTitle("标题" + i);
-                topic.setCreateTime(LocalDateTime.now().plusDays(i));
-                topics.add(topic);
-            }
-            long l = easyEntityQuery.insertable(topics).executeRows();
-        }
-
-        boolean sysUserAny = easyEntityQuery.queryable(SysUser.class).any();
-        if (!sysUserAny) {
-            List<SysUser> sysUsers = new ArrayList<>();
-            for (int i = 0; i < 100; i++) {
-                SysUser sysUser = new SysUser();
-                sysUser.setId(String.valueOf(i));
-                sysUser.setUsername("username" + String.valueOf(i));
-                sysUser.setCreateTime(LocalDateTime.now().plusDays(i));
-                sysUser.setPhone("18888888" + String.valueOf(i) + String.valueOf(i));
-                sysUser.setIdCard("333333333333333" + String.valueOf(i) + String.valueOf(i));
-                sysUser.setAddress(sysUser.getPhone() + sysUser.getIdCard());
-                sysUsers.add(sysUser);
-            }
-            long l = easyEntityQuery.insertable(sysUsers).executeRows();
-        }
-        boolean logicDeleteAny = easyEntityQuery.queryable(LogicDelTopic.class).any();
-        if (!logicDeleteAny) {
-            List<LogicDelTopic> logicDelTopics = new ArrayList<>();
-            for (int i = 0; i < 100; i++) {
-                LogicDelTopic logicDelTopic = new LogicDelTopic();
-                logicDelTopic.setId(String.valueOf(i));
-                logicDelTopic.setStars(i + 100);
-                logicDelTopic.setTitle("标题" + i);
-                logicDelTopic.setCreateTime(LocalDateTime.now().plusDays(i));
-                logicDelTopic.setDeleted(false);
-                logicDelTopics.add(logicDelTopic);
-            }
-            long l = easyEntityQuery.insertable(logicDelTopics).executeRows();
-        }
-        boolean logicDeleteCusAny = easyEntityQuery.queryable(LogicDelTopicCustom.class).any();
-        if (!logicDeleteCusAny) {
-            List<LogicDelTopicCustom> logicDelTopics = new ArrayList<>();
-            for (int i = 0; i < 100; i++) {
-                LogicDelTopicCustom logicDelTopic = new LogicDelTopicCustom();
-                logicDelTopic.setId(String.valueOf(i));
-                logicDelTopic.setStars(i + 100);
-                logicDelTopic.setTitle("标题" + i);
-                logicDelTopic.setCreateTime(LocalDateTime.now().plusDays(i));
-                logicDelTopics.add(logicDelTopic);
-            }
-            long l = easyEntityQuery.insertable(logicDelTopics).executeRows();
-        }
-        boolean topicInterceptorAny = easyEntityQuery.queryable(TopicInterceptor.class).any();
-        if (!topicInterceptorAny) {
-            List<TopicInterceptor> topicInterceptors = new ArrayList<>();
-            for (int i = 0; i < 100; i++) {
-                TopicInterceptor topicInterceptor = new TopicInterceptor();
-                topicInterceptor.setId(String.valueOf(i));
-                topicInterceptor.setStars(i + 100);
-                topicInterceptor.setTitle("标题" + i);
-                topicInterceptor.setCreateTime(LocalDateTime.now().plusDays(i));
-                topicInterceptor.setUpdateTime(LocalDateTime.now().plusDays(i));
-                topicInterceptor.setCreateBy(String.valueOf(i));
-                topicInterceptor.setUpdateBy(String.valueOf(i));
-                topicInterceptor.setTenantId(String.valueOf(i));
-                topicInterceptors.add(topicInterceptor);
-            }
-            long l = easyEntityQuery.insertable(topicInterceptors).executeRows();
+            long l = easyEntityQuery.insertable(topicShardingDataSources).executeRows();
         }
     }
     public static void beforex(){

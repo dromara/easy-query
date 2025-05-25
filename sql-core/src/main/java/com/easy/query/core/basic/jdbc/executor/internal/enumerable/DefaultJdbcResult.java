@@ -16,10 +16,10 @@ import java.util.List;
  * @author xuejiaming
  */
 public class DefaultJdbcResult<TR> implements JdbcResult<TR> {
-    private static final Log log= LogFactory.getLog(DefaultJdbcResult.class);
+    private static final Log log = LogFactory.getLog(DefaultJdbcResult.class);
     private final JdbcStreamResult<TR> jdbcStreamResult;
 
-    public DefaultJdbcResult(JdbcStreamResult<TR> jdbcStreamResult){
+    public DefaultJdbcResult(JdbcStreamResult<TR> jdbcStreamResult) {
 
         this.jdbcStreamResult = jdbcStreamResult;
     }
@@ -28,12 +28,13 @@ public class DefaultJdbcResult<TR> implements JdbcResult<TR> {
     public JdbcStreamResult<TR> getJdbcStreamResult() {
         return jdbcStreamResult;
     }
+
     @Override
-    public List<TR> toList(){
-        try(JdbcStreamResult<TR> jdbcStreamResultSet =jdbcStreamResult){
+    public List<TR> toList() {
+        try (JdbcStreamResult<TR> jdbcStreamResultSet = jdbcStreamResult) {
             StreamIterable<TR> streamResult = jdbcStreamResultSet.getStreamIterable();
             List<TR> list = EasyCollectionUtil.newArrayList(streamResult);
-            if(EasyJdbcExecutorUtil.isPrintSQL(jdbcStreamResult.getExecutorContext())){
+            if (EasyJdbcExecutorUtil.isPrintSQL(jdbcStreamResult.getExecutorContext())) {
                 log.info("<== Total: " + list.size());
             }
             return list;

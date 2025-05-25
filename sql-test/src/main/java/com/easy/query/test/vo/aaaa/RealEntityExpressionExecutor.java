@@ -14,8 +14,8 @@ public class RealEntityExpressionExecutor extends DefaultEntityExpressionExecuto
 
     private final DbInterceptorHolder dbInterceptorHolder;
 
-    public RealEntityExpressionExecutor(DbInterceptorHolder dbInterceptorHolder, EasyPrepareParser easyPrepareParser, ExecutionContextFactory executionContextFactory) {
-        super(easyPrepareParser, executionContextFactory);
+    public RealEntityExpressionExecutor(DbInterceptorHolder dbInterceptorHolder, ExecutionContextFactory executionContextFactory) {
+        super(executionContextFactory);
         this.dbInterceptorHolder = dbInterceptorHolder;
     }
 }

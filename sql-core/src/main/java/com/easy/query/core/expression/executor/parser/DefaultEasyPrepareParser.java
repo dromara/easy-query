@@ -24,30 +24,19 @@ import java.util.HashMap;
  */
 public class DefaultEasyPrepareParser implements EasyPrepareParser {
     private TablePredicateParseDescriptor parseQueryDescriptor(QueryPredicateParseContext queryPredicateParseContext){
-        ExpressionContext expressionContext = queryPredicateParseContext.getEntityExpressionBuilder().getExpressionContext();
-        if(expressionContext.isSharding()){
-            TablePredicateParseDescriptor tablePredicateParseDescriptor = new TablePredicateParseDescriptorImpl(new HashMap<>());
-            EasyParseUtil.getTableQueryParseDescriptor(queryPredicateParseContext.getEntityPredicateSQLExpression(), tablePredicateParseDescriptor);
-            return tablePredicateParseDescriptor;
-        }
-        return DefaultEmptyTableParseDescriptorImpl.INSTANCE;
+        TablePredicateParseDescriptor tablePredicateParseDescriptor = new TablePredicateParseDescriptorImpl(new HashMap<>());
+        EasyParseUtil.getTableQueryParseDescriptor(queryPredicateParseContext.getEntityPredicateSQLExpression(), tablePredicateParseDescriptor);
+        return tablePredicateParseDescriptor;
     }
     private TablePredicateParseDescriptor parsePredicateDescriptor(PredicatePrepareParseContext predicatePrepareParseContext){
-        ExpressionContext expressionContext = predicatePrepareParseContext.getEntityExpressionBuilder().getExpressionContext();
-        if(expressionContext.isSharding()){
-            TablePredicateParseDescriptor tablePredicateParseDescriptor = new TablePredicateParseDescriptorImpl(new HashMap<>());
-            EasyParseUtil.parseTablePredicateParseDescriptor(predicatePrepareParseContext.getEntityPredicateSQLExpression(), tablePredicateParseDescriptor);
-            return tablePredicateParseDescriptor;
-        }
-        return DefaultEmptyTableParseDescriptorImpl.INSTANCE;
+
+        TablePredicateParseDescriptor tablePredicateParseDescriptor = new TablePredicateParseDescriptorImpl(new HashMap<>());
+        EasyParseUtil.parseTablePredicateParseDescriptor(predicatePrepareParseContext.getEntityPredicateSQLExpression(), tablePredicateParseDescriptor);
+        return tablePredicateParseDescriptor;
     }
     private TableEntityParseDescriptor parseEntityDescriptor(EntityParseContext entityPrepareParseContext){
-        ExpressionContext expressionContext = entityPrepareParseContext.getEntityExpressionBuilder().getExpressionContext();
-        if(expressionContext.isSharding()){
-            TableAvailable entityTable = entityPrepareParseContext.getEntityExpressionBuilder().getTable(0).getEntityTable();
-            return new TableEntityParseDescriptorImpl(entityTable, entityPrepareParseContext.getEntities());
-        }
-        return DefaultEmptyTableParseDescriptorImpl.INSTANCE;
+        TableAvailable entityTable = entityPrepareParseContext.getEntityExpressionBuilder().getTable(0).getEntityTable();
+        return new TableEntityParseDescriptorImpl(entityTable, entityPrepareParseContext.getEntities());
     }
     @Override
     public PrepareParseResult parse(PrepareParseContext prepareParseContext) {

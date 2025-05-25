@@ -22,7 +22,6 @@ public class EasyPredicatePrepareParseResult implements PredicatePrepareParseRes
     private final TablePredicateParseDescriptor tablePredicateParseDescriptor;
     private final EntityPredicateExpressionBuilder entityPredicateExpressionBuilder;
     private final EntityPredicateSQLExpression entityPredicateSQLExpression;
-    private final boolean sharding;
 
     public EasyPredicatePrepareParseResult(PredicatePrepareParseContext predicatePrepareParseContext, TablePredicateParseDescriptor tablePredicateParseDescriptor){
         this.executorContext = predicatePrepareParseContext.getExecutorContext();
@@ -30,7 +29,6 @@ public class EasyPredicatePrepareParseResult implements PredicatePrepareParseRes
 
         this.entityPredicateExpressionBuilder = predicatePrepareParseContext.getEntityExpressionBuilder();
         this.entityPredicateSQLExpression = predicatePrepareParseContext.getEntityPredicateSQLExpression();
-        this.sharding = EasyCollectionUtil.isNotEmpty(tablePredicateParseDescriptor.getTables());
     }
 
     @Override
@@ -45,7 +43,7 @@ public class EasyPredicatePrepareParseResult implements PredicatePrepareParseRes
 
     @Override
     public boolean isSharding() {
-        return sharding;
+        return true;
     }
 
     @Override

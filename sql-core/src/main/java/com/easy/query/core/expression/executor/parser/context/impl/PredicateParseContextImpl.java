@@ -16,11 +16,11 @@ public class PredicateParseContextImpl implements PredicatePrepareParseContext {
     private final EntityPredicateExpressionBuilder entityPredicateExpressionBuilder;
     private final EntityPredicateSQLExpression entityPredicateSQLExpression;
 
-    public PredicateParseContextImpl(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder){
+    public PredicateParseContextImpl(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder,EntityPredicateSQLExpression entityPredicateSQLExpression){
 
         this.executorContext = executorContext;
         this.entityPredicateExpressionBuilder = entityPredicateExpressionBuilder;
-        this.entityPredicateSQLExpression = entityPredicateExpressionBuilder.toExpression();
+        this.entityPredicateSQLExpression = entityPredicateSQLExpression;
     }
     @Override
     public ExecutorContext getExecutorContext() {

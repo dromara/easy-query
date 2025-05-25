@@ -15,21 +15,19 @@ import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResul
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.expression.executor.parser.EasyPrepareParser;
-import com.easy.query.core.expression.executor.parser.EasyQueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.parser.context.impl.EntityParseContextImpl;
-import com.easy.query.core.expression.executor.parser.context.impl.InsertEntityParseContextImpl;
 import com.easy.query.core.expression.executor.parser.context.impl.PredicateParseContextImpl;
-import com.easy.query.core.expression.executor.parser.context.impl.QueryPredicateParseContextImpl;
 import com.easy.query.core.expression.executor.query.ExecutionContextFactory;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityPredicateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.expression.EntityPredicateSQLExpression;
+import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.sharding.context.EasyStreamMergeContext;
 import com.easy.query.core.sharding.context.EntityStreamMergeContext;
-import com.easy.query.core.sharding.context.ShardingQueryEasyStreamMergeContext;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -41,11 +39,9 @@ import java.util.List;
  * @author xuejiaming
  */
 public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor {
-    private final EasyPrepareParser easyPrepareParser;
-    private final ExecutionContextFactory executionContextFactory;
+    protected final ExecutionContextFactory executionContextFactory;
 
-    public DefaultEntityExpressionExecutor(EasyPrepareParser easyPrepareParser, ExecutionContextFactory executionContextFactory) {
-        this.easyPrepareParser = easyPrepareParser;
+    public DefaultEntityExpressionExecutor(ExecutionContextFactory executionContextFactory) {
         this.executionContextFactory = executionContextFactory;
     }
 
@@ -63,7 +59,7 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
         return getJdbcResult(resultSizeLimit, jdbcStreamResultSet);
     }
 
-    private <TR> JdbcResult<TR> getJdbcResult(long resultSizeLimit, JdbcStreamResult<TR> jdbcStreamResult) {
+    protected <TR> JdbcResult<TR> getJdbcResult(long resultSizeLimit, JdbcStreamResult<TR> jdbcStreamResult) {
         if (resultSizeLimit > 0) {
             return new ResultSizeLimitJdbcResult<>(resultSizeLimit, jdbcStreamResult);
         }
@@ -71,14 +67,9 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     }
 
     private JdbcCommand<QueryExecuteResult> getJdbcCommand(ExecutorContext executorContext, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        if (!entityQueryExpressionBuilder.getExpressionContext().isSharding()) {
-            ExecutionContext executionContext = executionContextFactory.createUnShardingJdbcExecutionContext(entityQueryExpressionBuilder);
-            return getSQLQueryJdbcCommand(executorContext, executionContext);
-        } else {
-            PrepareParseResult prepareParseResult = easyPrepareParser.parse(new QueryPredicateParseContextImpl(executorContext, entityQueryExpressionBuilder));
-            ExecutionContext executionContext = executionContextFactory.createEntityExecutionContext(prepareParseResult);
-            return getQueryEntityJdbcCommand(executorContext, executionContext, (EasyQueryPrepareParseResult) prepareParseResult);
-        }
+        EntityQuerySQLExpression entityQuerySQLExpression = entityQueryExpressionBuilder.toExpression();
+        ExecutionContext executionContext = executionContextFactory.createJdbcExecutionContext(entityQueryExpressionBuilder, entityQuerySQLExpression);
+        return getSQLQueryJdbcCommand(executorContext, executionContext);
     }
 
     @Override
@@ -89,7 +80,7 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
 
     @Override
     public <TR> JdbcResult<TR> querySQLStreamResultSet(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, String sql, List<SQLParameter> sqlParameters) {
-        ExecutionContext executionContext = executionContextFactory.createJdbcExecutionContext(sql, sqlParameters);
+        ExecutionContext executionContext = executionContextFactory.createNativeJdbcExecutionContext(sql, sqlParameters);
         JdbcCommand<QueryExecuteResult> command = getSQLQueryJdbcCommand(executorContext, executionContext);
         DefaultJdbcStreamResultSet<TR> jdbcStreamResultSet = new DefaultJdbcStreamResultSet<>(executorContext, resultMetadata, command);
         long resultSizeLimit = executorContext.getExpressionContext().getResultSizeLimit();
@@ -99,7 +90,7 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     @Override
     public long executeSQLRows(ExecutorContext executorContext, String sql, List<SQLParameter> sqlParameters) {
 
-        ExecutionContext executionContext = executionContextFactory.createJdbcExecutionContext(sql, sqlParameters);
+        ExecutionContext executionContext = executionContextFactory.createNativeJdbcExecutionContext(sql, sqlParameters);
         return executeSQLCommand(executorContext, executionContext);
     }
 
@@ -116,12 +107,12 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
 
     @Override
     public <T> long insert(ExecutorContext executorContext, List<T> entities, EntityInsertExpressionBuilder entityInsertExpressionBuilder, boolean fillAutoIncrement) {
-        PrepareParseResult prepareParseResult = easyPrepareParser.parse(new InsertEntityParseContextImpl(executorContext, entityInsertExpressionBuilder, (List<Object>) entities, fillAutoIncrement));
-        ExecutionContext executionContext = executionContextFactory.createEntityExecutionContext(prepareParseResult);
-        return executeInsertCommand(executorContext, executionContext, prepareParseResult);
+        ExecutionContext executionContext = executionContextFactory.createExecutionContextByInsert(entityInsertExpressionBuilder, (List<Object>) entities, fillAutoIncrement, executorContext);
+        return executeInsertCommand(executorContext, executionContext, false);
     }
-    protected long executeInsertCommand(ExecutorContext executorContext, ExecutionContext executionContext, PrepareParseResult prepareParseResult) {
-        try (JdbcCommand<AffectedRowsExecuteResult> command = getInsertJdbcCommand(executorContext, executionContext, prepareParseResult);
+
+    protected long executeInsertCommand(ExecutorContext executorContext, ExecutionContext executionContext, boolean sharding) {
+        try (JdbcCommand<AffectedRowsExecuteResult> command = getInsertJdbcCommand(executorContext, executionContext, sharding);
              AffectedRowsExecuteResult executeResult = command.execute()) {
             return executeResult.getRows();
         } catch (SQLException e) {
@@ -131,12 +122,12 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
 
     @Override
     public <T> long executeRows(ExecutorContext executorContext, EntityExpressionBuilder entityExpressionBuilder, List<T> entities) {
-        PrepareParseResult prepareParseResult = easyPrepareParser.parse(new EntityParseContextImpl(executorContext, entityExpressionBuilder, (List<Object>) entities));
-        ExecutionContext executionContext = executionContextFactory.createEntityExecutionContext(prepareParseResult);
-        return executeEntitiesCommand(executorContext, executionContext, prepareParseResult);
+        ExecutionContext executionContext = executionContextFactory.createExecutionContextByEntities(entityExpressionBuilder, (List<Object>) entities, executorContext);
+        return executeEntitiesCommand(executorContext, executionContext, false);
     }
-    protected long executeEntitiesCommand(ExecutorContext executorContext, ExecutionContext executionContext, PrepareParseResult prepareParseResult) {
-        try (JdbcCommand<AffectedRowsExecuteResult> command = getExecuteBatchJdbcCommand(executorContext, executionContext, prepareParseResult);
+
+    protected long executeEntitiesCommand(ExecutorContext executorContext, ExecutionContext executionContext, boolean sharding) {
+        try (JdbcCommand<AffectedRowsExecuteResult> command = getExecuteBatchJdbcCommand(executorContext, executionContext, sharding);
              AffectedRowsExecuteResult executeResult = command.execute()) {
             return executeResult.getRows();
         } catch (SQLException e) {
@@ -147,13 +138,18 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
 
     @Override
     public long executeRows(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder) {
-        PrepareParseResult prepareParseResult = easyPrepareParser.parse(new PredicateParseContextImpl(executorContext, entityPredicateExpressionBuilder));
-        ExecutionContext executionContext = executionContextFactory.createEntityExecutionContext(prepareParseResult);
-        return executeExpressionCommand(executorContext, executionContext, prepareParseResult);
+        EntityPredicateSQLExpression entityPredicateSQLExpression = entityPredicateExpressionBuilder.toExpression();
+        return executeRows0(executorContext, entityPredicateExpressionBuilder, entityPredicateSQLExpression, false);
     }
 
-    protected long executeExpressionCommand(ExecutorContext executorContext, ExecutionContext executionContext, PrepareParseResult prepareParseResult) {
-        try (JdbcCommand<AffectedRowsExecuteResult> command = getExecuteExpressionJdbcCommand(executorContext, executionContext, prepareParseResult);
+    protected long executeRows0(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder, EntityPredicateSQLExpression entityPredicateSQLExpression, boolean sharding) {
+        ExecutionContext executionContext = executionContextFactory.createByPredicateExpression(entityPredicateSQLExpression);
+        return executeExpressionCommand(executorContext, executionContext, sharding);
+    }
+
+    protected long executeExpressionCommand(ExecutorContext executorContext, ExecutionContext executionContext, boolean sharding) {
+
+        try (JdbcCommand<AffectedRowsExecuteResult> command = getExecuteExpressionJdbcCommand(executorContext, executionContext, sharding);
              AffectedRowsExecuteResult executeResult = command.execute()) {
             return executeResult.getRows();
         } catch (SQLException e) {
@@ -166,23 +162,19 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
         return new DefaultQueryJdbcCommand(new EasyStreamMergeContext(executorContext, executionContext));
     }
 
-    private JdbcCommand<QueryExecuteResult> getQueryEntityJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext, EasyQueryPrepareParseResult easyQueryPrepareParseResult) {
-        return new DefaultQueryJdbcCommand(new ShardingQueryEasyStreamMergeContext(executorContext, executionContext, easyQueryPrepareParseResult));
-    }
-
     private JdbcCommand<AffectedRowsExecuteResult> getSQLExecuteUpdateJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext) {
         return new DefaultExecuteUpdateJdbcCommand(new EasyStreamMergeContext(executorContext, executionContext));
     }
 
-    private JdbcCommand<AffectedRowsExecuteResult> getInsertJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext, PrepareParseResult prepareParseResult) {
-        return new DefaultInsertJdbcCommand(new EntityStreamMergeContext(executorContext, executionContext, prepareParseResult));
+    private JdbcCommand<AffectedRowsExecuteResult> getInsertJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext, boolean sharding) {
+        return new DefaultInsertJdbcCommand(new EntityStreamMergeContext(executorContext, executionContext, sharding));
     }
 
-    private JdbcCommand<AffectedRowsExecuteResult> getExecuteBatchJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext, PrepareParseResult prepareParseResult) {
-        return new DefaultExecuteBatchJdbcCommand(new EntityStreamMergeContext(executorContext, executionContext, prepareParseResult));
+    private JdbcCommand<AffectedRowsExecuteResult> getExecuteBatchJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext, boolean sharding) {
+        return new DefaultExecuteBatchJdbcCommand(new EntityStreamMergeContext(executorContext, executionContext, sharding));
     }
 
-    private JdbcCommand<AffectedRowsExecuteResult> getExecuteExpressionJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext, PrepareParseResult prepareParseResult) {
-        return new DefaultExecuteUpdateJdbcCommand(new EntityStreamMergeContext(executorContext, executionContext, prepareParseResult));
+    private JdbcCommand<AffectedRowsExecuteResult> getExecuteExpressionJdbcCommand(ExecutorContext executorContext, ExecutionContext executionContext, boolean sharding) {
+        return new DefaultExecuteUpdateJdbcCommand(new EntityStreamMergeContext(executorContext, executionContext, sharding));
     }
 }

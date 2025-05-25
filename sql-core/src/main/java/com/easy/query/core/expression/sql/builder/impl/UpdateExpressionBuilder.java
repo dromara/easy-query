@@ -36,7 +36,9 @@ import com.easy.query.core.expression.segment.condition.predicate.ColumnNullAsse
 import com.easy.query.core.expression.segment.impl.InsertUpdateColumnConfigureSegmentImpl;
 import com.easy.query.core.expression.segment.index.EntitySegmentComparer;
 import com.easy.query.core.expression.segment.index.SegmentIndex;
+import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ColumnConfigurerContext;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -46,6 +48,7 @@ import com.easy.query.core.expression.sql.builder.internal.AbstractPredicateEnti
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
+import com.easy.query.core.expression.visitor.TableVisitor;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.VersionMetadata;
@@ -538,5 +541,18 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
             }
         }
         return updateExpressionBuilder;
+    }
+    @Override
+    public void accept(TableVisitor visitor) {
+        visitor.visit(getTable(0).getEntityTable());
+        for (EntityTableExpressionBuilder table : getTables()) {
+            if (table instanceof AnonymousEntityTableExpressionBuilder) {
+                EntityQueryExpressionBuilder entityQueryExpressionBuilder = ((AnonymousEntityTableExpressionBuilder) table).getEntityQueryExpressionBuilder();
+                entityQueryExpressionBuilder.accept(visitor);
+            } else {
+                EasySQLSegmentUtil.tableVisit(table.getOn(), visitor);
+            }
+        }
+        EasySQLSegmentUtil.tableVisit(where, visitor);
     }
 }

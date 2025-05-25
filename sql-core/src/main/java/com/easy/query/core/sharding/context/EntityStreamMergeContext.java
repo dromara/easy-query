@@ -12,18 +12,19 @@ import com.easy.query.core.util.EasyCollectionUtil;
  * @author xuejiaming
  */
 public class EntityStreamMergeContext extends EasyStreamMergeContext{
-    private final PrepareParseResult prepareParseResult;
-    private final boolean isSharding;
+    private final boolean sharding;
 
-    public EntityStreamMergeContext(ExecutorContext executorContext, ExecutionContext executionContext, PrepareParseResult prepareParseResult) {
+    public EntityStreamMergeContext(ExecutorContext executorContext, ExecutionContext executionContext) {
+        this(executorContext,executionContext,false);
+    }
+    public EntityStreamMergeContext(ExecutorContext executorContext, ExecutionContext executionContext, boolean sharding) {
         super(executorContext, executionContext);
-        this.prepareParseResult = prepareParseResult;
-        this.isSharding= prepareParseResult.isSharding();
+        this.sharding= sharding;
     }
 
     @Override
     public boolean isSharding() {
-        return isSharding;
+        return sharding;
     }
 
     @Override

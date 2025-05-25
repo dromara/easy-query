@@ -22,8 +22,8 @@ import java.util.List;
 public class MockEntityExpressionExecutor extends DefaultEntityExpressionExecutor {
 
 
-    public MockEntityExpressionExecutor(EasyPrepareParser easyPrepareParser, ExecutionContextFactory executionContextFactory) {
-        super(easyPrepareParser, executionContextFactory);
+    public MockEntityExpressionExecutor(ExecutionContextFactory executionContextFactory) {
+        super(executionContextFactory);
     }
 
     @Override

@@ -15,7 +15,9 @@ import com.easy.query.core.expression.segment.condition.predicate.MapColumnNullA
 import com.easy.query.core.expression.segment.condition.predicate.MapColumnValuePredicate;
 import com.easy.query.core.expression.segment.impl.InsertUpdateColumnConfigureSegmentImpl;
 import com.easy.query.core.expression.segment.impl.UpdateMapColumnSegmentImpl;
+import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ColumnConfigurerContext;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.MapUpdateExpressionBuilder;
@@ -23,6 +25,7 @@ import com.easy.query.core.expression.sql.builder.internal.AbstractPredicateEnti
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
+import com.easy.query.core.expression.visitor.TableVisitor;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -263,5 +266,9 @@ public class UpdateMapExpressionBuilder extends AbstractPredicateEntityExpressio
             }
         }
         return where;
+    }
+    @Override
+    public void accept(TableVisitor visitor) {
+        visitor.visit(getTable(0).getEntityTable());
     }
 }

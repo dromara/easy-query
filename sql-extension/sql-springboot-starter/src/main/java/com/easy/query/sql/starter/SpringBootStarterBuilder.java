@@ -11,6 +11,8 @@ import com.easy.query.core.basic.extension.formater.DefaultSQLParameterPrintForm
 import com.easy.query.core.basic.extension.formater.MyBatisSQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.ShardingEntityExpressionExecutor;
 import com.easy.query.core.bootstrapper.DefaultDatabaseConfiguration;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.bootstrapper.StarterConfigurer;
@@ -125,6 +127,11 @@ public class SpringBootStarterBuilder {
                         s.addService(SQLParameterPrintFormat.class, MyBatisSQLParameterPrintFormat.class);
                     } else {
                         s.addService(SQLParameterPrintFormat.class, DefaultSQLParameterPrintFormat.class);
+                    }
+                })
+                .customConfigure(s -> {
+                    if (Boolean.TRUE.equals(easyQueryProperties.getSharding())) {
+                        s.addService(EntityExpressionExecutor.class, ShardingEntityExpressionExecutor.class);
                     }
                 })
                 .optionConfigure(builder -> {

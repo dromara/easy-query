@@ -16,11 +16,11 @@ public class QueryPredicateParseContextImpl implements QueryPredicateParseContex
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     private final EntityQuerySQLExpression entityQuerySQLExpression;
 
-    public QueryPredicateParseContextImpl(ExecutorContext executorContext, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+    public QueryPredicateParseContextImpl(ExecutorContext executorContext, EntityQueryExpressionBuilder entityQueryExpressionBuilder,EntityQuerySQLExpression entityQuerySQLExpression) {
 
         this.executorContext = executorContext;
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
-        this.entityQuerySQLExpression = entityQueryExpressionBuilder.toExpression();
+        this.entityQuerySQLExpression = entityQuerySQLExpression;
     }
 
     @Override
@@ -37,4 +37,5 @@ public class QueryPredicateParseContextImpl implements QueryPredicateParseContex
     public EntityQueryExpressionBuilder getEntityExpressionBuilder() {
         return entityQueryExpressionBuilder;
     }
+
 }

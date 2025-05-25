@@ -40,7 +40,7 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
     protected volatile boolean terminated = false;
 
     public ShardingQueryEasyStreamMergeContext(ExecutorContext executorContext, ExecutionContext executionContext, EasyQueryPrepareParseResult easyQueryPrepareParseResult) {
-        super(executorContext, executionContext, easyQueryPrepareParseResult);
+        super(executorContext, executionContext, easyQueryPrepareParseResult.isSharding());
         this.easyQueryPrepareParseResult = easyQueryPrepareParseResult;
         this.querySQLExpression = easyQueryPrepareParseResult.getEntityPredicateSQLExpression();
         this.orders = getOrders(querySQLExpression);

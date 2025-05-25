@@ -25,6 +25,7 @@ import java.util.function.Function;
 public class SolonEasyQueryProperties {
     //    private final static Boolean enable = false;
     private final static Boolean deleteThrow = true;
+    private final static Boolean sharding = false;
     private final static DatabaseEnum database = DatabaseEnum.MYSQL;
     private final static NameConversionEnum nameConversion = NameConversionEnum.UNDERLINED;
     private final static MapKeyConversionEnum mapKeyConversion = MapKeyConversionEnum.DEFAULT;
@@ -154,6 +155,14 @@ public class SolonEasyQueryProperties {
 
     public Boolean getDeleteThrow() {
         return this.props.getBool("delete-throw", deleteThrow);
+    }
+
+    /**
+     * 是否启用分片
+     * @return
+     */
+    public Boolean getSharding() {
+        return this.props.getBool("sharding", sharding);
     }
 
 

@@ -360,6 +360,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
     @Override
     public void accept(TableVisitor visitor) {
         for (EntityTableExpressionBuilder table : getTables()) {
+            visitor.visit(table.getEntityTable());
             if (table instanceof AnonymousEntityTableExpressionBuilder) {
                 EntityQueryExpressionBuilder entityQueryExpressionBuilder = ((AnonymousEntityTableExpressionBuilder) table).getEntityQueryExpressionBuilder();
                 entityQueryExpressionBuilder.accept(visitor);
@@ -372,11 +373,5 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         EasySQLSegmentUtil.tableVisit(order, visitor);
         EasySQLSegmentUtil.tableVisit(group, visitor);
         EasySQLSegmentUtil.tableVisit(having, visitor);
-    }
-
-    public static class TableRelationSort {
-        public TableRelationSort(EntityTableSQLExpression expression) {
-
-        }
     }
 }

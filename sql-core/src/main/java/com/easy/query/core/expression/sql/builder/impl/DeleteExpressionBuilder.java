@@ -21,7 +21,9 @@ import com.easy.query.core.expression.segment.builder.UpdateSetSQLBuilderSegment
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnEqualsPropertyPredicate;
+import com.easy.query.core.expression.sql.builder.AnonymousEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.AbstractPredicateEntityExpressionBuilder;
@@ -30,11 +32,13 @@ import com.easy.query.core.expression.sql.expression.EntityPredicateSQLExpressio
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMetadata;
+import com.easy.query.core.expression.visitor.TableVisitor;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.VersionMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyColumnSegmentUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.Collection;
 import java.util.Map;
@@ -280,5 +284,18 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
         return deleteExpressionBuilder;
     }
 
+    @Override
+    public void accept(TableVisitor visitor) {
+        visitor.visit(getTable(0).getEntityTable());
+        for (EntityTableExpressionBuilder table : getTables()) {
+            if (table instanceof AnonymousEntityTableExpressionBuilder) {
+                EntityQueryExpressionBuilder entityQueryExpressionBuilder = ((AnonymousEntityTableExpressionBuilder) table).getEntityQueryExpressionBuilder();
+                entityQueryExpressionBuilder.accept(visitor);
+            } else {
+                EasySQLSegmentUtil.tableVisit(table.getOn(), visitor);
+            }
+        }
+        EasySQLSegmentUtil.tableVisit(where, visitor);
+    }
 
 }

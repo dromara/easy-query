@@ -33,7 +33,6 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
     private final TablePredicateParseDescriptor tablePredicateParseDescriptor;
     private final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     private final EntityQuerySQLExpression easyQuerySQLExpression;
-    private final boolean sharding;
     private boolean startsWithGroupByInOrderBy;
     private final int maxShardingQueryLimit;
     private final ConnectionModeEnum connectionMode;
@@ -41,85 +40,82 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
     private final long originalRows;
     private final SequenceParseResult sequenceParseResult;
 
-    public EasyQueryPrepareParseResult(QueryPredicateParseContext queryPredicatePrepareParseContext, TablePredicateParseDescriptor tablePredicateParseDescriptor){
+    public EasyQueryPrepareParseResult(QueryPredicateParseContext queryPredicatePrepareParseContext, TablePredicateParseDescriptor tablePredicateParseDescriptor) {
         this.executorContext = queryPredicatePrepareParseContext.getExecutorContext();
         this.tablePredicateParseDescriptor = tablePredicateParseDescriptor;
 
         this.entityQueryExpressionBuilder = queryPredicatePrepareParseContext.getEntityExpressionBuilder();
         this.easyQuerySQLExpression = queryPredicatePrepareParseContext.getEntityPredicateSQLExpression();
-        this.sharding = EasyCollectionUtil.isNotEmpty(tablePredicateParseDescriptor.getTables());
         this.originalOffset = easyQuerySQLExpression.getOffset();
         this.originalRows = easyQuerySQLExpression.getRows();
         this.sequenceParseResult = initSequenceOrderPrepareParseResult(executorContext);
-        this.maxShardingQueryLimit = EasyShardingUtil.getMaxShardingQueryLimit(entityQueryExpressionBuilder, sequenceParseResult,executorContext.getEasyQueryOption());
+        this.maxShardingQueryLimit = EasyShardingUtil.getMaxShardingQueryLimit(entityQueryExpressionBuilder, sequenceParseResult, executorContext.getEasyQueryOption());
         this.connectionMode = EasyShardingUtil.getConnectionMode(entityQueryExpressionBuilder, sequenceParseResult);
     }
 
     private SequenceParseResult initSequenceOrderPrepareParseResult(ExecutorContext executorContext) {
         //存在分片对象的情况下
-        if (this.sharding) {
-            EasyQueryOption easyQueryOption = executorContext.getRuntimeContext().getQueryConfiguration().getEasyQueryOption();
-            SQLBuilderSegment order = easyQuerySQLExpression.getOrder();
-            if (EasySQLSegmentUtil.isNotEmpty(order)) {
-                SQLSegment firstOrder = EasyCollectionUtil.first(order.getSQLSegments());
-                OrderBySegment firstOrderColumn = (OrderBySegment) firstOrder;
-                TableAvailable table = firstOrderColumn.getTable();
-                ShardingInitConfig shardingInitConfig = table.getEntityMetadata().getShardingInitConfig();
-                ShardingSequenceConfig shardingSequenceConfig = shardingInitConfig.getShardingSequenceConfig();
-                if (shardingSequenceConfig != null) {
-                    //存在配置
-                    Boolean asc = shardingSequenceConfig.getSequenceProperty(firstOrderColumn.getPropertyName());
-                    if (asc != null) {
-                        boolean reverse = !firstOrderColumn.isAsc();
-                        return new SequenceParseResult(table, shardingSequenceConfig.getTableComparator(), reverse, shardingSequenceConfig.getConnectionModeOrDefault(executorContext.getExecuteMethod(), easyQueryOption.getConnectionMode()), shardingSequenceConfig.getMaxShardingQueryLimitOrDefault(executorContext.getExecuteMethod(), easyQueryOption.getMaxShardingQueryLimit()));
+        EasyQueryOption easyQueryOption = executorContext.getRuntimeContext().getQueryConfiguration().getEasyQueryOption();
+        SQLBuilderSegment order = easyQuerySQLExpression.getOrder();
+        if (EasySQLSegmentUtil.isNotEmpty(order)) {
+            SQLSegment firstOrder = EasyCollectionUtil.first(order.getSQLSegments());
+            OrderBySegment firstOrderColumn = (OrderBySegment) firstOrder;
+            TableAvailable table = firstOrderColumn.getTable();
+            ShardingInitConfig shardingInitConfig = table.getEntityMetadata().getShardingInitConfig();
+            ShardingSequenceConfig shardingSequenceConfig = shardingInitConfig.getShardingSequenceConfig();
+            if (shardingSequenceConfig != null) {
+                //存在配置
+                Boolean asc = shardingSequenceConfig.getSequenceProperty(firstOrderColumn.getPropertyName());
+                if (asc != null) {
+                    boolean reverse = !firstOrderColumn.isAsc();
+                    return new SequenceParseResult(table, shardingSequenceConfig.getTableComparator(), reverse, shardingSequenceConfig.getConnectionModeOrDefault(executorContext.getExecuteMethod(), easyQueryOption.getConnectionMode()), shardingSequenceConfig.getMaxShardingQueryLimitOrDefault(executorContext.getExecuteMethod(), easyQueryOption.getMaxShardingQueryLimit()));
+                }
+            }
+        } else {
+
+            if (Objects.equals(ExecuteMethodEnum.MAX, executorContext.getExecuteMethod())) {
+                SQLSegment firstMax = EasyCollectionUtil.first(easyQuerySQLExpression.getProjects().getSQLSegments());
+                if (firstMax instanceof FuncColumnSegment) {
+                    FuncColumnSegment firstMaxColumn = (FuncColumnSegment) firstMax;
+
+                    TableAvailable table = firstMaxColumn.getTable();
+                    ShardingInitConfig shardingInitConfig = table.getEntityMetadata().getShardingInitConfig();
+                    ShardingSequenceConfig shardingSequenceConfig = shardingInitConfig.getShardingSequenceConfig();
+                    if (shardingSequenceConfig != null) {
+                        //存在配置
+                        Boolean asc = shardingSequenceConfig.getSequenceProperty(firstMaxColumn.getPropertyName());
+                        if (asc != null) {
+                            return new SequenceParseResult(table, shardingSequenceConfig.getTableComparator(), true, shardingSequenceConfig.getConnectionModeOrDefault(executorContext.getExecuteMethod(), easyQueryOption.getConnectionMode()), shardingSequenceConfig.getMaxShardingQueryLimitOrDefault(executorContext.getExecuteMethod(), easyQueryOption.getMaxShardingQueryLimit()));
+                        }
+                    }
+                }
+
+            } else if (Objects.equals(ExecuteMethodEnum.MIN, executorContext.getExecuteMethod())) {
+                SQLSegment firstMin = EasyCollectionUtil.first(easyQuerySQLExpression.getProjects().getSQLSegments());
+                if (firstMin instanceof FuncColumnSegment) {
+                    FuncColumnSegment firstMinColumn = (FuncColumnSegment) firstMin;
+
+                    TableAvailable table = firstMinColumn.getTable();
+                    ShardingInitConfig shardingInitConfig = table.getEntityMetadata().getShardingInitConfig();
+                    ShardingSequenceConfig shardingSequenceConfig = shardingInitConfig.getShardingSequenceConfig();
+                    if (shardingSequenceConfig != null) {
+                        //存在配置
+                        Boolean asc = shardingSequenceConfig.getSequenceProperty(firstMinColumn.getPropertyName());
+                        if (asc != null) {
+                            return new SequenceParseResult(table, shardingSequenceConfig.getTableComparator(), false, shardingSequenceConfig.getConnectionModeOrDefault(executorContext.getExecuteMethod(), easyQueryOption.getConnectionMode()), shardingSequenceConfig.getMaxShardingQueryLimitOrDefault(executorContext.getExecuteMethod(), easyQueryOption.getMaxShardingQueryLimit()));
+                        }
                     }
                 }
             } else {
 
-                if (Objects.equals(ExecuteMethodEnum.MAX, executorContext.getExecuteMethod())) {
-                    SQLSegment firstMax = EasyCollectionUtil.first(easyQuerySQLExpression.getProjects().getSQLSegments());
-                    if (firstMax instanceof FuncColumnSegment) {
-                        FuncColumnSegment firstMaxColumn = (FuncColumnSegment) firstMax;
-
-                        TableAvailable table = firstMaxColumn.getTable();
-                        ShardingInitConfig shardingInitConfig = table.getEntityMetadata().getShardingInitConfig();
-                        ShardingSequenceConfig shardingSequenceConfig = shardingInitConfig.getShardingSequenceConfig();
-                        if (shardingSequenceConfig != null) {
-                            //存在配置
-                            Boolean asc = shardingSequenceConfig.getSequenceProperty(firstMaxColumn.getPropertyName());
-                            if (asc != null) {
-                                return new SequenceParseResult(table, shardingSequenceConfig.getTableComparator(), true, shardingSequenceConfig.getConnectionModeOrDefault(executorContext.getExecuteMethod(), easyQueryOption.getConnectionMode()), shardingSequenceConfig.getMaxShardingQueryLimitOrDefault(executorContext.getExecuteMethod(), easyQueryOption.getMaxShardingQueryLimit()));
-                            }
-                        }
-                    }
-
-                } else if (Objects.equals(ExecuteMethodEnum.MIN, executorContext.getExecuteMethod())) {
-                    SQLSegment firstMin = EasyCollectionUtil.first(easyQuerySQLExpression.getProjects().getSQLSegments());
-                    if (firstMin instanceof FuncColumnSegment) {
-                        FuncColumnSegment firstMinColumn = (FuncColumnSegment) firstMin;
-
-                        TableAvailable table = firstMinColumn.getTable();
-                        ShardingInitConfig shardingInitConfig = table.getEntityMetadata().getShardingInitConfig();
-                        ShardingSequenceConfig shardingSequenceConfig = shardingInitConfig.getShardingSequenceConfig();
-                        if (shardingSequenceConfig != null) {
-                            //存在配置
-                            Boolean asc = shardingSequenceConfig.getSequenceProperty(firstMinColumn.getPropertyName());
-                            if (asc != null) {
-                                return new SequenceParseResult(table, shardingSequenceConfig.getTableComparator(), false, shardingSequenceConfig.getConnectionModeOrDefault(executorContext.getExecuteMethod(), easyQueryOption.getConnectionMode()), shardingSequenceConfig.getMaxShardingQueryLimitOrDefault(executorContext.getExecuteMethod(), easyQueryOption.getMaxShardingQueryLimit()));
-                            }
-                        }
-                    }
-                } else {
-
-                    //默认匹配顺序
-                    TableAvailable table = EasyCollectionUtil.first(tablePredicateParseDescriptor.getTables());
-                    ShardingInitConfig shardingInitConfig = table.getEntityMetadata().getShardingInitConfig();
-                    ShardingSequenceConfig shardingSequenceConfig = shardingInitConfig.getShardingSequenceConfig();
-                    if (shardingSequenceConfig != null && shardingSequenceConfig.hasCompareMethods(executorContext.getExecuteMethod())) {
-                        boolean asc = shardingSequenceConfig.hasCompareAscMethods(executorContext.getExecuteMethod());
-                        boolean reverse = !asc;
-                        return new SequenceParseResult(table, shardingSequenceConfig.getTableComparator(), reverse, shardingSequenceConfig.getConnectionModeOrDefault(executorContext.getExecuteMethod(), easyQueryOption.getConnectionMode()), shardingSequenceConfig.getMaxShardingQueryLimitOrDefault(executorContext.getExecuteMethod(), easyQueryOption.getMaxShardingQueryLimit()));
-                    }
+                //默认匹配顺序
+                TableAvailable table = EasyCollectionUtil.first(tablePredicateParseDescriptor.getTables());
+                ShardingInitConfig shardingInitConfig = table.getEntityMetadata().getShardingInitConfig();
+                ShardingSequenceConfig shardingSequenceConfig = shardingInitConfig.getShardingSequenceConfig();
+                if (shardingSequenceConfig != null && shardingSequenceConfig.hasCompareMethods(executorContext.getExecuteMethod())) {
+                    boolean asc = shardingSequenceConfig.hasCompareAscMethods(executorContext.getExecuteMethod());
+                    boolean reverse = !asc;
+                    return new SequenceParseResult(table, shardingSequenceConfig.getTableComparator(), reverse, shardingSequenceConfig.getConnectionModeOrDefault(executorContext.getExecuteMethod(), easyQueryOption.getConnectionMode()), shardingSequenceConfig.getMaxShardingQueryLimitOrDefault(executorContext.getExecuteMethod(), easyQueryOption.getMaxShardingQueryLimit()));
                 }
             }
         }
@@ -153,7 +149,7 @@ public class EasyQueryPrepareParseResult implements QueryPrepareParseResult {
 
     @Override
     public boolean isSharding() {
-        return sharding;
+        return true;
     }
 
     @Override

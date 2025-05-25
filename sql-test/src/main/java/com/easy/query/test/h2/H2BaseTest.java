@@ -4,6 +4,8 @@ import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.ShardingEntityExpressionExecutor;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -119,6 +121,7 @@ public class H2BaseTest {
                     op.setDefaultDataSourceMergePoolSize(20);
                 })
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
+                .replaceService(EntityExpressionExecutor.class,ShardingEntityExpressionExecutor.class)
                 .useDatabaseConfigure(new H2DatabaseConfiguration())
                 .build();
         easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
@@ -141,7 +144,7 @@ public class H2BaseTest {
                     op.setThrowIfRouteNotMatch(false);
                     op.setMaxShardingRouteCount(512);
                     op.setDefaultDataSourceMergePoolSize(20);
-                })
+                }).replaceService(EntityExpressionExecutor.class, ShardingEntityExpressionExecutor.class)
                 .build();
         QueryRuntimeContext runtimeContext = easyQueryClientOrder.getRuntimeContext();
         QueryConfiguration queryConfiguration = runtimeContext.getQueryConfiguration();
