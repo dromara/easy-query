@@ -12,6 +12,8 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * create time 2024/6/16 20:27
@@ -21,7 +23,7 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
  */
 public class EasyParamExpressionUtil {
 
-    public static ParamExpression getParamExpression(EntitySQLContext entitySQLContext, Object value) {
+    public static ParamExpression getParamExpression(@NotNull EntitySQLContext entitySQLContext, @Nullable Object value) {
         if (value == null) {
             return new FormatValueParamExpressionImpl("NULL");
         }

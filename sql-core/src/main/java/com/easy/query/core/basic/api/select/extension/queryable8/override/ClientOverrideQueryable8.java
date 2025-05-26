@@ -13,6 +13,7 @@ import com.easy.query.core.expression.parser.core.base.NavigateInclude;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.function.BiFunction;
@@ -30,6 +31,7 @@ public interface ClientOverrideQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> extend
 
     ClientQueryable<T1> getClientQueryable();
 
+    @NotNull
     @Override
     ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> cloneQueryable();
 
@@ -119,28 +121,34 @@ public interface ClientOverrideQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> extend
     @Override
     <TREntity> ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> include(boolean condition, SQLFuncExpression1<NavigateInclude, ClientQueryable<TREntity>> navigateIncludeSQLExpression);
 
+    @NotNull
     @Override
     default ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> limit(long rows) {
         return limit(true, rows);
     }
 
+    @NotNull
     @Override
     default ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> limit(boolean condition, long rows) {
         return limit(condition, 0, rows);
     }
 
+    @NotNull
     @Override
     default ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> limit(long offset, long rows) {
         return limit(true, offset, rows);
     }
 
+    @NotNull
     @Override
     ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> limit(boolean condition, long offset, long rows);
 
+    @NotNull
     default ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> distinct() {
         return distinct(true);
     }
 
+    @NotNull
     @Override
     ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> distinct(boolean condition);
 
@@ -171,18 +179,23 @@ public interface ClientOverrideQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> extend
      *
      * @return
      */
+    @NotNull
     @Override
     ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> asTracking();
 
+    @NotNull
     @Override
     ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> asNoTracking();
 
+    @NotNull
     @Override
     ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
 
+    @NotNull
     @Override
     ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> useMaxShardingQueryLimit(int maxShardingQueryLimit);
 
+    @NotNull
     @Override
     ClientQueryable8<T1, T2, T3, T4, T5, T6, T7, T8> useConnectionMode(ConnectionModeEnum connectionMode);
 

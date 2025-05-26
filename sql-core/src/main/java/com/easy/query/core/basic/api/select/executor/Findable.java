@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select.executor;
 
-import com.easy.query.core.annotation.NotNull;
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.QueryAvailable;
 import com.easy.query.core.exception.AssertExceptionFactory;
@@ -25,7 +25,7 @@ public interface Findable<T> extends QueryAvailable<T> {
      * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 如果没有主键 所以VO查询必定报错
      * @throws com.easy.query.core.exception.EasyQueryFindNotNullException 可以通过 {@link AssertExceptionFactory#createFindNotNullException(Query, String, String)} 自定义
      */
-    @Nullable T findOrNull(Object id);
+    @Nullable T findOrNull(@NotNull Object id);
 
     /**
      * 无参数方法默认抛出对象添加的{@link com.easy.query.core.annotation.EasyAssertMessage}
@@ -54,7 +54,8 @@ public interface Findable<T> extends QueryAvailable<T> {
      * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 如果没有主键 所以VO查询必定报错
      * @throws com.easy.query.core.exception.EasyQueryFindNotNullException 可以通过 {@link AssertExceptionFactory#createFindNotNullException(Query, String, String)} 自定义
      */
-    default @NotNull T findNotNull(Object id){
+    @NotNull
+    default T findNotNull(@NotNull Object id){
         return findNotNull(id,null,null);
     }
 
@@ -87,7 +88,8 @@ public interface Findable<T> extends QueryAvailable<T> {
      * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 如果没有主键 所以VO查询必定报错
      * @throws com.easy.query.core.exception.EasyQueryFindNotNullException 可以通过 {@link AssertExceptionFactory#createFindNotNullException(Query, String, String)} 自定义
      */
-    default @NotNull T findNotNull(Object id,String msg) {
+    @NotNull
+    default T findNotNull(@NotNull Object id, @Nullable String msg) {
         return findNotNull(id,msg, null);
     }
 
@@ -121,7 +123,7 @@ public interface Findable<T> extends QueryAvailable<T> {
      * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 如果没有主键 所以VO查询必定报错
      * @throws com.easy.query.core.exception.EasyQueryFindNotNullException 可以通过 {@link AssertExceptionFactory#createFindNotNullException(Query, String, String)} 自定义
      */
-    @NotNull T findNotNull(Object id,String msg, String code);
+    @NotNull T findNotNull(@NotNull Object id,@Nullable String msg,@Nullable String code);
 
     /**
      *
@@ -131,5 +133,5 @@ public interface Findable<T> extends QueryAvailable<T> {
      * @throws com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException 如果存在多个主键 所以VO查询必定报错
      * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException 如果没有主键 所以VO查询必定报错
      */
-    @NotNull T findNotNull(Object id,Supplier<RuntimeException> throwFunc);
+    @NotNull T findNotNull(@NotNull Object id,@NotNull Supplier<RuntimeException> throwFunc);
 }

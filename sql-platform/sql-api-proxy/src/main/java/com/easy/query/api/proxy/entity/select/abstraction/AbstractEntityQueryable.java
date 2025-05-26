@@ -4,7 +4,6 @@ import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
-import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable2;
 import com.easy.query.api.proxy.entity.select.impl.EasySelectFlatQueryable;
 import com.easy.query.api.proxy.entity.select.join.join2.InnerJoinExpressionJoiner2;
 import com.easy.query.api.proxy.entity.select.join.join2.LeftJoinExpressionJoiner2;
@@ -12,12 +11,11 @@ import com.easy.query.api.proxy.entity.select.join.join2.RightJoinExpressionJoin
 import com.easy.query.api.proxy.extension.tree.EntityTreeCTEConfigurer;
 import com.easy.query.api.proxy.extension.tree.EntityTreeCTEConfigurerImpl;
 import com.easy.query.api.proxy.util.EasyProxyUtil;
-import com.easy.query.core.annotation.NotNull;
+import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.basic.api.select.ClientQueryable2;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
@@ -37,7 +35,6 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -97,6 +94,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return t1Proxy;
     }
 
+    @NotNull
     @Override
     public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
@@ -107,6 +105,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return clientQueryable;
     }
 
+    @NotNull
     @Override
     public EntityQueryable<T1Proxy, T1> toCteAs(String tableName) {
         return new EasyEntityQueryable<>(get1Proxy(), getClientQueryable().toCteAs(tableName));
@@ -117,11 +116,13 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return this;
     }
 
+    @NotNull
     @Override
     public Class<T1> queryClass() {
         return clientQueryable.queryClass();
     }
 
+    @NotNull
     @Override
     public EntityMetadata queryEntityMetadata() {
         return clientQueryable.queryEntityMetadata();
@@ -143,19 +144,19 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public <TR> TR singleOrNull(Class<TR> resultClass) {
+    public <TR> TR singleOrNull(@NotNull Class<TR> resultClass) {
         return getClientQueryable().singleOrNull(resultClass);
     }
 
     @Override
-    public T1 findOrNull(Object id) {
+    public T1 findOrNull(@NotNull Object id) {
         return getClientQueryable().findOrNull(id);
     }
 
 
     @NotNull
     @Override
-    public <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code) {
+    public <TR> TR firstNotNull(@NotNull Class<TR> resultClass, String msg, String code) {
         return getClientQueryable().firstNotNull(resultClass, msg, code);
     }
 
@@ -167,43 +168,49 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
     @NotNull
     @Override
-    public <TR> TR singleNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
+    public <TR> TR singleNotNull(@NotNull Class<TR> resultClass, @NotNull Supplier<RuntimeException> throwFunc) {
         return getClientQueryable().singleNotNull(resultClass, throwFunc);
     }
 
     @NotNull
     @Override
-    public T1 findNotNull(Object id, Supplier<RuntimeException> throwFunc) {
+    public T1 findNotNull(@NotNull Object id, @NotNull Supplier<RuntimeException> throwFunc) {
         return getClientQueryable().findNotNull(id, throwFunc);
     }
 
+    @NotNull
     @Override
     public Map<String, Object> toMap() {
         return getClientQueryable().toMap();
     }
 
+    @NotNull
     @Override
     public List<Map<String, Object>> toMaps() {
         return getClientQueryable().toMaps();
     }
 
+    @NotNull
     @Override
-    public <TR> List<TR> toList(Class<TR> resultClass) {
+    public <TR> List<TR> toList(@NotNull Class<TR> resultClass) {
         return clientQueryable.toList(resultClass);
     }
 
+    @NotNull
     @Override
-    public <TR> List<TR> toList(Class<TR> resultClass, EntityMetadata resultEntityMetadata) {
+    public <TR> List<TR> toList(@NotNull Class<TR> resultClass, @NotNull EntityMetadata resultEntityMetadata) {
         return clientQueryable.toList(resultClass, resultEntityMetadata);
     }
 
+    @NotNull
     @Override
     public List<T1> toTreeList(boolean ignore) {
         return clientQueryable.toTreeList(ignore);
     }
 
+    @NotNull
     @Override
-    public <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass, SQLConsumer<Statement> configurer) {
+    public <TR> JdbcStreamResult<TR> toStreamResult(@NotNull Class<TR> resultClass, @NotNull SQLConsumer<Statement> configurer) {
         return clientQueryable.toStreamResult(resultClass, configurer);
     }
 
@@ -212,13 +219,15 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         clientQueryable.toChunkIf(size, chunk);
     }
 
+    @NotNull
     @Override
-    public <TR> TR streamBy(Function<Stream<T1>, TR> fetcher, SQLConsumer<Statement> configurer) {
+    public <TR> TR streamBy(@NotNull Function<Stream<T1>, TR> fetcher, @NotNull SQLConsumer<Statement> configurer) {
         return clientQueryable.streamBy(fetcher, configurer);
     }
 
+    @NotNull
     @Override
-    public <TR> String toSQL(Class<TR> resultClass, ToSQLContext toSQLContext) {
+    public <TR> String toSQL(@NotNull Class<TR> resultClass, @NotNull ToSQLContext toSQLContext) {
         return clientQueryable.toSQL(resultClass, toSQLContext);
     }
 
@@ -526,8 +535,9 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return new EasyEntityQueryable<>(get1Proxy(), clientQueryable);
     }
 
+    @NotNull
     @Override
-    public EntityQueryable<T1Proxy, T1> select(String columns) {
+    public EntityQueryable<T1Proxy, T1> select(@NotNull String columns) {
         clientQueryable.select(columns);
         return this;
     }
@@ -653,6 +663,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return this;
     }
 
+    @NotNull
     @Override
     public EntityQueryable<T1Proxy, T1> distinct(boolean condition) {
         if (condition) {
@@ -661,6 +672,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return this;
     }
 
+    @NotNull
     @Override
     public EntityQueryable<T1Proxy, T1> limit(boolean condition, long offset, long rows) {
         if (condition) {
@@ -669,16 +681,19 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return this;
     }
 
+    @NotNull
     @Override
-    public <TResult> EasyPageResult<TResult> toPageResult(Class<TResult> tResultClass, long pageIndex, long pageSize, long pageTotal) {
+    public <TResult> EasyPageResult<TResult> toPageResult(@NotNull Class<TResult> tResultClass, long pageIndex, long pageSize, long pageTotal) {
         return clientQueryable.toPageResult(tResultClass, pageIndex, pageSize, pageTotal);
     }
 
+    @NotNull
     @Override
     public <TResult> EasyPageResult<TResult> toShardingPageResult(Class<TResult> tResultClass, long pageIndex, long pageSize, List<Long> totalLines) {
         return clientQueryable.toShardingPageResult(tResultClass, pageIndex, pageSize, totalLines);
     }
 
+    @NotNull
     @Override
     public EntityQueryExpressionBuilder getSQLEntityExpressionBuilder() {
         return clientQueryable.getSQLEntityExpressionBuilder();
@@ -782,12 +797,14 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return this;
     }
 
+    @NotNull
     @Override
     public EntityQueryable<T1Proxy, T1> asTracking() {
         clientQueryable.asTracking();
         return this;
     }
 
+    @NotNull
     @Override
     public EntityQueryable<T1Proxy, T1> asNoTracking() {
         clientQueryable.asNoTracking();
@@ -824,18 +841,21 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return this;
     }
 
+    @NotNull
     @Override
     public EntityQueryable<T1Proxy, T1> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
         clientQueryable.useShardingConfigure(maxShardingQueryLimit, connectionMode);
         return this;
     }
 
+    @NotNull
     @Override
     public EntityQueryable<T1Proxy, T1> useMaxShardingQueryLimit(int maxShardingQueryLimit) {
         clientQueryable.useMaxShardingQueryLimit(maxShardingQueryLimit);
         return this;
     }
 
+    @NotNull
     @Override
     public EntityQueryable<T1Proxy, T1> useConnectionMode(ConnectionModeEnum connectionMode) {
         clientQueryable.useConnectionMode(connectionMode);

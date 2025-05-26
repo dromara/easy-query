@@ -11,6 +11,7 @@ import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.proxy.ProxyEntity;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.function.BiFunction;
@@ -29,6 +30,7 @@ public interface OverrideEntityQueryable4<T1Proxy extends ProxyEntity<T1Proxy, T
         T4Proxy extends ProxyEntity<T4Proxy, T4>, T4> extends EntityQueryable<T1Proxy, T1>,
         EntityQueryable4Available<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> {
 
+    @NotNull
     @Override
     EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> cloneQueryable();
 
@@ -113,28 +115,34 @@ public interface OverrideEntityQueryable4<T1Proxy extends ProxyEntity<T1Proxy, T
     @Override
     EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> orderByObject(boolean condition, ObjectSort objectSort);
 
+    @NotNull
     @Override
     default EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> limit(long rows) {
         return limit(true, rows);
     }
 
+    @NotNull
     @Override
     default EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> limit(boolean condition, long rows) {
         return limit(condition, 0, rows);
     }
 
+    @NotNull
     @Override
     default EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> limit(long offset, long rows) {
         return limit(true, offset, rows);
     }
 
+    @NotNull
     @Override
     EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> limit(boolean condition, long offset, long rows);
 
+    @NotNull
     default EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> distinct() {
         return distinct(true);
     }
 
+    @NotNull
     @Override
     EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> distinct(boolean condition);
 
@@ -165,18 +173,23 @@ public interface OverrideEntityQueryable4<T1Proxy extends ProxyEntity<T1Proxy, T
      *
      * @return
      */
+    @NotNull
     @Override
     EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> asTracking();
 
+    @NotNull
     @Override
     EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> asNoTracking();
 
+    @NotNull
     @Override
     EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
 
+    @NotNull
     @Override
     EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> useMaxShardingQueryLimit(int maxShardingQueryLimit);
 
+    @NotNull
     @Override
     EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> useConnectionMode(ConnectionModeEnum connectionMode);
 

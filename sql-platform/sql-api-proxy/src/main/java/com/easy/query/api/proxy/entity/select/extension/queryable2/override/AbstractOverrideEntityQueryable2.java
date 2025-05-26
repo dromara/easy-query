@@ -17,6 +17,7 @@ import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.function.BiFunction;
@@ -80,12 +81,14 @@ public abstract class AbstractOverrideEntityQueryable2<T1Proxy extends ProxyEnti
         return getQueryable2();
     }
 
+    @NotNull
     @Override
     public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> limit(boolean condition, long offset, long rows) {
         super.limit(condition, offset, rows);
         return getQueryable2();
     }
 
+    @NotNull
     @Override
     public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> distinct(boolean condition) {
         super.distinct(condition);
@@ -134,30 +137,35 @@ public abstract class AbstractOverrideEntityQueryable2<T1Proxy extends ProxyEnti
         return getQueryable2();
     }
 
+    @NotNull
     @Override
     public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> asTracking() {
         super.asTracking();
         return getQueryable2();
     }
 
+    @NotNull
     @Override
     public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> asNoTracking() {
         super.asNoTracking();
         return getQueryable2();
     }
 
+    @NotNull
     @Override
     public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
         super.useShardingConfigure(maxShardingQueryLimit, connectionMode);
         return getQueryable2();
     }
 
+    @NotNull
     @Override
     public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> useMaxShardingQueryLimit(int maxShardingQueryLimit) {
         super.useMaxShardingQueryLimit(maxShardingQueryLimit);
         return getQueryable2();
     }
 
+    @NotNull
     @Override
     public EntityQueryable2<T1Proxy, T1, T2Proxy, T2> useConnectionMode(ConnectionModeEnum connectionMode) {
         super.useConnectionMode(connectionMode);

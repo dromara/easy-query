@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.metadata.EntityMetadata;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * create time 2023/10/7 15:06
@@ -14,6 +15,8 @@ public interface QueryAvailable<T> {
      *
      * @return 当前查询的对象字节
      */
+    @NotNull
     Class<T> queryClass();
+    @NotNull
     EntityMetadata queryEntityMetadata();
 }

@@ -2,6 +2,7 @@ package com.easy.query.core.basic.api.select.executor;
 
 import com.easy.query.core.basic.api.select.QueryAvailable;
 import com.easy.query.core.metadata.EntityMetadata;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -22,6 +23,10 @@ public interface ListResultAble<T> extends QueryAvailable<T> {
      * @param <TR>        映射对象类型
      * @return 获取查询结果集
      */
-    <TR> List<TR> toList(Class<TR> resultClass);
-    <TR> List<TR> toList(Class<TR> resultClass, EntityMetadata resultEntityMetadata);
+    @NotNull
+    <TR> List<TR> toList(@NotNull Class<TR> resultClass);
+    @NotNull
+    <TR> List<TR> toList(
+            @NotNull Class<TR> resultClass,
+            @NotNull EntityMetadata resultEntityMetadata);
 }

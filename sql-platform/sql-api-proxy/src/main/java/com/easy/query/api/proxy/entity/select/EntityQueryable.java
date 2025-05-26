@@ -25,6 +25,7 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * create time 2023/12/4 09:59
@@ -65,16 +66,19 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
      * 克隆一个查询表达式为了能够复用给其他代码而不再需要重新创建一个查询对象
      * @return
      */
+    @NotNull
     @Override
     EntityQueryable<T1Proxy, T1> cloneQueryable();
 
 
+    @NotNull
     @Override
     default EntityQueryable<T1Proxy, T1> toCteAs(){
 //        getClientQueryable().getRuntimeContext()
         return toCteAs(getRuntimeContext().getCteTableNamedProvider().getDefaultCteTableName(queryClass()));
     }
 
+    @NotNull
     @Override
     EntityQueryable<T1Proxy, T1> toCteAs(String tableName);
 
@@ -84,30 +88,36 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
      * @param columns
      * @return
      */
+    @NotNull
     @Override
-    EntityQueryable<T1Proxy, T1> select(String columns);
+    EntityQueryable<T1Proxy, T1> select(@NotNull String columns);
 
+    @NotNull
     default EntityQueryable<T1Proxy, T1> distinct() {
         return distinct(true);
     }
 
-    EntityQueryable<T1Proxy, T1> distinct(boolean condition);
+    @NotNull EntityQueryable<T1Proxy, T1> distinct(boolean condition);
 
+    @NotNull
     @Override
     default EntityQueryable<T1Proxy, T1> limit(long rows) {
         return limit(true, rows);
     }
 
+    @NotNull
     @Override
     default EntityQueryable<T1Proxy, T1> limit(boolean condition, long rows) {
         return limit(condition, 0, rows);
     }
 
+    @NotNull
     @Override
     default EntityQueryable<T1Proxy, T1> limit(long offset, long rows) {
         return limit(true, offset, rows);
     }
 
+    @NotNull
     @Override
     EntityQueryable<T1Proxy, T1> limit(boolean condition, long offset, long rows);
 

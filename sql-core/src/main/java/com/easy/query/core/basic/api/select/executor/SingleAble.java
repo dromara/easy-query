@@ -5,6 +5,8 @@ import com.easy.query.core.basic.api.select.QueryAvailable;
 import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.exception.EasyQuerySingleNotNullException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
@@ -19,8 +21,9 @@ public interface SingleAble<T> extends QueryAvailable<T> {
      * 返回数据且断言至多一条数据,如果大于一条数据将会抛出 {@link EasyQuerySingleMoreElementException}
      *
      * @return
-     * @throws EasyQuerySingleMoreElementException  如果大于一条数据
+     * @throws EasyQuerySingleMoreElementException 如果大于一条数据
      */
+    @Nullable
     T singleOrNull();
 
 
@@ -34,11 +37,15 @@ public interface SingleAble<T> extends QueryAvailable<T> {
      * public class Topic{}
      * }
      * </pre></blockquote>
+     *
      * @return
      */
+
+    @NotNull
     default T singleNotNull() {
         return singleNotNull(null, null);
     }
+
     /**
      * 返回数据且断言至多一条数据,如果大于一条数据将会抛出 {@link EasyQuerySingleMoreElementException}
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]
@@ -48,7 +55,8 @@ public interface SingleAble<T> extends QueryAvailable<T> {
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据 可以通过
      * @throws EasyQuerySingleNotNullException     如果查询不到数据 可以通过 {@link AssertExceptionFactory#createSingleNotNullException(Query, String, String)} 自定义
      */
-    default T singleNotNull(String msg) {
+    @NotNull
+    default T singleNotNull(@Nullable String msg) {
         return singleNotNull(msg, null);
     }
 
@@ -62,7 +70,15 @@ public interface SingleAble<T> extends QueryAvailable<T> {
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
      * @throws EasyQuerySingleNotNullException     如果查询不到数据 可以通过 {@link AssertExceptionFactory#createSingleNotNullException(Query, String, String)} 自定义
      */
-    T singleNotNull(String msg, String code);
+    @NotNull
+    T singleNotNull(@Nullable String msg, @Nullable String code);
 
-    T singleNotNull(Supplier<RuntimeException> throwFunc);
+    /**
+     * 自定义查询结果为null时如何返回
+     * @param throwFunc
+     * @return
+     * @throws EasyQuerySingleMoreElementException 如果大于一条数据
+     */
+    @NotNull
+    T singleNotNull(@NotNull Supplier<RuntimeException> throwFunc);
 }

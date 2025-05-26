@@ -1,8 +1,7 @@
 package com.easy.query.core.basic.api.select;
 
-import com.easy.query.core.annotation.NotNull;
-import com.easy.query.core.annotation.Nullable;
-import com.easy.query.core.basic.api.cte.CteTableAvailable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.basic.api.select.executor.Fillable;
 import com.easy.query.core.basic.api.select.executor.MapAble;
 import com.easy.query.core.basic.api.select.executor.QueryExecutable;
@@ -49,38 +48,47 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      *
      * @return
      */
+    @NotNull
     Query<T> cloneQueryable();
 
     /**
      * 生成with cte as临时表可复用
+     *
      * @return 返回表达式
      */
-   default Query<T> toCteAs(){
-      return toCteAs(getRuntimeContext().getCteTableNamedProvider().getDefaultCteTableName(queryClass()));
-   }
+    @NotNull
+    default Query<T> toCteAs() {
+        return toCteAs(getRuntimeContext().getCteTableNamedProvider().getDefaultCteTableName(queryClass()));
+    }
 
     /**
      * 生成with cte as临时表可复用
+     *
      * @param tableName 手动指定表名
      * @return 返回表达式
      */
-   default Query<T> toCteAs(String tableName){
-       throw new UnsupportedOperationException();
-   }
+    @NotNull
+    default Query<T> toCteAs(String tableName) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * 当前eq的运行时上下文
+     *
      * @return 运行时上下文
      */
-   @Override
-   default QueryRuntimeContext getRuntimeContext(){
-       return getSQLEntityExpressionBuilder().getRuntimeContext();
-   }
+    @NotNull
+    @Override
+    default QueryRuntimeContext getRuntimeContext() {
+        return getSQLEntityExpressionBuilder().getRuntimeContext();
+    }
+
     /**
      * 当前的查询表达式
      *
      * @return
      */
+    @NotNull
     EntityQueryExpressionBuilder getSQLEntityExpressionBuilder();
 
     /**
@@ -90,13 +98,15 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * @param columns
      * @return
      */
-    Query<T> select(String columns);
+    @NotNull
+    Query<T> select(@NotNull String columns);
 
     /**
      * 返回执行sql
      *
      * @return
      */
+    @NotNull
     default String toSQL() {
         return toSQL(queryClass());
     }
@@ -107,8 +117,8 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * @param toSQLContext
      * @return
      */
-
-    default String toSQL(ToSQLContext toSQLContext) {
+    @NotNull
+    default String toSQL(@NotNull ToSQLContext toSQLContext) {
         return toSQL(queryClass(), toSQLContext);
     }
 
@@ -117,7 +127,7 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      *
      * @return 包含sql和sql结果比如参数
      */
-
+    @NotNull
     default ToSQLResult toSQLResult() {
         ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(getSQLEntityExpressionBuilder().getExpressionContext().getTableContext());
         String sql = toSQL(queryClass(), toSQLContext);
@@ -131,12 +141,14 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * @param <TR>
      * @return
      */
-    default <TR> String toSQL(Class<TR> resultClass) {
+    @NotNull
+    default <TR> String toSQL(@NotNull Class<TR> resultClass) {
         TableContext tableContext = getSQLEntityExpressionBuilder().getExpressionContext().getTableContext();
         return toSQL(resultClass, DefaultToSQLContext.defaultToSQLContext(tableContext));
     }
 
-    <TR> String toSQL(Class<TR> resultClass, ToSQLContext toSQLContext);
+    @NotNull
+    <TR> String toSQL(@NotNull Class<TR> resultClass,@NotNull ToSQLContext toSQLContext);
 
     /**
      * 返回long类型的数量结果
@@ -169,15 +181,15 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
         required(null, null);
     }
 
-    default void required(String msg) {
+    default void required(@Nullable String msg) {
         required(() -> getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createRequiredException(this, msg, null));
     }
 
-    default void required(String msg, String code) {
+    default void required(@Nullable String msg,@Nullable String code) {
         required(() -> getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createRequiredException(this, msg, code));
     }
 
-    default void required(Supplier<RuntimeException> throwFunc) {
+    default void required(@NotNull Supplier<RuntimeException> throwFunc) {
         boolean any = any();
         if (!any) {
             throw throwFunc.get();
@@ -202,15 +214,15 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * @param code
      * @return
      */
-    default @NotNull T firstNotNull(String msg, String code) {
+    default @NotNull T firstNotNull(@Nullable String msg,@Nullable String code) {
         return firstNotNull(queryClass(), msg, code);
     }
 
-    default <TR> @NotNull TR firstNotNull(Class<TR> resultClass, String msg, String code) {
+    default <TR> @NotNull TR firstNotNull(@NotNull Class<TR> resultClass,@Nullable String msg,@Nullable String code) {
         return firstNotNull(resultClass, () -> getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createFirstNotNullException(this, msg, code));
     }
 
-    default @NotNull T firstNotNull(Supplier<RuntimeException> throwFunc) {
+    default @NotNull T firstNotNull(@NotNull Supplier<RuntimeException> throwFunc) {
         return firstNotNull(queryClass(), throwFunc);
     }
 
@@ -231,7 +243,7 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * @return
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
      */
-    default Optional<T> singleOptional() {
+    default @NotNull Optional<T> singleOptional() {
         return Optional.ofNullable(singleOrNull(queryClass()));
     }
 
@@ -243,7 +255,7 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * @return
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
      */
-    default T singleOrDefault(T defaultValue) {
+    default @NotNull T singleOrDefault(@NotNull T defaultValue) {
         T singleOrNull = singleOrNull(queryClass());
         return singleOrNull == null ? defaultValue : singleOrNull;
     }
@@ -257,7 +269,8 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * @return
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
      */
-    default T singleOrDefault(T defaultValue, @Nullable Predicate<@Nullable T> usingDefault) {
+    @Nullable
+    default T singleOrDefault(@NotNull T defaultValue, @Nullable Predicate<T> usingDefault) {
         T singleOrNullValue = singleOrNull(queryClass());
         return (usingDefault != null && usingDefault.test(singleOrNullValue)) ? defaultValue : singleOrNullValue;
     }
@@ -273,15 +286,16 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
      * @throws EasyQuerySingleNotNullException     如果查询不到数据
      */
-    default @NotNull T singleNotNull(String msg, String code) {
+    @NotNull
+    default T singleNotNull(@Nullable String msg,@Nullable String code) {
         return singleNotNull(queryClass(), msg, code);
     }
-
-    default <TR> @NotNull TR singleNotNull(Class<TR> resultClass, String msg, String code) {
+    @NotNull
+    default <TR> TR singleNotNull(@NotNull Class<TR> resultClass,@Nullable String msg,@Nullable String code) {
         return singleNotNull(resultClass, () -> getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createSingleNotNullException(this, msg, code));
     }
-
-    default @NotNull T singleNotNull(Supplier<RuntimeException> throwFunc) {
+    @NotNull
+    default T singleNotNull(@NotNull Supplier<RuntimeException> throwFunc) {
         return singleNotNull(queryClass(), throwFunc);
     }
 
@@ -309,6 +323,7 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      *                    }
      * </pre></blockquote>
      *
+     * @param id
      * @param msg
      * @param code
      * @return 返回一个不能为空的结果
@@ -316,7 +331,8 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * @throws com.easy.query.core.exception.EasyQueryNoPrimaryKeyException    如果没有主键
      * @throws com.easy.query.core.exception.EasyQueryFindNotNullException     可以通过 {@link AssertExceptionFactory#createFindNotNullException(Query, String, String)} 自定义
      */
-    default @NotNull T findNotNull(Object id, String msg, String code) {
+    @NotNull
+    default T findNotNull(@NotNull Object id,@Nullable String msg,@Nullable String code) {
         return findNotNull(id, () -> getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createFindNotNullException(this, msg, code));
     }
 
@@ -324,10 +340,10 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * 返回所有的查询结果集
      * eg. SELECT  projects  FROM table t [WHERE t.`columns` = ?]
      *
-     *
-     * @return 获取查询结果集,如果查询不到结果则返回 {@code new ArrayList<>(0)}
+     * @return 获取查询结果集, 如果查询不到结果则返回 {@code new ArrayList<>(0)}
      */
-    default @NotNull List<T> toList() {
+    @NotNull
+    default List<T> toList() {
         return toList(queryClass(), queryEntityMetadata());
     }
 
@@ -356,7 +372,8 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      *
      * @return
      */
-    default @NotNull JdbcStreamResult<T> toStreamResult(SQLConsumer<Statement> configurer) {
+    @NotNull
+    default JdbcStreamResult<T> toStreamResult(@NotNull SQLConsumer<Statement> configurer) {
         return toStreamResult(queryClass(), configurer);
     }
 
@@ -366,7 +383,8 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      *
      * @return
      */
-    default @NotNull Query<T> distinct() {
+    @NotNull
+    default Query<T> distinct() {
         return distinct(true);
     }
 
@@ -381,29 +399,37 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
     @NotNull
     Query<T> distinct(boolean condition);
 
+    @NotNull
     default Query<T> limit(long rows) {
         return limit(true, rows);
     }
 
+    @NotNull
     default Query<T> limit(boolean condition, long rows) {
         return limit(condition, 0, rows);
     }
 
+    @NotNull
     default Query<T> limit(long offset, long rows) {
         return limit(true, offset, rows);
     }
 
+    @NotNull
     Query<T> limit(boolean condition, long offset, long rows);
 
-
+    @NotNull
     Query<T> asTracking();
 
+    @NotNull
     Query<T> asNoTracking();
 
+    @NotNull
     Query<T> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
 
+    @NotNull
     Query<T> useMaxShardingQueryLimit(int maxShardingQueryLimit);
 
+    @NotNull
     Query<T> useConnectionMode(ConnectionModeEnum connectionMode);
 
     /**
@@ -426,6 +452,7 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * @param <TREntity>
      * @return
      */
+    @NotNull
     @Override
     default <TREntity> Query<T> fillMany(SQLFuncExpression<Query<TREntity>> fillSetterExpression, String targetProperty, String selfProperty, BiConsumer<T, Collection<TREntity>> produce, boolean consumeNull) {
         SQLFuncExpression1<FillParams, Query<?>> fillQueryableExpression = EasySQLExpressionUtil.getFillSQLExpression(fillSetterExpression, targetProperty, consumeNull);
@@ -456,6 +483,7 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * @param <TREntity>
      * @return
      */
+    @NotNull
     @Override
     default <TREntity> Query<T> fillOne(SQLFuncExpression<Query<TREntity>> fillSetterExpression, String targetProperty, String selfProperty, BiConsumer<T, TREntity> produce, boolean consumeNull) {
         SQLFuncExpression1<FillParams, Query<?>> fillQueryableExpression = EasySQLExpressionUtil.getFillSQLExpression(fillSetterExpression, targetProperty, consumeNull);

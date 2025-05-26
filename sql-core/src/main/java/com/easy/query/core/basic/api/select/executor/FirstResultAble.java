@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select.executor;
 
-import com.easy.query.core.annotation.NotNull;
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.QueryAvailable;
 import com.easy.query.core.exception.AssertExceptionFactory;
@@ -25,8 +25,8 @@ public interface FirstResultAble<T> extends QueryAvailable<T> {
      * @param <TR>
      * @return
      */
-
-    <TR> @Nullable TR firstOrNull(Class<TR> resultClass);
+    @Nullable
+    <TR> TR firstOrNull(Class<TR> resultClass);
 
     /**
      * 无参数方法默认抛出对象添加的{@link com.easy.query.core.annotation.EasyAssertMessage}
@@ -54,7 +54,8 @@ public interface FirstResultAble<T> extends QueryAvailable<T> {
      * @return
      * @param <TR>
      */
-    default <TR> @NotNull TR firstNotNull(Class<TR> resultClass) {
+    @NotNull
+    default <TR> TR firstNotNull(Class<TR> resultClass) {
         return firstNotNull(resultClass, null, null);
     }
 
@@ -68,8 +69,8 @@ public interface FirstResultAble<T> extends QueryAvailable<T> {
      * @return
      * @throws EasyQueryFirstNotNullException 可以通过 {@link AssertExceptionFactory#createFirstNotNullException(Query, String, String)} 自定义
      */
-
-    default <TR> @NotNull TR firstNotNull(Class<TR> resultClass, String msg) {
+    @NotNull
+    default <TR> TR firstNotNull(Class<TR> resultClass, String msg) {
         return firstNotNull(resultClass, msg, null);
     }
 
@@ -84,6 +85,9 @@ public interface FirstResultAble<T> extends QueryAvailable<T> {
      * @return
      * @throws EasyQueryFirstNotNullException 可以通过 {@link AssertExceptionFactory#createFirstNotNullException(Query,String, String)} 自定义
      */
-    <TR> @NotNull TR firstNotNull(Class<TR> resultClass, String msg, String code);
-    <TR> @NotNull TR firstNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc);
+    @NotNull
+    <TR> TR firstNotNull(Class<TR> resultClass, String msg, String code);
+
+    @NotNull
+    <TR> TR firstNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc);
 }

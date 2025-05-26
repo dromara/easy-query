@@ -2,6 +2,7 @@ package com.easy.query.core.basic.api.select.executor;
 
 import com.easy.query.core.basic.api.select.QueryAvailable;
 import com.easy.query.core.metadata.EntityMetadata;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -24,8 +25,9 @@ public interface TreeListResultAble<T> extends QueryAvailable<T> {
      * @param ignore 如果不存在children为自身的是否报错
      * @return 获取查询结果集
      */
+    @NotNull
     List<T> toTreeList(boolean ignore);
-
+    @NotNull
    default List<T> toTreeList(){
        return toTreeList(false);
    }

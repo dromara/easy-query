@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select.executor;
 
-import com.easy.query.core.annotation.NotNull;
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.basic.api.select.QueryAvailable;
 import com.easy.query.core.exception.EasyQuerySingleMoreElementException;
 import com.easy.query.core.exception.EasyQuerySingleNotNullException;
@@ -27,7 +27,7 @@ public interface SingleResultAble<T> extends QueryAvailable<T> {
      * @throws EasyQuerySingleMoreElementException 如果大于一条数据
      */
     @Nullable
-    <TR> TR singleOrNull(Class<TR> resultClass);
+    <TR> TR singleOrNull(@NotNull Class<TR> resultClass);
 
     /**
      * 无参数方法默认抛出对象添加的{@link com.easy.query.core.annotation.EasyAssertMessage}
@@ -45,7 +45,7 @@ public interface SingleResultAble<T> extends QueryAvailable<T> {
      * @return 返回类型TR的实例对象
      */
     @NotNull
-    default <TR> TR singleNotNull(Class<TR> resultClass) {
+    default <TR> TR singleNotNull(@NotNull Class<TR> resultClass) {
         return singleNotNull(resultClass, null, null);
     }
 
@@ -62,7 +62,7 @@ public interface SingleResultAble<T> extends QueryAvailable<T> {
      */
 
     @NotNull
-    default <TR> TR singleNotNull(Class<TR> resultClass, String msg) {
+    default <TR> TR singleNotNull(@NotNull Class<TR> resultClass, @Nullable String msg) {
         return singleNotNull(resultClass, msg, null);
     }
 
@@ -79,7 +79,7 @@ public interface SingleResultAble<T> extends QueryAvailable<T> {
      * @throws EasyQuerySingleNotNullException     如果查询不到数据
      */
     @NotNull
-    <TR> TR singleNotNull(Class<TR> resultClass, String msg, String code);
+    <TR> TR singleNotNull(@NotNull Class<TR> resultClass, @Nullable String msg, @Nullable String code);
 
     /**
      * 返回数据且断言至多一条数据,如果大于一条数据将会抛出 {@link RuntimeException}自定义异常
@@ -91,5 +91,5 @@ public interface SingleResultAble<T> extends QueryAvailable<T> {
      * @return 返回类型TR的实例对象
      */
     @NotNull
-    <TR> TR singleNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc);
+    <TR> TR singleNotNull(@NotNull Class<TR> resultClass, @NotNull Supplier<RuntimeException> throwFunc);
 }

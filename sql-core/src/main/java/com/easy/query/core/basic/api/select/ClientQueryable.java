@@ -24,6 +24,7 @@ import com.easy.query.core.basic.api.select.extension.queryable.Treeable1;
 import com.easy.query.core.basic.api.select.extension.queryable.Unionable1;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * create time 2023/6/1 17:26
@@ -59,13 +60,16 @@ public interface ClientQueryable<T1> extends Query<T1>,
      *
      * @return
      */
+    @NotNull
     @Override
     ClientQueryable<T1> cloneQueryable();
+    @NotNull
     @Override
    default ClientQueryable<T1> toCteAs(){
         return toCteAs(getRuntimeContext().getCteTableNamedProvider().getDefaultCteTableName(queryClass()));
     }
 
+    @NotNull
     @Override
     ClientQueryable<T1> toCteAs(String tableName);
 
@@ -75,35 +79,41 @@ public interface ClientQueryable<T1> extends Query<T1>,
      * @param columns
      * @return
      */
+    @NotNull
     @Override
-    ClientQueryable<T1> select(String columns);
+    ClientQueryable<T1> select(@NotNull String columns);
 
+    @NotNull
     default ClientQueryable<T1> distinct() {
         return distinct(true);
     }
 
 
-    ClientQueryable<T1> distinct(boolean condition);
+    @NotNull ClientQueryable<T1> distinct(boolean condition);
 
 
+    @NotNull
     @Override
     default ClientQueryable<T1> limit(long rows) {
         return limit(true, rows);
     }
 
 
+    @NotNull
     @Override
     default ClientQueryable<T1> limit(boolean condition, long rows) {
         return limit(condition, 0, rows);
     }
 
 
+    @NotNull
     @Override
     default ClientQueryable<T1> limit(long offset, long rows) {
         return limit(true, offset, rows);
     }
 
 
+    @NotNull
     @Override
     ClientQueryable<T1> limit(boolean condition, long offset, long rows);
 
@@ -113,15 +123,15 @@ public interface ClientQueryable<T1> extends Query<T1>,
      *
      * @return
      */
-    ClientQueryable<T1> asTracking();
+    @NotNull ClientQueryable<T1> asTracking();
 
-    ClientQueryable<T1> asNoTracking();
+    @NotNull ClientQueryable<T1> asNoTracking();
 
-    ClientQueryable<T1> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
+    @NotNull ClientQueryable<T1> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
 
-    ClientQueryable<T1> useMaxShardingQueryLimit(int maxShardingQueryLimit);
+    @NotNull ClientQueryable<T1> useMaxShardingQueryLimit(int maxShardingQueryLimit);
 
-    ClientQueryable<T1> useConnectionMode(ConnectionModeEnum connectionMode);
+    @NotNull ClientQueryable<T1> useConnectionMode(ConnectionModeEnum connectionMode);
 
     SQLExpressionProvider<T1> getSQLExpressionProvider1();
 

@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.select.executor;
 
 import com.easy.query.core.basic.api.select.QueryAvailable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,8 @@ public interface MapAble<T> extends QueryAvailable<T> {
      *
      * @return map结果
      */
+
+    @NotNull
     Map<String, Object> toMap();
 
     /**
@@ -25,6 +28,8 @@ public interface MapAble<T> extends QueryAvailable<T> {
      *
      * @return map集合结果
      */
+
+    @NotNull
     List<Map<String, Object>> toMaps();
 
 

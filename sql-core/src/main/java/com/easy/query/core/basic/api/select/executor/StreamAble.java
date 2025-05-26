@@ -1,9 +1,10 @@
 package com.easy.query.core.basic.api.select.executor;
 
-import com.easy.query.core.annotation.NotNull;
+import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.basic.api.select.QueryAvailable;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.expression.lambda.SQLConsumer;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Statement;
 import java.util.function.Function;
@@ -43,7 +44,7 @@ public interface StreamAble<T> extends QueryAvailable<T> {
      * @return
      */
     @NotNull
-    default JdbcStreamResult<T> toStreamResult(Integer fetchSize) {
+    default JdbcStreamResult<T> toStreamResult(@Nullable Integer fetchSize) {
         return toStreamResult(s -> {
             if (fetchSize != null) {
                 s.setFetchSize(fetchSize);
@@ -52,7 +53,7 @@ public interface StreamAble<T> extends QueryAvailable<T> {
     }
 
    @NotNull
-   JdbcStreamResult<T> toStreamResult(SQLConsumer<Statement> configurer);
+   JdbcStreamResult<T> toStreamResult(@NotNull SQLConsumer<Statement> configurer);
 
     /**
      * 以stream的模式拉取数据,如果当前表达式存在include/includes操作那么将以toList+stream进行二次处理
@@ -61,7 +62,8 @@ public interface StreamAble<T> extends QueryAvailable<T> {
      * @param <TR>    返回结果类型
      * @return 返回结果
      */
-    default <TR> TR streamBy(Function<Stream<T>, TR> fetcher) {
+    @NotNull
+    default <TR> TR streamBy(@NotNull Function<Stream<T>, TR> fetcher) {
         return streamBy(fetcher, Integer.MAX_VALUE);
     }
 
@@ -73,7 +75,8 @@ public interface StreamAble<T> extends QueryAvailable<T> {
      * @param <TR>      返回结果类型
      * @return 返回结果
      */
-    default <TR> TR streamBy(Function<Stream<T>, TR> fetcher, Integer fetchSize) {
+    @NotNull
+    default <TR> TR streamBy(@NotNull Function<Stream<T>, TR> fetcher,@NotNull Integer fetchSize) {
         return streamBy(fetcher, statement -> {
             statement.setFetchSize(fetchSize);
         });
@@ -87,6 +90,7 @@ public interface StreamAble<T> extends QueryAvailable<T> {
      * @param <TR>       返回结果类型
      * @return 返回结果
      */
-    <TR> TR streamBy(Function<Stream<T>, TR> fetcher, SQLConsumer<Statement> configurer);
+    @NotNull
+    <TR> TR streamBy(@NotNull Function<Stream<T>, TR> fetcher,@NotNull  SQLConsumer<Statement> configurer);
 
 }

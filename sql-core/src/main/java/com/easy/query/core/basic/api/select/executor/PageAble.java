@@ -3,6 +3,7 @@ package com.easy.query.core.basic.api.select.executor;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.pagination.Pager;
 import com.easy.query.core.basic.api.select.QueryAvailable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -20,11 +21,14 @@ public interface PageAble<T> extends QueryAvailable<T> {
      * @param pageSize  每页多少条
      * @return 分页结果
      */
+    @NotNull
     default EasyPageResult<T> toPageResult(long pageIndex, long pageSize) {
         return toPageResult(pageIndex, pageSize, -1);
     }
-    default <TResult> EasyPageResult<TResult> toPageResult(Class<TResult> resultClass,long pageIndex, long pageSize) {
-        return toPageResult(resultClass,pageIndex, pageSize, -1);
+
+    @NotNull
+    default <TResult> EasyPageResult<TResult> toPageResult(@NotNull Class<TResult> resultClass, long pageIndex, long pageSize) {
+        return toPageResult(resultClass, pageIndex, pageSize, -1);
     }
 
     /**
@@ -35,11 +39,16 @@ public interface PageAble<T> extends QueryAvailable<T> {
      * @param pageTotal 总条数有多少
      * @return 分页结果
      */
-    default EasyPageResult<T> toPageResult(long pageIndex, long pageSize, long pageTotal){
-        return toPageResult(queryClass(),pageIndex,pageSize,pageTotal);
+    @NotNull
+    default EasyPageResult<T> toPageResult(long pageIndex, long pageSize, long pageTotal) {
+        return toPageResult(queryClass(), pageIndex, pageSize, pageTotal);
     }
-    <TResult> EasyPageResult<TResult> toPageResult(Class<TResult> resultClass,long pageIndex, long pageSize, long pageTotal);
-    default <TPageResult> TPageResult toPageResult(Pager<T,TPageResult> pager){
+
+    @NotNull
+    <TResult> EasyPageResult<TResult> toPageResult(@NotNull Class<TResult> resultClass, long pageIndex, long pageSize, long pageTotal);
+
+    @NotNull
+    default <TPageResult> TPageResult toPageResult(@NotNull Pager<T, TPageResult> pager) {
         return pager.toResult(this);
     }
 
@@ -50,6 +59,7 @@ public interface PageAble<T> extends QueryAvailable<T> {
      * @param pageSize  总条数有多少
      * @return 分页结果
      */
+    @NotNull
     default EasyPageResult<T> toShardingPageResult(long pageIndex, long pageSize) {
         return toShardingPageResult(pageIndex, pageSize, null);
     }
@@ -62,9 +72,12 @@ public interface PageAble<T> extends QueryAvailable<T> {
      * @param totalLines 分页各个分页节点的数量
      * @return 分页结果
      */
-    default EasyPageResult<T> toShardingPageResult(long pageIndex, long pageSize, List<Long> totalLines){
-        return toShardingPageResult(queryClass(),pageIndex,pageSize,totalLines);
+    @NotNull
+    default EasyPageResult<T> toShardingPageResult(long pageIndex, long pageSize, List<Long> totalLines) {
+        return toShardingPageResult(queryClass(), pageIndex, pageSize, totalLines);
     }
-    <TResult> EasyPageResult<TResult> toShardingPageResult(Class<TResult> resultClass,long pageIndex, long pageSize, List<Long> totalLines);
+
+    @NotNull
+    <TResult> EasyPageResult<TResult> toShardingPageResult(Class<TResult> resultClass, long pageIndex, long pageSize, List<Long> totalLines);
 
 }

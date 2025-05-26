@@ -15,6 +15,7 @@ import com.easy.query.core.basic.api.internal.TableReNameable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -39,31 +40,41 @@ public interface MapQueryable extends Query<Map<String, Object>>,
         FilterConfigurable<MapQueryable> {
     ClientQueryable<Map<String, Object>> getClientQueryable();
 
+    @NotNull
     @Override
     MapQueryable cloneQueryable();
 
+    @NotNull
     @Override
     MapQueryable distinct();
+    @NotNull
     @Override
     MapQueryable distinct(boolean condition);
 
+    @NotNull
     @Override
     MapQueryable limit(long offset, long rows);
+    @NotNull
     @Override
     MapQueryable limit(boolean condition, long offset, long rows);
 
+    @NotNull
     @Override
     MapQueryable asTracking();
 
+    @NotNull
     @Override
     MapQueryable asNoTracking();
 
+    @NotNull
     @Override
     MapQueryable useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
 
+    @NotNull
     @Override
     MapQueryable useMaxShardingQueryLimit(int maxShardingQueryLimit);
 
+    @NotNull
     @Override
     MapQueryable useConnectionMode(ConnectionModeEnum connectionMode);
 }

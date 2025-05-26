@@ -4,6 +4,7 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable5;
 import com.easy.query.api.proxy.entity.select.abstraction.AbstractEntityQueryable5;
 import com.easy.query.core.basic.api.select.ClientQueryable5;
 import com.easy.query.core.proxy.ProxyEntity;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * create time 2023/6/23 23:22
@@ -21,6 +22,7 @@ public class EasyEntityQueryable5<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         super(t1Proxy, t2Proxy, t3Proxy, t4Proxy,t5Proxy, entityQueryable);
     }
 
+    @NotNull
     @Override
     public EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> cloneQueryable() {
         return new EasyEntityQueryable5<>(get1Proxy(), get2Proxy(), get3Proxy(),get4Proxy(),get5Proxy(), getClientQueryable5().cloneQueryable());

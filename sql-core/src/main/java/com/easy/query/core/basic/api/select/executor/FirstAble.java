@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select.executor;
 
-import com.easy.query.core.annotation.NotNull;
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.QueryAvailable;
 import com.easy.query.core.exception.AssertExceptionFactory;
@@ -38,7 +38,8 @@ public interface FirstAble<T> extends QueryAvailable<T> {
      *
      * @return
      */
-    default @NotNull T firstNotNull() {
+    @NotNull
+    default T firstNotNull() {
         return firstNotNull(null, null);
     }
 
@@ -50,7 +51,8 @@ public interface FirstAble<T> extends QueryAvailable<T> {
      * @return 返回查询对象结果
      * @throws EasyQueryFirstNotNullException 可以通过 {@link AssertExceptionFactory#createFirstNotNullException(Query, String, String)} 自定义
      */
-    default @NotNull T firstNotNull(String msg) {
+    @NotNull
+    default T firstNotNull(@Nullable String msg) {
         return firstNotNull(msg, null);
     }
 
@@ -64,7 +66,7 @@ public interface FirstAble<T> extends QueryAvailable<T> {
      * @throws EasyQueryFirstNotNullException 可以通过 {@link AssertExceptionFactory#createFirstNotNullException(Query, String, String)} 自定义
      */
     @NotNull
-    T firstNotNull(String msg, String code);
+    T firstNotNull(@Nullable String msg,@Nullable String code);
 
     /**
      * 当未查询到结果 将会抛出 {@code throwFunc.get()}
@@ -73,5 +75,5 @@ public interface FirstAble<T> extends QueryAvailable<T> {
      * @return
      */
     @NotNull
-    T firstNotNull(Supplier<RuntimeException> throwFunc);
+    T firstNotNull(@NotNull Supplier<RuntimeException> throwFunc);
 }

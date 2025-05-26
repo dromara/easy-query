@@ -14,6 +14,7 @@ import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.function.BiFunction;
@@ -89,6 +90,7 @@ public abstract class AbstractOverrideClientQueryable10<T1, T2, T3, T4, T5, T6, 
     protected abstract ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> getClientQueryable10();
 
 
+    @NotNull
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> cloneQueryable() {
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().cloneQueryable(getClientQueryable10());
@@ -148,12 +150,14 @@ public abstract class AbstractOverrideClientQueryable10<T1, T2, T3, T4, T5, T6, 
         return getClientQueryable10();
     }
 
+    @NotNull
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> limit(boolean condition, long offset, long rows) {
         super.limit(condition, offset, rows);
         return getClientQueryable10();
     }
 
+    @NotNull
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> distinct(boolean condition) {
         super.distinct(condition);
@@ -202,30 +206,35 @@ public abstract class AbstractOverrideClientQueryable10<T1, T2, T3, T4, T5, T6, 
         return getClientQueryable10();
     }
 
+    @NotNull
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> asTracking() {
         super.asTracking();
         return getClientQueryable10();
     }
 
+    @NotNull
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> asNoTracking() {
         super.asNoTracking();
         return getClientQueryable10();
     }
 
+    @NotNull
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
         super.useShardingConfigure(maxShardingQueryLimit, connectionMode);
         return getClientQueryable10();
     }
 
+    @NotNull
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> useMaxShardingQueryLimit(int maxShardingQueryLimit) {
         super.useMaxShardingQueryLimit(maxShardingQueryLimit);
         return getClientQueryable10();
     }
 
+    @NotNull
     @Override
     public ClientQueryable10<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10> useConnectionMode(ConnectionModeEnum connectionMode) {
         super.useConnectionMode(connectionMode);

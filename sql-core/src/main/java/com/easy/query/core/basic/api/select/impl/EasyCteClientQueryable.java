@@ -3,6 +3,7 @@ package com.easy.query.core.basic.api.select.impl;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.cte.CteTableAvailable;
 import com.easy.query.core.basic.api.select.abstraction.AbstractClientQueryable1;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * create time 2025/2/4 15:44
@@ -18,6 +19,7 @@ public class EasyCteClientQueryable<T> extends AbstractClientQueryable1<T> imple
         this.cteTableName = cteTableName;
     }
 
+    @NotNull
     @Override
     public ClientQueryable<T> cloneQueryable() {
         ClientQueryable<T> tClientQueryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().cloneQueryable(this);

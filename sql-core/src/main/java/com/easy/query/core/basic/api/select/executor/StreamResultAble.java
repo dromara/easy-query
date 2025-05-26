@@ -3,6 +3,8 @@ package com.easy.query.core.basic.api.select.executor;
 import com.easy.query.core.basic.api.select.QueryAvailable;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.expression.lambda.SQLConsumer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Statement;
 
@@ -39,8 +41,10 @@ public interface StreamResultAble<T> extends QueryAvailable<T> {
      * @param <TR>
      * @return 可迭代的流式结果
      */
-    <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass, SQLConsumer<Statement> configurer);
-    default <TR> JdbcStreamResult<TR> toStreamResult(Class<TR> resultClass,Integer fetchSize){
+    @NotNull
+    <TR> JdbcStreamResult<TR> toStreamResult(@NotNull Class<TR> resultClass,@NotNull SQLConsumer<Statement> configurer);
+    @NotNull
+    default <TR> JdbcStreamResult<TR> toStreamResult(@NotNull Class<TR> resultClass,@Nullable Integer fetchSize){
         return toStreamResult(resultClass,statement -> {
             if(fetchSize!=null){
                 statement.setFetchSize(fetchSize);

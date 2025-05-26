@@ -14,6 +14,7 @@ import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.function.BiFunction;
@@ -83,12 +84,14 @@ public abstract class AbstractOverrideEntityQueryable6<T1Proxy extends ProxyEnti
         return getQueryable6();
     }
 
+    @NotNull
     @Override
     public EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> limit(boolean condition, long offset, long rows) {
         super.limit(condition, offset, rows);
         return getQueryable6();
     }
 
+    @NotNull
     @Override
     public EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> distinct(boolean condition) {
         super.distinct(condition);
@@ -137,30 +140,35 @@ public abstract class AbstractOverrideEntityQueryable6<T1Proxy extends ProxyEnti
         return getQueryable6();
     }
 
+    @NotNull
     @Override
     public EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> asTracking() {
         super.asTracking();
         return getQueryable6();
     }
 
+    @NotNull
     @Override
     public EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> asNoTracking() {
         super.asNoTracking();
         return getQueryable6();
     }
 
+    @NotNull
     @Override
     public EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
         super.useShardingConfigure(maxShardingQueryLimit, connectionMode);
         return getQueryable6();
     }
 
+    @NotNull
     @Override
     public EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> useMaxShardingQueryLimit(int maxShardingQueryLimit) {
         super.useMaxShardingQueryLimit(maxShardingQueryLimit);
         return getQueryable6();
     }
 
+    @NotNull
     @Override
     public EntityQueryable6<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6> useConnectionMode(ConnectionModeEnum connectionMode) {
         super.useConnectionMode(connectionMode);
