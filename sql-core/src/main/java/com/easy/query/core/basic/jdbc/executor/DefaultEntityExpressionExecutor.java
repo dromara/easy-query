@@ -14,11 +14,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.result.AffectedRowsExecu
 import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResult;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
-import com.easy.query.core.expression.executor.parser.EasyPrepareParser;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
-import com.easy.query.core.expression.executor.parser.PrepareParseResult;
-import com.easy.query.core.expression.executor.parser.context.impl.EntityParseContextImpl;
-import com.easy.query.core.expression.executor.parser.context.impl.PredicateParseContextImpl;
 import com.easy.query.core.expression.executor.query.ExecutionContextFactory;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
