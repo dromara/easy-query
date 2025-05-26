@@ -97,14 +97,12 @@ public class ShardingEntityExpressionExecutor extends DefaultEntityExpressionExe
         return executeEntitiesCommand(executorContext, executionContext, true);
     }
 
-
     @Override
-    public long executeRows(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder) {
+    protected long executeRows0(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder, EntityPredicateSQLExpression entityPredicateSQLExpression) {
         boolean sharding = isSharding(entityPredicateExpressionBuilder);
         if (!sharding) {
-            return super.executeRows(executorContext, entityPredicateExpressionBuilder);
+            return super.executeRows0(executorContext, entityPredicateExpressionBuilder, entityPredicateSQLExpression);
         }
-        EntityPredicateSQLExpression entityPredicateSQLExpression = entityPredicateExpressionBuilder.toExpression();
         PrepareParseResult prepareParseResult = easyPrepareParser.parse(new PredicateParseContextImpl(executorContext, entityPredicateExpressionBuilder, entityPredicateSQLExpression));
         ExecutionContext executionContext = executionContextFactory.createShardingExecutionContext(prepareParseResult);
         return executeExpressionCommand(executorContext, executionContext, true);

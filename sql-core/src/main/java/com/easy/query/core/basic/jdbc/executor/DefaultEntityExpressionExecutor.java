@@ -135,12 +135,12 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
     @Override
     public long executeRows(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder) {
         EntityPredicateSQLExpression entityPredicateSQLExpression = entityPredicateExpressionBuilder.toExpression();
-        return executeRows0(executorContext, entityPredicateExpressionBuilder, entityPredicateSQLExpression, false);
+        return executeRows0(executorContext, entityPredicateExpressionBuilder, entityPredicateSQLExpression);
     }
 
-    protected long executeRows0(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder, EntityPredicateSQLExpression entityPredicateSQLExpression, boolean sharding) {
+    protected long executeRows0(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder, EntityPredicateSQLExpression entityPredicateSQLExpression) {
         ExecutionContext executionContext = executionContextFactory.createByPredicateExpression(entityPredicateSQLExpression);
-        return executeExpressionCommand(executorContext, executionContext, sharding);
+        return executeExpressionCommand(executorContext, executionContext, false);
     }
 
     protected long executeExpressionCommand(ExecutorContext executorContext, ExecutionContext executionContext, boolean sharding) {
