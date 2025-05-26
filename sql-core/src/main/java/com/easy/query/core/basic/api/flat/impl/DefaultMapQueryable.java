@@ -1,6 +1,5 @@
 package com.easy.query.core.basic.api.flat.impl;
 
-import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.flat.MapQueryable;
 import com.easy.query.core.basic.api.flat.provider.MapFilter;
@@ -31,16 +30,18 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
+import org.jetbrains.annotations.NotNull;
 
-import java.sql.Statement;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import java.sql.Statement;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -118,91 +119,91 @@ public class DefaultMapQueryable implements MapQueryable {
         return this;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public MapQueryable cloneQueryable() {
         return new DefaultMapQueryable(queryable.cloneQueryable());
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public MapQueryable distinct() {
         this.queryable.distinct();
         return this;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public MapQueryable distinct(boolean condition) {
         this.queryable.distinct(condition);
         return this;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public MapQueryable limit(long offset, long rows) {
         this.queryable.limit(offset, rows);
         return this;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public MapQueryable limit(boolean condition, long offset, long rows) {
         this.queryable.limit(condition, offset, rows);
         return this;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public MapQueryable asTracking() {
         this.queryable.asTracking();
         return this;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public MapQueryable asNoTracking() {
         this.queryable.asNoTracking();
         return this;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public MapQueryable useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
         this.queryable.useShardingConfigure(maxShardingQueryLimit, connectionMode);
         return this;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public MapQueryable useMaxShardingQueryLimit(int maxShardingQueryLimit) {
         this.queryable.useMaxShardingQueryLimit(maxShardingQueryLimit);
         return this;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public MapQueryable useConnectionMode(ConnectionModeEnum connectionMode) {
         this.queryable.useConnectionMode(connectionMode);
         return this;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public EntityQueryExpressionBuilder getSQLEntityExpressionBuilder() {
         return queryable.getSQLEntityExpressionBuilder();
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
-    public Query<Map<String, Object>> select(@org.jetbrains.annotations.NotNull String columns) {
+    public Query<Map<String, Object>> select(@NotNull String columns) {
         queryable.select(columns);
         return this;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
-    public <TR> String toSQL(@org.jetbrains.annotations.NotNull Class<TR> resultClass, @org.jetbrains.annotations.NotNull ToSQLContext toSQLContext) {
+    public <TR> String toSQL(@NotNull Class<TR> resultClass, @NotNull ToSQLContext toSQLContext) {
         return this.queryable.toSQL(resultClass, toSQLContext);
     }
 
@@ -217,26 +218,26 @@ public class DefaultMapQueryable implements MapQueryable {
     }
 
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public Class<Map<String, Object>> queryClass() {
         return queryClass;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public EntityMetadata queryEntityMetadata() {
         return queryable.queryEntityMetadata();
     }
 
     @Override
-    public Map<String, Object> findOrNull(@org.jetbrains.annotations.NotNull Object id) {
+    public Map<String, Object> findOrNull(@NotNull Object id) {
         return this.queryable.findOrNull(id);
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
-    public Map<String, Object> findNotNull(@org.jetbrains.annotations.NotNull Object id, @org.jetbrains.annotations.NotNull Supplier<RuntimeException> throwFunc) {
+    public Map<String, Object> findNotNull(@NotNull Object id, @NotNull Supplier<RuntimeException> throwFunc) {
         return this.queryable.findNotNull(id, throwFunc);
     }
 
@@ -245,64 +246,62 @@ public class DefaultMapQueryable implements MapQueryable {
         return this.queryable.firstOrNull(resultClass);
     }
 
-    @org.jetbrains.annotations.NotNull
     @NotNull
     @Override
     public <TR> TR firstNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
         return this.queryable.firstNotNull(resultClass, throwFunc);
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
-    public <TR> List<TR> toList(@org.jetbrains.annotations.NotNull Class<TR> resultClass) {
+    public <TR> List<TR> toList(@NotNull Class<TR> resultClass) {
         return queryable.toList(resultClass);
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
-    public <TR> List<TR> toList(@org.jetbrains.annotations.NotNull Class<TR> resultClass, @org.jetbrains.annotations.NotNull EntityMetadata resultEntityMetadata) {
+    public <TR> List<TR> toList(@NotNull Class<TR> resultClass, @NotNull EntityMetadata resultEntityMetadata) {
         return queryable.toList(resultClass, resultEntityMetadata);
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public Map<String, Object> toMap() {
         return this.queryable.toMap();
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public List<Map<String, Object>> toMaps() {
         return this.queryable.toMaps();
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
-    public <TResult> EasyPageResult<TResult> toPageResult(@org.jetbrains.annotations.NotNull Class<TResult> tResultClass, long pageIndex, long pageSize, long pageTotal) {
+    public <TResult> EasyPageResult<TResult> toPageResult(@NotNull Class<TResult> tResultClass, long pageIndex, long pageSize, long pageTotal) {
         return this.queryable.toPageResult(tResultClass, pageIndex, pageSize, pageTotal);
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public <TResult> EasyPageResult<TResult> toShardingPageResult(Class<TResult> tResultClass, long pageIndex, long pageSize, List<Long> totalLines) {
         return this.queryable.toShardingPageResult(tResultClass, pageIndex, pageSize, totalLines);
     }
 
     @Override
-    public <TR> TR singleOrNull(@org.jetbrains.annotations.NotNull Class<TR> resultClass) {
+    public <TR> TR singleOrNull(@NotNull Class<TR> resultClass) {
         return this.queryable.singleOrNull(resultClass);
     }
 
-    @org.jetbrains.annotations.NotNull
     @NotNull
     @Override
-    public <TR> TR singleNotNull(@org.jetbrains.annotations.NotNull Class<TR> resultClass, @org.jetbrains.annotations.NotNull Supplier<RuntimeException> throwFunc) {
+    public <TR> TR singleNotNull(@NotNull Class<TR> resultClass, @NotNull Supplier<RuntimeException> throwFunc) {
         return this.queryable.singleNotNull(resultClass, throwFunc);
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
-    public <TR> JdbcStreamResult<TR> toStreamResult(@org.jetbrains.annotations.NotNull Class<TR> resultClass, @org.jetbrains.annotations.NotNull SQLConsumer<Statement> configurer) {
+    public <TR> JdbcStreamResult<TR> toStreamResult(@NotNull Class<TR> resultClass, @NotNull SQLConsumer<Statement> configurer) {
         return this.queryable.toStreamResult(resultClass, configurer);
     }
 
@@ -396,9 +395,9 @@ public class DefaultMapQueryable implements MapQueryable {
         return new DefaultMapQueryable(unionQueryable);
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
-    public <TR> TR streamBy(@org.jetbrains.annotations.NotNull Function<Stream<Map<String, Object>>, TR> fetcher, @org.jetbrains.annotations.NotNull SQLConsumer<Statement> configurer) {
+    public <TR> TR streamBy(@NotNull Function<Stream<Map<String, Object>>, TR> fetcher, @NotNull SQLConsumer<Statement> configurer) {
         return this.queryable.streamBy(fetcher, configurer);
     }
 
@@ -419,7 +418,7 @@ public class DefaultMapQueryable implements MapQueryable {
         }
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public List<Map<String, Object>> toTreeList(boolean ignore) {
         if (!ignore) {

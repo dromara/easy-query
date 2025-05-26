@@ -7,6 +7,7 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
 import com.easy.query.test.entity.MyCategory;
 import com.easy.query.test.entity.Topic;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -32,7 +33,7 @@ public class TopicInterceptor implements PredicateFilterInterceptor {
     }
 
     @Override
-    public boolean apply(Class<?> entityClass) {
+    public boolean apply(@NotNull Class<?> entityClass) {
         return Topic.class.equals(entityClass);
     }
 }

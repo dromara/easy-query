@@ -8,6 +8,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * create time 2024/3/28 21:21
@@ -22,7 +23,7 @@ public class FullNameColumnValueSQLConverter implements ColumnValueSQLConverter 
     }
 
     @Override
-    public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
+    public void selectColumnConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext) {
         SQLFunc fx = runtimeContext.fx();
         SQLFunction concat = fx.concat("firstName", "lastName");
         String sqlSegment = concat.sqlSegment(table);
@@ -33,7 +34,7 @@ public class FullNameColumnValueSQLConverter implements ColumnValueSQLConverter 
     }
 
     @Override
-    public void propertyColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
+    public void propertyColumnConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext) {
         SQLFunc fx = runtimeContext.fx();
         SQLFunction concat = fx.concat("firstName", "lastName");
         String sqlSegment = concat.sqlSegment(table);
@@ -43,7 +44,7 @@ public class FullNameColumnValueSQLConverter implements ColumnValueSQLConverter 
     }
 
     @Override
-    public void valueConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLParameter sqlParameter, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext,boolean isCompareValue) {
+    public void valueConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLParameter sqlParameter, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext, boolean isCompareValue) {
         sqlPropertyConverter.sqlNativeSegment("{0}",context->{
             context.value(sqlParameter);
         });

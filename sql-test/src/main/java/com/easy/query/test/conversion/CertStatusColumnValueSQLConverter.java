@@ -9,6 +9,7 @@ import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.metadata.ColumnMetadata;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * create time 2024/5/1 08:46
@@ -24,7 +25,7 @@ public class CertStatusColumnValueSQLConverter  implements ColumnValueSQLConvert
     }
 
     @Override
-    public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
+    public void selectColumnConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext) {
         SQLFunc fx = runtimeContext.fx();
         //计算出两者天数差值 前面是大的时间后面是小的时间
         SQLFunction durationDay = fx.duration(x->x.column(table,"invalidTime").sqlFunc(fx.now()), DateTimeDurationEnum.Days);
@@ -40,7 +41,7 @@ public class CertStatusColumnValueSQLConverter  implements ColumnValueSQLConvert
     }
 
     @Override
-    public void propertyColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
+    public void propertyColumnConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext) {
         SQLFunc fx = runtimeContext.fx();
         SQLFunction durationDay = fx.duration(x->x.column(table,"invalidTime").sqlFunc(fx.now()), DateTimeDurationEnum.Days);
         SQLFunction sqlFunction = fx.anySQLFunction("(CASE WHEN {0}>30 THEN 1 WHEN {0}>=0 THEN 2 ELSE 3 END)", c -> {
@@ -54,7 +55,7 @@ public class CertStatusColumnValueSQLConverter  implements ColumnValueSQLConvert
     }
 
     @Override
-    public void valueConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLParameter sqlParameter, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext, boolean isCompareValue) {
+    public void valueConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLParameter sqlParameter, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext, boolean isCompareValue) {
         //因为不做插入和修改所以这个status属性被用作条件比较的时候条件值还是原先的值
         sqlPropertyConverter.sqlNativeSegment("{0}",context->{
             context.value(sqlParameter);

@@ -1,31 +1,33 @@
 package com.easy.query.core.basic.extension.track;
 
-import com.easy.query.core.annotation.NotNull;
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.exception.EasyQueryException;
 
 import java.util.Objects;
 
 /**
- * @FileName: TrackContext.java
- * @Description: 文件说明
  * create time 2023/3/18 21:21
+ *
  * @author xuejiaming
  */
 public interface TrackContext {
     void begin();
+
     boolean isTrack(Object entity);
 
     /**
      * 没有或者不符合返回null
+     *
      * @param entity
      * @return
      */
-   @Nullable
-   EntityState getTrackEntityState(Object entity);
-    default @NotNull EntityState getTrackEntityStateNotNull(Object entity){
+    @Nullable
+    EntityState getTrackEntityState(@Nullable Object entity);
+
+    default @NotNull EntityState getTrackEntityStateNotNull(@Nullable Object entity) {
         EntityState trackEntityState = getTrackEntityState(entity);
-        Objects.requireNonNull(trackEntityState,"cant get track entity state");
+        Objects.requireNonNull(trackEntityState, "cant get track entity state");
         return trackEntityState;
     }
 
@@ -37,18 +39,20 @@ public interface TrackContext {
      * @return true:添加成功,false:已经存在相同对象
      * @throws EasyQueryException 追踪对象为null,追踪对象无法获取key,追踪对象已经被追踪且不是同一个对象,追踪对象无法获取表名
      */
-    boolean addTracking(Object entity);
+    boolean addTracking(@NotNull Object entity);
 
-    EntityState addQueryTracking(Object entity);
+    @NotNull
+    EntityState addQueryTracking(@NotNull Object entity);
 
     /**
      * 只要不在当前上下文那么就是返回true
+     *
      * @param entity
      * @return
      */
-    boolean removeTracking(Object entity);
+    boolean removeTracking(@NotNull Object entity);
 
     boolean release();
 
-    boolean hasTracked(Class<?> entityClass);
+    boolean hasTracked(@Nullable Class<?> entityClass);
 }

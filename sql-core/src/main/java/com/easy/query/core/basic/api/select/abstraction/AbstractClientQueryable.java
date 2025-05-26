@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
-import com.easy.query.core.annotation.NotNull;
+import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
@@ -101,7 +101,6 @@ import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.SQLFunctionTranslateImpl;
-import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -149,10 +148,9 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * @author xuejiaming
- * @FileName: AbstractSelect0.java
- * @Description: 文件说明
  * create time 2023/2/6 23:44
+ *
+ * @author xuejiaming
  */
 public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1> {
     private static final Log log = LogFactory.getLog(AbstractClientQueryable.class);
@@ -164,13 +162,13 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     protected final SQLSegmentFactory sqlSegmentFactory;
     protected SQLExpressionProvider<T1> sqlExpressionProvider1;
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public Class<T1> queryClass() {
         return t1Class;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public EntityMetadata queryEntityMetadata() {
         return entityMetadata;
@@ -194,13 +192,13 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return sqlExpressionProvider1;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public ClientQueryable<T1> cloneQueryable() {
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().cloneQueryable(this);
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public ClientQueryable<T1> toCteAs(String tableName) {
         return new EasyCteClientQueryable<>(cloneQueryable(), tableName);
@@ -223,6 +221,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return EasyCollectionUtil.sum(result);
     }
 
+    @NotNull
     private EntityQueryExpressionBuilder createCountQueryExpressionBuilder() {
         EntityQueryExpressionBuilder queryExpressionBuilder = entityQueryExpressionBuilder.cloneEntityExpressionBuilder();
         EntityQueryExpressionBuilder countSQLEntityExpressionBuilder = EasySQLExpressionUtil.getCountEntityQueryExpression(queryExpressionBuilder, queryExpressionBuilder.isDistinct());
@@ -248,9 +247,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public <TNumber extends Number> ClientQueryable<TNumber> selectCount(Class<TNumber> numberClass) {
         EntityQueryExpressionBuilder countQueryExpressionBuilder = createCountQueryExpressionBuilder();
-        if (countQueryExpressionBuilder == null) {
-            return cloneQueryable().select(numberClass, o -> o.sqlNativeSegment("COUNT(*)"));
-        }
         return new EasyClientQueryable<>(numberClass, countQueryExpressionBuilder);
     }
 
@@ -371,7 +367,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return EasyCollectionUtil.firstOrNull(list);
     }
 
-    @org.jetbrains.annotations.NotNull
     @NotNull
     @Override
     public <TR> TR firstNotNull(Class<TR> resultClass, Supplier<RuntimeException> throwFunc) {
@@ -385,7 +380,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public T1 findOrNull(@org.jetbrains.annotations.NotNull Object id) {
+    public T1 findOrNull(@NotNull Object id) {
         setExecuteMethod(ExecuteMethodEnum.FIND);
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(queryClass());
         Collection<String> keyProperties = entityMetadata.getKeyProperties();
@@ -400,10 +395,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return EasyCollectionUtil.firstOrNull(list);
     }
 
-    @org.jetbrains.annotations.NotNull
     @NotNull
     @Override
-    public T1 findNotNull(@org.jetbrains.annotations.NotNull Object id, @org.jetbrains.annotations.NotNull Supplier<RuntimeException> throwFunc) {
+    public T1 findNotNull(@NotNull Object id, @NotNull Supplier<RuntimeException> throwFunc) {
         T1 result = findOrNull(id);
         if (result == null) {
             RuntimeException runtimeException = throwFunc.get();
@@ -413,10 +407,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return result;
     }
 
-    @org.jetbrains.annotations.NotNull
     @NotNull
     @Override
-    public <TR> TR singleNotNull(@org.jetbrains.annotations.NotNull Class<TR> resultClass, @org.jetbrains.annotations.NotNull Supplier<RuntimeException> throwFunc) {
+    public <TR> TR singleNotNull(@NotNull Class<TR> resultClass, @NotNull Supplier<RuntimeException> throwFunc) {
         TR result = singleOrNull(resultClass);
         if (result == null) {
             RuntimeException runtimeException = throwFunc.get();
@@ -427,7 +420,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public <TR> TR singleOrNull(@org.jetbrains.annotations.NotNull Class<TR> resultClass) {
+    public <TR> TR singleOrNull(@NotNull Class<TR> resultClass) {
         setExecuteMethod(ExecuteMethodEnum.SINGLE);
         boolean autoAllColumn = compensateSelect(resultClass);
         EntityMetadata resultEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(resultClass);
@@ -468,7 +461,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return next;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public Map<String, Object> toMap() {
         limit(1);
@@ -476,7 +469,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return EasyCollectionUtil.firstOrNull(maps);
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public List<Map<String, Object>> toMaps() {
         List<Map> queryMaps = toQueryMaps();
@@ -491,21 +484,21 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return toList(Map.class);
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
-    public <TR> List<TR> toList(@org.jetbrains.annotations.NotNull Class<TR> resultClass) {
+    public <TR> List<TR> toList(@NotNull Class<TR> resultClass) {
         EntityMetadata resultEntityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
         return toList(resultClass, resultEntityMetadata);
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
-    public <TR> List<TR> toList(@org.jetbrains.annotations.NotNull Class<TR> resultClass, @org.jetbrains.annotations.NotNull EntityMetadata resultEntityMetadata) {
+    public <TR> List<TR> toList(@NotNull Class<TR> resultClass, @NotNull EntityMetadata resultEntityMetadata) {
         setExecuteMethod(ExecuteMethodEnum.LIST, true);
         return toInternalList(resultClass, resultEntityMetadata);
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public List<T1> toTreeList(boolean ignore) {
         List<T1> list = this.toList(this.queryClass());
@@ -523,9 +516,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
-    public <TR> JdbcStreamResult<TR> toStreamResult(@org.jetbrains.annotations.NotNull Class<TR> resultClass, @org.jetbrains.annotations.NotNull SQLConsumer<Statement> configurer) {
+    public <TR> JdbcStreamResult<TR> toStreamResult(@NotNull Class<TR> resultClass, @NotNull SQLConsumer<Statement> configurer) {
         setExecuteMethod(ExecuteMethodEnum.StreamResult, true);
         return toInternalStreamResult(resultClass, configurer);
     }
@@ -581,9 +574,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return false;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
-    public <TR> String toSQL(@org.jetbrains.annotations.NotNull Class<TR> resultClass, @org.jetbrains.annotations.NotNull ToSQLContext toSQLContext) {
+    public <TR> String toSQL(@NotNull Class<TR> resultClass, @NotNull ToSQLContext toSQLContext) {
         compensateSelect(resultClass);
         return entityQueryExpressionBuilder.toExpression().toSQL(toSQLContext);
     }
@@ -645,9 +638,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return new JdbcResultWrap<>(executeMethod, expressionContext, entityMetadata, jdbcResult);
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
-    public <TR> TR streamBy(@org.jetbrains.annotations.NotNull Function<Stream<T1>, TR> fetcher, @org.jetbrains.annotations.NotNull SQLConsumer<Statement> configurer) {
+    public <TR> TR streamBy(@NotNull Function<Stream<T1>, TR> fetcher, @NotNull SQLConsumer<Statement> configurer) {
         ExpressionContext expressionContext = this.entityQueryExpressionBuilder.getExpressionContext();
         //为了支持streamBy下的include处理必须要进行stream的二次迭代
         if (expressionContext.hasIncludes() || expressionContext.hasFills()) {
@@ -785,9 +778,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         EasySQLExpressionUtil.appendSelfExtraTargetProperty(getSQLEntityExpressionBuilder(), sqlNative, table);
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
-    public ClientQueryable<T1> select(@org.jetbrains.annotations.NotNull String columns) {
+    public ClientQueryable<T1> select(@NotNull String columns) {
         entityQueryExpressionBuilder.getProjects().getSQLSegments().clear();
         SelectConstSegment selectConstSegment = sqlSegmentFactory.createSelectConstSegment(columns);
         entityQueryExpressionBuilder.getProjects().append(selectConstSegment);
@@ -1183,7 +1176,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return this;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public ClientQueryable<T1> limit(boolean condition, long offset, long rows) {
         if (condition) {
@@ -1210,7 +1203,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         }
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public ClientQueryable<T1> distinct(boolean condition) {
         if (condition) {
@@ -1221,9 +1214,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return this;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
-    public <TResult> EasyPageResult<TResult> toPageResult(@org.jetbrains.annotations.NotNull Class<TResult> tResultClass, long pageIndex, long pageSize, long pageTotal) {
+    public <TResult> EasyPageResult<TResult> toPageResult(@NotNull Class<TResult> tResultClass, long pageIndex, long pageSize, long pageTotal) {
         return doPageResult(pageIndex, pageSize, tResultClass, pageTotal);
     }
 
@@ -1265,7 +1258,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return easyPageResultProvider.createPageResult(pageIndex, pageSize, total, data);
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public <TResult> EasyPageResult<TResult> toShardingPageResult(Class<TResult> tResultClass, long pageIndex, long pageSize, List<Long> totalLines) {
         return doShardingPageResult(pageIndex, pageSize, tResultClass, totalLines);
@@ -1312,7 +1305,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public EntityQueryExpressionBuilder getSQLEntityExpressionBuilder() {
         return entityQueryExpressionBuilder;
@@ -1615,7 +1608,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return this;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public ClientQueryable<T1> asTracking() {
         TrackManager trackManager = runtimeContext.getTrackManager();
@@ -1627,7 +1620,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return this;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public ClientQueryable<T1> asNoTracking() {
         entityQueryExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.USE_TRACKING);
@@ -1664,7 +1657,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return this;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public ClientQueryable<T1> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode) {
         entityQueryExpressionBuilder.getExpressionContext().setMaxShardingQueryLimit(maxShardingQueryLimit);
@@ -1672,14 +1665,14 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return this;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public ClientQueryable<T1> useMaxShardingQueryLimit(int maxShardingQueryLimit) {
         entityQueryExpressionBuilder.getExpressionContext().setMaxShardingQueryLimit(maxShardingQueryLimit);
         return this;
     }
 
-    @org.jetbrains.annotations.NotNull
+    @NotNull
     @Override
     public ClientQueryable<T1> useConnectionMode(ConnectionModeEnum connectionMode) {
         entityQueryExpressionBuilder.getExpressionContext().setConnectionMode(connectionMode);

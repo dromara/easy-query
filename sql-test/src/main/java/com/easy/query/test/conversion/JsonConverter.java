@@ -6,6 +6,7 @@ import com.easy.query.core.basic.extension.complex.ComplexPropType;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasyStringUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * create time 2023/5/23 22:33
@@ -15,7 +16,7 @@ import com.easy.query.core.util.EasyStringUtil;
  */
 public class JsonConverter implements ValueConverter<Object, String> {
     @Override
-    public String serialize(Object o, ColumnMetadata columnMetadata) {
+    public String serialize(Object o, @NotNull ColumnMetadata columnMetadata) {
         if(o==null){
             return null;
         }
@@ -23,7 +24,7 @@ public class JsonConverter implements ValueConverter<Object, String> {
     }
 
     @Override
-    public Object deserialize(String s, ColumnMetadata columnMetadata) {
+    public Object deserialize(String s, @NotNull ColumnMetadata columnMetadata) {
         if(EasyStringUtil.isBlank(s)){
             return null;
         }

@@ -1,7 +1,6 @@
 package com.easy.query.core.basic.extension.conversion;
 
-import com.easy.query.core.annotation.NotNull;
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * create time 2023/11/22 21:41
@@ -10,5 +9,5 @@ import com.easy.query.core.annotation.Nullable;
  * @author xuejiaming
  */
 public interface EnumValueAutoConverter<TProperty, TProvider> extends ValueConverter<TProperty, TProvider> {
-    boolean apply(@NotNull Class<?> entityClass,@Nullable Class<TProperty> propertyType);
+    boolean apply(@NotNull Class<?> entityClass,@NotNull Class<TProperty> propertyType);
 }

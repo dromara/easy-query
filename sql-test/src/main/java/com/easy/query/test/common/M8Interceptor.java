@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,7 +31,7 @@ public class M8Interceptor implements PredicateFilterInterceptor {
     }
 
     @Override
-    public boolean apply(Class<?> entityClass) {
+    public boolean apply(@NotNull Class<?> entityClass) {
         return SysBankCard.class.equals(entityClass);
     }
 }

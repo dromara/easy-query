@@ -10,6 +10,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.test.entity.school.SchoolStudent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * create time 2024/4/8 13:25
@@ -24,7 +25,7 @@ public class StudentSizeColumnValueSQLConverter implements ColumnValueSQLConvert
     }
 
     @Override
-    public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
+    public void selectColumnConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext) {
 //        SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
 //        ClientQueryable<SchoolStudent> queryable = sqlClientApiFactory.createQueryable(SchoolStudent.class, runtimeContext);
 //        ClientQueryable<Long> studentSizeQuery = queryable.where(t -> t.eq(new SimpleEntitySQLTableOwner<>(table), "classId", "id"))
@@ -39,7 +40,7 @@ public class StudentSizeColumnValueSQLConverter implements ColumnValueSQLConvert
 
     }
     @Override
-    public void propertyColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
+    public void propertyColumnConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext) {
 //        SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
 //        ClientQueryable<SchoolStudent> queryable = sqlClientApiFactory.createQueryable(SchoolStudent.class, runtimeContext);
 //        ClientQueryable<Long> studentSizeQuery = queryable.where(t -> t.eq(new SimpleEntitySQLTableOwner<>(table), "classId", "id"))
@@ -57,7 +58,7 @@ public class StudentSizeColumnValueSQLConverter implements ColumnValueSQLConvert
     }
 
     @Override
-    public void valueConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLParameter sqlParameter, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext, boolean isCompareValue) {
+    public void valueConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLParameter sqlParameter, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext, boolean isCompareValue) {
         sqlPropertyConverter.sqlNativeSegment("{0}",context->{
             context.value(sqlParameter);
         });

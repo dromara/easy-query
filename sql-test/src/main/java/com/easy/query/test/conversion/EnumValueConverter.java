@@ -3,6 +3,7 @@ package com.easy.query.test.conversion;
 import com.easy.query.core.basic.extension.conversion.EnumValueAutoConverter;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasyObjectUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * create time 2023/5/22 14:13
@@ -12,7 +13,7 @@ import com.easy.query.core.util.EasyObjectUtil;
  */
 public class EnumValueConverter implements EnumValueAutoConverter<Enum<?>,Number> {
     @Override
-    public Number serialize(Enum<?> enumValue, ColumnMetadata columnMetadata) {
+    public Number serialize(Enum<?> enumValue, @NotNull ColumnMetadata columnMetadata) {
         if(enumValue==null){
             return null;
         }
@@ -20,7 +21,7 @@ public class EnumValueConverter implements EnumValueAutoConverter<Enum<?>,Number
     }
 
     @Override
-    public Enum<?> deserialize(Number integer, ColumnMetadata columnMetadata) {
+    public Enum<?> deserialize(Number integer, @NotNull ColumnMetadata columnMetadata) {
         if(integer==null){
             return null;
         }
@@ -28,7 +29,7 @@ public class EnumValueConverter implements EnumValueAutoConverter<Enum<?>,Number
     }
 
     @Override
-    public boolean apply(Class<?> entityClass, Class<Enum<?>> propertyType) {
+    public boolean apply(@NotNull Class<?> entityClass, @NotNull Class<Enum<?>> propertyType) {
         return true;
     }
 }

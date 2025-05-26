@@ -561,7 +561,7 @@ public class EntityMetadata {
         if (Enum.class.isAssignableFrom(propertyType)) {
             List<EnumValueAutoConverter<?, ?>> enumValueAutoConverters = configuration.getEnumValueAutoConverters();
             for (EnumValueAutoConverter<?, ?> enumValueAutoConverter : enumValueAutoConverters) {
-                if (enumValueAutoConverter.apply(entityClass, EasyObjectUtil.typeCastNullable(propertyType))) {
+                if (enumValueAutoConverter.apply(entityClass, EasyObjectUtil.typeCastNotNull(propertyType))) {
                     columnOption.setValueConverter(enumValueAutoConverter);
                     break;
                 }
@@ -664,7 +664,6 @@ public class EntityMetadata {
                     }
                 }
                 columnOption.setGeneratedKey(generatedKey);
-
 
 
                 Class<? extends ColumnValueSQLConverter> columnValueSQLConverterClass = column.sqlConversion();

@@ -21,8 +21,75 @@ class ProxyGeneratorSqlProcessor(
 ) : SymbolProcessor {
 
     companion object {
-        private val TYPE_MAPPING: HashMap<String, String> = HashMap()
-        private val TYPE_COLUMN_MAPPING: HashMap<String, PropertyColumn> = HashMap()
+        private val TYPE_MAPPING = mapOf(
+            "float" to "java.lang.Float",
+            "double" to "java.lang.Double",
+            "short" to "java.lang.Short",
+            "int" to "java.lang.Integer",
+            "long" to "java.lang.Long",
+            "byte" to "java.lang.Byte",
+            "boolean" to "java.lang.Boolean"
+        )
+        private val TYPE_COLUMN_MAPPING = mapOf(
+            "java.lang.Float" to PropertyColumn("SQLFloatTypeColumn", "java.lang.Float"),
+            "java.lang.Double" to PropertyColumn("SQLDoubleTypeColumn", "java.lang.Double"),
+            "java.lang.Short" to PropertyColumn("SQLShortTypeColumn", "java.lang.Short"),
+            "java.lang.Integer" to PropertyColumn("SQLIntegerTypeColumn", "java.lang.Integer"),
+            "java.lang.Long" to PropertyColumn("SQLLongTypeColumn", "java.lang.Long"),
+            "java.lang.Byte" to PropertyColumn("SQLByteTypeColumn", "java.lang.Byte"),
+            "java.math.BigDecimal" to PropertyColumn("SQLBigDecimalTypeColumn", "java.math.BigDecimal"),
+            "java.lang.Boolean" to PropertyColumn("SQLBooleanTypeColumn", "java.lang.Boolean"),
+            "java.lang.String" to PropertyColumn("SQLStringTypeColumn", "java.lang.String"),
+            "java.util.UUID" to PropertyColumn("SQLUUIDTypeColumn", "java.util.UUID"),
+            "java.sql.Timestamp" to PropertyColumn("SQLTimestampTypeColumn", "java.sql.Timestamp"),
+            "java.sql.Time" to PropertyColumn("SQLTimeTypeColumn", "java.sql.Time"),
+            "java.sql.Date" to PropertyColumn("SQLDateTypeColumn", "java.sql.Date"),
+            "java.util.Date" to PropertyColumn("SQLUtilDateTypeColumn", "java.util.Date"),
+            "java.time.LocalDate" to PropertyColumn("SQLLocalDateTypeColumn", "java.time.LocalDate"),
+            "java.time.LocalDateTime" to PropertyColumn("SQLLocalDateTimeTypeColumn", "java.time.LocalDateTime"),
+            "java.time.LocalTime" to PropertyColumn("SQLLocalTimeTypeColumn", "java.time.LocalTime")
+        )
+
+        // Kotlin类到Java类的映射
+        private val kotlinJavaTypeMapping = mapOf(
+            "kotlin.Int" to "java.lang.Integer",
+            "kotlin.Long" to "java.lang.Long",
+            "kotlin.Double" to "java.lang.Double",
+            "kotlin.Float" to "java.lang.Float",
+            "kotlin.Boolean" to "java.lang.Boolean",
+            "kotlin.Byte" to "java.lang.Byte",
+            "kotlin.Short" to "java.lang.Short",
+            "kotlin.Char" to "java.lang.Char",
+            "kotlin.String" to "java.lang.String",
+            "kotlin.Unit" to "java.lang.Void",
+            "kotlin.Any" to "java.lang.Object",
+            "kotlin.collections.Map" to "java.util.Map",
+            "kotlin.collections.MutableMap" to "java.util.Map",
+            "kotlin.collections.List" to "java.util.List",
+            "kotlin.collections.MutableList" to "java.util.List",
+            "kotlin.collections.Set" to "java.util.Set",
+            "kotlin.collections.MutableSet" to "java.util.Set",
+            "kotlin.collections.Collection" to "java.util.Collection",
+            "kotlin.collections.MutableCollection" to "java.util.Collection",
+            "kotlin.collections.ArrayList" to "java.util.ArrayList",
+            "kotlin.collections.HashSet" to "java.util.HashSet",
+            "kotlin.collections.HashMap" to "java.util.HashMap",
+            "kotlin.collections.AbstractMap" to "java.util.AbstractMap",
+            "kotlin.collections.AbstractList" to "java.util.AbstractList",
+            "kotlin.collections.AbstractSet" to "java.util.AbstractSet",
+            "kotlin.collections.AbstractCollection" to "java.util.AbstractCollection",
+            "kotlin.collections.ArrayDeque" to "java.util.ArrayDeque",
+            "kotlin.collections.LinkedList" to "java.util.LinkedList",
+            "kotlin.collections.LinkedHashSet" to "java.util.LinkedHashSet",
+            "kotlin.collections.LinkedHashMap" to "java.util.LinkedHashMap",
+            "kotlin.collections.PriorityQueue" to "java.util.PriorityQueue",
+            "kotlin.collections.TreeSet" to "java.util.TreeSet",
+            "kotlin.collections.TreeMap" to "java.util.TreeMap",
+            "kotlin.collections.EnumMap" to "java.util.EnumMap",
+            "kotlin.collections.EnumSet" to "java.util.EnumSet",
+            "kotlin.collections.AbstractMap.SimpleEntry" to "java.util.AbstractMap.SimpleEntry",
+            "kotlin.collections.AbstractMap.SimpleImmutableEntry" to "java.util.AbstractMap.SimpleImmutableEntry"
+        )
 
         private const val FIELD_DOC_COMMENT_TEMPLATE = "\n" +
                 "    /**\n" +
@@ -33,47 +100,6 @@ class ProxyGeneratorSqlProcessor(
                 "    /**\n" +
                 "     * {@link @{entityClass}#get@{property}}\n" +
                 "     */"
-
-        init {
-            TYPE_MAPPING.apply {
-                put("float", "java.lang.Float")
-                put("double", "java.lang.Double")
-                put("short", "java.lang.Short")
-                put("int", "java.lang.Integer")
-                put("long", "java.lang.Long")
-                put("byte", "java.lang.Byte")
-                put("boolean", "java.lang.Boolean")
-            }
-            TYPE_COLUMN_MAPPING.apply {
-                put("Float", PropertyColumn("SQLFloatTypeColumn", "java.lang.Float"))
-                put("Double", PropertyColumn("SQLDoubleTypeColumn", "java.lang.Double"))
-                put("Short", PropertyColumn("SQLShortTypeColumn", "java.lang.Short"))
-                put("Integer", PropertyColumn("SQLIntegerTypeColumn", "java.lang.Integer"))
-                put("Long", PropertyColumn("SQLLongTypeColumn", "java.lang.Long"))
-                put("Byte", PropertyColumn("SQLByteTypeColumn", "java.lang.Byte"))
-                put("BigDecimal", PropertyColumn("SQLBigDecimalTypeColumn", "java.math.BigDecimal"))
-                put("Boolean", PropertyColumn("SQLBooleanTypeColumn", "java.lang.Boolean"))
-                put("String", PropertyColumn("SQLStringTypeColumn", "java.lang.String"))
-                put("java.lang.Float", PropertyColumn("SQLFloatTypeColumn", "java.lang.Float"))
-                put("java.lang.Double", PropertyColumn("SQLDoubleTypeColumn", "java.lang.Double"))
-                put("java.lang.Short", PropertyColumn("SQLShortTypeColumn", "java.lang.Short"))
-                put("java.lang.Integer", PropertyColumn("SQLIntegerTypeColumn", "java.lang.Integer"))
-                put("java.lang.Long", PropertyColumn("SQLLongTypeColumn", "java.lang.Long"))
-                put("java.lang.Byte", PropertyColumn("SQLByteTypeColumn", "java.lang.Byte"))
-                put("java.math.BigDecimal", PropertyColumn("SQLBigDecimalTypeColumn", "java.math.BigDecimal"))
-                put("java.lang.Boolean", PropertyColumn("SQLBooleanTypeColumn", "java.lang.Boolean"))
-                put("java.lang.String", PropertyColumn("SQLStringTypeColumn", "java.lang.String"))
-                put("java.util.UUID", PropertyColumn("SQLUUIDTypeColumn", "java.util.UUID"))
-                put("java.sql.Timestamp", PropertyColumn("SQLTimestampTypeColumn", "java.sql.Timestamp"))
-                put("java.sql.Time", PropertyColumn("SQLTimeTypeColumn", "java.sql.Time"))
-                put("java.sql.Date", PropertyColumn("SQLDateTypeColumn", "java.sql.Date"))
-                put("java.util.Date", PropertyColumn("SQLUtilDateTypeColumn", "java.util.Date"))
-                put("java.time.LocalDate", PropertyColumn("SQLLocalDateTypeColumn", "java.time.LocalDate"))
-                put("java.time.LocalDateTime", PropertyColumn("SQLLocalDateTimeTypeColumn", "java.time.LocalDateTime"))
-                put("java.time.LocalTime", PropertyColumn("SQLLocalTimeTypeColumn", "java.time.LocalTime"))
-
-            }
-        }
 
         fun getPropertyColumn(fieldGenericType: String?, anyType: Boolean?): PropertyColumn {
             return TYPE_COLUMN_MAPPING.getOrDefault(
@@ -88,7 +114,7 @@ class ProxyGeneratorSqlProcessor(
     override fun process(resolver: Resolver): List<KSAnnotated> {
         resolver.getSymbolsWithAnnotation(EntityProxy::class.java.name).forEach {
             if (it is KSClassDeclaration) {
-                environment.logger.warn("entityClassElement:${it.qualifiedName?.asString()}")
+                environment.logger.info("entityClassElement:${it.qualifiedName?.asString()}")
                 buildEntityProxy(it, resolver)
             }
         }
@@ -254,17 +280,26 @@ class ProxyGeneratorSqlProcessor(
     ): String {
         val typeString = defTypeString(isDeclared, includeProperty, type)
         return if (typeString.contains(".")) {
-            if (typeString.startsWith("kotlin.")) {
-                val kotlinType = typeString.substringAfterLast('.')
-                return if (kotlinType == "Int") {
-                    "Integer"
-                } else {
-                    kotlinType
-                }
-            }
-            return typeString
+            typeString
         } else {
             TYPE_MAPPING.getOrDefault(typeString, typeString)
+        }
+    }
+
+    private fun KSType.toJavaString(): String {
+        val type = this
+        if (type.declaration.qualifiedName == null) {
+            return "java.lang.Object"
+        }
+        val declaration = type.declaration
+        var className = declaration.qualifiedName!!.asString()
+        // 将kotlin的类型转为java对应的类型
+        className = kotlinJavaTypeMapping[className] ?: className
+        val arguments = type.arguments
+        return if (arguments.isNotEmpty()) { // 泛型
+            "$className<${arguments.joinToString(", ") { it.type?.resolve()?.toJavaString() ?: "?" }}>"
+        } else {
+            className
         }
     }
 
@@ -274,11 +309,10 @@ class ProxyGeneratorSqlProcessor(
         type: KSType,
     ): String {
         return if (includeProperty) {
-            type.arguments.firstOrNull()?.type?.resolve()?.declaration?.qualifiedName?.asString()
-                ?: type.declaration.qualifiedName!!.asString()
+            val genericType = type.arguments.firstOrNull()?.type?.resolve()
+            genericType?.toJavaString() ?: type.toJavaString()
         } else {
-            val element = type.declaration
-            element.qualifiedName!!.asString()
+            type.toJavaString()
         }
     }
 

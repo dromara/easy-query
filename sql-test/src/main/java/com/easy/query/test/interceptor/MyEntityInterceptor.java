@@ -8,6 +8,7 @@ import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.test.entity.TopicInterceptor;
 import com.easy.query.test.logicdel.CurrentUserHelper;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 
@@ -49,7 +50,7 @@ public class MyEntityInterceptor implements EntityInterceptor, UpdateSetIntercep
     }
 
     @Override
-    public boolean apply(Class<?> entityClass) {
+    public boolean apply(@NotNull Class<?> entityClass) {
         return TopicInterceptor.class.isAssignableFrom(entityClass);
     }
 

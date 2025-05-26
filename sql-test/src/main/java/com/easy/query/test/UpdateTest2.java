@@ -2,6 +2,7 @@ package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
+import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
@@ -34,10 +35,9 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class UpdateTest2  extends BaseTest{
-
+public class UpdateTest2 extends BaseTest {
     @Test
-    public void testUpdateNull(){
+    public void testUpdateNull() {
         ListenerContextManager listenerContextManager = new ListenerContextManager();
         MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
         EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
@@ -66,7 +66,7 @@ public class UpdateTest2  extends BaseTest{
                 topic.setId("12312333sss");
                 topic.setTitle("123");
                 defaultEasyEntityQuery.updatable(topic).executeRows();
-            }catch (Exception ex){
+            } catch (Exception ex) {
 
             }
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -86,7 +86,7 @@ public class UpdateTest2  extends BaseTest{
                 topic.setTitle("123");
                 topic.setStars(1);
                 defaultEasyEntityQuery.updatable(topic).executeRows();
-            }catch (Exception ex){
+            } catch (Exception ex) {
 
             }
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -100,7 +100,7 @@ public class UpdateTest2  extends BaseTest{
     }
 
     @Test
-    public void update1(){
+    public void update1() {
         easyEntityQuery.updatable(Topic.class)
                 .where(t -> {
                     t.id().in(easyEntityQuery.queryable(Topic.class).select(t1 -> new StringProxy(t1.id().max())).select("*"));
@@ -110,10 +110,8 @@ public class UpdateTest2  extends BaseTest{
     }
 
 
-
-
     @Test
-    public void testUpdateValueTest(){
+    public void testUpdateValueTest() {
         ListenerContextManager listenerContextManager = new ListenerContextManager();
         MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
         EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
@@ -144,7 +142,7 @@ public class UpdateTest2  extends BaseTest{
                         .where(t -> t.stars().eq((Integer) null))
                         .executeRows();
 
-            }catch (Exception ex){
+            } catch (Exception ex) {
 
             }
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -163,7 +161,7 @@ public class UpdateTest2  extends BaseTest{
                         .where(t -> t.stars().eq((Integer) null))
                         .executeRows();
 
-            }catch (Exception ex){
+            } catch (Exception ex) {
 
             }
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -183,7 +181,7 @@ public class UpdateTest2  extends BaseTest{
                         .where(t -> t.title().eq("123"))
                         .toList();
 
-            }catch (Exception ex){
+            } catch (Exception ex) {
 
             }
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -195,8 +193,8 @@ public class UpdateTest2  extends BaseTest{
         }
 
     }
-    
-    
+
+
 //    @Test
 //    public  void updateTest1(){
 //        ArrayList<Topic> topics = new ArrayList<>();
@@ -227,7 +225,7 @@ public class UpdateTest2  extends BaseTest{
 
 
     @Test
-    public void test11(){
+    public void test11() {
 
         ListenerContextManager listenerContextManager = new ListenerContextManager();
         MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
@@ -254,10 +252,10 @@ public class UpdateTest2  extends BaseTest{
             try {
                 eq.queryable(Topic2.class)
                         .where(t -> t.title().eq("123"))
-                        .select(Topic2DTO.class,t->t.FETCHER.allFields())
+                        .select(Topic2DTO.class, t -> t.FETCHER.allFields())
                         .toList();
 
-            }catch (Exception ex){
+            } catch (Exception ex) {
 
             }
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());

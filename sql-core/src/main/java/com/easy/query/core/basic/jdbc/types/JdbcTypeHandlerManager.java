@@ -1,14 +1,12 @@
 package com.easy.query.core.basic.jdbc.types;
 
-import com.easy.query.core.annotation.NotNull;
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 
 /**
- * @author xuejiaming
- * @FileName: EasyJdbcTypeHandler.java
- * @Description: 文件说明
  * create time 2023/2/17 22:07
+ * @author xuejiaming
  */
 public interface JdbcTypeHandlerManager {
     /**
@@ -23,5 +21,5 @@ public interface JdbcTypeHandlerManager {
     JdbcTypeHandler getHandler(@Nullable Class<?> type);
 
     @NotNull
-    JdbcTypeHandler getHandlerByHandlerClass(@Nullable Class<?> handlerType);
+    JdbcTypeHandler getHandlerByHandlerClass(@NotNull Class<?> handlerType);
 }

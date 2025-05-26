@@ -82,6 +82,7 @@ import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.RelationExtraColumn;
 import com.easy.query.core.metadata.RelationExtraColumnAddResult;
 import com.easy.query.core.metadata.RelationExtraMetadata;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -378,6 +379,7 @@ public class EasySQLExpressionUtil {
     }
 
 
+    @Nullable
     public static EntityQueryExpressionBuilder getCountEntityQueryExpression(EntityQueryExpressionBuilder entityQueryExpressionBuilder, boolean isDistinct) {
         processRemoveOrderAndLimit(entityQueryExpressionBuilder);
         if (EasySQLExpressionUtil.hasAnyOperateWithoutWhereAndOrder(entityQueryExpressionBuilder)) {

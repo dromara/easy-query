@@ -22,6 +22,9 @@ import com.easy.query.core.exception.EasyQueryUnexpectedException;
 import com.easy.query.core.expression.sql.builder.EasyExpressionContext;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
+import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.ColumnOption;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.util.EasyAesUtil;
 import com.easy.query.core.util.EasyBase64Util;
@@ -1136,15 +1139,16 @@ public class GenericTest extends BaseTest {
     @Test
     public void EnumValueTest2() {
         EnumValueConverter enumValueConverter = new EnumValueConverter();
-        Number e1 = enumValueConverter.serialize(null, null);
+        ColumnMetadata columnMetadata = new ColumnMetadata(new ColumnOption(false, new EntityMetadata(Object.class), "", "", ""));
+        Number e1 = enumValueConverter.serialize(null, columnMetadata);
         Assert.assertNull(e1);
-        Number e2 = enumValueConverter.serialize(MyEnum.ZJ, null);
+        Number e2 = enumValueConverter.serialize(MyEnum.ZJ, columnMetadata);
         Assert.assertEquals(MyEnum.ZJ.getCode(), e2);
-        Number e3 = enumValueConverter.serialize(MyEnum.JS, null);
+        Number e3 = enumValueConverter.serialize(MyEnum.JS, columnMetadata);
         Assert.assertEquals(MyEnum.JS.getCode(), e3);
-        Number e4 = enumValueConverter.serialize(MyEnum.SH, null);
+        Number e4 = enumValueConverter.serialize(MyEnum.SH, columnMetadata);
         Assert.assertEquals(MyEnum.SH.getCode(), e4);
-        Number e5 = enumValueConverter.serialize(MyEnum.BJ, null);
+        Number e5 = enumValueConverter.serialize(MyEnum.BJ, columnMetadata);
         Assert.assertEquals(MyEnum.BJ.getCode(), e5);
 
     }

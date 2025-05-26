@@ -4,6 +4,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.ColumnMetadata;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * create time 2023/8/8 22:14
@@ -19,17 +20,17 @@ public class DefaultColumnValueSQLConverter implements ColumnValueSQLConverter{
 
 
     @Override
-    public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
+    public void selectColumnConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext) {
 
     }
 
     @Override
-    public void propertyColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
+    public void propertyColumnConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext) {
 
     }
 
     @Override
-    public void valueConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLParameter sqlParameter, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext, boolean isCompareValue) {
+    public void valueConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLParameter sqlParameter, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext, boolean isCompareValue) {
 
     }
 }

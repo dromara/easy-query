@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.migration;
 
-import com.easy.query.core.annotation.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * create time 2023/11/30 08:52

@@ -1,8 +1,8 @@
 package com.easy.query.core.basic.extension.interceptor;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
- * @FileName: GlobalInterceptor.java
- * @Description: 文件说明
  * create time 2023/3/9 21:35
  * @author xuejiaming
  */
@@ -32,5 +32,5 @@ public interface Interceptor {
      * @param entityClass
      * @return
      */
-    boolean apply(Class<?> entityClass);
+    boolean apply(@NotNull Class<?> entityClass);
 }

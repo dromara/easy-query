@@ -9,6 +9,7 @@ import com.easy.query.core.expression.segment.index.EntitySegmentComparer;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.test.entity.TopicUpdate;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 
@@ -36,7 +37,7 @@ public class TopicUpdateInterceptor implements UpdateSetInterceptor, EntityInter
     }
 
     @Override
-    public boolean apply(Class<?> entityClass) {
+    public boolean apply(@NotNull Class<?> entityClass) {
         return TopicUpdate.class.equals(entityClass);
     }
 
@@ -51,7 +52,7 @@ public class TopicUpdateInterceptor implements UpdateSetInterceptor, EntityInter
     }
 
     @Override
-    public void configure(Class<?> entityClass, EntityUpdateExpressionBuilder entityUpdateExpressionBuilder, ColumnOnlySelector<Object> columnSelector, Object entity) {
+    public void configure(@NotNull Class<?> entityClass, @NotNull EntityUpdateExpressionBuilder entityUpdateExpressionBuilder, @NotNull ColumnOnlySelector<Object> columnSelector, @NotNull Object entity) {
         EntitySegmentComparer createTime = new EntitySegmentComparer(entityClass, "createTime");
         columnSelector.getSQLSegmentBuilder().forEach(k->{
              createTime.visit(k);

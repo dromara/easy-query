@@ -8,6 +8,7 @@ import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
 import com.easy.query.test.entity.TopicInterceptor;
 import com.easy.query.test.logicdel.CurrentUserHelper;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * create time 2023/4/3 22:11
@@ -22,7 +23,7 @@ public class MyTenantInterceptor implements EntityInterceptor, PredicateFilterIn
     }
 
     @Override
-    public boolean apply(Class<?> entityClass) {
+    public boolean apply(@NotNull Class<?> entityClass) {
         return TopicInterceptor.class.isAssignableFrom(entityClass);
     }
 

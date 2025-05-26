@@ -3,6 +3,7 @@ package com.easy.query.test.entity;
 import com.easy.query.core.basic.extension.interceptor.PredicateFilterInterceptor;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * create time 2024/12/7 23:08
@@ -35,7 +36,7 @@ public class MyCategoryInterceptor implements PredicateFilterInterceptor {
     }
 
     @Override
-    public boolean apply(Class<?> entityClass) {
+    public boolean apply(@NotNull Class<?> entityClass) {
         return entityClass.equals(MyCategory.class);
     }
 }

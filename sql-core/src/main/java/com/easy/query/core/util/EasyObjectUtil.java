@@ -1,6 +1,8 @@
 package com.easy.query.core.util;
 
 import com.easy.query.core.exception.EasyQueryException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
@@ -58,9 +60,17 @@ public class EasyObjectUtil {
      * @param <N> 目标类型
      * @return 目标对象
      */
+    @Nullable
     public static <T, N> N typeCastNullable(T original) {
         if (original == null) {
             return null;
+        }
+        return typeCast(original);
+    }
+    @NotNull
+    public static <T, N> N typeCastNotNull(T original) {
+        if (original == null) {
+            throw new NullPointerException("typeCastNotNull");
         }
         return typeCast(original);
     }

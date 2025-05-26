@@ -11,6 +11,7 @@ import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.MathMethodEnum;
 import com.easy.query.core.func.def.enums.NumberCalcEnum;
 import com.easy.query.core.metadata.ColumnMetadata;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * create time 2024/3/28 21:21
@@ -25,7 +26,7 @@ public class UserAgeColumnValueSQLConverter implements ColumnValueSQLConverter {
     }
 
     @Override
-    public void selectColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
+    public void selectColumnConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext) {
         SQLFunc fx = runtimeContext.fx();
         SQLFunction durationDay = fx.duration(x->x.sqlFunc(fx.now()).column(table,"birthday"), DateTimeDurationEnum.Days);
         SQLFunction sqlFunction = fx.numberCalc(x -> x.sqlFunc(durationDay).value(365), NumberCalcEnum.NUMBER_DIVIDE);
@@ -40,7 +41,7 @@ public class UserAgeColumnValueSQLConverter implements ColumnValueSQLConverter {
     }
 
     @Override
-    public void propertyColumnConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext) {
+    public void propertyColumnConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext) {
         SQLFunc fx = runtimeContext.fx();
         SQLFunction durationDay = fx.duration(x->x.sqlFunc(fx.now()).column(table,"birthday"), DateTimeDurationEnum.Days);
         SQLFunction sqlFunction = fx.numberCalc(x -> x.sqlFunc(durationDay).value(365), NumberCalcEnum.NUMBER_DIVIDE);
@@ -63,7 +64,7 @@ public class UserAgeColumnValueSQLConverter implements ColumnValueSQLConverter {
      * @param isCompareValue 当前值是用于比较还是存储
      */
     @Override
-    public void valueConvert(TableAvailable table, ColumnMetadata columnMetadata, SQLParameter sqlParameter, SQLPropertyConverter sqlPropertyConverter, QueryRuntimeContext runtimeContext,boolean isCompareValue) {
+    public void valueConvert(@NotNull TableAvailable table, @NotNull ColumnMetadata columnMetadata, @NotNull SQLParameter sqlParameter, @NotNull SQLPropertyConverter sqlPropertyConverter, @NotNull QueryRuntimeContext runtimeContext, boolean isCompareValue) {
         sqlPropertyConverter.sqlNativeSegment("{0}",context->{
             context.value(sqlParameter);
         });
