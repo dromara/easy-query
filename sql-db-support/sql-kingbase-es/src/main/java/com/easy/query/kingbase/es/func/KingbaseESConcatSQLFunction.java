@@ -5,6 +5,7 @@ import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
 import com.easy.query.core.util.EasyCollectionUtil;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -21,15 +22,22 @@ public class KingbaseESConcatSQLFunction extends AbstractExpressionSQLFunction {
         if (EasyCollectionUtil.isEmpty(concatExpressions)) {
             throw new IllegalArgumentException("KingbaseESConcatSQLFunction columns empty");
         }
+        if(EasyCollectionUtil.isSingle(concatExpressions)){
+            throw new IllegalArgumentException("KingbaseESConcatSQLFunction columns single");
+        }
         this.columnExpressions = concatExpressions;
     }
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        Iterable<String> params = EasyCollectionUtil.select(columnExpressions, (t, i) ->"{" + i + "}");
-//        return String.format("(%s)", String.join(" || ", params));
-////        return String.format("%s", String.join(" || ", params));
-        return String.format("CONCAT(%s)", String.join(",", params));
+        StringBuilder sb = new StringBuilder("CONCAT({0},{1})");
+
+        for (int i = 2; i < columnExpressions.size(); i++) {
+            sb.insert(0, "CONCAT(");
+            sb.append(",{").append(i).append("})");
+        }
+
+        return sb.toString();
     }
 
     @Override

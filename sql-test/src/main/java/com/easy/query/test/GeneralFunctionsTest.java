@@ -13,6 +13,7 @@ import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.oracle.config.OracleDatabaseConfiguration;
@@ -783,6 +784,34 @@ public class GeneralFunctionsTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT \"id\",\"uid\",\"code\",\"type\",\"bank_id\" FROM \"doc_bank_card\" WHERE INSTR(\"type\",?,1,1) = (LENGTH(\"type\") - LENGTH(?) + 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("30%(String),30%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+
+
+    @Test
+    public void testDoubleConcat() {
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        EasyEntityQuery easyEntityQuery = create(listenerContextManager, new KingbaseESDatabaseConfiguration());
+        listenerContextManager.startCreateListen();
+
+        try {
+
+            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                    .where(t_blog -> {
+                        t_blog.expression().stringFormat("你好:{0}我叫{1}你好吗!我今年{2}岁了,{3}你呢", t_blog.title(), t_blog.star(),t_blog.content(), 12)
+                                .eq("比较一下");
+                    }).toList();
+        } catch (Exception ignored) {
+
+        }
+        ListenerContext listenerContext = listenerContextManager.getListenContext();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT \"id\",\"create_time\",\"update_time\",\"create_by\",\"update_by\",\"deleted\",\"title\",\"content\",\"url\",\"star\",\"publish_time\",\"score\",\"status\",\"order\",\"is_top\",\"top\" FROM \"t_blog\" WHERE \"deleted\" = ? AND CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(CONCAT(?,\"title\"),?),\"star\"),?),\"content\"),?),?),?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),你好:(String),我叫(String),你好吗!我今年(String),岁了,(String),12(Integer),你呢(String),比较一下(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 }

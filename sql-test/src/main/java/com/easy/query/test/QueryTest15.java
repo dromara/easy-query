@@ -13,6 +13,7 @@ import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.dialect.DefaultSQLKeyword;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
@@ -725,6 +726,7 @@ public class QueryTest15 extends BaseTest {
                     m.createTime().format("yyyy年MM月dd日").eq("2022年01月01日");
                 }).toSQL();
         Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE TO_CHAR((\"create_time\")::TIMESTAMP,'YYYY年MM月DD日') = ?", sql);
+
     }
 
 
