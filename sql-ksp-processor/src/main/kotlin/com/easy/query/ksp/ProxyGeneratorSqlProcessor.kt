@@ -31,80 +31,49 @@ class ProxyGeneratorSqlProcessor(
             "boolean" to "java.lang.Boolean"
         )
         private val TYPE_COLUMN_MAPPING = mapOf(
-            "java.lang.Float" to PropertyColumn("SQLFloatTypeColumn", "java.lang.Float"),
-            "java.lang.Double" to PropertyColumn("SQLDoubleTypeColumn", "java.lang.Double"),
-            "java.lang.Short" to PropertyColumn("SQLShortTypeColumn", "java.lang.Short"),
-            "java.lang.Integer" to PropertyColumn("SQLIntegerTypeColumn", "java.lang.Integer"),
-            "java.lang.Long" to PropertyColumn("SQLLongTypeColumn", "java.lang.Long"),
-            "java.lang.Byte" to PropertyColumn("SQLByteTypeColumn", "java.lang.Byte"),
-            "java.math.BigDecimal" to PropertyColumn("SQLBigDecimalTypeColumn", "java.math.BigDecimal"),
-            "java.lang.Boolean" to PropertyColumn("SQLBooleanTypeColumn", "java.lang.Boolean"),
-            "java.lang.String" to PropertyColumn("SQLStringTypeColumn", "java.lang.String"),
-            "java.util.UUID" to PropertyColumn("SQLUUIDTypeColumn", "java.util.UUID"),
-            "java.sql.Timestamp" to PropertyColumn("SQLTimestampTypeColumn", "java.sql.Timestamp"),
-            "java.sql.Time" to PropertyColumn("SQLTimeTypeColumn", "java.sql.Time"),
-            "java.sql.Date" to PropertyColumn("SQLDateTypeColumn", "java.sql.Date"),
-            "java.util.Date" to PropertyColumn("SQLUtilDateTypeColumn", "java.util.Date"),
-            "java.time.LocalDate" to PropertyColumn("SQLLocalDateTypeColumn", "java.time.LocalDate"),
-            "java.time.LocalDateTime" to PropertyColumn("SQLLocalDateTimeTypeColumn", "java.time.LocalDateTime"),
-            "java.time.LocalTime" to PropertyColumn("SQLLocalTimeTypeColumn", "java.time.LocalTime")
-        )
+            "kotlin.Float" to KspPropertyColumn("SQLFloatTypeColumn", "java.lang.Float"),
+            "kotlin.Double" to KspPropertyColumn("SQLDoubleTypeColumn", "java.lang.Double"),
+            "kotlin.Short" to KspPropertyColumn("SQLShortTypeColumn", "java.lang.Short"),
+            "kotlin.Int" to KspPropertyColumn("SQLIntegerTypeColumn", "java.lang.Integer"),
+            "kotlin.Long" to KspPropertyColumn("SQLLongTypeColumn", "java.lang.Long"),
+            "kotlin.Byte" to KspPropertyColumn("SQLByteTypeColumn", "java.lang.Byte"),
+            "kotlin.Boolean" to KspPropertyColumn("SQLBooleanTypeColumn", "java.lang.Boolean"),
+            "kotlin.String" to KspPropertyColumn("SQLStringTypeColumn", "java.lang.String"),
 
-        // Kotlin类到Java类的映射
-        private val kotlinJavaTypeMapping = mapOf(
-            "kotlin.Int" to "java.lang.Integer",
-            "kotlin.Long" to "java.lang.Long",
-            "kotlin.Double" to "java.lang.Double",
-            "kotlin.Float" to "java.lang.Float",
-            "kotlin.Boolean" to "java.lang.Boolean",
-            "kotlin.Byte" to "java.lang.Byte",
-            "kotlin.Short" to "java.lang.Short",
-            "kotlin.Char" to "java.lang.Char",
-            "kotlin.String" to "java.lang.String",
-            "kotlin.Unit" to "java.lang.Void",
-            "kotlin.Any" to "java.lang.Object",
-            "kotlin.collections.Map" to "java.util.Map",
-            "kotlin.collections.MutableMap" to "java.util.Map",
-            "kotlin.collections.List" to "java.util.List",
-            "kotlin.collections.MutableList" to "java.util.List",
-            "kotlin.collections.Set" to "java.util.Set",
-            "kotlin.collections.MutableSet" to "java.util.Set",
-            "kotlin.collections.Collection" to "java.util.Collection",
-            "kotlin.collections.MutableCollection" to "java.util.Collection",
-            "kotlin.collections.ArrayList" to "java.util.ArrayList",
-            "kotlin.collections.HashSet" to "java.util.HashSet",
-            "kotlin.collections.HashMap" to "java.util.HashMap",
-            "kotlin.collections.AbstractMap" to "java.util.AbstractMap",
-            "kotlin.collections.AbstractList" to "java.util.AbstractList",
-            "kotlin.collections.AbstractSet" to "java.util.AbstractSet",
-            "kotlin.collections.AbstractCollection" to "java.util.AbstractCollection",
-            "kotlin.collections.ArrayDeque" to "java.util.ArrayDeque",
-            "kotlin.collections.LinkedList" to "java.util.LinkedList",
-            "kotlin.collections.LinkedHashSet" to "java.util.LinkedHashSet",
-            "kotlin.collections.LinkedHashMap" to "java.util.LinkedHashMap",
-            "kotlin.collections.PriorityQueue" to "java.util.PriorityQueue",
-            "kotlin.collections.TreeSet" to "java.util.TreeSet",
-            "kotlin.collections.TreeMap" to "java.util.TreeMap",
-            "kotlin.collections.EnumMap" to "java.util.EnumMap",
-            "kotlin.collections.EnumSet" to "java.util.EnumSet",
-            "kotlin.collections.AbstractMap.SimpleEntry" to "java.util.AbstractMap.SimpleEntry",
-            "kotlin.collections.AbstractMap.SimpleImmutableEntry" to "java.util.AbstractMap.SimpleImmutableEntry"
+
+            "java.lang.Float" to KspPropertyColumn("SQLFloatTypeColumn", "java.lang.Float"),
+            "java.lang.Double" to KspPropertyColumn("SQLDoubleTypeColumn", "java.lang.Double"),
+            "java.lang.Short" to KspPropertyColumn("SQLShortTypeColumn", "java.lang.Short"),
+            "java.lang.Integer" to KspPropertyColumn("SQLIntegerTypeColumn", "java.lang.Integer"),
+            "java.lang.Long" to KspPropertyColumn("SQLLongTypeColumn", "java.lang.Long"),
+            "java.lang.Byte" to KspPropertyColumn("SQLByteTypeColumn", "java.lang.Byte"),
+            "java.math.BigDecimal" to KspPropertyColumn("SQLBigDecimalTypeColumn", "java.math.BigDecimal"),
+            "java.lang.Boolean" to KspPropertyColumn("SQLBooleanTypeColumn", "java.lang.Boolean"),
+            "java.lang.String" to KspPropertyColumn("SQLStringTypeColumn", "java.lang.String"),
+            "java.util.UUID" to KspPropertyColumn("SQLUUIDTypeColumn", "java.util.UUID"),
+            "java.sql.Timestamp" to KspPropertyColumn("SQLTimestampTypeColumn", "java.sql.Timestamp"),
+            "java.sql.Time" to KspPropertyColumn("SQLTimeTypeColumn", "java.sql.Time"),
+            "java.sql.Date" to KspPropertyColumn("SQLDateTypeColumn", "java.sql.Date"),
+            "java.util.Date" to KspPropertyColumn("SQLUtilDateTypeColumn", "java.util.Date"),
+            "java.time.LocalDate" to KspPropertyColumn("SQLLocalDateTypeColumn", "java.time.LocalDate"),
+            "java.time.LocalDateTime" to KspPropertyColumn("SQLLocalDateTimeTypeColumn", "java.time.LocalDateTime"),
+            "java.time.LocalTime" to KspPropertyColumn("SQLLocalTimeTypeColumn", "java.time.LocalTime")
         )
 
         private const val FIELD_DOC_COMMENT_TEMPLATE = "\n" +
                 "    /**\n" +
-                "     * {@link @{entityClass}#get@{property}}\n" +
+                "     * [@{entityClass}.@{property}]\n" +
                 "     @{comment}\n" +
                 "     */"
         private const val FIELD_EMPTY_DOC_COMMENT_TEMPLATE = "\n" +
                 "    /**\n" +
-                "     * {@link @{entityClass}#get@{property}}\n" +
+                "     * [@{entityClass}.@{property}]\n" +
                 "     */"
 
-        fun getPropertyColumn(fieldGenericType: String?, anyType: Boolean?): PropertyColumn {
+        fun getKspPropertyColumn(fieldGenericType: String?, anyType: Boolean?): PropertyColumn {
             return TYPE_COLUMN_MAPPING.getOrDefault(
                 fieldGenericType,
-                PropertyColumn("SQLAnyTypeColumn", fieldGenericType, anyType)
+                KspPropertyColumn("SQLAnyTypeColumn", fieldGenericType, anyType)
             )
         }
 
@@ -164,7 +133,7 @@ class ProxyGeneratorSqlProcessor(
             Dependencies(false, entityClassElement.containingFile!!),
             realGenPackage,
             proxyInstanceName,
-            "java"
+            "kt"
         ).use {
             it.write(content.encodeToByteArray())
         }
@@ -211,7 +180,7 @@ class ProxyGeneratorSqlProcessor(
             val fieldName =
                 if (isValueObject) fieldGenericType.substringAfterLast('.') else aptFileCompiler.entityClassName
             var fieldComment = getFiledComment(docComment, fieldName, propertyName)
-            val propertyColumn = getPropertyColumn(fieldGenericType, anyType)
+            val propertyColumn = getKspPropertyColumn(fieldGenericType, anyType)
             aptFileCompiler.addImports(propertyColumn.import)
 
             if (!includeProperty) {
@@ -289,15 +258,19 @@ class ProxyGeneratorSqlProcessor(
     private fun KSType.toJavaString(): String {
         val type = this
         if (type.declaration.qualifiedName == null) {
-            return "java.lang.Object"
+            return "Any"
         }
         val declaration = type.declaration
-        var className = declaration.qualifiedName!!.asString()
+        val className = declaration.qualifiedName!!.asString()
         // 将kotlin的类型转为java对应的类型
-        className = kotlinJavaTypeMapping[className] ?: className
         val arguments = type.arguments
         return if (arguments.isNotEmpty()) { // 泛型
-            "$className<${arguments.joinToString(", ") { it.type?.resolve()?.toJavaString() ?: "?" }}>"
+            "$className<${arguments.joinToString(", ") {
+                // 如果是可空的，增加问号
+                val resolve = it.type?.resolve()
+                val nullable = if (resolve?.isMarkedNullable == true) "?" else ""
+                resolve?.toJavaString()?.let { ktType  -> ktType + nullable } ?: "*" 
+            }}>"
         } else {
             className
         }
@@ -329,7 +302,7 @@ class ProxyGeneratorSqlProcessor(
         if (docComment == null) {
             val proxyComment = FIELD_EMPTY_DOC_COMMENT_TEMPLATE
                 .replace("@{entityClass}", className)
-                .replace("@{property}", EasyStringUtil.toUpperCaseFirstOne(propertyName))
+                .replace("@{property}", propertyName)
             return FieldComment(proxyComment, "");
         }
         val commentLines = docComment.trim().split("\n".toRegex())
@@ -342,7 +315,7 @@ class ProxyGeneratorSqlProcessor(
         val proxyComment = FIELD_DOC_COMMENT_TEMPLATE
             .replace("@{comment}", entityComment)
             .replace("@{entityClass}", className)
-            .replace("@{property}", EasyStringUtil.toUpperCaseFirstOne(propertyName))
+            .replace("@{property}", propertyName)
         return FieldComment(proxyComment, entityComment);
     }
 
@@ -423,7 +396,7 @@ class ProxyGeneratorSqlProcessor(
                 val valueObject = fieldElement.getAnnotationsByType(ValueObject::class).firstOrNull() != null
                 val fieldName = if (valueObject) fieldGenericType.substringAfterLast('.') else entityName
                 var fieldComment = getFiledComment(docComment, fieldName, propertyName)
-                val propertyColumn = getPropertyColumn(fieldGenericType, anyType)
+                val propertyColumn = getKspPropertyColumn(fieldGenericType, anyType)
                 aptFileCompiler.addImports(propertyColumn.import)
 
                 if (includeProperty) {
@@ -477,6 +450,6 @@ class ProxyGeneratorSqlProcessor(
     }
 
     private fun buildTablesClass(aptFileCompiler: AptFileCompiler, aptValueObjectInfo: AptValueObjectInfo): String {
-        return AptCreatorHelper.createProxy(aptFileCompiler, aptValueObjectInfo)
+        return KspCreatorHelper.createProxy(aptFileCompiler, aptValueObjectInfo)
     }
 }

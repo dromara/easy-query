@@ -591,7 +591,7 @@ public class GenericTest extends BaseTest {
 
             long l = easyEntityQuery.updatable(BlogEntity.class)
                     .asTable("x_t_blog")
-                    .setColumns(false,t_blog -> t_blog.star().increment(2))
+                    .setColumns(false, t_blog -> t_blog.star().increment(2))
                     .setColumns(t_blog -> t_blog.score().increment(2))
                     .whereById("123")
                     .executeRows();
@@ -1139,7 +1139,11 @@ public class GenericTest extends BaseTest {
     @Test
     public void EnumValueTest2() {
         EnumValueConverter enumValueConverter = new EnumValueConverter();
-        ColumnMetadata columnMetadata = new ColumnMetadata(new ColumnOption(false, new EntityMetadata(Object.class), "", "", ""));
+        ColumnOption columnOption = new ColumnOption(false, new EntityMetadata(Object.class), "", "", "");
+        columnOption.setSetterCaller((a, b) -> {
+        });
+        columnOption.setGetterCaller(s -> null);
+        ColumnMetadata columnMetadata = new ColumnMetadata(columnOption);
         Number e1 = enumValueConverter.serialize(null, columnMetadata);
         Assert.assertNull(e1);
         Number e2 = enumValueConverter.serialize(MyEnum.ZJ, columnMetadata);
