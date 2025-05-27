@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -474,5 +475,13 @@ public class DamengQueryTest extends DamengBaseTest {
                 .select(DamengMyTopic.class, o -> {
                    return o.key1().as(DamengMyTopic::getTitle);
                 }).limit(0, 9).toList();
+    }
+
+    @Test
+     public void concat1(){
+         List<Map> maps = easyQueryClient.sqlQuery("select 'a' || null || 'b' as \"aa\" from DUAL", Map.class);
+         System.out.println(maps);
+        Object o = maps.get(0).get("aa");
+        Assert.assertEquals("ab",o);
     }
 }

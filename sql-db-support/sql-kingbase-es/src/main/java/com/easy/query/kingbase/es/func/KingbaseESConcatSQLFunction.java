@@ -28,6 +28,11 @@ public class KingbaseESConcatSQLFunction extends AbstractExpressionSQLFunction {
         this.columnExpressions = concatExpressions;
     }
 
+    /**
+     * KingbaseES提供了多种兼容模式，MySQL模式支持多个CONCAT参数，ORACLE模式仅支持两个所以这边使用两个来兼容多个的模式
+     * @param defaultTable 默认单属性时候使用的表
+     * @return
+     */
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         StringBuilder sb = new StringBuilder("CONCAT({0},{1})");

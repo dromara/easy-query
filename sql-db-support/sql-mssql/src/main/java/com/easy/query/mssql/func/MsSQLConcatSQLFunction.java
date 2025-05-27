@@ -34,27 +34,8 @@ public class MsSQLConcatSQLFunction extends AbstractExpressionSQLFunction {
     }
 
     protected String getSQLSegment(TableAvailable defaultTable) {
-        int i = 0;
-        String[] params = new String[columnExpressions.size()];
-        for (ColumnExpression columnExpression : columnExpressions) {
-            if (columnExpression instanceof ColumnPropertyExpression) {
-                ColumnPropertyExpression columnFuncExpression = (ColumnPropertyExpression) columnExpression;
-                TableAvailable table = getTableByExpression(defaultTable, columnFuncExpression);
-                ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(columnFuncExpression.getProperty());
-                Class<?> propertyType = columnMetadata.getPropertyType();
-                if (Objects.equals(String.class, propertyType)) {
-                    params[i] = String.format("{%s}", i);
-                } else if (EasyClassUtil.isBasicType(propertyType)) {
-                    params[i] = String.format("CAST({%s} AS VARCHAR)", i);
-                } else {
-                    params[i] = String.format("CAST({%s} AS NVARCHAR(MAX))", i);
-                }
-            } else {
-                params[i] = String.format("{%s}", i);
-            }
-            i++;
-        }
-        return String.join(" + ", params);
+        Iterable<String> params = EasyCollectionUtil.select(columnExpressions, (t, i) -> "{" + i + "}");
+        return String.format("CONCAT(%s)", String.join(",", params));
     }
 
 

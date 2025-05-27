@@ -39,8 +39,7 @@ import java.util.Map;
  */
 public class QueryTest19 extends PgSQLBaseTest {
     @Test
-    public  void tree9(){
-
+    public void tree9() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -63,9 +62,9 @@ public class QueryTest19 extends PgSQLBaseTest {
         Assert.assertEquals("1(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
-    @Test
-    public  void tree10(){
 
+    @Test
+    public void tree10() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -85,9 +84,9 @@ public class QueryTest19 extends PgSQLBaseTest {
         Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
-    @Test
-    public  void tree10_1(){
 
+    @Test
+    public void tree10_1() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -109,8 +108,7 @@ public class QueryTest19 extends PgSQLBaseTest {
     }
 
     @Test
-    public  void tree11(){
-
+    public void tree11() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -172,7 +170,7 @@ public class QueryTest19 extends PgSQLBaseTest {
     }
 
     @Test
-    public  void tree12(){
+    public void tree12() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -245,7 +243,7 @@ public class QueryTest19 extends PgSQLBaseTest {
                     m.parentId().eq("1");
                 }).asTreeCTE()
                 .toTreeList();
-        Assert.assertEquals(2,treeList.size());
+        Assert.assertEquals(2, treeList.size());
         for (MyCategory child : treeList) {
             if ("3".equals(child.getId())) {
                 Assert.assertEquals(2, child.getChildren().size());
@@ -276,7 +274,7 @@ public class QueryTest19 extends PgSQLBaseTest {
 
 
     @Test
-    public  void testJoining(){
+    public void testJoining() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -297,7 +295,7 @@ public class QueryTest19 extends PgSQLBaseTest {
     }
 
     @Test
-    public  void testJoining2(){
+    public void testJoining2() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -308,7 +306,7 @@ public class QueryTest19 extends PgSQLBaseTest {
                 }).groupBy(t_blog -> GroupKeys.of(t_blog.title()))
                 .select(group -> Select.DRAFT.of(
                         group.key1(),
-                        group.joining(x->x.content())
+                        group.joining(x -> x.content())
                 )).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -316,8 +314,9 @@ public class QueryTest19 extends PgSQLBaseTest {
         Assert.assertEquals(",(String),false(Boolean),2022-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public  void testJoining3(){
+    public void testJoining3() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -327,7 +326,7 @@ public class QueryTest19 extends PgSQLBaseTest {
                 }).groupBy(t_blog -> GroupKeys.of(t_blog.title()))
                 .select(group -> Select.DRAFT.of(
                         group.key1(),
-                        group.joining(x -> x.content(),",")
+                        group.joining(x -> x.content(), ",")
                 ));
 
         List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
@@ -341,8 +340,9 @@ public class QueryTest19 extends PgSQLBaseTest {
         Assert.assertEquals(",(String),false(Boolean),2022-01-01T00:00(LocalDateTime),false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public  void testJoining4(){
+    public void testJoining4() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -370,13 +370,14 @@ public class QueryTest19 extends PgSQLBaseTest {
     }
 
     @Test
-     public void testChunk(){
+    public void testChunk() {
         entityQuery.queryable(BlogEntity.class)
-                .toChunk(100,s->{
+                .toChunk(100, s -> {
                 });
     }
+
     @Test
-     public void testMapChain(){
+    public void testMapChain() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
@@ -393,8 +394,9 @@ public class QueryTest19 extends PgSQLBaseTest {
         Assert.assertEquals("false(Boolean),123(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-     public void testMapChain2(){
+    public void testMapChain2() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
@@ -413,7 +415,6 @@ public class QueryTest19 extends PgSQLBaseTest {
     }
 
 
-
     @Test
     public void testToTreeList3() {
         ListenerContext listenerContext = new ListenerContext();
@@ -421,8 +422,8 @@ public class QueryTest19 extends PgSQLBaseTest {
         List<MyCategory> treeList = entityQuery.queryable(MyCategory.class)
                 .where(m -> {
                     m.id().eq("1");
-                }).asTreeCTE(op->{
-                    op.setChildFilter(child->{
+                }).asTreeCTE(op -> {
+                    op.setChildFilter(child -> {
                         child.name().like("123");
                     });
                 })
@@ -470,18 +471,18 @@ public class QueryTest19 extends PgSQLBaseTest {
 
 
     @Test
-    public void datetimeformat(){
+    public void datetimeformat() {
 
-        String formater="yyyy年MM-01 HH:mm分ss秒";
+        String formater = "yyyy年MM-01 HH:mm分ss秒" ;
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        List<Draft2<LocalDateTime,String>> list = entityQuery.queryable(BlogEntity.class)
+        List<Draft2<LocalDateTime, String>> list = entityQuery.queryable(BlogEntity.class)
                 .select(d -> Select.DRAFT.of(
                         d.createTime(),
                         d.createTime().format(formater)
                 )).toList();
         Assert.assertFalse(list.isEmpty());
-        for (Draft2<LocalDateTime,String> timeAndFormat : list) {
+        for (Draft2<LocalDateTime, String> timeAndFormat : list) {
             LocalDateTime value1 = timeAndFormat.getValue1();
             String format = value1.format(DateTimeFormatter.ofPattern(formater));
             Assert.assertEquals(format, timeAndFormat.getValue2());
@@ -495,12 +496,19 @@ public class QueryTest19 extends PgSQLBaseTest {
 
     }
 
-//    @Test
+    //    @Test
 //    public void test(){
 //        EntityMetadata entityMetadata = entityQuery.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(TestPgSQLEntity.class);
 //        String tableName = entityMetadata.getTableName();
 //        System.out.println("TestPgSQLEntity:"+tableName);
 //        List<TestPgSQLEntity> list = entityQuery.queryable(TestPgSQLEntity.class).toList();
 //    }
+    @Test
+    public void concat1() {
+        List<Map> maps = entityQuery.sqlQuery("select CONCAT('a', null , 'b') as \"aa\" ", Map.class);
+        System.out.println(maps);
+        Object o = maps.get(0).get("aa");
+        Assert.assertEquals("ab", o);
+    }
 
 }

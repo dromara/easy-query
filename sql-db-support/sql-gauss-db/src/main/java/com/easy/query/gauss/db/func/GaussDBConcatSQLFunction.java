@@ -19,7 +19,7 @@ public class GaussDBConcatSQLFunction extends AbstractExpressionSQLFunction {
 
     public GaussDBConcatSQLFunction(List<ColumnExpression> concatExpressions) {
         if (EasyCollectionUtil.isEmpty(concatExpressions)) {
-            throw new IllegalArgumentException("PgSQLConcatSQLFunction columns empty");
+            throw new IllegalArgumentException("GaussDBSQLConcatSQLFunction columns empty");
         }
         this.columnExpressions = concatExpressions;
     }
@@ -27,7 +27,6 @@ public class GaussDBConcatSQLFunction extends AbstractExpressionSQLFunction {
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
         Iterable<String> params = EasyCollectionUtil.select(columnExpressions, (t, i) -> "{" + i + "}");
-//        return String.format("%s", String.join(" || ", params));
         return String.format("CONCAT(%s)", String.join(",", params));
     }
 

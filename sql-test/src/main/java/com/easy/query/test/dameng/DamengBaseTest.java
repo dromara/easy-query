@@ -30,6 +30,7 @@ import java.util.List;
 public abstract class DamengBaseTest {
     public static HikariDataSource dataSource;
     public static EasyEntityQuery entityQuery;
+    public static EasyQueryClient easyQueryClient;
     public static ListenerContextManager listenerContextManager;
 
     static {
@@ -57,7 +58,7 @@ public abstract class DamengBaseTest {
     public static void initEasyQuery() {
         listenerContextManager = new ListenerContextManager();
         MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
-        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+        easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
                 .setDefaultDataSource(dataSource)
                 .optionConfigure(op -> {
                     op.setDeleteThrowError(false);

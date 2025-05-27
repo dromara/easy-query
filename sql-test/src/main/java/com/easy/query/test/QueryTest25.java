@@ -7,6 +7,8 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
+import com.easy.query.test.dto.TopicTypeVO;
+import com.easy.query.test.dto.proxy.TopicTypeVOProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.listener.ListenerContext;
@@ -14,6 +16,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -47,5 +50,15 @@ public class QueryTest25 extends BaseTest {
                 }).toList();
     }
 
+    @Test
+    public void test11(){
+        List<TopicTypeVO> list = easyEntityQuery.queryable(Topic.class)
+                .where(t_topic -> {
+                    t_topic.title().contains("123");
+                }).select(t_topic -> new TopicTypeVOProxy() {{
+                    id().set(t_topic.id());
+                    stars().set(t_topic.stars());
+                }}).toList();
+    }
 
 }

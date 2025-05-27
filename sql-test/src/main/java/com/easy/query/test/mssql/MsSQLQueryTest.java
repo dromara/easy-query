@@ -577,4 +577,12 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         Assert.assertEquals("年(String),-01 (String),:(String),分(String),秒(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
+    @Test
+    public void concat1(){
+        List<Map> maps = entityQuery.sqlQuery("select CONCAT('a', null , 'b') as [aa] ", Map.class);
+        System.out.println(maps);
+        Object o = maps.get(0).get("aa");
+        Assert.assertEquals("ab",o);
+    }
 }
