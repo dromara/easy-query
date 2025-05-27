@@ -26,7 +26,7 @@ public class SQLiteConcatSQLFunction extends AbstractExpressionSQLFunction {
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        Iterable<String> params = EasyCollectionUtil.select(columnExpressions, (t, i) -> "{" + i + "}");
+        Iterable<String> params = EasyCollectionUtil.select(columnExpressions, (t, i) -> "COALESCE({" + i + "},'')");
         return String.format("%s", String.join(" || ", params));
     }
 
