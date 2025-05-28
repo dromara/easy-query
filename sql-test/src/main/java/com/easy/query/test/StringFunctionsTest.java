@@ -123,7 +123,7 @@ public class StringFunctionsTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT ? + t.[code] + ? + t.[type] FROM [doc_bank_card] t WHERE t.[code] + ? = ? AND t.[code] + t.[type] = ? AND ? + t.[code] = ? AND ? + t.[code] + ? + t.[type] = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT CONCAT(?,t.[code],?,t.[type]) FROM [doc_bank_card] t WHERE CONCAT(t.[code],?) = ? AND CONCAT(t.[code],t.[type]) = ? AND CONCAT(?,t.[code]) = ? AND CONCAT(?,t.[code],?,t.[type]) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("这张银行卡编号:(String),,类型为:(String),nextCode(String),aaaa(String),123(String),这张银行卡编号:(String),123(String),这张银行卡编号:(String),,类型为:(String),这张银行卡编号:123,类型为:456(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
