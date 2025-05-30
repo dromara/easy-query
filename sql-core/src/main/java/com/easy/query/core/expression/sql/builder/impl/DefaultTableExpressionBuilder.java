@@ -25,7 +25,7 @@ import java.util.function.Supplier;
 public class DefaultTableExpressionBuilder implements EntityTableExpressionBuilder {
 
     protected final TableAvailable entityTable;
-    protected final MultiTableTypeEnum multiTableType;
+    protected MultiTableTypeEnum multiTableType;
     protected final QueryRuntimeContext runtimeContext;
     protected PredicateSegment on;
     protected Supplier<Boolean> tableLogicDel;
@@ -38,6 +38,11 @@ public class DefaultTableExpressionBuilder implements EntityTableExpressionBuild
         this.entityTable = entityTable;
         this.multiTableType = multiTableType;
         this.runtimeContext = runtimeContext;
+    }
+
+    @Override
+    public void setMultiTableType(MultiTableTypeEnum multiTableType) {
+        this.multiTableType = multiTableType;
     }
 
     @Override

@@ -203,7 +203,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @NotNull
     @Override
     public ClientQueryable<T1> toCteAs(String tableName) {
-        ClientQueryable<T1> t1ClientQueryable = cloneQueryable();
         ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();
 
         EntityQueryExpressionBuilder entityQueryExpressionBuilder = expressionBuilderFactory.createEntityQueryExpressionBuilder(expressionContext, queryClass());
@@ -215,10 +214,10 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
         List<ExpressionBuilder> declareExpressions = entityQueryExpressionBuilder.getExpressionContext().getDeclareExpressions();
         if(!EasySQLExpressionUtil.withTableInDeclareExpressions(declareExpressions,tableName)){
+
+            ClientQueryable<T1> t1ClientQueryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(this);
             EntityQueryExpressionBuilder sqlEntityExpressionBuilder = t1ClientQueryable.getSQLEntityExpressionBuilder();
-            if(EasySQLSegmentUtil.isEmpty(sqlEntityExpressionBuilder.getProjects())){
-                t1ClientQueryable.select(s->s.columnAll());
-            }
+
             EntityQueryExpressionBuilder anonymousWithTableQueryExpressionBuilder = expressionBuilderFactory.createAnonymousWithTableQueryExpressionBuilder(tableName, sqlEntityExpressionBuilder, entityQueryExpressionBuilder.getExpressionContext(), queryClass());
             declareExpressions.add(anonymousWithTableQueryExpressionBuilder);
         }

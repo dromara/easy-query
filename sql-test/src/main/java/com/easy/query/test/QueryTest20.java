@@ -392,7 +392,7 @@ public class QueryTest20 extends BaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("WITH `with_TopicGroupTestDTO` AS (SELECT t1.`id` AS `id`,COUNT(t1.`id`) AS `id_count` FROM `t_topic` t1 WHERE t1.`id` = ? GROUP BY t1.`id`)  SELECT t.`id` AS `value1`,t3.`id_count` AS `value2` FROM `t_blog` t LEFT JOIN `with_TopicGroupTestDTO` t3 ON t.`id` = t3.`id` WHERE t.`deleted` = ? AND t.`id` IS NOT NULL AND t3.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("WITH `with_TopicGroupTestDTO` AS (SELECT t1.`id` AS `id`,COUNT(t1.`id`) AS `id_count` FROM `t_topic` t1 WHERE t1.`id` = ? GROUP BY t1.`id`) SELECT t.`id` AS `value1`,t3.`id_count` AS `value2` FROM `t_blog` t LEFT JOIN `with_TopicGroupTestDTO` t3 ON t.`id` = t3.`id` WHERE t.`deleted` = ? AND t.`id` IS NOT NULL AND t3.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("3(String),false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 

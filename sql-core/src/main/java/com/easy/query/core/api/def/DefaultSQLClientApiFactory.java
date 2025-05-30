@@ -248,7 +248,7 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
 
     private <T> void addJoinTableExpressionBuilder(ClientQueryable<T> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder){
 
-        Class<T> joinClass = joinQueryable.queryClass();
+//        Class<T> joinClass = joinQueryable.queryClass();
 
         //不需要额外在获取直接获取表达式的即可
         EntityMetadata entityMetadata = joinQueryable.queryEntityMetadata();// entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(joinClass)
@@ -257,7 +257,9 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
         boolean withTable = joinQueryable instanceof CteTableAvailable;
         if (withTable) {
             CteTableAvailable withTableAvailable = (CteTableAvailable) joinQueryable;
-            EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, entityQueryExpressionBuilder.getRuntimeContext());
+            EntityTableExpressionBuilder sqlTable = joinQueryable.getSQLEntityExpressionBuilder().getFromTable();
+            sqlTable.setMultiTableType(selectTableInfoType);
+//            EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata, selectTableInfoType, entityQueryExpressionBuilder.getRuntimeContext());
             String withTableName = withTableAvailable.getCteTableName();
             sqlTable.setTableNameAs(o -> {
                 return withTableName;

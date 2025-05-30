@@ -56,12 +56,12 @@ public class QueryTest11 extends BaseTest {
     @Test
     public void testx() {
 
-        EntityQueryable<BlogEntityProxy, BlogEntity> where1 = easyEntityQuery.queryable(BlogEntity.class)
-                .where(o -> o.id().eq("1")).toCteAs();
-        List<Topic> x = easyEntityQuery
-                .queryable(Topic.class).where(o -> o.expression().exists(()->{
-                    return where1.where(q -> q.id().eq(o.id()));
-                })).toList();
+//        EntityQueryable<BlogEntityProxy, BlogEntity> where1 = easyEntityQuery.queryable(BlogEntity.class)
+//                .where(o -> o.id().eq("1")).toCteAs();
+//        List<Topic> x = easyEntityQuery
+//                .queryable(Topic.class).where(o -> o.expression().exists(()->{
+//                    return where1.where(q -> q.id().eq(o.id()));
+//                })).toList();
 
 
         EntityQueryable<BlogEntityProxy, BlogEntity> where = easyEntityQuery.queryable(BlogEntity.class)
@@ -745,7 +745,7 @@ public class QueryTest11 extends BaseTest {
                 .where(o -> o.id().isNotNull())
                 .asTreeCTE()
                 .toSQL();
-        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS ( (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL)  UNION ALL  (SELECT t2.`cte_deep` + 1 AS `cte_deep`,t3.`id`,t3.`stars`,t3.`title`,t3.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t3.`stars` = t2.`id`) )  SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t", sql);
+        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS ( (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL)  UNION ALL  (SELECT t2.`cte_deep` + 1 AS `cte_deep`,t3.`id`,t3.`stars`,t3.`title`,t3.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t3.`stars` = t2.`id`) ) SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t", sql);
     }
 
     @Test

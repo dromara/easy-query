@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql.builder;
 
+import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -18,7 +19,7 @@ import java.util.function.Supplier;
  */
 public interface EntityTableExpressionBuilder extends TableExpressionBuilder {
     EntityMetadata getEntityMetadata();
-
+    void setMultiTableType(MultiTableTypeEnum multiTableType);
     void setTableNameAs(Function<String, String> tableNameAs);
 
     /**

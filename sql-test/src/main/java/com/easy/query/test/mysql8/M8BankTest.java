@@ -1443,7 +1443,7 @@ public class M8BankTest extends BaseTest {
 
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
 //                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("WITH `with_Draft2` AS (SELECT t1.`bank_id` AS `value1`,COUNT(*) AS `value2` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`)  SELECT t.`name` AS `value1`,t3.`value2` AS `value2` FROM `t_bank` t LEFT JOIN `with_Draft2` t3 ON t.`id` = t3.`value1`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("WITH `with_Draft2` AS (SELECT t1.`bank_id` AS `value1`,COUNT(*) AS `value2` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) SELECT t.`name` AS `value1`,t3.`value2` AS `value2` FROM `t_bank` t LEFT JOIN `with_Draft2` t3 ON t.`id` = t3.`value1`", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
     }
