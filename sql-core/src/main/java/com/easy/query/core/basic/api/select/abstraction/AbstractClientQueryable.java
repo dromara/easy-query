@@ -1,5 +1,7 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
+import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
@@ -201,7 +203,31 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @NotNull
     @Override
     public ClientQueryable<T1> toCteAs(String tableName) {
-        return new EasyCteClientQueryable<>(cloneQueryable(), tableName);
+        ClientQueryable<T1> t1ClientQueryable = cloneQueryable();
+        ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();
+
+        EntityQueryExpressionBuilder entityQueryExpressionBuilder = expressionBuilderFactory.createEntityQueryExpressionBuilder(expressionContext, queryClass());
+        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.FROM, runtimeContext);
+        sqlTable.setTableNameAs(o -> {
+            return tableName;
+        });
+        entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
+
+        List<ExpressionBuilder> declareExpressions = entityQueryExpressionBuilder.getExpressionContext().getDeclareExpressions();
+        if(!EasySQLExpressionUtil.withTableInDeclareExpressions(declareExpressions,tableName)){
+            EntityQueryExpressionBuilder sqlEntityExpressionBuilder = t1ClientQueryable.getSQLEntityExpressionBuilder();
+            if(EasySQLSegmentUtil.isEmpty(sqlEntityExpressionBuilder.getProjects())){
+                t1ClientQueryable.select(s->s.columnAll());
+            }
+            EntityQueryExpressionBuilder anonymousWithTableQueryExpressionBuilder = expressionBuilderFactory.createAnonymousWithTableQueryExpressionBuilder(tableName, sqlEntityExpressionBuilder, entityQueryExpressionBuilder.getExpressionContext(), queryClass());
+            declareExpressions.add(anonymousWithTableQueryExpressionBuilder);
+        }
+
+
+        EasyClientQueryable<T1> easyClientQueryable = new EasyClientQueryable<>(queryClass(), entityQueryExpressionBuilder);
+
+
+        return new EasyCteClientQueryable<>(easyClientQueryable, tableName);
     }
 
     private void setExecuteMethod(ExecuteMethodEnum executeMethod) {

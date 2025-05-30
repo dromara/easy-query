@@ -262,11 +262,6 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
             sqlTable.setTableNameAs(o -> {
                 return withTableName;
             });
-            List<ExpressionBuilder> declareExpressions = entityQueryExpressionBuilder.getExpressionContext().getDeclareExpressions();
-            if(!EasySQLExpressionUtil.withTableInDeclareExpressions(declareExpressions,withTableName)){
-                EntityQueryExpressionBuilder anonymousWithTableQueryExpressionBuilder = expressionBuilderFactory.createAnonymousWithTableQueryExpressionBuilder(withTableName, joinQueryableSQLEntityExpressionBuilder, entityQueryExpressionBuilder.getExpressionContext(), joinClass);
-                declareExpressions.add(anonymousWithTableQueryExpressionBuilder);
-            }
 
             entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
         } else {

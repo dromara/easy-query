@@ -154,8 +154,8 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
 
     @Override
     public List<EntityTableSQLExpression> getRelationTables() {
-        if (relationTables==null){
-            relationTables=new ArrayList<>();
+        if (relationTables == null) {
+            relationTables = new ArrayList<>();
         }
         return relationTables;
     }
@@ -168,15 +168,16 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         boolean root = EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
-        if(root){
-            if(entitySQLExpressionMetadata.getExpressionContext().hasDeclareExpressions()){
-                StringBuilder sb = new StringBuilder();
+        if (root) {
+            if (entitySQLExpressionMetadata.getExpressionContext().hasDeclareExpressions()) {
+                StringBuilder sb = new StringBuilder("WITH ");
                 List<ExpressionBuilder> declareExpressions = entitySQLExpressionMetadata.getExpressionContext().getDeclareExpressions();
                 for (ExpressionBuilder declareExpression : declareExpressions) {
                     SQLExpression expression = declareExpression.toExpression();
                     String sql = expression.toSQL(toSQLContext);
-                    sb.append(sql).append(" ");
+                    sb.append(sql).append(",");
                 }
+                sb.deleteCharAt(sb.length() - 1);
                 sb.append(toSQL0(true, toSQLContext));
                 return sb.toString();
             }
@@ -184,7 +185,7 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
         return toSQL0(root, toSQLContext);
     }
 
-    protected String toSQL0(boolean root,ToSQLContext toSQLContext){
+    protected String toSQL0(boolean root, ToSQLContext toSQLContext) {
 
         StringBuilder sql = new StringBuilder("SELECT ");
         if (this.distinct) {
@@ -274,7 +275,7 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
         for (EntityTableSQLExpression table : this.tables) {
             easyQuerySQLExpression.getTables().add(table.cloneSQLExpression());
         }
-        if(hasRelationTables()){
+        if (hasRelationTables()) {
             for (EntityTableSQLExpression relationTable : this.relationTables) {
                 easyQuerySQLExpression.getRelationTables().add(relationTable.cloneSQLExpression());
             }

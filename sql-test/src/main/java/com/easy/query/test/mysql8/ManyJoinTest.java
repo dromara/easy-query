@@ -5,8 +5,12 @@ import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
+import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
+import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.doc.entity.DocBank;
@@ -27,6 +31,9 @@ import com.easy.query.test.mysql8.entity.M8UserBook;
 import com.easy.query.test.mysql8.entity.M8UserRole;
 import com.easy.query.test.mysql8.entity.M8UserRole2;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
+import com.easy.query.test.mysql8.entity.proxy.M8MenuProxy;
+import com.easy.query.test.mysql8.entity.proxy.M8UserProxy;
+import com.easy.query.test.mysql8.entity.proxy.M8UserRoleProxy;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +42,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * create time 2025/3/6 11:48
@@ -480,8 +488,31 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
+    private <TMember extends Number> NumberTypeExpression<BigDecimal> createColumn(M8UserProxy u, SQLFuncExpression1<M8MenuProxy,ColumnNumberFunctionAvailable<TMember>> columnSelector){
+        return  u.roles().sumBigDecimal(role -> {
+            return role.menus().where(menu -> menu.name().like("admin")).sum(columnSelector);
+        });
+    }
     @Test
     public void testMany2Many2GroupJoin2() {
+
+
+//        List<Draft1<Integer>> list1 = easyEntityQuery.queryable(M8User.class)
+//                .subQueryToGroupJoin(s -> s.roles())
+//                .subQueryConfigure(s -> s.roles(), s -> s.subQueryToGroupJoin(r -> r.menus()))
+//                .select(m -> Select.DRAFT.of(
+//                        m.roles().sum(role -> {
+//                            return role.menus().where(menu -> menu.name().like("admin")).sum(menu -> menu.path().asInteger());
+//                        })
+//                )).toList();
+//
+//        List<Draft2<BigDecimal, BigDecimal>> list = easyEntityQuery.queryable(M8User.class)
+//                .select(m -> Select.DRAFT.of(
+//                        createColumn(m, menu -> menu.path().asInteger()),
+//                        createColumn(m, menu -> menu.name().asInteger())
+//                )).toList();
+
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);

@@ -32,7 +32,7 @@ public class AnonymousWithTableQuerySQLExpressionImpl implements AnonymousEntity
     public String toSQL(ToSQLContext toSQLContext) {
         EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
         String quoteWithTableName = EasySQLExpressionUtil.getQuoteName(getRuntimeContext(), this.withTableName);
-        StringBuilder sql = new StringBuilder("WITH ").append(quoteWithTableName).append(" AS (");
+        StringBuilder sql = new StringBuilder().append(quoteWithTableName).append(" AS (");
         String cteSQL = querySQLExpression.toSQL(toSQLContext);
         sql.append(cteSQL).append(") ");
         return sql.toString();
