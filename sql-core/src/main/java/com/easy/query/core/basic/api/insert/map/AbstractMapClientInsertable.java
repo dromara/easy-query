@@ -43,7 +43,7 @@ public abstract class AbstractMapClientInsertable implements MapClientInsertable
         QueryRuntimeContext runtimeContext = entityInsertExpressionBuilder.getRuntimeContext();
         entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(Map.class);
 
-        this.entityTableExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.NONE, runtimeContext);
+        this.entityTableExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.NONE, entityInsertExpressionBuilder.getExpressionContext());
         this.entityInsertExpressionBuilder.addSQLEntityTableExpression(entityTableExpressionBuilder);
     }
 

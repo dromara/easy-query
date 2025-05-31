@@ -55,7 +55,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
         entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
 
-        this.entityTableExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.NONE, runtimeContext);
+        this.entityTableExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.NONE, entityInsertExpressionBuilder.getExpressionContext());
         this.entityInsertExpressionBuilder.addSQLEntityTableExpression(entityTableExpressionBuilder);
     }
 

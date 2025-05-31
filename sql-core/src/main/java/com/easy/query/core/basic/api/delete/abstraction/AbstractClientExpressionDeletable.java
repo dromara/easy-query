@@ -57,7 +57,7 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
         QueryRuntimeContext runtimeContext = entityDeleteExpressionBuilder.getRuntimeContext();
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        this.tableExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.NONE, runtimeContext);
+        this.tableExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.NONE, entityDeleteExpressionBuilder.getExpressionContext());
         this.entityDeleteExpressionBuilder.addSQLEntityTableExpression(tableExpressionBuilder);
     }
 

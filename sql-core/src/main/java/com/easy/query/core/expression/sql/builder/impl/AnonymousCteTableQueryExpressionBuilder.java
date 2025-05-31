@@ -49,4 +49,9 @@ public class AnonymousCteTableQueryExpressionBuilder extends QueryExpressionBuil
     public String getCteTableName() {
         return withTableName;
     }
+
+    @Override
+    public Class<?> cteTableClass() {
+        return queryClass;
+    }
 }

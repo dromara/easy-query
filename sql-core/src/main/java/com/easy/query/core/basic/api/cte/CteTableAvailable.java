@@ -8,4 +8,5 @@ package com.easy.query.core.basic.api.cte;
  */
 public interface CteTableAvailable {
     String getCteTableName();
+    Class<?> cteTableClass();
 }

@@ -103,12 +103,13 @@ public class EasySQLExpressionUtil {
     private EasySQLExpressionUtil() {
     }
 
-    public static boolean withTableInDeclareExpressions(List<ExpressionBuilder> declareExpressions, String withTableName) {
+    public static boolean withTableInDeclareExpressions(List<ExpressionBuilder> declareExpressions,Class<?> cteTableClass, String cteTableName) {
         boolean hasWithTable = false;
         for (ExpressionBuilder declareExpression : declareExpressions) {
             if (declareExpression instanceof CteTableAvailable) {
-                String declareWithTableName = ((CteTableAvailable) declareExpression).getCteTableName();
-                if (Objects.equals(declareWithTableName, withTableName)) {
+                CteTableAvailable cteTableAvailable = (CteTableAvailable) declareExpression;
+                String declareWithTableName = cteTableAvailable.getCteTableName();
+                if (Objects.equals(declareWithTableName, cteTableName)&&Objects.equals(cteTableAvailable.cteTableClass(),cteTableClass)) {
                     hasWithTable = true;
                     break;
                 }

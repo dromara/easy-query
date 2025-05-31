@@ -30,4 +30,9 @@ public class EasyCteClientQueryable<T> extends AbstractClientQueryable1<T> imple
     public String getCteTableName() {
         return cteTableName;
     }
+
+    @Override
+    public Class<?> cteTableClass() {
+        return queryClass();
+    }
 }

@@ -49,7 +49,7 @@ public abstract class AbstractMapClientUpdatable extends AbstractSQLExecuteRows<
         QueryRuntimeContext runtimeContext = this.mapUpdateExpressionBuilder.getRuntimeContext();
         entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(Map.class);
         entityMetadata.checkTable();
-        table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.NONE, runtimeContext);
+        table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.NONE, mapUpdateExpressionBuilder.getExpressionContext());
         this.mapUpdateExpressionBuilder.addSQLEntityTableExpression(table);
     }
 

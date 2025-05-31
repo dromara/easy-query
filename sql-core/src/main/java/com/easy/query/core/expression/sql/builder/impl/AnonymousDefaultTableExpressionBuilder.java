@@ -25,7 +25,7 @@ public class AnonymousDefaultTableExpressionBuilder extends DefaultTableExpressi
     protected final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
 
     public AnonymousDefaultTableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        super(entityTable, multiTableType, entityQueryExpressionBuilder.getRuntimeContext());
+        super(entityTable, multiTableType, entityQueryExpressionBuilder.getExpressionContext());
         this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
     }
 

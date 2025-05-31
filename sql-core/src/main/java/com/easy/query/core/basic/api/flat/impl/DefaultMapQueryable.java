@@ -26,6 +26,7 @@ import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -54,18 +55,20 @@ public class DefaultMapQueryable implements MapQueryable {
     private final ClientQueryable<Map<String, Object>> queryable;
     private final Class<Map<String, Object>> queryClass;
     private final QueryRuntimeContext runtimeContext;
+    private final ExpressionContext expressionContext;
 
     public DefaultMapQueryable(ClientQueryable<Map<String, Object>> queryable) {
 
         this.queryable = queryable;
         this.queryClass = queryable.queryClass();
+        this.expressionContext = queryable.getSQLEntityExpressionBuilder().getExpressionContext();
         this.runtimeContext = queryable.getSQLEntityExpressionBuilder().getRuntimeContext();
     }
 
     @Override
     public MapQueryable join(MultiTableTypeEnum joinTable, SQLActionExpression1<MapFilter> on) {
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(Map.class);
-        EntityTableExpressionBuilder sqlTable = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.LEFT_JOIN, runtimeContext);
+        EntityTableExpressionBuilder sqlTable = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.LEFT_JOIN, expressionContext);
         queryable.getSQLEntityExpressionBuilder().addSQLEntityTableExpression(sqlTable);
         on.apply(new MapOnFilterImpl(this.queryable));
         return this;

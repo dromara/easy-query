@@ -29,10 +29,10 @@ import java.util.List;
  */
 public interface ExpressionBuilderFactory {
     ExpressionContext createExpressionContext(QueryRuntimeContext runtimeContext);
-   default EntityTableExpressionBuilder createEntityTableExpressionBuilder(EntityMetadata entityMetadata, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext){
-       return createEntityTableExpressionBuilder(new EntityTableAvailable(entityMetadata,false),multiTableType,runtimeContext);
+   default EntityTableExpressionBuilder createEntityTableExpressionBuilder(EntityMetadata entityMetadata, MultiTableTypeEnum multiTableType, ExpressionContext expressionContext){
+       return createEntityTableExpressionBuilder(new EntityTableAvailable(entityMetadata,false),multiTableType,expressionContext);
    }
-    EntityTableExpressionBuilder createEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext);
+    EntityTableExpressionBuilder createEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, ExpressionContext expressionContext);
    default EntityTableExpressionBuilder createAnonymousEntityTableExpressionBuilder(EntityMetadata entityMetadata,MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder){
        return createAnonymousEntityTableExpressionBuilder(new EntityTableAvailable(entityMetadata,true),multiTableType,entityQueryExpressionBuilder);
    }

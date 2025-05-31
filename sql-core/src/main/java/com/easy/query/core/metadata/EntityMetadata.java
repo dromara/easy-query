@@ -22,6 +22,8 @@ import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.UpdateIgnore;
 import com.easy.query.core.annotation.ValueObject;
 import com.easy.query.core.annotation.Version;
+import com.easy.query.core.api.EntityCteViewer;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.complex.ComplexPropType;
 import com.easy.query.core.basic.extension.complex.DefaultComplexPropType;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
@@ -65,6 +67,7 @@ import com.easy.query.core.configuration.bean.EasyMatcher;
 import com.easy.query.core.configuration.bean.PropertyDescriptorResult;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
 import com.easy.query.core.enums.OrderByPropertyModeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
@@ -117,6 +120,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -176,6 +180,8 @@ public class EntityMetadata {
     protected EntityMetadataTypeEnum entityMetadataType = EntityMetadataTypeEnum.BEAN;
     protected Supplier<Object> beanConstructorCreator;
 
+    private Supplier<Query<?>> cteViewerCreator;
+
     private DataReader dataReader;
 
     public EntityMetadata(Class<?> entityClass) {
@@ -229,6 +235,12 @@ public class EntityMetadata {
                 if (EasyStringUtil.isNotBlank(easyTree.value())) {
                     this.treeName = easyTree.value();
                 }
+            }
+
+            if (EntityCteViewer.class.isAssignableFrom(entityClass)) {
+                EntityCteViewer<?> entityCteViewer = EasyObjectUtil.typeCastNotNull(EasyClassUtil.newInstance(entityClass));
+                QueryRuntimeContext runtimeContext = serviceProvider.getService(QueryRuntimeContext.class);
+                this.cteViewerCreator = EasyObjectUtil.typeCastNotNull(entityCteViewer.viewConfigure(runtimeContext));
             }
         }
 
@@ -1255,5 +1267,9 @@ public class EntityMetadata {
      */
     public ExtraAutoIncludeConfigure getExtraAutoIncludeConfigure() {
         return extraAutoIncludeConfigure;
+    }
+
+    public Supplier<Query<?>> getCteViewerCreator() {
+        return cteViewerCreator;
     }
 }

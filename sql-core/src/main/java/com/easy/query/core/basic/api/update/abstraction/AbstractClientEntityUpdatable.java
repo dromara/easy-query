@@ -62,7 +62,7 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
         QueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
         entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         entityMetadata.checkTable();
-        table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.NONE, runtimeContext);
+        table = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.NONE, entityUpdateExpressionBuilder.getExpressionContext());
         this.entityUpdateExpressionBuilder.addSQLEntityTableExpression(table);
     }
 

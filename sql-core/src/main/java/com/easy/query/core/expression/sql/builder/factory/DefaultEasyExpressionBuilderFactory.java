@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.sql.builder.factory;
 
+import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -10,6 +12,7 @@ import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.MapUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousDefaultTableExpressionBuilder;
@@ -21,6 +24,11 @@ import com.easy.query.core.expression.sql.builder.impl.QueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.DefaultTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.UpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.UpdateMapExpressionBuilder;
+import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasySQLExpressionUtil;
+
+import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * create time 2023/4/2 22:09
@@ -35,8 +43,30 @@ public class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFac
     }
 
     @Override
-    public EntityTableExpressionBuilder createEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
-        return new DefaultTableExpressionBuilder(tableAvailable, multiTableType, runtimeContext);
+    public EntityTableExpressionBuilder createEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, ExpressionContext expressionContext) {
+        QueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
+        DefaultTableExpressionBuilder defaultTableExpressionBuilder = new DefaultTableExpressionBuilder(tableAvailable, multiTableType, expressionContext);
+        EntityMetadata entityMetadata = tableAvailable.getEntityMetadata();
+        Supplier<Query<?>> cteViewerCreator = entityMetadata.getCteViewerCreator();
+        if (cteViewerCreator != null) {
+            List<ExpressionBuilder> declareExpressions = expressionContext.getDeclareExpressions();
+            Query<?> query = cteViewerCreator.get();
+            defaultTableExpressionBuilder.setTableNameAs(o -> {
+                return entityMetadata.getTableName();
+            });
+
+            expressionContext.extract(query.getSQLEntityExpressionBuilder().getExpressionContext());
+            if(!EasySQLExpressionUtil.withTableInDeclareExpressions(declareExpressions,entityMetadata.getEntityClass(),entityMetadata.getTableName())){
+                ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();
+                EntityQueryExpressionBuilder sqlEntityExpressionBuilder = query.getSQLEntityExpressionBuilder();
+
+                EntityQueryExpressionBuilder anonymousWithTableQueryExpressionBuilder = expressionBuilderFactory.createAnonymousWithTableQueryExpressionBuilder(entityMetadata.getTableName(), sqlEntityExpressionBuilder, expressionContext, entityMetadata.getEntityClass());
+                declareExpressions.add(anonymousWithTableQueryExpressionBuilder);
+            }
+
+        }
+
+        return defaultTableExpressionBuilder;
     }
 
     @Override
@@ -46,7 +76,7 @@ public class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFac
 
     @Override
     public AnonymousManyJoinEntityTableExpressionBuilder createAnonymousManyGroupEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder, String[] defaultKeys) {
-        return new AnonymousManyJoinDefaultTableExpressionBuilder(tableAvailable,multiTableType,entityQueryExpressionBuilder,defaultKeys);
+        return new AnonymousManyJoinDefaultTableExpressionBuilder(tableAvailable, multiTableType, entityQueryExpressionBuilder, defaultKeys);
     }
 
     @Override

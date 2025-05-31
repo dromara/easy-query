@@ -206,14 +206,14 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();
 
         EntityQueryExpressionBuilder entityQueryExpressionBuilder = expressionBuilderFactory.createEntityQueryExpressionBuilder(expressionContext, queryClass());
-        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.FROM, runtimeContext);
+        EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.FROM, expressionContext);
         sqlTable.setTableNameAs(o -> {
             return tableName;
         });
         entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
 
         List<ExpressionBuilder> declareExpressions = entityQueryExpressionBuilder.getExpressionContext().getDeclareExpressions();
-        if(!EasySQLExpressionUtil.withTableInDeclareExpressions(declareExpressions,tableName)){
+        if(!EasySQLExpressionUtil.withTableInDeclareExpressions(declareExpressions,queryClass(),tableName)){
 
             ClientQueryable<T1> t1ClientQueryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(this);
             EntityQueryExpressionBuilder sqlEntityExpressionBuilder = t1ClientQueryable.getSQLEntityExpressionBuilder();

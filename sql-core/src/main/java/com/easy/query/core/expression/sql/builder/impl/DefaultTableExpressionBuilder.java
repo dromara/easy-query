@@ -9,6 +9,7 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 
@@ -26,6 +27,7 @@ public class DefaultTableExpressionBuilder implements EntityTableExpressionBuild
 
     protected final TableAvailable entityTable;
     protected MultiTableTypeEnum multiTableType;
+    private final ExpressionContext expressionContext;
     protected final QueryRuntimeContext runtimeContext;
     protected PredicateSegment on;
     protected Supplier<Boolean> tableLogicDel;
@@ -34,10 +36,11 @@ public class DefaultTableExpressionBuilder implements EntityTableExpressionBuild
     protected Function<String, String> linkAs;
     protected BiFunction<String, String, String> segmentAs;
 
-    public DefaultTableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, QueryRuntimeContext runtimeContext) {
+    public DefaultTableExpressionBuilder(TableAvailable entityTable, MultiTableTypeEnum multiTableType, ExpressionContext expressionContext) {
         this.entityTable = entityTable;
         this.multiTableType = multiTableType;
-        this.runtimeContext = runtimeContext;
+        this.expressionContext = expressionContext;
+        this.runtimeContext = expressionContext.getRuntimeContext();
     }
 
     @Override
@@ -115,7 +118,7 @@ public class DefaultTableExpressionBuilder implements EntityTableExpressionBuild
     public EntityTableExpressionBuilder copyEntityTableExpressionBuilder() {
 
 
-        EntityTableExpressionBuilder tableExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityTable, multiTableType, runtimeContext);
+        EntityTableExpressionBuilder tableExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityTable, multiTableType, expressionContext);
         if (on != null) {
             on.copyTo(tableExpressionBuilder.getOn());
         }
