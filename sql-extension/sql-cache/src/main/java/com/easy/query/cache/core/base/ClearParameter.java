@@ -1,6 +1,7 @@
 package com.easy.query.cache.core.base;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 /**
  * create time 2024/1/25 20:46
@@ -14,5 +15,6 @@ public interface ClearParameter {
     CacheMethodEnum getClearMethod();
     LocalDateTime getBeforeTime();
     String getEntityName();
+    Map<String,String> getParameters();
 
 }
