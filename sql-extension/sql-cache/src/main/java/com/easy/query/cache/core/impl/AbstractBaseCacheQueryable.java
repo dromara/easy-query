@@ -22,23 +22,23 @@ import java.util.stream.Stream;
  *
  * @author xuejiaming
  */
-public abstract class AbstractBaseCacheQueryable<TEntity extends CacheEntity>  implements CacheQueryable {
+public abstract class AbstractBaseCacheQueryable<TEntity extends CacheEntity> implements CacheQueryable {
     protected final EasyCacheOption easyCacheOption;
     protected final EasyCacheManager easyCacheManager;
     protected final EasyQueryClient easyQueryClient;
     protected final Class<TEntity> entityClass;
     protected final CacheEntitySchema cacheEntitySchema;
-    private  List<CachePredicate<TEntity>> filters;
+    private List<CachePredicate<TEntity>> filters;
 
-    public AbstractBaseCacheQueryable(EasyCacheStorageOption easyCacheStorageOption, Class<TEntity> entityClass){
+    public AbstractBaseCacheQueryable(EasyCacheStorageOption easyCacheStorageOption, Class<TEntity> entityClass) {
 
         this.easyCacheOption = easyCacheStorageOption.getCacheOption();
         this.easyCacheManager = easyCacheStorageOption.getRedisManager();
         this.easyQueryClient = easyCacheStorageOption.getEasyQueryClient();
         this.entityClass = entityClass;
         CacheEntitySchema cacheEntitySchema = EasyClassUtil.getAnnotation(entityClass, CacheEntitySchema.class);
-        if(cacheEntitySchema==null){
-            throw new IllegalArgumentException(entityClass.getSimpleName()+"需要指定注解@CacheEntitySchema");
+        if (cacheEntitySchema == null) {
+            throw new IllegalArgumentException(entityClass.getSimpleName() + "需要指定注解@CacheEntitySchema");
         }
         this.cacheEntitySchema = cacheEntitySchema;
     }
@@ -48,31 +48,35 @@ public abstract class AbstractBaseCacheQueryable<TEntity extends CacheEntity>  i
         return this.easyCacheOption.getEntityKey(entityClass);
     }
 
-    protected Pair<String,TEntity> getKeyAndEntity(TEntity entity){
-        return new Pair<>(getKey(entity),entity);
+    protected Pair<String, TEntity> getKeyAndEntity(TEntity entity) {
+        return new Pair<>(getKey(entity), entity);
     }
-    protected  String getKey(TEntity entity){
+
+    protected String getKey(TEntity entity) {
         return entity.cacheIdValue();
     }
-    protected String getIdProperty(){
+
+    protected String getIdProperty() {
         return cacheEntitySchema.value();
     }
-    protected void addFilter(CachePredicate<TEntity> filter){
-        if(filters==null){
-            filters=new ArrayList<>();
+
+    protected void addFilter(CachePredicate<TEntity> filter) {
+        if (filters == null) {
+            filters = new ArrayList<>();
         }
         filters.add(filter);
     }
-    protected boolean hasFilter(){
+
+    protected boolean hasFilter() {
         return EasyCollectionUtil.isNotEmpty(filters);
     }
 
-    protected Stream<TEntity> filterResult(Stream<TEntity> source){
-        if(filters!=null){
-            return source.filter(o->{
+    protected Stream<TEntity> filterResult(Stream<TEntity> source) {
+        if (filters != null) {
+            return source.filter(o -> {
                 for (CachePredicate<TEntity> filter : filters) {
                     boolean ok = filter.apply(o);
-                    if(!ok){
+                    if (!ok) {
                         return false;
                     }
                 }

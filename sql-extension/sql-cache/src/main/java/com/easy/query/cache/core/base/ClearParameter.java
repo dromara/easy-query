@@ -14,7 +14,7 @@ public interface ClearParameter {
     String getCacheIndexId();
     CacheMethodEnum getClearMethod();
     LocalDateTime getBeforeTime();
-    String getEntityName();
+    String getTableName();
     Map<String,String> getParameters();
 
 }

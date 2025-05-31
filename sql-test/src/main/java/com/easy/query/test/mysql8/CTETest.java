@@ -160,6 +160,14 @@ public class CTETest extends BaseTest {
     public void cteTest6() {
 
 
+        List<M8User> list1 = easyEntityQuery.queryable(M8User.class)
+                .configure(op->op.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(m -> {
+                    m.roles().flatElement().menus().flatElement().path().contains("/admin");
+
+                }).toList();
+
+
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
@@ -173,8 +181,8 @@ public class CTETest extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("WITH `m8_user_temp` AS (SELECT t.`id`,t.`name` FROM `m8_user` t WHERE t.`age` IS NULL) SELECT t2.`name` AS `value1`,t11.`name` AS `value2` FROM `m8_user_temp` t2 LEFT JOIN `m8_user_temp` t5 ON t2.`name` = t5.`name` LEFT JOIN (SELECT t9.`id` AS `id`,t9.`name` AS `name`,t9.`user_id` AS `user_id` FROM (SELECT t7.`user_id` AS `user_id`,t6.`id`,t6.`name`,(ROW_NUMBER() OVER (PARTITION BY t6.`id`)) AS `__row__` FROM `m8_role` t6 INNER JOIN `m8_user_role` t7 ON t6.`id` = t7.`role_id`) t9 WHERE t9.`__row__` = ?) t11 ON t11.`user_id` = t5.`id` WHERE t11.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("1(Integer),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("WITH `m8_user_temp2` AS (SELECT t.`id`,t.`name`,t.`age`,(ROW_NUMBER() OVER (PARTITION BY t.`age` ORDER BY t.`create_time` DESC)) AS `row_number` FROM `m8_user` t WHERE t.`age` IS NULL) SELECT t2.`id`,t2.`name`,t2.`age`,t2.`row_number` FROM `m8_user_temp2` t2 WHERE t2.`row_number` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 }
