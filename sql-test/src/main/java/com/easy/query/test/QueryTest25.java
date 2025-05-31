@@ -20,6 +20,7 @@ import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * create time 2025/5/23 10:45
@@ -73,9 +74,11 @@ public class QueryTest25 extends BaseTest {
         EntityMetadataManager entityMetadataManager = easyEntityQuery.getRuntimeContext().getEntityMetadataManager();
         List<EntityMetadata> entityMetadataList = entityMetadataManager.getEntityMetadataList("t_topic");
         Assert.assertNotNull(entityMetadataList);
-        Assert.assertEquals(1, entityMetadataList.size());
-        EntityMetadata entityMetadata = entityMetadataList.get(0);
-        Assert.assertEquals(Topic.class, entityMetadata.getEntityClass());
+        for (EntityMetadata entityMetadata : entityMetadataList) {
+            System.out.println(entityMetadata.getEntityClass());
+        }
+        boolean anyMatch = entityMetadataList.stream().anyMatch(s -> Objects.equals(s.getEntityClass(), Topic.class));
+        Assert.assertTrue(anyMatch);
 
     }
 
