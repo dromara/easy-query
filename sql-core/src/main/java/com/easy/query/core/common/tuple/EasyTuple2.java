@@ -6,15 +6,14 @@ package com.easy.query.core.common.tuple;
  *
  * @author xuejiaming
  */
-public class Tuple3<T1, T2, T3> {
+public class EasyTuple2<T1, T2> {
     private final T1 t;
     private final T2 t1;
-    private final T3 t2;
 
-    public Tuple3(T1 t, T2 t1, T3 t2) {
+    public EasyTuple2(T1 t, T2 t1) {
+
         this.t = t;
         this.t1 = t1;
-        this.t2 = t2;
     }
 
 
@@ -24,9 +23,5 @@ public class Tuple3<T1, T2, T3> {
 
     public T2 t1() {
         return t1;
-    }
-
-    public T3 t2() {
-        return t2;
     }
 }

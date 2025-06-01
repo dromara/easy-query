@@ -1,6 +1,6 @@
 package com.easy.query.core.func.def.impl;
 
-import com.easy.query.core.common.tuple.Tuple2;
+import com.easy.query.core.common.tuple.EasyTuple2;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.core.AnyValueFilter;
@@ -30,12 +30,12 @@ import java.util.List;
 public class SegmentSQLFunction extends AbstractExpressionSQLFunction {
     private final QueryRuntimeContext runtimeContext;
     private final ExpressionContext expressionContext;
-    private final List<Tuple2<SQLActionExpression1<Filter>, ParamExpression>> whens;
+    private final List<EasyTuple2<SQLActionExpression1<Filter>, ParamExpression>> whens;
     private final ParamExpression elseValue;
     private final List<ColumnExpression> columnExpressions = new ArrayList<>();
     private final StringBuilder sql = new StringBuilder();
 
-    public SegmentSQLFunction(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, List<Tuple2<SQLActionExpression1<Filter>, ParamExpression>> whens, ParamExpression elseValue) {
+    public SegmentSQLFunction(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, List<EasyTuple2<SQLActionExpression1<Filter>, ParamExpression>> whens, ParamExpression elseValue) {
         this.runtimeContext = runtimeContext;
         this.expressionContext = expressionContext;
 
@@ -48,7 +48,7 @@ public class SegmentSQLFunction extends AbstractExpressionSQLFunction {
 
         int i = 0;
         sql.append("(CASE ");
-        for (Tuple2<SQLActionExpression1<Filter>, ParamExpression> when : whens) {
+        for (EasyTuple2<SQLActionExpression1<Filter>, ParamExpression> when : whens) {
             SQLActionExpression1<Filter> filterExpression = when.t();
             ParamExpression paramExpression = when.t1();
             AndPredicateSegment resolve = resolve(runtimeContext, expressionContext, filterExpression);

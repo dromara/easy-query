@@ -1,7 +1,7 @@
 package com.easy.query.core.extension.casewhen;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.common.tuple.Tuple2;
+import com.easy.query.core.common.tuple.EasyTuple2;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
@@ -24,10 +24,10 @@ import java.util.List;
 public class CaseWhenSQLColumnSegment implements CloneableSQLSegment {
 
     private final ExpressionContext expressionContext;
-    private final List<Tuple2<SQLActionExpression1<Filter>, ParamExpression>> whens;
+    private final List<EasyTuple2<SQLActionExpression1<Filter>, ParamExpression>> whens;
     private final ParamExpression elseValue;
 
-    public CaseWhenSQLColumnSegment(ExpressionContext expressionContext, List<Tuple2<SQLActionExpression1<Filter>,ParamExpression>> whens, ParamExpression elseValue){
+    public CaseWhenSQLColumnSegment(ExpressionContext expressionContext, List<EasyTuple2<SQLActionExpression1<Filter>,ParamExpression>> whens, ParamExpression elseValue){
         this.expressionContext = expressionContext;
 
         this.whens = whens;
@@ -43,7 +43,7 @@ public class CaseWhenSQLColumnSegment implements CloneableSQLSegment {
 
         StringBuilder sql = new StringBuilder();
         sql.append("(CASE ");
-        for (Tuple2<SQLActionExpression1<Filter>, ParamExpression> when : whens) {
+        for (EasyTuple2<SQLActionExpression1<Filter>, ParamExpression> when : whens) {
             SQLActionExpression1<Filter> filterExpression = when.t();
             ParamExpression paramExpression = when.t1();
             AndPredicateSegment resolve = resolve(filterExpression);

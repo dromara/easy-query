@@ -6,7 +6,7 @@ package com.easy.query.core.common.tuple;
  *
  * @author xuejiaming
  */
-public class Tuple11<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10,T11> {
+public class EasyTuple11<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10,T11> {
     private final T1  t;
     private final T2  t1;
     private final T3  t2;
@@ -19,7 +19,7 @@ public class Tuple11<T1, T2, T3, T4, T5, T6, T7, T8, T9,T10,T11> {
     private final T10 t9;
     private final T11 t11;
 
-    public Tuple11(T1 t, T2 t1, T3 t2, T4 t3, T5 t4, T6 t5, T7 t6, T8 t7, T9 t8, T10 t9,T11 t11) {
+    public EasyTuple11(T1 t, T2 t1, T3 t2, T4 t3, T5 t4, T6 t5, T7 t6, T8 t7, T9 t8, T10 t9, T11 t11) {
         this.t=  t;
         this.t1= t1;
         this.t2= t2;

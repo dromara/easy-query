@@ -1,7 +1,7 @@
 package com.easy.query.core.basic.api.select.extension.queryable3;
 
 import com.easy.query.core.basic.api.select.ClientQueryable3;
-import com.easy.query.core.common.tuple.Tuple3;
+import com.easy.query.core.common.tuple.EasyTuple3;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLActionExpression3;
 import com.easy.query.core.expression.parser.core.base.ColumnGroupSelector;
@@ -21,13 +21,13 @@ public interface Groupable3<T1, T2, T3> {
 
     ClientQueryable3<T1, T2, T3> groupBy(boolean condition, SQLActionExpression3<ColumnGroupSelector<T1>, ColumnGroupSelector<T2>, ColumnGroupSelector<T3>> selectExpression);
 
-    default ClientQueryable3<T1, T2, T3> groupByMerge(SQLActionExpression1<Tuple3<ColumnGroupSelector<T1>, ColumnGroupSelector<T2>, ColumnGroupSelector<T3>>> selectExpression) {
+    default ClientQueryable3<T1, T2, T3> groupByMerge(SQLActionExpression1<EasyTuple3<ColumnGroupSelector<T1>, ColumnGroupSelector<T2>, ColumnGroupSelector<T3>>> selectExpression) {
         return groupByMerge(true, selectExpression);
     }
 
-    default ClientQueryable3<T1, T2, T3> groupByMerge(boolean condition, SQLActionExpression1<Tuple3<ColumnGroupSelector<T1>, ColumnGroupSelector<T2>, ColumnGroupSelector<T3>>> selectExpression) {
+    default ClientQueryable3<T1, T2, T3> groupByMerge(boolean condition, SQLActionExpression1<EasyTuple3<ColumnGroupSelector<T1>, ColumnGroupSelector<T2>, ColumnGroupSelector<T3>>> selectExpression) {
         return groupBy(condition, (t1, t2,t3) -> {
-            selectExpression.apply(new Tuple3<>(t1, t2,t3));
+            selectExpression.apply(new EasyTuple3<>(t1, t2,t3));
         });
     }
 }

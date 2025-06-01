@@ -1,18 +1,11 @@
 package com.easy.query.test;
 
-import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.dynamic.sort.ObjectSortBuilder;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
-import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.basic.extension.track.EntityState;
-import com.easy.query.core.basic.extension.track.EntityTrackProperty;
-import com.easy.query.core.basic.extension.track.TrackManager;
-import com.easy.query.core.common.tuple.Tuple3;
-import com.easy.query.core.configuration.dialect.AbstractSQLKeyword;
-import com.easy.query.core.configuration.dialect.SQLKeyword;
+import com.easy.query.core.common.tuple.EasyTuple3;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.LowerCamelCaseNameConversion;
@@ -26,8 +19,6 @@ import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.segment.impl.SQLColumnAsSegmentImpl;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousDefaultTableExpressionBuilder;
@@ -35,24 +26,19 @@ import com.easy.query.core.expression.sql.builder.impl.QueryExpressionBuilder;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.core.draft.Draft2;
-import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.core.util.EasyTrackUtil;
 import com.easy.query.test.common.PageResult;
 import com.easy.query.test.doc.entity.DocBankCard;
 import com.easy.query.test.doc.entity.DocUser;
-import com.easy.query.test.dto.autodto.SchoolClassAOProp14;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.navf.User;
 import com.easy.query.test.entity.navf.proxy.UserProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
-import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.page.mp.SearchCountPager;
 import lombok.AllArgsConstructor;
@@ -63,9 +49,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -769,9 +753,9 @@ public class QueryTest21 extends BaseTest {
 
     @Test
     public void anyColumnTest1() {
-        ArrayList<Tuple3<String, Boolean, OrderByModeEnum>> sorts = new ArrayList<>();
-        sorts.add(new Tuple3<>("user.age", false, OrderByModeEnum.NULLS_LAST));
-        sorts.add(new Tuple3<>("type", true, OrderByModeEnum.NULLS_LAST));
+        ArrayList<EasyTuple3<String, Boolean, OrderByModeEnum>> sorts = new ArrayList<>();
+        sorts.add(new EasyTuple3<>("user.age", false, OrderByModeEnum.NULLS_LAST));
+        sorts.add(new EasyTuple3<>("type", true, OrderByModeEnum.NULLS_LAST));
 
 
         ListenerContext listenerContext = new ListenerContext(true);
@@ -784,7 +768,7 @@ public class QueryTest21 extends BaseTest {
                     bank_card.code().nullOrDefault("654").eq("321");
                 })
                 .orderBy(bank_card -> {
-                    for (Tuple3<String, Boolean, OrderByModeEnum> sort : sorts) {
+                    for (EasyTuple3<String, Boolean, OrderByModeEnum> sort : sorts) {
                         bank_card.anyColumn(sort.t()).orderBy(sort.t1(), sort.t2());
                     }
                 }).toList();
@@ -827,9 +811,9 @@ public class QueryTest21 extends BaseTest {
     }
     @Test
     public void anyColumnOrderByTest1() {
-        ArrayList<Tuple3<String, Boolean, OrderByModeEnum>> sorts = new ArrayList<>();
-        sorts.add(new Tuple3<>("user.age", false, OrderByModeEnum.NULLS_LAST));
-        sorts.add(new Tuple3<>("type", true, OrderByModeEnum.NULLS_LAST));
+        ArrayList<EasyTuple3<String, Boolean, OrderByModeEnum>> sorts = new ArrayList<>();
+        sorts.add(new EasyTuple3<>("user.age", false, OrderByModeEnum.NULLS_LAST));
+        sorts.add(new EasyTuple3<>("type", true, OrderByModeEnum.NULLS_LAST));
 
 
         ListenerContext listenerContext = new ListenerContext(true);
@@ -842,7 +826,7 @@ public class QueryTest21 extends BaseTest {
                     bank_card.code().nullOrDefault("654").eq("321");
                 })
                 .orderBy(bank_card -> {
-                    for (Tuple3<String, Boolean, OrderByModeEnum> sort : sorts) {
+                    for (EasyTuple3<String, Boolean, OrderByModeEnum> sort : sorts) {
                         bank_card.anyColumn(sort.t()).orderBy(sort.t1(), sort.t2());
                     }
                 }).toList();

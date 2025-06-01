@@ -1,6 +1,6 @@
 package com.easy.query.core.extension.casewhen;
 
-import com.easy.query.core.common.tuple.Tuple2;
+import com.easy.query.core.common.tuple.EasyTuple2;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
@@ -25,7 +25,7 @@ import java.util.List;
 public class CaseWhenBuilderExpression {
     private final QueryRuntimeContext runtimeContext;
     private final ExpressionContext expressionContext;
-    private final List<Tuple2<SQLActionExpression1<Filter>, ParamExpression>> whens;
+    private final List<EasyTuple2<SQLActionExpression1<Filter>, ParamExpression>> whens;
 
     public CaseWhenBuilderExpression(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext){
         this.runtimeContext = runtimeContext;
@@ -36,7 +36,7 @@ public class CaseWhenBuilderExpression {
         return caseWhen(predicate,new ColumnConstParameterExpressionImpl(then));
     }
     public CaseWhenBuilderExpression caseWhen(SQLActionExpression1<Filter> predicate, ParamExpression paramExpression){
-        whens.add(new Tuple2<>(predicate,paramExpression));
+        whens.add(new EasyTuple2<>(predicate,paramExpression));
         return this;
     }
     public SQLFunction elseEnd(Object elseValue){

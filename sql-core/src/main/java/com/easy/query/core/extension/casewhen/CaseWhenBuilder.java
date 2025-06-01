@@ -1,6 +1,6 @@
 package com.easy.query.core.extension.casewhen;
 
-import com.easy.query.core.common.tuple.Tuple2;
+import com.easy.query.core.common.tuple.EasyTuple2;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
@@ -25,7 +25,7 @@ import java.util.List;
 public class CaseWhenBuilder {
     private final QueryRuntimeContext runtimeContext;
     private final ExpressionContext expressionContext;
-    private List<Tuple2<SQLActionExpression1<Filter>, ParamExpression>> whens;
+    private List<EasyTuple2<SQLActionExpression1<Filter>, ParamExpression>> whens;
 
     public CaseWhenBuilder(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext){
         this.runtimeContext = runtimeContext;
@@ -33,11 +33,11 @@ public class CaseWhenBuilder {
         whens=new ArrayList<>();
     }
     public CaseWhenBuilder caseWhen(SQLActionExpression1<Filter> predicate, Object then){
-        whens.add(new Tuple2<>(predicate,new ColumnConstParameterExpressionImpl(then)));
+        whens.add(new EasyTuple2<>(predicate,new ColumnConstParameterExpressionImpl(then)));
         return this;
     }
     public CaseWhenBuilder caseWhenColumn(SQLActionExpression1<Filter> predicate, TableAvailable table, String property){
-        whens.add(new Tuple2<>(predicate,new ColumnPropertyExpressionImpl(table,property,expressionContext)));
+        whens.add(new EasyTuple2<>(predicate,new ColumnPropertyExpressionImpl(table,property,expressionContext)));
         return this;
     }
     public CaseWhenBuilder caseWhenColumn(SQLActionExpression1<Filter> predicate, SQLTableOwner sqlTableOwner, String property){

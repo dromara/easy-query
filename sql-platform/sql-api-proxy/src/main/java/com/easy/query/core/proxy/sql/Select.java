@@ -62,7 +62,14 @@ public class Select {
         return SQLSelectAsExpression.empty;
     }
 
+    /**
+     * 返回元组 Draft1...10
+     */
     public static Draft DRAFT = new Draft();
+    /**
+     * 返回元组 Tuple1...10
+     */
+    public static Tuple TUPLE = new Tuple();
     public static SQLPart PART = new SQLPart();
 
 

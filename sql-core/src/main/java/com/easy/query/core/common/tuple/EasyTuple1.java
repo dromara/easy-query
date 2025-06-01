@@ -6,10 +6,10 @@ package com.easy.query.core.common.tuple;
  *
  * @author xuejiaming
  */
-public class Tuple1<T1> {
+public class EasyTuple1<T1> {
     private final T1 t;
 
-    public Tuple1(T1 t) {
+    public EasyTuple1(T1 t) {
 
         this.t = t;
     }

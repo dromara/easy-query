@@ -1,6 +1,6 @@
 package com.easy.query.core.basic.api.select.extension.queryable2;
 
-import com.easy.query.core.common.tuple.Tuple2;
+import com.easy.query.core.common.tuple.EasyTuple2;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
@@ -80,73 +80,73 @@ public interface Aggregatable2<T1,T2> {
      * @param <TMember>
      * @return
      */
-    default <TMember extends Number> BigDecimal sumBigDecimalOrNullMerge(SQLActionExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression) {
+    default <TMember extends Number> BigDecimal sumBigDecimalOrNullMerge(SQLActionExpression1<EasyTuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression) {
         return sumBigDecimalOrDefaultMerge(columnSelectorExpression, null);
     }
 
-   default  <TMember extends Number> BigDecimal sumBigDecimalOrDefaultMerge(SQLActionExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, BigDecimal def){
+   default  <TMember extends Number> BigDecimal sumBigDecimalOrDefaultMerge(SQLActionExpression1<EasyTuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, BigDecimal def){
         return sumBigDecimalOrDefault((t1, t2)->{
-            columnSelectorExpression.apply(new Tuple2<>(t1, t2));
+            columnSelectorExpression.apply(new EasyTuple2<>(t1, t2));
         },def);
    }
 
-    default <TMember extends Number> TMember sumOrNullMerge(SQLActionExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression) {
+    default <TMember extends Number> TMember sumOrNullMerge(SQLActionExpression1<EasyTuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression) {
         return sumOrDefaultMerge(columnSelectorExpression, null);
     }
 
-   default  <TMember extends Number> TMember sumOrDefaultMerge(SQLActionExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, TMember def){
+   default  <TMember extends Number> TMember sumOrDefaultMerge(SQLActionExpression1<EasyTuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, TMember def){
         return sumOrDefault((t1, t2)->{
-            columnSelectorExpression.apply(new Tuple2<>(t1, t2));
+            columnSelectorExpression.apply(new EasyTuple2<>(t1, t2));
         },def);
    }
 
-    default <TMember> TMember maxOrNullMerge(SQLActionExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression) {
+    default <TMember> TMember maxOrNullMerge(SQLActionExpression1<EasyTuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression) {
         return maxOrDefaultMerge(columnSelectorExpression, null);
     }
 
-   default  <TMember> TMember maxOrDefaultMerge(SQLActionExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, TMember def){
+   default  <TMember> TMember maxOrDefaultMerge(SQLActionExpression1<EasyTuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, TMember def){
         return maxOrDefault((t1, t2)->{
-            columnSelectorExpression.apply(new Tuple2<>(t1, t2));
+            columnSelectorExpression.apply(new EasyTuple2<>(t1, t2));
         },def);
    }
 
-    default <TMember> TMember minOrNullMerge(SQLActionExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression) {
+    default <TMember> TMember minOrNullMerge(SQLActionExpression1<EasyTuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression) {
         return minOrDefaultMerge(columnSelectorExpression, null);
     }
 
-   default  <TMember> TMember minOrDefaultMerge(SQLActionExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, TMember def){
+   default  <TMember> TMember minOrDefaultMerge(SQLActionExpression1<EasyTuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, TMember def){
         return minOrDefault((t1, t2)->{
-            columnSelectorExpression.apply(new Tuple2<>(t1, t2));
+            columnSelectorExpression.apply(new EasyTuple2<>(t1, t2));
         },def);
     }
 
-    default <TMember extends Number> Double avgOrNullMerge(SQLActionExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression) {
+    default <TMember extends Number> Double avgOrNullMerge(SQLActionExpression1<EasyTuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression) {
         return avgOrDefaultMerge(columnSelectorExpression, null, Double.class);
     }
 
-    default <TMember extends Number> BigDecimal avgBigDecimalOrNullMerge(SQLActionExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression) {
+    default <TMember extends Number> BigDecimal avgBigDecimalOrNullMerge(SQLActionExpression1<EasyTuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression) {
         return avgOrDefaultMerge(columnSelectorExpression, null, BigDecimal.class);
     }
 
-    default <TMember extends Number> Float avgFloatOrNullMerge(SQLActionExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression) {
+    default <TMember extends Number> Float avgFloatOrNullMerge(SQLActionExpression1<EasyTuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression) {
         return avgOrDefaultMerge(columnSelectorExpression, null, Float.class);
     }
 
-    default <TMember extends Number> Double avgOrDefaultMerge(SQLActionExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, Double def) {
+    default <TMember extends Number> Double avgOrDefaultMerge(SQLActionExpression1<EasyTuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, Double def) {
         return avgOrDefaultMerge(columnSelectorExpression, def, Double.class);
     }
 
-    default <TMember extends Number> BigDecimal avgBigDecimalOrDefaultMerge(SQLActionExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, BigDecimal def) {
+    default <TMember extends Number> BigDecimal avgBigDecimalOrDefaultMerge(SQLActionExpression1<EasyTuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, BigDecimal def) {
         return avgOrDefaultMerge(columnSelectorExpression, def, BigDecimal.class);
     }
 
-    default <TMember extends Number> Float avgFloatOrDefaultMerge(SQLActionExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, Float def) {
+    default <TMember extends Number> Float avgFloatOrDefaultMerge(SQLActionExpression1<EasyTuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, Float def) {
         return avgOrDefaultMerge(columnSelectorExpression, def, Float.class);
     }
 
-  default   <TMember extends Number, TResult extends Number> TResult avgOrDefaultMerge(SQLActionExpression1<Tuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, TResult def, Class<TResult> resultClass){
+  default   <TMember extends Number, TResult extends Number> TResult avgOrDefaultMerge(SQLActionExpression1<EasyTuple2<ColumnResultSelector<T1>, ColumnResultSelector<T2>>> columnSelectorExpression, TResult def, Class<TResult> resultClass){
         return avgOrDefault((t1, t2)->{
-            columnSelectorExpression.apply(new Tuple2<>(t1, t2));
+            columnSelectorExpression.apply(new EasyTuple2<>(t1, t2));
         },def,resultClass);
   }
 }
