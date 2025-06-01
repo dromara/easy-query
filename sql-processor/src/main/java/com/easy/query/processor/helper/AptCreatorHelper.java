@@ -33,10 +33,10 @@ public class AptCreatorHelper {
 
     private static String renderPropertyUI(AptFileCompiler aptFileCompiler, AptValueObjectInfo aptValueObjectInfo) {
         StringBuilder filedContent = new StringBuilder();
+        Map<String, String> replacements = new HashMap<>();
         for (AptPropertyInfo property : aptValueObjectInfo.getProperties()) {
             if (property.isValueObject()) {
 
-                Map<String, String> replacements = new HashMap<>(6);
                 replacements.put("entityClass", property.getEntityName());
                 replacements.put("comment", property.getComment());
                 replacements.put("propertyType", property.getPropertyType());
@@ -49,7 +49,6 @@ public class AptCreatorHelper {
                 if (property.isIncludeProperty() && property.getNavigateProxyName() != null) {
                     if (property.isIncludeManyProperty()) {
 
-                        Map<String, String> replacements = new HashMap<>(6);
                         replacements.put("entityClassProxy", aptFileCompiler.getEntityClassProxyName());
                         replacements.put("propertyProxy", property.getNavigateProxyName());
                         replacements.put("comment", property.getComment());
@@ -61,7 +60,6 @@ public class AptCreatorHelper {
                         String fieldString = AptConstant.FIELD_NAVIGATES_TEMPLATE_GENERATOR.generate(replacements);
                         filedContent.append(fieldString);
                     } else {
-                        Map<String, String> replacements = new HashMap<>(4);
                         replacements.put("propertyProxy", property.getNavigateProxyName());
                         replacements.put("comment", property.getComment());
                         replacements.put("property", property.getPropertyName());
@@ -73,7 +71,6 @@ public class AptCreatorHelper {
                 } else {
                     if (property.isAnyType()) {
 
-                        Map<String, String> replacements = new HashMap<>(8);
                         replacements.put("entityClassProxy", aptFileCompiler.getEntityClassProxyName());
                         replacements.put("comment", property.getComment());
                         replacements.put("propertyType", property.getPropertyType());
@@ -81,7 +78,7 @@ public class AptCreatorHelper {
                         replacements.put("property", property.getPropertyName());
                         replacements.put("proxyProperty", property.getProxyPropertyName());
                         replacements.put("SQLColumn", property.getSqlColumn());
-                        replacements.put("sqlColumnMethod", property.getSqlColumnMethod());;
+                        replacements.put("sqlColumnMethod", property.getSqlColumnMethod());
 
 
                         String fieldString = AptConstant.ANY_FIELD_TEMPLATE_GENERATOR.generate(replacements);
@@ -89,7 +86,6 @@ public class AptCreatorHelper {
                     } else {
 
 
-                        Map<String, String> replacements = new HashMap<>(6);
                         replacements.put("entityClassProxy", aptFileCompiler.getEntityClassProxyName());
                         replacements.put("comment", property.getComment());
                         replacements.put("property", property.getPropertyName());
@@ -102,6 +98,7 @@ public class AptCreatorHelper {
                     }
                 }
             }
+            replacements.clear();
         }
         return filedContent.toString();
     }
@@ -125,17 +122,12 @@ public class AptCreatorHelper {
         FieldRenderVal fieldRenderVal = new FieldRenderVal();
         AptSelectorInfo selectorInfo = aptFileCompiler.getSelectorInfo();
 //        StringBuilder fieldCase = new StringBuilder();
+        Map<String, String> replacements = new HashMap<>(1);
         for (AptSelectPropertyInfo property : selectorInfo.getProperties()) {
-//            if (!ignoreComment) {
-//                String comment = EasyStringUtil.trimOuterWhitespaceOptimized(EasyStringUtil.startWithRemove(property.getEntityComment(), "*"));
-//                String fieldString = AptConstant.FIELD_COMMENT_TEMPLATE
-//                        .replace("@{property}", property.getPropertyName())
-//                        .replace("@{comment}", new String(EasyBase64Util.encode(comment.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
-//                fieldCase.append(fieldString);
-//            }
-            String staticFiled = AptConstant.FIELD_STATIC_TEMPLATE
-                    .replace("@{property}", property.getPropertyName());
+            replacements.put("property", property.getPropertyName());
+            String staticFiled = AptConstant.FIELD_STATIC_TEMPLATE_GENERATOR.generate(replacements);
             fieldRenderVal.staticField.append(staticFiled);
+            replacements.clear();
         }
 //        if(!ignoreComment){
 //            String fieldCommentMethod = AptConstant.FIELD_COMMENT_METHOD
@@ -148,14 +140,15 @@ public class AptCreatorHelper {
     private static String renderSelectorPropertyUI(AptFileCompiler aptFileCompiler) {
         AptSelectorInfo selectorInfo = aptFileCompiler.getSelectorInfo();
         StringBuilder filedContent = new StringBuilder();
+        Map<String, String> replacements = new HashMap<>(3);
         for (AptSelectPropertyInfo property : selectorInfo.getProperties()) {
-            Map<String, String> replacements = new HashMap<>(3);
             replacements.put("selectorName", selectorInfo.getName());
             replacements.put("comment", property.getComment());
             replacements.put("proxyProperty", property.getProxyPropertyName());
 
             String fieldString = AptConstant.FIELD_SELECTOR_PROPERTY_TEMPLATE_GENERATOR.generate(replacements);
             filedContent.append(fieldString);
+            replacements.clear();
 
         }
         return filedContent.toString();
@@ -171,7 +164,6 @@ public class AptCreatorHelper {
             replacements.put("mainEntityClassProxy", aptFileCompiler.getEntityClassProxyName());
             replacements.put("fieldContent", propertyContent);
             replacements.put("valueObjectContext", vc);
-
 
 
             String valueObjectContent = AptConstant.FIELD_VALUE_OBJECT_CLASS_TEMPLATE_GENERATOR.generate(replacements);

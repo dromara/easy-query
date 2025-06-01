@@ -135,4 +135,5 @@ public class KspConstant {
     public static final ClassProxyGenerator PROXY_SELECTOR_TEMPLATE_GENERATOR=new ClassProxyGenerator(PROXY_SELECTOR_TEMPLATE);
     public static final ClassProxyGenerator FIELD_SELECTOR_PROPERTY_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_SELECTOR_PROPERTY_TEMPLATE);
     public static final ClassProxyGenerator FIELD_VALUE_OBJECT_CLASS_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_VALUE_OBJECT_CLASS_TEMPLATE);
+    public static final ClassProxyGenerator FIELD_STATIC_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_STATIC_TEMPLATE);
 }
