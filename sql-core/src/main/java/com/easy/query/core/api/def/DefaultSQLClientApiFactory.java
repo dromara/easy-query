@@ -46,6 +46,7 @@ import com.easy.query.core.basic.api.update.map.EasyEmptyMapClientUpdatable;
 import com.easy.query.core.basic.api.update.map.EasyMapClientUpdatable;
 import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.ContextTypeEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
@@ -89,7 +90,7 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
 
     @Override
     public <T> ClientQueryable<T> createQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext) {
-        ExpressionContext queryExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
+        ExpressionContext queryExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, ContextTypeEnum.QUERY);
         return createQueryable(clazz, runtimeContext, queryExpressionContext);
     }
 
@@ -107,7 +108,7 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     public <T> ClientQueryable<T> createQueryable(String sql, Collection<Object> sqlParams, Class<T> clazz, QueryRuntimeContext runtimeContext) {
 
 
-        ExpressionContext queryExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
+        ExpressionContext queryExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, ContextTypeEnum.QUERY);
         EntityQueryExpressionBuilder innerSQLEntityQueryExpressionBuilder = expressionBuilderFactory.createAnonymousQueryExpressionBuilder(sql, sqlParams, queryExpressionContext, clazz);
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
         EntityTableExpressionBuilder sqlTable = expressionBuilderFactory.createAnonymousEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.FROM, innerSQLEntityQueryExpressionBuilder);
@@ -246,7 +247,7 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     }
 
 
-    private <T> void addJoinTableExpressionBuilder(ClientQueryable<T> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder){
+    private <T> void addJoinTableExpressionBuilder(ClientQueryable<T> joinQueryable, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
 
 //        Class<T> joinClass = joinQueryable.queryClass();
 
@@ -272,6 +273,7 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
             entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
         }
     }
+
     @Override
     public <T1, T2> ClientQueryable2<T1, T2> createQueryable2(Class<T1> t1Class, Class<T2> t2Class, MultiTableTypeEnum selectTableInfoType, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
 
@@ -452,21 +454,21 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
 
     @Override
     public <T> ClientInsertable<T> createInsertable(Class<T> clazz, QueryRuntimeContext runtimeContext) {
-        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
+        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, ContextTypeEnum.INSERT);
         EntityInsertExpressionBuilder entityInsertExpressionBuilder = expressionBuilderFactory.createEntityInsertExpressionBuilder(expressionContext, clazz);
         return createInsertable(clazz, entityInsertExpressionBuilder);
     }
 
     @Override
     public MapClientInsertable<Map<String, Object>> createMapInsertable(QueryRuntimeContext runtimeContext) {
-        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
+        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, ContextTypeEnum.INSERT);
         EntityInsertExpressionBuilder entityInsertExpressionBuilder = expressionBuilderFactory.createMapInsertExpressionBuilder(expressionContext);
         return createMapInsertable(entityInsertExpressionBuilder);
     }
 
     @Override
     public <T> ClientInsertable<T> createEmptyInsertable(QueryRuntimeContext runtimeContext) {
-        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
+        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, ContextTypeEnum.INSERT);
         EntityInsertExpressionBuilder entityInsertExpressionBuilder = expressionBuilderFactory.createEntityInsertExpressionBuilder(expressionContext, null);
         return new EasyEmptyClientInsertable<>(entityInsertExpressionBuilder);
     }
@@ -483,7 +485,7 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
 
     @Override
     public MapClientInsertable<Map<String, Object>> createEmptyMapInsertable(QueryRuntimeContext runtimeContext) {
-        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
+        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, ContextTypeEnum.INSERT);
         EntityInsertExpressionBuilder entityInsertExpressionBuilder = expressionBuilderFactory.createEntityInsertExpressionBuilder(expressionContext, null);
         return new EasyEmptyMapClientInsertable(entityInsertExpressionBuilder);
     }
@@ -505,7 +507,7 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
 
     @Override
     public <T> ClientEntityUpdatable<T> createEntityUpdatable(Collection<T> entities, QueryRuntimeContext runtimeContext) {
-        ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
+        ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, ContextTypeEnum.UPDATE);
         Class<T> clazz = EasyObjectUtil.typeCastNullable(EasyCollectionUtil.first(entities).getClass());
         EntityUpdateExpressionBuilder entityUpdateExpression = expressionBuilderFactory.createEntityUpdateExpressionBuilder(sqlExpressionContext, clazz, false);
         return new EasyClientEntityUpdatable<>(clazz, entities, entityUpdateExpression);
@@ -518,14 +520,14 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
 
     @Override
     public <T> MapClientUpdatable<Map<String, Object>> createMapUpdatable(Collection<Map<String, Object>> entities, QueryRuntimeContext runtimeContext) {
-        ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
+        ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, ContextTypeEnum.UPDATE);
         MapUpdateExpressionBuilder entityUpdateExpression = expressionBuilderFactory.createMapUpdateExpressionBuilder(sqlExpressionContext);
         return new EasyMapClientUpdatable(entities, entityUpdateExpression);
     }
 
     @Override
     public <T> ClientExpressionUpdatable<T> createExpressionUpdatable(Class<T> entityClass, QueryRuntimeContext runtimeContext) {
-        ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
+        ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, ContextTypeEnum.UPDATE);
         EntityUpdateExpressionBuilder entityUpdateExpressionBuilder = expressionBuilderFactory.createEntityUpdateExpressionBuilder(sqlExpressionContext, entityClass, true);
         return new EasyClientExpressionUpdatable<>(entityClass, entityUpdateExpressionBuilder);
     }
@@ -542,7 +544,7 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
 
     @Override
     public <T> ClientEntityDeletable<T> createEntityDeletable(Collection<T> entities, QueryRuntimeContext runtimeContext) {
-        ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
+        ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, ContextTypeEnum.DELETE);
         Class<T> clazz = EasyObjectUtil.typeCastNullable(EasyCollectionUtil.first(entities).getClass());
         EntityDeleteExpressionBuilder entityDeleteExpressionBuilder = expressionBuilderFactory.createEntityDeleteExpressionBuilder(sqlExpressionContext, clazz, false);
         return new EasyClientEntityDeletable<>(clazz, entities, entityDeleteExpressionBuilder);
@@ -550,7 +552,7 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
 
     @Override
     public <T> ClientExpressionDeletable<T> createExpressionDeletable(Class<T> entityClass, QueryRuntimeContext runtimeContext) {
-        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
+        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, ContextTypeEnum.DELETE);
         EntityDeleteExpressionBuilder entityDeleteExpressionBuilder = expressionBuilderFactory.createEntityDeleteExpressionBuilder(expressionContext, entityClass, true);
         return new EasyClientExpressionDeletable<>(entityClass, entityDeleteExpressionBuilder);
     }

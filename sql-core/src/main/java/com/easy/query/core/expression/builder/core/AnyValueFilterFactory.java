@@ -7,8 +7,29 @@ package com.easy.query.core.expression.builder.core;
  * @author xuejiaming
  */
 public class AnyValueFilterFactory implements ValueFilterFactory {
+
     @Override
-    public ValueFilter getExpressionDefaultValueFilter() {
+    public ValueFilter getQueryValueFilter() {
+        return AnyValueFilter.DEFAULT;
+    }
+
+    @Override
+    public ValueFilter getInsertValueFilter() {
+        return AnyValueFilter.DEFAULT;
+    }
+
+    @Override
+    public ValueFilter getExecuteValueFilter() {
+        return AnyValueFilter.DEFAULT;
+    }
+
+    @Override
+    public ValueFilter getUpdateValueFilter() {
+        return AnyValueFilter.DEFAULT;
+    }
+
+    @Override
+    public ValueFilter getDeleteValueFilter() {
         return AnyValueFilter.DEFAULT;
     }
 }

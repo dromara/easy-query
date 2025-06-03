@@ -3,6 +3,7 @@ package com.easy.query.core.expression.sql.builder.factory;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.ContextTypeEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
@@ -38,8 +39,8 @@ import java.util.function.Supplier;
  */
 public class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFactory {
     @Override
-    public ExpressionContext createExpressionContext(QueryRuntimeContext runtimeContext) {
-        return new EasyExpressionContext(runtimeContext);
+    public ExpressionContext createExpressionContext(QueryRuntimeContext runtimeContext, ContextTypeEnum contextType) {
+        return new EasyExpressionContext(runtimeContext, contextType);
     }
 
     @Override
@@ -56,7 +57,7 @@ public class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFac
             });
 
             expressionContext.extract(query.getSQLEntityExpressionBuilder().getExpressionContext());
-            if(!EasySQLExpressionUtil.withTableInDeclareExpressions(declareExpressions,entityMetadata.getEntityClass(),entityMetadata.getTableName())){
+            if (!EasySQLExpressionUtil.withTableInDeclareExpressions(declareExpressions, entityMetadata.getEntityClass(), entityMetadata.getTableName())) {
                 ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();
                 EntityQueryExpressionBuilder sqlEntityExpressionBuilder = query.getSQLEntityExpressionBuilder();
 

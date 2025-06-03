@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
+import com.easy.query.core.enums.ContextTypeEnum;
 import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
@@ -31,6 +32,8 @@ import java.util.function.Predicate;
  * @author xuejiaming
  */
 public interface ExpressionContext extends RuntimeContextAvailable {
+    ContextTypeEnum getType();
+
     ExpressionContextInterceptor getExpressionContextInterceptor();
 
     String getQuoteName(String value);

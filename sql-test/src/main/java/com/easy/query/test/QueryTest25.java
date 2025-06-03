@@ -5,28 +5,51 @@ import com.easy.query.cache.core.EasyCacheManager;
 import com.easy.query.cache.core.base.CacheMethodEnum;
 import com.easy.query.cache.core.base.DefaultClearParameter;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.entity.EntityMappingRule;
+import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.configuration.QueryConfiguration;
+import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
+import com.easy.query.core.configuration.bean.entity.EntityPropertyDescriptorMatcher;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.builder.core.AnyValueFilter;
+import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.core.expression.builder.core.ValueFilter;
+import com.easy.query.core.expression.builder.core.ValueFilterFactory;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
+import com.easy.query.core.proxy.core.Expression;
+import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.tuple.Tuple1;
 import com.easy.query.core.proxy.core.tuple.Tuple2;
 import com.easy.query.core.proxy.core.tuple.Tuple3;
+import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyTypeUtil;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
+import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.cache.CacheItem;
 import com.easy.query.test.cache.DefaultEasyRedisManagerMultiLevel;
 import com.easy.query.test.cache.JsonUtil;
+import com.easy.query.test.common.MyQueryConfiguration;
+import com.easy.query.test.conversion.JavaEncryptionStrategy;
 import com.easy.query.test.dto.TopicTypeVO;
 import com.easy.query.test.dto.proxy.TopicTypeVOProxy;
+import com.easy.query.test.encryption.Base64EncryptionStrategy;
+import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
+import com.easy.query.test.encryption.MyEncryptionStrategy;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.company.ValueCompany;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.listener.ListenerContextManager;
+import com.easy.query.test.listener.MyJdbcListener;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Assert;
@@ -416,7 +439,7 @@ public class QueryTest25 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            Topic blogEntity = easyCacheClient.allStorage(Topic.class).filter(topic->Objects.equals(topic.getId(),"1")).singleOrNull("1");
+            Topic blogEntity = easyCacheClient.allStorage(Topic.class).filter(topic -> Objects.equals(topic.getId(), "1")).singleOrNull("1");
             Assert.assertNotNull(blogEntity);
             Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
             listenerContextManager.clear();
@@ -425,7 +448,7 @@ public class QueryTest25 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            Topic blogEntity = easyCacheClient.allStorage(Topic.class).filter(topic->!Objects.equals(topic.getId(),"1")).singleOrNull("1");
+            Topic blogEntity = easyCacheClient.allStorage(Topic.class).filter(topic -> !Objects.equals(topic.getId(), "1")).singleOrNull("1");
             Assert.assertNull(blogEntity);
             Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
             listenerContextManager.clear();
@@ -434,7 +457,7 @@ public class QueryTest25 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
-            Topic blogEntity = easyCacheClient.allStorage(Topic.class).filter(topic->Objects.equals(topic.getId(),"1")).singleOrNull("1");
+            Topic blogEntity = easyCacheClient.allStorage(Topic.class).filter(topic -> Objects.equals(topic.getId(), "1")).singleOrNull("1");
             Assert.assertNotNull(blogEntity);
             Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
             listenerContextManager.clear();
@@ -479,6 +502,109 @@ public class QueryTest25 extends BaseTest {
 //            Assert.assertNull(json);
 //        }
 //        System.out.println("1");
+    }
+
+    @Test
+    public void xxx() {
+        List<Draft1<Boolean>> list = easyEntityQuery.queryable(Topic.class)
+                .select(t_topic -> {
+
+                    Expression expression = t_topic.expression();
+
+                    BooleanTypeExpression<Boolean> booleanTypeExpression = expression.valueOf(() -> {
+
+                        expression.exists(() -> {
+                            return expression.subQueryable(BlogEntity.class).where(t -> {
+                                t.title().eq(t_topic.title());
+                            });
+                        });
+                    });
+
+
+                    return Select.DRAFT.of(
+                            booleanTypeExpression
+                    );
+                }).toList();
+
+    }
+
+    @Test
+    public void xxx22() {
+
+
+        HikariDataSource dataSource = new HikariDataSource();
+        dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/easy-query-test?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
+        dataSource.setUsername("root");
+        dataSource.setPassword("root");
+        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        dataSource.setMaximumPoolSize(1);
+
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
+        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(dataSource)
+                .optionConfigure(op -> {
+                    op.setDeleteThrowError(false);
+                    op.setDefaultDataSourceName("ds2020");
+                    op.setReverseOffsetThreshold(10);
+                })
+//                .replaceService(Column2MapKeyConversion.class, UpperColumn2MapKeyConversion.class)
+                .useDatabaseConfigure(new MySQLDatabaseConfiguration())
+//                .replaceService(Dialect.class, DefaultDialect.class)
+                .replaceService(JdbcExecutorListener.class, myJdbcListener)
+                .replaceService(QueryConfiguration.class, MyQueryConfiguration.class)
+//                .replaceService(EntityMappingRule.class, PropertyEntityMappingRule.class)
+                .replaceService(EntityMappingRule.class, PropertyFirstEntityMappingRule.class)
+                .replaceService(PropertyDescriptorMatcher.class, EntityPropertyDescriptorMatcher.class)
+                .replaceService(ValueFilterFactory.class, MyValueFactory.class)
+//                .replaceService(EasyPageResultProvider.class,MyEasyPageResultProvider.class)
+//                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
+//                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
+                .build();
+        DefaultEasyEntityQuery easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+        QueryRuntimeContext runtimeContext = easyEntityQuery.getRuntimeContext();
+        QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
+        configuration.applyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());
+        configuration.applyEncryptionStrategy(new Base64EncryptionStrategy());
+        configuration.applyEncryptionStrategy(new MyEncryptionStrategy());
+        configuration.applyEncryptionStrategy(new JavaEncryptionStrategy());
+
+        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                .where(t -> {
+//                    t.blogs().any(s -> s.content().eq((String) null));
+                    t.blogs().flatElement().content().eq((String) null);
+                    t.blogs().flatElement().users().flatElement().phone().eq((String) "123");
+                }).toList();
+
+    }
+
+    public static class MyValueFactory implements ValueFilterFactory{
+
+
+        @Override
+        public ValueFilter getQueryValueFilter() {
+            return NotNullOrEmptyValueFilter.DEFAULT;
+        }
+
+        @Override
+        public ValueFilter getInsertValueFilter() {
+            return AnyValueFilter.DEFAULT;
+        }
+
+        @Override
+        public ValueFilter getExecuteValueFilter() {
+            return AnyValueFilter.DEFAULT;
+        }
+
+        @Override
+        public ValueFilter getUpdateValueFilter() {
+            return AnyValueFilter.DEFAULT;
+        }
+
+        @Override
+        public ValueFilter getDeleteValueFilter() {
+            return AnyValueFilter.DEFAULT;
+        }
     }
 
 }

@@ -9,6 +9,7 @@ import com.easy.query.core.configuration.nameconversion.impl.LowerCamelCaseNameC
 import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperUnderlinedNameConversion;
+import com.easy.query.core.enums.ContextTypeEnum;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
@@ -1242,7 +1243,7 @@ public class GenericTest extends BaseTest {
 
     @Test
     public void testPrintSQL1() {
-        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(easyEntityQuery.getRuntimeContext());
+        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(easyEntityQuery.getRuntimeContext(), ContextTypeEnum.QUERY);
         easyExpressionContext.setPrintSQL(false);
         easyExpressionContext.setPrintNavSQL(false);
         ExpressionContext expressionContext = easyExpressionContext.cloneExpressionContext();
@@ -1252,7 +1253,7 @@ public class GenericTest extends BaseTest {
 
     @Test
     public void testPrintSQL2() {
-        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(easyEntityQuery.getRuntimeContext());
+        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(easyEntityQuery.getRuntimeContext(), ContextTypeEnum.QUERY);
         easyExpressionContext.setPrintSQL(null);
         easyExpressionContext.setPrintNavSQL(true);
         ExpressionContext expressionContext = easyExpressionContext.cloneExpressionContext();

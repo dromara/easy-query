@@ -4,6 +4,7 @@ import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.ContextTypeEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -38,6 +39,11 @@ public class EmptyExpressionContext implements ExpressionContext{
     public EmptyExpressionContext(QueryRuntimeContext runtimeContext){
 
         this.runtimeContext = runtimeContext;
+    }
+
+    @Override
+    public ContextTypeEnum getType() {
+        return null;
     }
 
     @Override

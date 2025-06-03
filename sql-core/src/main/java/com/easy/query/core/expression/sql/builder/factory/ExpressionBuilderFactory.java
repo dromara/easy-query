@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql.builder.factory;
 
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.ContextTypeEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.expression.EntityTableAvailable;
@@ -28,7 +29,7 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface ExpressionBuilderFactory {
-    ExpressionContext createExpressionContext(QueryRuntimeContext runtimeContext);
+    ExpressionContext createExpressionContext(QueryRuntimeContext runtimeContext, ContextTypeEnum contextType);
    default EntityTableExpressionBuilder createEntityTableExpressionBuilder(EntityMetadata entityMetadata, MultiTableTypeEnum multiTableType, ExpressionContext expressionContext){
        return createEntityTableExpressionBuilder(new EntityTableAvailable(entityMetadata,false),multiTableType,expressionContext);
    }

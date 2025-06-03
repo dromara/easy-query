@@ -6,10 +6,12 @@ import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.ContextTypeEnum;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.builder.core.ValueFilterFactory;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -22,7 +24,6 @@ import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.RelationExtraMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +47,7 @@ public class EasyExpressionContext implements ExpressionContext {
     protected final EasyBehavior easyBehavior;
     protected final ExpressionContextInterceptor expressionContextInterceptor;
     protected final TableContext tableContext;
+    protected final ContextTypeEnum type;
     private boolean deleteThrowException;
     private Object version;
     private ExecuteMethodEnum executeMethod = ExecuteMethodEnum.UNKNOWN;
@@ -72,7 +74,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private ConfigureArgument configureArgument;
     private boolean reverseOrder;
 
-    public EasyExpressionContext(QueryRuntimeContext runtimeContext) {
+    public EasyExpressionContext(QueryRuntimeContext runtimeContext, ContextTypeEnum type) {
 
         this.runtimeContext = runtimeContext;
         QueryConfiguration queryConfiguration = runtimeContext.getQueryConfiguration();
@@ -91,12 +93,30 @@ public class EasyExpressionContext implements ExpressionContext {
         this.connectionMode = null;
         this.sharding = false;
         this.reverseOrder = true;
+        this.type = type;
         this.configureArgument = new ConfigureArgument();
 
         ValueFilterFactory valueFilterFactory = runtimeContext.getValueFilterFactory();
-        this.valueFilter = valueFilterFactory.getExpressionDefaultValueFilter();
+        if (type == ContextTypeEnum.QUERY) {
+            this.valueFilter = valueFilterFactory.getQueryValueFilter();
+        } else if (type == ContextTypeEnum.INSERT) {
+            this.valueFilter = valueFilterFactory.getInsertValueFilter();
+        } else if (type == ContextTypeEnum.UPDATE) {
+            this.valueFilter = valueFilterFactory.getUpdateValueFilter();
+        } else if (type == ContextTypeEnum.DELETE) {
+            this.valueFilter = valueFilterFactory.getDeleteValueFilter();
+        } else if (type == ContextTypeEnum.EXECUTE) {
+            this.valueFilter = valueFilterFactory.getExecuteValueFilter();
+        } else {
+            throw new EasyQueryInvalidOperationException("unknown context type:" + type);
+        }
         this.groupSize = easyQueryOption.getRelationGroupSize();
         this.resultSizeLimit = easyQueryOption.getResultSizeLimit();
+    }
+
+    @Override
+    public ContextTypeEnum getType() {
+        return null;
     }
 
     @Override
@@ -377,7 +397,7 @@ public class EasyExpressionContext implements ExpressionContext {
 
     @Override
     public ExpressionContext cloneExpressionContext() {
-        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(runtimeContext);
+        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(runtimeContext,this.type);
         this.easyBehavior.copyTo(easyExpressionContext.easyBehavior);
         expressionContextInterceptor.copyTo(easyExpressionContext.expressionContextInterceptor);
         this.tableContext.copyTo(easyExpressionContext.tableContext);

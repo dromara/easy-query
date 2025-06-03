@@ -20,6 +20,7 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.configuration.LoadIncludeConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.ContextTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.include.IncludeProcessor;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
@@ -244,7 +245,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
 
         IncludeProvider includeProvider = runtimeContext.getIncludeProvider();
         ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();
-        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext);
+        ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, ContextTypeEnum.QUERY);
 //        for (String selfProperty : navigateMetadata.getSelfPropertiesOrPrimary()) {
 //            ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(selfProperty);
 //            EasySQLExpressionUtil.addRelationExtraColumn(columnMetadata,selfProperty,expressionContext.getRelationExtraMetadata(),false);
