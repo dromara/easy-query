@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface AllCacheQueryable<TEntity extends CacheEntity> extends SingleCacheQueryable<TEntity>, CacheInterceptorQueryable<TEntity,AllCacheQueryable<TEntity>> {
+public interface AllCacheQueryable<TEntity extends CacheEntity> extends SingleCacheQueryable<TEntity>, CacheFilterInterceptorQueryable<TEntity,AllCacheQueryable<TEntity>> {
     List<TEntity> toList();
     List<String> toIndexList();
     int count();

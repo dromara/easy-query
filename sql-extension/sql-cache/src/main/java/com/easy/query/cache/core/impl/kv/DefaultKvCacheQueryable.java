@@ -86,4 +86,11 @@ public class DefaultKvCacheQueryable<TEntity extends CacheKvEntity> extends Abst
         this.functions.add(q -> q.useInterceptor());
         return this;
     }
+    @Override
+    public KvCacheQueryable<TEntity> filter(boolean condition, CachePredicate<TEntity> predicate) {
+        if(condition){
+            addFilter(predicate);
+        }
+        return this;
+    }
 }

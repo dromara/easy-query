@@ -10,7 +10,7 @@ import com.easy.query.cache.core.base.CachePredicate;
  *
  * @author xuejiaming
  */
-public interface CacheInterceptorQueryable<TEntity  extends CacheEntity,TChain> extends CacheQueryable {
+public interface CacheFilterInterceptorQueryable<TEntity  extends CacheEntity,TChain> extends CacheQueryable {
 
     /**
      * 当前表达式不使用拦截器,并且删除之前手动指定的 {@link #noInterceptor(String name)}、{@link #useInterceptor(String name)}
@@ -37,4 +37,8 @@ public interface CacheInterceptorQueryable<TEntity  extends CacheEntity,TChain> 
      * @return
      */
     TChain useInterceptor();
+    default TChain filter(CachePredicate<TEntity> predicate){
+        return filter(true,predicate);
+    }
+    TChain filter(boolean condition,CachePredicate<TEntity> predicate);
 }

@@ -221,4 +221,11 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
 //                    return defaultSelect(otherIds);
 //                });
 //    }
+@Override
+public AllCacheQueryable<TEntity> filter(boolean condition, CachePredicate<TEntity> predicate) {
+    if (condition) {
+        addFilter(predicate);
+    }
+    return this;
+}
 }

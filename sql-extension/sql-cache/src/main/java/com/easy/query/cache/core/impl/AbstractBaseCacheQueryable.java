@@ -55,6 +55,7 @@ public abstract class AbstractBaseCacheQueryable<TEntity extends CacheEntity> im
     protected final EntityMetadata entityMetadata;
     protected final ClientQueryable<TEntity> queryable;
     protected List<Function<ClientQueryable<TEntity>, ClientQueryable<TEntity>>> functions;
+    private List<CachePredicate<TEntity>> filters;
 
     public AbstractBaseCacheQueryable(CacheRuntimeContext cacheRuntimeContext, Class<TEntity> entityClass) {
 
@@ -114,7 +115,29 @@ public abstract class AbstractBaseCacheQueryable<TEntity extends CacheEntity> im
     }
 
 
+    protected void addFilter(CachePredicate<TEntity> filter) {
+        if (filters == null) {
+            filters = new ArrayList<>();
+        }
+        filters.add(filter);
+    }
+
+    protected boolean hasFilter() {
+        return EasyCollectionUtil.isNotEmpty(filters);
+    }
+
     protected Stream<TEntity> filterResult(Stream<TEntity> source) {
+        if (filters != null) {
+            return source.filter(o -> {
+                for (CachePredicate<TEntity> filter : filters) {
+                    boolean ok = filter.apply(o);
+                    if (!ok) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        }
         return source;
     }
 
