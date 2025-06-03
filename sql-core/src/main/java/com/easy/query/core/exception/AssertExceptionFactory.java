@@ -1,6 +1,7 @@
 package com.easy.query.core.exception;
 
 import com.easy.query.core.annotation.NotNull;
+import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.basic.api.select.Query;
 
 /**
@@ -11,13 +12,13 @@ import com.easy.query.core.basic.api.select.Query;
  */
 public interface AssertExceptionFactory {
     @NotNull
-    <T> RuntimeException createFindNotNullException(Query<T> query, String msg, String code);
+    <T> RuntimeException createFindNotNullException(@Nullable Query<T> query, String msg, String code);
     @NotNull
-    <T> RuntimeException createRequiredException(Query<T> query, String msg, String code);
+    <T> RuntimeException createRequiredException(@Nullable Query<T> query, String msg, String code);
     @NotNull
-    <T> RuntimeException createFirstNotNullException(Query<T> query, String msg, String code);
+    <T> RuntimeException createFirstNotNullException(@Nullable Query<T> query, String msg, String code);
     @NotNull
-    <T> RuntimeException createSingleNotNullException(Query<T> query,String msg, String code);
+    <T> RuntimeException createSingleNotNullException(@Nullable Query<T> query, String msg, String code);
     @NotNull
-    <T> RuntimeException createSingleMoreElementException(Query<T> query);
+    <T> RuntimeException createSingleMoreElementException(@Nullable Query<T> query);
 }

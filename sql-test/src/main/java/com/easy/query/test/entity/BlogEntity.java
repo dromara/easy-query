@@ -1,5 +1,7 @@
 package com.easy.query.test.entity;
 
+import com.easy.query.cache.core.CacheKvEntity;
+import com.easy.query.cache.core.annotation.CacheEntitySchema;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EasyAlias;
 import com.easy.query.core.annotation.EntityProxy;
@@ -9,6 +11,7 @@ import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.UpdateIgnore;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.cache.CacheMultiLevel;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,7 +34,8 @@ import java.util.List;
 @EntityProxy
 @EasyAlias("t_blog")
 @ToString
-public class BlogEntity extends BaseEntity implements ProxyEntityAvailable<BlogEntity, BlogEntityProxy> {
+@CacheEntitySchema
+public class BlogEntity extends BaseEntity implements CacheKvEntity, CacheMultiLevel,ProxyEntityAvailable<BlogEntity, BlogEntityProxy> {
 
     /**
      * 标题

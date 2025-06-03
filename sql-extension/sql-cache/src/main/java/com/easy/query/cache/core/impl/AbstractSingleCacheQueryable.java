@@ -2,9 +2,10 @@ package com.easy.query.cache.core.impl;
 
 
 import com.easy.query.cache.core.CacheEntity;
-import com.easy.query.cache.core.EasyCacheStorageOption;
+import com.easy.query.cache.core.CacheRuntimeContext;
 import com.easy.query.cache.core.Pair;
 import com.easy.query.cache.core.queryable.SingleCacheQueryable;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.Collection;
@@ -21,22 +22,22 @@ import java.util.stream.Collectors;
 public abstract class AbstractSingleCacheQueryable<TEntity extends CacheEntity> extends AbstractBaseCacheQueryable<TEntity> implements SingleCacheQueryable<TEntity> {
 
 
-    public AbstractSingleCacheQueryable(EasyCacheStorageOption easyCacheStorageOption, Class<TEntity> entityClass) {
-        super(easyCacheStorageOption, entityClass);
+    public AbstractSingleCacheQueryable(CacheRuntimeContext cacheRuntimeContext, Class<TEntity> entityClass) {
+        super(cacheRuntimeContext, entityClass);
     }
 
     @Override
-    public TEntity firstOrNull(String id) {
-        return firstOrDefault(id,null);
+    public TEntity singleOrNull(String id) {
+        return singleOrDefault(id, null);
     }
 
     @Override
-    public TEntity firstOrDefault(String id, TEntity def) {
-        if(EasyStringUtil.isBlank(id)){
+    public TEntity singleOrDefault(String id, TEntity def) {
+        if (EasyStringUtil.isBlank(id)) {
             return def;
         }
         List<TEntity> in = toList(Collections.singletonList(id));
-        if(in.isEmpty()){
+        if (in.isEmpty()) {
             return null;
         }
         return in.get(0);
@@ -44,15 +45,15 @@ public abstract class AbstractSingleCacheQueryable<TEntity extends CacheEntity> 
 
     @Override
     public abstract List<TEntity> toList(Collection<String> ids);
-    protected List<Pair<String,TEntity>> defaultSelect(Collection<String> ids){
-        return getEntities(ids).stream()
+
+    protected List<Pair<String, TEntity>> defaultSelect(Collection<String> ids, ClientQueryable<TEntity> clientQueryable) {
+        return getEntities(ids, clientQueryable).stream()
                 .map(this::getKeyAndEntity).collect(Collectors.toList());
     }
-    protected  List<TEntity> getEntities(Collection<String> ids){
-        return easyQueryClient.queryable(entityClass)
-                .noInterceptor()
-                .asNoTracking()
-                .where(o->o.in(getIdProperty(),ids)).toList();
+
+    protected List<TEntity> getEntities(Collection<String> ids, ClientQueryable<TEntity> clientQueryable) {
+        return clientQueryable.where(o -> o.in(getIdProperty(), ids)).toList();
     }
+
 
 }

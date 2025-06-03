@@ -19,8 +19,16 @@
         <maven.install.skip>true</maven.install.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
         <mysql.version>9.2.0</mysql.version>
+        <redisson.version>3.33.0</redisson.version>
+        <caffeine.version>2.9.3</caffeine.version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>com.easy-query</groupId>
+            <artifactId>sql-cache</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>com.easy-query</groupId>
             <artifactId>sql-mysql</artifactId>
@@ -81,6 +89,12 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.redisson/redisson -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>${redisson.version}</version>
+        </dependency>
         <!--        &lt;!&ndash;oracle驱动 &ndash;&gt;-->
         <!--        <dependency>-->
         <!--            <groupId>com.oracle</groupId>-->
@@ -98,6 +112,17 @@
 <!--            <artifactId>mysql-connector-java</artifactId>-->
 <!--            <version>8.0.17</version>-->
 <!--        </dependency>-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.17.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine -->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>${caffeine.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>

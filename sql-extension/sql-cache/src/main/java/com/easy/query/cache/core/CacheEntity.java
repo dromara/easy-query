@@ -7,5 +7,4 @@ package com.easy.query.cache.core;
  * @author xuejiaming
  */
 public interface CacheEntity {
-    String cacheIdValue();
 }

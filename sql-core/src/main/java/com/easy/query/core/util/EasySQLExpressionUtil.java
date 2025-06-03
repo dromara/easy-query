@@ -15,6 +15,8 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.cte.CteTableAvailable;
 import com.easy.query.core.basic.api.select.impl.EasyCteClientQueryable;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
+import com.easy.query.core.basic.extension.interceptor.Interceptor;
+import com.easy.query.core.basic.extension.interceptor.PredicateFilterInterceptor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRewriteUnit;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
@@ -69,6 +71,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.SQLAnonymousEntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousUnionQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.AnonymousUnionEntityQuerySQLExpression;
@@ -77,6 +80,7 @@ import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.fill.FillParams;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.RelationExtraColumn;
@@ -101,6 +105,19 @@ import java.util.stream.Collectors;
  */
 public class EasySQLExpressionUtil {
     private EasySQLExpressionUtil() {
+    }
+
+    public static void invokeInterceptors(EntityMetadata entityMetadata, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, ExpressionContext expressionContext, WherePredicate<Object> sqlPredicate){
+        //如果当前对象是存在拦截器的那么就通过stream获取剩余的拦截器
+        List<PredicateFilterInterceptor> predicateFilterInterceptors = entityMetadata.getPredicateFilterInterceptors();
+        if (EasyCollectionUtil.isNotEmpty(predicateFilterInterceptors)) {
+            java.util.function.Predicate<Interceptor> interceptorFilter = expressionContext.getInterceptorFilter();
+            for (PredicateFilterInterceptor predicateFilterInterceptor : predicateFilterInterceptors) {
+                if (interceptorFilter.test(predicateFilterInterceptor)) {
+                    predicateFilterInterceptor.configure(entityMetadata.getEntityClass(), lambdaEntityExpressionBuilder, sqlPredicate);
+                }
+            }
+        }
     }
 
     public static boolean withTableInDeclareExpressions(List<ExpressionBuilder> declareExpressions,Class<?> cteTableClass, String cteTableName) {

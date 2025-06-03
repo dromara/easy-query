@@ -2,6 +2,9 @@ package com.easy.query.test;
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
+import com.easy.query.cache.core.EasyCacheClient;
+import com.easy.query.cache.core.EasyCacheManager;
+import com.easy.query.cache.core.bootstrapper.EasyCacheBootstrapper;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
@@ -21,6 +24,10 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.router.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.router.manager.TableRouteManager;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
+import com.easy.query.test.cache.BlogPredicateInterceptor;
+import com.easy.query.test.cache.CacheMultiOption;
+import com.easy.query.test.cache.DefaultEasyRedisManager;
+import com.easy.query.test.cache.DefaultEasyRedisManagerMultiLevel;
 import com.easy.query.test.common.MyQueryConfiguration;
 import com.easy.query.test.common.TopicUpdateInterceptor;
 import com.easy.query.test.conversion.Blog2StarToStringColumnValueSQLConverter;
@@ -74,6 +81,11 @@ import com.easy.query.test.sharding.TopicShardingTableRoute;
 import com.easy.query.test.sharding.TopicShardingTimeShardingInitializer;
 import com.easy.query.test.sharding.TopicShardingTimeTableRoute;
 import com.zaxxer.hikari.HikariDataSource;
+import org.redisson.Redisson;
+import org.redisson.api.NameMapper;
+import org.redisson.api.RedissonClient;
+import org.redisson.client.codec.StringCodec;
+import org.redisson.config.Config;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -95,6 +107,7 @@ import java.util.UUID;
 public abstract class BaseTest {
     public static HikariDataSource dataSource;
     public static EasyQueryClient easyQueryClient;
+    public static EasyCacheClient easyCacheClient;
     public static EasyQueryShardingOption easyQueryShardingOption;
     public static EasyEntityQuery easyEntityQuery;
     public static ListenerContextManager listenerContextManager;
@@ -190,6 +203,7 @@ public abstract class BaseTest {
         configuration.applyInterceptor(new Topic1Interceptor());
         configuration.applyInterceptor(new MyTenantInterceptor());
         configuration.applyInterceptor(new TopicUpdateInterceptor());
+        configuration.applyInterceptor(new BlogPredicateInterceptor());
         configuration.applyNavigateExtraFilterStrategy(new BookNavigateExtraFilterStrategy());
         configuration.applyNavigateExtraFilterStrategy(new JoinType());
         configuration.applyNavigateExtraFilterStrategy(new RoleJoin.RoleJoinType());
@@ -209,8 +223,44 @@ public abstract class BaseTest {
         configuration.applyNavigateValueSetter(new MyNavigateValueSetter());
         configuration.applyNavigateExtraFilterStrategy(new com.easy.query.test.entity.navf.RoleJoin.RoleJoinType());
 
+
+        easyCacheClient = EasyCacheBootstrapper.defaultBuilderConfiguration()
+                .optionConfigure(op -> {
+                })
+                .replaceService(new CacheMultiOption(1000 * 60 * 60, 1000, 10000))
+                .replaceService(EasyCacheManager.class, DefaultEasyRedisManagerMultiLevel.class)
+                .replaceService(EasyQueryClient.class, easyQueryClient)
+                .replaceService(RedissonClient.class, cacheRedissonClient()).build();
         beforex();
 
+    }
+
+    public static RedissonClient cacheRedissonClient() {
+        Config config = new Config();
+        config.useSingleServer()
+                .setConnectionMinimumIdleSize(1)
+                .setDatabase(1)
+                .setAddress("redis://127.0.0.1:55001")
+                .setNameMapper(createNameMapper("CACHE"));
+        config.useSingleServer().setPassword("redispw");
+        StringCodec codec = new StringCodec();
+        config.setCodec(codec);
+        return Redisson.create(config);
+    }
+    private static NameMapper createNameMapper(String prefix) {
+        return new NameMapper() {
+            public final String nameSpace = prefix + ":" ;
+
+            @Override
+            public String map(String name) {
+                return nameSpace + name;
+            }
+
+            @Override
+            public String unmap(String name) {
+                return name.substring(nameSpace.length());
+            }
+        };
     }
 
     public static void initData() {
@@ -332,22 +382,23 @@ public abstract class BaseTest {
             long l = easyEntityQuery.insertable(topicInterceptors).executeRows();
         }
     }
-    public static void beforex(){
+
+    public static void beforex() {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
         {
             try {
 
-                CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(DocBankCard.class,DocBank.class,UserAccount.class, UserBook.class, DocUser.class));
-                codeFirstCommand.executeWithTransaction(a->a.commit());
-            }catch (Exception ignored){
+                CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(DocBankCard.class, DocBank.class, UserAccount.class, UserBook.class, DocUser.class));
+                codeFirstCommand.executeWithTransaction(a -> a.commit());
+            } catch (Exception ignored) {
 
             }
 
         }
         {
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class,UserAccount.class, UserBook.class,DocBankCard.class, DocUser.class));
-            codeFirstCommand.executeWithTransaction(a->a.commit());
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class, UserAccount.class, UserBook.class, DocBankCard.class, DocUser.class));
+            codeFirstCommand.executeWithTransaction(a -> a.commit());
         }
     }
 

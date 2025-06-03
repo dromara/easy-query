@@ -2,13 +2,14 @@ package com.easy.query.cache.core.impl.all;
 
 import com.easy.query.cache.core.CacheAllEntity;
 import com.easy.query.cache.core.EasyCacheIndex;
-import com.easy.query.cache.core.EasyCacheStorageOption;
+import com.easy.query.cache.core.CacheRuntimeContext;
 import com.easy.query.cache.core.Pair;
 import com.easy.query.cache.core.base.CachePredicate;
 import com.easy.query.cache.core.impl.AbstractSingleCacheQueryable;
 import com.easy.query.cache.core.queryable.AllCacheQueryable;
 import com.easy.query.core.api.pagination.DefaultPageResult;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -30,8 +31,11 @@ import java.util.stream.Stream;
  * @author xuejiaming
  */
 public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends AbstractSingleCacheQueryable<TEntity> implements AllCacheQueryable<TEntity> {
-    public DefaultAllCacheQueryable(EasyCacheStorageOption easyCacheStorageOption, Class<TEntity> entityClass) {
-        super(easyCacheStorageOption, entityClass);
+
+    private final ClientQueryable<TEntity> indexQueryable;
+    public DefaultAllCacheQueryable(CacheRuntimeContext cacheRuntimeContext, Class<TEntity> entityClass) {
+        super(cacheRuntimeContext, entityClass);
+        this.indexQueryable=easyQueryClient.queryable(entityClass).asNoTracking();
     }
 
     @Override
@@ -53,10 +57,6 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
         Set<String> indexs = doGetIndex();
         if (indexs.isEmpty()) {
             return false;
-        }
-        if (hasFilter()) {
-            List<TEntity> in = toList(indexs);
-            return EasyCollectionUtil.isNotEmpty(in);
         }
         return true;
     }
@@ -97,7 +97,7 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
     }
 
     protected List<Pair<String, TEntity>> doGet(Collection<String> ids) {
-        if(EasyCollectionUtil.isEmpty(ids)){
+        if (EasyCollectionUtil.isEmpty(ids)) {
             Set<String> indexs = doGetIndex();
             if (indexs.isEmpty()) {
                 return Collections.emptyList();
@@ -107,7 +107,7 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
                 return getCacheByIds(findIds);
             }
             return Collections.emptyList();
-        }else{
+        } else {
             return getCacheByIds(new HashSet<>(ids));
         }
 
@@ -123,16 +123,21 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
     protected Set<String> doGetIndex() {
         Set<String> fields = new HashSet<>();
         fields.add(easyCacheOption.getCacheIndex());
-        List<Pair<String, EasyCacheIndex>> cache = easyCacheManager.cache(EasyCacheIndex.class, getEntityKey(), fields, easyCacheOption.getTimeoutMillisSeconds(), easyCacheOption.getValueNullTimeoutMillisSeconds(), ids -> {
-            return getIndex(getCacheAllIndex());
+        ClientQueryable<TEntity> endEntityQueryable = getEndEntityQueryable(indexQueryable);
+        String queryableKey = getQueryableKey(endEntityQueryable);
+
+        List<Pair<String, EasyCacheIndex>> cache = easyCacheManager.cache(entityClass, EasyCacheIndex.class, getEntityKey(), queryableKey, fields, ids -> {
+            return getIndex(getCacheAllIndex(endEntityQueryable));
         });
         EasyCacheIndex v = cache.get(0).getObject2();
         return (v == null || v.getIndex() == null) ? new HashSet<>() : v.getIndex();
     }
 
     private List<Pair<String, TEntity>> getCacheByIds(Set<String> ids) {
-        return easyCacheManager.cache(entityClass, getEntityKey(), ids, easyCacheOption.getTimeoutMillisSeconds(), easyCacheOption.getValueNullTimeoutMillisSeconds(), otherIds -> {
-            return toKeyAndEntity(getEntities(otherIds));
+        ClientQueryable<TEntity> entityQueryable = getEndEntityQueryable(this.queryable);
+        String queryableKey = getQueryableKey(entityQueryable);
+        return easyCacheManager.cache(entityClass, entityClass, getEntityKey(), queryableKey, ids, otherIds -> {
+            return toKeyAndEntity(getEntities(otherIds, entityQueryable));
         });
     }
 
@@ -141,16 +146,13 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
      *
      * @return
      */
-    protected List<String> getCacheAllIndex() {
-        return getCacheAllIndex0();
+    protected List<String> getCacheAllIndex(ClientQueryable<TEntity> indexQueryable) {
+        return getCacheAllIndex0(indexQueryable);
     }
 
-    protected List<String> getCacheAllIndex0() {
-//        return new LinkedList<>();
+    protected List<String> getCacheAllIndex0(ClientQueryable<TEntity> indexQueryable) {
         SQLActionExpression1<ColumnAsSelector<TEntity, String>> idProperty = x -> x.column(getIdProperty());
-        return easyQueryClient.queryable(entityClass)
-                .noInterceptor()
-                .asNoTracking()
+        return indexQueryable
                 .select(String.class, idProperty)
                 .toList();
     }
@@ -169,12 +171,29 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
     }
 
     @Override
-    public AllCacheQueryable<TEntity> filter(boolean condition, CachePredicate<TEntity> predicate) {
-        if (condition) {
-            addFilter(predicate);
-        }
+    public AllCacheQueryable<TEntity> noInterceptor() {
+        this.functions.add(q -> q.noInterceptor());
         return this;
     }
+
+    @Override
+    public AllCacheQueryable<TEntity> useInterceptor(String name) {
+        this.functions.add(q -> q.useInterceptor(name));
+        return this;
+    }
+
+    @Override
+    public AllCacheQueryable<TEntity> noInterceptor(String name) {
+        this.functions.add(q -> q.noInterceptor(name));
+        return this;
+    }
+
+    @Override
+    public AllCacheQueryable<TEntity> useInterceptor() {
+        this.functions.add(q -> q.useInterceptor());
+        return this;
+    }
+
 //
 //    @Override
 //    public TEntity firstOrDefault(String id, TEntity def) {

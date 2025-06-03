@@ -7,24 +7,25 @@ package com.easy.query.cache.core;
  * @author xuejiaming
  */
 public class EasyCacheOption {
-    private  String keyPrefix="CACHE";
-    private  String cacheIndex="INDEX";
-    private  long timeoutMillisSeconds=1000 * 60 * 60*3;//3小时
-    private  long valueNullTimeoutMillisSeconds=1000*10;//10秒
-    public String getEntityKey(Class<?> entityClass){
-        return this.keyPrefix+":"+entityClass.getSimpleName();
+    private String keyPrefix = "CACHE";
+    private String cacheIndex = "INDEX";
+    private long expireMillisSeconds = 1000 * 60 * 60 * 3;//3小时
+    private long valueNullExpireMillisSeconds = 1000 * 10;//10秒
+
+    public String getEntityKey(Class<?> entityClass) {
+        return this.keyPrefix + ":" + entityClass.getSimpleName();
     }
 
     public String getKeyPrefix() {
         return keyPrefix;
     }
 
-    public long getTimeoutMillisSeconds() {
-        return timeoutMillisSeconds;
+    public long getExpireMillisSeconds() {
+        return expireMillisSeconds;
     }
 
-    public long getValueNullTimeoutMillisSeconds() {
-        return valueNullTimeoutMillisSeconds;
+    public long getValueNullExpireMillisSeconds() {
+        return valueNullExpireMillisSeconds;
     }
 
     public String getCacheIndex() {
@@ -39,11 +40,11 @@ public class EasyCacheOption {
         this.cacheIndex = cacheIndex;
     }
 
-    public void setTimeoutMillisSeconds(long timeoutMillisSeconds) {
-        this.timeoutMillisSeconds = timeoutMillisSeconds;
+    public void setExpireMillisSeconds(long expireMillisSeconds) {
+        this.expireMillisSeconds = expireMillisSeconds;
     }
 
-    public void setValueNullTimeoutMillisSeconds(long valueNullTimeoutMillisSeconds) {
-        this.valueNullTimeoutMillisSeconds = valueNullTimeoutMillisSeconds;
+    public void setValueNullExpireMillisSeconds(long valueNullExpireMillisSeconds) {
+        this.valueNullExpireMillisSeconds = valueNullExpireMillisSeconds;
     }
 }

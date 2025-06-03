@@ -9,5 +9,5 @@ import com.easy.query.cache.core.CacheEntity;
  *
  * @author xuejiaming
  */
-public interface KvCacheQueryable<TEntity extends CacheEntity> extends SingleCacheQueryable<TEntity>,CacheFilterQueryable<TEntity,KvCacheQueryable<TEntity>>{
+public interface KvCacheQueryable<TEntity extends CacheEntity> extends SingleCacheQueryable<TEntity>, CacheInterceptorQueryable<TEntity,KvCacheQueryable<TEntity>> {
 }

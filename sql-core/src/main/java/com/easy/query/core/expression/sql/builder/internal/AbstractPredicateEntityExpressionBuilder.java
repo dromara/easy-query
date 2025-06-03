@@ -29,6 +29,7 @@ import com.easy.query.core.metadata.VersionMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyColumnSegmentUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -89,16 +90,17 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
                     }
                 }
             }
-            //如果当前对象是存在拦截器的那么就通过stream获取剩余的拦截器
-            List<PredicateFilterInterceptor> predicateFilterInterceptors = entityMetadata.getPredicateFilterInterceptors();
-            if (EasyCollectionUtil.isNotEmpty(predicateFilterInterceptors)) {
-                Predicate<Interceptor> interceptorFilter = expressionContext.getInterceptorFilter();
-                for (PredicateFilterInterceptor predicateFilterInterceptor : predicateFilterInterceptors) {
-                    if (interceptorFilter.test(predicateFilterInterceptor)) {
-                        predicateFilterInterceptor.configure(entityMetadata.getEntityClass(), this, sqlPredicate);
-                    }
-                }
-            }
+//            //如果当前对象是存在拦截器的那么就通过stream获取剩余的拦截器
+//            List<PredicateFilterInterceptor> predicateFilterInterceptors = entityMetadata.getPredicateFilterInterceptors();
+//            if (EasyCollectionUtil.isNotEmpty(predicateFilterInterceptors)) {
+//                Predicate<Interceptor> interceptorFilter = expressionContext.getInterceptorFilter();
+//                for (PredicateFilterInterceptor predicateFilterInterceptor : predicateFilterInterceptors) {
+//                    if (interceptorFilter.test(predicateFilterInterceptor)) {
+//                        predicateFilterInterceptor.configure(entityMetadata.getEntityClass(), this, sqlPredicate);
+//                    }
+//                }
+//            }
+            EasySQLExpressionUtil.invokeInterceptors(entityMetadata,this,expressionContext,sqlPredicate);
 
             if (predicateSegment.isNotEmpty()) {
                 if (originalPredicate != null && originalPredicate.isNotEmpty()) {
@@ -109,6 +111,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
         }
         return originalPredicate;
     }
+
 
 
     private Boolean relationLogicDelete(RelationTableAvailable relationTable) {

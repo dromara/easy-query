@@ -1,6 +1,8 @@
 package com.easy.query.core.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -9,6 +11,23 @@ import java.util.regex.Pattern;
  */
 public class EasyStringUtil {
     public static final String EMPTY = "";
+
+    public static String join(Collection<String> items, String delimiter, boolean skipNull) {
+        if (items == null) return null;
+        StringBuilder sb = new StringBuilder();
+        Iterator<String> iterator = items.iterator();
+        while (iterator.hasNext()) {
+            String item = iterator.next();
+            if (item == null && skipNull) {
+                continue;
+            }
+            sb.append(item == null ? "null" : item);
+            if (iterator.hasNext()) {
+                sb.append(delimiter);
+            }
+        }
+        return sb.toString();
+    }
 
 //    public static final int INDEX_NOT_FOUND = -1;
 //
@@ -154,6 +173,7 @@ public class EasyStringUtil {
 
     /**
      * 移除字符串前后空格
+     *
      * @param input
      * @return
      */
@@ -164,11 +184,11 @@ public class EasyStringUtil {
     }
 
 
-
     private static final Pattern NEWLINE_PATTERN = Pattern.compile("[\\r\\n]+");
 
     /**
      * 将字符串换行转成空格单行显示
+     *
      * @param input
      * @return
      */
@@ -176,6 +196,7 @@ public class EasyStringUtil {
         if (input == null) return null;
         return NEWLINE_PATTERN.matcher(input).replaceAll(" ").trim();
     }
+
     /**
      * 去空格
      *

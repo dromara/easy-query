@@ -1,5 +1,7 @@
 package com.easy.query.test.entity;
 
+import com.easy.query.cache.core.CacheAllEntity;
+import com.easy.query.cache.core.annotation.CacheEntitySchema;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EasyAlias;
 import com.easy.query.core.annotation.EasyAssertMessage;
@@ -10,6 +12,7 @@ import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.UpdateIgnore;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.test.cache.CacheMultiLevel;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
@@ -29,7 +32,8 @@ import java.util.List;
 @EasyAssertMessage("未找到主题信息")
 @EasyAlias("t_topic")
 @FieldNameConstants
-public class Topic implements ProxyEntityAvailable<Topic, TopicProxy> {
+@CacheEntitySchema
+public class Topic implements CacheAllEntity, CacheMultiLevel,ProxyEntityAvailable<Topic, TopicProxy> {
 
     @Column(primaryKey = true)
     private String id;

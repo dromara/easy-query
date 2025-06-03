@@ -1,11 +1,13 @@
 package com.easy.query.cache.core.impl.kv;
 
 import com.easy.query.cache.core.CacheKvEntity;
-import com.easy.query.cache.core.EasyCacheStorageOption;
+import com.easy.query.cache.core.CacheRuntimeContext;
 import com.easy.query.cache.core.Pair;
 import com.easy.query.cache.core.base.CachePredicate;
 import com.easy.query.cache.core.impl.AbstractSingleCacheQueryable;
+import com.easy.query.cache.core.queryable.AllCacheQueryable;
 import com.easy.query.cache.core.queryable.KvCacheQueryable;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
@@ -24,27 +26,31 @@ import java.util.stream.Stream;
  */
 public class DefaultKvCacheQueryable<TEntity extends CacheKvEntity> extends AbstractSingleCacheQueryable<TEntity> implements KvCacheQueryable<TEntity> {
 
-    public DefaultKvCacheQueryable(EasyCacheStorageOption easyCacheStorageOption, Class<TEntity> entityClass) {
-        super(easyCacheStorageOption, entityClass);
+    public DefaultKvCacheQueryable(CacheRuntimeContext cacheRuntimeContext, Class<TEntity> entityClass) {
+        super(cacheRuntimeContext, entityClass);
     }
 
     @Override
     public List<TEntity> toList(Collection<String> ids) {
-        if(EasyCollectionUtil.isEmpty(ids)){
+        if (EasyCollectionUtil.isEmpty(ids)) {
             return Collections.emptyList();
         }
-        List<Pair<String, TEntity>> caches=doGet(ids);
+        List<Pair<String, TEntity>> caches = doGet(ids);
         Set<String> idSet = new HashSet<>(ids);
         Stream<TEntity> select = caches.stream().filter(o -> o.getObject2() != null && idSet.contains(o.getObject1()))
                 .map(o -> o.getObject2());
         return filterResult(select).collect(Collectors.toList());
     }
-    protected List<Pair<String, TEntity>> doGet(Collection<String> ids){
+
+    protected List<Pair<String, TEntity>> doGet(Collection<String> ids) {
         Set<String> needFinds = new HashSet<>(ids);
-        if(!needFinds.isEmpty()){
-            return easyCacheManager.cache(entityClass, getEntityKey(), needFinds, easyCacheOption.getTimeoutMillisSeconds(), easyCacheOption.getValueNullTimeoutMillisSeconds(),
+        if (!needFinds.isEmpty()) {
+            ClientQueryable<TEntity> entityQueryable = getEndEntityQueryable(this.queryable);
+            String queryableKey = getQueryableKey(entityQueryable);
+
+            return easyCacheManager.cache(entityClass,entityClass, getEntityKey(), queryableKey, needFinds,
                     otherIds -> {
-                        return defaultSelect(otherIds);
+                        return defaultSelect(otherIds, entityQueryable);
                     });
         }
         return Collections.emptyList();
@@ -53,14 +59,31 @@ public class DefaultKvCacheQueryable<TEntity extends CacheKvEntity> extends Abst
 
     @Override
     public boolean any(String id) {
-        return firstOrDefault(id,null)!=null;
+        return singleOrDefault(id, null) != null;
+    }
+
+
+    @Override
+    public KvCacheQueryable<TEntity> noInterceptor() {
+        this.functions.add(q -> q.noInterceptor());
+        return this;
     }
 
     @Override
-    public KvCacheQueryable<TEntity> filter(boolean condition, CachePredicate<TEntity> predicate) {
-        if(condition){
-            addFilter(predicate);
-        }
+    public KvCacheQueryable<TEntity> useInterceptor(String name) {
+        this.functions.add(q -> q.useInterceptor(name));
+        return this;
+    }
+
+    @Override
+    public KvCacheQueryable<TEntity> noInterceptor(String name) {
+        this.functions.add(q -> q.noInterceptor(name));
+        return this;
+    }
+
+    @Override
+    public KvCacheQueryable<TEntity> useInterceptor() {
+        this.functions.add(q -> q.useInterceptor());
         return this;
     }
 }

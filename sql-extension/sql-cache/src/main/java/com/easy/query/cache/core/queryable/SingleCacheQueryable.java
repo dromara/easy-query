@@ -3,7 +3,7 @@ package com.easy.query.cache.core.queryable;
 
 
 import com.easy.query.cache.core.CacheEntity;
-import com.easy.query.cache.core.exceptions.EasyQueryCacheFirstNotNullException;
+import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface SingleCacheQueryable<TEntity extends CacheEntity> extends CacheQueryable {
+public interface SingleCacheQueryable<TEntity extends CacheEntity> extends CacheQueryable, RuntimeContextAvailable {
 
     /**
      * 不存在就返回null
@@ -22,7 +22,8 @@ public interface SingleCacheQueryable<TEntity extends CacheEntity> extends Cache
      * @param id
      * @return
      */
-    TEntity firstOrNull(String id);
+    TEntity singleOrNull(String id);
+
 
     /**
      * 条件成立查询否则返回null
@@ -31,21 +32,21 @@ public interface SingleCacheQueryable<TEntity extends CacheEntity> extends Cache
      * @param id
      * @return
      */
-    default TEntity firstOrNull(boolean condition, String id) {
+    default TEntity singleOrNull(boolean condition, String id) {
         if (condition) {
-            return firstOrNull(id);
+            return singleOrNull(id);
         }
         return null;
     }
 
-    default TEntity firstNotNull(String id, String error) {
-        return firstNotNull(id, error, null);
+    default TEntity singleNotNull(String id, String error) {
+        return singleNotNull(id, error, null);
     }
 
-    default TEntity firstNotNull(String id, String error, String code) {
-        TEntity one = firstOrNull(id);
+    default TEntity singleNotNull(String id, String error, String code) {
+        TEntity one = singleOrNull(id);
         if (null == one) {
-            throw new EasyQueryCacheFirstNotNullException(code, error);
+            throw getRuntimeContext().getAssertExceptionFactory().createSingleNotNullException(null, error, code);
         }
         return one;
     }
@@ -58,7 +59,7 @@ public interface SingleCacheQueryable<TEntity extends CacheEntity> extends Cache
      * @param def
      * @return
      */
-    TEntity firstOrDefault(String id, TEntity def);
+    TEntity singleOrDefault(String id, TEntity def);
 
     List<TEntity> toList(Collection<String> ids);
 

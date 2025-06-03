@@ -1,6 +1,9 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
+import com.easy.query.cache.core.EasyCacheManager;
+import com.easy.query.cache.core.base.CacheMethodEnum;
+import com.easy.query.cache.core.base.DefaultClearParameter;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
@@ -12,21 +15,28 @@ import com.easy.query.core.proxy.core.tuple.Tuple2;
 import com.easy.query.core.proxy.core.tuple.Tuple3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyTypeUtil;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
+import com.easy.query.test.cache.CacheItem;
+import com.easy.query.test.cache.DefaultEasyRedisManagerMultiLevel;
+import com.easy.query.test.cache.JsonUtil;
 import com.easy.query.test.dto.TopicTypeVO;
 import com.easy.query.test.dto.proxy.TopicTypeVOProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.company.ValueCompany;
 import com.easy.query.test.listener.ListenerContext;
+import com.github.benmanes.caffeine.cache.Cache;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -274,6 +284,161 @@ public class QueryTest25 extends BaseTest {
             Assert.assertEquals("title0", value3);
         }
 
+    }
+
+    @Test
+    public void test11a(){
+        easyCacheClient.clear(new DefaultClearParameter("1",null, CacheMethodEnum.UPDATE, LocalDateTime.of(2020,1,1,1,1),"t_blog",new HashMap<>()));
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            BlogEntity blogEntity = easyCacheClient.kvStorage(BlogEntity.class).singleOrNull("1");
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            BlogEntity blogEntity = easyCacheClient.kvStorage(BlogEntity.class).singleOrNull("1");
+
+            Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            BlogEntity blogEntity = easyCacheClient.kvStorage(BlogEntity.class).useInterceptor("blog-cache").singleOrNull("1");
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` = ? AND `id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),123(String),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        EasyCacheManager service = easyCacheClient.getService(EasyCacheManager.class);
+        DefaultEasyRedisManagerMultiLevel redisManagerMultiLevel = (DefaultEasyRedisManagerMultiLevel) service;
+        Cache<String, Map<String, CacheItem>> cache = redisManagerMultiLevel.cache;
+        {
+            Map<String, CacheItem> cacheItemMap = cache.get("CACHE:BlogEntity:1", k -> null);
+            Assert.assertNotNull(cacheItemMap);
+            CacheItem cacheItem = cacheItemMap.get("{}");
+            String json = cacheItem.getJson();
+            BlogEntity blogEntity = JsonUtil.jsonStr2Object(json, BlogEntity.class);
+            Assert.assertEquals("1",blogEntity.getId());
+        }
+        {
+            Map<String, CacheItem> cacheItemMap = cache.get("CACHE:BlogEntity:1", k -> null);
+            Assert.assertNotNull(cacheItemMap);
+            CacheItem cacheItem = cacheItemMap.get("{\"sql\":\"`content` = ?\",\"parameters\":\"123(String)\"}");
+            String json = cacheItem.getJson();
+            Assert.assertNull(json);
+        }
+        System.out.println("1");
+    }
+
+    @Test
+    public void test11a1(){
+        easyCacheClient.clear(new DefaultClearParameter("1",null, CacheMethodEnum.UPDATE, LocalDateTime.of(2020,1,1,1,1),"t_topic",new HashMap<>()));
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            Topic blogEntity = easyCacheClient.allStorage(Topic.class).singleOrNull("1");
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        easyCacheClient.clear(new DefaultClearParameter("1","INDEX", CacheMethodEnum.DELETE, LocalDateTime.of(2020,1,1,1,1),"t_topic",new HashMap<>()));
+        {
+
+            ListenerContext listenerContext = new ListenerContext(true);
+            listenerContextManager.startListen(listenerContext);
+            easyCacheClient.allStorage(Topic.class).toList();
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+            {
+
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                Assert.assertEquals("SELECT t.`id` FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            }
+            {
+
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            listenerContextManager.clear();
+        }
+
+        EasyCacheManager service = easyCacheClient.getService(EasyCacheManager.class);
+        DefaultEasyRedisManagerMultiLevel redisManagerMultiLevel = (DefaultEasyRedisManagerMultiLevel) service;
+        Cache<String, Map<String, CacheItem>> cache = redisManagerMultiLevel.cache;
+        {
+            Map<String, CacheItem> cacheItemMap = cache.get("CACHE:Topic:1", k -> null);
+            Assert.assertNotNull(cacheItemMap);
+            CacheItem cacheItem = cacheItemMap.get("{}");
+            String json = cacheItem.getJson();
+            Topic blogEntity = JsonUtil.jsonStr2Object(json, Topic.class);
+            Assert.assertEquals("1", blogEntity.getId());
+        }
+        {
+            Map<String, CacheItem> cacheItemMap = cache.get("CACHE:Topic:INDEX", k -> null);
+            Assert.assertNotNull(cacheItemMap);
+            CacheItem cacheItem = cacheItemMap.get("{}");
+            String json = cacheItem.getJson();
+            Assert.assertEquals("{\"index\":[\"88\",\"89\",\"995\",\"90\",\"91\",\"92\",\"93\",\"94\",\"95\",\"96\",\"97\",\"10\",\"98\",\"11\",\"99\",\"12\",\"13\",\"14\",\"15\",\"16\",\"17\",\"18\",\"19\",\"0\",\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\",\"20\",\"21\",\"22\",\"23\",\"24\",\"25\",\"26\",\"27\",\"28\",\"29\",\"30\",\"31\",\"32\",\"33\",\"34\",\"35\",\"36\",\"37\",\"38\",\"39\",\"40\",\"41\",\"42\",\"43\",\"44\",\"45\",\"46\",\"47\",\"48\",\"49\",\"50\",\"51\",\"52\",\"53\",\"54\",\"55\",\"56\",\"57\",\"58\",\"59\",\"60\",\"61\",\"62\",\"63\",\"64\",\"65\",\"66\",\"67\",\"68\",\"69\",\"70\",\"71\",\"72\",\"73\",\"74\",\"75\",\"76\",\"77\",\"78\",\"79\",\"80\",\"81\",\"82\",\"83\",\"84\",\"85\",\"86\",\"87\"]}",json);
+        }
+        System.out.println("1");
+//        {
+//
+//            ListenerContext listenerContext = new ListenerContext();
+//            listenerContextManager.startListen(listenerContext);
+//            BlogEntity blogEntity = easyCacheClient.kvStorage(BlogEntity.class).singleOrNull("1");
+//
+//            Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
+//            listenerContextManager.clear();
+//        }
+//        {
+//
+//            ListenerContext listenerContext = new ListenerContext();
+//            listenerContextManager.startListen(listenerContext);
+//            BlogEntity blogEntity = easyCacheClient.kvStorage(BlogEntity.class).useInterceptor("blog-cache").singleOrNull("1");
+//
+//            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` = ? AND `id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("false(Boolean),123(String),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            listenerContextManager.clear();
+//        }
+//        EasyCacheManager service = easyCacheClient.getService(EasyCacheManager.class);
+//        DefaultEasyRedisManagerMultiLevel redisManagerMultiLevel = (DefaultEasyRedisManagerMultiLevel) service;
+//        Cache<String, Map<String, CacheItem>> cache = redisManagerMultiLevel.cache;
+//        {
+//            Map<String, CacheItem> cacheItemMap = cache.get("CACHE:BlogEntity:1", k -> null);
+//            Assert.assertNotNull(cacheItemMap);
+//            CacheItem cacheItem = cacheItemMap.get("{}");
+//            String json = cacheItem.getJson();
+//            BlogEntity blogEntity = JsonUtil.jsonStr2Object(json, BlogEntity.class);
+//            Assert.assertEquals("1",blogEntity.getId());
+//        }
+//        {
+//            Map<String, CacheItem> cacheItemMap = cache.get("CACHE:BlogEntity:1", k -> null);
+//            Assert.assertNotNull(cacheItemMap);
+//            CacheItem cacheItem = cacheItemMap.get("{\"sql\":\"`content` = ?\",\"parameters\":\"123(String)\"}");
+//            String json = cacheItem.getJson();
+//            Assert.assertNull(json);
+//        }
+//        System.out.println("1");
     }
 
 }

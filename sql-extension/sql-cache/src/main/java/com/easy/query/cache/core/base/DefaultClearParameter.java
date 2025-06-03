@@ -1,5 +1,8 @@
 package com.easy.query.cache.core.base;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
@@ -18,7 +21,7 @@ public class DefaultClearParameter implements ClearParameter {
     private final String tableName;
     private final Map<String, String> parameters;
 
-    public DefaultClearParameter(String cacheId, String cacheIndexId, CacheMethodEnum cacheMethodEnum, LocalDateTime beforeTime, String tableName, Map<String, String> parameters) {
+    public DefaultClearParameter(@Nullable String cacheId, @Nullable String cacheIndexId, @NotNull CacheMethodEnum cacheMethodEnum,@NotNull LocalDateTime beforeTime,@NotNull String tableName,@NotNull Map<String, String> parameters) {
         Objects.requireNonNull(parameters, "parameters cannot be null");
         this.cacheId = cacheId;
         this.cacheIndexId = cacheIndexId;
