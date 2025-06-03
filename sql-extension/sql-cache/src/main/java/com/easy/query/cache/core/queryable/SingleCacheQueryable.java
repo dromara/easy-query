@@ -1,9 +1,10 @@
 package com.easy.query.cache.core.queryable;
 
 
-
 import com.easy.query.cache.core.CacheEntity;
 import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,24 +23,22 @@ public interface SingleCacheQueryable<TEntity extends CacheEntity> extends Cache
      * @param id
      * @return
      */
+    @Nullable
     TEntity singleOrNull(String id);
 
-
-    /**
-     * 条件成立查询否则返回null
-     *
-     * @param condition
-     * @param id
-     * @return
-     */
-    default TEntity singleOrNull(boolean condition, String id) {
-        if (condition) {
-            return singleOrNull(id);
-        }
-        return null;
+    @Deprecated
+    @Nullable
+    default TEntity firstOrNull(String id) {
+        return singleOrNull(id);
     }
 
+    @NotNull
     default TEntity singleNotNull(String id, String error) {
+        return singleNotNull(id, error, null);
+    }
+
+    @NotNull
+    default TEntity firstNotNull(String id, String error) {
         return singleNotNull(id, error, null);
     }
 
@@ -51,6 +50,12 @@ public interface SingleCacheQueryable<TEntity extends CacheEntity> extends Cache
         return one;
     }
 
+    @NotNull
+    @Deprecated
+    default TEntity firstNotNull(String id, String error, String code) {
+        return singleNotNull(id, error, code);
+    }
+
 
     /**
      * 不存在返回def
@@ -60,6 +65,11 @@ public interface SingleCacheQueryable<TEntity extends CacheEntity> extends Cache
      * @return
      */
     TEntity singleOrDefault(String id, TEntity def);
+
+    @Deprecated
+    default TEntity firstOrDefault(String id, TEntity def) {
+        return singleOrDefault(id, def);
+    }
 
     List<TEntity> toList(Collection<String> ids);
 

@@ -132,6 +132,7 @@ public class M8BankTest extends BaseTest {
 
 
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                .subQueryConfigure(s->s.bankCards(),s->s.filterConfigure(NotNullOrEmptyValueFilter.DEFAULT))
                 .where(user -> {
                     user.bankCards().where(card -> {
                         card.bank().name().eq("工商银行");
@@ -951,6 +952,7 @@ public class M8BankTest extends BaseTest {
         Assert.assertEquals("储蓄卡(String),2(String),1(Integer),true(Boolean),false(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void whereSubQuery2_2() {
 

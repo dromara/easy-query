@@ -7,6 +7,7 @@ import com.easy.query.cache.core.Pair;
 import com.easy.query.cache.core.queryable.SingleCacheQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.util.EasyStringUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -27,7 +28,7 @@ public abstract class AbstractSingleCacheQueryable<TEntity extends CacheEntity> 
     }
 
     @Override
-    public TEntity singleOrNull(String id) {
+    public TEntity singleOrNull(@NotNull String id) {
         return singleOrDefault(id, null);
     }
 
