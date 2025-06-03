@@ -345,7 +345,6 @@ public class QueryTest25 extends BaseTest {
         }
 
         {
-
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             BlogEntity blogEntity = easyCacheClient.kvStorage(BlogEntity.class).filter(b -> !Objects.equals(b.getId(), "1")).singleOrNull("1");
