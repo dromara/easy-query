@@ -83,6 +83,7 @@ import com.easy.query.test.sharding.TopicShardingTimeTableRoute;
 import com.zaxxer.hikari.HikariDataSource;
 import org.redisson.Redisson;
 import org.redisson.api.NameMapper;
+import org.redisson.api.RKeys;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.StringCodec;
 import org.redisson.config.Config;
@@ -232,6 +233,14 @@ public abstract class BaseTest {
                 .replaceService(EasyQueryClient.class, easyQueryClient)
                 .replaceService(RedissonClient.class, cacheRedissonClient()).build();
         beforex();
+
+
+        RedissonClient redissonClient = easyCacheClient.getService(RedissonClient.class);
+        RKeys keys = redissonClient.getKeys();
+        Iterable<String> keysByPattern = keys.getKeysByPattern("CACHE:*");
+        for (String s : keysByPattern) {
+            redissonClient.getBucket(s).delete();
+        }
 
     }
 
