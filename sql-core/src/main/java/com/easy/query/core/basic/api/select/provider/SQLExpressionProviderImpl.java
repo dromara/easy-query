@@ -85,7 +85,7 @@ public class SQLExpressionProviderImpl<TEntity> implements SQLExpressionProvider
 
     @Override
     public FilterContext getOnWhereFilterContext() {
-        FilterImpl filter = new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), EasyUtil.getCurrentPredicateTable(entityQueryExpressionBuilder).getOn(), false, AnyValueFilter.DEFAULT);
+        FilterImpl filter = new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), EasyUtil.getCurrentPredicateTable(entityQueryExpressionBuilder).getOn(), false, entityQueryExpressionBuilder.getExpressionContext().getValueFilter());
         return new FilterContext(filter,entityQueryExpressionBuilder);
     }
 

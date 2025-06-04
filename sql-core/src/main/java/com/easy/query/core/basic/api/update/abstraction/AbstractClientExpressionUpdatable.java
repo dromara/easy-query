@@ -131,7 +131,7 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     @Override
     public ClientExpressionUpdatable<T> where(boolean condition, SQLActionExpression1<WherePredicate<T>> whereExpression) {
         if (condition) {
-            FilterImpl filter = new FilterImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getExpressionContext(), entityUpdateExpressionBuilder.getWhere(), false, AnyValueFilter.DEFAULT);
+            FilterImpl filter = new FilterImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getExpressionContext(), entityUpdateExpressionBuilder.getWhere(), false, entityUpdateExpressionBuilder.getExpressionContext().getValueFilter());
             WherePredicateImpl<T> sqlPredicate = new WherePredicateImpl<>(table, new FilterContext(filter, entityUpdateExpressionBuilder));
             whereExpression.apply(sqlPredicate);
         }

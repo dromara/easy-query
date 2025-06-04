@@ -124,7 +124,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
         Collection<Field> allFields = EasyClassUtil.getAllFields(object.getClass());
 
 
-        FilterImpl filter = new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getWhere(), false, AnyValueFilter.DEFAULT);
+        FilterImpl filter = new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getWhere(), false, entityQueryExpressionBuilder.getExpressionContext().getValueFilter());
 
         for (Field field : allFields) {
             boolean accessible = field.isAccessible();

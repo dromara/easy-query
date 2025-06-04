@@ -73,7 +73,7 @@ public class CaseWhenSQLFunction extends AbstractExpressionSQLFunction {
     public AndPredicateSegment resolve(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, SQLActionExpression1<Filter> filterExpression) {
 
         AndPredicateSegment andPredicateSegment = new AndPredicateSegment(true);
-        FilterImpl filter = new FilterImpl(runtimeContext, expressionContext, andPredicateSegment, false, AnyValueFilter.DEFAULT);
+        FilterImpl filter = new FilterImpl(runtimeContext, expressionContext, andPredicateSegment, false, expressionContext.getValueFilter());
         filterExpression.apply(filter);
 //        topicSQLWherePredicate.eq(Topic::getId,"1");
 //        String sql = andPredicateSegment.toSQL(toSQLContext);

@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.predicate;
 
+import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;

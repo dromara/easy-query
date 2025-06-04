@@ -89,7 +89,7 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     @Override
     public ClientExpressionDeletable<T> where(boolean condition, SQLActionExpression1<WherePredicate<T>> whereExpression) {
         if (condition) {
-            FilterImpl filter = new FilterImpl(entityDeleteExpressionBuilder.getRuntimeContext(), entityDeleteExpressionBuilder.getExpressionContext(), entityDeleteExpressionBuilder.getWhere(), false, AnyValueFilter.DEFAULT);
+            FilterImpl filter = new FilterImpl(entityDeleteExpressionBuilder.getRuntimeContext(), entityDeleteExpressionBuilder.getExpressionContext(), entityDeleteExpressionBuilder.getWhere(), false, entityDeleteExpressionBuilder.getExpressionContext().getValueFilter());
             WherePredicateImpl<T> sqlPredicate = new WherePredicateImpl<>(tableExpressionBuilder.getEntityTable(), new FilterContext(filter, entityDeleteExpressionBuilder));
             whereExpression.apply(sqlPredicate);
         }

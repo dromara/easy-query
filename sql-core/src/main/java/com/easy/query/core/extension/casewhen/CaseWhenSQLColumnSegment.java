@@ -58,7 +58,7 @@ public class CaseWhenSQLColumnSegment implements CloneableSQLSegment {
     public AndPredicateSegment resolve(SQLActionExpression1<Filter> filterExpression){
 
         AndPredicateSegment andPredicateSegment = new AndPredicateSegment(true);
-        FilterImpl filter = new FilterImpl(expressionContext.getRuntimeContext(),expressionContext,andPredicateSegment,false, AnyValueFilter.DEFAULT);
+        FilterImpl filter = new FilterImpl(expressionContext.getRuntimeContext(),expressionContext,andPredicateSegment,false, expressionContext.getValueFilter());
         filterExpression.apply(filter);
 //        topicSQLWherePredicate.eq(Topic::getId,"1");
 //        String sql = andPredicateSegment.toSQL(toSQLContext);

@@ -19,6 +19,7 @@ import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.builder.core.ValueFilterFactory;
+import com.easy.query.core.expression.sql.builder.EasyExpressionContext;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.proxy.core.Expression;
@@ -384,7 +385,6 @@ public class QueryTest25 extends BaseTest {
     @Test
     public void test11a1() {
 
-
         easyCacheClient.clear(new DefaultClearParameter("1", null, CacheMethodEnum.UPDATE, LocalDateTime.of(2020, 1, 1, 1, 1), "t_topic", new HashMap<>()));
         {
 
@@ -583,7 +583,7 @@ public class QueryTest25 extends BaseTest {
 
     }
 
-    public static class MyValueFactory implements ValueFilterFactory{
+    public static class MyValueFactory implements ValueFilterFactory {
 
 
         @Override
