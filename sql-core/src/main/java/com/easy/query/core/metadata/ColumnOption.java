@@ -60,6 +60,7 @@ public final class ColumnOption {
     private Supplier<Object> beanConstructorCreator;
     private final List<ColumnOption> valueObjectColumnOptions;
     private String fullPropertyName;
+    private String comment;
 //    private boolean concurrentUpdateInTrack = false;
 
 
@@ -277,6 +278,15 @@ public final class ColumnOption {
     public void setNullable(boolean nullable) {
         this.nullable = nullable;
     }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
     //    public boolean isNullable() {
 //        return nullable;
 //    }

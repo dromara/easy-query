@@ -1,6 +1,11 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.base.MapProxy;
+import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
+import com.easy.query.api.proxy.key.MapKey;
+import com.easy.query.api.proxy.key.MapKeys;
+import com.easy.query.api.proxy.key.StringMapKey;
 import com.easy.query.cache.core.EasyCacheManager;
 import com.easy.query.cache.core.base.CacheMethodEnum;
 import com.easy.query.cache.core.base.DefaultClearParameter;
@@ -20,6 +25,7 @@ import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.builder.core.ValueFilterFactory;
 import com.easy.query.core.expression.sql.builder.EasyExpressionContext;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.proxy.core.Expression;
@@ -59,12 +65,14 @@ import org.redisson.Redisson;
 import org.redisson.api.RKeys;
 import org.redisson.api.RedissonClient;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * create time 2025/5/23 10:45
@@ -581,6 +589,26 @@ public class QueryTest25 extends BaseTest {
                     t.blogs().flatElement().users().flatElement().phone().eq((String) "123");
                 }).toList();
 
+        EntityMetadataManager entityMetadataManager = easyEntityQuery.getRuntimeContext().getEntityMetadataManager();
+        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(Topic.class);
+
+        Supplier<Object> beanConstructorCreator = entityMetadata.getBeanConstructorCreator();
+        //new topic
+        Object o = beanConstructorCreator.get();
+        ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull("id");
+
+        //topic.getId()
+        Object id = columnMetadata.getGetterCaller().apply(o);
+
+        //topic.setId("123")
+        columnMetadata.getSetterCaller().call(o,"123");
+
+//        easyEntityQuery.getEasyQueryClient().deletable(Map.class)
+//                .asTable("t_user")
+//                .where(m -> {
+//                    m.eq("id","123");
+//                }).executeRows();
+
     }
 
     public static class MyValueFactory implements ValueFilterFactory {
@@ -610,6 +638,56 @@ public class QueryTest25 extends BaseTest {
         public ValueFilter getDeleteValueFilter() {
             return AnyValueFilter.DEFAULT;
         }
+    }
+
+
+    @Test
+    public void testMap(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Map<String, Object>> list = easyEntityQuery.queryable(BlogEntity.class)
+                .select(t_blog -> new MapProxy()
+                        .put("aa", t_blog.id())
+                        .put("bb", t_blog.star())
+                )
+                .where(o -> {
+                    o.get("aa").eq("123");
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`aa` AS `aa`,t1.`bb` AS `bb` FROM (SELECT t.`id` AS `aa`,t.`star` AS `bb` FROM `t_blog` t WHERE t.`deleted` = ?) t1 WHERE t1.`aa` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testMap1(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        MapKey<String> aa = MapKeys.stringKey("aa");
+        MapKey<Integer> bb = MapKeys.integerKey("bb");
+
+        List<Map<String, Object>> list = easyEntityQuery.queryable(BlogEntity.class)
+                .select(t_blog -> new MapTypeProxy()
+                        .put(aa, t_blog.id())
+                        .put(bb, t_blog.star())
+                )
+                .where(o -> {
+                    o.get(aa).eq("123");
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`aa` AS `aa`,t1.`bb` AS `bb` FROM (SELECT t.`id` AS `aa`,t.`star` AS `bb` FROM `t_blog` t WHERE t.`deleted` = ?) t1 WHERE t1.`aa` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
     }
 
 }

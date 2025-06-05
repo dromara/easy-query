@@ -133,10 +133,12 @@ import java.util.stream.Collectors;
 public class EntityMetadata {
     private static final Log log = LogFactory.getLog(EntityMetadata.class);
     private final Class<?> entityClass;
+    private final QueryRuntimeContext runtimeContext;
     private String tableName;
     private String oldTableName;
     private String treeName;
     private String schema;
+    private String comment;
     private ExtraAutoIncludeConfigure extraAutoIncludeConfigure;
     private ErrorMessage errorMessage;
 
@@ -184,17 +186,18 @@ public class EntityMetadata {
 
     private DataReader dataReader;
 
-    public EntityMetadata(Class<?> entityClass) {
+    public EntityMetadata(Class<?> entityClass,QueryRuntimeContext runtimeContext) {
         this.entityClass = entityClass;
+        this.runtimeContext = runtimeContext;
+    }
+
+    public EasyQueryOption getEasyQueryOption() {
+        return runtimeContext.getQueryConfiguration().getEasyQueryOption();
     }
 
 
     public void init(ServiceProvider serviceProvider) {
 
-//        if (Map.class.isAssignableFrom(entityClass)) {
-//            entityMetadataType = EntityMetadataTypeEnum.MAP;
-//            return;
-//        }
         if (EasyClassUtil.isBasicType(entityClass)) {
             entityMetadataType = EntityMetadataTypeEnum.BASIC_TYPE;
             return;
@@ -204,12 +207,8 @@ public class EntityMetadata {
             return;
         }
 
-//        if(Draft.class.isAssignableFrom(entityClass)){
-//            entityMetadataType = EntityMetadataTypeEnum.DRAFT;
-//            return;
-//        }
-
         QueryConfiguration configuration = serviceProvider.getService(QueryConfiguration.class);
+        EasyQueryOption easyQueryOption = getEasyQueryOption();
         PropertyDescriptorMatcher propertyDescriptorMatcher = serviceProvider.getService(PropertyDescriptorMatcher.class);
         JdbcTypeHandlerManager jdbcTypeHandlerManager = serviceProvider.getService(JdbcTypeHandlerManager.class);
         NameConversion nameConversion = configuration.getNameConversion();
@@ -219,10 +218,11 @@ public class EntityMetadata {
             this.tableName = EasyStringUtil.defaultIfBank(nameConversion.annotationCovert(entityClass, table.value(), true), nameConversion.convert(EasyClassUtil.getSimpleName(entityClass)));
             this.oldTableName = EasyStringUtil.defaultIfBank(nameConversion.annotationCovert(entityClass, table.
                     renameFrom(), true), nameConversion.convert(EasyClassUtil.getSimpleName(entityClass)));
-
+            if (easyQueryOption.isSaveComment()){
+                this.comment = table.comment();
+            }
             this.schema = table.schema();
             if (EasyStringUtil.isBlank(this.schema)) {
-                EasyQueryOption easyQueryOption = configuration.getEasyQueryOption();
                 //如果存在默认的schema那么就用这个
                 boolean hasDefaultSchema = EasyStringUtil.isNotBlank(easyQueryOption.getDefaultSchema());
                 if (hasDefaultSchema) {
@@ -583,6 +583,7 @@ public class EntityMetadata {
 
     private ColumnOption createColumnOption(Field field, PropertyDescriptor propertyDescriptor, boolean tableEntity, String property, FastBeanProperty fastBeanProperty, QueryConfiguration configuration, FastBean fastBean, JdbcTypeHandlerManager jdbcTypeHandlerManager, boolean defaultAutoSelect, String fieldName) {
         NameConversion nameConversion = configuration.getNameConversion();
+        EasyQueryOption easyQueryOption = getEasyQueryOption();
         Column column = field.getAnnotation(Column.class);
         boolean hasColumnName = column != null && EasyStringUtil.isNotBlank(column.value());
         boolean autoSelect = column == null ? defaultAutoSelect : column.autoSelect();
@@ -597,6 +598,7 @@ public class EntityMetadata {
         columnOption.setPropertyDescriptor(propertyDescriptor);
         columnOption.setAutoSelect(autoSelect);
 
+
         Encryption encryption = field.getAnnotation(Encryption.class);
         if (encryption != null) {
             Class<? extends EncryptionStrategy> strategy = encryption.strategy();
@@ -609,6 +611,9 @@ public class EntityMetadata {
         }
         if (column != null) {
             columnOption.setNullable(column.nullable());
+            if(easyQueryOption.isSaveComment()){
+                columnOption.setComment(column.comment());
+            }
             //获取默认的属性值转换
             Class<? extends ValueConverter<?, ?>> conversionClass = column.conversion();
             //如果不是默认的就代表添加了

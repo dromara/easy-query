@@ -136,6 +136,7 @@ public class EasyQueryOption {
      * 一对多拉取带limit的时候使用哪种模式默认UNION_ALL
      */
     private final IncludeLimitModeEnum includeLimitMode;
+    private final boolean saveComment;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy,
                            SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode,
@@ -150,7 +151,8 @@ public class EasyQueryOption {
                            boolean warningColumnMiss, int shardingFetchSize, boolean mapToBeanStrict,
                            String defaultSchema, long resultSizeLimit, boolean printNavSql,
                            ShardingQueryInTransactionEnum shardingQueryInTransaction, int mssqlMinBigDecimalScale,
-                           IncludeLimitModeEnum includeLimitMode) {
+                           IncludeLimitModeEnum includeLimitMode,
+                           boolean saveComment) {
 
 
         if (executorMaximumPoolSize > 0) {
@@ -221,6 +223,7 @@ public class EasyQueryOption {
         this.shardingQueryInTransaction = shardingQueryInTransaction;
         this.mssqlMinBigDecimalScale = mssqlMinBigDecimalScale;
         this.includeLimitMode = includeLimitMode;
+        this.saveComment = saveComment;
     }
 
     public int getMaxShardingRouteCount() {
@@ -359,5 +362,9 @@ public class EasyQueryOption {
 
     public IncludeLimitModeEnum getIncludeLimitMode() {
         return includeLimitMode;
+    }
+
+    public boolean isSaveComment() {
+        return saveComment;
     }
 }

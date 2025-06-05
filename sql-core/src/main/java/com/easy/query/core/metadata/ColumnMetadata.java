@@ -1,6 +1,6 @@
 package com.easy.query.core.metadata;
 
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.basic.extension.complex.ComplexPropType;
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
@@ -60,7 +60,8 @@ public class ColumnMetadata {
     private final boolean generatedKey;
 
 
-    private boolean nullable = true;
+    private final boolean nullable;
+    private final String comment;
     /**
      * 是否是乐观锁版本号
      */
@@ -171,6 +172,7 @@ public class ColumnMetadata {
         this.valueObject = columnOption.isValueObject();
         this.beanConstructorCreator = columnOption.getBeanConstructorCreator();
         this.nullable = columnOption.isNullable();
+        this.comment = columnOption.getComment();
         if (this.valueObject) {
             this.valueObjectColumnMetadataList = new ArrayList<>(columnOption.getValueObjectColumnOptions().size());
         } else {
@@ -303,6 +305,10 @@ public class ColumnMetadata {
 
     public boolean isNullable() {
         return nullable;
+    }
+
+    public String getComment() {
+        return comment;
     }
     //    public boolean isConcurrentUpdateInTrack() {
 //        return concurrentUpdateInTrack;
