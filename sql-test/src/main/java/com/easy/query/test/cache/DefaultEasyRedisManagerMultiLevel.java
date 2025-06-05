@@ -228,7 +228,8 @@ public class DefaultEasyRedisManagerMultiLevel implements EasyCacheManager {
                 String cacheId = clearParameter.getCacheId();
                 String realEntityKey = getRealEntityKey(cacheId, entityKey);
                 deleteCacheKey(realEntityKey, multiCacheEntity);
-            } else if (CacheAllEntity.class.isAssignableFrom(entityClass)) {
+            }
+            if (CacheAllEntity.class.isAssignableFrom(entityClass)) {
                 String realEntityKey = getRealEntityKey(easyCacheOption.getCacheIndex(), entityKey);
                 deleteCacheKey(realEntityKey, multiCacheEntity);
             }

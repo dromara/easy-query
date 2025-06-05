@@ -58,6 +58,10 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
         if (indexs.isEmpty()) {
             return false;
         }
+        if (hasFilter()) {
+            List<TEntity> in = toList(indexs);
+            return EasyCollectionUtil.isNotEmpty(in);
+        }
         return true;
     }
 

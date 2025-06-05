@@ -4,45 +4,56 @@ import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
+import org.jetbrains.annotations.Nullable;
 
 /**
+ * @author xuejiaming
  * @Description: 文件说明
  * create time 2023/3/3 22:17
- * @author xuejiaming
  */
 public interface EntityQueryExpressionBuilder extends EntityPredicateExpressionBuilder, LambdaEntityExpressionBuilder {
     boolean isEmpty();
+
     default boolean isNotEmpty() {
         return !isEmpty();
     }
 
     SQLBuilderSegment getProjects();
+
     PredicateSegment getWhere();
-     long getOffset();
 
-     void setOffset(long offset);
+    long getOffset();
 
-     long getRows();
+    void setOffset(long offset);
 
-     void setRows(long rows);
+    long getRows();
 
-     boolean hasLimit();
+    void setRows(long rows);
+
+    boolean hasLimit();
 
 
-     boolean hasWhere();
+    boolean hasWhere();
 
-     PredicateSegment getHaving() ;
+    PredicateSegment getHaving();
 
-     boolean hasHaving();
-     SQLBuilderSegment getGroup();
-     boolean isDistinct();
-     void setDistinct(boolean distinct);
+    boolean hasHaving();
 
-     boolean hasGroup();
+    SQLBuilderSegment getGroup();
 
-    OrderBySQLBuilderSegment getOrder() ;
+    boolean isDistinct();
 
-     boolean hasOrder();
+    void setDistinct(boolean distinct);
+
+    boolean hasGroup();
+
+    OrderBySQLBuilderSegment getOrder();
+
+    boolean hasOrder();
+
+    @Nullable
+    PredicateSegment getSQLWhereWithQueryFilter();
+
     @Override
     EntityQueryExpressionBuilder cloneEntityExpressionBuilder();
 

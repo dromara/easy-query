@@ -34,6 +34,7 @@ import com.easy.query.core.proxy.core.tuple.Tuple1;
 import com.easy.query.core.proxy.core.tuple.Tuple2;
 import com.easy.query.core.proxy.core.tuple.Tuple3;
 import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
+import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -366,7 +367,7 @@ public class QueryTest25 extends BaseTest {
         {
             Map<String, CacheItem> cacheItemMap = cache.get("CACHE:BlogEntity:1", k -> null);
             Assert.assertNotNull(cacheItemMap);
-            CacheItem cacheItem = cacheItemMap.get("{}");
+            CacheItem cacheItem = cacheItemMap.get("{\"sql\":\"`deleted` = ?\",\"parameters\":\"false(Boolean)\"}");
             String json = cacheItem.getJson();
             BlogEntity blogEntity = JsonUtil.jsonStr2Object(json, BlogEntity.class);
             Assert.assertEquals("1", blogEntity.getId());
@@ -374,7 +375,7 @@ public class QueryTest25 extends BaseTest {
         {
             Map<String, CacheItem> cacheItemMap = cache.get("CACHE:BlogEntity:1", k -> null);
             Assert.assertNotNull(cacheItemMap);
-            CacheItem cacheItem = cacheItemMap.get("{\"sql\":\"`content` = ?\",\"parameters\":\"123(String)\"}");
+            CacheItem cacheItem = cacheItemMap.get("{\"sql\":\"`deleted` = ? AND `content` = ?\",\"parameters\":\"false(Boolean),123(String)\"}");
             String json = cacheItem.getJson();
             Assert.assertNull(json);
         }
@@ -688,6 +689,16 @@ public class QueryTest25 extends BaseTest {
         Assert.assertEquals("SELECT t1.`aa` AS `aa`,t1.`bb` AS `bb` FROM (SELECT t.`id` AS `aa`,t.`star` AS `bb` FROM `t_blog` t WHERE t.`deleted` = ?) t1 WHERE t1.`aa` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
+
+        List<Part1<BlogEntity, String>> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                .select(t_blog -> Select.PART.of(
+                        t_blog,
+                        t_blog.title().concat("123")
+                ))
+                .where(part -> {
+                    part.partColumn1().eq("123");
+                    part.entityTable().star().eq(1);
+                }).toList();
     }
 
 }

@@ -20,6 +20,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
+import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.inject.ServiceProvider;
@@ -146,18 +147,13 @@ public abstract class AbstractBaseCacheQueryable<TEntity extends CacheEntity> im
 
 
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = entityQueryable.getSQLEntityExpressionBuilder();
-
-        SQLExpressionInvokeFactory easyQueryLambdaFactory = getRuntimeContext().getSQLExpressionInvokeFactory();
-        TableAvailable entityTable = sqlEntityExpressionBuilder.getFromTable().getEntityTable();
-        AndPredicateSegment andPredicateSegment = new AndPredicateSegment(true);
-        WherePredicate<Object> sqlPredicate = easyQueryLambdaFactory.createWherePredicate(entityTable, sqlEntityExpressionBuilder, andPredicateSegment);
+        PredicateSegment sqlWhereWithQueryFilter = sqlEntityExpressionBuilder.getSQLWhereWithQueryFilter();
         ExpressionContext expressionContext = sqlEntityExpressionBuilder.getExpressionContext();
-        EasySQLExpressionUtil.invokeInterceptors(entityQueryable.queryEntityMetadata(), sqlEntityExpressionBuilder, expressionContext, sqlPredicate);
-        if (EasySQLSegmentUtil.isEmpty(andPredicateSegment)) {
+        if (sqlWhereWithQueryFilter==null||EasySQLSegmentUtil.isEmpty(sqlWhereWithQueryFilter)) {
             return cacheHashKeyFactory.getKey(null);
         }
         ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(expressionContext.getTableContext());
-        String sql = andPredicateSegment.toSQL(toSQLContext);
+        String sql = sqlWhereWithQueryFilter.toSQL(toSQLContext);
         List<SQLParameter> parameters = toSQLContext.getParameters();
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("sql", sql);

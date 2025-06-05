@@ -310,7 +310,8 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         return sqlPredicateFilter(table, table.hasOn() ? table.getOn() : null);
     }
 
-    protected PredicateSegment getSQLWhereWithQueryFilter() {
+    @Override
+    public PredicateSegment getSQLWhereWithQueryFilter() {
         EntityTableExpressionBuilder table = getTable(0);
         return sqlPredicateFilter(table, hasWhere() ? getWhere() : null);
     }

@@ -6,5 +6,5 @@ package com.easy.query.cache.core;
  *
  * @author xuejiaming
  */
-public interface CacheAllEntity extends CacheEntity {
+public interface CacheAllEntity extends CacheKvEntity {
 }
