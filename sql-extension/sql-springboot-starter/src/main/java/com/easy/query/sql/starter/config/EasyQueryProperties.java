@@ -51,6 +51,7 @@ public class EasyQueryProperties {
      * 一对多拉取带limit的时候使用哪种模式默认UNION_ALL
      */
     private IncludeLimitModeEnum includeLimitMode = IncludeLimitModeEnum.UNION_ALL;
+    private boolean saveComment = false;
     /**
      * 仅分片时有效默认同时5个线程5
      */
@@ -496,6 +497,14 @@ public class EasyQueryProperties {
 
     public void setSharding(Boolean sharding) {
         this.sharding = sharding;
+    }
+
+    public boolean isSaveComment() {
+        return saveComment;
+    }
+
+    public void setSaveComment(boolean saveComment) {
+        this.saveComment = saveComment;
     }
 
     public EasyQueryProperties() {

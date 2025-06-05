@@ -92,6 +92,7 @@ public class EasyQueryOptionBuilder {
      * 一对多拉取带limit的时候使用哪种模式默认UNION_ALL
      */
     private IncludeLimitModeEnum includeLimitMode;
+    private boolean saveComment;
 
 
     public EasyQueryOptionBuilder() {
@@ -126,6 +127,7 @@ public class EasyQueryOptionBuilder {
         this.shardingQueryInTransaction = ShardingQueryInTransactionEnum.SERIALIZABLE;
         this.mssqlMinBigDecimalScale = 0;
         this.includeLimitMode = IncludeLimitModeEnum.UNION_ALL;
+        this.saveComment = false;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -276,6 +278,14 @@ public class EasyQueryOptionBuilder {
         this.includeLimitMode = includeLimitMode;
     }
 
+    public boolean isSaveComment() {
+        return saveComment;
+    }
+
+    public void setSaveComment(boolean saveComment) {
+        this.saveComment = saveComment;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -309,6 +319,7 @@ public class EasyQueryOptionBuilder {
                 this.printNavSql,
                 this.shardingQueryInTransaction,
                 this.mssqlMinBigDecimalScale,
-                this.includeLimitMode);
+                this.includeLimitMode,
+                this.saveComment);
     }
 }
