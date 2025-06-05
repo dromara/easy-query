@@ -949,6 +949,10 @@ public class EntityMetadata {
         return treeName;
     }
 
+    public String getComment() {
+        return comment;
+    }
+
     public String getSchemaOrNull() {
         return schema;
     }
