@@ -14,12 +14,11 @@ import java.util.Objects;
 public class EntitySegmentComparer {
     private final Class<?> entityClass;
     private final String propertyName;
-    private boolean inSegment;
+    private SQLSegment segment;
 
-    public EntitySegmentComparer(Class<?> entityClass, String propertyName){
+    public EntitySegmentComparer(Class<?> entityClass, String propertyName) {
         this.entityClass = entityClass;
         this.propertyName = propertyName;
-        this.inSegment = false;
     }
 
     public Class<?> getEntityClass() {
@@ -30,20 +29,24 @@ public class EntitySegmentComparer {
         return propertyName;
     }
 
-    public void visit(SQLSegment other){
-        if(!inSegment){
-            if(other instanceof SQLEntitySegment){
+    public void visit(SQLSegment other) {
+        if (segment == null) {
+            if (other instanceof SQLEntitySegment) {
                 SQLEntitySegment otherSegment = (SQLEntitySegment) other;
                 EntitySegmentComparer otherSegmentComparer = new EntitySegmentComparer(otherSegment.getTable().getEntityClass(), otherSegment.getPropertyName());
-                if(Objects.equals(this,otherSegmentComparer)){
-                    inSegment = true;
+                if (Objects.equals(this, otherSegmentComparer)) {
+                    this.segment = otherSegment;
                 }
             }
         }
     }
 
+    public SQLSegment getSegment() {
+        return segment;
+    }
+
     public boolean isInSegment() {
-        return inSegment;
+        return this.segment != null;
     }
 
     @Override
