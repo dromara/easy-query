@@ -150,7 +150,11 @@ public class EasyRelationalUtil {
                         relationJoin = MultiTableTypeEnum.INNER_JOIN;
                     }
                 }
-                EntityTableExpressionBuilder tableExpressionBuilder = new DefaultTableExpressionBuilder(rightTable, relationJoin, entityExpressionBuilder.getExpressionContext());
+                ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();
+                EntityTableExpressionBuilder tableExpressionBuilder =expressionBuilderFactory.createEntityTableExpressionBuilder(rightTable,relationJoin,  entityExpressionBuilder.getExpressionContext());
+
+
+//                EntityTableExpressionBuilder tableExpressionBuilder = new DefaultTableExpressionBuilder(rightTable, relationJoin, entityExpressionBuilder.getExpressionContext());
                 AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
 
                 SQLExpressionInvokeFactory easyQueryLambdaFactory = runtimeContext.getSQLExpressionInvokeFactory();

@@ -231,7 +231,7 @@ public class EasyJdbcExecutorUtil {
 
         } catch (Exception e) {
             exception = e;
-            log.error(sql, e);
+//            log.error(sql, e);
             if (e instanceof SQLException) {
                 throw new EasyQuerySQLStatementException(sql, e);
             } else {
@@ -321,7 +321,7 @@ public class EasyJdbcExecutorUtil {
             logResult(printSql, r, easyConnection, shardingPrint, replicaPrint);
         } catch (Exception e) {
             exception = e;
-            log.error(sql, e);
+//            log.error(sql, e);
             if (e instanceof SQLException) {
                 throw new EasyQuerySQLStatementException(sql, e);
             } else {
@@ -382,7 +382,7 @@ public class EasyJdbcExecutorUtil {
             logResult(printSql, r, easyConnection, shardingPrint, replicaPrint);
         } catch (Exception e) {
             exception = e;
-            log.error(sql, e);
+//            log.error(sql, e);
             if (e instanceof SQLException) {
                 throw new EasyQuerySQLStatementException(sql, e);
             } else {
@@ -439,7 +439,7 @@ public class EasyJdbcExecutorUtil {
             logResult(printSql, r, easyConnection, shardingPrint, replicaPrint);
         } catch (Exception e) {
             exception = e;
-            log.error(sql, e);
+//            log.error(sql, e);
             if (e instanceof SQLException) {
                 throw new EasyQuerySQLStatementException(sql, e);
             } else {

@@ -9,6 +9,8 @@ import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.core.proxy.sql.Tuple;
+import com.easy.query.core.proxy.sql.draft.Draft1Builder;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyTypeUtil;
 import com.easy.query.test.entity.BlogEntity;
@@ -631,7 +633,7 @@ public class QueryTest10 extends BaseTest{
                     .orderBy(t -> {
                         t.id().asc();
                     })
-                    .select(o -> new MapProxy().put(o.title().nullOrDefault("1")).put(o.id()).put(o.stars())).toList();
+                    .select(o -> new MapProxy().put("title",o.title().nullOrDefault("1")).put(o.id()).put(o.stars())).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT IFNULL(t.`title`,?) AS `title`,t.`id` AS `id`,t.`stars` AS `stars` FROM `t_topic` t ORDER BY t.`id` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());

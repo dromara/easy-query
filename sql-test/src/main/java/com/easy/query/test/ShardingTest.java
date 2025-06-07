@@ -33,6 +33,12 @@ import java.util.stream.Collectors;
  * @author xuejiaming
  */
 public class ShardingTest extends ShardingBaseTest {
+
+    @Test
+    public  void test111(){
+        EntityMetadata entityMetadata = easyEntityQuery.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(TopicSharding.class);
+        System.out.println(entityMetadata);
+    }
     @Test
     public void sharding1() {
         TopicSharding topicSharding = easyEntityQuery.queryable(TopicSharding.class)

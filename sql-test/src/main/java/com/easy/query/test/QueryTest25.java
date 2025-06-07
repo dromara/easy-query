@@ -37,6 +37,7 @@ import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
 import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.core.proxy.sql.draft.Draft1Builder;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyTypeUtil;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
@@ -602,7 +603,7 @@ public class QueryTest25 extends BaseTest {
         Object id = columnMetadata.getGetterCaller().apply(o);
 
         //topic.setId("123")
-        columnMetadata.getSetterCaller().call(o,"123");
+        columnMetadata.getSetterCaller().call(o, "123");
 
 //        easyEntityQuery.getEasyQueryClient().deletable(Map.class)
 //                .asTable("t_user")
@@ -643,7 +644,7 @@ public class QueryTest25 extends BaseTest {
 
 
     @Test
-    public void testMap(){
+    public void testMap() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -665,8 +666,9 @@ public class QueryTest25 extends BaseTest {
         Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testMap1(){
+    public void testMap1() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -698,6 +700,17 @@ public class QueryTest25 extends BaseTest {
                 .where(part -> {
                     part.partColumn1().eq("123");
                     part.entityTable().star().eq(1);
+                }).toList();
+    }
+
+    @Test
+    public void testDraft() {
+
+        List<Draft1<String>> list1 = easyEntityQuery.queryable(Topic.class)
+                .orderBy(t -> {
+                    t.id().asc();
+                }).select(t_topic -> {
+                    return Select.DRAFT.of(t_topic.id());
                 }).toList();
     }
 
