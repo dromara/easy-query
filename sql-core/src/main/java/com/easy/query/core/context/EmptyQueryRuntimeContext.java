@@ -44,6 +44,7 @@ import com.easy.query.core.sharding.comparer.ShardingComparer;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.sharding.router.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.router.manager.TableRouteManager;
+import com.easy.query.core.sql.JdbcSQLExecutor;
 
 /**
  * create time 2024/6/8 21:18
@@ -275,6 +276,11 @@ public class EmptyQueryRuntimeContext implements QueryRuntimeContext{
 
     @Override
     public SQLCaseWhenBuilderFactory getSQLCaseWhenBuilderFactory() {
+        return null;
+    }
+
+    @Override
+    public JdbcSQLExecutor getJdbcSQLExecutor() {
         return null;
     }
 }

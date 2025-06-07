@@ -44,6 +44,7 @@ import com.easy.query.core.sharding.comparer.ShardingComparer;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.sharding.router.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.router.manager.TableRouteManager;
+import com.easy.query.core.sql.JdbcSQLExecutor;
 
 /**
  * create time 2023/2/11 13:46
@@ -110,4 +111,5 @@ public interface QueryRuntimeContext {
 
     RelationNullValueValidator getRelationNullValueValidator();
     SQLCaseWhenBuilderFactory getSQLCaseWhenBuilderFactory();
+    JdbcSQLExecutor getJdbcSQLExecutor();
 }

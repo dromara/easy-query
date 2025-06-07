@@ -47,6 +47,7 @@ import com.easy.query.core.sharding.comparer.ShardingComparer;
 import com.easy.query.core.sharding.manager.ShardingQueryCountManager;
 import com.easy.query.core.sharding.router.manager.DataSourceRouteManager;
 import com.easy.query.core.sharding.router.manager.TableRouteManager;
+import com.easy.query.core.sql.JdbcSQLExecutor;
 
 /**
  * @author xuejiaming
@@ -102,6 +103,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final IncludeProvider includeProvider;
     private final RelationNullValueValidator relationNullValueValidator;
     private final SQLCaseWhenBuilderFactory sqlCaseWhenBuilderFactory;
+    private final JdbcSQLExecutor jdbcSQLExecutor;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -148,7 +150,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           DatabaseCodeFirst databaseCodeFirst,
                                           IncludeProvider includeProvider,
                                           RelationNullValueValidator relationNullValueValidator,
-                                          SQLCaseWhenBuilderFactory sqlCaseWhenBuilderFactory) {
+                                          SQLCaseWhenBuilderFactory sqlCaseWhenBuilderFactory,
+                                          JdbcSQLExecutor jdbcSQLExecutor) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -195,6 +198,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.includeProvider = includeProvider;
         this.relationNullValueValidator = relationNullValueValidator;
         this.sqlCaseWhenBuilderFactory = sqlCaseWhenBuilderFactory;
+        this.jdbcSQLExecutor = jdbcSQLExecutor;
     }
 
     @Override
@@ -425,5 +429,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public SQLCaseWhenBuilderFactory getSQLCaseWhenBuilderFactory() {
         return sqlCaseWhenBuilderFactory;
+    }
+
+    @Override
+    public JdbcSQLExecutor getJdbcSQLExecutor() {
+        return jdbcSQLExecutor;
     }
 }

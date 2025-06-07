@@ -13,6 +13,7 @@ import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.common.CommandExecuteUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRouteUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.sharding.merger.impl.AffectedRowsShardingMerger;
+import com.easy.query.core.sql.JdbcSQLExecutor;
 import com.easy.query.core.util.EasyJdbcExecutorUtil;
 
 import java.sql.SQLException;
@@ -40,7 +41,8 @@ public class EasyExecuteBatchExecutor extends AbstractExecutor<AffectedRowsExecu
         List<Object> entities = sqlRouteUnit.getEntities();
         boolean isSharding = streamMergeContext.isSharding();
         boolean configReplica = streamMergeContext.configReplica();
-        int rows= EasyJdbcExecutorUtil.executeRows(executorContext,easyConnection,sql,entities,parameters,isSharding,configReplica);
+        JdbcSQLExecutor jdbcSQLExecutor = executorContext.getRuntimeContext().getJdbcSQLExecutor();
+        int rows= jdbcSQLExecutor.executeRows(executorContext,easyConnection,sql,entities,parameters,isSharding,configReplica);
         return new AffectedRowsExecuteResult(rows);
     }
 

@@ -128,6 +128,8 @@ import com.easy.query.core.sharding.router.table.ShardingTableRouter;
 import com.easy.query.core.sharding.router.table.TableRouter;
 import com.easy.query.core.sharding.router.table.engine.DefaultTableRouteEngine;
 import com.easy.query.core.sharding.router.table.engine.TableRouteEngine;
+import com.easy.query.core.sql.DefaultJdbcSQLExecutor;
+import com.easy.query.core.sql.JdbcSQLExecutor;
 
 import javax.sql.DataSource;
 import java.util.function.Consumer;
@@ -198,6 +200,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(IncludeProcessorFactory.class, EasyIncludeProcessorFactory.class)
                 .replaceService(IncludeParserEngine.class, DefaultIncludeParserEngine.class)
                 .replaceService(MapColumnNameChecker.class, DefaultMapColumnNameChecker.class)
+                .replaceService(JdbcSQLExecutor.class, DefaultJdbcSQLExecutor.class)
                 //whereObject的默认实现
                 .replaceService(WhereObjectQueryExecutor.class, DefaultWhereObjectQueryExecutor.class)
                 //orderByObject的默认实现

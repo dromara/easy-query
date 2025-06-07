@@ -13,6 +13,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.CircuitBrea
 import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.NoCircuitBreaker;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.sharding.context.StreamMergeContext;
+import com.easy.query.core.sql.JdbcSQLExecutor;
 import com.easy.query.core.util.EasyJdbcExecutorUtil;
 
 import java.sql.SQLException;
@@ -41,7 +42,8 @@ public class EasyInsertExecutor extends AbstractExecutor<AffectedRowsExecuteResu
         boolean fillAutoIncrement = sqlRouteUnit.isFillAutoIncrement();
         boolean isSharding = streamMergeContext.isSharding();
         boolean configReplica = streamMergeContext.configReplica();
-        int rows = EasyJdbcExecutorUtil.insert(executorContext, easyConnection, sql, entities, parameters, fillAutoIncrement,isSharding,configReplica);
+        JdbcSQLExecutor jdbcSQLExecutor = executorContext.getRuntimeContext().getJdbcSQLExecutor();
+        int rows = jdbcSQLExecutor.insert(executorContext, easyConnection, sql, entities, parameters, fillAutoIncrement,isSharding,configReplica);
         return new AffectedRowsExecuteResult(rows);
     }
 

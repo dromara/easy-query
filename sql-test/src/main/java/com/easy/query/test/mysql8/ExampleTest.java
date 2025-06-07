@@ -6,7 +6,9 @@ import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * create time 2025/6/7 10:11
@@ -24,6 +26,29 @@ public class ExampleTest extends BaseTest{
                     .where(bank -> {
                         bank.bankCards().orderBy(card->card.openTime().desc()).first().type().eq("123");
                     }).toList();
+
+            ArrayList<SysBank> query = new ArrayList<>();
+
+            List<SysBank> collect = query.stream().filter(bank -> {
+                return bank.getBankCards().stream().sorted((a, b) -> a.getOpenTime().compareTo(b.getOpenTime()) * -1).findFirst().orElse(null).getType().equals("123");
+            }).collect(Collectors.toList());
+
+        }
+        {
+            List<SysBank> banks = easyEntityQuery.queryable(SysBank.class)
+                    .where(bank -> {
+                        bank.bankCards().any(card->{
+                            card.type().eq("123");
+                        });
+                    }).toList();
+
+            ArrayList<SysBank> query = new ArrayList<>();
+
+            List<SysBank> collect = query.stream().filter(bank -> {
+                return bank.getBankCards().stream().anyMatch(card->{
+                    return card.getType().equals("123");
+                });
+            }).collect(Collectors.toList());
 
         }
 

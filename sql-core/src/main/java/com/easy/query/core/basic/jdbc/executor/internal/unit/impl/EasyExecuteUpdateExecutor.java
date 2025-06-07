@@ -13,6 +13,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.CircuitBrea
 import com.easy.query.core.basic.jdbc.executor.internal.unit.breaker.NoCircuitBreaker;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.sharding.context.StreamMergeContext;
+import com.easy.query.core.sql.JdbcSQLExecutor;
 import com.easy.query.core.util.EasyJdbcExecutorUtil;
 
 import java.sql.SQLException;
@@ -42,7 +43,8 @@ public class EasyExecuteUpdateExecutor extends AbstractExecutor<AffectedRowsExec
         List<SQLParameter> parameters = sqlRouteUnit.getParameters();
         boolean isSharding = streamMergeContext.isSharding();
         boolean configReplica = streamMergeContext.configReplica();
-        int rows= EasyJdbcExecutorUtil.executeRows(executorContext,easyConnection,sql,parameters,isSharding,configReplica);
+        JdbcSQLExecutor jdbcSQLExecutor = executorContext.getRuntimeContext().getJdbcSQLExecutor();
+        int rows= jdbcSQLExecutor.executeRows(executorContext,easyConnection,sql,parameters,isSharding,configReplica);
         return new AffectedRowsExecuteResult(rows);
     }
 
