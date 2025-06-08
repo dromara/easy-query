@@ -10,6 +10,7 @@ import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
+import com.easy.query.core.proxy.core.ColumnSelectSQLContext;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -153,7 +154,7 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
 
     @Override
     public TProxy fetchProxy() {
-        TProxy proxy = tProxy.create(null, tProxy.getEntitySQLContext());
+        TProxy proxy = tProxy.create(tProxy.getTable(), new ColumnSelectSQLContext());
         proxy.selectExpression(this);
         return proxy;
     }

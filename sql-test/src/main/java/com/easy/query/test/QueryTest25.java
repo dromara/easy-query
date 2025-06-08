@@ -56,6 +56,7 @@ import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.company.ValueCompany;
+import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
@@ -706,12 +707,14 @@ public class QueryTest25 extends BaseTest {
     @Test
     public void testDraft() {
 
-        List<Draft1<String>> list1 = easyEntityQuery.queryable(Topic.class)
-                .orderBy(t -> {
-                    t.id().asc();
-                }).select(t_topic -> {
-                    return Select.DRAFT.of(t_topic.id());
-                }).toList();
+        List<BlogEntity> list = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t_topic, t_blog) -> t_topic.id().eq(t_blog.star()))
+                .select((t_topic, t_blog) -> {
+                    BlogEntityProxy blogEntityProxy = t_blog.FETCHER.id().star().fetchProxy();
+                    blogEntityProxy.content().set(t_topic.title());
+                    return blogEntityProxy;
+                })
+                .toList();
     }
 
 }
