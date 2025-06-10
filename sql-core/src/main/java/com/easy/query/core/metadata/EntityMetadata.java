@@ -388,7 +388,7 @@ public class EntityMetadata {
         String[] targetMappingProperties = tableEntity && !hasDirectMapping ? navigate.targetMappingProperty() : EasyArrayUtil.EMPTY;
 
         EasyNavigateUtil.checkProperties(entityClass, property, selfProperties, selfMappingProperties, navigate.mappingClass(), targetMappingProperties, targetProperties);
-
+        //获取导航类型如果是单个对象则为对象类型如果是集合属性那么为集合内泛型类型
         Class<?> navigateType = getNavigateType(toMany, field, fastBeanProperty);
         if (navigateType == null) {
             throw new EasyQueryInvalidOperationException("not found navigate type, property:[" + property + "]");

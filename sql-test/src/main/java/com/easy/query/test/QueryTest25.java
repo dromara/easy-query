@@ -707,6 +707,9 @@ public class QueryTest25 extends BaseTest {
     @Test
     public void testDraft() {
 
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
         List<BlogEntity> list = easyEntityQuery.queryable(Topic.class)
                 .leftJoin(BlogEntity.class, (t_topic, t_blog) -> t_topic.id().eq(t_blog.star()))
                 .select((t_topic, t_blog) -> {
@@ -715,6 +718,35 @@ public class QueryTest25 extends BaseTest {
                     return blogEntityProxy;
                 })
                 .toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`id`,t1.`star`,t.`title` AS `content` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`star`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testDraft2() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t_topic, t_blog) -> t_topic.id().eq(t_blog.star()))
+                .select((t_topic, t_blog) -> {
+                    BlogEntityProxy blogEntityProxy = t_blog.FETCHER.id().star().fetchProxy();
+                    blogEntityProxy.content().set(t_topic.title());
+                    return blogEntityProxy;
+                })
+                .toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`id`,t1.`star`,t.`title` AS `content` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`star`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
     }
 
 }
