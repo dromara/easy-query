@@ -3,6 +3,7 @@ package com.easy.query.api.proxy.entity.select.impl;
 import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -38,7 +39,7 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
     private final ColumnMetadata columnMetadata;
 
     public EasySelectFlatQueryable(ClientQueryable<?> queryable, String navValue, TProxy tProxy) {
-        if(!(tProxy.getEntitySQLContext() instanceof FlatEntitySQLContext)){
+        if (!(tProxy.getEntitySQLContext() instanceof FlatEntitySQLContext)) {
             throw new EasyQueryInvalidOperationException("flatElement result only allowed use in toList");
         }
 
@@ -152,8 +153,8 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
                                 x.column(tProxy.getValue());
                             });
                         }
-                        if(tProxy.getEntitySQLContext() instanceof FlatEntitySQLContext){
-                            FlatEntitySQLContext flatEntitySQLContext = (FlatEntitySQLContext)tProxy.getEntitySQLContext() ;
+                        if (tProxy.getEntitySQLContext() instanceof FlatEntitySQLContext) {
+                            FlatEntitySQLContext flatEntitySQLContext = (FlatEntitySQLContext) tProxy.getEntitySQLContext();
                             if (flatEntitySQLContext.getSelectAsExpressionFunction() != null) {
                                 Class<Object> queryClass = with.queryClass();
                                 return with.select(x -> {
@@ -168,10 +169,12 @@ public class EasySelectFlatQueryable<TProxy extends ProxyEntity<TProxy, TEntity>
                         }
                         return with;
                     } else {
+
                         return with.select(c -> {
-                            Collection<String> keyProperties = entityMetadata.getKeyProperties();
-                            for (String keyProperty : keyProperties) {
-                                c.column(keyProperty);
+
+                            String[] targetProperties = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
+                            for (String target : targetProperties) {
+                                c.column(target);
                             }
                         });
                     }

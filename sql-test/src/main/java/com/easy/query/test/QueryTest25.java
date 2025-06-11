@@ -58,6 +58,7 @@ import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.company.ValueCompany;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
+import com.easy.query.test.entity.tolistflat.TestA;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
@@ -806,6 +807,21 @@ public class QueryTest25 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+    }
+    @Test
+    public void testToListFlat1() {
+        Exception ee=null;
+        try {
+
+            List<String> list1 = easyEntityQuery.queryable(TestA.class)
+                    .where(t -> {
+                        t.aname().like("123");
+                    }).toList(t -> t.bList().flatElement().cList().flatElement().cname());
+        }catch (Exception ex){
+            ee=ex;
+        }
+        Assert.assertNotNull(ee);
+        Assert.assertEquals("com.easy.query.core.exception.EasyQuerySQLStatementException: java.sql.SQLSyntaxErrorException: Table 'easy-query-test.test_a' doesn't exist",ee.getMessage());
     }
 
 }
