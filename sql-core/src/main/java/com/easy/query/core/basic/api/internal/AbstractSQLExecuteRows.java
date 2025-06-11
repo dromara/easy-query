@@ -3,6 +3,7 @@ package com.easy.query.core.basic.api.internal;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 
@@ -43,7 +44,8 @@ public abstract class AbstractSQLExecuteRows<TChain> implements SQLExecuteExpect
     private void doExecuteRows(long expectRows, String msg, String code) {
         long rows = executeRows();
         if (rows != expectRows) {
-            throw new EasyQueryConcurrentException(msg, code);
+            AssertExceptionFactory assertExceptionFactory = entityExpressionBuilder.getRuntimeContext().getAssertExceptionFactory();
+            throw assertExceptionFactory.createExecuteCurrentException(expectRows, rows, msg, code);
         }
     }
 

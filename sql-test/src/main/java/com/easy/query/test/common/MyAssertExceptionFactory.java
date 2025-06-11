@@ -1,6 +1,8 @@
 package com.easy.query.test.common;
 
-import com.easy.query.core.annotation.NotNull;
+import com.easy.query.core.exception.EasyQueryConcurrentException;
+import org.checkerframework.checker.units.qual.C;
+import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -69,5 +71,11 @@ public class MyAssertExceptionFactory implements AssertExceptionFactory {
     @NotNull
     public <T> RuntimeException createSingleMoreElementException(Query<T> query) {
         return new BusinessException("查询结果大于1条");
+    }
+
+    @Override
+    @NotNull
+    public RuntimeException createExecuteCurrentException(long expectRows,long realRows, String msg, String code) {
+        return new EasyQueryConcurrentException(msg, code);
     }
 }

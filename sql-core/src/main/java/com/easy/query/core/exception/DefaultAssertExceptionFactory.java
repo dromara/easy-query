@@ -1,6 +1,6 @@
 package com.easy.query.core.exception;
 
-import com.easy.query.core.annotation.NotNull;
+import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -68,6 +68,12 @@ public class DefaultAssertExceptionFactory implements AssertExceptionFactory {
     @NotNull
     public <T> RuntimeException createSingleMoreElementException(Query<T> query) {
         return new EasyQuerySingleMoreElementException("single query at most one element in result set.");
+    }
+
+    @NotNull
+    @Override
+    public RuntimeException createExecuteCurrentException(long expectRows, long realRows, String msg, String code) {
+        return new EasyQueryConcurrentException(msg,code);
     }
 
 }

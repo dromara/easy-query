@@ -3,12 +3,14 @@ package com.easy.query.core.basic.api.update.impl;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
+import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.List;
@@ -22,6 +24,11 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public class EasyEmptyClientEntityUpdatable<T> implements ClientEntityUpdatable<T> {
+    private final ServiceProvider serviceProvider;
+
+    public EasyEmptyClientEntityUpdatable(ServiceProvider serviceProvider){
+        this.serviceProvider = serviceProvider;
+    }
     @Override
     public ClientEntityUpdatable<T> noInterceptor() {
         return this;
@@ -51,7 +58,8 @@ public class EasyEmptyClientEntityUpdatable<T> implements ClientEntityUpdatable<
     public void executeRows(long expectRows, String msg, String code) {
         long rows = executeRows();
         if (rows != expectRows) {
-            throw new EasyQueryConcurrentException(msg, code);
+            AssertExceptionFactory assertExceptionFactory = serviceProvider.getService(AssertExceptionFactory.class);
+            throw assertExceptionFactory.createExecuteCurrentException(expectRows, rows, msg, code);
         }
 
     }

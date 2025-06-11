@@ -2,11 +2,13 @@ package com.easy.query.core.basic.api.delete.impl;
 
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
+import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.List;
@@ -20,6 +22,12 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public class EasyEmptyClientEntityDeletable<T> implements ClientEntityDeletable<T> {
+    private final ServiceProvider serviceProvider;
+
+    public EasyEmptyClientEntityDeletable(ServiceProvider serviceProvider) {
+        this.serviceProvider = serviceProvider;
+    }
+
     @Override
     public List<T> getEntities() {
         return EasyCollectionUtil.emptyList();
@@ -36,7 +44,7 @@ public class EasyEmptyClientEntityDeletable<T> implements ClientEntityDeletable<
     }
 
     @Override
-    public String toSQL()  {
+    public String toSQL() {
         return null;
     }
 
@@ -79,7 +87,8 @@ public class EasyEmptyClientEntityDeletable<T> implements ClientEntityDeletable<
     public void executeRows(long expectRows, String msg, String code) {
         long rows = executeRows();
         if (rows != expectRows) {
-            throw new EasyQueryConcurrentException(msg, code);
+            AssertExceptionFactory assertExceptionFactory = serviceProvider.getService(AssertExceptionFactory.class);
+            throw assertExceptionFactory.createExecuteCurrentException(expectRows, rows, msg, code);
         }
     }
 
@@ -107,6 +116,7 @@ public class EasyEmptyClientEntityDeletable<T> implements ClientEntityDeletable<
     public ClientEntityDeletable<T> asTableLink(Function<String, String> linkAs) {
         return this;
     }
+
     @Override
     public ClientEntityDeletable<T> asTableSegment(BiFunction<String, String, String> segmentAs) {
         return this;

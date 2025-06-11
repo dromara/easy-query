@@ -1,7 +1,7 @@
 package com.easy.query.core.exception;
 
-import com.easy.query.core.annotation.NotNull;
-import com.easy.query.core.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.basic.api.select.Query;
 
 /**
@@ -21,4 +21,15 @@ public interface AssertExceptionFactory {
     <T> RuntimeException createSingleNotNullException(@Nullable Query<T> query, String msg, String code);
     @NotNull
     <T> RuntimeException createSingleMoreElementException(@Nullable Query<T> query);
+
+    /**
+     * 并发执行时候行数不一致
+     * @param expectRows 期望受影响行数
+     * @param realRows 实际受影响行数
+     * @param msg
+     * @param code
+     * @return
+     */
+    @NotNull
+    RuntimeException createExecuteCurrentException(long expectRows,long realRows, String msg, String code);
 }

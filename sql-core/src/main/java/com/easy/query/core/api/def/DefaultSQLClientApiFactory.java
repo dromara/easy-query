@@ -49,6 +49,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ContextTypeEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLUnionEnum;
+import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
@@ -59,6 +60,7 @@ import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.MapUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
+import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -78,9 +80,11 @@ import java.util.Map;
  */
 public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     private final ExpressionBuilderFactory expressionBuilderFactory;
+    private final ServiceProvider serviceProvider;
 
-    public DefaultSQLClientApiFactory(ExpressionBuilderFactory expressionBuilderFactory) {
+    public DefaultSQLClientApiFactory(ExpressionBuilderFactory expressionBuilderFactory, ServiceProvider serviceProvider) {
         this.expressionBuilderFactory = expressionBuilderFactory;
+        this.serviceProvider = serviceProvider;
     }
 
     @Override
@@ -492,7 +496,7 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
 
     @Override
     public <T> ClientEntityUpdatable<T> createEmptyEntityUpdatable() {
-        return new EasyEmptyClientEntityUpdatable<>();
+        return new EasyEmptyClientEntityUpdatable<>(serviceProvider);
     }
 
     @Override
@@ -534,7 +538,7 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
 
     @Override
     public <T> ClientEntityDeletable<T> createEmptyEntityDeletable() {
-        return new EasyEmptyClientEntityDeletable<>();
+        return new EasyEmptyClientEntityDeletable<>(serviceProvider);
     }
 
     @Override
