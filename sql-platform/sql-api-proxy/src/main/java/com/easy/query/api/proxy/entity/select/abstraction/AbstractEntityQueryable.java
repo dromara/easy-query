@@ -11,6 +11,7 @@ import com.easy.query.api.proxy.entity.select.join.join2.RightJoinExpressionJoin
 import com.easy.query.api.proxy.extension.tree.EntityTreeCTEConfigurer;
 import com.easy.query.api.proxy.extension.tree.EntityTreeCTEConfigurerImpl;
 import com.easy.query.api.proxy.util.EasyProxyUtil;
+import com.easy.query.core.proxy.core.FlatEntitySQLContext;
 import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
@@ -890,7 +891,17 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> List<TR> toList(SQLFuncExpression1<T1Proxy, TRProxy> fetchResultExpression) {
         TRProxy resultProxy = fetchResultExpression.apply(get1Proxy());
         String navValue = EasyProxyUtil.getNavValue(resultProxy);
-        return new EasySelectFlatQueryable<>(clientQueryable, navValue, resultProxy).toList();
+        if (resultProxy.getEntitySQLContext() instanceof FlatEntitySQLContext) {
+            return new EasySelectFlatQueryable<>(clientQueryable, navValue, resultProxy).toList();
+        } else {
+            return this.selectColumn(s -> {
+                TRProxy columnProxy = fetchResultExpression.apply(s);
+                if (columnProxy instanceof PropTypeColumn) {
+                    return (PropTypeColumn<TR>) columnProxy;
+                }
+                throw new EasyQueryInvalidOperationException("column proxy must be PropTypeColumn");
+            }).toList();
+        }
     }
 //
 //    private <TRProxy extends ProxyEntity<TRProxy, TR>, TR> String getNavValue(TRProxy resultProxy) {

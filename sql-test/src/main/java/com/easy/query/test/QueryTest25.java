@@ -726,6 +726,7 @@ public class QueryTest25 extends BaseTest {
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void testDraft2() {
 
@@ -747,6 +748,18 @@ public class QueryTest25 extends BaseTest {
         Assert.assertEquals("SELECT t1.`id`,t1.`star`,t.`title` AS `content` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`star`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
+    }
+
+    @Test
+    public void testList() {
+
+        List<String> list1 = easyEntityQuery.queryable(Topic.class).orderBy(t_topic -> t_topic.id().asc()).selectColumn(t_topic -> t_topic.id()).toList();
+        List<String> list2 = easyEntityQuery.queryable(Topic.class).orderBy(t_topic -> t_topic.id().asc()).toList(t -> t.id());
+        Assert.assertFalse(list1.isEmpty());
+        Assert.assertEquals(list1.size(),list2.size());
+        for (int i = 0; i < list1.size(); i++) {
+            Assert.assertEquals(list1.get(i), list2.get(i));
+        }
     }
 
 }

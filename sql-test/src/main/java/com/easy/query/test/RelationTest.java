@@ -26,6 +26,7 @@ import com.easy.query.test.dto.autodto.SchoolClassAOProp9;
 import com.easy.query.test.dto.autodto.SchoolStudentDTOAO111;
 import com.easy.query.test.dto.autodto.SchoolStudentDTOAO222;
 import com.easy.query.test.dto.autodto.SchoolStudentDTOxxx;
+import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.base.Area;
@@ -35,6 +36,7 @@ import com.easy.query.test.entity.base.Province;
 import com.easy.query.test.entity.base.proxy.CityProxy;
 import com.easy.query.test.entity.base.proxy.MyProvinceVOProxy;
 import com.easy.query.test.entity.base.proxy.ProvinceProxy;
+import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.SchoolClassAggregate;
 import com.easy.query.test.entity.school.SchoolClassTeacher;
@@ -854,16 +856,23 @@ public class RelationTest extends BaseTest {
             }
             {
                 boolean exception = true;
+                ListenerContext listenerContext = new ListenerContext();
+                listenerContextManager.startListen(listenerContext);
+
                 try {
 
                     List<String> list = easyEntityQuery.queryable(SchoolStudent.class)
                             .toList(x -> x.schoolStudentAddress().address());
                     exception = false;
                 } catch (Exception ex) {
-                    Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
-                    Assert.assertEquals(ex.getMessage(), "flatElement result only allowed use in toList");
                 }
-                Assert.assertTrue(exception);
+                listenerContextManager.clear();
+
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+                Assert.assertEquals("SELECT t1.`address` FROM `school_student` t LEFT JOIN `school_student_address` t1 ON t1.`student_id` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+
+                Assert.assertFalse(exception);
                 System.out.println(1);
             }
             {
