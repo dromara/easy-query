@@ -21,10 +21,12 @@ public final class LogicDeleteMetadata {
     private final String propertyName;
     /**
      * where
+     * 查询 更新 删除等操作会添加该表达式
      */
     private final SQLActionExpression1<WherePredicate<Object>> logicDeletePredicateFilterExpression;
     /**
      * update set
+     * 删除时执行设置表字段信息
      */
     private final SQLActionExpression1<ColumnSetter<Object>> logicDeletedSQLExpression;
 

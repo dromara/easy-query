@@ -9,7 +9,6 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ContextTypeEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.expression.sql.builder.EasyExpressionContext;
-import com.easy.query.core.expression.sql.builder.EmptyExpressionContext;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 
