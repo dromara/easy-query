@@ -6,11 +6,13 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
+import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.sqlite.config.SQLiteDatabaseConfiguration;
+import com.easy.query.test.common.SQLiteLocalDateTimeTypeHandler;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
@@ -66,6 +68,8 @@ public class SQLiteBaseTest {
                 .replaceService(NameConversion.class, UpperCamelCaseNameConversion.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
+        JdbcTypeHandlerManager jdbcTypeHandlerManager = easyQueryClient.getRuntimeContext().getJdbcTypeHandlerManager();
+        jdbcTypeHandlerManager.appendHandler(LocalDateTime.class,new SQLiteLocalDateTimeTypeHandler(),true);
         entityQuery = new DefaultEasyEntityQuery(easyQueryClient);
     }
 

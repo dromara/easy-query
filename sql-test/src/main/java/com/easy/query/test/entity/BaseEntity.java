@@ -5,6 +5,7 @@ import com.easy.query.core.annotation.LogicDelete;
 import com.easy.query.core.annotation.UpdateIgnore;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import lombok.Data;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
  * @author xuejiaming
  */
 @Data
+@ToString
 public class BaseEntity implements Serializable {
     private static final long serialVersionUID = -4834048418175625051L;
 

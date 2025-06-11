@@ -39,6 +39,8 @@ import com.easy.query.core.basic.thread.DefaultEasyShardingExecutorService;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
 import com.easy.query.core.common.DefaultMapColumnNameChecker;
 import com.easy.query.core.common.MapColumnNameChecker;
+import com.easy.query.core.configuration.DefaultEasyInitConfiguration;
+import com.easy.query.core.configuration.EasyInitConfiguration;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.EasyQueryOptionBuilder;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -183,6 +185,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(RewriteContextFactory.class, DefaultRewriteContextFactory.class)
                 .replaceService(ExecutionContextFactory.class, DefaultExecutionContextFactory.class)
                 .replaceService(EntityExpressionExecutor.class, DefaultEntityExpressionExecutor.class)
+                .replaceService(EasyInitConfiguration.class, DefaultEasyInitConfiguration.class)
 //                .replaceService(EntityExpressionExecutor.class, ShardingEntityExpressionExecutor.class)
                 .replaceService(ShardingExecutorService.class, DefaultEasyShardingExecutorService.class)
                 .replaceService(ExpressionFactory.class, DefaultEasyExpressionFactory.class)
@@ -342,6 +345,8 @@ public class EasyQueryBuilderConfiguration {
         EasyQueryOption easyQueryOption = easyQueryOptionBuilder.build();
         replaceService(easyQueryOption);
         ServiceProvider serviceProvider = serviceCollection.build();
+        EasyInitConfiguration service = serviceProvider.getService(EasyInitConfiguration.class);
+        service.init();
         return serviceProvider.getService(EasyQueryClient.class);
     }
 
