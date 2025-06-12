@@ -73,8 +73,8 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
     private static final TimeTypeHandler timeTypeHandler = new TimeTypeHandler();
     private static final JdbcTypeHandler uuidTypeHandler=new UUIDTypeHandler();
     private static final JdbcTypeHandler DEFAULT_HANDLER=new ObjectTypeHandler();
-    private static final Map<Class<?>, JdbcTypeHandler> handlers=new ConcurrentHashMap<>();
-    static{
+    private final Map<Class<?>, JdbcTypeHandler> handlers=new ConcurrentHashMap<>();
+    public EasyJdbcTypeHandlerManager(){
         handlers.put(BigDecimal.class, bigDecimalHandler);
         handlers.put(Boolean.class, booleanTypeHandler);
         handlers.put(boolean.class, booleanTypeHandler);
