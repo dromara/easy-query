@@ -62,6 +62,7 @@ import com.easy.query.test.entity.tolistflat.TestA;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
+import com.easy.query.test.mysql8.entity.M8User;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Assert;
@@ -72,12 +73,14 @@ import org.redisson.api.RedissonClient;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * create time 2025/5/23 10:45

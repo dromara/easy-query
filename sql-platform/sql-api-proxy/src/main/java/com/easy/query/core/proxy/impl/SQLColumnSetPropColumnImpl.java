@@ -7,6 +7,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.PropValueConvertColumn;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLColumnSetExpression;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
@@ -43,7 +44,7 @@ public class SQLColumnSetPropColumnImpl implements SQLColumnSetExpression {
             Function<SQLFunc, SQLFunction> func = sqlFunctionAvailable.func();
             SQLFunc fx = s.getRuntimeContext().fx();
             s.setFunc(table, property, func.apply(fx));
-        } else {
+        }else {
             throw new UnsupportedOperationException();
         }
     }

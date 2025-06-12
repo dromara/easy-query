@@ -1,6 +1,8 @@
 package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
+import com.easy.query.core.basic.extension.conversion.ColumnReader;
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -19,6 +21,7 @@ import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.RelationExtraMetadata;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -252,6 +255,11 @@ public class EmptyExpressionContext implements ExpressionContext{
 
     @Override
     public ResultColumnMetadata[] getResultPropTypes() {
+        return null;
+    }
+
+    @Override
+    public Map<String, ColumnReader> getResultValueConverterMap(boolean createIfNull) {
         return null;
     }
 

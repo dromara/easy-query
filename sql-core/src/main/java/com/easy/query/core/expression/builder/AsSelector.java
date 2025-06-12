@@ -2,6 +2,7 @@ package com.easy.query.core.expression.builder;
 
 import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.builder.core.SelectorColumn;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
@@ -16,6 +17,8 @@ import com.easy.query.core.func.ACSSelector;
 import com.easy.query.core.func.DistinctDefaultSettingImpl;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
+
+import java.util.function.Function;
 
 /**
  * create time 2023/6/22 20:47
@@ -67,6 +70,7 @@ public interface AsSelector extends SelectorColumn<AsSelector>,SQLNative<AsSelec
     AsSelector columnAll(TableAvailable table);
 
     AsSelector columnAs(TableAvailable table, String property, String propertyAlias);
+    AsSelector columnAs(TableAvailable table, String property, String propertyAlias, Function<?, ?> valueConverter);
     AsSelector columnFixedAs(TableAvailable table, String property, String propertyAlias) ;
 
     <TSubQuery> AsSelector columnSubQueryAs(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc, String propertyAlias);

@@ -2,6 +2,7 @@ package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.entity.EntityMappingRule;
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.core.ResultColumnInfo;
@@ -25,6 +26,7 @@ import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * create time 2023/6/24 11:11
@@ -65,6 +67,12 @@ public class AutoAsSelectorImpl extends AbstractAsSelector<AsSelector> implement
     public AsSelector columnAs(TableAvailable table, String property, String propertyAlias) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public AsSelector columnAs(TableAvailable table, String property, String propertyAlias, Function<?, ?> valueConverter) {
+        throw new UnsupportedOperationException();
+    }
+
 
     @Override
     public <TSubQuery> AsSelector columnSubQueryAs(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc, String propertyAlias) {

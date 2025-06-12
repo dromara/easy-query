@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 
+import com.easy.query.core.basic.extension.conversion.ColumnReader;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
@@ -38,10 +39,10 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
     protected TrackManager trackManager;
     protected DataReader dataReader;
     protected RelationExtraMetadata relationExtraMetadata;
+    protected Map<String, ColumnReader> resultValueConverterMap;
 
     public DefaultBeanStreamIterator(ExecutorContext context, StreamResultSet streamResult, ResultMetadata<T> resultMetadata) throws SQLException {
         super(context, streamResult, resultMetadata);
-
     }
 
     @Override
@@ -51,6 +52,7 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
             relationExtraMetadata = context.getExpressionContext().getRelationExtraMetadata();
             relationExtraMetadata.clearRow();
         }
+        this.resultValueConverterMap = context.getExpressionContext().getResultValueConverterMap(false);
         this.dataReader = getColumnDataReader(rsmd);
         this.trackBean = EasyTrackUtil.trackBean(context, resultMetadata.getResultClass());
         this.trackManager = trackBean ? context.getRuntimeContext().getTrackManager() : null;
@@ -122,10 +124,17 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
             if (PartResult.class.isAssignableFrom(resultMetadata.getResultClass())) {
                 dataReader = new BeanDataReader(dataReader, new PartByPropertyDataReader(resultColumnMetadata));
             } else {
-                dataReader = new BeanDataReader(dataReader, new PropertyDataReader(resultColumnMetadata));
+                dataReader = new BeanDataReader(dataReader, new PropertyDataReader(resultColumnMetadata, getValueConverterColumnReader(colName)));
             }
         }
         return dataReader;
+    }
+
+    private ColumnReader getValueConverterColumnReader(String colName) {
+        if (resultValueConverterMap != null) {
+            return resultValueConverterMap.get(colName);
+        }
+        return null;
     }
 
 

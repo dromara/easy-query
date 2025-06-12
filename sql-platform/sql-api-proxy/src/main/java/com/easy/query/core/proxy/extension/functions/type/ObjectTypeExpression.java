@@ -1,7 +1,9 @@
 package com.easy.query.core.proxy.extension.functions.type;
 
+import com.easy.query.core.proxy.PropValueConvertColumn;
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.extension.functions.type.impl.AnyTypeExpressionImpl;
+import com.easy.query.core.proxy.impl.PropValueConvertColumnImpl;
 
 import java.util.function.Function;
 
@@ -17,8 +19,7 @@ public interface ObjectTypeExpression<T> extends ColumnFuncComparableExpression<
         Class<?> propertyType = getPropertyType();
         return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), this.func(), propertyType);
     }
-//    default <TR> AnyTypeExpression<TR> valueConvert(Function<T,TR> converter) {
-//        Class<?> propertyType = getPropertyType();
-//        return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), this.func(), propertyType);
-//    }
+    default <TR> PropValueConvertColumn<TR,T> valueConvert(Function<T,TR> converter) {
+        return new PropValueConvertColumnImpl<>(this,converter);
+    }
 }

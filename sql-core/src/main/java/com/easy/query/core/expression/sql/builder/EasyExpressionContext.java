@@ -1,6 +1,8 @@
 package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
+import com.easy.query.core.basic.extension.conversion.ColumnReader;
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.configuration.EasyQueryOption;
@@ -26,6 +28,7 @@ import com.easy.query.core.metadata.RelationExtraMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -65,6 +68,7 @@ public class EasyExpressionContext implements ExpressionContext {
 
     private Map<TableAvailable, Map<String, ColumnIncludeExpression>> columnIncludeMaps;
     private ResultColumnMetadata[] propTypes;
+    private Map<String, ColumnReader> valueConverterMap;
     private Function<Class<?>, Boolean> relationLogicDelete;
     private RelationExtraMetadata relationExtraMetadata;
     private Integer groupSize;
@@ -321,6 +325,9 @@ public class EasyExpressionContext implements ExpressionContext {
             otherExpressionContext.setResultPropTypes(new ResultColumnMetadata[this.propTypes.length]);
             System.arraycopy(this.propTypes, 0, otherExpressionContext.getResultPropTypes(), 0, this.propTypes.length);
         }
+        if (this.valueConverterMap != null) {
+            otherExpressionContext.getResultValueConverterMap(true).putAll(this.valueConverterMap);
+        }
     }
 
     @Override
@@ -397,7 +404,7 @@ public class EasyExpressionContext implements ExpressionContext {
 
     @Override
     public ExpressionContext cloneExpressionContext() {
-        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(runtimeContext,this.type);
+        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(runtimeContext, this.type);
         this.easyBehavior.copyTo(easyExpressionContext.easyBehavior);
         expressionContextInterceptor.copyTo(easyExpressionContext.expressionContextInterceptor);
         this.tableContext.copyTo(easyExpressionContext.tableContext);
@@ -431,6 +438,9 @@ public class EasyExpressionContext implements ExpressionContext {
             easyExpressionContext.propTypes = new ResultColumnMetadata[this.propTypes.length];
             System.arraycopy(this.propTypes, 0, easyExpressionContext.propTypes, 0, this.propTypes.length);
         }
+        if (this.valueConverterMap != null) {
+            easyExpressionContext.valueConverterMap = new HashMap<>(this.valueConverterMap);
+        }
         return easyExpressionContext;
     }
 
@@ -455,6 +465,14 @@ public class EasyExpressionContext implements ExpressionContext {
     @Override
     public ResultColumnMetadata[] getResultPropTypes() {
         return this.propTypes;
+    }
+
+    @Override
+    public Map<String, ColumnReader> getResultValueConverterMap(boolean createIfNull) {
+        if (createIfNull && valueConverterMap == null) {
+            valueConverterMap = new HashMap<>();
+        }
+        return valueConverterMap;
     }
 
     @Override

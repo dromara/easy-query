@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.builder.impl;
 
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Selector;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
@@ -12,6 +13,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 /**
  * create time 2024/2/18 21:09
@@ -51,6 +53,11 @@ public class FetchSelector implements Selector {
 
     @Override
     public Selector columnAs(TableAvailable table, String property, String propertyAlias) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Selector columnAs(TableAvailable table, String property, String propertyAlias, Function<?, ?> valueConverter) {
         throw new UnsupportedOperationException();
     }
 

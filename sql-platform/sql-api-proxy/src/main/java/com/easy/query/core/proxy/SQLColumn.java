@@ -3,8 +3,7 @@ package com.easy.query.core.proxy;
 import com.easy.query.core.proxy.columns.SQLAnyColumn;
 import com.easy.query.core.proxy.columns.impl.SQLAnyColumnImpl;
 import com.easy.query.core.proxy.extension.ColumnComparableExpression;
-import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
-import com.easy.query.core.proxy.extension.functions.type.impl.AnyTypeExpressionImpl;
+import com.easy.query.core.proxy.impl.PropValueConvertColumnImpl;
 import com.easy.query.core.proxy.set.DSLColumnSet;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -37,10 +36,9 @@ public interface SQLColumn<TProxy, TProperty> extends ColumnComparableExpression
         column._setProxy(castChain());
         return EasyObjectUtil.typeCastNullable(column);
     }
-//    default <TR> AnyTypeExpression<TR> valueConvert(Function<TProperty,TR> converter) {
-//        Class<?> propertyType = getPropertyType();
-//        return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), this.func(), propertyType);
-//    }
+    default <TR> PropValueConvertColumn<TR,TProperty> valueConvert(Function<TProperty,TR> converter) {
+        return new PropValueConvertColumnImpl<>(this,converter);
+    }
 
     @Override
     default <TR> SQLColumn<TProxy, TR> asAnyType(Class<TR> clazz) {

@@ -2,6 +2,10 @@ package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.entity.EntityMappingRule;
+import com.easy.query.core.basic.extension.conversion.ColumnReader;
+import com.easy.query.core.basic.extension.conversion.ColumnReaderImpl;
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
+import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EntityMetadataTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
@@ -33,6 +37,7 @@ import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * create time 2023/6/22 20:56
@@ -43,7 +48,7 @@ import java.util.Objects;
 public class AsSelectorImpl extends AbstractAsSelector<AsSelector> implements AsSelector {
 
     public AsSelectorImpl(EntityQueryExpressionBuilder entityQueryExpressionBuilder, SQLBuilderSegment sqlBuilderSegment, EntityMetadata resultEntityMetadata) {
-        super(entityQueryExpressionBuilder, sqlBuilderSegment,resultEntityMetadata);
+        super(entityQueryExpressionBuilder, sqlBuilderSegment, resultEntityMetadata);
     }
 
     @Override
@@ -70,11 +75,22 @@ public class AsSelectorImpl extends AbstractAsSelector<AsSelector> implements As
 
     @Override
     public AsSelector columnAs(TableAvailable table, String property, String propertyAlias) {
+        return columnAs(table, property, propertyAlias, null);
+    }
+
+    @Override
+    public AsSelector columnAs(TableAvailable table, String property, String propertyAlias, Function<?, ?> valueConverter) {
         ResultColumnInfo resultColumnInfo = getResultColumnName(propertyAlias);
         ColumnSegment columnSegment = sqlSegmentFactory.createSelectColumnSegment(table, property, expressionContext, resultColumnInfo.getColumnAsName());
         sqlBuilderSegment.append(columnSegment);
+        if (valueConverter != null) {
+            String columnName = resultColumnInfo.getColumnAsName();
+            ColumnReaderImpl columnReader = new ColumnReaderImpl(table.getEntityMetadata(), table.getEntityMetadata().getColumnNotNull(property), valueConverter);
+            expressionContext.getResultValueConverterMap(true).put(columnName, columnReader);
+        }
         return this;
     }
+
 
     public <T2> void extract(Query<T2> subQuery) {
 
@@ -138,7 +154,7 @@ public class AsSelectorImpl extends AbstractAsSelector<AsSelector> implements As
 //                String aliasPropertyName = resultEntityMetadata.getPropertyNameOrNull(columnName);
                 if (resultColumnMetadata != null) {
 //                    ColumnMetadata resultColumnMetadata = resultEntityMetadata.getColumnNotNull(aliasPropertyName);
-                    if(!resultColumnMetadata.isAutoSelect()){
+                    if (!resultColumnMetadata.isAutoSelect()) {
                         continue;
                     }
                     String aliasColumnName = resultColumnMetadata.getName();

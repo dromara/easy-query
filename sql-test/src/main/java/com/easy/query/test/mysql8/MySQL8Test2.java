@@ -5,6 +5,9 @@ import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.inject.ServiceCollection;
+import com.easy.query.core.inject.ServiceProvider;
+import com.easy.query.core.inject.impl.ServiceCollectionImpl;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
 import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.part.proxy.Part1Proxy;
@@ -85,6 +88,7 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals("%银行%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void test2() {
 
@@ -94,7 +98,7 @@ public class MySQL8Test2 extends BaseTest {
 
 
         List<Part1<SysBank, Long>> banks = easyEntityQuery.queryable(SysBank.class)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(bank -> {
                     bank.name().like("银行");
                 })
@@ -162,7 +166,7 @@ public class MySQL8Test2 extends BaseTest {
                         bank.bankCards().count()
                 ));
         List<SysBankCard> list = easyEntityQuery.queryable(SysBankCard.class)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .leftJoin(queryable, (a, b) -> a.bankId().eq(b.entityTable().id()))
                 .where((a, b) -> {
                     b.entityTable().bankCards().any();
@@ -175,6 +179,7 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals("%银行%(String),true(Boolean),false(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void test5() {
 
@@ -182,7 +187,7 @@ public class MySQL8Test2 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         EntityQueryable<Part1Proxy<NumberTypeExpression<Long>, Long, SysBankProxy, SysBank>, Part1<SysBank, Long>> queryable = easyEntityQuery.queryable(SysBank.class)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(bank -> {
                     bank.name().like("银行");
                 })
@@ -191,7 +196,7 @@ public class MySQL8Test2 extends BaseTest {
                         bank.bankCards().count()
                 ));
         List<SysBankCard> list = easyEntityQuery.queryable(SysBankCard.class)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .leftJoin(queryable, (a, b) -> a.bankId().eq(b.entityTable().id()))
                 .where((a, b) -> {
                     b.entityTable().bankCards().any();
@@ -206,7 +211,7 @@ public class MySQL8Test2 extends BaseTest {
     }
 
     @Test
-    public  void testJoin(){
+    public void testJoin() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -223,8 +228,9 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals("ICBC(String),小明(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public  void testDelete(){
+    public void testDelete() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -266,7 +272,7 @@ public class MySQL8Test2 extends BaseTest {
 
 
     @Test
-    public void testOrderCaseWhen1(){
+    public void testOrderCaseWhen1() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -287,7 +293,7 @@ public class MySQL8Test2 extends BaseTest {
     }
 
     @Test
-    public  void testParentNull(){
+    public void testParentNull() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -303,6 +309,22 @@ public class MySQL8Test2 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time` FROM `t_bank_card` t INNER JOIN `t_bank` t1 ON t1.`id` = t.`bank_id` WHERE t1.`id` IS NULL AND t.`bank_id` IS NULL", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //        Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void abc() {
+
+        List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
+                .configure(op -> op.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(t -> {
+                    t.expression().caseWhen(() -> {
+                                t.bankCards().none();
+                            }).then(null)
+                            .elseEnd(t.expression().constant(123).divide(t.bankCards().count()))
+                            .eq(123);
+
+                }).toList();
 
     }
 }

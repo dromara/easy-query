@@ -1,6 +1,8 @@
 package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.basic.entity.EntityMappingRule;
+import com.easy.query.core.basic.extension.conversion.ColumnReaderImpl;
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -39,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * create time 2023/6/22 21:14
@@ -122,11 +125,21 @@ public abstract class AbstractSelector<TChain> {
     }
 
     public TChain columnAs(TableAvailable table, String property, String propertyAlias) {
+        return columnAs(table,property,propertyAlias,null);
+    }
+
+    public TChain columnAs(TableAvailable table, String property, String propertyAlias, Function<?, ?> valueConverter) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
         String alias = propertyAlias == null ? null : table.getEntityMetadata().getColumnNotNull(propertyAlias).getName();
         appendColumnMetadata(table, columnMetadata, false, false, alias);
+        if (valueConverter != null) {
+            String columnName = alias == null ? columnMetadata.getName() : alias;
+            ColumnReaderImpl columnReader = new ColumnReaderImpl(table.getEntityMetadata(), columnMetadata, valueConverter);
+            expressionContext.getResultValueConverterMap(true).put(columnName, columnReader);
+        }
         return castChain();
     }
+
     public TChain columnFixedAs(TableAvailable table, String property, String propertyAlias) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
         appendColumnMetadata(table, columnMetadata, false, false, propertyAlias);
@@ -330,6 +343,7 @@ public abstract class AbstractSelector<TChain> {
         }
         return castChain();
     }
+
     public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
     }

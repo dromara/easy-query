@@ -2,6 +2,7 @@ package com.easy.query.core.proxy;
 
 import com.easy.query.api.proxy.util.EasyPropertyLambdaUtil;
 import com.easy.query.core.annotation.Nullable;
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.OnlySelector;
 import com.easy.query.core.expression.builder.Selector;
@@ -16,6 +17,8 @@ import com.easy.query.core.proxy.impl.SQLSelectImpl;
 import com.easy.query.core.proxy.impl.draft.SelectToDraftColumn;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyObjectUtil;
+
+import java.util.function.Function;
 
 /**
  * create time 2023/12/1 22:56
@@ -129,13 +132,21 @@ public interface SQLSelectExpression extends TablePropColumn {
     }
 
     default SQLSelectAsExpression as(String propertyAlias) {
+        Function<?,?> valueConverter = getValueConverter(this);
         return new SQLSelectAsImpl(s -> {
-            s.columnAs(this.getTable(), this.getValue(), propertyAlias);
+            s.columnAs(this.getTable(), this.getValue(), propertyAlias, valueConverter);
         }, s -> {
-            s.columnAs(this.getTable(), this.getValue(), propertyAlias);
+            s.columnAs(this.getTable(), this.getValue(), propertyAlias, valueConverter);
         }, s -> {
             throw new UnsupportedOperationException();
         });
+    }
+
+    static Function<?,?>  getValueConverter(SQLSelectExpression sqlSelectExpression) {
+        if (sqlSelectExpression instanceof PropValueConvertColumn) {
+            return ((PropValueConvertColumn<?, ?>) sqlSelectExpression).getValueConverter();
+        }
+        return null;
     }
 
     default <TEntity, TR> SQLSelectAsExpression as(Property<TEntity, TR> propertyAlias) {
