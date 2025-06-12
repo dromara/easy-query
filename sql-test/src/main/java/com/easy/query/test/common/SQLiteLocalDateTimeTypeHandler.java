@@ -6,6 +6,7 @@ import com.easy.query.core.basic.jdbc.types.EasyParameter;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -20,10 +21,10 @@ public class SQLiteLocalDateTimeTypeHandler implements JdbcTypeHandler {
 
     @Override
     public Object getValue(JdbcProperty jdbcProperty, StreamResultSet streamResultSet) throws SQLException {
-        String dateTimeStr = streamResultSet.getString(jdbcProperty.getJdbcIndex());
-//        Timestamp timestamp = streamResultSet.getTimestamp(jdbcProperty.getJdbcIndex());
-        if (dateTimeStr != null) {
-            return LocalDateTime.parse(dateTimeStr, DEFAULT_FORMATTER);
+//        String dateTimeStr = streamResultSet.getString(jdbcProperty.getJdbcIndex());
+        Timestamp timestamp = streamResultSet.getTimestamp(jdbcProperty.getJdbcIndex());
+        if (timestamp != null) {
+            return timestamp.toLocalDateTime();
         }
         return null;
     }
