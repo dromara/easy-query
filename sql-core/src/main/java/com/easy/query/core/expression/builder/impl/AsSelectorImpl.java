@@ -75,25 +75,14 @@ public class AsSelectorImpl extends AbstractAsSelector<AsSelector> implements As
 
     @Override
     public AsSelector columnAs(TableAvailable table, String property, String propertyAlias) {
-        return columnAs(table, property, propertyAlias, null);
-    }
-
-    @Override
-    public AsSelector columnAs(TableAvailable table, String property, String propertyAlias, Function<?, ?> valueConverter) {
         ResultColumnInfo resultColumnInfo = getResultColumnName(propertyAlias);
         ColumnSegment columnSegment = sqlSegmentFactory.createSelectColumnSegment(table, property, expressionContext, resultColumnInfo.getColumnAsName());
         sqlBuilderSegment.append(columnSegment);
-        if (valueConverter != null) {
-            String columnName = resultColumnInfo.getColumnAsName();
-            ColumnReaderImpl columnReader = new ColumnReaderImpl(table.getEntityMetadata(), table.getEntityMetadata().getColumnNotNull(property), valueConverter);
-            expressionContext.getResultValueConverterMap(true).put(columnName, columnReader);
-        }
         return this;
     }
 
 
     public <T2> void extract(Query<T2> subQuery) {
-
         EntityQueryExpressionBuilder subQueryableSQLEntityExpressionBuilder = subQuery.getSQLEntityExpressionBuilder();
         expressionContext.extract(subQueryableSQLEntityExpressionBuilder.getExpressionContext());
     }

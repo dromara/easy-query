@@ -1,14 +1,19 @@
 package com.easy.query.core.proxy.impl;
 
 import com.easy.query.core.basic.extension.conversion.ColumnFunctionReaderImpl;
+import com.easy.query.core.basic.extension.conversion.ColumnReader;
+import com.easy.query.core.basic.extension.conversion.ColumnReaderImpl;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.PropValueConvertColumn;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -19,15 +24,15 @@ import java.util.function.Function;
  */
 public class PropValueConvertColumnImpl<TRProperty, TDBProperty> implements PropValueConvertColumn<TRProperty, TDBProperty> {
     private final PropTypeColumn<TDBProperty> propTypeColumn;
-    private final Function<TDBProperty,TRProperty> valueConverter;
+    private final Function<TDBProperty, TRProperty> valueConverter;
 
-    public PropValueConvertColumnImpl(PropTypeColumn<TDBProperty> propTypeColumn, Function<TDBProperty,TRProperty> converter) {
+    public PropValueConvertColumnImpl(PropTypeColumn<TDBProperty> propTypeColumn, Function<TDBProperty, TRProperty> converter) {
         this.propTypeColumn = propTypeColumn;
         this.valueConverter = converter;
     }
 
     @Override
-    public Function<TDBProperty,TRProperty> getValueConverter() {
+    public Function<TDBProperty, TRProperty> getValueConverter() {
         return valueConverter;
     }
 
@@ -63,13 +68,31 @@ public class PropValueConvertColumnImpl<TRProperty, TDBProperty> implements Prop
 
     @Override
     public SQLSelectAsExpression as(String propertyAlias) {
+
+        ExpressionContext expressionContext = getEntitySQLContext().getExpressionContext();
+        Map<String, ColumnReader> resultValueConverterMap = getEntitySQLContext().getExpressionContext().getResultValueConverterMap(true);
         if (propTypeColumn instanceof SQLColumn) {
+            TableAvailable table = propTypeColumn.getTable();
+            ColumnMetadata columnMetadata = propTypeColumn.getTable().getEntityMetadata().getColumnNotNull(propTypeColumn.getValue());
+            ColumnReaderImpl columnReader = new ColumnReaderImpl(table.getEntityMetadata(), columnMetadata, valueConverter);
+            String key = getPropertyAlias(propertyAlias, columnMetadata.getPropertyName());
+            expressionContext.getResultValueConverterMap(true).put(key, columnReader);
             return PropValueConvertColumn.super.as(propertyAlias);
         } else {
             JdbcTypeHandler jdbcTypeHandler = getEntitySQLContext().getRuntimeContext().getJdbcTypeHandlerManager().getHandler(getPropertyType());
-            ColumnFunctionReaderImpl columnReader = new ColumnFunctionReaderImpl(getPropertyType(),jdbcTypeHandler, valueConverter);
-            getEntitySQLContext().getExpressionContext().getResultValueConverterMap(true).put(propertyAlias,columnReader);
+            ColumnFunctionReaderImpl columnReader = new ColumnFunctionReaderImpl(getPropertyType(), jdbcTypeHandler, valueConverter);
+            String key = getPropertyAlias(propertyAlias, propTypeColumn.getValue());
+            resultValueConverterMap.put(key, columnReader);
             return propTypeColumn.as(propertyAlias);
         }
+    }
+
+    private String getPropertyAlias(String propertyAlias, String def) {
+        if (propertyAlias == null) {
+            if (def != null) {
+                return def;
+            }
+        }
+        return propertyAlias;
     }
 }

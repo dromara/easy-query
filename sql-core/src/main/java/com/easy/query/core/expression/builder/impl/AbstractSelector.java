@@ -125,21 +125,11 @@ public abstract class AbstractSelector<TChain> {
     }
 
     public TChain columnAs(TableAvailable table, String property, String propertyAlias) {
-        return columnAs(table,property,propertyAlias,null);
-    }
-
-    public TChain columnAs(TableAvailable table, String property, String propertyAlias, Function<?, ?> valueConverter) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
         String alias = propertyAlias == null ? null : table.getEntityMetadata().getColumnNotNull(propertyAlias).getName();
         appendColumnMetadata(table, columnMetadata, false, false, alias);
-        if (valueConverter != null) {
-            String columnName = alias == null ? columnMetadata.getName() : alias;
-            ColumnReaderImpl columnReader = new ColumnReaderImpl(table.getEntityMetadata(), columnMetadata, valueConverter);
-            expressionContext.getResultValueConverterMap(true).put(columnName, columnReader);
-        }
         return castChain();
     }
-
     public TChain columnFixedAs(TableAvailable table, String property, String propertyAlias) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
         appendColumnMetadata(table, columnMetadata, false, false, propertyAlias);

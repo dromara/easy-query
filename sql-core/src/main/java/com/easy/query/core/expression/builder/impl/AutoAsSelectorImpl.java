@@ -69,12 +69,6 @@ public class AutoAsSelectorImpl extends AbstractAsSelector<AsSelector> implement
     }
 
     @Override
-    public AsSelector columnAs(TableAvailable table, String property, String propertyAlias, Function<?, ?> valueConverter) {
-        throw new UnsupportedOperationException();
-    }
-
-
-    @Override
     public <TSubQuery> AsSelector columnSubQueryAs(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc, String propertyAlias) {
         throw new UnsupportedOperationException();
     }

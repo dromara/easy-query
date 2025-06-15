@@ -70,7 +70,6 @@ public interface AsSelector extends SelectorColumn<AsSelector>,SQLNative<AsSelec
     AsSelector columnAll(TableAvailable table);
 
     AsSelector columnAs(TableAvailable table, String property, String propertyAlias);
-    AsSelector columnAs(TableAvailable table, String property, String propertyAlias, Function<?, ?> valueConverter);
     AsSelector columnFixedAs(TableAvailable table, String property, String propertyAlias) ;
 
     <TSubQuery> AsSelector columnSubQueryAs(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc, String propertyAlias);

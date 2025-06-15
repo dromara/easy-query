@@ -132,23 +132,14 @@ public interface SQLSelectExpression extends TablePropColumn {
     }
 
     default SQLSelectAsExpression as(String propertyAlias) {
-        Function<?,?> valueConverter = getValueConverter(this);
         return new SQLSelectAsImpl(s -> {
-            s.columnAs(this.getTable(), this.getValue(), propertyAlias, valueConverter);
+            s.columnAs(this.getTable(), this.getValue(), propertyAlias);
         }, s -> {
-            s.columnAs(this.getTable(), this.getValue(), propertyAlias, valueConverter);
+            s.columnAs(this.getTable(), this.getValue(), propertyAlias);
         }, s -> {
             throw new UnsupportedOperationException();
         });
     }
-
-    static Function<?,?>  getValueConverter(SQLSelectExpression sqlSelectExpression) {
-        if (sqlSelectExpression instanceof PropValueConvertColumn) {
-            return ((PropValueConvertColumn<?, ?>) sqlSelectExpression).getValueConverter();
-        }
-        return null;
-    }
-
     default <TEntity, TR> SQLSelectAsExpression as(Property<TEntity, TR> propertyAlias) {
         return as(EasyPropertyLambdaUtil.getPropertyName(propertyAlias));
     }

@@ -124,15 +124,15 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
             if (PartResult.class.isAssignableFrom(resultMetadata.getResultClass())) {
                 dataReader = new BeanDataReader(dataReader, new PartByPropertyDataReader(resultColumnMetadata));
             } else {
-                dataReader = new BeanDataReader(dataReader, new PropertyDataReader(resultColumnMetadata, getValueConverterColumnReader(colName)));
+                dataReader = new BeanDataReader(dataReader, new PropertyDataReader(resultColumnMetadata, getValueConverterColumnReader(resultColumnMetadata)));
             }
         }
         return dataReader;
     }
 
-    private ColumnReader getValueConverterColumnReader(String colName) {
+    private ColumnReader getValueConverterColumnReader(ResultColumnMetadata resultColumnMetadata) {
         if (resultValueConverterMap != null) {
-            return resultValueConverterMap.get(colName);
+            return resultValueConverterMap.get(resultColumnMetadata.getPropertyName());
         }
         return null;
     }

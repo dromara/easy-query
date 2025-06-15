@@ -19,6 +19,14 @@ public interface ObjectTypeExpression<T> extends ColumnFuncComparableExpression<
         Class<?> propertyType = getPropertyType();
         return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), this.func(), propertyType);
     }
+
+    /**
+     * t.createTime().format("yyyy-MM").valueConvert(d -> d+"Month")
+     * 内存转换
+     * @param converter 内存转换表达式
+     * @return 返回一个呗转换后的列表达式
+     * @param <TR> 发挥类型
+     */
     default <TR> PropValueConvertColumn<TR,T> valueConvert(Function<T,TR> converter) {
         return new PropValueConvertColumnImpl<>(this,converter);
     }
