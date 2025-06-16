@@ -1,6 +1,5 @@
 package com.easy.query.core.expression.sql.include;
 
-import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.IncludeNavigateExpression;

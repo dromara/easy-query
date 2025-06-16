@@ -99,10 +99,14 @@ public class EasyUtil {
     }
 
     public static String getAnonymousPropertyNameByPropertyFirst(SQLEntityAliasSegment sqlEntityProject, TableAvailable anonymousTable) {
+
+        String alias = sqlEntityProject.getAlias();
+        if (EasyStringUtil.isNotBlank(alias)) {
+            return anonymousTable.getEntityMetadata().getPropertyNameOrNull(alias, null);
+        }
         String propertyName = sqlEntityProject.getPropertyName();
         if (propertyName != null) {
             if (sqlEntityProject instanceof FuncColumnSegment) {
-                String alias = sqlEntityProject.getAlias();
                 if (EasyStringUtil.isNotBlank(alias)) {
                     return anonymousTable.getEntityMetadata().getPropertyNameOrNull(alias, null);
                 }
@@ -110,11 +114,6 @@ public class EasyUtil {
             ColumnMetadata columnMetadata = anonymousTable.getEntityMetadata().getProperty2ColumnMap().get(propertyName);
             if (columnMetadata != null && !columnMetadata.isValueObject()) {
                 propertyName = columnMetadata.getPropertyName();
-            } else {
-                String alias = sqlEntityProject.getAlias();
-                if (EasyStringUtil.isNotBlank(alias)) {
-                    return anonymousTable.getEntityMetadata().getPropertyNameOrNull(alias, null);
-                }
             }
         }
         return propertyName;

@@ -61,6 +61,10 @@ import com.easy.query.test.entity.TopicShardingDataSourceTime;
 import com.easy.query.test.entity.TopicShardingTime;
 import com.easy.query.test.entity.m2m.UserAccount;
 import com.easy.query.test.entity.m2m.UserBook;
+import com.easy.query.test.entity.onrelation.OnRelationA;
+import com.easy.query.test.entity.onrelation.OnRelationB;
+import com.easy.query.test.entity.onrelation.OnRelationC;
+import com.easy.query.test.entity.onrelation.OnRelationD;
 import com.easy.query.test.entity.relation.BookNavigateExtraFilterStrategy;
 import com.easy.query.test.entity.testrelation.JoinType;
 import com.easy.query.test.increment.MyDatabaseIncrementSQLColumnGenerator;
@@ -256,9 +260,10 @@ public abstract class BaseTest {
         config.setCodec(codec);
         return Redisson.create(config);
     }
+
     private static NameMapper createNameMapper(String prefix) {
         return new NameMapper() {
-            public final String nameSpace = prefix + ":" ;
+            public final String nameSpace = prefix + ":";
 
             @Override
             public String map(String name) {
@@ -398,7 +403,7 @@ public abstract class BaseTest {
         {
             try {
 
-                CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(DocBankCard.class, DocBank.class, UserAccount.class, UserBook.class, DocUser.class));
+                CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(DocBankCard.class, DocBank.class, UserAccount.class, UserBook.class, DocUser.class, OnRelationA.class, OnRelationB.class, OnRelationC.class, OnRelationD.class));
                 codeFirstCommand.executeWithTransaction(a -> a.commit());
             } catch (Exception ignored) {
 
@@ -406,7 +411,7 @@ public abstract class BaseTest {
 
         }
         {
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class, UserAccount.class, UserBook.class, DocBankCard.class, DocUser.class));
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class, UserAccount.class, UserBook.class, DocBankCard.class, DocUser.class, OnRelationA.class, OnRelationB.class, OnRelationC.class, OnRelationD.class));
             codeFirstCommand.executeWithTransaction(a -> a.commit());
         }
     }

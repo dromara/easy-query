@@ -38,7 +38,7 @@ public class ColumnReaderImpl implements ColumnReader {
         Object value = EasyJdbcExecutorUtil.fromValue(resultColumnMetadata, handler.getValue(jdbcProperty, streamResultSet));
 
         if (valueConverter != null) {
-            value = valueConverter.apply(EasyObjectUtil.typeCastNotNull(value));
+            value = valueConverter.apply(EasyObjectUtil.typeCastNullable(value));
         }
         return value;
     }

@@ -31,4 +31,9 @@ public class DefaultRelationTableKey implements RelationTableKey {
     public int hashCode() {
         return Objects.hash(table, property);
     }
+
+    @Override
+    public TableAvailable getTable() {
+        return table;
+    }
 }

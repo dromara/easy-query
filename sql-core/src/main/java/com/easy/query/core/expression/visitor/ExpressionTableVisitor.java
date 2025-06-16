@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.visitor;
 
+import com.easy.query.core.expression.RelationTableKey;
+import com.easy.query.core.expression.parser.core.available.RelationTableAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 
 import java.util.HashSet;
@@ -22,6 +24,18 @@ public class ExpressionTableVisitor implements TableVisitor {
     @Override
     public void visit(TableAvailable table) {
         if (table != null) {
+            visit0(table);
+        }
+    }
+
+    private void visit0(TableAvailable table){
+        if(table instanceof RelationTableAvailable){
+            RelationTableAvailable relationTableAvailable = (RelationTableAvailable) table;
+            tables.add(table);
+            RelationTableKey relationTableKey = relationTableAvailable.getRelationTableKey();
+            TableAvailable previewTable = relationTableKey.getTable();
+            visit0(previewTable);
+        }else{
             tables.add(table);
         }
     }

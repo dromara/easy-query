@@ -37,7 +37,7 @@ public class ColumnFunctionReaderImpl implements ColumnReader {
         JdbcProperty jdbcProperty = new BasicJdbcProperty(index, propType);
         Object value = jdbcTypeHandler.getValue(jdbcProperty, streamResultSet);
         if (valueConverter != null) {
-            value = valueConverter.apply(EasyObjectUtil.typeCastNotNull(value));
+            value = valueConverter.apply(EasyObjectUtil.typeCastNullable(value));
         }
         return value;
     }

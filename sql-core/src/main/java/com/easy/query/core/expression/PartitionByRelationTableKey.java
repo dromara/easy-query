@@ -35,4 +35,9 @@ public class PartitionByRelationTableKey implements RelationTableKey {
     public int hashCode() {
         return Objects.hash(table, property, rowNumber, sqlKey);
     }
+
+    @Override
+    public TableAvailable getTable() {
+        return table;
+    }
 }

@@ -1,5 +1,7 @@
 package com.easy.query.core.expression;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
+
 import java.util.Objects;
 
 /**
@@ -9,4 +11,6 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public interface RelationTableKey {
+    TableAvailable getTable();
 }
+

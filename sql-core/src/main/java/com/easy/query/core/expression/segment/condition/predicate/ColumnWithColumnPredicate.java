@@ -8,12 +8,13 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.visitor.TableVisitor;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLExpressionUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 /**
+ * @author xuejiaming
  * @FileName: ColumnValuePredicate.java
  * @Description: 文件说明
  * create time 2023/2/14 23:34
- * @author xuejiaming
  */
 public class ColumnWithColumnPredicate implements Predicate {
     private final Column2Segment leftColumn2Segment;
@@ -28,7 +29,7 @@ public class ColumnWithColumnPredicate implements Predicate {
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        return leftColumn2Segment.toSQL(toSQLContext) +" "+ compare.getSQL() + " "+rightColumn2Segment.toSQL(toSQLContext);
+        return leftColumn2Segment.toSQL(toSQLContext) + " " + compare.getSQL() + " " + rightColumn2Segment.toSQL(toSQLContext);
     }
 
     @Override
