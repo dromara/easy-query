@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.extension.functions.type;
 
+import com.easy.query.core.expression.lambda.ValueConvertFunction;
 import com.easy.query.core.proxy.PropValueConvertColumn;
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.extension.functions.type.impl.AnyTypeExpressionImpl;
@@ -27,7 +28,7 @@ public interface ObjectTypeExpression<T> extends ColumnFuncComparableExpression<
      * @return 返回一个呗转换后的列表达式
      * @param <TR> 发挥类型
      */
-    default <TR> PropValueConvertColumn<TR,T> valueConvert(Function<T,TR> converter) {
+    default <TR> PropValueConvertColumn<TR> valueConvert(ValueConvertFunction<T,TR> converter) {
         return new PropValueConvertColumnImpl<>(this,converter);
     }
 }

@@ -1,6 +1,7 @@
 package com.easy.query.core.proxy;
 
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
+import com.easy.query.core.expression.lambda.ValueConvertFunction;
 
 import java.util.function.Function;
 
@@ -10,7 +11,6 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface PropValueConvertColumn<TRProperty, TDBProperty> extends PropTypeColumn<TRProperty> {
+public interface PropValueConvertColumn<TRProperty> extends PropTypeColumn<TRProperty> {
 
-    Function<TDBProperty,TRProperty>  getValueConverter();
 }

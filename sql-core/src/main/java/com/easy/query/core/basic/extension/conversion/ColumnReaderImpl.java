@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultColumnMetada
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
+import com.easy.query.core.expression.lambda.ValueConvertFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyJdbcExecutorUtil;
@@ -22,9 +23,9 @@ import java.util.function.Function;
 public class ColumnReaderImpl implements ColumnReader {
     private final EntityMetadata entityMetadata;
     private final ColumnMetadata columnMetadata;
-    private final Function<?, ?> valueConverter;
+    private final ValueConvertFunction<?, ?> valueConverter;
 
-    public ColumnReaderImpl(EntityMetadata entityMetadata, ColumnMetadata columnMetadata, Function<?, ?> valueConverter) {
+    public ColumnReaderImpl(EntityMetadata entityMetadata, ColumnMetadata columnMetadata, ValueConvertFunction<?, ?> valueConverter) {
         this.entityMetadata = entityMetadata;
         this.columnMetadata = columnMetadata;
         this.valueConverter = valueConverter;
@@ -38,7 +39,7 @@ public class ColumnReaderImpl implements ColumnReader {
         Object value = EasyJdbcExecutorUtil.fromValue(resultColumnMetadata, handler.getValue(jdbcProperty, streamResultSet));
 
         if (valueConverter != null) {
-            value = valueConverter.apply(EasyObjectUtil.typeCastNullable(value));
+            value = valueConverter.convert(EasyObjectUtil.typeCastNullable(value));
         }
         return value;
     }

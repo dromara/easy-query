@@ -135,6 +135,7 @@ public class QueryTest26 extends BaseTest {
         }
 
     }
+
     @Test
     public void test7() {
         List<Tuple4<String, String, LocalDateTime, LocalDateTime>> list = easyEntityQuery.queryable(BlogEntity.class)
@@ -187,16 +188,16 @@ public class QueryTest26 extends BaseTest {
 
     @Test
     public void testViewWhere2() {
-        List<TopicType1VO> list =  easyEntityQuery.queryable(Topic.class)
+        List<TopicType1VO> list = easyEntityQuery.queryable(Topic.class)
                 .innerJoin(Topic.class, (t1, t2) -> t1.id().eq(t2.id()))
-                .leftJoin(Topic.class, (t1,t2,t3) -> t1.id().eq(t3.id()))
-                .leftJoin(Topic.class, (t1,t2,t3,t4) -> t1.id().eq(t4.id()))
-                .leftJoin(Topic.class, (t1,t2,t3,t4,t5) ->t1.id().eq(t5.id()))
-                .leftJoin(Topic.class, (t1,t2,t3,t4,t5,t6) -> t1.id().eq(t6.id()))
-                .leftJoin(Topic.class, (t1,t2,t3,t4,t5,t6,t7) -> t1.id().eq(t7.id()))
-                .leftJoin(Topic.class, (t1,t2,t3,t4,t5,t6,t7,t8) -> t1.id().eq(t8.id()))
-                .leftJoin(Topic.class, (t1,t2,t3,t4,t5,t6,t7,t8,t9) -> t1.id().eq(t9.id()))
-                .select((a, b,c,d,e,f,g,h,i) -> new TopicType1VOProxy()
+                .leftJoin(Topic.class, (t1, t2, t3) -> t1.id().eq(t3.id()))
+                .leftJoin(Topic.class, (t1, t2, t3, t4) -> t1.id().eq(t4.id()))
+                .leftJoin(Topic.class, (t1, t2, t3, t4, t5) -> t1.id().eq(t5.id()))
+                .leftJoin(Topic.class, (t1, t2, t3, t4, t5, t6) -> t1.id().eq(t6.id()))
+                .leftJoin(Topic.class, (t1, t2, t3, t4, t5, t6, t7) -> t1.id().eq(t7.id()))
+                .leftJoin(Topic.class, (t1, t2, t3, t4, t5, t6, t7, t8) -> t1.id().eq(t8.id()))
+                .leftJoin(Topic.class, (t1, t2, t3, t4, t5, t6, t7, t8, t9) -> t1.id().eq(t9.id()))
+                .select((a, b, c, d, e, f, g, h, i) -> new TopicType1VOProxy()
                         .column1().set(a.id())
                         .column2().set(b.id())
                         .column3().set(b.title())
@@ -207,7 +208,7 @@ public class QueryTest26 extends BaseTest {
     }
 
     @Test
-    public void testRelationOn(){
+    public void testRelationOn() {
 
         {
 

@@ -4,6 +4,7 @@ import com.easy.query.core.basic.extension.conversion.ColumnFunctionReaderImpl;
 import com.easy.query.core.basic.extension.conversion.ColumnReader;
 import com.easy.query.core.basic.extension.conversion.ColumnReaderImpl;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
+import com.easy.query.core.expression.lambda.ValueConvertFunction;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -22,20 +23,14 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public class PropValueConvertColumnImpl<TRProperty, TDBProperty> implements PropValueConvertColumn<TRProperty, TDBProperty> {
+public class PropValueConvertColumnImpl<TRProperty, TDBProperty> implements PropValueConvertColumn<TRProperty> {
     private final PropTypeColumn<TDBProperty> propTypeColumn;
-    private final Function<TDBProperty, TRProperty> valueConverter;
+    private final ValueConvertFunction<TDBProperty, TRProperty> valueConverter;
 
-    public PropValueConvertColumnImpl(PropTypeColumn<TDBProperty> propTypeColumn, Function<TDBProperty, TRProperty> converter) {
+    public PropValueConvertColumnImpl(PropTypeColumn<TDBProperty> propTypeColumn, ValueConvertFunction<TDBProperty, TRProperty> converter) {
         this.propTypeColumn = propTypeColumn;
         this.valueConverter = converter;
     }
-
-    @Override
-    public Function<TDBProperty, TRProperty> getValueConverter() {
-        return valueConverter;
-    }
-
     @Override
     public <TR> void _setPropertyType(Class<TR> clazz) {
         this.propTypeColumn._setPropertyType(clazz);

@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy;
 
+import com.easy.query.core.expression.lambda.ValueConvertFunction;
 import com.easy.query.core.proxy.columns.SQLAnyColumn;
 import com.easy.query.core.proxy.columns.impl.SQLAnyColumnImpl;
 import com.easy.query.core.proxy.extension.ColumnComparableExpression;
@@ -45,7 +46,7 @@ public interface SQLColumn<TProxy, TProperty> extends ColumnComparableExpression
      * @return 返回一个呗转换后的列表达式
      * @param <TR> 发挥类型
      */
-    default <TR> PropValueConvertColumn<TR,TProperty> valueConvert(Function<TProperty,TR> converter) {
+    default <TR> PropValueConvertColumn<TR> valueConvert(ValueConvertFunction<TProperty,TR> converter) {
         return new PropValueConvertColumnImpl<>(this,converter);
     }
 
