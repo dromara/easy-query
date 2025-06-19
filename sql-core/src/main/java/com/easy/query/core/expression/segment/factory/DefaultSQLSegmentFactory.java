@@ -6,6 +6,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.CloneableSQLSegment;
 import com.easy.query.core.expression.segment.Column2Segment;
+import com.easy.query.core.expression.segment.Column2SegmentImpl;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.ColumnValue2Segment;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
@@ -78,37 +79,40 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
 
     @Override
     public InsertUpdateSetColumnSQLSegment createInsertColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext) {
-        Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
+//        Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
+        Column2Segment column2Segment = new Column2SegmentImpl(table, columnMetadata, expressionContext);
         ColumnValue2Segment columnValue2Segment = EasyColumnSegmentUtil.createColumnValue2Segment(table, columnMetadata, expressionContext, null);
-        return new InsertColumnSegmentImpl(column2Segment,columnValue2Segment);
+        return new InsertColumnSegmentImpl(column2Segment, columnValue2Segment);
     }
 
     @Override
-    public InsertUpdateSetColumnSQLSegment createInsertMapColumnSegment(String columnName,String mapKey, QueryRuntimeContext runtimeContext) {
-        return new InsertMapColumnSegmentImpl(columnName,mapKey, runtimeContext);
+    public InsertUpdateSetColumnSQLSegment createInsertMapColumnSegment(String columnName, String mapKey, QueryRuntimeContext runtimeContext) {
+        return new InsertMapColumnSegmentImpl(columnName, mapKey, runtimeContext);
     }
 
     @Override
     public InsertUpdateSetColumnSQLSegment createColumnWithSelfSegment(boolean increment, TableAvailable table, String propertyName, Object val, ExpressionContext expressionContext) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
+        Column2Segment columnLeftSegment = new Column2SegmentImpl(table, columnMetadata, expressionContext);
         Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
-        return new ColumnWithSelfSegmentImpl(increment, column2Segment, val);
+        return new ColumnWithSelfSegmentImpl(increment,columnLeftSegment, column2Segment, val);
     }
 
     @Override
     public InsertUpdateSetColumnSQLSegment createUpdateColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, VersionStrategy versionStrategy) {
 
-        Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
-        ColumnValue2Segment versionColumnValue2Segment = EasyColumnSegmentUtil.createColumnValue2Segment(table, columnMetadata, expressionContext,versionStrategy);
-        return new UpdateColumnSegmentImpl(column2Segment,versionColumnValue2Segment);
+        Column2Segment column2Segment = new Column2SegmentImpl(table, columnMetadata, expressionContext);
+        ColumnValue2Segment versionColumnValue2Segment = EasyColumnSegmentUtil.createColumnValue2Segment(table, columnMetadata, expressionContext, versionStrategy);
+        return new UpdateColumnSegmentImpl(column2Segment, versionColumnValue2Segment);
     }
 
     @Override
     public InsertUpdateSetColumnSQLSegment createUpdateSetColumnSegment(TableAvailable table, String propertyName, ExpressionContext expressionContext, Object val) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
-        Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
-        ColumnValue2Segment compareValue2Segment = EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext,val);
-        return new UpdateColumnSetSegmentImpl(column2Segment,compareValue2Segment);
+        Column2Segment column2Segment = new Column2SegmentImpl(table, columnMetadata, expressionContext);
+//        ColumnValue2Segment columnValue2Segment = EasyColumnSegmentUtil.createColumnValue2Segment(table, columnMetadata, expressionContext, null);
+        ColumnValue2Segment compareValue2Segment = EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, val, false, false);
+        return new UpdateColumnSetSegmentImpl(column2Segment, compareValue2Segment);
     }
 
     @Override
@@ -117,7 +121,7 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
         ColumnMetadata rightColumnMetadata = rightTable.getEntityMetadata().getColumnNotNull(rightPropertyName);
         Column2Segment leftColumn2Segment = EasyColumnSegmentUtil.createColumn2Segment(leftTable, leftColumnMetadata, expressionContext);
         Column2Segment rightColumn2Segment = EasyColumnSegmentUtil.createColumn2Segment(rightTable, rightColumnMetadata, expressionContext);
-        return new UpdateColumnSetSelfSegmentImpl(leftColumn2Segment,rightColumn2Segment);
+        return new UpdateColumnSetSelfSegmentImpl(leftColumn2Segment, rightColumn2Segment);
     }
 
     @Override

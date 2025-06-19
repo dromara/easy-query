@@ -113,6 +113,18 @@ public class EasyColumnSegmentUtil {
             return new ColumnValue2NativeSegmentImpl(table, columnMetadata, expressionContext, sqlParameter, sqlPropertyConverter.getColumnSegment());
         }
     }
+    public static ColumnValue2Segment createColumnCompareValue2Segment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, Object val, boolean isLike,boolean isCompareValue) {
+
+        SQLParameter sqlParameter =createSQLParameter(table,columnMetadata,val,isLike);
+        ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
+        if (columnValueSQLConverter == null) {
+            return new ColumnValue2SegmentImpl(table, columnMetadata, expressionContext, sqlParameter);
+        } else {
+            DefaultSQLPropertyConverter sqlPropertyConverter = new DefaultSQLPropertyConverter(table, expressionContext);
+            columnValueSQLConverter.valueConvert(table, columnMetadata, sqlParameter, sqlPropertyConverter, expressionContext.getRuntimeContext(), isCompareValue);
+            return new ColumnValue2NativeSegmentImpl(table, columnMetadata, expressionContext, sqlParameter, sqlPropertyConverter.getColumnSegment());
+        }
+    }
 
     private static SQLParameter createSQLParameter(TableAvailable table, ColumnMetadata columnMetadata, Object val, boolean isLike) {
 

@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.core.tuple.Tuple3;
@@ -8,15 +9,19 @@ import com.easy.query.core.proxy.core.tuple.Tuple9;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.dto.TopicGroupTestDTO;
 import com.easy.query.test.dto.TopicType1VO;
 import com.easy.query.test.dto.proxy.TopicType1VOProxy;
 import com.easy.query.test.dto.proxy.TopicTypeVOProxy;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.SysUserEncrypt;
+import com.easy.query.test.entity.SysUserEncrypt2;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.onrelation.OnRelationA;
 import com.easy.query.test.entity.onrelation.OnRelationD;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
+import com.google.errorprone.annotations.Var;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 import org.junit.Assert;
@@ -227,5 +232,103 @@ public class QueryTest26 extends BaseTest {
             listenerContextManager.clear();
         }
     }
+    @Test
+    public void testQuery(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        try {
 
+            List<SysUserEncrypt2> list = easyEntityQuery.queryable(SysUserEncrypt2.class)
+                    .where(t -> {
+                        t.phone().eq("123");
+                    }).orderBy(s -> s.phone().asc())
+                    .toList();
+        }catch (Exception e){
+
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`name`,AES_DECRYPT(from_base64(`phone`),?) AS `phone` FROM `sys_user2` WHERE AES_DECRYPT(from_base64(`phone`),?) = ? ORDER BY AES_DECRYPT(from_base64(`phone`),?) ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1234567890123456(String),1234567890123456(String),123(String),1234567890123456(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testQuery2(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+             easyEntityQuery.updatable(SysUserEncrypt.class)
+                    .setColumns(s -> s.phone().set("12333"))
+                    .where(t -> {
+                        t.id().eq("123eeddffrrttgga");
+                    }).executeRows();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `sys_user` SET `phone` = to_base64(AES_ENCRYPT(?,?)) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("12333(String),1234567890123456(String),123eeddffrrttgga(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testQuery3(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            easyEntityQuery.updatable(SysUserEncrypt2.class)
+                    .setColumns(s -> s.phone().set("12333"))
+                    .where(t -> {
+                        t.id().eq("123eeddffrrttgga");
+                    }).executeRows();
+        } catch (Exception e) {
+
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `sys_user2` SET `phone` = to_base64(AES_ENCRYPT(?,?)) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("12333(String),1234567890123456(String),123eeddffrrttgga(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+//    @Test
+//    public void testQuery4(){
+//        ListenerContext listenerContext = new ListenerContext();
+//        listenerContextManager.startListen(listenerContext);
+//
+//        try {
+//
+//            easyEntityQuery.updatable(SysUserEncrypt2.class)
+//                    .setColumns(s -> s.phone().increment(123))
+//                    .where(t -> {
+//                        t.id().eq("123eeddffrrttgga");
+//                    }).executeRows();
+//        } catch (Exception e) {
+//
+//        }
+//        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//        Assert.assertEquals("UPDATE `sys_user2` SET `phone` = to_base64(AES_ENCRYPT(?,?)) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("12333(String),1234567890123456(String),123eeddffrrttgga(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//        listenerContextManager.clear();
+//    }
+//    @Test
+//    public void testQuery5(){
+//        ListenerContext listenerContext = new ListenerContext();
+//        listenerContextManager.startListen(listenerContext);
+//
+//        try {
+//
+//            easyEntityQuery.updatable(SysUserEncrypt2.class)
+//                    .setColumns(s -> s.phone().set(s.phone().nullOrDefault("").concat("123")))
+//                    .where(t -> {
+//                        t.id().eq("123eeddffrrttgga");
+//                    }).executeRows();
+//        } catch (Exception e) {
+//
+//        }
+//        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//        Assert.assertEquals("UPDATE `sys_user2` SET `phone` = to_base64(AES_ENCRYPT(?,?)) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("12333(String),1234567890123456(String),123eeddffrrttgga(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//        listenerContextManager.clear();
+//    }
 }

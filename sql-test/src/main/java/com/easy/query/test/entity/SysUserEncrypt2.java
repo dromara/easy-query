@@ -10,6 +10,7 @@ import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.conversion.JavaEncryptionStrategy;
 import com.easy.query.test.conversion.MySQLAesEncrypt2ColumnValueSQLConverter;
 import com.easy.query.test.conversion.MySQLAesEncryptColumnValueSQLConverter;
+import com.easy.query.test.entity.proxy.SysUserEncrypt2Proxy;
 import com.easy.query.test.entity.proxy.SysUserEncryptProxy;
 import lombok.Data;
 
@@ -23,19 +24,12 @@ import java.util.List;
  * @author xuejiaming
  */
 @Data
-@Table("sys_user")
+@Table("sys_user2")
 @EntityProxy
-public class SysUserEncrypt implements ProxyEntityAvailable<SysUserEncrypt , SysUserEncryptProxy> {
+public class SysUserEncrypt2 implements ProxyEntityAvailable<SysUserEncrypt2, SysUserEncrypt2Proxy> {
     @Column(primaryKey = true)
     private String id;
     private String name;
-    @Column(sqlConversion = MySQLAesEncryptColumnValueSQLConverter.class)
-    private String phone;
     @Column(sqlConversion = MySQLAesEncrypt2ColumnValueSQLConverter.class)
-    private String phone2;
-    @Encryption(strategy = JavaEncryptionStrategy.class,supportQueryLike = true)
-    private String Address;
-    private LocalDateTime createTime;
-    @Navigate(value = RelationTypeEnum.OneToMany,targetProperty = "userId")
-    private List<UserBookEncrypt> books;
+    private String phone;
 }

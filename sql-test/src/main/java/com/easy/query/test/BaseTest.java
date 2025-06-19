@@ -37,6 +37,7 @@ import com.easy.query.test.conversion.EnumValueConverter;
 import com.easy.query.test.conversion.FullNameColumnValueSQLConverter;
 import com.easy.query.test.conversion.JavaEncryptionStrategy;
 import com.easy.query.test.conversion.JsonConverter;
+import com.easy.query.test.conversion.MySQLAesEncrypt2ColumnValueSQLConverter;
 import com.easy.query.test.conversion.MySQLAesEncryptColumnValueSQLConverter;
 import com.easy.query.test.conversion.StudentSizeColumnValueSQLConverter;
 import com.easy.query.test.conversion.UserAgeColumnValueSQLConverter;
@@ -220,6 +221,7 @@ public abstract class BaseTest {
 //        configuration.applyValueUpdateAtomicTrack(new IntegerNotNullValueUpdateAtomicTrack());
         configuration.applyColumnValueSQLConverter(new CertStatusColumnValueSQLConverter());
         configuration.applyColumnValueSQLConverter(new MySQLAesEncryptColumnValueSQLConverter());
+        configuration.applyColumnValueSQLConverter(new MySQLAesEncrypt2ColumnValueSQLConverter());
         configuration.applyColumnValueSQLConverter(new FullNameColumnValueSQLConverter());
         configuration.applyColumnValueSQLConverter(new UserAgeColumnValueSQLConverter());
         configuration.applyColumnValueSQLConverter(new StudentSizeColumnValueSQLConverter());

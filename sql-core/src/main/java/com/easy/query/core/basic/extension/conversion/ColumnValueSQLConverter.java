@@ -34,8 +34,8 @@ public interface ColumnValueSQLConverter {
      * where
      * 当前列被作为属性条件的时候如何处理
      * select * from table where propertyColumnConvert(column) = ?
-     * update table set propertyColumnConvert(column) = ? where ...
-     * insert into table (propertyColumnConvert(column),...) values (?,?,?)
+     * update table set column = ? where propertyColumnConvert(column) = ?..
+     * insert into table (column,...) values (?,?,?)
      *
      * @param table
      * @param columnMetadata
@@ -51,8 +51,8 @@ public interface ColumnValueSQLConverter {
      * update set
      * where
      * select * from table where propertyColumnConvert(column) = valueConvert(?)
-     * update table set propertyColumnConvert(column) = valueConvert(?) where ...
-     * insert into table (propertyColumnConvert(column),...) values (valueConvert(?),?,?)
+     * update table set column = valueConvert(?) where ...
+     * insert into table (column,...) values (valueConvert(?),?,?)
      *
      * @param table
      * @param columnMetadata
