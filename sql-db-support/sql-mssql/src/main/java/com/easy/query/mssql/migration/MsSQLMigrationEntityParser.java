@@ -4,6 +4,7 @@ import com.easy.query.core.migration.ColumnDbTypeResult;
 import com.easy.query.core.migration.DefaultMigrationEntityParser;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +36,7 @@ public class MsSQLMigrationEntityParser extends DefaultMigrationEntityParser {
         columnTypeMap.put(Byte.class, new ColumnDbTypeResult("TINYINT", null));
         columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("DECIMAL(16,2)", null));
         columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("DATETIME", null));
+        columnTypeMap.put(LocalDate.class, new ColumnDbTypeResult("DATE", null));
         columnTypeMap.put(String.class, new ColumnDbTypeResult("NVARCHAR(255)", ""));
         columnTypeMap.put(UUID.class, new ColumnDbTypeResult("uniqueidentifier", null));
     }

@@ -6,6 +6,7 @@ import com.easy.query.core.migration.ColumnDbTypeResult;
 import com.easy.query.core.migration.DefaultMigrationEntityParser;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +38,7 @@ public class ClickHouseMigrationEntityParser extends DefaultMigrationEntityParse
         columnTypeMap.put(Byte.class, new ColumnDbTypeResult("Int8", null));
         columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("Decimal(38, 19)", null));
         columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("DateTime('Asia/Shanghai')", null));
+        columnTypeMap.put(LocalDate.class, new ColumnDbTypeResult("Date32", null));
         columnTypeMap.put(String.class, new ColumnDbTypeResult("String", ""));
         columnTypeMap.put(UUID.class, new ColumnDbTypeResult("String", null));
     }

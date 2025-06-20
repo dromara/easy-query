@@ -4,6 +4,7 @@ import com.easy.query.core.migration.ColumnDbTypeResult;
 import com.easy.query.core.migration.DefaultMigrationEntityParser;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +36,7 @@ public class OracleMigrationEntityParser extends DefaultMigrationEntityParser {
         columnTypeMap.put(Byte.class, new ColumnDbTypeResult("number(3)", null));
         columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("number(16,2)", null));
         columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("timestamp(6)", null));
+        columnTypeMap.put(LocalDate.class, new ColumnDbTypeResult("date", null));
         columnTypeMap.put(String.class, new ColumnDbTypeResult("nvarchar2(255)", null));
         columnTypeMap.put(UUID.class, new ColumnDbTypeResult("char(36)", null));
     }

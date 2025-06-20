@@ -17,6 +17,7 @@ import com.easy.query.core.util.EasyStringUtil;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,6 +52,7 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
         columnTypeMap.put(Byte.class, new ColumnDbTypeResult("TINYINT(3)", null));
         columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("DECIMAL(16,2)", null));
         columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("DATETIME(3)", null));
+        columnTypeMap.put(LocalDate.class, new ColumnDbTypeResult("DATE", null));
         columnTypeMap.put(String.class, new ColumnDbTypeResult("VARCHAR(255)", null));
     }
 
