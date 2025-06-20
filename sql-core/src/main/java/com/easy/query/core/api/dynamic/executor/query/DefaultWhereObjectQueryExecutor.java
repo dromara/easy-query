@@ -1,7 +1,10 @@
 package com.easy.query.core.api.dynamic.executor.query;
 
 import com.easy.query.core.annotation.EasyWhereCondition;
+import com.easy.query.core.common.tuple.MergeTuple2;
 import com.easy.query.core.enums.SQLLikeEnum;
+import com.easy.query.core.enums.SQLPredicateCompareEnum;
+import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
@@ -20,6 +23,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -339,6 +343,30 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
                         }
                     }
                     break;
+                    case RANGE_OPEN:
+                    case RANGE_CLOSED:
+                    case RANGE_CLOSED_OPEN:
+                    case RANGE_OPEN_CLOSED: {
+                        MergeTuple2<SQLPredicateCompareEnum, SQLPredicateCompareEnum> sqlPredicateCompareEnum = EasyWhereCondition.Condition.getSQLPredicateCompareEnum(q.type());
+                        if (val.getClass().isArray()) {
+                            Object[] valArray = (Object[]) val;
+                            if (EasyArrayUtil.isNotEmpty(valArray)) {
+                                Object[] pairArray = {valArray[0], null};
+                                if (valArray.length > 1) {
+                                    pairArray[1] = valArray[1];
+                                }
+
+                                rangePairArray(pairArray, queries, filter, sqlPredicateCompareEnum);
+                            }
+                        } else {
+                            Collection<?> valCollection = (Collection<?>) val;
+                            if (EasyCollectionUtil.isNotEmpty(valCollection)) {
+                                Object[] pairArray = getPairArray(valCollection);
+                                rangePairArray(pairArray, queries, filter, sqlPredicateCompareEnum);
+                            }
+                        }
+                    }
+                    break;
                     default:
                         break;
                 }
@@ -351,12 +379,54 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
 
         }
     }
-    private SQLLikeEnum getSQLLike(EasyWhereCondition.Condition like){
-            switch (like){
-                case LIKE:return SQLLikeEnum.LIKE_PERCENT_ALL;
-                case LIKE_MATCH_LEFT:return SQLLikeEnum.LIKE_PERCENT_RIGHT;
-                case LIKE_MATCH_RIGHT:return SQLLikeEnum.LIKE_PERCENT_LEFT;
-            }
-            throw new UnsupportedOperationException("where object cant get sql like");
+
+    //数组处理
+    private void rangePairArray(Object[] pairArray, List<WhereObjectEntry> queries, FilterImpl filter, MergeTuple2<SQLPredicateCompareEnum, SQLPredicateCompareEnum> sqlPredicateCompareEnum) {
+
+        if (queries.size() > 1) {
+            filter.and(x -> {
+                for (WhereObjectEntry whereObjectEntry : queries) {
+                    if (pairArray[1] != null) {
+                        x.compare(whereObjectEntry.getTable(), whereObjectEntry.getProperty(), pairArray[0], sqlPredicateCompareEnum.t1)
+                                .and()
+                                .compare(whereObjectEntry.getTable(), whereObjectEntry.getProperty(), pairArray[1], sqlPredicateCompareEnum.t2);
+                    } else {
+                        x.compare(whereObjectEntry.getTable(), whereObjectEntry.getProperty(), pairArray[0], sqlPredicateCompareEnum.t1);
+                    }
+                }
+            });
+        } else {
+            filter.and(f -> {
+                if (pairArray[1] != null) {
+                    f.compare(queries.get(0).getTable(), queries.get(0).getProperty(), pairArray[0], sqlPredicateCompareEnum.t1)
+                            .and()
+                            .compare(queries.get(0).getTable(), queries.get(0).getProperty(), pairArray[1], sqlPredicateCompareEnum.t2);
+                } else {
+                    f.compare(queries.get(0).getTable(), queries.get(0).getProperty(), pairArray[0], sqlPredicateCompareEnum.t1);
+                }
+            });
+        }
+    }
+
+    private Object[] getPairArray(Collection<?> collection) {
+        Iterator<?> iterator = collection.iterator();
+        Object first = iterator.next();
+        Object[] array = {first, null};
+        if (iterator.hasNext()) {
+            array[1] = iterator.next();
+        }
+        return array;
+    }
+
+    private SQLLikeEnum getSQLLike(EasyWhereCondition.Condition like) {
+        switch (like) {
+            case LIKE:
+                return SQLLikeEnum.LIKE_PERCENT_ALL;
+            case LIKE_MATCH_LEFT:
+                return SQLLikeEnum.LIKE_PERCENT_RIGHT;
+            case LIKE_MATCH_RIGHT:
+                return SQLLikeEnum.LIKE_PERCENT_LEFT;
+        }
+        throw new UnsupportedOperationException("where object cant get sql like");
     }
 }

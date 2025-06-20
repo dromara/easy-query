@@ -51,6 +51,20 @@ public class BlogQueryRequest implements ObjectSort {
     private LocalDateTime publishTimeBegin;
     @EasyWhereCondition(type = EasyWhereCondition.Condition.RANGE_RIGHT_CLOSED,propName = "publishTime")
     private LocalDateTime publishTimeEnd;
+
+
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.RANGE_CLOSED)
+    private LocalDateTime[] publishTime;
+
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.RANGE_CLOSED,propName = "publishTime")
+    private List<LocalDateTime> publishTimes;
+
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.RANGE_OPEN,propName = "publishTime")
+    private List<LocalDateTime> publishTimeOpen;
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.RANGE_OPEN_CLOSED,propName = "publishTime")
+    private List<LocalDateTime> publishTimeOpenClosed;
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.RANGE_CLOSED_OPEN,propName = "publishTime")
+    private List<LocalDateTime> publishTimeClosedOpen;
     /**
      * 评分
      */

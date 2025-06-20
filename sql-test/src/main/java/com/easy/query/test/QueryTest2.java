@@ -11,8 +11,6 @@ import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.ToSQLResult;
-import com.easy.query.core.enums.AggregatePredicateCompare;
-import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -39,7 +37,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * create time 2023/6/8 21:38
@@ -1002,19 +999,55 @@ public class QueryTest2 extends BaseTest {
         blogQueryRequest.setTitle("123");
         blogQueryRequest.setContent("123");
         blogQueryRequest.setStar(123);
-        blogQueryRequest.setPublishTimeBegin(LocalDateTime.now());
-        blogQueryRequest.setPublishTimeEnd(LocalDateTime.now());
+        blogQueryRequest.setPublishTimeBegin(LocalDateTime.of(2000,2,1,0,0));
+        blogQueryRequest.setPublishTimeEnd(LocalDateTime.of(2000,3,1,0,0));
+        LocalDateTime[] array = {LocalDateTime.of(2000,1,1,0,0), LocalDateTime.of(2001,1,1,0,0)};
+        blogQueryRequest.setPublishTime(array);
+        {
+
+            List<LocalDateTime> list=Arrays.asList(LocalDateTime.of(2003,1,1,0,0), LocalDateTime.of(2004,1,1,0,0));
+            blogQueryRequest.setPublishTimes(list);
+        }
+        {
+
+            List<LocalDateTime> list=Arrays.asList(LocalDateTime.of(2005,1,1,0,0), LocalDateTime.of(2006,1,1,0,0));
+            blogQueryRequest.setPublishTimeOpen(list);
+        }
+        {
+
+            List<LocalDateTime> list=Arrays.asList(LocalDateTime.of(2007,1,1,0,0), LocalDateTime.of(2008,1,1,0,0));
+            blogQueryRequest.setPublishTimeOpenClosed(list);
+        }
+        {
+
+            List<LocalDateTime> list=Arrays.asList(LocalDateTime.of(2009,1,1,0,0), LocalDateTime.of(2010,1,1,0,0));
+            blogQueryRequest.setPublishTimeClosedOpen(list);
+        }
         blogQueryRequest.setScore(new BigDecimal("123"));
         blogQueryRequest.setStatus(1);
         blogQueryRequest.setOrder(new BigDecimal("12"));
         blogQueryRequest.setIsTop(false);
         blogQueryRequest.getOrders().add("status");
         blogQueryRequest.getOrders().add("score");
-        String sql = easyEntityQuery.queryable(BlogEntity.class)
-                .whereObject(blogQueryRequest)
-                .orderByObject(blogQueryRequest)
-                .toSQL();
-        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `title` LIKE ? AND `url` LIKE ? AND `star` = ? AND `publish_time` >= ? AND `publish_time` <= ? AND `score` >= ? AND `status` <= ? AND `order` > ? AND `is_top` <> ? ORDER BY `status` ASC,`score` ASC", sql);
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            List<BlogEntity> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                    .whereObject(blogQueryRequest)
+                    .orderByObject(blogQueryRequest).toList();
+//        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `title` LIKE ? AND `url` LIKE ? AND `star` = ? AND `publish_time` >= ? AND `publish_time` <= ? AND `score` >= ? AND `status` <= ? AND `order` > ? AND `is_top` <> ? ORDER BY `status` ASC,`score` ASC", sql);
+
+        } catch (Exception e) {
+
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `title` LIKE ? AND `url` LIKE ? AND `star` = ? AND `publish_time` >= ? AND `publish_time` <= ? AND (`publish_time` >= ? AND `publish_time` <= ?) AND (`publish_time` >= ? AND `publish_time` <= ?) AND (`publish_time` > ? AND `publish_time` < ?) AND (`publish_time` > ? AND `publish_time` <= ?) AND (`publish_time` >= ? AND `publish_time` < ?) AND `score` >= ? AND `status` <= ? AND `order` > ? AND `is_top` <> ? ORDER BY `status` ASC,`score` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),%123%(String),%123%(String),123(Integer),2000-02-01T00:00(LocalDateTime),2000-03-01T00:00(LocalDateTime),2000-01-01T00:00(LocalDateTime),2001-01-01T00:00(LocalDateTime),2003-01-01T00:00(LocalDateTime),2004-01-01T00:00(LocalDateTime),2005-01-01T00:00(LocalDateTime),2006-01-01T00:00(LocalDateTime),2007-01-01T00:00(LocalDateTime),2008-01-01T00:00(LocalDateTime),2009-01-01T00:00(LocalDateTime),2010-01-01T00:00(LocalDateTime),123(BigDecimal),1(Integer),12(BigDecimal),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 
     @Test

@@ -1,5 +1,9 @@
 package com.easy.query.core.annotation;
 
+import com.easy.query.core.common.tuple.MergeTuple2;
+import com.easy.query.core.enums.SQLPredicateCompareEnum;
+import com.easy.query.core.enums.SQLRangeEnum;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 
 import java.lang.annotation.Documented;
@@ -62,6 +66,7 @@ public @interface EasyWhereCondition {
 
     /**
      * 映射属性对应的表数组索引对应空为对应属性0
+     *
      * @return
      */
     int[] tablesIndex() default {};
@@ -115,6 +120,29 @@ public @interface EasyWhereCondition {
         , RANGE_RIGHT_CLOSED
         //equal or (a=? or a=? or a=?)
         , COLLECTION_EQUAL_OR
+        //(left..right)
+        , RANGE_OPEN
+        //[left..right]
+        , RANGE_CLOSED
+        //[left..right)
+        , RANGE_CLOSED_OPEN
+        //(left..right]
+        , RANGE_OPEN_CLOSED;
+
+
+        public static MergeTuple2<SQLPredicateCompareEnum,SQLPredicateCompareEnum> getSQLPredicateCompareEnum(Condition condition) {
+            switch (condition) {
+                case RANGE_OPEN:
+                    return new MergeTuple2<>(SQLPredicateCompareEnum.GT,SQLPredicateCompareEnum.LT);
+                case RANGE_CLOSED:
+                    return new MergeTuple2<>(SQLPredicateCompareEnum.GE,SQLPredicateCompareEnum.LE);
+                case RANGE_CLOSED_OPEN:
+                    return new MergeTuple2<>(SQLPredicateCompareEnum.GE,SQLPredicateCompareEnum.LT);
+                case RANGE_OPEN_CLOSED:
+                    return new MergeTuple2<>(SQLPredicateCompareEnum.GT,SQLPredicateCompareEnum.LE);
+            }
+            throw new EasyQueryInvalidOperationException("getSQLPredicateCompareEnum not support condition:" + condition);
+        }
     }
 
     enum Mode {

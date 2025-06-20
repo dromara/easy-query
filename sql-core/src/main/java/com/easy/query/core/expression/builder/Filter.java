@@ -95,6 +95,8 @@ public interface Filter extends SQLNative<Filter> {
      */
     Filter lt(TableAvailable table, String property, Object val);
 
+    Filter compare(TableAvailable table, String property, Object val,SQLPredicateCompareEnum sqlPredicateCompare);
+
     /**
      * column like ?val?
      * 列自定义匹配

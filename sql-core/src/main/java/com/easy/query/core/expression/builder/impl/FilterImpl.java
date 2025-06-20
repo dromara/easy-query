@@ -208,6 +208,15 @@ public class FilterImpl implements Filter {
     }
 
     @Override
+    public Filter compare(TableAvailable table, String property, Object val, SQLPredicateCompareEnum sqlPredicateCompare) {
+        if (conditionAppend(table, property, val)) {
+            appendThisPredicate(table, property, val, sqlPredicateCompare);
+            next();
+        }
+        return this;
+    }
+
+    @Override
     public Filter like(TableAvailable table, String property, Object val, SQLLikeEnum sqlLike) {
 
         if (conditionAppend(table, property, val)) {
