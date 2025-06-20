@@ -1,5 +1,6 @@
 package com.easy.query.core.common.cache;
 
+import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -52,4 +53,6 @@ public interface Cache<K, V> {
      */
     V putIfAbsent(K key, V value);
     V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction);
+
+    Collection<V> values();
 }

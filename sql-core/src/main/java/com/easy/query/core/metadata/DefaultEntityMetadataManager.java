@@ -115,4 +115,9 @@ public class DefaultEntityMetadataManager implements EntityMetadataManager {
         }
         return tableEntityMetadataCache.get(tableName);
     }
+
+    @Override
+    public List<EntityMetadata> getAllLoadedEntityMetadata() {
+        return new ArrayList<>(entityMetadataCache.values());
+    }
 }

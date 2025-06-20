@@ -35,4 +35,10 @@ public interface EntityMetadataManager {
     @Nullable
     List<EntityMetadata> getEntityMetadataList(String tableName);
 
+    /**
+     * 获取所有已加载的对象元信息
+     * @return
+     */
+    List<EntityMetadata> getAllLoadedEntityMetadata();
+
 }
