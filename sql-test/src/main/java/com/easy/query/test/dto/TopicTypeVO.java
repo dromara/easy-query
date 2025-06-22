@@ -6,6 +6,7 @@ import com.easy.query.test.conversion.EnumConverter;
 import com.easy.query.test.enums.TopicTypeEnum;
 import lombok.Data;
 import lombok.ToString;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 @Data
 @ToString
 @EntityProxy
+@FieldNameConstants
 public class TopicTypeVO {
 
     private String id;

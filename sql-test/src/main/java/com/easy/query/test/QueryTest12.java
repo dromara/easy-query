@@ -254,16 +254,6 @@ public class QueryTest12 extends BaseTest {
         Assert.assertEquals(",(String),false(Boolean),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
-        List<Map<String, Object>> list1 = easyEntityQuery.queryable(BlogEntity.class)
-                .leftJoin(Topic.class, (b, t2) -> b.id().eq(t2.id()))
-                .select((b1, t2) -> {
-                    MapProxy result = new MapProxy();
-                    result.selectAll(b1);
-                    result.selectIgnores(b1.createTime());
-                    result.put("xx", t2.createTime());
-                    return result;
-                })
-                .toList();
 
     }
 

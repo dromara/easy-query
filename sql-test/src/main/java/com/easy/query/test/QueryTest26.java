@@ -1,18 +1,16 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.MapProxy;
+import com.easy.query.api.proxy.base.TypeProxy;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.proxy.core.draft.Draft4;
-import com.easy.query.core.proxy.core.tuple.Tuple3;
 import com.easy.query.core.proxy.core.tuple.Tuple4;
-import com.easy.query.core.proxy.core.tuple.Tuple9;
-import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.dto.TopicGroupTestDTO;
 import com.easy.query.test.dto.TopicType1VO;
+import com.easy.query.test.dto.TopicTypeVO;
 import com.easy.query.test.dto.proxy.TopicType1VOProxy;
-import com.easy.query.test.dto.proxy.TopicTypeVOProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUserEncrypt;
 import com.easy.query.test.entity.SysUserEncrypt2;
@@ -21,7 +19,6 @@ import com.easy.query.test.entity.onrelation.OnRelationA;
 import com.easy.query.test.entity.onrelation.OnRelationD;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
-import com.google.errorprone.annotations.Var;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 import org.junit.Assert;
@@ -30,6 +27,7 @@ import org.junit.Test;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 /**
  * create time 2025/6/12 14:03
@@ -331,4 +329,72 @@ public class QueryTest26 extends BaseTest {
 //        Assert.assertEquals("12333(String),1234567890123456(String),123eeddffrrttgga(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 //        listenerContextManager.clear();
 //    }
+
+    @Test
+     public void testFindInSet(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+
+                    Query<String> stringQuery = easyEntityQuery.queryable(Topic.class)
+                            .where(t_topic -> {
+                                t_topic.id().eq("123");
+                                t_topic.expression().sql("find_in_set({0},{1})", c -> {
+                                    c.value(104).expression(t_topic.title());
+                                });
+                            }).selectColumn(t_topic -> t_topic.id());
+                    t_blog.id().in(stringQuery);
+
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`id` IN (SELECT t1.`id` FROM `t_topic` t1 WHERE t1.`id` = ? AND find_in_set(?,t1.`title`))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),123(String),104(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public  void testaa(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Map<String, Object>> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                .leftJoin(Topic.class, (b, t2) -> b.id().eq(t2.id()))
+                .select((b1, t2) -> {
+                    MapProxy result = new MapProxy();
+                    result.selectAll(b1);
+                    result.selectIgnores(b1.createTime());
+                    result.put("xx", t2.createTime());
+                    return result;
+                })
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top`,t1.`create_time` AS `xx` FROM `t_blog` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public  void testaa1(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<TopicTypeVO> list = easyEntityQuery.queryable(Topic.class)
+                .where(topic -> {
+                    topic.id().isNotNull();
+                }).select(topic -> new TypeProxy<>(TopicTypeVO.class)
+                        .column(TopicTypeVO.Fields.title).set(topic.id())
+                        .column(TopicTypeVO.Fields.id).set(topic.title())
+//                        .column("title").set(topic.id())
+//                        .column("id").set(topic.title())
+//                        .column(TopicTypeVO::getTitle).set(topic.id())
+//                        .column(TopicTypeVO::getId).set(topic.title())
+                ).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `title`,t.`title` AS `id` FROM `t_topic` t WHERE t.`id` IS NOT NULL", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 }
