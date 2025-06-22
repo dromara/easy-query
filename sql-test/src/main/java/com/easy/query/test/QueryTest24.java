@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.base.ClassProxy;
 import com.easy.query.api.proxy.entity.update.EntityUpdatable;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -913,6 +914,25 @@ public class QueryTest24 extends BaseTest {
         Assert.assertEquals("SELECT SUBSTR(t2.`title`,2,2) AS `value1` FROM (SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t RIGHT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id`) t2 LEFT JOIN `t_topic` t3 ON t2.`stars` = t3.`stars` WHERE t3.`stars` IS NOT NULL", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+    }
+
+    @Test
+    public void testEnum(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<TopicTypeTest1> list = easyEntityQuery.queryable(TopicTypeTest1.class)
+                .select(t -> new ClassProxy<>(TopicTypeTest1.class)
+                        .field(TopicTypeTest1.Fields.topicType).set(t.topicType())
+                ).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`topic_type` AS `topic_type` FROM `t_topic_type` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        listenerContextManager.clear();
+        for (TopicTypeTest1 topicTypeTest1 : list) {
+            Assert.assertEquals(TopicTypeEnum.CLASSER,topicTypeTest1.getTopicType());
+        }
     }
 
 

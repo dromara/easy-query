@@ -9,6 +9,7 @@ import com.easy.query.test.entity.proxy.TopicTypeTest1Proxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import lombok.Data;
 import lombok.ToString;
+import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 @Table("t_topic_type")
 @EntityFileProxy
 @ToString
+@FieldNameConstants
 public class TopicTypeTest1 implements ProxyEntityAvailable<TopicTypeTest1 , TopicTypeTest1Proxy> {
 
     @Column(primaryKey = true)
