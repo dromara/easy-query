@@ -11,12 +11,12 @@ import com.easy.query.core.util.EasyObjectUtil;
  *
  * @author xuejiaming
  */
-public class TypeProxy<T> extends AbstractProxyEntity<TypeProxy<T>, T> {
+public class ClassProxy<T> extends AbstractProxyEntity<ClassProxy<T>, T> {
 
 
     private final Class<T> entityClass;
 
-    public TypeProxy(Class<T> entityClass) {
+    public ClassProxy(Class<T> entityClass) {
         this.entityClass = entityClass;
     }
 
@@ -26,11 +26,11 @@ public class TypeProxy<T> extends AbstractProxyEntity<TypeProxy<T>, T> {
     }
 
 
-    public <TProperty> SQLAnyTypeColumn<TypeProxy<T>, TProperty> column(String property) {
-        return getAnyTypeColumn(property, EasyObjectUtil.typeCastNotNull(Object.class));
+    public <TProperty> SQLAnyTypeColumn<ClassProxy<T>, TProperty> field(String fieldName) {
+        return getAnyTypeColumn(fieldName, EasyObjectUtil.typeCastNotNull(Object.class));
     }
-    public <TProperty> SQLAnyTypeColumn<TypeProxy<T>, TProperty> column(Property<T, TProperty> property) {
-        return getAnyTypeColumn(EasyPropertyLambdaUtil.getPropertyName(property), EasyObjectUtil.typeCastNotNull(Object.class));
+    public <TProperty> SQLAnyTypeColumn<ClassProxy<T>, TProperty> field(Property<T, TProperty> fieldName) {
+        return getAnyTypeColumn(EasyPropertyLambdaUtil.getPropertyName(fieldName), EasyObjectUtil.typeCastNotNull(Object.class));
     }
 
 }

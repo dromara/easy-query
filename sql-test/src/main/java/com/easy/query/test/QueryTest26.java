@@ -1,7 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.MapProxy;
-import com.easy.query.api.proxy.base.TypeProxy;
+import com.easy.query.api.proxy.base.ClassProxy;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.proxy.core.draft.Draft4;
@@ -383,9 +383,9 @@ public class QueryTest26 extends BaseTest {
         List<TopicTypeVO> list = easyEntityQuery.queryable(Topic.class)
                 .where(topic -> {
                     topic.id().isNotNull();
-                }).select(topic -> new TypeProxy<>(TopicTypeVO.class)
-                        .column(TopicTypeVO.Fields.title).set(topic.id())
-                        .column(TopicTypeVO.Fields.id).set(topic.title())
+                }).select(topic -> new ClassProxy<>(TopicTypeVO.class)
+                        .field(TopicTypeVO.Fields.title).set(topic.id())
+                        .field(TopicTypeVO.Fields.id).set(topic.title())
 //                        .column("title").set(topic.id())
 //                        .column("id").set(topic.title())
 //                        .column(TopicTypeVO::getTitle).set(topic.id())
