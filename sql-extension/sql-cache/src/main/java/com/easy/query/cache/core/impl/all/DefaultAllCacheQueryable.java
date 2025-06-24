@@ -7,11 +7,14 @@ import com.easy.query.cache.core.Pair;
 import com.easy.query.cache.core.base.CachePredicate;
 import com.easy.query.cache.core.impl.AbstractSingleCacheQueryable;
 import com.easy.query.cache.core.queryable.AllCacheQueryable;
+import com.easy.query.cache.core.queryable.KvCacheQueryable;
 import com.easy.query.core.api.pagination.DefaultPageResult;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
+import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
@@ -30,7 +33,7 @@ import java.util.stream.Stream;
  *
  * @author xuejiaming
  */
-public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends AbstractSingleCacheQueryable<TEntity> implements AllCacheQueryable<TEntity> {
+public class DefaultAllCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEntity>, TEntity extends ProxyEntityAvailable<TEntity, T1Proxy> & CacheAllEntity> extends AbstractSingleCacheQueryable<TEntity> implements AllCacheQueryable<T1Proxy,TEntity> {
 
     private final ClientQueryable<TEntity> indexQueryable;
     public DefaultAllCacheQueryable(CacheRuntimeContext cacheRuntimeContext, Class<TEntity> entityClass) {
@@ -98,6 +101,16 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
                 .map(o -> o.getObject2());
         List<TEntity> tCacheItems = filterResult(select).skip(skip).limit(take).collect(Collectors.toList());
         return new DefaultPageResult<>(indexs.size(), tCacheItems);
+    }
+
+    @Override
+    public AllCacheQueryable<T1Proxy, TEntity> where(SQLActionExpression1<T1Proxy> whereExpression) {
+        return null;
+    }
+
+    @Override
+    public AllCacheQueryable<T1Proxy, TEntity> where(boolean condition, SQLActionExpression1<T1Proxy> whereExpression) {
+        return null;
     }
 
     protected List<Pair<String, TEntity>> doGet(Collection<String> ids) {
@@ -175,25 +188,25 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
     }
 
     @Override
-    public AllCacheQueryable<TEntity> noInterceptor() {
+    public AllCacheQueryable<T1Proxy, TEntity> noInterceptor() {
         this.functions.add(q -> q.noInterceptor());
         return this;
     }
 
     @Override
-    public AllCacheQueryable<TEntity> useInterceptor(String name) {
+    public AllCacheQueryable<T1Proxy, TEntity> useInterceptor(String name) {
         this.functions.add(q -> q.useInterceptor(name));
         return this;
     }
 
     @Override
-    public AllCacheQueryable<TEntity> noInterceptor(String name) {
+    public AllCacheQueryable<T1Proxy, TEntity> noInterceptor(String name) {
         this.functions.add(q -> q.noInterceptor(name));
         return this;
     }
 
     @Override
-    public AllCacheQueryable<TEntity> useInterceptor() {
+    public AllCacheQueryable<T1Proxy, TEntity> useInterceptor() {
         this.functions.add(q -> q.useInterceptor());
         return this;
     }
@@ -226,7 +239,7 @@ public class DefaultAllCacheQueryable<TEntity extends CacheAllEntity> extends Ab
 //                });
 //    }
 @Override
-public AllCacheQueryable<TEntity> filter(boolean condition, CachePredicate<TEntity> predicate) {
+public AllCacheQueryable<T1Proxy, TEntity> filter(boolean condition, CachePredicate<TEntity> predicate) {
     if (condition) {
         addFilter(predicate);
     }

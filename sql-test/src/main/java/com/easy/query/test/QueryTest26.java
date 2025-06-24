@@ -4,8 +4,10 @@ import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.base.ClassProxy;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.core.tuple.Tuple4;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.dto.TopicType1VO;
@@ -24,6 +26,7 @@ import lombok.experimental.FieldNameConstants;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -230,8 +233,9 @@ public class QueryTest26 extends BaseTest {
             listenerContextManager.clear();
         }
     }
+
     @Test
-    public void testQuery(){
+    public void testQuery() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         try {
@@ -241,7 +245,7 @@ public class QueryTest26 extends BaseTest {
                         t.phone().eq("123");
                     }).orderBy(s -> s.phone().asc())
                     .toList();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -250,24 +254,26 @@ public class QueryTest26 extends BaseTest {
         Assert.assertEquals("1234567890123456(String),1234567890123456(String),123(String),1234567890123456(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testQuery2(){
+    public void testQuery2() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-             easyEntityQuery.updatable(SysUserEncrypt.class)
-                    .setColumns(s -> s.phone().set("12333"))
-                    .where(t -> {
-                        t.id().eq("123eeddffrrttgga");
-                    }).executeRows();
+        easyEntityQuery.updatable(SysUserEncrypt.class)
+                .setColumns(s -> s.phone().set("12333"))
+                .where(t -> {
+                    t.id().eq("123eeddffrrttgga");
+                }).executeRows();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("UPDATE `sys_user` SET `phone` = to_base64(AES_ENCRYPT(?,?)) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("12333(String),1234567890123456(String),123eeddffrrttgga(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testQuery3(){
+    public void testQuery3() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
@@ -331,7 +337,7 @@ public class QueryTest26 extends BaseTest {
 //    }
 
     @Test
-     public void testFindInSet(){
+    public void testFindInSet() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
@@ -355,7 +361,7 @@ public class QueryTest26 extends BaseTest {
     }
 
     @Test
-    public  void testaa(){
+    public void testaa() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -375,8 +381,9 @@ public class QueryTest26 extends BaseTest {
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public  void testaa1(){
+    public void testaa1() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -384,8 +391,8 @@ public class QueryTest26 extends BaseTest {
                 .where(topic -> {
                     topic.id().isNotNull();
                 }).select(topic -> new ClassProxy<>(TopicTypeVO.class)
-                        .field(TopicTypeVO.Fields.title).set(topic.id())
-                        .field(TopicTypeVO.Fields.id).set(topic.title())
+                                .field(TopicTypeVO.Fields.title).set(topic.id())
+                                .field(TopicTypeVO.Fields.id).set(topic.title())
 //                        .column("title").set(topic.id())
 //                        .column("id").set(topic.title())
 //                        .column(TopicTypeVO::getTitle).set(topic.id())
@@ -396,5 +403,40 @@ public class QueryTest26 extends BaseTest {
         Assert.assertEquals("SELECT t.`id` AS `title`,t.`title` AS `id` FROM `t_topic` t WHERE t.`id` IS NOT NULL", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+    }
+
+    @Test
+    public void testSetConstant() {
+        List<BlogEntity> list = easyEntityQuery.queryable(Topic.class)
+                .select(t_topic -> new ClassProxy<>(BlogEntity.class)
+                        .field("id").set("123")
+                ).toList();
+        Assert.assertTrue(list.size() > 0);
+        for (BlogEntity blogEntity : list) {
+            Assert.assertEquals("123", blogEntity.getId());
+        }
+        System.out.println(list);
+    }
+
+    @Test
+    public void joiningTest() {
+        List<Draft3<String, String, String>> list = easyEntityQuery.queryable(BlogEntity.class)
+                .groupBy(t_blog -> GroupKeys.of(
+                        t_blog.title()
+                )).select(group -> Select.DRAFT.of(
+                        group.key1(),
+                        group.joining(s -> {
+                            return s.expression().caseWhen(() -> {
+                                        s.score().eq(BigDecimal.ZERO);
+                                    }).then(s.content().concat(s.url()))
+                                    .elseEnd(null);
+                        }, "|"),
+                        group.joining(s -> {
+                            return s.expression().caseWhen(() -> {
+                                        s.score().eq(BigDecimal.ONE);
+                                    }).then(s.content().concat(s.url()))
+                                    .elseEnd(null);
+                        }, "|")
+                )).toList();
     }
 }
