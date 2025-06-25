@@ -3,19 +3,16 @@ package com.easy.query.test.search;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
-import com.easy.query.core.api.dynamic.executor.search.DefaultEasySearchConfigurationProvider;
-import com.easy.query.core.api.dynamic.executor.search.EasySearch;
-import com.easy.query.core.api.dynamic.executor.search.EasySearchConfiguration;
-import com.easy.query.core.api.dynamic.executor.search.EasySearchConfigurationProvider;
-import com.easy.query.core.api.dynamic.executor.search.executor.EasySearchParamParser;
-import com.easy.query.core.api.dynamic.executor.search.executor.EasySearchQueryExecutor;
-import com.easy.query.core.api.dynamic.executor.search.meta.EasySearchMetaDataManager;
 import com.easy.query.core.basic.api.database.CodeFirstCommandTxArg;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
+import com.easy.query.search.EasySearch;
+import com.easy.query.search.EasySearchConfiguration;
+import com.easy.query.search.SearchInjectConfiguration;
+import com.easy.query.search.meta.EasySearchMetaDataManager;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
@@ -54,21 +51,24 @@ public abstract class EasySearchBaseTest {
             dataSource.setMaximumPoolSize(20);
 
             easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
-                                                   .setDefaultDataSource(dataSource)
-                                                   .optionConfigure(op -> {
-                                                       op.setDeleteThrowError(true);
-                                                       op.setDefaultDataSourceName("dt");
-                                                       op.setReverseOffsetThreshold(10);
-                                                       op.setPrintSql(true);
-                                                   })
-                                                   .useDatabaseConfigure(new MySQLDatabaseConfiguration())
-                                                   .build();
+                    .setDefaultDataSource(dataSource)
+                    .optionConfigure(op -> {
+                        op.setDeleteThrowError(true);
+                        op.setDefaultDataSourceName("dt");
+                        op.setReverseOffsetThreshold(10);
+                        op.setPrintSql(true);
+                    })
+                    .useDatabaseConfigure(new MySQLDatabaseConfiguration())
+                    .customConfigure(s -> {
+                        SearchInjectConfiguration.configure(s);
+                    })
+                    .build();
             easyEntityQuery = new DefaultEasyEntityQuery(EasySearchBaseTest.easyQueryClient);
             EasySearchConfiguration configuration =
                     EasySearchBaseTest.easyEntityQuery.getRuntimeContext()
-                                                      .getService(
-                                                              EasySearchMetaDataManager.class)
-                                                      .getConfiguration();
+                            .getService(
+                                    EasySearchMetaDataManager.class)
+                            .getConfiguration();
 
             StringBuilder opBuilder = new StringBuilder();
             configuration.getAllOp().forEach((k, v) -> {
@@ -81,7 +81,7 @@ public abstract class EasySearchBaseTest {
             codeFirst.dropTableIfExistsCommand(tableClasses).executeWithTransaction(
                     CodeFirstCommandTxArg::commit);
             codeFirst.createTableCommand(tableClasses)
-                     .executeWithTransaction(CodeFirstCommandTxArg::commit);
+                    .executeWithTransaction(CodeFirstCommandTxArg::commit);
 
             List<SysUser> users = new ArrayList<>();
             List<SysUserExt> userExts = new ArrayList<>();
@@ -142,13 +142,13 @@ public abstract class EasySearchBaseTest {
             Object... values
     ) {
         EasySearch easySearch = EasySearch.of(SysUser.class)
-                                          .param(property, first, values)
-                                          .param(property + "-op", op);
+                .param(property, first, values)
+                .param(property + "-op", op);
 
         long count = easyEntityQuery.queryable(SysUser.class)
-                                    .whereObject(easySearch)
-                                    .orderByObject(easySearch)
-                                    .count();
+                .whereObject(easySearch)
+                .orderByObject(easySearch)
+                .count();
         Assert.assertEquals(expectedCount, count);
     }
 }

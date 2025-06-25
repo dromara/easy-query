@@ -26,6 +26,7 @@
         <module>sql-extension/sql-springboot-starter</module>
         <module>sql-extension/sql-solon-plugin</module>
         <module>sql-extension/sql-cache</module>
+        <module>sql-extension/sql-search</module>
         <module>sql-db-support</module>
         <module>sql-db-support/sql-mysql</module>
         <module>sql-db-support/sql-mssql</module>

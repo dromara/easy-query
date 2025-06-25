@@ -1,16 +1,12 @@
 package com.easy.query.core.api.dynamic.executor.query;
 
 import com.easy.query.core.annotation.EasyWhereCondition;
-import com.easy.query.core.api.dynamic.executor.search.EasySearch;
-import com.easy.query.core.api.dynamic.executor.search.executor.EasySearchQueryExecutor;
 import com.easy.query.core.common.tuple.MergeTuple2;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
-import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
-import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -28,6 +24,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.ServiceLoader;
 
 /**
  * create time 2023/9/26 08:27
@@ -36,11 +33,6 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor {
-    private final EasySearchQueryExecutor easySearchQueryExecutor;
-
-    public DefaultWhereObjectQueryExecutor(EasySearchQueryExecutor easySearchQueryExecutor) {
-        this.easySearchQueryExecutor = easySearchQueryExecutor;
-    }
 
 
     private WhereObjectEntry checkStrict(EntityQueryExpressionBuilder entityQueryExpressionBuilder, boolean strictMode, String property, int tableIndex) {
@@ -131,10 +123,6 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
 
     @Override
     public void whereObject(Object object, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
-        if (object instanceof EasySearch) {
-            easySearchQueryExecutor.whereObject(object, entityQueryExpressionBuilder);
-            return;
-        }
 
         Collection<Field> allFields = EasyClassUtil.getAllFields(object.getClass());
 

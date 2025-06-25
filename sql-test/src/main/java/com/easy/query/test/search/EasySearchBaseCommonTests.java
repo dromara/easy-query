@@ -1,6 +1,6 @@
 package com.easy.query.test.search;
 
-import com.easy.query.core.api.dynamic.executor.search.EasySearch;
+import com.easy.query.search.EasySearch;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;

@@ -1,7 +1,7 @@
 package com.easy.query.test.search;
 
-import com.easy.query.core.annotation.EasyCond;
-import com.easy.query.core.api.dynamic.executor.search.op.Equals;
+import com.easy.query.search.annotation.EasyCond;
+import com.easy.query.search.op.Equals;
 import com.easy.query.test.search.proxy.SysUserProxy;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.ColumnIgnore;

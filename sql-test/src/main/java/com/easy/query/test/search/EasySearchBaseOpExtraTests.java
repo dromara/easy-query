@@ -1,8 +1,7 @@
 package com.easy.query.test.search;
 
-import com.easy.query.core.api.dynamic.executor.search.EasySearch;
-import com.easy.query.core.api.dynamic.executor.search.exception.EasySearchStatusException;
-import com.easy.query.core.exception.EasyQuerySQLCommandException;
+import com.easy.query.search.EasySearch;
+import com.easy.query.search.exception.EasySearchStatusException;
 import org.junit.Assert;
 import org.junit.Test;
 
