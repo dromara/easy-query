@@ -144,21 +144,7 @@ public abstract class AbstractBaseCacheQueryable<TEntity extends CacheEntity> im
 
 
     protected String getQueryableKey(ClientQueryable<TEntity> entityQueryable) {
-
-
-        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = entityQueryable.getSQLEntityExpressionBuilder();
-        PredicateSegment sqlWhereWithQueryFilter = sqlEntityExpressionBuilder.getSQLWhereWithQueryFilter();
-        ExpressionContext expressionContext = sqlEntityExpressionBuilder.getExpressionContext();
-        if (sqlWhereWithQueryFilter==null||EasySQLSegmentUtil.isEmpty(sqlWhereWithQueryFilter)) {
-            return cacheHashKeyFactory.getKey(null);
-        }
-        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(expressionContext.getTableContext());
-        String sql = sqlWhereWithQueryFilter.toSQL(toSQLContext);
-        List<SQLParameter> parameters = toSQLContext.getParameters();
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("sql", sql);
-        map.put("parameters", EasySQLUtil.sqlParameterToString(parameters));
-        return cacheHashKeyFactory.getKey(map);
+        return cacheHashKeyFactory.getKey(entityQueryable);
     }
 
 }

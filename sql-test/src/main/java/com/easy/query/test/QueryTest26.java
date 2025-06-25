@@ -4,6 +4,8 @@ import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.base.ClassProxy;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.func.SQLFunc;
+import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.core.tuple.Tuple4;
@@ -19,6 +21,7 @@ import com.easy.query.test.entity.SysUserEncrypt2;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.onrelation.OnRelationA;
 import com.easy.query.test.entity.onrelation.OnRelationD;
+import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
 import lombok.Data;
@@ -439,4 +442,15 @@ public class QueryTest26 extends BaseTest {
                         }, "|")
                 )).toList();
     }
+
+    @Test
+    public void updateConcat() {
+        SQLFunc fx = easyQueryClient.getRuntimeContext().fx();
+        SQLFunction concat = fx.concat(s -> s.value("DSL_").column("url"));
+        easyQueryClient.updatable(BlogEntity.class)
+                .setSQLFunction("title", concat)
+                .where(o -> o.eq("id", "1234fdcvb"))
+                .executeRows();
+    }
+
 }

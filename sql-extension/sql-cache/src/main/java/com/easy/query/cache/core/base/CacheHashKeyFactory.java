@@ -1,5 +1,6 @@
 package com.easy.query.cache.core.base;
 
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,4 +15,6 @@ import java.util.Map;
 public interface CacheHashKeyFactory {
     @NotNull
     String getKey(@Nullable Map<String, Object> map);
+    @NotNull
+    String getKey(ClientQueryable<?> entityQueryable);
 }

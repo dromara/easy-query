@@ -1,9 +1,23 @@
 package com.easy.query.cache.core.base;
 
+import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
+import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.expression.RelationTableKey;
+import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.util.EasyMD5Util;
+import com.easy.query.core.util.EasySQLSegmentUtil;
+import com.easy.query.core.util.EasySQLUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,6 +33,59 @@ public class DefaultCacheHashKeyFactory implements CacheHashKeyFactory {
         if (map == null) {
             return "{}";
         }
+        return toJson(map);
+    }
+
+    @NotNull
+    @Override
+    public String getKey(ClientQueryable<?> entityQueryable) {
+
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = entityQueryable.getSQLEntityExpressionBuilder();
+        boolean hasRelationTables = sqlEntityExpressionBuilder.hasRelationTables();
+
+        if (hasRelationTables) {
+            return getRelationSQLKey(entityQueryable);
+        } else {
+            return getSampleSQLKey(entityQueryable);
+        }
+    }
+
+    /**
+     * 条件存在关联关系的sql key
+     * @param entityQueryable
+     * @return
+     */
+    private String getRelationSQLKey(ClientQueryable<?> entityQueryable) {
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = entityQueryable.getSQLEntityExpressionBuilder();
+        ExpressionContext expressionContext = sqlEntityExpressionBuilder.getExpressionContext();
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(expressionContext.getTableContext());
+        String sql = sqlEntityExpressionBuilder.toExpression().toSQL(toSQLContext);
+        List<SQLParameter> parameters = toSQLContext.getParameters();
+        Map<String, Object> map = new LinkedHashMap<>();
+        String key = sql + ":" + EasySQLUtil.sqlParameterToString(parameters);
+        map.put("key", EasyMD5Util.getMD5Hash(key));
+        return toJson(map);
+    }
+
+    /**
+     * 无关联关系的sql key
+     * @param entityQueryable
+     * @return
+     */
+    private String getSampleSQLKey(ClientQueryable<?> entityQueryable) {
+
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = entityQueryable.getSQLEntityExpressionBuilder();
+        PredicateSegment sqlWhereWithQueryFilter = sqlEntityExpressionBuilder.getSQLWhereWithQueryFilter();
+        ExpressionContext expressionContext = sqlEntityExpressionBuilder.getExpressionContext();
+        if (sqlWhereWithQueryFilter == null || EasySQLSegmentUtil.isEmpty(sqlWhereWithQueryFilter)) {
+            return "{}";
+        }
+        ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(expressionContext.getTableContext());
+        String sql = sqlWhereWithQueryFilter.toSQL(toSQLContext);
+        List<SQLParameter> parameters = toSQLContext.getParameters();
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("sql", sql);
+        map.put("parameters", EasySQLUtil.sqlParameterToString(parameters));
         return toJson(map);
     }
 
