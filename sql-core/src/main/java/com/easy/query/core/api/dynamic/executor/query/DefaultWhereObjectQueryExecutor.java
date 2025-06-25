@@ -1,6 +1,8 @@
 package com.easy.query.core.api.dynamic.executor.query;
 
 import com.easy.query.core.annotation.EasyWhereCondition;
+import com.easy.query.core.api.dynamic.executor.search.EasySearch;
+import com.easy.query.core.api.dynamic.executor.search.executor.EasySearchQueryExecutor;
 import com.easy.query.core.common.tuple.MergeTuple2;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
@@ -34,6 +36,11 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor {
+    private final EasySearchQueryExecutor easySearchQueryExecutor;
+
+    public DefaultWhereObjectQueryExecutor(EasySearchQueryExecutor easySearchQueryExecutor) {
+        this.easySearchQueryExecutor = easySearchQueryExecutor;
+    }
 
 
     private WhereObjectEntry checkStrict(EntityQueryExpressionBuilder entityQueryExpressionBuilder, boolean strictMode, String property, int tableIndex) {
@@ -124,6 +131,10 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
 
     @Override
     public void whereObject(Object object, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+        if (object instanceof EasySearch) {
+            easySearchQueryExecutor.whereObject(object, entityQueryExpressionBuilder);
+            return;
+        }
 
         Collection<Field> allFields = EasyClassUtil.getAllFields(object.getClass());
 
