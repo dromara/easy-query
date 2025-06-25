@@ -451,6 +451,13 @@ public class QueryTest26 extends BaseTest {
                 .setSQLFunction("title", concat)
                 .where(o -> o.eq("id", "1234fdcvb"))
                 .executeRows();
+
+
+        BigDecimal bigDecimal = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(BlogEntity.class, (t_topic, t_blog) -> {
+                    t_topic.title().eq(t_blog.title());
+                })
+                .sumBigDecimalOrDefault((t_topic, t_blog) -> t_blog.score().nullOrDefault(BigDecimal.ZERO), BigDecimal.ZERO);
     }
 
 }
