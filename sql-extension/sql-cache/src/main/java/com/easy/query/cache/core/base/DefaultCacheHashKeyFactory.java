@@ -60,6 +60,7 @@ public class DefaultCacheHashKeyFactory implements CacheHashKeyFactory {
         ExpressionContext expressionContext = sqlEntityExpressionBuilder.getExpressionContext();
         ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(expressionContext.getTableContext());
         String sql = sqlEntityExpressionBuilder.toExpression().toSQL(toSQLContext);
+        //不对参数进行解压如果存在valueConverter那么需要额外展开参数这边为了性能可以不进行设置
         List<SQLParameter> parameters = toSQLContext.getParameters();
         Map<String, Object> map = new LinkedHashMap<>();
         String key = sql + ":" + EasySQLUtil.sqlParameterToString(parameters);

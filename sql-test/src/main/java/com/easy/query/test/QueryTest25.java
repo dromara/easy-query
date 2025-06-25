@@ -38,6 +38,7 @@ import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.proxy.sql.draft.Draft1Builder;
+import com.easy.query.core.util.EasyMD5Util;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyTypeUtil;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
@@ -393,6 +394,53 @@ public class QueryTest25 extends BaseTest {
             BlogEntity blogEntity = easyCacheClient.kvStorage(BlogEntity.class).filter(b -> !Objects.equals(b.getId(), "1")).singleOrNull("1");
             Assert.assertNull(blogEntity);
             Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
+            listenerContextManager.clear();
+        }
+
+        {
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            BlogEntity blogEntity = easyCacheClient.kvStorage(BlogEntity.class).where(b -> {
+                b.content().contains("123xx");
+                b.content().contains("123xx4");
+            }).singleOrNull("2");
+            Assert.assertNull(blogEntity);
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE CONCAT('%',?,'%') AND `content` LIKE CONCAT('%',?,'%') AND `id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),123xx(String),123xx4(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+            listenerContextManager.clear();
+        }
+        {
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            BlogEntity blogEntity = easyCacheClient.kvStorage(BlogEntity.class).where(b -> {
+                b.content().contains("123xx");
+            }).singleOrNull("2");
+            Assert.assertNull(blogEntity);
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `content` LIKE CONCAT('%',?,'%') AND `id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),123xx(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+            listenerContextManager.clear();
+        }
+        {
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            BlogEntity blogEntity = easyCacheClient.kvStorage(BlogEntity.class).where(b -> {
+                b.users().flatElement().phone().eq("133333");
+            }).singleOrNull("2");
+            Assert.assertNull(blogEntity);
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t WHERE t.`deleted` = ? AND EXISTS (SELECT 1 FROM `easy-query-test`.`t_sys_user` t1 WHERE t1.`id` = t.`title` AND t1.`phone` = ? LIMIT 1) AND t.`id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),Nun4XeChdyK43Ss/oLE6eQ==TAIxYGF+bNgNUIbsBsV2LA==TAIxYGF+bNgNUIbsBsV2LA==(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
+            String key = "SSELECT * FROM `t_blog` t LEFT JOIN (SELECT t1.`id` AS `id`,(CASE WHEN COUNT((CASE WHEN t1.`phone` = ? THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `easy-query-test`.`t_sys_user` t1 GROUP BY t1.`id`) t2 ON t2.`id` = t.`title` WHERE t.`deleted` = ? AND IFNULL(t2.`__any2__`,?) = ?:133333(String),1(Integer),true(Boolean),false(Boolean),false(Boolean),false(Boolean),true(Boolean)";
+            Assert.assertEquals("4d34dafc06c8c83b302136c4b7c3cf03", EasyMD5Util.getMD5Hash(key));
             listenerContextManager.clear();
         }
         System.out.println("1");
@@ -761,11 +809,12 @@ public class QueryTest25 extends BaseTest {
         List<String> list1 = easyEntityQuery.queryable(Topic.class).orderBy(t_topic -> t_topic.id().asc()).selectColumn(t_topic -> t_topic.id()).toList();
         List<String> list2 = easyEntityQuery.queryable(Topic.class).orderBy(t_topic -> t_topic.id().asc()).toList(t -> t.id());
         Assert.assertFalse(list1.isEmpty());
-        Assert.assertEquals(list1.size(),list2.size());
+        Assert.assertEquals(list1.size(), list2.size());
         for (int i = 0; i < list1.size(); i++) {
             Assert.assertEquals(list1.get(i), list2.get(i));
         }
     }
+
     @Test
     public void testOnlyIgnore() {
 
@@ -781,6 +830,7 @@ public class QueryTest25 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
     }
+
     @Test
     public void testOnlyIgnore2() {
 
@@ -796,6 +846,7 @@ public class QueryTest25 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
     }
+
     @Test
     public void testOnlyIgnore3() {
 
@@ -811,20 +862,21 @@ public class QueryTest25 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
     }
+
     @Test
     public void testToListFlat1() {
-        Exception ee=null;
+        Exception ee = null;
         try {
 
             List<String> list1 = easyEntityQuery.queryable(TestA.class)
                     .where(t -> {
                         t.aname().like("123");
                     }).toList(t -> t.bList().flatElement().cList().flatElement().cname());
-        }catch (Exception ex){
-            ee=ex;
+        } catch (Exception ex) {
+            ee = ex;
         }
         Assert.assertNotNull(ee);
-        Assert.assertEquals("com.easy.query.core.exception.EasyQuerySQLStatementException: java.sql.SQLSyntaxErrorException: Table 'easy-query-test.test_a' doesn't exist",ee.getMessage());
+        Assert.assertEquals("com.easy.query.core.exception.EasyQuerySQLStatementException: java.sql.SQLSyntaxErrorException: Table 'easy-query-test.test_a' doesn't exist", ee.getMessage());
     }
 
 }
