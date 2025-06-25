@@ -2,6 +2,11 @@ package com.easy.query.solon.integration;
 
 import com.easy.query.clickhouse.config.ClickHouseDatabaseConfiguration;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.api.dynamic.executor.search.DefaultEasySearchConfigurationProvider;
+import com.easy.query.core.api.dynamic.executor.search.EasySearchConfigurationProvider;
+import com.easy.query.core.api.dynamic.executor.search.executor.EasySearchParamParser;
+import com.easy.query.core.api.dynamic.executor.search.executor.EasySearchQueryExecutor;
+import com.easy.query.core.api.dynamic.executor.search.meta.EasySearchMetaDataManager;
 import com.easy.query.core.basic.entity.ColumnEntityMappingRule;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyEntityMappingRule;
@@ -179,6 +184,17 @@ public class DbManager {
                     builder.setIncludeLimitMode(solonEasyQueryProperties.getIncludeLimitMode());
                     builder.setSaveComment(solonEasyQueryProperties.getSaveComment());
                 });
+
+        //配置easy-search
+        easyQueryBuilderConfiguration
+                .replaceService(
+                        EasySearchConfigurationProvider.class,
+                        new DefaultEasySearchConfigurationProvider()
+                )
+                .replaceService(EasySearchMetaDataManager.class)
+                .replaceService(EasySearchParamParser.class)
+                .replaceService(EasySearchQueryExecutor.class);
+
         DatabaseConfiguration databaseConfigure = getDatabaseConfigure(solonEasyQueryProperties);
         if (databaseConfigure != null) {
             easyQueryBuilderConfiguration.useDatabaseConfigure(databaseConfigure);

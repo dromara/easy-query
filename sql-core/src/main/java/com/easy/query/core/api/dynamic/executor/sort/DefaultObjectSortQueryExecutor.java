@@ -1,5 +1,7 @@
 package com.easy.query.core.api.dynamic.executor.sort;
 
+import com.easy.query.core.api.dynamic.executor.search.EasySearch;
+import com.easy.query.core.api.dynamic.executor.search.executor.EasySearchQueryExecutor;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.dynamic.sort.internal.ObjectSortBuilderImpl;
 import com.easy.query.core.api.dynamic.sort.internal.ObjectSortEntry;
@@ -18,8 +20,19 @@ import java.util.Map;
  * @author xuejiaming
  */
 public class DefaultObjectSortQueryExecutor implements ObjectSortQueryExecutor {
+    private final EasySearchQueryExecutor easySearchQueryExecutor;
+
+    public DefaultObjectSortQueryExecutor(EasySearchQueryExecutor easySearchQueryExecutor) {
+        this.easySearchQueryExecutor = easySearchQueryExecutor;
+    }
+
     @Override
     public void orderByObject(ObjectSort objectSort, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+        if (objectSort instanceof EasySearch) {
+            easySearchQueryExecutor.orderByObject(objectSort, entityQueryExpressionBuilder);
+            return;
+        }
+
         boolean strictMode = objectSort.useStrictMode();
 
         ObjectSortBuilderImpl orderByBuilder = new ObjectSortBuilderImpl();
