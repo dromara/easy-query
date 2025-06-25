@@ -10,7 +10,7 @@ import java.util.List;
 
 
 /**
- * EasySearch»ù´¡²âÊÔ
+ * EasySearchåŸºç¡€æµ‹è¯•
  *
  * @author bkbits
  */

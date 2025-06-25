@@ -71,7 +71,7 @@ public interface EntityAggregatable9<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
                 return fx.sum(x -> {
                     PropTypeColumn.columnFuncSelector(x, propTypeColumn);
                 });
-            }, EasyObjectUtil.typeCastNullable(BigDecimal.class));
+            }, def != null ? def.getClass() : propTypeColumn.getPropertyType());
         }).toList();
         return EasyCollectionUtil.firstOrDefault(list, def);
     }
@@ -88,7 +88,7 @@ public interface EntityAggregatable9<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
                 return fx.max(x -> {
                     PropTypeColumn.columnFuncSelector(x, propTypeColumn);
                 });
-            }, EasyObjectUtil.typeCastNullable(BigDecimal.class));
+            }, def != null ? def.getClass() : propTypeColumn.getPropertyType());
         }).toList();
         return EasyCollectionUtil.firstOrDefault(list, def);
     }
@@ -105,7 +105,7 @@ public interface EntityAggregatable9<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
                 return fx.min(x -> {
                     PropTypeColumn.columnFuncSelector(x, propTypeColumn);
                 });
-            }, EasyObjectUtil.typeCastNullable(BigDecimal.class));
+            }, def != null ? def.getClass() : propTypeColumn.getPropertyType());
         }).toList();
         return EasyCollectionUtil.firstOrDefault(list, def);
     }
@@ -142,7 +142,7 @@ public interface EntityAggregatable9<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
                 return fx.avg(x -> {
                     PropTypeColumn.columnFuncSelector(x, propTypeColumn);
                 });
-            }, EasyObjectUtil.typeCastNullable(resultClass));
+            }, resultClass);
         }).toList();
         return EasyCollectionUtil.firstOrDefault(list, def);
     }

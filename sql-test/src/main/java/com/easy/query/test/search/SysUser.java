@@ -12,7 +12,7 @@ import lombok.Data;
 
 import java.util.Date;
 
-@Table
+@Table("sys_user_search")
 @EntityProxy
 @Data
 public class SysUser

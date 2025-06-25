@@ -2,11 +2,6 @@ package com.easy.query.sql.starter;
 
 import com.easy.query.clickhouse.config.ClickHouseDatabaseConfiguration;
 import com.easy.query.core.api.client.EasyQueryClient;
-import com.easy.query.core.api.dynamic.executor.search.DefaultEasySearchConfigurationProvider;
-import com.easy.query.core.api.dynamic.executor.search.EasySearchConfigurationProvider;
-import com.easy.query.core.api.dynamic.executor.search.executor.EasySearchParamParser;
-import com.easy.query.core.api.dynamic.executor.search.executor.EasySearchQueryExecutor;
-import com.easy.query.core.api.dynamic.executor.search.meta.EasySearchMetaDataManager;
 import com.easy.query.core.basic.entity.ColumnEntityMappingRule;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyEntityMappingRule;
@@ -220,15 +215,6 @@ public class SpringBootStarterBuilder {
                     if (starterConfigurer != null) {
                         starterConfigurer.configure(s);
                     }
-                })
-                .customConfigure(s -> {
-                    s.addService(
-                             EasySearchConfigurationProvider.class,
-                             new DefaultEasySearchConfigurationProvider()
-                     )
-                     .addService(EasySearchMetaDataManager.class)
-                     .addService(EasySearchParamParser.class)
-                     .addService(EasySearchQueryExecutor.class);
                 })
                 .build();
         if (easyQueryInitializeOption != null) {

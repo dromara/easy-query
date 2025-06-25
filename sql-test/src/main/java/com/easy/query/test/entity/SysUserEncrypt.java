@@ -23,7 +23,7 @@ import java.util.List;
  * @author xuejiaming
  */
 @Data
-@Table("sys_user")
+@Table("sys_user_encrypt")
 @EntityProxy
 public class SysUserEncrypt implements ProxyEntityAvailable<SysUserEncrypt , SysUserEncryptProxy> {
     @Column(primaryKey = true)
@@ -34,6 +34,7 @@ public class SysUserEncrypt implements ProxyEntityAvailable<SysUserEncrypt , Sys
     @Column(sqlConversion = MySQLAesEncrypt2ColumnValueSQLConverter.class)
     private String phone2;
     @Encryption(strategy = JavaEncryptionStrategy.class,supportQueryLike = true)
+    @Column(dbType = "varchar(4000)")
     private String Address;
     private LocalDateTime createTime;
     @Navigate(value = RelationTypeEnum.OneToMany,targetProperty = "userId")

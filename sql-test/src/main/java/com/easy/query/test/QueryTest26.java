@@ -270,7 +270,7 @@ public class QueryTest26 extends BaseTest {
                 }).executeRows();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("UPDATE `sys_user` SET `phone` = to_base64(AES_ENCRYPT(?,?)) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("UPDATE `sys_user_encrypt` SET `phone` = to_base64(AES_ENCRYPT(?,?)) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("12333(String),1234567890123456(String),123eeddffrrttgga(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }

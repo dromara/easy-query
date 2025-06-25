@@ -6,6 +6,13 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.api.def.DefaultSQLClientApiFactory;
 import com.easy.query.core.api.dynamic.executor.query.DefaultWhereObjectQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.query.WhereObjectQueryExecutor;
+import com.easy.query.core.api.dynamic.executor.search.DefaultEasySearchConfigurationProvider;
+import com.easy.query.core.api.dynamic.executor.search.EasySearchConfigurationProvider;
+import com.easy.query.core.api.dynamic.executor.search.executor.DefaultEasySearchQueryExecutor;
+import com.easy.query.core.api.dynamic.executor.search.executor.EasySearchParamParser;
+import com.easy.query.core.api.dynamic.executor.search.executor.EasySearchQueryExecutor;
+import com.easy.query.core.api.dynamic.executor.search.meta.DefaultEasySearchMetaDataManager;
+import com.easy.query.core.api.dynamic.executor.search.meta.EasySearchMetaDataManager;
 import com.easy.query.core.api.dynamic.executor.sort.DefaultObjectSortQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
 import com.easy.query.core.basic.api.cte.CteTableNamedProvider;
@@ -163,7 +170,7 @@ public class EasyQueryBuilderConfiguration {
     }
 
     private void defaultConfiguration() {
-                replaceService(EasyQueryDataSource.class, DefaultEasyQueryDataSource.class)
+        replaceService(EasyQueryDataSource.class, DefaultEasyQueryDataSource.class)
                 .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
                 .replaceService(NameConversion.class, UnderlinedNameConversion.class)
                 .replaceService(QueryConfiguration.class)
@@ -232,7 +239,10 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(RelationNullValueValidator.class, DefaultRelationNullValueValidator.class)
                 .replaceService(SQLCaseWhenBuilderFactory.class, DefaultSQLCaseWhenBuilderFactory.class)
 //                .replaceService(NavigateNamedGuess.class, DefaultNavigateNamedGuess.class)
-                .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
+                .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class)
+                .replaceService(EasySearchMetaDataManager.class, DefaultEasySearchMetaDataManager.class)
+                .replaceService(EasySearchQueryExecutor.class, DefaultEasySearchQueryExecutor.class)
+                .replaceService(EasySearchConfigurationProvider.class, DefaultEasySearchConfigurationProvider.class);
     }
 
     public EasyQueryBuilderConfiguration setDefaultDataSource(DataSource dataSource) {

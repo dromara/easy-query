@@ -53,6 +53,7 @@ import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.LogicDelTopic;
 import com.easy.query.test.entity.LogicDelTopicCustom;
 import com.easy.query.test.entity.SysUser;
+import com.easy.query.test.entity.SysUserEncrypt;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAuto;
 import com.easy.query.test.entity.TopicInterceptor;
@@ -405,7 +406,7 @@ public abstract class BaseTest {
         {
             try {
 
-                CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(DocBankCard.class, DocBank.class, UserAccount.class, UserBook.class, DocUser.class, OnRelationA.class, OnRelationB.class, OnRelationC.class, OnRelationD.class));
+                CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(SysUserEncrypt.class,DocBankCard.class, DocBank.class, UserAccount.class, UserBook.class, DocUser.class, OnRelationA.class, OnRelationB.class, OnRelationC.class, OnRelationD.class));
                 codeFirstCommand.executeWithTransaction(a -> a.commit());
             } catch (Exception ignored) {
 
@@ -413,7 +414,7 @@ public abstract class BaseTest {
 
         }
         {
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class, UserAccount.class, UserBook.class, DocBankCard.class, DocUser.class, OnRelationA.class, OnRelationB.class, OnRelationC.class, OnRelationD.class));
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUserEncrypt.class,DocBank.class, UserAccount.class, UserBook.class, DocBankCard.class, DocUser.class, OnRelationA.class, OnRelationB.class, OnRelationC.class, OnRelationD.class));
             codeFirstCommand.executeWithTransaction(a -> a.commit());
         }
     }

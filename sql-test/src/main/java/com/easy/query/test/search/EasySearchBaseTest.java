@@ -62,13 +62,6 @@ public abstract class EasySearchBaseTest {
                                                        op.setPrintSql(true);
                                                    })
                                                    .useDatabaseConfigure(new MySQLDatabaseConfiguration())
-                                                   .replaceService(
-                                                           EasySearchConfigurationProvider.class,
-                                                           new DefaultEasySearchConfigurationProvider()
-                                                   )
-                                                   .replaceService(EasySearchMetaDataManager.class)
-                                                   .replaceService(EasySearchParamParser.class)
-                                                   .replaceService(EasySearchQueryExecutor.class)
                                                    .build();
             easyEntityQuery = new DefaultEasyEntityQuery(EasySearchBaseTest.easyQueryClient);
             EasySearchConfiguration configuration =

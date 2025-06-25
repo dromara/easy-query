@@ -9,7 +9,7 @@ import com.easy.query.core.annotation.Table;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import lombok.Data;
 
-@Table
+@Table("sys_user_search_ext")
 @EntityProxy
 @Data
 public class SysUserExt
