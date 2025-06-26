@@ -3,8 +3,8 @@ package com.easy.query.search;
 import com.easy.query.search.op.Op;
 import com.easy.query.search.option.EasySearchOption;
 import com.easy.query.search.param.EasySearchParamMapProvider;
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashMap;
