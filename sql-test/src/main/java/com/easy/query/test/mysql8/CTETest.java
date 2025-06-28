@@ -185,4 +185,74 @@ public class CTETest extends BaseTest {
         Assert.assertEquals("2(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+    @Test
+    public void cteJoinTest7() {
+
+
+        EntityQueryable<M8UserProxy, M8User> cteTTTAs = easyEntityQuery.queryable(M8User.class)
+                .where(m -> {
+                    m.age().eq(12);
+                }).useInterceptor("aaaaxx").toCteAs("ttt");
+        EntityQueryable<M8UserProxy, M8User> cteYYYAs = easyEntityQuery.queryable(M8User.class)
+                .where(m -> {
+                    m.age().eq(13);
+                }).toCteAs("yyy");
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft2<String, String>> list = cteTTTAs.leftJoin(cteYYYAs, (m, m2) -> m.age().eq(m2.age()))
+                .where((m1, m2) -> {
+                    m1.name().like("123");
+                    m2.name().like("456");
+                }).select((m1, m2) -> Select.DRAFT.of(
+                        m1.name(),
+                        m2.name()
+                )).toList();
+
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("WITH `ttt` AS (SELECT t.`id`,t.`name`,t.`age`,t.`create_time` FROM `m8_user` t WHERE t.`name` = ? AND t.`age` = ?) ,`yyy` AS (SELECT t2.`id`,t2.`name`,t2.`age`,t2.`create_time` FROM `m8_user` t2 WHERE t2.`age` = ?) SELECT t1.`name` AS `value1`,t3.`name` AS `value2` FROM `ttt` t1 LEFT JOIN `yyy` t3 ON t3.`name` = ? AND t1.`age` = t3.`age` WHERE t1.`name` = ? AND t1.`name` LIKE ? AND t3.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),12(Integer),13(Integer),123(String),123(String),%123%(String),%456%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void cteJoinTest8() {
+
+
+        EntityQueryable<M8UserProxy, M8User> cteTTTAs = easyEntityQuery.queryable(M8User.class)
+                .where(m -> {
+                    m.age().eq(12);
+                }).toCteAs("ttt").useInterceptor("aaaaxx");
+        EntityQueryable<M8UserProxy, M8User> cteYYYAs = easyEntityQuery.queryable(M8User.class)
+                .where(m -> {
+                    m.age().eq(13);
+                }).toCteAs("yyy");
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft2<String, String>> list = cteTTTAs.leftJoin(cteYYYAs, (m, m2) -> m.age().eq(m2.age()))
+                .where((m1, m2) -> {
+                    m1.name().like("123");
+                    m2.name().like("456");
+                }).select((m1, m2) -> Select.DRAFT.of(
+                        m1.name(),
+                        m2.name()
+                )).toList();
+
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("WITH `ttt` AS (SELECT t.`id`,t.`name`,t.`age`,t.`create_time` FROM `m8_user` t WHERE t.`age` = ?) ,`yyy` AS (SELECT t2.`id`,t2.`name`,t2.`age`,t2.`create_time` FROM `m8_user` t2 WHERE t2.`age` = ?) SELECT t1.`name` AS `value1`,t3.`name` AS `value2` FROM `ttt` t1 LEFT JOIN `yyy` t3 ON t3.`name` = ? AND t1.`age` = t3.`age` WHERE t1.`name` = ? AND t1.`name` LIKE ? AND t3.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("12(Integer),13(Integer),123(String),123(String),%123%(String),%456%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
 }

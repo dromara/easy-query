@@ -9,9 +9,8 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  *
  * @author xuejiaming
  */
-public interface ManyPropColumn<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends PropColumn {
+public interface ManyPropColumn<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends PropColumn,ProxyNavValueAvailable {
 
-    String getNavValue();
 
     T1Proxy getProxy();
     TableAvailable getOriginalTable();

@@ -1,6 +1,7 @@
 package com.easy.query.test.mysql8;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -8,6 +9,7 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.inject.impl.ServiceCollectionImpl;
+import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
 import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.part.proxy.Part1Proxy;
@@ -326,5 +328,36 @@ public class MySQL8Test2 extends BaseTest {
 
                 }).toList();
 
+    }
+
+    @Test
+    public void testPageSelectSubQueryCount(){
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        EasyPageResult<Draft2<String, Long>> pageResult = easyEntityQuery.queryable(SysBank.class)
+                .subQueryToGroupJoin(s -> s.bankCards())
+                .select(bank -> Select.DRAFT.of(
+                        bank.id(),
+                        bank.bankCards().count()
+                )).toPageResult(1, 10);
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT COUNT(*) FROM `t_bank` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("绍兴市(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+//                    Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`id` AS `value1`,IFNULL(t2.`__count2__`,0) AS `value2` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,COUNT(*) AS `__count2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` LIMIT 3", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("绍兴市(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
     }
 }

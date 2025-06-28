@@ -29,6 +29,7 @@ import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
+import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelector;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelectorImpl;
 import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
@@ -44,6 +45,7 @@ import com.easy.query.core.proxy.extension.functions.type.impl.StringTypeExpress
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
+import com.easy.query.core.proxy.sql.IncludeManyExpression;
 import com.easy.query.core.util.EasySQLUtil;
 
 import java.math.BigDecimal;
@@ -462,4 +464,5 @@ public class Expression {
     public <TProperty> AnyTypeExpression<TProperty> constantOfNull() {
         return new AnyTypeExpressionImpl<>(this.entitySQLContext, null, null, f -> f.constValue(0), Object.class);
     }
+
 }

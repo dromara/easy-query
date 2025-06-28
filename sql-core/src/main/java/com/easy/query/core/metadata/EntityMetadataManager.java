@@ -32,6 +32,12 @@ public interface EntityMetadataManager {
 
     boolean isOnlyShardingDataSource(Class<?> entityClass);
 
+    /**
+     * 根据表名获取已加载对象信息
+     * 因为多个对象可以同时指向一张表
+     * @param tableName
+     * @return
+     */
     @Nullable
     List<EntityMetadata> getEntityMetadataList(String tableName);
 

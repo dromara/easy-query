@@ -1,18 +1,22 @@
 package com.easy.query.core.util;
 
 import com.easy.query.core.annotation.ExpressionArg;
+import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.extension.conversion.ExpArg;
 import com.easy.query.core.basic.extension.conversion.ExpArgTypeEnum;
 import com.easy.query.core.basic.jdbc.executor.internal.common.GroupByValue;
 import com.easy.query.core.basic.jdbc.executor.internal.common.GroupByValueImpl;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.parser.core.available.IncludeAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.IncludePathTreeNode;
+import com.easy.query.core.metadata.PathTreeBuilder;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -230,6 +234,34 @@ public class EasyUtil {
         }
 
         return val;
+    }
+
+    public static void includeMany(ClientQueryable<?> clientQueryable, IncludePathTreeNode treeNode) {
+
+        for (IncludePathTreeNode child : treeNode.getChildren()) {
+            clientQueryable.include(t -> {
+                ClientQueryable<?> with = t.with(child.getName(), null);
+                IncludePathTreeNode.IncludeFunction includeFunction = child.getIncludeFunction();
+                if (includeFunction != null) {
+                    for (Function<ClientQueryable<?>, ClientQueryable<?>> function : includeFunction.functions) {
+                        function.apply(with);
+                    }
+                }
+                includeMany(with, child);
+                return with;
+            });
+        }
+    }
+
+    public static IncludePathTreeNode getIncludePathTreeRoot(IncludeAvailable includeAvailable) {
+
+        List<IncludeAvailable> includes = includeAvailable.getIncludes();
+        IncludePathTreeNode root = new IncludePathTreeNode("EASY-QUERY-INCLUDE-ROOT");
+        for (IncludeAvailable include : includes) {
+            String[] paths = include.getNavValue().split("\\.");
+            PathTreeBuilder.insertPath(root, paths, new IncludePathTreeNode.IncludeFunction(include.getFunctions()));
+        }
+        return root;
     }
 }
 

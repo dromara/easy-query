@@ -2,8 +2,10 @@ package com.easy.query.core.common.cache;
 
 import com.easy.query.core.util.EasyMapUtil;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -14,7 +16,7 @@ import java.util.function.Function;
  * create time 2023/2/11 10:14
  */
 public class DefaultMemoryCache<K, V> implements Cache<K, V> {
-    private final ConcurrentHashMap<K, V> map = new ConcurrentHashMap<K, V>();
+    private final ConcurrentHashMap<K, V> map = new ConcurrentHashMap<>();
 
     @Override
     public V get(K key) {

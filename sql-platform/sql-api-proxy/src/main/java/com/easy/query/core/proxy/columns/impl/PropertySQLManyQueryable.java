@@ -63,7 +63,7 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public SQLManyQueryable<TProxy,T1Proxy, T1> orderBy(boolean condition, SQLActionExpression1<T1Proxy> orderExpression) {
+    public SQLManyQueryable<TProxy, T1Proxy, T1> orderBy(boolean condition, SQLActionExpression1<T1Proxy> orderExpression) {
         if (condition) {
             subQueryContext.appendOrderByExpression(orderExpression);
         }
@@ -72,15 +72,15 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public T1Proxy element(int index) {
-        return DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext,index);
+        return DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext, index);
 //        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubQuerySQLQueryableFactory.INSTANCE.create(subQueryContext);
 //        return sqlQueryable.element(index);
     }
 
     @Override
     public SQLQueryable<T1Proxy, T1> elements(boolean condition, int fromIndex, int toIndex) {
-        if(condition){
-            subQueryContext.elements(fromIndex,toIndex);
+        if (condition) {
+            subQueryContext.elements(fromIndex, toIndex);
             SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
             return sqlQueryable;
         }
@@ -95,12 +95,12 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public SQLManyQueryable<TProxy, T1Proxy, T1> useLogicDelete(boolean enable) {
-        subQueryContext.appendConfigureExpression(s->s.useLogicDelete(enable));
+        subQueryContext.appendConfigureExpression(s -> s.useLogicDelete(enable));
         return this;
     }
 
     @Override
-    public SQLManyQueryable<TProxy,T1Proxy, T1> where(SQLActionExpression1<T1Proxy> whereExpression) {
+    public SQLManyQueryable<TProxy, T1Proxy, T1> where(SQLActionExpression1<T1Proxy> whereExpression) {
         subQueryContext.appendWhereExpression(whereExpression);
         return this;
     }

@@ -110,7 +110,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.IncludeNavigateParams;
-import com.easy.query.core.metadata.MappingPathTreeBuilder;
+import com.easy.query.core.metadata.PathTreeBuilder;
 import com.easy.query.core.metadata.MappingPathTreeNode;
 import com.easy.query.core.metadata.NavigateFlatMetadata;
 import com.easy.query.core.metadata.NavigateJoinMetadata;
@@ -910,7 +910,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         MappingPathTreeNode root = new MappingPathTreeNode("EASY-QUERY-ROOT");
         for (NavigateFlatMetadata navigateFlatMetadata : navigateFlatMetadataCollection) {
             String[] mappingPath = navigateFlatMetadata.getMappingPath();
-            MappingPathTreeBuilder.insertPath(root, mappingPath, navigateFlatMetadata, path -> {
+            PathTreeBuilder.insertPath(root, mappingPath, navigateFlatMetadata, path -> {
                 NavigateMetadata navigateOrNull = navigateEntityMetadata.getNavigateOrNull(path);
                 if (navigateOrNull != null) {
                     //当查询结果vo、dto里面的导航对象和导航对象的属性在同一级那么是不被允许的

@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DefaultEntityMetadataManager implements EntityMetadataManager {
     private final Cache<Class<?>, EntityMetadata> entityMetadataCache = new DefaultMemoryCache<>();
+    //一个表名可能对应多个表实体
     private final Map<String, List<EntityMetadata>> tableEntityMetadataCache = new ConcurrentHashMap<>();
     private final ServiceProvider serviceProvider;
     private final MapColumnNameChecker mapColumnNameChecker;

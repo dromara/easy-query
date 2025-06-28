@@ -22,6 +22,7 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
 
     /**
      * 请使用{@link #first()}
+     *
      * @return
      */
     @Deprecated
@@ -31,6 +32,7 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
 
     /**
      * 一对多或者多对多子查询获取第一个元素
+     *
      * @return
      */
     default T1Proxy first() {
@@ -75,7 +77,6 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
     }
 
     /**
-     *
      * <blockquote><pre>
      * {@code
      *     new MyUserVOProxy()
@@ -88,11 +89,12 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
      *        })
      * }
      * </pre></blockquote>
+     *
      * @param columnProxy
      * @param navigateSelectExpression
-     * @return
      * @param <TPropertyProxy>
      * @param <TProperty>
+     * @return
      */
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> TProxy set(SQLQueryable<TPropertyProxy, TProperty> columnProxy, SQLActionExpression2<T1Proxy, TPropertyProxy> navigateSelectExpression) {
         DefaultSubquerySQLQueryableFactory.dslNavigatesSet(columnProxy);
@@ -102,7 +104,5 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
         getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(columnProxy.getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy.getProxy(), t1Proxy, navigateSelectExpression));
         return EasyObjectUtil.typeCastNullable(this.getSubQueryContext().getLeftTableProxy());
     }
-
-
 
 }

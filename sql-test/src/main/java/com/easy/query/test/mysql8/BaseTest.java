@@ -24,6 +24,7 @@ import com.easy.query.test.mysql8.entity.M8Child;
 import com.easy.query.test.mysql8.entity.M8Comment;
 import com.easy.query.test.mysql8.entity.M8Parent;
 import com.easy.query.test.mysql8.entity.M8ParentChild;
+import com.easy.query.test.mysql8.entity.QueryInterceptor;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
@@ -99,6 +100,7 @@ public class BaseTest {
         QueryConfiguration queryConfiguration = easyQueryClient.getRuntimeContext().getQueryConfiguration();
         queryConfiguration.applyRelationPropertyProvider(FindInSetRelationToImplicitProvider.INSTANCE);
         queryConfiguration.applyInterceptor(new M8Interceptor());
+        queryConfiguration.applyInterceptor(new QueryInterceptor());
         easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
         beforex();
     }

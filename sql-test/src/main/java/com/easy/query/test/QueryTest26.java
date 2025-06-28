@@ -6,10 +6,12 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.proxy.columns.SQLManyQueryable;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.core.tuple.Tuple4;
 import com.easy.query.core.proxy.sql.GroupKeys;
+import com.easy.query.core.proxy.sql.Include;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.dto.TopicType1VO;
@@ -21,8 +23,11 @@ import com.easy.query.test.entity.SysUserEncrypt2;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.onrelation.OnRelationA;
 import com.easy.query.test.entity.onrelation.OnRelationD;
-import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
+import com.easy.query.test.entity.school.SchoolClass;
+import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
+import com.easy.query.test.entity.school.proxy.SchoolStudentAddressProxy;
+import com.easy.query.test.entity.school.proxy.SchoolTeacherProxy;
 import com.easy.query.test.listener.ListenerContext;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
@@ -459,5 +464,19 @@ public class QueryTest26 extends BaseTest {
                 })
                 .sumBigDecimalOrDefault((t_topic, t_blog) -> t_blog.score().nullOrDefault(BigDecimal.ZERO), BigDecimal.ZERO);
     }
+    @Test
+    public void includeFlat() {
+
+        List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
+                .includeMany(s -> {
+                    return new Include<>(s.schoolTeachers().flatElement().schoolClasses())
+                            .where(a -> a.name().like("123"))
+                            .thenInclude(s.schoolStudents().flatElement().schoolClass())
+                            .where(x -> x.schoolStudents().flatElement().name().eq("123"))
+                            .thenInclude(s.schoolStudents())
+                            .where(x -> x.name().eq("123"));
+                }).toList();
+    }
+
 
 }
