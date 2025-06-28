@@ -6,35 +6,20 @@ import com.easy.query.cache.core.CacheRuntimeContext;
 import com.easy.query.cache.core.EasyCacheManager;
 import com.easy.query.cache.core.Pair;
 import com.easy.query.cache.core.annotation.CacheEntitySchema;
-import com.easy.query.cache.core.base.CacheHashKeyFactory;
+import com.easy.query.cache.core.base.CacheKeyFactory;
 import com.easy.query.cache.core.base.CachePredicate;
 import com.easy.query.cache.core.queryable.CacheQueryable;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.WherePredicate;
-import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
-import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
-import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.EasySQLExpressionUtil;
-import com.easy.query.core.util.EasySQLSegmentUtil;
-import com.easy.query.core.util.EasySQLUtil;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -49,7 +34,7 @@ public abstract class AbstractBaseCacheQueryable<TEntity extends CacheEntity> im
     protected final EasyCacheManager easyCacheManager;
     protected final EasyQueryClient easyQueryClient;
     protected final ServiceProvider serviceProvider;
-    protected final CacheHashKeyFactory cacheHashKeyFactory;
+    protected final CacheKeyFactory cacheKeyFactory;
     protected final Class<TEntity> entityClass;
     protected final CacheEntitySchema cacheEntitySchema;
     protected final QueryRuntimeContext runtimeContext;
@@ -64,7 +49,7 @@ public abstract class AbstractBaseCacheQueryable<TEntity extends CacheEntity> im
         this.easyCacheOption = cacheRuntimeContext.getEasyCacheOption();
         this.easyCacheManager = cacheRuntimeContext.getEasyCacheManager();
         this.easyQueryClient = cacheRuntimeContext.getEasyQueryClient();
-        this.cacheHashKeyFactory = serviceProvider.getService(CacheHashKeyFactory.class);
+        this.cacheKeyFactory = serviceProvider.getService(CacheKeyFactory.class);
         this.runtimeContext = this.easyQueryClient.getRuntimeContext();
         this.entityClass = entityClass;
         this.entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(entityClass);
@@ -144,7 +129,7 @@ public abstract class AbstractBaseCacheQueryable<TEntity extends CacheEntity> im
 
 
     protected String getQueryableKey(ClientQueryable<TEntity> entityQueryable) {
-        return cacheHashKeyFactory.getKey(entityQueryable);
+        return cacheKeyFactory.getKey(entityQueryable);
     }
 
 }

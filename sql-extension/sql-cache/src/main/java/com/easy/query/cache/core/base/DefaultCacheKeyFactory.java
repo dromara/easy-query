@@ -4,10 +4,8 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.util.EasyMD5Util;
 import com.easy.query.core.util.EasySQLSegmentUtil;
@@ -26,7 +24,7 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public class DefaultCacheHashKeyFactory implements CacheHashKeyFactory {
+public class DefaultCacheKeyFactory implements CacheKeyFactory {
     @NotNull
     @Override
     public String getKey(@Nullable Map<String, Object> map) {
@@ -41,6 +39,7 @@ public class DefaultCacheHashKeyFactory implements CacheHashKeyFactory {
     public String getKey(ClientQueryable<?> entityQueryable) {
 
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = entityQueryable.getSQLEntityExpressionBuilder();
+        //只有单表查询形状的情况下判定是否存在关联关系表的筛选如果有那么应该将整个表达式作为一个缓存key如果没有则可以使用where条件来做关系key
         boolean hasRelationTables = sqlEntityExpressionBuilder.hasRelationTables();
 
         if (hasRelationTables) {
@@ -86,6 +85,7 @@ public class DefaultCacheHashKeyFactory implements CacheHashKeyFactory {
         List<SQLParameter> parameters = toSQLContext.getParameters();
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("sql", sql);
+        //直接获取参数如果存在valueConverter那么不会额外展开参数
         map.put("parameters", EasySQLUtil.sqlParameterToString(parameters));
         return toJson(map);
     }

@@ -1,6 +1,6 @@
 package com.easy.query.cache.core;
 
-import com.easy.query.cache.core.base.CacheHashKeyFactory;
+import com.easy.query.cache.core.base.CacheKeyFactory;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.inject.ServiceProvider;
 
@@ -15,19 +15,19 @@ public class CacheRuntimeContext {
     private final EasyCacheOption easyCacheOption;
     private final EasyQueryClient easyQueryClient;
     private final ServiceProvider serviceProvider;
-    private final CacheHashKeyFactory cacheHashKeyFactory;
+    private final CacheKeyFactory cacheKeyFactory;
 
     public CacheRuntimeContext(
             ServiceProvider serviceProvider,
             EasyCacheManager easyCacheManager,
             EasyCacheOption easyCacheOption,
             EasyQueryClient easyQueryClient,
-            CacheHashKeyFactory cacheHashKeyFactory) {
+            CacheKeyFactory cacheKeyFactory) {
         this.easyCacheManager = easyCacheManager;
         this.easyCacheOption = easyCacheOption;
         this.easyQueryClient = easyQueryClient;
         this.serviceProvider = serviceProvider;
-        this.cacheHashKeyFactory = cacheHashKeyFactory;
+        this.cacheKeyFactory = cacheKeyFactory;
     }
 
     public EasyCacheManager getRedisManager() {
@@ -49,7 +49,7 @@ public class CacheRuntimeContext {
     public ServiceProvider getServiceProvider() {
         return serviceProvider;
     }
-    public CacheHashKeyFactory getCacheHashKeyFactory() {
-        return cacheHashKeyFactory;
+    public CacheKeyFactory getCacheHashKeyFactory() {
+        return cacheKeyFactory;
     }
 }

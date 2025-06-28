@@ -114,8 +114,11 @@ public interface EntityIncludeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
             IncludeAvailable includeAvailable = navigateIncludeSQLExpression.apply(t1Proxy);
             includeAvailableValueHolder.setValue(includeAvailable);
         });
-        IncludePathTreeNode includePathTreeRoot = EasyUtil.getIncludePathTreeRoot(includeAvailableValueHolder.getValue());
-        EasyUtil.includeMany(this.getClientQueryable(), includePathTreeRoot);
+        IncludeAvailable value = includeAvailableValueHolder.getValue();
+        if(value!=null){
+            IncludePathTreeNode includePathTreeRoot = EasyUtil.getIncludePathTreeRoot(value);
+            EasyUtil.includeMany(this.getClientQueryable(), includePathTreeRoot);
+        }
         return getQueryable();
     }
 }

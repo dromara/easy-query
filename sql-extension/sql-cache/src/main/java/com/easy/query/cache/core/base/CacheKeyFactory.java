@@ -12,7 +12,7 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public interface CacheHashKeyFactory {
+public interface CacheKeyFactory {
     @NotNull
     String getKey(@Nullable Map<String, Object> map);
     @NotNull
