@@ -4,6 +4,7 @@ import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.api.proxy.extension.casewhen.CaseWhenEntityBuilder;
+import com.easy.query.api.proxy.extension.casewhen.SQLMapExpression;
 import com.easy.query.api.proxy.extension.casewhen.CaseWhenThenEntityBuilder;
 import com.easy.query.api.proxy.extension.partition.AvgOverBuilder;
 import com.easy.query.api.proxy.extension.partition.CountOverBuilder;
@@ -29,7 +30,6 @@ import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
-import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelector;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelectorImpl;
 import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
@@ -45,7 +45,6 @@ import com.easy.query.core.proxy.extension.functions.type.impl.StringTypeExpress
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
-import com.easy.query.core.proxy.sql.IncludeManyExpression;
 import com.easy.query.core.util.EasySQLUtil;
 
 import java.math.BigDecimal;
@@ -163,7 +162,6 @@ public class Expression {
 //    }
 
 
-
     /**
      * 返回子查询
      * <blockquote><pre>
@@ -266,6 +264,10 @@ public class Expression {
         return new CaseWhenEntityBuilder(entitySQLContext).caseWhen(sqlActionExpression);
     }
 
+    public SQLMapExpression newMap() {
+        return new SQLMapExpression(entitySQLContext, this);
+    }
+
     public <TV, TProperty> AnyTypeExpression<TProperty> ifElse(SQLActionExpression sqlActionExpression, TV thenValue, TV elseValue) {
         return caseWhen(sqlActionExpression).then(thenValue).elseEnd(elseValue);
     }
@@ -298,19 +300,20 @@ public class Expression {
         return concat(x -> {
             for (Object arg : args) {
 
-                ConcatExpressionSelector.accept(x,arg);
+                ConcatExpressionSelector.accept(x, arg);
             }
         });
     }
 
     /**
      * 格式化字符串
+     *
      * @param format
      * @param args
      * @return
      */
     public StringTypeExpression<String> stringFormat(String format, Object... args) {
-        if(format==null){
+        if (format == null) {
             throw new EasyQueryInvalidOperationException("format is null");
         }
 
@@ -318,7 +321,7 @@ public class Expression {
         return concat(x -> {
             for (Object arg : argList) {
 
-                ConcatExpressionSelector.accept(x,arg);
+                ConcatExpressionSelector.accept(x, arg);
             }
         });
     }
@@ -365,14 +368,13 @@ public class Expression {
     }
 
 
-
     public BooleanTypeExpression<Boolean> valueOf(SQLActionExpression sqlActionExpression) {
         EntityExpressionBuilder entityExpressionBuilder = this.entitySQLContext.getEntityExpressionBuilder();
         AndPredicateSegment andPredicateSegment = new AndPredicateSegment(true);
         FilterImpl filter = new FilterImpl(entityExpressionBuilder.getRuntimeContext(), entityExpressionBuilder.getExpressionContext(), andPredicateSegment, false, entityExpressionBuilder.getExpressionContext().getValueFilter());
-        this.entitySQLContext.getCurrentEntitySQLContext()._where(filter,sqlActionExpression);
+        this.entitySQLContext.getCurrentEntitySQLContext()._where(filter, sqlActionExpression);
 
-        return new BooleanTypeExpressionImpl<>(entitySQLContext, null, null, f -> f.anySQLFunction("({0})", c->{
+        return new BooleanTypeExpressionImpl<>(entitySQLContext, null, null, f -> f.anySQLFunction("({0})", c -> {
             c.expression(andPredicateSegment);
         }), Boolean.class);
     }
@@ -381,9 +383,9 @@ public class Expression {
         EntityExpressionBuilder entityExpressionBuilder = this.entitySQLContext.getEntityExpressionBuilder();
         AndPredicateSegment andPredicateSegment = new AndPredicateSegment(true);
         FilterImpl filter = new FilterImpl(entityExpressionBuilder.getRuntimeContext(), entityExpressionBuilder.getExpressionContext(), andPredicateSegment, false, entityExpressionBuilder.getExpressionContext().getValueFilter());
-        this.entitySQLContext.getCurrentEntitySQLContext()._where(filter,sqlActionExpression);
+        this.entitySQLContext.getCurrentEntitySQLContext()._where(filter, sqlActionExpression);
         SQLFunction notFunction = this.entitySQLContext.getRuntimeContext().fx().not(c -> c.expression(andPredicateSegment));
-        this.sql("{0}",c->{
+        this.sql("{0}", c -> {
             c.sqlFunc(notFunction);
         });
 
@@ -425,6 +427,7 @@ public class Expression {
     public <TNumber extends Number> NumberTypeExpression<TNumber> constant(Number val) {
         return new NumberTypeExpressionImpl<>(this.entitySQLContext, null, null, f -> f.constValue(val), BigDecimal.class);
     }
+
     public NumberTypeExpression<BigDecimal> constant(BigDecimal val) {
         return new NumberTypeExpressionImpl<>(this.entitySQLContext, null, null, f -> f.constValue(val), BigDecimal.class);
     }

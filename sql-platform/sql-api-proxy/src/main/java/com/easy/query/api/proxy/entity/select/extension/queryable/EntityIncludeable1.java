@@ -118,6 +118,8 @@ public interface EntityIncludeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
         if(value!=null){
             IncludePathTreeNode includePathTreeRoot = EasyUtil.getIncludePathTreeRoot(value);
             EasyUtil.includeMany(this.getClientQueryable(), includePathTreeRoot);
+            value.getIncludes().clear();
+            value.getFunctions().clear();
         }
         return getQueryable();
     }

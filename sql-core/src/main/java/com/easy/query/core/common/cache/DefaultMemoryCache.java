@@ -2,10 +2,7 @@ package com.easy.query.core.common.cache;
 
 import com.easy.query.core.util.EasyMapUtil;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 

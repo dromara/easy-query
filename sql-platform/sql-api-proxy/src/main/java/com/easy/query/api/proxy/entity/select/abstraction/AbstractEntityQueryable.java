@@ -549,8 +549,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return this;
     }
 
-
-//    @Override
+    //    @Override
 //    public EntityQueryable<T1Proxy, T1> where(boolean condition, SQLExpression2<ProxyFilter, T1Proxy> whereExpression) {
 //        if (condition) {
 //            entityQueryable.where(wherePredicate -> {
@@ -567,11 +566,6 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
                 t1Proxy.getEntitySQLContext()._where(wherePredicate.getFilter(), () -> {
                     whereExpression.apply(t1Proxy);
                 });
-//                t1Proxy.__setFilter(wherePredicate.getFilter());
-//                whereExpression.apply(t1Proxy);
-//                t1Proxy.__setFilter(null);
-//                SQLPredicateExpression sqlPredicate = whereExpression.apply(t1Proxy);
-//                sqlPredicate.accept(wherePredicate.getFilter());
             });
         }
         return this;

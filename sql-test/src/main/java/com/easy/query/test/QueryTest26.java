@@ -6,7 +6,6 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
-import com.easy.query.core.proxy.columns.SQLManyQueryable;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.core.tuple.Tuple4;
@@ -25,10 +24,8 @@ import com.easy.query.test.entity.onrelation.OnRelationA;
 import com.easy.query.test.entity.onrelation.OnRelationD;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.school.SchoolClass;
-import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
-import com.easy.query.test.entity.school.proxy.SchoolStudentAddressProxy;
-import com.easy.query.test.entity.school.proxy.SchoolTeacherProxy;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 import org.junit.Assert;
@@ -464,6 +461,7 @@ public class QueryTest26 extends BaseTest {
                 })
                 .sumBigDecimalOrDefault((t_topic, t_blog) -> t_blog.score().nullOrDefault(BigDecimal.ZERO), BigDecimal.ZERO);
     }
+
     @Test
     public void includeFlat() {
 
@@ -476,6 +474,83 @@ public class QueryTest26 extends BaseTest {
                             .thenInclude(s.schoolStudents())
                             .where(x -> x.name().eq("123"));
                 }).toList();
+    }
+
+    @Test
+    public void switchCase() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .orderBy(t_blog -> {
+                    t_blog.expression().newMap()
+                            .put(1, t_blog.title())
+                            .put(2, 3)
+                            .getOrDefault(t_blog.content(), null).asc();
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? ORDER BY (CASE WHEN `content` = ? THEN `title` WHEN `content` = ? THEN ? ELSE NULL END) ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),1(Integer),2(Integer),3(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+    }
+
+    @Test
+    public void test11() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            List<SysBankCard> list = easyEntityQuery.queryable(SysBankCard.class)
+                    .where(bank_card -> {
+                        bank_card.bank().appendOn(t -> {
+                            t.or(() -> {
+                                t.name().like("工商银行");
+                                t.name().contains("建设银行");
+                            });
+                        });
+
+                    }).toList();
+        }catch (Exception e){
+
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time` FROM `t_bank_card` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        listenerContextManager.clear();
+    }
+    @Test
+    public void test22() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+            List<SysBankCard> list = easyEntityQuery.queryable(SysBankCard.class)
+                    .where(bank_card -> {
+                        bank_card.bank().appendOn(t -> {
+                            t.or(() -> {
+                                t.name().like("工商银行");
+                                t.name().contains("建设银行");
+                            });
+                        });
+
+                        bank_card.bank().name().contains("123");
+                    }).toList();
+        }catch (Exception e){
+
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time` FROM `t_bank_card` t INNER JOIN `t_bank` t1 ON t1.`id` = t.`bank_id` AND (t1.`name` LIKE ? OR t1.`name` LIKE CONCAT('%',?,'%')) WHERE t1.`name` LIKE CONCAT('%',?,'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%工商银行%(String),建设银行(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 
 

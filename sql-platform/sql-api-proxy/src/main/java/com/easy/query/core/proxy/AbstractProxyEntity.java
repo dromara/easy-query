@@ -3,10 +3,13 @@ package com.easy.query.core.proxy;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.RelationTableKey;
+import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.proxy.columns.impl.DefaultSubquerySQLQueryableFactory;
@@ -65,10 +68,26 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         }
     }
 
+    public void appendOn(SQLActionExpression1<TProxy> filter) {
+        TableAvailable thisTable = getTable();
+        if(!(thisTable instanceof RelationEntityTableAvailable)){
+            throw new EasyQueryInvalidOperationException("can not use extraFilter for " + EasyClassUtil.getSimpleName(getTable().getEntityClass()));
+        }
+        RelationTableKey relationTableKey = ((RelationEntityTableAvailable) thisTable).getRelationTableKey();
+        EntityTableExpressionBuilder entityTableExpressionBuilder = entitySQLContext.getEntityExpressionBuilder().getRelationTables().get(relationTableKey);
+        if (entityTableExpressionBuilder == null) {
+            throw new EasyQueryInvalidOperationException("can not find relation table for " + EasyClassUtil.getSimpleName(getTable().getEntityClass()) + ", field:" + getValue());
+        }
+        PredicateSegment on = entityTableExpressionBuilder.getOn();
+        FilterImpl onFilter = new FilterImpl(entitySQLContext.getRuntimeContext(), entitySQLContext.getExpressionContext(), on, false, entitySQLContext.getExpressionContext().getValueFilter());
+        getEntitySQLContext()._where(onFilter, () -> {
+            filter.apply(EasyObjectUtil.typeCastNullable(this));
+        });
+    }
+
     protected <T, N> N __cast(T original) {
         return EasyObjectUtil.typeCastNullable(original);
     }
-
 
 
     /**
@@ -95,6 +114,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
             }
         }
     }
+
     /**
      * 查询表所有属性字段,如果前面已经单独查询了那么会追加下去
      *
@@ -136,7 +156,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      * @return
      */
     public TProxy selectIgnores(TablePropColumn... ignoreTableProps) {
-        entitySQLContext.accept(new SQLSelectIgnoreImpl(this.getTable(),ignoreTableProps));
+        entitySQLContext.accept(new SQLSelectIgnoreImpl(this.getTable(), ignoreTableProps));
         return castChain();
     }
 
@@ -193,6 +213,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         selectExpression.accept(castChain());
         return castChain();
     }
+
     public Expression expression() {
         return Expression.of(entitySQLContext);
     }
@@ -214,6 +235,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      *        })
      * }
      * </pre></blockquote>
+     *
      * @param columnProxy
      * @param navigateSelectExpression
      * @param <TPropertyProxy>
@@ -302,9 +324,10 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 仅selectAutoInclude这个api会生效用于增强查询结果
+     *
      * @return
      */
-    public EntityExtraAutoIncludeConfigure<TProxy,TEntity> EXTRA_AUTO_INCLUDE_CONFIGURE(){
+    public EntityExtraAutoIncludeConfigure<TProxy, TEntity> EXTRA_AUTO_INCLUDE_CONFIGURE() {
         return new EntityExtraAutoIncludeConfigureImpl<>();
     }
 }
