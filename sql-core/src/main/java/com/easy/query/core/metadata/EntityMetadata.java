@@ -372,9 +372,10 @@ public class EntityMetadata {
     private void createNavigateMetadata(boolean tableEntity, Navigate navigate, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property, QueryConfiguration configuration) {
 
         RelationTypeEnum relationType = navigate.value();
+        boolean readMetadata = tableEntity || navigate.supportNonEntity();
         boolean toMany = relationType.equals(RelationTypeEnum.OneToMany) || relationType.equals(RelationTypeEnum.ManyToMany);
         //toOne并且是table对象
-        boolean hasDirectMapping = !toMany && tableEntity && EasyArrayUtil.isNotEmpty(navigate.directMapping());
+        boolean hasDirectMapping = !toMany && readMetadata && EasyArrayUtil.isNotEmpty(navigate.directMapping());
         if (hasDirectMapping) {
             if (navigate.directMapping().length < 2) {
                 throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityClass) + " navigate directMapping must have a length of at least 2, property:[" + property + "]");
@@ -382,10 +383,10 @@ public class EntityMetadata {
         }
         boolean required = navigate.required();
 
-        String[] selfProperties = tableEntity && !hasDirectMapping ? navigate.selfProperty() : EasyArrayUtil.EMPTY;
-        String[] targetProperties = tableEntity && !hasDirectMapping ? navigate.targetProperty() : EasyArrayUtil.EMPTY;
-        String[] selfMappingProperties = tableEntity && !hasDirectMapping ? navigate.selfMappingProperty() : EasyArrayUtil.EMPTY;
-        String[] targetMappingProperties = tableEntity && !hasDirectMapping ? navigate.targetMappingProperty() : EasyArrayUtil.EMPTY;
+        String[] selfProperties = readMetadata && !hasDirectMapping ? navigate.selfProperty() : EasyArrayUtil.EMPTY;
+        String[] targetProperties = readMetadata && !hasDirectMapping ? navigate.targetProperty() : EasyArrayUtil.EMPTY;
+        String[] selfMappingProperties = readMetadata && !hasDirectMapping ? navigate.selfMappingProperty() : EasyArrayUtil.EMPTY;
+        String[] targetMappingProperties = readMetadata && !hasDirectMapping ? navigate.targetMappingProperty() : EasyArrayUtil.EMPTY;
 
         EasyNavigateUtil.checkProperties(entityClass, property, selfProperties, selfMappingProperties, navigate.mappingClass(), targetMappingProperties, targetProperties);
         //获取导航类型如果是单个对象则为对象类型如果是集合属性那么为集合内泛型类型
@@ -400,7 +401,7 @@ public class EntityMetadata {
 
         NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperties, targetProperties, orderProps, navigate.offset(), navigate.limit(), navigate.directMapping());
 
-        if (tableEntity) {
+        if (readMetadata) {
             navigateOption.setSubQueryToGroupJoin(toMany && navigate.subQueryToGroupJoin());
             navigateOption.setRequired(required);
             NavigateExtraFilterStrategy navigateExtraFilterStrategy = getNavigateExtraFilterStrategy(configuration, navigate);

@@ -25,6 +25,8 @@ import com.easy.query.test.entity.onrelation.OnRelationD;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.dto.BankCardGroupBO;
+import com.easy.query.test.mysql8.dto.proxy.BankCardGroupBOProxy;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
@@ -517,7 +519,7 @@ public class QueryTest26 extends BaseTest {
                         });
 
                     }).toList();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -525,6 +527,7 @@ public class QueryTest26 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time` FROM `t_bank_card` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
         listenerContextManager.clear();
     }
+
     @Test
     public void test22() {
 
@@ -543,7 +546,7 @@ public class QueryTest26 extends BaseTest {
 
                         bank_card.bank().name().contains("123");
                     }).toList();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -553,5 +556,31 @@ public class QueryTest26 extends BaseTest {
         listenerContextManager.clear();
     }
 
+    @Test
+    public void test23() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+            List<BankCardGroupBO> list = easyEntityQuery.queryable(SysBankCard.class)
+                    .groupBy(bank_card -> GroupKeys.of(bank_card.uid()))
+                    .select(group -> new BankCardGroupBOProxy()
+                            .uid().set(group.key1())
+                            .count().set(group.count())
+                    ).where(b -> {
+                        b.user().name().contains("123");
+                    }).toList();
+        } catch (Exception e) {
+
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`uid` AS `uid`,t1.`count` AS `count` FROM (SELECT t.`uid` AS `uid`,COUNT(*) AS `count` FROM `t_bank_card` t GROUP BY t.`uid`) t1 LEFT JOIN `t_sys_user` t2 ON t2.`id` = t1.`uid` WHERE t2.`name` LIKE CONCAT('%',?,'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+    }
 
 }

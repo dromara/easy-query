@@ -285,6 +285,9 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
             }
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
             EntityRelationPropertyProvider entityRelationToImplicitProvider = navigateMetadata.getEntityRelationPropertyProvider();
+            if(entityRelationToImplicitProvider==null){
+                throw new EasyQueryInvalidOperationException("entityRelationToImplicitProvider is null,Navigate property in non entity plz set supportNonEntity = true.");
+            }
             TableAvailable relationTable = entityRelationToImplicitProvider.toImplicitJoin(entityExpressionBuilder, leftTable, property);
             TPropertyProxy tPropertyProxy = propertyProxy.create(relationTable, this.getEntitySQLContext());
             String fullName = getFullNavValue(property);

@@ -137,4 +137,10 @@ public @interface Navigate {
      * @return
      */
     boolean subQueryToGroupJoin() default false;
+
+    /**
+     * 允许非实体也支持导航
+     * @return
+     */
+    boolean supportNonEntity() default false;
 }
