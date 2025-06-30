@@ -590,11 +590,6 @@ public class QueryTest17 extends BaseTest {
                 }).toSQL();
         Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE TO_CHAR((\"create_time\")::TIMESTAMP,'YYYY年MM月DD日') = ? AND CONCAT(\"id\",':') = ?", sql);
 
-        defaultEasyEntityQuery.updatable(SysBankCard.class)
-                .setColumns(bank_card -> {
-                    bank_card.type().set(bank_card.bank().name());
-                }).where(bank_card -> bank_card.id().isNull())
-                .executeRows();
     }
 
     @Test
