@@ -582,5 +582,4 @@ public class QueryTest26 extends BaseTest {
         listenerContextManager.clear();
 
     }
-
 }

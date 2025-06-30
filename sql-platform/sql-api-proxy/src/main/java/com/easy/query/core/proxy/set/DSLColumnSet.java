@@ -35,7 +35,11 @@ public interface DSLColumnSet<TProxy, TProperty> extends PropTypeColumn<TPropert
 
     default TProxy set(boolean condition, TProperty val) {
         if (condition) {
-            getCurrentEntitySQLContext().accept(new SQLColumnSetValueImpl(getTable(), getValue(), val));
+            if (val instanceof PropTypeColumn<?>) {
+                getCurrentEntitySQLContext().accept(new SQLColumnSetPropColumnImpl(getTable(), getValue(), (PropTypeColumn<?>) val));
+            } else {
+                getCurrentEntitySQLContext().accept(new SQLColumnSetValueImpl(getTable(), getValue(), val));
+            }
         }
         return castChain();
     }

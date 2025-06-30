@@ -45,6 +45,7 @@ import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
 import com.easy.query.test.entity.school.proxy.SchoolTeacherProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.nop.MyObject;
 import com.easy.query.test.nop.OtherTable;
 import com.zaxxer.hikari.HikariDataSource;
@@ -588,6 +589,12 @@ public class QueryTest17 extends BaseTest {
                     expression.concat(x -> x.expression(m.id()).format("':'")).eq("123");
                 }).toSQL();
         Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE TO_CHAR((\"create_time\")::TIMESTAMP,'YYYY年MM月DD日') = ? AND CONCAT(\"id\",':') = ?", sql);
+
+        defaultEasyEntityQuery.updatable(SysBankCard.class)
+                .setColumns(bank_card -> {
+                    bank_card.type().set(bank_card.bank().name());
+                }).where(bank_card -> bank_card.id().isNull())
+                .executeRows();
     }
 
     @Test

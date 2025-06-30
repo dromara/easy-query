@@ -934,6 +934,23 @@ public class QueryTest24 extends BaseTest {
             Assert.assertEquals(TopicTypeEnum.CLASSER,topicTypeTest1.getTopicType());
         }
     }
+    @Test
+    public void testSubCount(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Topic> list = easyEntityQuery.queryable(BlogEntity.class)
+                .select(t -> new ClassProxy<>(Topic.class)
+                        .selectAll(t)
+                        .field(Topic.Fields.stars).set(t.users2().count())
+                ).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`title`,IFNULL(t2.`__count2__`,0) AS `stars` FROM `t_blog` t LEFT JOIN (SELECT t1.`id` AS `id`,COUNT(*) AS `__count2__` FROM `easy-query-test`.`t_sys_user` t1 GROUP BY t1.`id`) t2 ON t2.`id` = t.`title` WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 
 
 }

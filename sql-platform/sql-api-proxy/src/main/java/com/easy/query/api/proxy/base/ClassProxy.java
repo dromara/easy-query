@@ -3,7 +3,9 @@ package com.easy.query.api.proxy.base;
 import com.easy.query.api.proxy.util.EasyPropertyLambdaUtil;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.proxy.AbstractProxyEntity;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
+import com.easy.query.core.proxy.impl.SQLColumnSetValueImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 
 /**
@@ -32,5 +34,4 @@ public class ClassProxy<T> extends AbstractProxyEntity<ClassProxy<T>, T> {
     public <TProperty> SQLAnyTypeColumn<ClassProxy<T>, TProperty> field(Property<T, TProperty> fieldName) {
         return getAnyTypeColumn(EasyPropertyLambdaUtil.getPropertyName(fieldName), EasyObjectUtil.typeCastNotNull(Object.class));
     }
-
 }

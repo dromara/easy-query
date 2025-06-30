@@ -80,6 +80,9 @@ public class BlogEntity extends BaseEntity implements CacheKvEntity, CacheMultiL
 
     @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = "title")
     private List<SysUser> users;
+
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = "title",subQueryToGroupJoin = true)
+    private List<SysUser> users2;
 //
 //
 //    @Column(autoSelect = false)
