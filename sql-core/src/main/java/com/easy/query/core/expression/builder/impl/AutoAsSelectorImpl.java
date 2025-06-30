@@ -113,11 +113,13 @@ public class AutoAsSelectorImpl extends AbstractAsSelector<AsSelector> implement
 
 
     private AsSelector columnAll0(EntityTableExpressionBuilder tableExpressionBuilder) {
+        EntityMetadata targetEntityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
         if (tableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder && EasyStringUtil.isBlank(tableExpressionBuilder.getEntityTable().getEntityMetadata().getTableName())) {
             columnAnonymousAll((AnonymousEntityTableExpressionBuilder) tableExpressionBuilder);
+            autoColumnInclude(tableExpressionBuilder.getEntityTable(), targetEntityMetadata);
         } else {
             //只查询当前对象返回结果属性名称匹配
-            EntityMetadata targetEntityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(resultClass);
+
             EntityMetadata sourceEntityMetadata = tableExpressionBuilder.getEntityMetadata();
 
             Collection<String> sourceProperties = sourceEntityMetadata.getProperties();
