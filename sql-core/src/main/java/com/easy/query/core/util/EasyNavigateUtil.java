@@ -14,6 +14,8 @@ import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.NavigateOrderProp;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -55,9 +57,9 @@ public class EasyNavigateUtil {
         }
     }
 
-    public static <T> ClientQueryable<T> navigateOrderBy(ClientQueryable<T> clientQueryable, OffsetLimitEntry offsetLimit, List<NavigateOrderProp> navigateOrderProps, EntityMetadata navigateEntityMetadata, ConfigureArgument configureArgument, QueryRuntimeContext runtimeContext) {
+    public static <T> ClientQueryable<T> navigateOrderBy(ClientQueryable<T> clientQueryable, OffsetLimitEntry offsetLimit, List<NavigateOrderProp> navigateOrderProps, @Nullable EntityMetadata navigateEntityMetadata, ConfigureArgument configureArgument, QueryRuntimeContext runtimeContext) {
         clientQueryable.configure(o -> o.setConfigureArgument(configureArgument.getArg()));
-        if (navigateEntityMetadata.getExtraAutoIncludeConfigure() != null) {
+        if (navigateEntityMetadata != null && navigateEntityMetadata.getExtraAutoIncludeConfigure() != null) {
             ExtraAutoIncludeConfigure extraAutoIncludeConfigure = navigateEntityMetadata.getExtraAutoIncludeConfigure();
             if (extraAutoIncludeConfigure.getExtraConfigure() != null) {
                 extraAutoIncludeConfigure.getExtraConfigure().configure(clientQueryable);

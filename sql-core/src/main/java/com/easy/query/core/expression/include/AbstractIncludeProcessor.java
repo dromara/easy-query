@@ -191,7 +191,6 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
 
     protected abstract void ManyToManyProcess(List<RelationExtraEntity> includes, List<Object> mappingRows);
 
-
     protected <T> void setEntityValue(T entity, Object value) {
         includeParserResult.getSetter().call(entity, value);
     }

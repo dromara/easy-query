@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
  * entity对象表不会生效
  * NavigateFlat支持获取穿透数据库对象到VO
  * 如果NavigateFlat了一个VO又在同级对象下获取了这个VO的id那么将会报错
+ * 目标对象必须是集合不可以是单个对象如果是单个对象必须是基本类型或数据库实体
  *
  * @author xuejiaming
  */

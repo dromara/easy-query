@@ -27,6 +27,7 @@ import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.bank.SysUserBook;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysUserProxy;
 import com.easy.query.test.mysql8.vo.MyUserVO;
+import com.easy.query.test.mysql8.vo.SysBank2DTO;
 import com.easy.query.test.mysql8.vo.SysBankCardDTO;
 import com.easy.query.test.mysql8.vo.SysBankDTO;
 import com.easy.query.test.mysql8.vo.SysUserDTO;
@@ -132,7 +133,7 @@ public class M8BankTest extends BaseTest {
 
 
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
-                .subQueryConfigure(s->s.bankCards(),s->s.filterConfigure(NotNullOrEmptyValueFilter.DEFAULT))
+                .subQueryConfigure(s -> s.bankCards(), s -> s.filterConfigure(NotNullOrEmptyValueFilter.DEFAULT))
                 .where(user -> {
                     user.bankCards().where(card -> {
                         card.bank().name().eq("工商银行");
@@ -1508,6 +1509,48 @@ public class M8BankTest extends BaseTest {
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
             Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time`,IFNULL(t2.`__count2__`,0) AS `book_count`,t6.`name` AS `book_name`,t6.`price` AS `book_price` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,COUNT(*) AS `__count2__` FROM `t_sys_user_book` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` LEFT JOIN (SELECT t4.`id` AS `id`,t4.`name` AS `name`,t4.`uid` AS `uid`,t4.`price` AS `price` FROM (SELECT t3.`id`,t3.`name`,t3.`uid`,t3.`price`,(ROW_NUMBER() OVER (PARTITION BY t3.`uid` ORDER BY t3.`price` DESC)) AS `__row__` FROM `t_sys_user_book` t3) t4 WHERE t4.`__row__` = ?) t6 ON t6.`uid` = t.`id` WHERE t.`name` <> ? AND t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer),myArg(String),u1(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+
+    @Test
+    public void testExtraDTO123() {
+
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        Exception ea = null;
+        try {
+
+            String arg = "myArg";
+            List<SysBank2DTO> list = easyEntityQuery.queryable(SysBank.class)
+                    .configure(o -> {
+                        o.setConfigureArgument(arg);
+                    })
+                    .selectAutoInclude(SysBank2DTO.class)
+                    .toList();
+
+        } catch (Exception e) {
+            ea = e;
+        }
+        Assert.assertNotNull(ea);
+        listenerContextManager.clear();
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("SELECT t.`class_id`,t.`name`,t.`id` AS `__relation__id` FROM `school_student` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `uid` AS `__relation__uid`,`bank_id` AS `__relation__bankId` FROM `t_bank_card` WHERE `bank_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`create_time`,IFNULL(t2.`__count2__`,0) AS `book_count`,t6.`name` AS `book_name`,t6.`price` AS `book_price` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,COUNT(*) AS `__count2__` FROM `t_sys_user_book` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` LEFT JOIN (SELECT t4.`id` AS `id`,t4.`name` AS `name`,t4.`uid` AS `uid`,t4.`price` AS `price` FROM (SELECT t3.`id`,t3.`name`,t3.`uid`,t3.`price`,(ROW_NUMBER() OVER (PARTITION BY t3.`uid` ORDER BY t3.`price` DESC)) AS `__row__` FROM `t_sys_user_book` t3) t4 WHERE t4.`__row__` = ?) t6 ON t6.`uid` = t.`id` WHERE t.`name` <> ? AND t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1(Integer),myArg(String),u1(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
     }

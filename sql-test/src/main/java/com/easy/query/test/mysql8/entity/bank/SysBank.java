@@ -51,4 +51,13 @@ public class SysBank implements ProxyEntityAvailable<SysBank, SysBankProxy> {
             selfProperty = {"id"},
             targetProperty = {"bankId"})
     private FirstSysBankCard firstBankCard;
+
+
+    /**
+     * 拥有的银行卡
+     */
+    @Navigate(value = RelationTypeEnum.ManyToOne,
+            selfProperty = {"id"},
+            targetProperty = {"bankId"})
+    private SysBankCard bankCard1;
 }

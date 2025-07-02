@@ -213,7 +213,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         entityQueryExpressionBuilder.addSQLEntityTableExpression(sqlTable);
 
         List<ExpressionBuilder> declareExpressions = entityQueryExpressionBuilder.getExpressionContext().getDeclareExpressions();
-        if(!EasySQLExpressionUtil.withTableInDeclareExpressions(declareExpressions,queryClass(),tableName)){
+        if (!EasySQLExpressionUtil.withTableInDeclareExpressions(declareExpressions, queryClass(), tableName)) {
 
             ClientQueryable<T1> t1ClientQueryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(this);
             EntityQueryExpressionBuilder sqlEntityExpressionBuilder = t1ClientQueryable.getSQLEntityExpressionBuilder();
@@ -362,6 +362,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         }
         return EasyObjectUtil.typeCastNullable(value);
     }
+
     @Override
     public <TMember extends Number, TResult extends Number> TResult avgOrDefault(String property, TResult def, Class<TResult> resultClass) {
         setExecuteMethod(ExecuteMethodEnum.AVG);
@@ -1032,7 +1033,35 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
 
                         ConfigureArgument configureArgument = this.entityQueryExpressionBuilder.getExpressionContext().getConfigureArgument();
-                        ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(t.with(propertyName), EasyNavigateUtil.getNavigateLimit(entityNavigateMetadata, t.getIncludeNavigateParams().getNavigateMetadata()), EasyNavigateUtil.getNavigateOrderProps(entityNavigateMetadata.getOrderProps(), t.getIncludeNavigateParams().getNavigateMetadata().getOrderProps()), entityMetadata, configureArgument, runtimeContext);
+                        ClientQueryable<Object> propertyQueryable = t.with(propertyName);
+
+                        if (basicType && !allChildrenIsProps) {
+                            //检查是否存在自定义dto
+                            List<NavigateFlatMetadata> navigateFlatMetadataList = mappingPathTreeChild.getNavigateFlatMetadataList().stream().filter(o -> !o.isBasicType() && o.getMappingPath().length == mappingPathTreeChild.getDeep() && Objects.equals(propertyName, o.getMappingPath()[o.getMappingPath().length - 1])).collect(Collectors.toList());
+                            if (EasyCollectionUtil.isNotEmpty(navigateFlatMetadataList)) {
+                                if (EasyCollectionUtil.isNotSingle(navigateFlatMetadataList)) {
+                                    throw new EasyQueryInvalidOperationException(String.format("In the class [%s], @NavigateFlat only allows one associated attribute: [%s] to exist.", EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()), propertyName));
+                                }
+                                NavigateFlatMetadata navigateFlatMetadata = EasyCollectionUtil.first(navigateFlatMetadataList);
+
+                                Class<?> navigatePropertyType = navigateFlatMetadata.getNavigatePropertyType();
+                                //表示VO对象并不是最终的对象
+                                if (mappingPathTreeChild.hasChildren()) {
+                                    if (EasyCollectionUtil.isNotEmpty(navigateFlatBasicProps) && !Objects.equals(propertyQueryable.queryClass(), navigatePropertyType)) {
+                                        //如果存在Flat一个数据库VO那么就不可以在对VO所属的对象路径进行基本类型的获取
+                                        //Flat [roles,menus] 那么就不可以Flat [roles,menus,id]
+                                        throw new EasyQueryInvalidOperationException(String.format("@NavigateFlat cannot simultaneously include non-database related objects: [%s] and its object properties.", EasyClassUtil.getSimpleName(navigatePropertyType)));
+                                    }
+                                }
+                                t.getIncludeNavigateParams().setFlatClassType(navigatePropertyType);
+                            }
+                        }
+                        Class<?> flatClassType = t.getIncludeNavigateParams().getFlatClassType();
+                        EntityMetadata flatClassTypeEntityMetadata=null;
+                        if (flatClassType != null) {
+                           flatClassTypeEntityMetadata = entityMetadataManager.getEntityMetadata(flatClassType);
+                        }
+                        ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(propertyQueryable, EasyNavigateUtil.getNavigateLimit(entityNavigateMetadata, t.getIncludeNavigateParams().getNavigateMetadata()), EasyNavigateUtil.getNavigateOrderProps(entityNavigateMetadata.getOrderProps(), t.getIncludeNavigateParams().getNavigateMetadata().getOrderProps()), flatClassTypeEntityMetadata, configureArgument, runtimeContext);
 
                         IncludeNavigateExpression includeNavigateExpression = expressionContext.getIncludes().get(entityNavigateMetadata);
                         if (includeNavigateExpression != null) {
@@ -1049,27 +1078,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //                        }
                         selectAutoIncludeFlat0(entityMetadataManager, with, entityEntityMetadata, mappingPathTreeChild, false);
 
-                        if (basicType && !allChildrenIsProps) {
-                            //检查是否存在自定义dto
-                            List<NavigateFlatMetadata> navigateFlatMetadataList = mappingPathTreeChild.getNavigateFlatMetadataList().stream().filter(o -> !o.isBasicType() && o.getMappingPath().length == mappingPathTreeChild.getDeep() && Objects.equals(propertyName, o.getMappingPath()[o.getMappingPath().length - 1])).collect(Collectors.toList());
-                            if (EasyCollectionUtil.isNotEmpty(navigateFlatMetadataList)) {
-                                if (EasyCollectionUtil.isNotSingle(navigateFlatMetadataList)) {
-                                    throw new EasyQueryInvalidOperationException(String.format("In the class [%s], @NavigateFlat only allows one associated attribute: [%s] to exist.", EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()), propertyName));
-                                }
-                                NavigateFlatMetadata navigateFlatMetadata = EasyCollectionUtil.first(navigateFlatMetadataList);
-
-                                Class<?> navigatePropertyType = navigateFlatMetadata.getNavigatePropertyType();
-                                //表示VO对象并不是最终的对象
-                                if (mappingPathTreeChild.hasChildren()) {
-                                    if (EasyCollectionUtil.isNotEmpty(navigateFlatBasicProps) && !Objects.equals(with.queryClass(), navigatePropertyType)) {
-                                        //如果存在Flat一个数据库VO那么就不可以在对VO所属的对象路径进行基本类型的获取
-                                        //Flat [roles,menus] 那么就不可以Flat [roles,menus,id]
-                                        throw new EasyQueryInvalidOperationException(String.format("@NavigateFlat cannot simultaneously include non-database related objects: [%s] and its object properties.", EasyClassUtil.getSimpleName(navigatePropertyType)));
-                                    }
-                                }
-                                t.getIncludeNavigateParams().setFlatClassType(navigatePropertyType);
-                            }
-                        } else {
+                        if (!(basicType && !allChildrenIsProps)) {
                             if (EasyCollectionUtil.isNotEmpty(navigateFlatBasicProps)) {
                                 EntityQueryExpressionBuilder sqlEntityExpressionBuilder = with.getSQLEntityExpressionBuilder();
                                 with = with.select(z -> {

@@ -211,6 +211,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         //映射到目标哪个属性值上
         //如果存在映射关系 是否调用了columnInclude
 
+        EntityMetadataManager entityMetadataManager = expressionContext.getRuntimeContext().getEntityMetadataManager();
         boolean hasColumnIncludeMaps = expressionContext.hasColumnIncludeMaps();
         if (hasColumnIncludeMaps) {
             Map<String, ColumnIncludeExpression> propertyColumnIncludeExpressionMap = expressionContext.getColumnIncludeMaps().get(includeNavigateParams.getTable());
@@ -229,7 +230,6 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                     includeParseContext.setNavigatePropertySetter(aliasNavigateMetadata.getSetter());
                     includeParseContext.setNavigatePropertyGetter(aliasNavigateMetadata.getGetter());
                     SQLFuncExpression<ClientQueryable<?>> includeQueryableExpression = includeParseContext.getIncludeQueryableExpression();
-                    EntityMetadataManager entityMetadataManager = expressionContext.getRuntimeContext().getEntityMetadataManager();
                     if (columnIncludeExpression.getIncludeSelectorExpression() == null) {
 
                         includeParseContext.setIncludeQueryableExpression(() -> {
@@ -253,9 +253,9 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 
                             return includeQueryable.select(aliasClassType, t -> {
                                 columnIncludeExpression.getIncludeSelectorExpression().apply(t.getAsSelector());
-                                if (includeParseContext.getIncludeNavigateParams().getFlatClassType() == null) {
+//                                if (includeParseContext.getIncludeNavigateParams().getFlatClassType() == null) {
                                     processorExtraSelect(entityMetadataManager, aliasClassType, t);
-                                }
+//                                }
                                 EasySQLExpressionUtil.appendSelfExtraTargetProperty(sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
                                 EasySQLExpressionUtil.appendTargetExtraTargetProperty(selfNavigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
                             });
@@ -275,6 +275,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                     if (aliasClassType != null) {
                         return includeQueryable.select(aliasClassType, t -> {
                             t.columnAll();
+                            processorExtraSelect(entityMetadataManager, aliasClassType, t);
                             EasySQLExpressionUtil.appendTargetExtraTargetProperty(navigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
                         });
                     } else {
