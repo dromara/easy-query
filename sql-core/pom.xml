@@ -5,10 +5,11 @@
     <parent>
         <artifactId>easy-query-all</artifactId>
         <groupId>com.easy-query</groupId>
-        <version>3.0.33</version>
+        <version>3.0.34</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <name>sql-core</name>
     <artifactId>sql-core</artifactId>
 
     <properties>
