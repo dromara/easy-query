@@ -139,9 +139,10 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
     @Override
     public long executeRows(boolean fillAutoIncrement) {
         if (!entities.isEmpty()) {
+            ExecutorContext executorContext = ExecutorContext.create(entityInsertExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.INSERT);
             insertBefore();
             EntityExpressionExecutor entityExpressionExecutor = entityInsertExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
-            return entityExpressionExecutor.insert(ExecutorContext.create(entityInsertExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.INSERT), entities, entityInsertExpressionBuilder, fillAutoIncrement);
+            return entityExpressionExecutor.insert(executorContext, entities, entityInsertExpressionBuilder, fillAutoIncrement);
         }
 
         return 0;

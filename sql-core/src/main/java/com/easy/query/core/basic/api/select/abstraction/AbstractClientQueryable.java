@@ -1164,7 +1164,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public ClientQueryable<T1> whereObject(boolean condition, Object object) {
         if (condition) {
-            Objects.requireNonNull(object, "where object params can not be null");
+//            Objects.requireNonNull(object, "where object params can not be null");
             entityQueryExpressionBuilder.getRuntimeContext()
                     .getWhereObjectQueryExecutor().whereObject(object, entityQueryExpressionBuilder);
         }

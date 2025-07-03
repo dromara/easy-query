@@ -123,6 +123,9 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
 
     @Override
     public void whereObject(Object object, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+        if (object == null) {
+            return;
+        }
 
         Collection<Field> allFields = EasyClassUtil.getAllFields(object.getClass());
 

@@ -79,9 +79,10 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     @Override
     public long executeRows() {
         if (EasyCollectionUtil.isNotEmpty(entities)) {
+            ExecutorContext executorContext = ExecutorContext.create(entityUpdateExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.UPDATE);
             List<Object> trackEntities = configureUpdateAndGetTrackEntities();
             EntityExpressionExecutor entityExpressionExecutor = entityUpdateExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
-            long executeRows = entityExpressionExecutor.executeRows(ExecutorContext.create(entityUpdateExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.UPDATE), entityUpdateExpressionBuilder, entities);
+            long executeRows = entityExpressionExecutor.executeRows(executorContext, entityUpdateExpressionBuilder, entities);
             removeTrackEntities(trackEntities);
             return executeRows;
         }

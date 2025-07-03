@@ -7,11 +7,10 @@ import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 import java.sql.Statement;
+import java.time.LocalDateTime;
 
 /**
  * @author xuejiaming
- * @FileName: ExecutorContext.java
- * @Description: 文件说明
  * create time 2023/2/16 22:51
  */
 public class ExecutorContext {
@@ -21,6 +20,7 @@ public class ExecutorContext {
     private final ExecuteMethodEnum executeMethod;
     private final boolean tracking;
     private final EasyQueryOption easyQueryOption;
+    private final LocalDateTime createTime;
     private SQLConsumer<Statement> configurer;
 
     public ExecutorContext(ExpressionContext expressionContext, boolean isQuery, ExecuteMethodEnum executeMethod) {
@@ -34,6 +34,7 @@ public class ExecutorContext {
         this.executeMethod = executeMethod;
         this.tracking = tracking;
         this.mapToBeanStrict = easyQueryOption.isMapToBeanStrict();
+        this.createTime = LocalDateTime.now();
     }
 
     public static ExecutorContext create(ExpressionContext expressionContext, boolean isQuery, ExecuteMethodEnum executeMethod) {
@@ -98,5 +99,9 @@ public class ExecutorContext {
             }
         }
         return configurer;
+    }
+
+    public LocalDateTime getCreateTime() {
+        return createTime;
     }
 }
