@@ -3,6 +3,7 @@ package com.easy.query.core.basic.api.delete.abstraction;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
 import com.easy.query.core.basic.api.internal.AbstractSQLExecuteRows;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -10,7 +11,6 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
-import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -74,8 +74,8 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     @Override
     public long executeRows() {
         QueryRuntimeContext runtimeContext = entityDeleteExpressionBuilder.getRuntimeContext();
-        EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
-        return entityExpressionExecutor.executeRows(ExecutorContext.create(entityDeleteExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.DELETE), entityDeleteExpressionBuilder);
+        EntityExpressionPrepareExecutor entityExpressionPrepareExecutor = runtimeContext.getEntityExpressionPrepareExecutor();
+        return entityExpressionPrepareExecutor.executeRows(ExecutorContext.create(entityDeleteExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.DELETE), entityDeleteExpressionBuilder,entityDeleteExpressionBuilder.toExpression());
     }
 
 //    @Override

@@ -11,13 +11,12 @@ import com.easy.query.core.expression.sql.expression.EntityPredicateSQLExpressio
 import java.util.List;
 
 /**
- * create time 2023/4/16 22:47
+ * create time 2025/7/3 18:39
  * 文件说明
  *
  * @author xuejiaming
  */
-public interface EntityExpressionExecutor {
-
+public interface EntityExpressionPrepareExecutor {
     /**
      * 表达式查询方法
      * @param executorContext
@@ -26,7 +25,7 @@ public interface EntityExpressionExecutor {
      * @return
      * @param <TR>
      */
-   <TR> List<TR> query(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
+    <TR> List<TR> query(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
 
     /**
      * 表达式查询返回stream结果
@@ -36,7 +35,7 @@ public interface EntityExpressionExecutor {
      * @return
      * @param <TR>
      */
-   <TR> JdbcResult<TR> queryStreamResultSet(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
+    <TR> JdbcResult<TR> queryStreamResultSet(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
 
     /**
      * sql查询
@@ -47,7 +46,7 @@ public interface EntityExpressionExecutor {
      * @return
      * @param <TR>
      */
-   <TR> List<TR> querySQL(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, String sql, List<SQLParameter> sqlParameters);
+    <TR> List<TR> querySQL(ExecutorContext executorContext, ResultMetadata<TR> resultMetadata, String sql, List<SQLParameter> sqlParameters);
 
     /**
      * sql查询返回strem结果

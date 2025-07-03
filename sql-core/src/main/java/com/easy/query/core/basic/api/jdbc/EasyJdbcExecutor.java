@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.jdbc;
 
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultMetadata;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
@@ -30,17 +31,17 @@ public class EasyJdbcExecutor implements JdbcExecutor {
 
     @Override
     public <T> List<T> sqlQuery(String sql, Class<T> clazz, List<SQLParameter> sqlParameters) {
-        EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
+        EntityExpressionPrepareExecutor entityExpressionPrepareExecutor = runtimeContext.getEntityExpressionPrepareExecutor();
         ExecutorContext executorContext = ExecutorContext.create(new EasyExpressionContext(runtimeContext, ContextTypeEnum.QUERY), true, ExecuteMethodEnum.LIST);
         executorContext.setMapToBeanStrict(false);
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(clazz);
-        return entityExpressionExecutor.querySQL(executorContext, new EntityResultMetadata<>(entityMetadata), sql, sqlParameters);
+        return entityExpressionPrepareExecutor.querySQL(executorContext, new EntityResultMetadata<>(entityMetadata), sql, sqlParameters);
     }
 
     @Override
     public long sqlExecute(String sql, List<Object> parameters) {
         List<SQLParameter> sqlParameters = EasyCollectionUtil.map(parameters, o -> new EasyConstSQLParameter(null, null, o));
-        EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
-        return entityExpressionExecutor.executeSQLRows(ExecutorContext.create(new EasyExpressionContext(runtimeContext, ContextTypeEnum.EXECUTE), false, ExecuteMethodEnum.UNKNOWN), sql, sqlParameters);
+        EntityExpressionPrepareExecutor entityExpressionPrepareExecutor = runtimeContext.getEntityExpressionPrepareExecutor();
+        return entityExpressionPrepareExecutor.executeSQLRows(ExecutorContext.create(new EasyExpressionContext(runtimeContext, ContextTypeEnum.EXECUTE), false, ExecuteMethodEnum.UNKNOWN), sql, sqlParameters);
     }
 }

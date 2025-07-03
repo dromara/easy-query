@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.insert.map;
 
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
@@ -69,8 +70,8 @@ public abstract class AbstractMapClientInsertable implements MapClientInsertable
     @Override
     public long executeRows(boolean fillAutoIncrement) {
         if (!maps.isEmpty()) {
-            EntityExpressionExecutor entityExpressionExecutor = entityInsertExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
-            return entityExpressionExecutor.insert(ExecutorContext.create(entityInsertExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.INSERT), maps, entityInsertExpressionBuilder, fillAutoIncrement);
+            EntityExpressionPrepareExecutor entityExpressionPrepareExecutor = entityInsertExpressionBuilder.getRuntimeContext().getEntityExpressionPrepareExecutor();
+            return entityExpressionPrepareExecutor.insert(ExecutorContext.create(entityInsertExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.INSERT), maps, entityInsertExpressionBuilder, fillAutoIncrement);
         }
 
         return 0;

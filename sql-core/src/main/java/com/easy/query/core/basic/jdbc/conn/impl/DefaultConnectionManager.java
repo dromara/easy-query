@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.jdbc.conn.impl;
 
+import com.easy.query.core.basic.jdbc.tx.TransactionListener;
 import com.easy.query.core.enums.conn.ConnectionStrategyEnum;
 import com.easy.query.core.basic.jdbc.conn.EasyConnection;
 import com.easy.query.core.basic.jdbc.conn.EasyConnectionFactory;

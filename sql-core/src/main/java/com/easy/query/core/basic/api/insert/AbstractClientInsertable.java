@@ -4,6 +4,7 @@ import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
 import com.easy.query.core.basic.extension.interceptor.EntityInterceptor;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
@@ -141,8 +142,8 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
         if (!entities.isEmpty()) {
             ExecutorContext executorContext = ExecutorContext.create(entityInsertExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.INSERT);
             insertBefore();
-            EntityExpressionExecutor entityExpressionExecutor = entityInsertExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
-            return entityExpressionExecutor.insert(executorContext, entities, entityInsertExpressionBuilder, fillAutoIncrement);
+            EntityExpressionPrepareExecutor entityExpressionPrepareExecutor = entityInsertExpressionBuilder.getRuntimeContext().getEntityExpressionPrepareExecutor();
+            return entityExpressionPrepareExecutor.insert(executorContext, entities, entityInsertExpressionBuilder, fillAutoIncrement);
         }
 
         return 0;

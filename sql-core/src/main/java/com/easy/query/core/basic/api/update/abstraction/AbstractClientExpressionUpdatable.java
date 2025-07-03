@@ -3,6 +3,7 @@ package com.easy.query.core.basic.api.update.abstraction;
 import com.easy.query.core.basic.api.internal.AbstractSQLExecuteRows;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -10,7 +11,6 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
-import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -84,8 +84,8 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     @Override
     public long executeRows() {
         QueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
-        EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
-        return entityExpressionExecutor.executeRows(ExecutorContext.create(entityUpdateExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.UPDATE), entityUpdateExpressionBuilder);
+        EntityExpressionPrepareExecutor entityExpressionPrepareExecutor = runtimeContext.getEntityExpressionPrepareExecutor();
+        return entityExpressionPrepareExecutor.executeRows(ExecutorContext.create(entityUpdateExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.UPDATE), entityUpdateExpressionBuilder, entityUpdateExpressionBuilder.toExpression());
     }
 
     @Override

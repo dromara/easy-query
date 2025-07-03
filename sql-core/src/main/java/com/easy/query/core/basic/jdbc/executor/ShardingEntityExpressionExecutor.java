@@ -61,9 +61,7 @@ public class ShardingEntityExpressionExecutor extends DefaultEntityExpressionExe
         ExpressionTableVisitor expressionTableVisitor = new ExpressionTableVisitor();
         entityExpressionBuilder.accept(expressionTableVisitor);
         Set<TableAvailable> tables = expressionTableVisitor.getTables();
-        return tables.stream().anyMatch(table -> {
-            return entityMetadataManager.isSharding(table.getEntityClass());
-        });
+        return tables.stream().anyMatch(table -> entityMetadataManager.isSharding(table.getEntityClass()));
     }
 
     private JdbcCommand<QueryExecuteResult> getJdbcCommand(ExecutorContext executorContext, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
@@ -98,10 +96,10 @@ public class ShardingEntityExpressionExecutor extends DefaultEntityExpressionExe
     }
 
     @Override
-    protected long executeRows0(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder, EntityPredicateSQLExpression entityPredicateSQLExpression) {
+    public long executeRows(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder, EntityPredicateSQLExpression entityPredicateSQLExpression) {
         boolean sharding = isSharding(entityPredicateExpressionBuilder);
         if (!sharding) {
-            return super.executeRows0(executorContext, entityPredicateExpressionBuilder, entityPredicateSQLExpression);
+            return super.executeRows(executorContext, entityPredicateExpressionBuilder, entityPredicateSQLExpression);
         }
         PrepareParseResult prepareParseResult = easyPrepareParser.parse(new PredicateParseContextImpl(executorContext, entityPredicateExpressionBuilder, entityPredicateSQLExpression));
         ExecutionContext executionContext = executionContextFactory.createShardingExecutionContext(prepareParseResult);

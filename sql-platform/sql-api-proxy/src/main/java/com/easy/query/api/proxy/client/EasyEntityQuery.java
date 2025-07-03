@@ -15,12 +15,14 @@ import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.expression.parser.core.PropColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.core.trigger.TriggerEvent;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * create time 2023/9/19 08:07
@@ -123,5 +125,8 @@ public interface EasyEntityQuery extends EasyBaseQuery{
     }
     default void setMigrationParser(MigrationEntityParser migrationParser){
         getEasyQueryClient().setMigrationParser(migrationParser);
+    }
+    default void addTriggerListener(Consumer<TriggerEvent> eventConsumer){
+        getEasyQueryClient().addTriggerListener(eventConsumer);
     }
 }

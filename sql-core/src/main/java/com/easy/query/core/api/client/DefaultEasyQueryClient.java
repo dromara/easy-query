@@ -36,6 +36,8 @@ import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.migration.DatabaseMigrationProvider;
 import com.easy.query.core.migration.MigrationEntityParser;
+import com.easy.query.core.trigger.EntityExpressionTrigger;
+import com.easy.query.core.trigger.TriggerEvent;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -43,6 +45,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * @author xuejiaming
@@ -250,7 +253,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
 //            ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(selfProperty);
 //            EasySQLExpressionUtil.addRelationExtraColumn(columnMetadata,selfProperty,expressionContext.getRelationExtraMetadata(),false);
 //        }
-        includeProvider.include(null,entityMetadata,expressionContext,ic->ic.with(navigateProperty));
+        includeProvider.include(null, entityMetadata, expressionContext, ic -> ic.with(navigateProperty));
 
         IncludeProcessorFactory includeProcessorFactory = runtimeContext.getIncludeProcessorFactory();
         IncludeParserEngine includeParserEngine = runtimeContext.getIncludeParserEngine();
@@ -267,10 +270,18 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
     public DatabaseCodeFirst getDatabaseCodeFirst() {
         return runtimeContext.getDatabaseCodeFirst();
     }
+
     @Override
     public void setMigrationParser(MigrationEntityParser migrationParser) {
-        Objects.requireNonNull(migrationParser, "migrationParser can not be null");
+        Objects.requireNonNull(migrationParser, "migrationParser is null");
         DatabaseMigrationProvider databaseMigrationProvider = runtimeContext.getService(DatabaseMigrationProvider.class);
         databaseMigrationProvider.setMigrationParser(migrationParser);
+    }
+
+    @Override
+    public void addTriggerListener(Consumer<TriggerEvent> eventConsumer) {
+        Objects.requireNonNull(eventConsumer, "eventConsumer is null");
+        EntityExpressionTrigger entityExpressionTrigger = runtimeContext.getService(EntityExpressionTrigger.class);
+        entityExpressionTrigger.addTriggerListener(eventConsumer);
     }
 }

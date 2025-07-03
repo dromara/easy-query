@@ -11,7 +11,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.extension.print.JdbcSQLPrinter;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
-import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
@@ -59,7 +59,7 @@ public interface QueryRuntimeContext {
     EntityMetadataManager getEntityMetadataManager();
     SQLExpressionInvokeFactory getSQLExpressionInvokeFactory();
     ConnectionManager getConnectionManager();
-    EntityExpressionExecutor getEntityExpressionExecutor();
+    EntityExpressionPrepareExecutor getEntityExpressionPrepareExecutor();
 
     JdbcTypeHandlerManager getJdbcTypeHandlerManager();
 

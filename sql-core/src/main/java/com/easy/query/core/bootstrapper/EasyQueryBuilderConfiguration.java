@@ -29,7 +29,9 @@ import com.easy.query.core.basic.jdbc.conn.impl.DefaultConnectionManager;
 import com.easy.query.core.basic.jdbc.conn.impl.DefaultEasyConnectionFactory;
 import com.easy.query.core.basic.jdbc.conn.impl.DefaultEasyDataSourceConnectionFactory;
 import com.easy.query.core.basic.jdbc.executor.DefaultEntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.DefaultEntityExpressionPrepareExecutor;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
 import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.DefaultEasyPageResultProvider;
@@ -131,6 +133,8 @@ import com.easy.query.core.sharding.router.table.engine.DefaultTableRouteEngine;
 import com.easy.query.core.sharding.router.table.engine.TableRouteEngine;
 import com.easy.query.core.sql.DefaultJdbcSQLExecutor;
 import com.easy.query.core.sql.JdbcSQLExecutor;
+import com.easy.query.core.trigger.DefaultEntityExpressionTrigger;
+import com.easy.query.core.trigger.EntityExpressionTrigger;
 
 import javax.sql.DataSource;
 import java.util.function.Consumer;
@@ -230,6 +234,8 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(IncludeProvider.class, DefaultIncludeProvider.class)
                 .replaceService(RelationNullValueValidator.class, DefaultRelationNullValueValidator.class)
                 .replaceService(SQLCaseWhenBuilderFactory.class, DefaultSQLCaseWhenBuilderFactory.class)
+                .replaceService(EntityExpressionTrigger.class, DefaultEntityExpressionTrigger.class)
+                .replaceService(EntityExpressionPrepareExecutor.class, DefaultEntityExpressionPrepareExecutor.class)
 //                .replaceService(NavigateNamedGuess.class, DefaultNavigateNamedGuess.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }

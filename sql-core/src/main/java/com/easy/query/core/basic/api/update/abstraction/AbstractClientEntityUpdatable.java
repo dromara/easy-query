@@ -7,6 +7,7 @@ import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
@@ -81,8 +82,8 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
         if (EasyCollectionUtil.isNotEmpty(entities)) {
             ExecutorContext executorContext = ExecutorContext.create(entityUpdateExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.UPDATE);
             List<Object> trackEntities = configureUpdateAndGetTrackEntities();
-            EntityExpressionExecutor entityExpressionExecutor = entityUpdateExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
-            long executeRows = entityExpressionExecutor.executeRows(executorContext, entityUpdateExpressionBuilder, entities);
+            EntityExpressionPrepareExecutor entityExpressionPrepareExecutor = entityUpdateExpressionBuilder.getRuntimeContext().getEntityExpressionPrepareExecutor();
+            long executeRows = entityExpressionPrepareExecutor.executeRows(executorContext, entityUpdateExpressionBuilder, entities);
             removeTrackEntities(trackEntities);
             return executeRows;
         }

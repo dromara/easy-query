@@ -13,7 +13,9 @@ import com.easy.query.core.basic.jdbc.executor.internal.enumerable.ResultSizeLim
 import com.easy.query.core.basic.jdbc.executor.internal.result.AffectedRowsExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResult;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
+import com.easy.query.core.expression.executor.parser.EasyPrepareParser;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.query.ExecutionContextFactory;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
@@ -133,16 +135,10 @@ public class DefaultEntityExpressionExecutor implements EntityExpressionExecutor
 
 
     @Override
-    public long executeRows(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder) {
-        EntityPredicateSQLExpression entityPredicateSQLExpression = entityPredicateExpressionBuilder.toExpression();
-        return executeRows0(executorContext, entityPredicateExpressionBuilder, entityPredicateSQLExpression);
-    }
-
-    protected long executeRows0(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder, EntityPredicateSQLExpression entityPredicateSQLExpression) {
+    public long executeRows(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder,EntityPredicateSQLExpression entityPredicateSQLExpression) {
         ExecutionContext executionContext = executionContextFactory.createByPredicateExpression(entityPredicateSQLExpression);
         return executeExpressionCommand(executorContext, executionContext, false);
     }
-
     protected long executeExpressionCommand(ExecutorContext executorContext, ExecutionContext executionContext, boolean sharding) {
 
         try (JdbcCommand<AffectedRowsExecuteResult> command = getExecuteExpressionJdbcCommand(executorContext, executionContext, sharding);

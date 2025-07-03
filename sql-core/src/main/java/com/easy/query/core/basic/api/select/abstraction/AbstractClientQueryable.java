@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
 import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import org.jetbrains.annotations.NotNull;
@@ -655,12 +656,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         ExpressionContext expressionContext = this.entityQueryExpressionBuilder.getExpressionContext();
         boolean tracking = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.USE_TRACKING);
         ExecuteMethodEnum executeMethod = expressionContext.getExecuteMethod();
-        EntityExpressionExecutor entityExpressionExecutor = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
+        EntityExpressionPrepareExecutor entityExpressionPrepareExecutor = this.entityQueryExpressionBuilder.getRuntimeContext().getEntityExpressionPrepareExecutor();
         ExecutorContext executorContext = ExecutorContext.create(expressionContext, true, executeMethod, tracking);
         executorContext.setConfigurer(configurer);
         // todo data reader
         DataReader dataReader = autoAllColumn ? entityMetadata.getDataReader() : null;
-        JdbcResult<TR> jdbcResult = entityExpressionExecutor.queryStreamResultSet(executorContext, new EntityResultMetadata<>(entityMetadata, dataReader), entityQueryExpressionBuilder);
+        JdbcResult<TR> jdbcResult = entityExpressionPrepareExecutor.queryStreamResultSet(executorContext, new EntityResultMetadata<>(entityMetadata, dataReader), entityQueryExpressionBuilder);
         return new JdbcResultWrap<>(executeMethod, expressionContext, entityMetadata, jdbcResult);
     }
 

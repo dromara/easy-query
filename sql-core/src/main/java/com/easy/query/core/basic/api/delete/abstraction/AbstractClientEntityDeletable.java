@@ -3,6 +3,7 @@ package com.easy.query.core.basic.api.delete.abstraction;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.api.internal.AbstractSQLExecuteRows;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -65,8 +66,8 @@ public abstract class AbstractClientEntityDeletable<T> extends AbstractSQLExecut
 
         if (!entities.isEmpty()) {
             QueryRuntimeContext runtimeContext = entityDeleteExpressionBuilder.getRuntimeContext();
-            EntityExpressionExecutor entityExpressionExecutor = runtimeContext.getEntityExpressionExecutor();
-            return entityExpressionExecutor.executeRows(ExecutorContext.create(getExpressionContext(), false, ExecuteMethodEnum.DELETE), entityDeleteExpressionBuilder, entities);
+            EntityExpressionPrepareExecutor entityExpressionPrepareExecutor = runtimeContext.getEntityExpressionPrepareExecutor();
+            return entityExpressionPrepareExecutor.executeRows(ExecutorContext.create(getExpressionContext(), false, ExecuteMethodEnum.DELETE), entityDeleteExpressionBuilder, entities);
         }
         return 0;
     }

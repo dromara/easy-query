@@ -14,6 +14,7 @@ import com.easy.query.core.basic.extension.print.JdbcSQLPrinter;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
@@ -62,7 +63,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final EntityMetadataManager entityMetadataManager;
     private final SQLExpressionInvokeFactory easyQueryLambdaFactory;
     private final ConnectionManager easyConnectionManager;
-    private final EntityExpressionExecutor entityExpressionExecutor;
+    private final EntityExpressionPrepareExecutor entityExpressionPrepareExecutor;
     //    private final EasyQueryExecutor easyQueryExecutor;
     private final JdbcTypeHandlerManager easyJdbcTypeHandler;
     //    private final SQLApiFactory easyQueryableFactory;
@@ -111,7 +112,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           EntityMetadataManager entityMetadataManager,
                                           SQLExpressionInvokeFactory easyQueryLambdaFactory,
                                           ConnectionManager easyConnectionManager,
-                                          EntityExpressionExecutor entityExpressionExecutor,
+                                          EntityExpressionPrepareExecutor entityExpressionPrepareExecutor,
                                           JdbcTypeHandlerManager easyJdbcTypeHandler,
 //                                          SQLApiFactory easyQueryableFactory,
                                           ExpressionBuilderFactory expressionBuilderFactory,
@@ -158,7 +159,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.entityMetadataManager = entityMetadataManager;
         this.easyQueryLambdaFactory = easyQueryLambdaFactory;
         this.easyConnectionManager = easyConnectionManager;
-        this.entityExpressionExecutor = entityExpressionExecutor;
+        this.entityExpressionPrepareExecutor = entityExpressionPrepareExecutor;
         this.easyJdbcTypeHandler = easyJdbcTypeHandler;
 //        this.easyQueryableFactory = easyQueryableFactory;
         this.expressionBuilderFactory = expressionBuilderFactory;
@@ -232,8 +233,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     }
 
     @Override
-    public EntityExpressionExecutor getEntityExpressionExecutor() {
-        return entityExpressionExecutor;
+    public EntityExpressionPrepareExecutor getEntityExpressionPrepareExecutor() {
+        return entityExpressionPrepareExecutor;
     }
 
     @Override

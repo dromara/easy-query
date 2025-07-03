@@ -2,6 +2,7 @@ package com.easy.query.core.basic.api.update.map;
 
 import com.easy.query.core.basic.api.internal.AbstractSQLExecuteRows;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
+import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
@@ -56,8 +57,8 @@ public abstract class AbstractMapClientUpdatable extends AbstractSQLExecuteRows<
     @Override
     public long executeRows() {
         if (EasyCollectionUtil.isNotEmpty(entities)) {
-            EntityExpressionExecutor entityExpressionExecutor = mapUpdateExpressionBuilder.getRuntimeContext().getEntityExpressionExecutor();
-            return entityExpressionExecutor.executeRows(ExecutorContext.create(mapUpdateExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.UPDATE), mapUpdateExpressionBuilder, entities);
+            EntityExpressionPrepareExecutor entityExpressionPrepareExecutor = mapUpdateExpressionBuilder.getRuntimeContext().getEntityExpressionPrepareExecutor();
+            return entityExpressionPrepareExecutor.executeRows(ExecutorContext.create(mapUpdateExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.UPDATE), mapUpdateExpressionBuilder, entities);
         }
         return 0;
     }

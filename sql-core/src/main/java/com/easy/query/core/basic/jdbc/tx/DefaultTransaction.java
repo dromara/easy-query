@@ -9,10 +9,10 @@ import java.util.function.Consumer;
 
 
 /**
+ * @author xuejiaming
  * @FileName: DefaultTransaction.java
  * @Description: 文件说明
  * create time 2023/2/20 22:11
- * @author xuejiaming
  */
 public class DefaultTransaction implements Transaction {
 
@@ -26,8 +26,8 @@ public class DefaultTransaction implements Transaction {
         this.isolationLevel = isolationLevel;
         this.connectionManager = connectionManager;
 
-        this.open=true;
-        this.closed=false;
+        this.open = true;
+        this.closed = false;
     }
 
     @Override
@@ -35,19 +35,20 @@ public class DefaultTransaction implements Transaction {
         return isolationLevel;
     }
 
-    private void listenerInvoke(Consumer<TransactionListener> consumer){
-        if(EasyCollectionUtil.isNotEmpty(this.transactionListeners)){
+    private void listenerInvoke(Consumer<TransactionListener> consumer) {
+        if (EasyCollectionUtil.isNotEmpty(this.transactionListeners)) {
             for (TransactionListener transactionListener : this.transactionListeners) {
                 consumer.accept(transactionListener);
             }
         }
     }
+
     @Override
     public void commit() {
         listenerInvoke(TransactionListener::beforeCommit);
         connectionManager.commit();
         listenerInvoke(TransactionListener::afterCommit);
-        open=false;
+        open = false;
     }
 
     @Override
@@ -55,21 +56,25 @@ public class DefaultTransaction implements Transaction {
         listenerInvoke(TransactionListener::beforeRollback);
         connectionManager.rollback();
         listenerInvoke(TransactionListener::afterRollback);
-        open=false;
+        open = false;
     }
 
-    private void close(boolean closing){
-        if(closed){
+    private void close(boolean closing) {
+        if (closed) {
             return;
         }
 
         listenerInvoke(TransactionListener::beforeClose);
-        if(closing&&this.open){
+        if (closing && this.open) {
             this.rollback();
         }
-        closed=true;
+        closed = true;
         listenerInvoke(TransactionListener::afterClose);
+        if (transactionListeners != null) {
+            transactionListeners.clear();
+        }
     }
+
     @Override
     public void close() {
         close(true);
@@ -77,9 +82,9 @@ public class DefaultTransaction implements Transaction {
 
     @Override
     public void registerListener(TransactionListener transactionBehavior) {
-        if(transactionListeners==null){
+        if (transactionListeners == null) {
             //一般不需要注册很多个arraylist相对比较浪费内存
-            transactionListeners=new ArrayList<>();
+            transactionListeners = new ArrayList<>();
         }
         this.transactionListeners.add(transactionBehavior);
     }

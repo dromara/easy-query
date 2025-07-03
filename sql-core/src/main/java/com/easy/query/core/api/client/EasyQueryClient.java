@@ -18,6 +18,7 @@ import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.configuration.LoadIncludeConfiguration;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.migration.MigrationEntityParser;
+import com.easy.query.core.trigger.TriggerEvent;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -25,6 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * @author xuejiaming
@@ -147,4 +149,6 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
     DatabaseCodeFirst getDatabaseCodeFirst();
 
     void setMigrationParser(MigrationEntityParser migrationParser);
+
+    void addTriggerListener(Consumer<TriggerEvent> eventConsumer);
 }

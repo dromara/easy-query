@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.jdbc.conn;
 
 import com.easy.query.core.basic.jdbc.tx.Transaction;
+import com.easy.query.core.basic.jdbc.tx.TransactionListener;
 import com.easy.query.core.enums.conn.ConnectionStrategyEnum;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 
