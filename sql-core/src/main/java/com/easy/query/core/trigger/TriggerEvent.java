@@ -4,6 +4,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -20,12 +21,15 @@ public class TriggerEvent {
     @NotNull
     private final TriggerTypeEnum type;
     @NotNull
+    private final LocalDateTime triggerTime;
+    @NotNull
     private final QueryRuntimeContext runtimeContext;
 
-    public TriggerEvent(@NotNull Class<?> entityClass, @Nullable List<?> entities, @NotNull TriggerTypeEnum type, @NotNull QueryRuntimeContext runtimeContext){
+    public TriggerEvent(@NotNull Class<?> entityClass, @Nullable List<?> entities, @NotNull TriggerTypeEnum type, @NotNull LocalDateTime triggerTime, @NotNull QueryRuntimeContext runtimeContext){
         this.entityClass = entityClass;
         this.entities = entities;
         this.type = type;
+        this.triggerTime = triggerTime;
         this.runtimeContext = runtimeContext;
     }
 
@@ -42,6 +46,11 @@ public class TriggerEvent {
     @NotNull
     public TriggerTypeEnum getType() {
         return type;
+    }
+
+    @NotNull
+    public LocalDateTime getTriggerTime() {
+        return triggerTime;
     }
 
     @NotNull

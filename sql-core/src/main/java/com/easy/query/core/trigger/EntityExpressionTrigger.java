@@ -4,6 +4,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -15,7 +16,7 @@ import java.util.function.Consumer;
  */
 public interface EntityExpressionTrigger {
 
-    void trigger(@NotNull Class<?> entityClass, @Nullable List<?> entities, @NotNull TriggerTypeEnum type, @NotNull QueryRuntimeContext runtimeContext);
+    void trigger(@NotNull Class<?> entityClass, @Nullable List<?> entities, @NotNull TriggerTypeEnum type, @NotNull LocalDateTime triggerTime, @NotNull QueryRuntimeContext runtimeContext);
 
     void addTriggerListener(Consumer<TriggerEvent> trigger);
 }
