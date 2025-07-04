@@ -75,7 +75,7 @@ public class MyAssertExceptionFactory implements AssertExceptionFactory {
 
     @Override
     @NotNull
-    public RuntimeException createExecuteCurrentException(long expectRows,long realRows, String msg, String code) {
+    public RuntimeException createExecuteConcurrentException(long expectRows, long realRows, String msg, String code) {
         return new EasyQueryConcurrentException(msg, code);
     }
 }

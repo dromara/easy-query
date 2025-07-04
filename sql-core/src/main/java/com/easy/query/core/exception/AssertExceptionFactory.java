@@ -31,5 +31,5 @@ public interface AssertExceptionFactory {
      * @return
      */
     @NotNull
-    RuntimeException createExecuteCurrentException(long expectRows,long realRows, String msg, String code);
+    RuntimeException createExecuteConcurrentException(long expectRows, long realRows, String msg, String code);
 }

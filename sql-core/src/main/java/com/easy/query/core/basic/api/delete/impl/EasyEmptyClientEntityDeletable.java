@@ -3,7 +3,6 @@ package com.easy.query.core.basic.api.delete.impl;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.AssertExceptionFactory;
-import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -88,7 +87,7 @@ public class EasyEmptyClientEntityDeletable<T> implements ClientEntityDeletable<
         long rows = executeRows();
         if (rows != expectRows) {
             AssertExceptionFactory assertExceptionFactory = serviceProvider.getService(AssertExceptionFactory.class);
-            throw assertExceptionFactory.createExecuteCurrentException(expectRows, rows, msg, code);
+            throw assertExceptionFactory.createExecuteConcurrentException(expectRows, rows, msg, code);
         }
     }
 

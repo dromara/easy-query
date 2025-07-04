@@ -4,7 +4,6 @@ import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.AssertExceptionFactory;
-import com.easy.query.core.exception.EasyQueryConcurrentException;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
@@ -59,7 +58,7 @@ public class EasyEmptyClientEntityUpdatable<T> implements ClientEntityUpdatable<
         long rows = executeRows();
         if (rows != expectRows) {
             AssertExceptionFactory assertExceptionFactory = serviceProvider.getService(AssertExceptionFactory.class);
-            throw assertExceptionFactory.createExecuteCurrentException(expectRows, rows, msg, code);
+            throw assertExceptionFactory.createExecuteConcurrentException(expectRows, rows, msg, code);
         }
 
     }
