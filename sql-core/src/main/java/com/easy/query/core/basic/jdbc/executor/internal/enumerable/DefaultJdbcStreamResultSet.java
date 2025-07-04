@@ -68,9 +68,9 @@ public class DefaultJdbcStreamResultSet<T> implements JdbcStreamResult<T> {
 
     @Override
     public void close() throws SQLException {
-        command.close();
         if(this.queryExecuteResult!=null){
             this.queryExecuteResult.close();
         }
+        command.close();
     }
 }

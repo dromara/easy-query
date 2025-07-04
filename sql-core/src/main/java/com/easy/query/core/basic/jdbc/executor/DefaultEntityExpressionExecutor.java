@@ -13,9 +13,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.enumerable.ResultSizeLim
 import com.easy.query.core.basic.jdbc.executor.internal.result.AffectedRowsExecuteResult;
 import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResult;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
-import com.easy.query.core.expression.executor.parser.EasyPrepareParser;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
 import com.easy.query.core.expression.executor.query.ExecutionContextFactory;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
