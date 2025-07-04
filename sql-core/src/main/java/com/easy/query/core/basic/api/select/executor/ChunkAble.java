@@ -1,6 +1,8 @@
 package com.easy.query.core.basic.api.select.executor;
 
 import com.easy.query.core.basic.api.select.QueryAvailable;
+import com.easy.query.core.common.Chunk;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -24,6 +26,7 @@ public interface ChunkAble<T> extends QueryAvailable<T> {
 
     /**
      * 分批处理 支持include
+     *
      * @param size  每个批次大小
      * @param chunk 如何处理
      */
@@ -33,5 +36,7 @@ public interface ChunkAble<T> extends QueryAvailable<T> {
             return list.size() <= size;
         });
     }
+
+    void offsetChunk(int size, SQLFuncExpression1<Chunk<List<T>>, Chunk.Offset> chunk);
 
 }

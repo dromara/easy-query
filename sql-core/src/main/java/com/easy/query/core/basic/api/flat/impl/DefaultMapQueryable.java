@@ -17,6 +17,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.common.Chunk;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -24,6 +25,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -116,6 +118,7 @@ public class DefaultMapQueryable implements MapQueryable {
         queryable.asTableLink(linkAs);
         return this;
     }
+
     @Override
     public MapQueryable asTableSegment(BiFunction<String, String, String> segmentAs) {
         queryable.asTableSegment(segmentAs);
@@ -409,7 +412,7 @@ public class DefaultMapQueryable implements MapQueryable {
         int offset = 0;
         while (true) {
             MapQueryable cloneQueryable = this.cloneQueryable();
-            List<Map<String, Object>> list = cloneQueryable.limit(offset,size).toList();
+            List<Map<String, Object>> list = cloneQueryable.limit(offset, size).toList();
             offset += size;
             if (EasyCollectionUtil.isEmpty(list)) {
                 break;
@@ -418,6 +421,39 @@ public class DefaultMapQueryable implements MapQueryable {
             if (!chunk.test(list) || !hasNext) {
                 break;
             }
+        }
+    }
+
+    @Override
+    public void offsetChunk(int size, SQLFuncExpression1<Chunk<List<Map<String, Object>>>, Chunk.Offset> chunk) {
+
+        int offset = 0;
+        long fetchSize = 0L;
+        long nextSize = size;
+        while (true) {
+
+            MapQueryable cloneQueryable = this.cloneQueryable();
+            List<Map<String, Object>> list = cloneQueryable.limit(offset, nextSize).toList();
+            if (EasyCollectionUtil.isEmpty(list)) {
+                break;
+            }
+            boolean hasNext = list.size() == nextSize;
+            fetchSize += nextSize;
+            Chunk<List<Map<String, Object>>> chunkItem = new Chunk<>(list, fetchSize);
+            Chunk.Offset offsetItem = chunk.apply(chunkItem);
+            if (chunkItem.isBreakChunk()) {
+                break;
+            }
+
+            offset += offsetItem.offset;
+            if (!hasNext) {
+                break;
+            }
+            if (fetchSize >= chunkItem.getMaxFetchSize()) {
+                break;
+            }
+
+            nextSize = Math.min(chunkItem.getMaxFetchSize() - fetchSize, nextSize);
         }
     }
 

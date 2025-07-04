@@ -11,6 +11,7 @@ import com.easy.query.api.proxy.entity.select.join.join2.RightJoinExpressionJoin
 import com.easy.query.api.proxy.extension.tree.EntityTreeCTEConfigurer;
 import com.easy.query.api.proxy.extension.tree.EntityTreeCTEConfigurerImpl;
 import com.easy.query.api.proxy.util.EasyProxyUtil;
+import com.easy.query.core.common.Chunk;
 import com.easy.query.core.proxy.core.FlatEntitySQLContext;
 import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
@@ -218,6 +219,11 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public void toChunkIf(int size, Predicate<List<T1>> chunk) {
         clientQueryable.toChunkIf(size, chunk);
+    }
+
+    @Override
+    public void offsetChunk(int size, SQLFuncExpression1<Chunk<List<T1>>, Chunk.Offset> chunk) {
+        clientQueryable.offsetChunk(size, chunk);
     }
 
     @NotNull

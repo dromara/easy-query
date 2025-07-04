@@ -38,12 +38,13 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -679,5 +680,72 @@ public class QueryTest26 extends BaseTest {
         private String shape;
 
         public List<Fruit> fruits;
+    }
+    @Test
+    public void testChunk3() {
+        HashMap<String, BlogEntity> ids = new HashMap<>();
+        easyEntityQuery.queryable(BlogEntity.class)
+                .orderBy(b -> b.createTime().asc())
+                .orderBy(b -> b.id().asc())
+                .offsetChunk(3, chunk -> {
+                    Assert.assertTrue(chunk.getValues().size() <= 3);
+                    for (BlogEntity blog : chunk.getValues()) {
+                        if (ids.containsKey(blog.getId())) {
+                            throw new RuntimeException("id 重复:" + blog.getId());
+                        }
+                        ids.put(blog.getId(), blog);
+                    }
+                    return chunk.offset(chunk.getValues().size());
+                });
+        Assert.assertEquals(100, ids.size());
+    }
+
+    @Test
+    public void testChunk4() {
+        AtomicInteger a = new AtomicInteger(0);
+        easyEntityQuery.queryable(BlogEntity.class)
+                .orderBy(b -> b.createTime().asc())
+                .orderBy(b -> b.id().asc())
+                .offsetChunk(3, chunk -> {
+                    for (BlogEntity blog : chunk.getValues()) {
+                        a.incrementAndGet();
+                    }
+                    return chunk.offset(chunk.getValues().size());
+                });
+        Assert.assertEquals(100, a.intValue());
+
+    }
+    @Test
+    public void testChunk5() {
+        AtomicInteger a = new AtomicInteger(0);
+        easyEntityQuery.queryable(BlogEntity.class)
+                .orderBy(b -> b.createTime().asc())
+                .orderBy(b -> b.id().asc())
+                .offsetChunk(100, chunk -> {
+                    for (BlogEntity blog : chunk.getValues()) {
+                        a.incrementAndGet();
+                    }
+                    return chunk.offset(0);
+                });
+        Assert.assertEquals(100000, a.intValue());
+
+
+    }
+    @Test
+    public void testChunk6() {
+        AtomicInteger a = new AtomicInteger(0);
+        easyEntityQuery.queryable(BlogEntity.class)
+                .orderBy(b -> b.createTime().asc())
+                .orderBy(b -> b.id().asc())
+                .offsetChunk(100, chunk -> {
+                    chunk.setMaxFetchSize(100001);
+                    for (BlogEntity blog : chunk.getValues()) {
+                        a.incrementAndGet();
+                    }
+                    return chunk.offset(0);
+                });
+        Assert.assertEquals(100001, a.intValue());
+
+
     }
 }

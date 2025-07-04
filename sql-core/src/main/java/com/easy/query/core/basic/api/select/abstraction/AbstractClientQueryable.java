@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
+import com.easy.query.core.common.Chunk;
 import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +26,6 @@ import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
 import com.easy.query.core.basic.api.select.impl.EasyCteClientQueryable;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.extension.track.TrackManager;
-import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultMetadata;
@@ -580,6 +580,47 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         }
     }
 
+    @Override
+    public void offsetChunk(int size, SQLFuncExpression1<Chunk<List<T1>>, Chunk.Offset> chunk) {
+        int offset = 0;
+        long fetchSize = 0L;
+        long nextSize = size;
+        while (true) {
+
+            ClientQueryable<T1> cloneQueryable = this.cloneQueryable();
+            if (!cloneQueryable.getSQLEntityExpressionBuilder().hasOrder()) {
+                cloneQueryable.orderByAsc(o -> {
+                    Collection<String> keyProperties = o.getEntityMetadata().getKeyProperties();
+                    if (EasyCollectionUtil.isEmpty(keyProperties)) {
+                        throw new EasyQueryInvalidOperationException("No primary key detected. Provide an ordering clause for sequence determination in the chunk function.");
+                    }
+                    for (String keyProperty : keyProperties) {
+                        o.column(keyProperty);
+                    }
+                });
+            }
+            List<T1> list = cloneQueryable.limit(offset, nextSize).toList();
+            if (EasyCollectionUtil.isEmpty(list)) {
+                break;
+            }
+            boolean hasNext = list.size() == nextSize;
+            fetchSize += nextSize;
+            Chunk<List<T1>> chunkItem = new Chunk<>(list, fetchSize);
+            Chunk.Offset offsetItem = chunk.apply(chunkItem);
+            if (chunkItem.isBreakChunk()) {
+                break;
+            }
+            offset += offsetItem.offset;
+            if (!hasNext) {
+                break;
+            }
+            if (fetchSize >= chunkItem.getMaxFetchSize()) {
+                break;
+            }
+            nextSize = Math.min(chunkItem.getMaxFetchSize() - fetchSize, nextSize);
+        }
+    }
+
     /**
      * 补齐select操作
      *
@@ -1058,9 +1099,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                             }
                         }
                         Class<?> flatClassType = t.getIncludeNavigateParams().getFlatClassType();
-                        EntityMetadata flatClassTypeEntityMetadata=null;
+                        EntityMetadata flatClassTypeEntityMetadata = null;
                         if (flatClassType != null) {
-                           flatClassTypeEntityMetadata = entityMetadataManager.getEntityMetadata(flatClassType);
+                            flatClassTypeEntityMetadata = entityMetadataManager.getEntityMetadata(flatClassType);
                         }
                         ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(propertyQueryable, EasyNavigateUtil.getNavigateLimit(entityNavigateMetadata, t.getIncludeNavigateParams().getNavigateMetadata()), EasyNavigateUtil.getNavigateOrderProps(entityNavigateMetadata.getOrderProps(), t.getIncludeNavigateParams().getNavigateMetadata().getOrderProps()), flatClassTypeEntityMetadata, configureArgument, runtimeContext);
 
