@@ -1,5 +1,6 @@
 package com.easy.query.core.metadata;
 
+import com.easy.query.core.enums.PartitionOrderEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
@@ -35,6 +36,7 @@ public class NavigateOption {
     private EntityRelationPropertyProvider entityRelationPropertyProvider;
     private boolean required = false;
     private boolean subQueryToGroupJoin = false;
+    private PartitionOrderEnum partitionOrder;
 
     public NavigateOption(EntityMetadata entityMetadata,
                           String propertyName,
@@ -56,6 +58,7 @@ public class NavigateOption {
         this.offset = offset;
         this.limit = limit;
         this.directMapping = directMapping;
+        this.partitionOrder = PartitionOrderEnum.THROW;
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -168,5 +171,13 @@ public class NavigateOption {
 
     public void setSubQueryToGroupJoin(boolean subQueryToGroupJoin) {
         this.subQueryToGroupJoin = subQueryToGroupJoin;
+    }
+
+    public PartitionOrderEnum getPartitionOrder() {
+        return partitionOrder;
+    }
+
+    public void setPartitionOrder(PartitionOrderEnum partitionOrder) {
+        this.partitionOrder = partitionOrder;
     }
 }

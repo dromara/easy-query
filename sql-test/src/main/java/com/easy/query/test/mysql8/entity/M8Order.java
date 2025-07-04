@@ -3,6 +3,7 @@ package com.easy.query.test.mysql8.entity;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.enums.PartitionOrderEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.mysql8.entity.proxy.M8OrderProxy;
@@ -27,6 +28,8 @@ public class M8Order implements ProxyEntityAvailable<M8Order, M8OrderProxy> {
     private BigDecimal price;
     private LocalDateTime createTime;
 
-    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"orderId"}, required = true)
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"orderId"}, required = true,partitionOrder = PartitionOrderEnum.IGNORE)
     private List<M8OrderItem> orderItems;
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"orderId"}, required = true,partitionOrder = PartitionOrderEnum.KEY_DESC)
+    private List<M8OrderItem> orderItem2s;
 }

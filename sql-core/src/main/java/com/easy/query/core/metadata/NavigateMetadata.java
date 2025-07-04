@@ -2,6 +2,7 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.common.DirectMappingIterator;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.PartitionOrderEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
@@ -66,6 +67,7 @@ public class NavigateMetadata {
     private final long limit;
     private final boolean required;
     private final boolean subQueryToGroupJoin;
+    private final PartitionOrderEnum partitionOrder;
 
     public NavigateMetadata(NavigateOption navigateOption,
                             Property<Object, ?> getter,
@@ -92,6 +94,7 @@ public class NavigateMetadata {
         this.setter = setter;
         this.required = navigateOption.isRequired();
         this.subQueryToGroupJoin = navigateOption.isSubQueryToGroupJoin();
+        this.partitionOrder = navigateOption.getPartitionOrder();
         if (EasyArrayUtil.isNotEmpty(directMapping)) {
             this.directMappingMetadataMap = new ConcurrentHashMap<>(2);
         } else {
@@ -319,5 +322,9 @@ public class NavigateMetadata {
      */
     public boolean isSubQueryToGroupJoin() {
         return subQueryToGroupJoin;
+    }
+
+    public PartitionOrderEnum getPartitionOrder() {
+        return partitionOrder;
     }
 }

@@ -2,7 +2,10 @@ package com.easy.query.core.expression.implicit;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.PartitionOrderEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.DefaultRelationTableKey;
 import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.PartitionByRelationTableKey;
@@ -20,6 +23,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.core.base.impl.ColumnOrderSelectorImpl;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
@@ -29,6 +33,7 @@ import com.easy.query.core.func.def.PartitionBySQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
+import com.easy.query.core.metadata.NavigateOrderProp;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
@@ -144,6 +149,36 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
         clientQueryableSQLExpression.apply(clientQueryable);
 
         OrderBySQLBuilderSegment order = clientQueryable.getSQLEntityExpressionBuilder().getOrder();
+        if (EasySQLSegmentUtil.isEmpty(order)) {
+
+            PartitionOrderEnum partitionOrder = navigateMetadata.getPartitionOrder();
+            if (PartitionOrderEnum.IGNORE != partitionOrder) {
+                if (PartitionOrderEnum.NAVIGATE == partitionOrder) {
+                    List<NavigateOrderProp> orderProps = navigateMetadata.getOrderProps();
+                    if (EasyCollectionUtil.isNotEmpty(orderProps)) {
+                        clientQueryable.orderByAsc(s -> {
+                            for (NavigateOrderProp orderProp : orderProps) {
+                                EasySQLUtil.dynamicOrderBy(s.getOrderSelector(), s.getTable(), orderProp.getProperty(), orderProp.isAsc(), orderProp.getMode(), true);
+                            }
+                        });
+                    }
+                } else if (PartitionOrderEnum.KEY_ASC == partitionOrder||PartitionOrderEnum.KEY_DESC == partitionOrder) {
+                    boolean asc = PartitionOrderEnum.KEY_ASC == partitionOrder;
+                    clientQueryable.orderBy(s -> {
+                        Collection<String> keyProperties = s.getEntityMetadata().getKeyProperties();
+                        if (EasyCollectionUtil.isNotEmpty(keyProperties)) {
+                            for (String keyProperty : keyProperties) {
+                                s.column(keyProperty);
+                            }
+                        }
+                    },asc);
+                }
+                if (EasySQLSegmentUtil.isEmpty(order)) {
+                    //必须要指定order by
+                    throw new EasyQueryInvalidOperationException("In a PARTITION BY clause, the ORDER BY expression must be explicitly specified; otherwise, referencing the nth expression is not supported.");
+                }
+            }
+        }
         OrderBySQLBuilderSegmentImpl orderBySQLBuilderSegment = new OrderBySQLBuilderSegmentImpl();
         order.copyTo(orderBySQLBuilderSegment);
         order.clear();
@@ -208,11 +243,11 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
     }
 
     @Override
-    public RelationIncludeGetter getManyToManyGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes, List<Object> mappingRows,boolean hasOrder) {
+    public RelationIncludeGetter getManyToManyGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes, List<Object> mappingRows, boolean hasOrder) {
         if (navigateMetadata.getMappingClass() == null) {
             return new EqualsManyToManyNoMappingRowsGetter(navigateMetadata, targetPropertyNames, includes);
         }
-        if(hasOrder){
+        if (hasOrder) {
             return new EqualsManyToManyMappingOrderRowsGetter(runtimeContext, navigateMetadata, targetPropertyNames, includes, mappingRows);
         }
         return new EqualsManyToManyMappingRowsGetter(runtimeContext, navigateMetadata, targetPropertyNames, includes, mappingRows);

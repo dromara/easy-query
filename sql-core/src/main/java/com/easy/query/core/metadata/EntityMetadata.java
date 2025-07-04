@@ -401,6 +401,7 @@ public class EntityMetadata {
 
         NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperties, targetProperties, orderProps, navigate.offset(), navigate.limit(), navigate.directMapping());
 
+        navigateOption.setPartitionOrder(navigate.partitionOrder());
         if (readMetadata) {
             navigateOption.setSubQueryToGroupJoin(toMany && navigate.subQueryToGroupJoin());
             navigateOption.setRequired(required);

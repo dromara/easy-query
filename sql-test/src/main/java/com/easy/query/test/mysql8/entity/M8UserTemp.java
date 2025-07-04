@@ -9,6 +9,7 @@ import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.PartitionOrderEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.mysql8.entity.proxy.M8UserProxy;
@@ -40,7 +41,7 @@ public class M8UserTemp implements ProxyEntityAvailable<M8UserTemp, M8UserTempPr
             selfMappingProperty = {M8UserRole.Fields.userId},
             mappingClass = M8UserRole.class,
             targetProperty = {M8Role.Fields.id},
-            targetMappingProperty = {M8UserRole.Fields.roleId})
+            targetMappingProperty = {M8UserRole.Fields.roleId},partitionOrder = PartitionOrderEnum.IGNORE)
     private List<M8Role> roles;
 
     @Override

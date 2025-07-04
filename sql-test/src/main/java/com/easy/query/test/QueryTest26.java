@@ -1,9 +1,12 @@
 package com.easy.query.test;
 
+import com.bestvike.linq.Linq;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.base.ClassProxy;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.core.draft.Draft3;
@@ -22,6 +25,7 @@ import com.easy.query.test.entity.SysUserEncrypt2;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.onrelation.OnRelationA;
 import com.easy.query.test.entity.onrelation.OnRelationD;
+import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
@@ -37,8 +41,10 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * create time 2025/6/12 14:03
@@ -580,5 +586,98 @@ public class QueryTest26 extends BaseTest {
         Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
+    }
+
+    @Test
+    public void test(){
+        EntityQueryable<BlogEntityProxy, BlogEntity> queryable = easyEntityQuery.queryable(BlogEntity.class);
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = queryable.getSQLEntityExpressionBuilder();
+        sqlEntityExpressionBuilder.setOffset(1);
+        sqlEntityExpressionBuilder.setDistinct(true);
+        sqlEntityExpressionBuilder.setRows(10);
+        List<BlogEntity> list1 = queryable.toList();
+
+
+        ArrayList<Fruit> fruits = new ArrayList<>();
+        List<ColorCategory> list = Linq.of(fruits)
+                .groupBy(o -> o.getColor())
+                .select(g -> {
+                    ColorCategory colorCategory = new ColorCategory();
+                    colorCategory.setColor(g.getKey());
+                    List<ShapeCategory> shapes = g.groupBy(ig -> ig.getShape()).select(ig -> {
+                        ShapeCategory shapeCategory = new ShapeCategory();
+                        shapeCategory.setShape(ig.getKey());
+                        shapeCategory.setFruits(ig.toList());
+                        return shapeCategory;
+                    }).toList();
+
+                    colorCategory.setShape(shapes);
+                    return colorCategory;
+                }).toList();
+
+
+        Map<String, List<Fruit>> collect = fruits.stream().collect(Collectors.groupingBy(o -> o.getColor()));
+        List<ColorCategory> result=new ArrayList<>();
+        for (Map.Entry<String, List<Fruit>> stringListEntry : collect.entrySet()) {
+
+            String key = stringListEntry.getKey();
+            List<Fruit> value = stringListEntry.getValue();
+            ColorCategory colorCategory = new ColorCategory();
+            colorCategory.setColor(key);
+            Map<String, List<Fruit>> shapeMap = value.stream().collect(Collectors.groupingBy(o -> o.getShape()));
+            List<ShapeCategory> shapeCategories = shapeMap.entrySet().stream().map(o -> {
+                ShapeCategory shapeCategory = new ShapeCategory();
+                shapeCategory.setShape(o.getKey());
+                shapeCategory.setFruits(o.getValue());
+                return shapeCategory;
+            }).collect(Collectors.toList());
+            colorCategory.setShape(shapeCategories);
+
+            result.add(colorCategory);
+        }
+    }
+
+
+    @Data
+    public static class Fruit {
+
+        /**
+         * id
+         */
+        private String id;
+        /**
+         * 水果名称
+         */
+        private String name;
+        /**
+         * 颜色
+         */
+        private String color;
+        /**
+         * 形状
+         */
+        private String shape;
+    }
+
+    @Data
+    public static class ColorCategory {
+        /**
+         * 颜色
+         */
+        private String color;
+
+        public List<ShapeCategory> shape;
+
+    }
+
+    @Data
+    public static class ShapeCategory{
+
+        /**
+         * 形状
+         */
+        private String shape;
+
+        public List<Fruit> fruits;
     }
 }

@@ -5,7 +5,10 @@ import com.easy.query.core.annotation.EasyAlias;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.ForeignKey;
 import com.easy.query.core.annotation.Navigate;
+import com.easy.query.core.annotation.OrderByProperty;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.enums.OrderByPropertyModeEnum;
+import com.easy.query.core.enums.PartitionOrderEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysUserProxy;
@@ -37,7 +40,7 @@ public class SysUser implements ProxyEntityAvailable<SysUser, SysUserProxy> {
     /**
      * 用户拥有的银行卡数
      */
-    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"uid"})
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"uid"},partitionOrder = PartitionOrderEnum.IGNORE)
     private List<SysBankCard> bankCards;
     /**
      * 用户拥有的银行卡数
@@ -53,4 +56,12 @@ public class SysUser implements ProxyEntityAvailable<SysUser, SysUserProxy> {
 
     @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"uid"})
     private List<SysUserBook> userBooks;
+    /**
+     * 用户拥有的银行卡数
+     */
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"uid"},orderByProps = {
+            @OrderByProperty(property = "openTime",asc = true),
+            @OrderByProperty(property = "code",asc = false,mode = OrderByPropertyModeEnum.NULLS_FIRST),
+    },partitionOrder = PartitionOrderEnum.NAVIGATE)
+    private List<SysBankCard> bankCard4s;
 }

@@ -142,7 +142,7 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
         TableAvailable leftTable = subQueryContext.getLeftTable();
         String property = subQueryContext.getProperty();
         T1Proxy propertyProxy = subQueryContext.getPropertyProxy();
-        String fullName = subQueryContext.getFullName();
+//        String fullName = subQueryContext.getFullName();
         //获取导航元信息
         NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
         //获取表达式配置信息

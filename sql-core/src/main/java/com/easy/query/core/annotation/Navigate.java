@@ -2,6 +2,7 @@ package com.easy.query.core.annotation;
 
 import com.easy.query.core.basic.extension.navigate.DefaultNavigateExtraFilterStrategy;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
+import com.easy.query.core.enums.PartitionOrderEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 
 import java.lang.annotation.Documented;
@@ -143,4 +144,11 @@ public @interface Navigate {
      * @return
      */
     boolean supportNonEntity() default false;
+
+    /**
+     * 当使用partition的时候如果没有指定order那么使用何种排序
+     * @return
+     */
+    PartitionOrderEnum partitionOrder() default PartitionOrderEnum.THROW;
+
 }
