@@ -1,6 +1,5 @@
-package com.easy.query.test.cache;
+package com.easy.query.cache.core.common;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * create time 2025/6/2 22:23
@@ -28,12 +27,10 @@ public class CacheItem {
         this.expire = expire;
     }
 
-    @JsonIgnore
-    public boolean isExpired() {
+    public boolean cacheIsExpired() {
         return System.currentTimeMillis() > expire;
     }
 
-    @JsonIgnore
     public boolean hasJson() {
         return json != null;
     }

@@ -8,5 +8,4 @@ package com.easy.query.cache.core.queryable;
  * @author xuejiaming
  */
 public interface CacheQueryable {
-    String getEntityKey();
 }

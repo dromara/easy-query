@@ -15,6 +15,7 @@ import java.util.function.Consumer;
  * @author xuejiaming
  */
 public interface EntityExpressionTrigger {
+    boolean hasListener();
 
     void trigger(@NotNull Class<?> entityClass, @Nullable List<?> entities, @NotNull TriggerTypeEnum type, @NotNull LocalDateTime triggerTime, @NotNull QueryRuntimeContext runtimeContext);
 

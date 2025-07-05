@@ -1,4 +1,4 @@
-package com.easy.query.cache.core.base;
+package com.easy.query.cache.core.key;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;

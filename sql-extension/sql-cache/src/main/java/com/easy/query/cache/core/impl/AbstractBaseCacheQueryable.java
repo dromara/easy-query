@@ -3,10 +3,10 @@ package com.easy.query.cache.core.impl;
 import com.easy.query.cache.core.CacheEntity;
 import com.easy.query.cache.core.EasyCacheOption;
 import com.easy.query.cache.core.CacheRuntimeContext;
-import com.easy.query.cache.core.EasyCacheManager;
+import com.easy.query.cache.core.provider.EasyCacheProvider;
 import com.easy.query.cache.core.Pair;
 import com.easy.query.cache.core.annotation.CacheEntitySchema;
-import com.easy.query.cache.core.base.CacheKeyFactory;
+import com.easy.query.cache.core.key.CacheKeyFactory;
 import com.easy.query.cache.core.base.CachePredicate;
 import com.easy.query.cache.core.queryable.CacheQueryable;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -31,7 +31,7 @@ import java.util.stream.Stream;
  */
 public abstract class AbstractBaseCacheQueryable<TEntity extends CacheEntity> implements CacheQueryable, RuntimeContextAvailable {
     protected final EasyCacheOption easyCacheOption;
-    protected final EasyCacheManager easyCacheManager;
+    protected final EasyCacheProvider easyCacheProvider;
     protected final EasyQueryClient easyQueryClient;
     protected final ServiceProvider serviceProvider;
     protected final CacheKeyFactory cacheKeyFactory;
@@ -47,7 +47,7 @@ public abstract class AbstractBaseCacheQueryable<TEntity extends CacheEntity> im
 
         this.serviceProvider = cacheRuntimeContext.getServiceProvider();
         this.easyCacheOption = cacheRuntimeContext.getEasyCacheOption();
-        this.easyCacheManager = cacheRuntimeContext.getEasyCacheManager();
+        this.easyCacheProvider = cacheRuntimeContext.getEasyCacheManager();
         this.easyQueryClient = cacheRuntimeContext.getEasyQueryClient();
         this.cacheKeyFactory = serviceProvider.getService(CacheKeyFactory.class);
         this.runtimeContext = this.easyQueryClient.getRuntimeContext();
@@ -77,11 +77,6 @@ public abstract class AbstractBaseCacheQueryable<TEntity extends CacheEntity> im
     @Override
     public QueryRuntimeContext getRuntimeContext() {
         return runtimeContext;
-    }
-
-    @Override
-    public String getEntityKey() {
-        return this.easyCacheOption.getEntityKey(entityClass);
     }
 
     protected Pair<String, TEntity> getKeyAndEntity(TEntity entity) {

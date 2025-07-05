@@ -2,6 +2,7 @@ package com.easy.query.cache.core;
 
 
 import com.easy.query.cache.core.base.ClearParameter;
+import com.easy.query.cache.core.common.CacheKey;
 import com.easy.query.cache.core.queryable.AllCacheQueryable;
 import com.easy.query.cache.core.queryable.KvCacheQueryable;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -25,6 +26,6 @@ public interface EasyCacheClient {
             TEntity extends ProxyEntityAvailable<TEntity, T1Proxy> & CacheAllEntity>
     AllCacheQueryable<T1Proxy, TEntity> allStorage(Class<TEntity> entityClass);
 
-    void clear(ClearParameter clearParameter);
+    void deleteBy(CacheKey cacheKey);
 
 }

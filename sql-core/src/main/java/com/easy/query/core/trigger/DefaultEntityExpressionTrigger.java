@@ -1,6 +1,7 @@
 package com.easy.query.core.trigger;
 
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.util.EasyCollectionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +18,11 @@ import java.util.function.Consumer;
  */
 public class DefaultEntityExpressionTrigger implements EntityExpressionTrigger {
     private final List<Consumer<TriggerEvent>> triggers = new ArrayList<>();
+
+    @Override
+    public boolean hasListener() {
+        return EasyCollectionUtil.isNotEmpty(triggers);
+    }
 
     @Override
     public void trigger(@NotNull Class<?> entityClass, @Nullable List<?> entities, @NotNull TriggerTypeEnum type, @NotNull LocalDateTime triggerTime, @NotNull QueryRuntimeContext runtimeContext) {

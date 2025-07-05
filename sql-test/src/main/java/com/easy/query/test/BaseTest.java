@@ -3,16 +3,14 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.cache.core.EasyCacheClient;
-import com.easy.query.cache.core.EasyCacheManager;
 import com.easy.query.cache.core.bootstrapper.EasyCacheBootstrapper;
+import com.easy.query.cache.core.manager.EasyCacheManager;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
-import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
-import com.easy.query.core.basic.jdbc.executor.ShardingEntityExpressionExecutor;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -21,13 +19,10 @@ import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
 import com.easy.query.core.configuration.bean.entity.EntityPropertyDescriptorMatcher;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.logging.LogFactory;
-import com.easy.query.core.sharding.router.manager.DataSourceRouteManager;
-import com.easy.query.core.sharding.router.manager.TableRouteManager;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.cache.BlogPredicateInterceptor;
 import com.easy.query.test.cache.CacheMultiOption;
-import com.easy.query.test.cache.DefaultEasyRedisManager;
-import com.easy.query.test.cache.DefaultEasyRedisManagerMultiLevel;
+import com.easy.query.test.cache.DefaultCacheManager;
 import com.easy.query.test.common.MyQueryConfiguration;
 import com.easy.query.test.common.TopicUpdateInterceptor;
 import com.easy.query.test.conversion.Blog2StarToStringColumnValueSQLConverter;
@@ -57,10 +52,6 @@ import com.easy.query.test.entity.SysUserEncrypt;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicAuto;
 import com.easy.query.test.entity.TopicInterceptor;
-import com.easy.query.test.entity.TopicSharding;
-import com.easy.query.test.entity.TopicShardingDataSource;
-import com.easy.query.test.entity.TopicShardingDataSourceTime;
-import com.easy.query.test.entity.TopicShardingTime;
 import com.easy.query.test.entity.m2m.UserAccount;
 import com.easy.query.test.entity.m2m.UserBook;
 import com.easy.query.test.entity.onrelation.OnRelationA;
@@ -77,15 +68,6 @@ import com.easy.query.test.keytest.MyTestPrimaryKeyGenerator;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
-import com.easy.query.test.sharding.DataSourceAndTableShardingInitializer;
-import com.easy.query.test.sharding.DataSourceShardingInitializer;
-import com.easy.query.test.sharding.TopicShardingDataSourceRoute;
-import com.easy.query.test.sharding.TopicShardingDataSourceTimeDataSourceRoute;
-import com.easy.query.test.sharding.TopicShardingDataSourceTimeTableRoute;
-import com.easy.query.test.sharding.TopicShardingShardingInitializer;
-import com.easy.query.test.sharding.TopicShardingTableRoute;
-import com.easy.query.test.sharding.TopicShardingTimeShardingInitializer;
-import com.easy.query.test.sharding.TopicShardingTimeTableRoute;
 import com.zaxxer.hikari.HikariDataSource;
 import org.redisson.Redisson;
 import org.redisson.api.NameMapper;
@@ -95,15 +77,12 @@ import org.redisson.client.codec.StringCodec;
 import org.redisson.config.Config;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * @author xuejiaming
@@ -236,7 +215,7 @@ public abstract class BaseTest {
                 .optionConfigure(op -> {
                 })
                 .replaceService(new CacheMultiOption(1000 * 60 * 60, 1000, 10000))
-                .replaceService(EasyCacheManager.class, DefaultEasyRedisManagerMultiLevel.class)
+                .replaceService(EasyCacheManager.class, DefaultCacheManager.class)
                 .replaceService(EasyQueryClient.class, easyQueryClient)
                 .replaceService(RedissonClient.class, cacheRedissonClient()).build();
         beforex();

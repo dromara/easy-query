@@ -7,7 +7,6 @@ import com.easy.query.cache.core.Pair;
 import com.easy.query.cache.core.base.CachePredicate;
 import com.easy.query.cache.core.impl.AbstractSingleCacheQueryable;
 import com.easy.query.cache.core.queryable.AllCacheQueryable;
-import com.easy.query.cache.core.queryable.KvCacheQueryable;
 import com.easy.query.core.api.pagination.DefaultPageResult;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
@@ -143,7 +142,7 @@ public class DefaultAllCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEnti
         ClientQueryable<TEntity> endEntityQueryable = getEndEntityQueryable(indexQueryable);
         String queryableKey = getQueryableKey(endEntityQueryable);
 
-        List<Pair<String, EasyCacheIndex>> cache = easyCacheManager.cache(entityClass, EasyCacheIndex.class, getEntityKey(), queryableKey, fields, ids -> {
+        List<Pair<String, EasyCacheIndex>> cache = easyCacheProvider.cache(entityClass, EasyCacheIndex.class, queryableKey, fields, ids -> {
             return getIndex(getCacheAllIndex(endEntityQueryable));
         });
         EasyCacheIndex v = cache.get(0).getObject2();
@@ -153,7 +152,7 @@ public class DefaultAllCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEnti
     private List<Pair<String, TEntity>> getCacheByIds(Set<String> ids) {
         ClientQueryable<TEntity> entityQueryable = getEndEntityQueryable(this.queryable);
         String queryableKey = getQueryableKey(entityQueryable);
-        return easyCacheManager.cache(entityClass, entityClass, getEntityKey(), queryableKey, ids, otherIds -> {
+        return easyCacheProvider.cache(entityClass, entityClass,  queryableKey, ids, otherIds -> {
             return toKeyAndEntity(getEntities(otherIds, entityQueryable));
         });
     }

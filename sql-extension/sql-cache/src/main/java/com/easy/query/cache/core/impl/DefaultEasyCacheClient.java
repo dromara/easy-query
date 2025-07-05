@@ -3,7 +3,8 @@ package com.easy.query.cache.core.impl;
 import com.easy.query.cache.core.CacheAllEntity;
 import com.easy.query.cache.core.CacheKvEntity;
 import com.easy.query.cache.core.EasyCacheClient;
-import com.easy.query.cache.core.EasyCacheManager;
+import com.easy.query.cache.core.common.CacheKey;
+import com.easy.query.cache.core.provider.EasyCacheProvider;
 import com.easy.query.cache.core.CacheRuntimeContext;
 import com.easy.query.cache.core.base.ClearParameter;
 import com.easy.query.cache.core.impl.all.DefaultAllCacheQueryable;
@@ -22,14 +23,14 @@ import com.easy.query.core.proxy.ProxyEntityAvailable;
  */
 public class DefaultEasyCacheClient implements EasyCacheClient {
     private final CacheRuntimeContext cacheRuntimeContext;
-    private final EasyCacheManager easyCacheManager;
+    private final EasyCacheProvider easyCacheProvider;
     private final ServiceProvider serviceProvider;
 
 
-    public DefaultEasyCacheClient(CacheRuntimeContext cacheRuntimeContext, EasyCacheManager easyCacheManager, ServiceProvider serviceProvider){
+    public DefaultEasyCacheClient(CacheRuntimeContext cacheRuntimeContext, EasyCacheProvider easyCacheProvider, ServiceProvider serviceProvider){
 
         this.cacheRuntimeContext = cacheRuntimeContext;
-        this.easyCacheManager = easyCacheManager;
+        this.easyCacheProvider = easyCacheProvider;
         this.serviceProvider = serviceProvider;
     }
 
@@ -63,7 +64,7 @@ public class DefaultEasyCacheClient implements EasyCacheClient {
 //        return new DefaultAllCacheQueryable<>(cacheRuntimeContext,entityClass);
 //    }
     @Override
-    public void clear(ClearParameter clearParameter) {
-        easyCacheManager.clear(clearParameter);
+    public void deleteBy(CacheKey cacheKey) {
+        easyCacheProvider.deleteBy(cacheKey);
     }
 }

@@ -7,7 +7,6 @@ import com.easy.query.cache.core.CacheRuntimeContext;
 import com.easy.query.cache.core.Pair;
 import com.easy.query.cache.core.base.CachePredicate;
 import com.easy.query.cache.core.impl.AbstractSingleCacheQueryable;
-import com.easy.query.cache.core.queryable.AllCacheQueryable;
 import com.easy.query.cache.core.queryable.KvCacheQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
@@ -55,7 +54,7 @@ public class DefaultKvCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEntit
             ClientQueryable<TEntity> entityQueryable = getEndEntityQueryable(this.queryable);
             String queryableKey = getQueryableKey(entityQueryable);
 
-            return easyCacheManager.cache(entityClass, entityClass, getEntityKey(), queryableKey, needFinds,
+            return easyCacheProvider.cache(entityClass, entityClass, queryableKey, needFinds,
                     otherIds -> {
                         return defaultSelect(otherIds, entityQueryable);
                     });

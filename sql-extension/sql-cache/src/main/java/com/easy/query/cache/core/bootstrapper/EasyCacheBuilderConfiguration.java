@@ -3,9 +3,11 @@ package com.easy.query.cache.core.bootstrapper;
 import com.easy.query.cache.core.EasyCacheClient;
 import com.easy.query.cache.core.EasyCacheOption;
 import com.easy.query.cache.core.CacheRuntimeContext;
-import com.easy.query.cache.core.base.CacheKeyFactory;
-import com.easy.query.cache.core.base.DefaultCacheKeyFactory;
+import com.easy.query.cache.core.key.CacheKeyFactory;
+import com.easy.query.cache.core.key.DefaultCacheKeyFactory;
 import com.easy.query.cache.core.impl.DefaultEasyCacheClient;
+import com.easy.query.cache.core.provider.DefaultCacheProvider;
+import com.easy.query.cache.core.provider.EasyCacheProvider;
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.inject.impl.ServiceCollectionImpl;
@@ -41,7 +43,8 @@ public class EasyCacheBuilderConfiguration {
     private void defaultConfiguration() {
         replaceService(CacheRuntimeContext.class)
                 .replaceService(EasyCacheClient.class, DefaultEasyCacheClient.class)
-                .replaceService(CacheKeyFactory.class, DefaultCacheKeyFactory.class);
+                .replaceService(CacheKeyFactory.class, DefaultCacheKeyFactory.class)
+                .replaceService(EasyCacheProvider.class, DefaultCacheProvider.class);
     }
 
     /**

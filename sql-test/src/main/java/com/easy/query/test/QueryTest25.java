@@ -5,8 +5,10 @@ import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.key.MapKey;
 import com.easy.query.api.proxy.key.MapKeys;
-import com.easy.query.api.proxy.key.StringMapKey;
-import com.easy.query.cache.core.EasyCacheManager;
+import com.easy.query.cache.core.common.CacheItem;
+import com.easy.query.cache.core.common.DefaultCacheKey;
+import com.easy.query.cache.core.manager.EasyCacheManager;
+import com.easy.query.cache.core.provider.EasyCacheProvider;
 import com.easy.query.cache.core.base.CacheMethodEnum;
 import com.easy.query.cache.core.base.DefaultClearParameter;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -19,12 +21,10 @@ import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
 import com.easy.query.core.configuration.bean.entity.EntityPropertyDescriptorMatcher;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.core.AnyValueFilter;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.builder.core.ValueFilterFactory;
-import com.easy.query.core.expression.sql.builder.EasyExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -37,14 +37,11 @@ import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
 import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
-import com.easy.query.core.proxy.sql.draft.Draft1Builder;
 import com.easy.query.core.util.EasyMD5Util;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyTypeUtil;
-import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
-import com.easy.query.test.cache.CacheItem;
-import com.easy.query.test.cache.DefaultEasyRedisManagerMultiLevel;
+import com.easy.query.test.cache.DefaultCacheManager;
 import com.easy.query.test.cache.JsonUtil;
 import com.easy.query.test.common.MyQueryConfiguration;
 import com.easy.query.test.conversion.JavaEncryptionStrategy;
@@ -63,25 +60,17 @@ import com.easy.query.test.entity.tolistflat.TestA;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
-import com.easy.query.test.mysql8.entity.M8User;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Assert;
 import org.junit.Test;
-import org.redisson.Redisson;
-import org.redisson.api.RKeys;
-import org.redisson.api.RedissonClient;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * create time 2025/5/23 10:45
@@ -335,7 +324,8 @@ public class QueryTest25 extends BaseTest {
 
     @Test
     public void test11a() {
-        easyCacheClient.clear(new DefaultClearParameter("1", null, CacheMethodEnum.UPDATE, LocalDateTime.of(2020, 1, 1, 1, 1), "t_blog", new HashMap<>()));
+        DefaultCacheKey cacheKey = new DefaultCacheKey(BlogEntity.class, "1");
+        easyCacheClient.deleteBy(cacheKey);
         {
 
             ListenerContext listenerContext = new ListenerContext();
@@ -370,8 +360,8 @@ public class QueryTest25 extends BaseTest {
             listenerContextManager.clear();
         }
         EasyCacheManager service = easyCacheClient.getService(EasyCacheManager.class);
-        DefaultEasyRedisManagerMultiLevel redisManagerMultiLevel = (DefaultEasyRedisManagerMultiLevel) service;
-        Cache<String, Map<String, CacheItem>> cache = redisManagerMultiLevel.cache;
+        DefaultCacheManager redisManagerMultiLevel = (DefaultCacheManager) service;
+        Cache<String, Map<String, CacheItem>> cache = redisManagerMultiLevel.caffeineCache;
         {
             Map<String, CacheItem> cacheItemMap = cache.get("CACHE:BlogEntity:1", k -> null);
             Assert.assertNotNull(cacheItemMap);
@@ -449,7 +439,8 @@ public class QueryTest25 extends BaseTest {
     @Test
     public void test11a1() {
 
-        easyCacheClient.clear(new DefaultClearParameter("1", null, CacheMethodEnum.UPDATE, LocalDateTime.of(2020, 1, 1, 1, 1), "t_topic", new HashMap<>()));
+        DefaultCacheKey cacheKey = new DefaultCacheKey(Topic.class, "1");
+        easyCacheClient.deleteBy(cacheKey);
         {
 
             ListenerContext listenerContext = new ListenerContext();
@@ -462,7 +453,10 @@ public class QueryTest25 extends BaseTest {
             Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
-        easyCacheClient.clear(new DefaultClearParameter("1", "INDEX", CacheMethodEnum.DELETE, LocalDateTime.of(2020, 1, 1, 1, 1), "t_topic", new HashMap<>()));
+        DefaultCacheKey k1 = new DefaultCacheKey(Topic.class, "1");
+        easyCacheClient.deleteBy(k1);
+        DefaultCacheKey k2 = new DefaultCacheKey(Topic.class, "INDEX");
+        easyCacheClient.deleteBy(k2);
         {
 
             ListenerContext listenerContext = new ListenerContext(true);
@@ -485,8 +479,8 @@ public class QueryTest25 extends BaseTest {
         }
 
         EasyCacheManager service = easyCacheClient.getService(EasyCacheManager.class);
-        DefaultEasyRedisManagerMultiLevel redisManagerMultiLevel = (DefaultEasyRedisManagerMultiLevel) service;
-        Cache<String, Map<String, CacheItem>> cache = redisManagerMultiLevel.cache;
+        DefaultCacheManager redisManagerMultiLevel = (DefaultCacheManager) service;
+        Cache<String, Map<String, CacheItem>> cache = redisManagerMultiLevel.caffeineCache;
         {
             Map<String, CacheItem> cacheItemMap = cache.get("CACHE:Topic:1", k -> null);
             Assert.assertNotNull(cacheItemMap);

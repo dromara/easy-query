@@ -56,22 +56,28 @@ public class DefaultEntityExpressionPrepareExecutor implements EntityExpressionP
     @Override
     public <T> long insert(ExecutorContext executorContext, List<T> entities, EntityInsertExpressionBuilder entityInsertExpressionBuilder, boolean fillAutoIncrement) {
         long rows = entityExpressionExecutor.insert(executorContext, entities, entityInsertExpressionBuilder, fillAutoIncrement);
-        entityExpressionTrigger.trigger(entities.get(0).getClass(), entities, getTriggerType(executorContext.getExecuteMethod()), executorContext.getCreateTime(), executorContext.getRuntimeContext());
+        if(entityExpressionTrigger.hasListener()){
+            entityExpressionTrigger.trigger(entities.get(0).getClass(), entities, getTriggerType(executorContext.getExecuteMethod()), executorContext.getCreateTime(), executorContext.getRuntimeContext());
+        }
         return rows;
     }
 
     @Override
     public <T> long executeRows(ExecutorContext executorContext, EntityExpressionBuilder entityExpressionBuilder, List<T> entities) {
         long rows = entityExpressionExecutor.executeRows(executorContext, entityExpressionBuilder, entities);
-        entityExpressionTrigger.trigger(entities.get(0).getClass(), entities, getTriggerType(executorContext.getExecuteMethod()), executorContext.getCreateTime(), executorContext.getRuntimeContext());
+        if(entityExpressionTrigger.hasListener()){
+            entityExpressionTrigger.trigger(entities.get(0).getClass(), entities, getTriggerType(executorContext.getExecuteMethod()), executorContext.getCreateTime(), executorContext.getRuntimeContext());
+        }
         return rows;
     }
 
     @Override
     public long executeRows(ExecutorContext executorContext, EntityPredicateExpressionBuilder entityPredicateExpressionBuilder, EntityPredicateSQLExpression entityPredicateSQLExpression) {
         long rows = entityExpressionExecutor.executeRows(executorContext, entityPredicateExpressionBuilder, entityPredicateSQLExpression);
-        Class<?> entityClass = entityPredicateExpressionBuilder.getTable(0).getEntityTable().getEntityClass();
-        entityExpressionTrigger.trigger(entityClass, null, getTriggerType(executorContext.getExecuteMethod()), executorContext.getCreateTime(), executorContext.getRuntimeContext());
+        if(entityExpressionTrigger.hasListener()){
+            Class<?> entityClass = entityPredicateExpressionBuilder.getTable(0).getEntityTable().getEntityClass();
+            entityExpressionTrigger.trigger(entityClass, null, getTriggerType(executorContext.getExecuteMethod()), executorContext.getCreateTime(), executorContext.getRuntimeContext());
+        }
         return rows;
     }
 

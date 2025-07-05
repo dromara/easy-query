@@ -3,7 +3,6 @@ package com.easy.query.core.basic.api.insert;
 import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
 import com.easy.query.core.basic.extension.interceptor.EntityInterceptor;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
-import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
