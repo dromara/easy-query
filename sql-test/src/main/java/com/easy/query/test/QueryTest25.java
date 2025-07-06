@@ -12,6 +12,7 @@ import com.easy.query.cache.core.provider.EasyCacheProvider;
 import com.easy.query.cache.core.base.CacheMethodEnum;
 import com.easy.query.cache.core.base.DefaultClearParameter;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -461,8 +462,7 @@ public class QueryTest25 extends BaseTest {
 
             ListenerContext listenerContext = new ListenerContext(true);
             listenerContextManager.startListen(listenerContext);
-            easyCacheClient.allStorage(Topic.class).toList();
-
+            List<Topic> list = easyCacheClient.allStorage(Topic.class).toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
             {
 
@@ -569,6 +569,12 @@ public class QueryTest25 extends BaseTest {
 
     @Test
     public void xxx() {
+
+        EasyPageResult<Topic> pageResult = easyCacheClient.allStorage(Topic.class).where(o -> {
+            o.title().contains("123");
+        }).toPageResult(1, 2);
+        EasyPageResult<Topic> pageResult1 = easyCacheClient.allStorage(Topic.class).where(o -> {
+        }).toPageResult(1, 2);
         List<Draft1<Boolean>> list = easyEntityQuery.queryable(Topic.class)
                 .select(t_topic -> {
 

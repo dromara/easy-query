@@ -1,5 +1,7 @@
 package com.easy.query.cache.core.impl.all;
 
+import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
+import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.cache.core.CacheAllEntity;
 import com.easy.query.cache.core.EasyCacheIndex;
 import com.easy.query.cache.core.CacheRuntimeContext;
@@ -33,11 +35,12 @@ import java.util.stream.Stream;
  * @author xuejiaming
  */
 public class DefaultAllCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEntity>, TEntity extends ProxyEntityAvailable<TEntity, T1Proxy> & CacheAllEntity> extends AbstractSingleCacheQueryable<TEntity> implements AllCacheQueryable<T1Proxy,TEntity> {
-
+    private final T1Proxy t1Proxy;
     private final ClientQueryable<TEntity> indexQueryable;
     public DefaultAllCacheQueryable(CacheRuntimeContext cacheRuntimeContext, Class<TEntity> entityClass) {
         super(cacheRuntimeContext, entityClass);
         this.indexQueryable=easyQueryClient.queryable(entityClass).asNoTracking();
+        this.t1Proxy = EntityQueryProxyManager.create(entityClass);
     }
 
     @Override
@@ -104,12 +107,14 @@ public class DefaultAllCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEnti
 
     @Override
     public AllCacheQueryable<T1Proxy, TEntity> where(SQLActionExpression1<T1Proxy> whereExpression) {
-        return null;
+        this.functions.add(q -> new EasyEntityQueryable<>(t1Proxy, q).where(whereExpression).getClientQueryable());
+        return this;
     }
 
     @Override
     public AllCacheQueryable<T1Proxy, TEntity> where(boolean condition, SQLActionExpression1<T1Proxy> whereExpression) {
-        return null;
+        this.functions.add(q -> new EasyEntityQueryable<>(t1Proxy, q).where(condition, whereExpression).getClientQueryable());
+        return this;
     }
 
     protected List<Pair<String, TEntity>> doGet(Collection<String> ids) {
