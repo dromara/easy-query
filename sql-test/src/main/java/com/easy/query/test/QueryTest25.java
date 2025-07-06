@@ -324,7 +324,7 @@ public class QueryTest25 extends BaseTest {
 
     @Test
     public void test11a() {
-        DefaultCacheKey cacheKey = new DefaultCacheKey(BlogEntity.class, "1");
+        DefaultCacheKey cacheKey = new DefaultCacheKey(CacheMethodEnum.DELETE,BlogEntity.class, "1");
         easyCacheClient.deleteBy(cacheKey);
         {
 
@@ -439,7 +439,7 @@ public class QueryTest25 extends BaseTest {
     @Test
     public void test11a1() {
 
-        DefaultCacheKey cacheKey = new DefaultCacheKey(Topic.class, "1");
+        DefaultCacheKey cacheKey = new DefaultCacheKey(CacheMethodEnum.DELETE,Topic.class, "1");
         easyCacheClient.deleteBy(cacheKey);
         {
 
@@ -453,9 +453,9 @@ public class QueryTest25 extends BaseTest {
             Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
-        DefaultCacheKey k1 = new DefaultCacheKey(Topic.class, "1");
+        DefaultCacheKey k1 = new DefaultCacheKey(CacheMethodEnum.DELETE,Topic.class, "1");
         easyCacheClient.deleteBy(k1);
-        DefaultCacheKey k2 = new DefaultCacheKey(Topic.class, "INDEX");
+        DefaultCacheKey k2 = new DefaultCacheKey(CacheMethodEnum.DELETE,Topic.class, "INDEX");
         easyCacheClient.deleteBy(k2);
         {
 

@@ -109,7 +109,8 @@ public class DefaultCacheManager extends AbstractCacheManager {
     }
 
     @Override
-    public void deleteBy(CacheKey cacheKey) {
+    public void deleteBy0(CacheKey cacheKey) {
+
         boolean multiCacheEntity = CacheUtil.isMultiCacheEntity(cacheKey.getEntityClass());
         String deleteCacheKey = getCacheKey(cacheKey.getEntityClass(), cacheKey.getKey());
         if (multiCacheEntity) {

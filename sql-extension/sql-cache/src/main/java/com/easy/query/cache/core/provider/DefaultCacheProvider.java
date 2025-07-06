@@ -27,13 +27,13 @@ import java.util.function.Function;
 public class DefaultCacheProvider implements EasyCacheProvider {
     private final long expireMillisSeconds;
     private final long valueNullExpireMillisSeconds;
-    public final EasyCacheManager cacheItemProvider;
+    public final EasyCacheManager easyCacheManager;
 
     public DefaultCacheProvider(EasyCacheManager easyCacheManager, EasyCacheOption easyCacheOption) {
 
         this.expireMillisSeconds = easyCacheOption.getExpireMillisSeconds();
         this.valueNullExpireMillisSeconds = easyCacheOption.getValueNullExpireMillisSeconds();
-        this.cacheItemProvider = easyCacheManager;
+        this.easyCacheManager = easyCacheManager;
     }
     @Override
     public <T> List<Pair<String, T>> cache(Class<?> entityClass, Class<T> clazz, String conditionKey, Set<String> ids, Function<Collection<String>, List<Pair<String, T>>> getDataFunc) {
@@ -46,12 +46,12 @@ public class DefaultCacheProvider implements EasyCacheProvider {
         HashMap<String, Pair<String, T>> ret = new HashMap<>(ids.size());
         Set<String> notExistsIds = new HashSet<>();
         for (String id : ids) {
-            CacheItem cacheItem = cacheItemProvider.getCacheItem(id, conditionKey, entityClass);
+            CacheItem cacheItem = easyCacheManager.getCacheItem(id, conditionKey, entityClass);
             if (cacheItem != null) {
                 if (!cacheItem.cacheIsExpired() && cacheItem.hasJson()) {
                     String json = cacheItem.getJson();
                     if (EasyStringUtil.isNotBlank(json)) {
-                        T entity = cacheItemProvider.fromJson(json, clazz);
+                        T entity = easyCacheManager.fromJson(json, clazz);
                         ret.put(id, new Pair<>(id, entity));
                     } else {
                         ret.put(id, new Pair<>(id, null));
@@ -78,12 +78,12 @@ public class DefaultCacheProvider implements EasyCacheProvider {
                     }
                 }
                 ret.put(id, new Pair<>(data.getObject1(), data.getObject2()));
-                String json = cacheItemProvider.toJson(data.getObject2());
+                String json = easyCacheManager.toJson(data.getObject2());
 
                 CacheItem cacheItem = new CacheItem();
                 cacheItem.setExpire(System.currentTimeMillis() + expired);
                 cacheItem.setJson(json);
-                cacheItemProvider.setCacheItem(id, conditionKey, cacheItem, entityClass, expireMillisSeconds);
+                easyCacheManager.setCacheItem(id, conditionKey, cacheItem, entityClass, expireMillisSeconds);
 
                 notExistsIds.remove(id);
 
@@ -94,7 +94,7 @@ public class DefaultCacheProvider implements EasyCacheProvider {
                 cacheItem.setExpire(System.currentTimeMillis() + valueNullExpireMillisSeconds);
                 cacheItem.setJson(null);
 
-                cacheItemProvider.setCacheItem(cacheId, conditionKey, cacheItem, entityClass, expireMillisSeconds);
+                easyCacheManager.setCacheItem(cacheId, conditionKey, cacheItem, entityClass, expireMillisSeconds);
             }
         }
         return new ArrayList<>(ret.values());
@@ -103,6 +103,6 @@ public class DefaultCacheProvider implements EasyCacheProvider {
 
     @Override
     public void deleteBy(CacheKey cacheKey) {
-        cacheItemProvider.deleteBy(cacheKey);
+        easyCacheManager.deleteBy(cacheKey);
     }
 }
