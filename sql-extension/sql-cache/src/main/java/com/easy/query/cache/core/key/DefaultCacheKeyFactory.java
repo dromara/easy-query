@@ -25,14 +25,6 @@ import java.util.Map;
  * @author xuejiaming
  */
 public class DefaultCacheKeyFactory implements CacheKeyFactory {
-    @NotNull
-    @Override
-    public String getKey(@Nullable Map<String, Object> map) {
-        if (map == null) {
-            return "{}";
-        }
-        return toJson(map);
-    }
 
     @NotNull
     @Override

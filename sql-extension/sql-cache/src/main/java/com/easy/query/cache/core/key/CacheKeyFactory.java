@@ -14,7 +14,5 @@ import java.util.Map;
  */
 public interface CacheKeyFactory {
     @NotNull
-    String getKey(@Nullable Map<String, Object> map);
-    @NotNull
     String getKey(ClientQueryable<?> entityQueryable);
 }
