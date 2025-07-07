@@ -6,6 +6,7 @@ import com.easy.query.cache.core.CacheKvEntity;
 import com.easy.query.cache.core.EasyCacheOption;
 import com.easy.query.cache.core.annotation.CacheEntitySchema;
 import com.easy.query.cache.core.base.CacheMethodEnum;
+import com.easy.query.cache.core.common.CacheDeleteEvent;
 import com.easy.query.cache.core.common.CacheKey;
 import com.easy.query.cache.core.common.DefaultCacheKey;
 import com.easy.query.cache.core.util.EasyCacheUtil;
@@ -21,7 +22,10 @@ import com.easy.query.core.util.EasyStringUtil;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * create time 2025/7/6 16:58
@@ -120,6 +124,30 @@ public abstract class AbstractCacheKeysProvider implements CacheKeysProvider {
             return cacheKeys;
         }
     }
+
+    @Override
+    public List<CacheDeleteEvent> getCacheEvents(TriggerEvent triggerEvent) {
+        EntityMetadata entityMetadata = triggerEvent.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(triggerEvent.getEntityClass());
+        LocalDateTime now = LocalDateTime.now();
+        String tableName = entityMetadata.getTableName();
+        List<CacheDeleteEvent> cacheDeleteEvents = new ArrayList<>();
+        if (triggerEvent.getEntities() == null) {
+            CacheDeleteEvent cacheDeleteEvent = CacheDeleteEvent.build(null, getCacheMethod(triggerEvent.getType()).getCode(), triggerEvent.getTriggerTime(), now, tableName);
+            cacheDeleteEvents.add(cacheDeleteEvent);
+        } else {
+            Set<CacheDeleteEvent> events = new HashSet<>();
+            CacheEntitySchema cacheEntitySchema = EasyCacheUtil.getCacheEntitySchema(entityMetadata.getEntityClass());
+            ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(cacheEntitySchema.value());
+            for (Object entity : triggerEvent.getEntities()) {
+                String cacheKeyValue = getCacheEntityCacheKey(columnMetadata, entity, cacheEntitySchema);
+                CacheDeleteEvent cacheDeleteEvent = CacheDeleteEvent.build(cacheKeyValue, getCacheMethod(triggerEvent.getType()).getCode(), triggerEvent.getTriggerTime(), now, tableName);
+                events.add(cacheDeleteEvent);
+            }
+            cacheDeleteEvents.addAll(events);
+        }
+        return cacheDeleteEvents;
+    }
+
 
     private String getCacheEntityCacheKey(ColumnMetadata columnMetadata, Object cacheEntity, CacheEntitySchema cacheEntitySchema) {
         Object val = columnMetadata.getGetterCaller().apply(cacheEntity);

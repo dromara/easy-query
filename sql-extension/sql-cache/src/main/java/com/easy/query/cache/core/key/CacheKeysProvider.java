@@ -1,6 +1,7 @@
 package com.easy.query.cache.core.key;
 
 import com.easy.query.cache.core.base.CacheMethodEnum;
+import com.easy.query.cache.core.common.CacheDeleteEvent;
 import com.easy.query.cache.core.common.CacheKey;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.trigger.TriggerEvent;
@@ -18,4 +19,5 @@ public interface CacheKeysProvider {
     List<CacheKey> getCacheKeys(LocalDateTime triggerTime, LocalDateTime receivedTime, EntityMetadata entityMetadata, CacheMethodEnum cacheMethod, String cacheKey);
     List<CacheKey> getCacheKeys(LocalDateTime triggerTime, LocalDateTime receivedTime, String tableName, CacheMethodEnum clearMethod, String cacheKey);
     List<CacheKey> getCacheKeys(TriggerEvent triggerEvent);
+    List<CacheDeleteEvent> getCacheEvents(TriggerEvent triggerEvent);
 }

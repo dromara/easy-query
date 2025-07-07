@@ -2,6 +2,8 @@ package com.easy.query.cache.core.common;
 
 import com.easy.query.cache.core.base.CacheMethodEnum;
 
+import java.util.Objects;
+
 /**
  * create time 2025/7/5 13:18
  * 文件说明
@@ -32,5 +34,17 @@ public class DefaultCacheKey implements CacheKey {
     @Override
     public String getKey() {
         return key;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        DefaultCacheKey cacheKey = (DefaultCacheKey) o;
+        return cacheMethod == cacheKey.cacheMethod && Objects.equals(entityClass, cacheKey.entityClass) && Objects.equals(key, cacheKey.key);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cacheMethod, entityClass, key);
     }
 }
