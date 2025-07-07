@@ -48,7 +48,11 @@ public class DefaultCacheProvider implements EasyCacheProvider {
         for (String id : ids) {
             CacheItem cacheItem = easyCacheManager.getCacheItem(id, conditionKey, entityClass);
             if (cacheItem != null) {
-                if (!cacheItem.cacheIsExpired() && cacheItem.hasJson()) {
+                if (!cacheItem.cacheIsExpired()) {
+                    if(!cacheItem.hasJson()){
+                        ret.put(id, new Pair<>(id, null));
+                        continue;
+                    }
                     String json = cacheItem.getJson();
                     if (EasyStringUtil.isNotBlank(json)) {
                         T entity = easyCacheManager.fromJson(json, clazz);
