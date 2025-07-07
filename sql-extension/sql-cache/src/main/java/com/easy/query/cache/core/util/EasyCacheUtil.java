@@ -8,6 +8,8 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
+import java.util.Objects;
+
 /**
  * create time 2024/1/26 23:42
  * 文件说明
@@ -28,10 +30,10 @@ public class EasyCacheUtil {
     public static CacheEntitySchema getCacheEntitySchema(Class<?> entityClass) {
         CacheEntitySchema cacheEntitySchema = EasyClassUtil.getAnnotation(entityClass, CacheEntitySchema.class);
         if (cacheEntitySchema == null) {
-            throw new EasyQueryInvalidOperationException("entity:[%s] not found annotation @CacheEntitySchema");
+            throw new EasyQueryInvalidOperationException(String.format("entity:[%s] not found annotation @CacheEntitySchema",EasyClassUtil.getSimpleName(entityClass)));
         }
-        if(EasyStringUtil.isNotBlank(cacheEntitySchema.value())){
-            throw new EasyQueryInvalidOperationException("entity:[%s] @CacheEntitySchema value must be empty");
+        if(EasyStringUtil.isBlank(cacheEntitySchema.value())){
+            throw new EasyQueryInvalidOperationException(String.format("entity:[%s] @CacheEntitySchema value must be empty",EasyClassUtil.getSimpleName(entityClass)));
         }
         return cacheEntitySchema;
     }

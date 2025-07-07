@@ -5,12 +5,14 @@ import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.key.MapKey;
 import com.easy.query.api.proxy.key.MapKeys;
+import com.easy.query.cache.core.annotation.CacheEntitySchema;
 import com.easy.query.cache.core.common.CacheItem;
 import com.easy.query.cache.core.common.DefaultCacheKey;
 import com.easy.query.cache.core.manager.EasyCacheManager;
 import com.easy.query.cache.core.provider.EasyCacheProvider;
 import com.easy.query.cache.core.base.CacheMethodEnum;
 import com.easy.query.cache.core.base.DefaultClearParameter;
+import com.easy.query.cache.core.util.EasyCacheUtil;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.entity.EntityMappingRule;
@@ -517,7 +519,8 @@ public class QueryTest25 extends BaseTest {
             listenerContextManager.clear();
         }
         {
-
+            CacheEntitySchema cacheEntitySchema = EasyCacheUtil.getCacheEntitySchema(Topic.class);
+            Assert.assertNotNull(cacheEntitySchema);
             ListenerContext listenerContext = new ListenerContext();
             listenerContextManager.startListen(listenerContext);
             Topic blogEntity = easyCacheClient.allStorage(Topic.class).filter(topic -> Objects.equals(topic.getId(), "1")).singleOrNull("1");
