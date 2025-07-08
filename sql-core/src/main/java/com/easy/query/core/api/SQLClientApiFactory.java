@@ -42,6 +42,7 @@ public interface SQLClientApiFactory {
     JdbcExecutor createJdbcExecutor(QueryRuntimeContext runtimeContext);
 
     <T> ClientQueryable<T> createQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext);
+    <T> ClientQueryable<T> createSubQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext, ExpressionContext expressionContext);
     <T> ClientQueryable<T> createQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext, ExpressionContext expressionContext);
 
     default <T> ClientQueryable<T> createQueryable(String sql, Class<T> clazz, QueryRuntimeContext runtimeContext) {

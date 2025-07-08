@@ -10,6 +10,8 @@ import com.easy.query.core.expression.DefaultRelationTableKey;
 import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.PartitionByRelationTableKey;
 import com.easy.query.core.expression.RelationTableKey;
+import com.easy.query.core.expression.builder.core.PropagationValueFilter;
+import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.include.getter.EqualsDirectToOneGetter;
 import com.easy.query.core.expression.include.getter.EqualsManyToManyMappingOrderRowsGetter;
 import com.easy.query.core.expression.include.getter.EqualsManyToManyMappingRowsGetter;
@@ -37,6 +39,7 @@ import com.easy.query.core.metadata.NavigateOrderProp;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyRelationalUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasySQLUtil;
 
@@ -63,9 +66,10 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
     @Override
     public <T> ClientQueryable<T> toImplicitSubQuery(EntityExpressionBuilder entityExpressionBuilder, TableAvailable leftTable, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext) {
 
-        ClientQueryable<?> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getNavigatePropertyType(), runtimeContext);
+        ClientQueryable<?> clientQueryable = runtimeContext.getSQLClientApiFactory().createSubQueryable(navigateMetadata.getNavigatePropertyType(), runtimeContext, entityExpressionBuilder.getExpressionContext());
+
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
-            ClientQueryable<?> mappingQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getMappingClass(), runtimeContext);
+            ClientQueryable<?> mappingQueryable = runtimeContext.getSQLClientApiFactory().createSubQueryable(navigateMetadata.getMappingClass(), runtimeContext, entityExpressionBuilder.getExpressionContext());
             clientQueryable.where(x -> {
                 x.and(() -> {
                     ClientQueryable<?> subMappingQueryable = mappingQueryable.where(m -> {
@@ -105,7 +109,7 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
         //获取表达式配置信息
         ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(new DefaultRelationTableKey(leftTable, navigateMetadata.getPropertyName()));
         //创建分区分组查询表达式
-        ClientQueryable<?> clientQueryable = createPartitionQueryable(entityClass, entityExpressionBuilder.getRuntimeContext(), navigateMetadata, manyConfiguration, clientQueryableSQLExpression);
+        ClientQueryable<?> clientQueryable = createPartitionQueryable(entityClass, entityExpressionBuilder, navigateMetadata, manyConfiguration, clientQueryableSQLExpression);
 
         String queryableKey = EasySQLUtil.toQueryableKey(clientQueryable);
         RelationTableKey partitionByRelationTableKey = new PartitionByRelationTableKey(leftTable, navigateMetadata.getPropertyName(), index, queryableKey);
@@ -115,11 +119,11 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
     }
 
 
-    private <T1> ClientQueryable<?> createPartitionQueryable(Class<T1> entityClass, QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, ManyConfiguration manyConfiguration, SQLActionExpression1<ClientQueryable<T1>> clientQueryableSQLExpression) {
-
+    private <T1> ClientQueryable<?> createPartitionQueryable(Class<T1> entityClass, EntityExpressionBuilder entityExpressionBuilder, NavigateMetadata navigateMetadata, ManyConfiguration manyConfiguration, SQLActionExpression1<ClientQueryable<T1>> clientQueryableSQLExpression) {
+        QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
         String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
 
-        ClientQueryable<T1> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(entityClass, runtimeContext);
+        ClientQueryable<T1> clientQueryable = runtimeContext.getSQLClientApiFactory().createSubQueryable(entityClass, runtimeContext, entityExpressionBuilder.getExpressionContext());
         SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> queryableSQLFuncExpression1 = Optional.ofNullable(manyConfiguration).map(x -> x.getConfigureExpression()).orElse(null);
         if (queryableSQLFuncExpression1 != null) {
             clientQueryable = EasyObjectUtil.typeCastNullable(queryableSQLFuncExpression1.apply(clientQueryable));
@@ -162,7 +166,7 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
                             }
                         });
                     }
-                } else if (PartitionOrderEnum.KEY_ASC == partitionOrder||PartitionOrderEnum.KEY_DESC == partitionOrder) {
+                } else if (PartitionOrderEnum.KEY_ASC == partitionOrder || PartitionOrderEnum.KEY_DESC == partitionOrder) {
                     boolean asc = PartitionOrderEnum.KEY_ASC == partitionOrder;
                     clientQueryable.orderBy(s -> {
                         Collection<String> keyProperties = s.getEntityMetadata().getKeyProperties();
@@ -171,7 +175,7 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
                                 s.column(keyProperty);
                             }
                         }
-                    },asc);
+                    }, asc);
                 }
                 if (EasySQLSegmentUtil.isEmpty(order)) {
                     //必须要指定order by

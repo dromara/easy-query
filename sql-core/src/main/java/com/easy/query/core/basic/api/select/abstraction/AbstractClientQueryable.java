@@ -1597,7 +1597,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         SQLActionExpression1<WherePredicate<?>> childFilter = treeCTEOption.getChildFilter();
         Class<T1> thisQueryClass = queryClass();
 
-        ClientQueryable<T1> queryable = runtimeContext.getSQLClientApiFactory().createQueryable(thisQueryClass, runtimeContext);
+        ClientQueryable<T1> queryable = runtimeContext.getSQLClientApiFactory().createSubQueryable(thisQueryClass, runtimeContext, expressionContext);
         ExpressionContext innerJoinExpressionContext = queryable.getSQLEntityExpressionBuilder().getExpressionContext();
         innerJoinExpressionContext.extract(this.entityQueryExpressionBuilder.getExpressionContext());
         this.entityQueryExpressionBuilder.getExpressionContext().extendFrom(innerJoinExpressionContext);
@@ -1620,7 +1620,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         this.select(o -> o.sqlNativeSegment("0", c -> c.setAlias(deepColumnName)).columnAll());
 
         ClientQueryable<T1> t1ClientQueryable = internalUnion(Collections.singletonList(cteQueryable), treeCTEOption.sqlUnion());
-        ClientQueryable<T1> myQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(thisQueryClass, runtimeContext);
+        ClientQueryable<T1> myQueryable = runtimeContext.getSQLClientApiFactory().createSubQueryable(thisQueryClass, runtimeContext, expressionContext);
         ExpressionContext expressionContext = myQueryable.getSQLEntityExpressionBuilder().getExpressionContext();
         expressionContext.extract(this.entityQueryExpressionBuilder.getExpressionContext());
         this.entityQueryExpressionBuilder.getExpressionContext().extendFrom(expressionContext);

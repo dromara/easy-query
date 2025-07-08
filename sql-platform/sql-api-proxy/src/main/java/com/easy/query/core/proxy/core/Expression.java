@@ -360,7 +360,7 @@ public class Expression {
 
     public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityQueryable<TProxy, T> subQueryable(Class<T> entityClass) {
         SQLClientApiFactory sqlClientApiFactory = entitySQLContext.getRuntimeContext().getSQLClientApiFactory();
-        ClientQueryable<T> queryable = sqlClientApiFactory.createQueryable(entityClass, entitySQLContext.getRuntimeContext());
+        ClientQueryable<T> queryable = sqlClientApiFactory.createSubQueryable(entityClass, entitySQLContext.getRuntimeContext(),entitySQLContext.getExpressionContext());
         TProxy tProxy = EntityQueryProxyManager.create(entityClass);
         EasyEntityQueryable<TProxy, T> tProxyTEasyEntityQueryable = new EasyEntityQueryable<>(tProxy, queryable);
         tProxyTEasyEntityQueryable.get1Proxy().getEntitySQLContext().setContextHolder(this.entitySQLContext.getContextHolder());

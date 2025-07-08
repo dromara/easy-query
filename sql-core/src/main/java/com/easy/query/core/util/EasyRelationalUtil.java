@@ -11,6 +11,7 @@ import com.easy.query.core.expression.ImplicitGroupRelationTableKey;
 import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.RelationTableKey;
+import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.SimpleEntitySQLTableOwner;
@@ -20,6 +21,7 @@ import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.builder.impl.DefaultTableExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -151,7 +153,7 @@ public class EasyRelationalUtil {
                     }
                 }
                 ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();
-                EntityTableExpressionBuilder tableExpressionBuilder =expressionBuilderFactory.createEntityTableExpressionBuilder(rightTable,relationJoin,  entityExpressionBuilder.getExpressionContext());
+                EntityTableExpressionBuilder tableExpressionBuilder = expressionBuilderFactory.createEntityTableExpressionBuilder(rightTable, relationJoin, entityExpressionBuilder.getExpressionContext());
 
 
 //                EntityTableExpressionBuilder tableExpressionBuilder = new DefaultTableExpressionBuilder(rightTable, relationJoin, entityExpressionBuilder.getExpressionContext());
@@ -181,7 +183,7 @@ public class EasyRelationalUtil {
         }
         String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(Map.class);
-        ClientQueryable<?> manyQueryable = createManyQueryable(runtimeContext, navigateMetadata, targetPropertiesOrPrimary, manyConfiguration);
+        ClientQueryable<?> manyQueryable = createManyQueryable(entityExpressionBuilder, navigateMetadata, targetPropertiesOrPrimary, manyConfiguration);
 
         String queryableKey = EasySQLUtil.toQueryableKey(manyQueryable);
 
@@ -313,9 +315,12 @@ public class EasyRelationalUtil {
     }
 
 
-    private static ClientQueryable<?> createManyQueryable(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertiesOrPrimary, ManyConfiguration manyConfiguration) {
+    private static ClientQueryable<?> createManyQueryable(EntityExpressionBuilder entityExpressionBuilder, NavigateMetadata navigateMetadata, String[] targetPropertiesOrPrimary, ManyConfiguration manyConfiguration) {
 
-        ClientQueryable<?> clientQueryable = runtimeContext.getSQLClientApiFactory().createQueryable(navigateMetadata.getNavigatePropertyType(), runtimeContext);
+        QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
+        //todo 如果启用了全局filterConfigure传递
+        ClientQueryable<?> clientQueryable = runtimeContext.getSQLClientApiFactory().createSubQueryable(navigateMetadata.getNavigatePropertyType(), runtimeContext, entityExpressionBuilder.getExpressionContext());
+
         if (manyConfiguration != null) {
             SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> configureExpression = manyConfiguration.getConfigureExpression();
             if (configureExpression != null) {

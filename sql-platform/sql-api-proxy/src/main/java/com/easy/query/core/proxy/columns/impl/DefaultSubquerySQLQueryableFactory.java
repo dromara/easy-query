@@ -12,6 +12,8 @@ import com.easy.query.core.expression.DefaultRelationTableKey;
 import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.RelationTableKey;
+import com.easy.query.core.expression.builder.core.PropagationValueFilter;
+import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.implicit.EntityRelationToImplicitGroupProvider;
 import com.easy.query.core.expression.implicit.EntityRelationToImplicitPartitionByProvider;

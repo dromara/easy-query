@@ -28,7 +28,9 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
+import com.easy.query.core.expression.builder.core.PropagationValueFilter;
 import com.easy.query.core.expression.builder.core.SQLNative;
+import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLActionExpression10;
 import com.easy.query.core.expression.lambda.SQLActionExpression2;
@@ -105,6 +107,14 @@ import java.util.stream.Collectors;
  */
 public class EasySQLExpressionUtil {
     private EasySQLExpressionUtil() {
+    }
+    public static void propagationValueFilter(ClientQueryable<?> clientQueryable,ExpressionContext expressionContext){
+
+        //todo 如果启用了全局filterConfigure传递
+        ValueFilter valueFilter = expressionContext.getValueFilter();
+        if (valueFilter instanceof PropagationValueFilter) {
+            clientQueryable.filterConfigure(valueFilter);
+        }
     }
 
     public static void invokeInterceptors(EntityMetadata entityMetadata, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, ExpressionContext expressionContext, WherePredicate<Object> sqlPredicate){

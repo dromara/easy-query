@@ -6,13 +6,16 @@ import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.inject.impl.ServiceCollectionImpl;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
 import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.part.proxy.Part1Proxy;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.common.MD5Util;
@@ -293,6 +296,7 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void testOrderCaseWhen2() {
 
@@ -351,7 +355,7 @@ public class MySQL8Test2 extends BaseTest {
     }
 
     @Test
-    public void testPageSelectSubQueryCount(){
+    public void testPageSelectSubQueryCount() {
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
 
@@ -379,5 +383,252 @@ public class MySQL8Test2 extends BaseTest {
             Assert.assertEquals("SELECT t.`id` AS `value1`,IFNULL(t2.`__count2__`,0) AS `value2` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,COUNT(*) AS `__count2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` LIMIT 3", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //            Assert.assertEquals("绍兴市(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
+    }
+
+    @Test
+    public void testFilterConfigure1() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .where(bank -> {
+                    bank.name().eq("");
+                    bank.bankCards().any(s -> s.type().eq(""));
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t WHERE EXISTS (SELECT 1 FROM `t_bank_card` t1 WHERE t1.`bank_id` = t.`id` AND t1.`type` = ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testFilterConfigure2() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
+                .where(bank -> {
+                    bank.name().eq("");
+                    bank.bankCards().any(s -> s.type().eq(""));
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t WHERE EXISTS (SELECT 1 FROM `t_bank_card` t1 WHERE t1.`bank_id` = t.`id` LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+
+    }
+    @Test
+    public void testFilterConfigure3() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
+                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(bank -> {
+                    bank.name().eq("");
+                    bank.bankCards().any(s -> s.type().eq(""));
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,(CASE WHEN COUNT((CASE WHEN 1 = 1 THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),true(Boolean),false(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void testFilterConfigure4() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(bank -> {
+                    bank.name().eq("");
+                    bank.bankCards().any(s -> s.type().eq(""));
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,(CASE WHEN COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` WHERE t.`name` = ? AND IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("(String),1(Integer),true(Boolean),false(Boolean),(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void testFilterConfigure5() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
+                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(bank -> {
+                    bank.name().eq("");
+                    bank.bankCards().orderBy(s->s.type().asc()).first().type().eq("");
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("(String),1(Integer),true(Boolean),false(Boolean),(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void testFilterConfigure6() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
+                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(bank -> {
+                    bank.name().eq("");
+                    bank.bankCards().where(x->x.id().eq("")).orderBy(s->s.type().asc()).first().type().eq("");
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("(String),1(Integer),true(Boolean),false(Boolean),(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void testFilterConfigure7() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(bank -> {
+                    bank.name().eq("");
+                    bank.bankCards().where(x->x.id().eq("1")).orderBy(s->s.type().asc()).first().type().eq("");
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("(String),1(Integer),true(Boolean),false(Boolean),(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void testFilterConfigure8() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
+                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(bank -> {
+                    bank.name().eq("");
+                    bank.bankCards().where(x->x.id().eq("")).orderBy(s->s.type().asc()).first().type().eq("1");
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t2.`id` AS `id`,t2.`uid` AS `uid`,t2.`code` AS `code`,t2.`type` AS `type`,t2.`bank_id` AS `bank_id`,t2.`open_time` AS `open_time` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time`,(ROW_NUMBER() OVER (PARTITION BY t1.`bank_id` ORDER BY t1.`type` ASC)) AS `__row__` FROM `t_bank_card` t1 WHERE t1.`id` = ?) t2 WHERE t2.`__row__` = ?) t4 ON t4.`bank_id` = t.`id` WHERE t4.`type` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("(String),1(Integer),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void testFilterConfigure9() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
+                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(bank -> {
+                    bank.name().eq("");
+                    bank.bankCards().where(x->x.id().eq("")).orderBy(s->s.type().asc()).first().type().eq("1");
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t2.`id` AS `id`,t2.`uid` AS `uid`,t2.`code` AS `code`,t2.`type` AS `type`,t2.`bank_id` AS `bank_id`,t2.`open_time` AS `open_time` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time`,(ROW_NUMBER() OVER (PARTITION BY t1.`bank_id` ORDER BY t1.`type` ASC)) AS `__row__` FROM `t_bank_card` t1) t2 WHERE t2.`__row__` = ?) t4 ON t4.`bank_id` = t.`id` WHERE t4.`type` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+
+    @Test
+     public void testGroupConcat1(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            List<Draft3<String, String, String>> list = easyEntityQuery.queryable(BlogEntity.class)
+                    .groupBy(t_blog -> GroupKeys.of(t_blog.id()))
+                    .select(group -> Select.DRAFT.of(
+                            group.key1(),
+                            group.groupTable().title().joining(",", true),
+                            group.groupTable().content().joining(",", true)
+                    )).toList();
+        } catch (Exception e) {
+
+        }
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `value1`,GROUP_CONCAT(DISTINCT t.`title` SEPARATOR ?) AS `value2`,GROUP_CONCAT(DISTINCT t.`content` SEPARATOR ?) AS `value3` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(",(String),,(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
+    }
+
+    @Test
+     public void testGroupConcat2(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+            List<Draft2<String, String>> list1 = easyEntityQuery.queryable(BlogEntity.class)
+                    .groupBy(t_blog -> GroupKeys.of(t_blog.id()))
+                    .select(group -> Select.DRAFT.of(
+                            group.key1(),
+                            group.expression().sqlSegment("GROUP_CONCAT(DISTINCT {0} SEPARATOR {1})",c->{
+                                c.expression(group.groupTable().content()).value(",");
+                            }).asStr()
+                    )).toList();
+        } catch (Exception e) {
+
+        }
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `value1`,GROUP_CONCAT(DISTINCT t.`content` SEPARATOR ?) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(",(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
     }
 }

@@ -99,6 +99,13 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     }
 
     @Override
+    public <T> ClientQueryable<T> createSubQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext, ExpressionContext expressionContext) {
+        ClientQueryable<T> queryable = createQueryable(clazz, runtimeContext);
+        EasySQLExpressionUtil.propagationValueFilter(queryable,expressionContext);
+        return queryable;
+    }
+
+    @Override
     public <T> ClientQueryable<T> createQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext, ExpressionContext expressionContext) {
 
         EntityQueryExpressionBuilder entityQueryExpressionBuilder = expressionBuilderFactory.createEntityQueryExpressionBuilder(expressionContext, clazz);

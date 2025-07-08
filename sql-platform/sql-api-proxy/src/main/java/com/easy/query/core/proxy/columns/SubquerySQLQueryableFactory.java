@@ -9,6 +9,13 @@ import com.easy.query.core.proxy.ProxyEntity;
  * @author xuejiaming
  */
 public interface SubquerySQLQueryableFactory {
+    /**
+     * 创建子查询
+     * @param subqueryContext
+     * @return
+     * @param <T1Proxy>
+     * @param <T1>
+     */
     <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> SQLQueryable<T1Proxy, T1> create(SubQueryContext<T1Proxy, T1> subqueryContext);
 
     /**
