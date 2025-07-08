@@ -400,7 +400,7 @@ public class EasyClassUtil {
             return null;
         }
         Class<?> type = result.getClass();
-        if (type == result) {
+        if (type == requiredType) {
             //大多数情况，都是这样
             return result;
         }
