@@ -1,6 +1,7 @@
 package com.easy.query.core.util;
 
 import com.easy.query.core.common.Consumer2;
+import com.easy.query.core.common.collection.CollectionDescriptor;
 import com.easy.query.core.exception.EasyQueryResultSizeLimitException;
 import com.easy.query.core.expression.lambda.Selector;
 import com.easy.query.core.metadata.NavigateMetadata;
@@ -17,7 +18,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -30,8 +30,8 @@ import java.util.function.Supplier;
  */
 public class EasyCollectionUtil {
     public static <TNavigateEntity> Collection<TNavigateEntity> createManyCollection(NavigateMetadata navigateMetadata) {
-        Class<? extends Collection> collectionImplType = EasyClassUtil.getCollectionImplType(navigateMetadata.getNavigateOriginalPropertyType());
-        return EasyObjectUtil.typeCastNullable(EasyClassUtil.newInstance(collectionImplType));
+        CollectionDescriptor collectionDescriptor = EasyClassUtil.getCollectionDescriptorByType(navigateMetadata.getNavigateOriginalPropertyType());
+        return EasyObjectUtil.typeCastNullable(collectionDescriptor.newCollection());
     }
 
     public static <T> List<T> emptyList() {

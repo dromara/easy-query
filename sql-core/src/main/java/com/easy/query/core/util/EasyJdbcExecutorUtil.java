@@ -7,6 +7,8 @@ import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.jdbc.conn.EasyConnection;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl.EasyStreamResultSet;
+import com.easy.query.core.basic.jdbc.executor.internal.props.BasicJdbcProperty;
 import com.easy.query.core.basic.jdbc.parameter.BeanSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
@@ -307,30 +309,34 @@ public class EasyJdbcExecutorUtil {
     public static <T> void incrementBackFill(boolean fillAutoIncrement, int alreadyCommitSize, List<String> generatedKeyColumns, PreparedStatement ps, List<T> entities, EntityMetadata entityMetadata) throws SQLException {
         if (fillAutoIncrement && EasyCollectionUtil.isNotEmpty(generatedKeyColumns)) {
             assert ps != null;
-            ResultSet keysSet = ps.getGeneratedKeys();
-            //未提交数量
-            int unCommitSize = alreadyCommitSize % BATCH_GROUP_COUNT;
-            int index = unCommitSize == 0 ? alreadyCommitSize - BATCH_GROUP_COUNT : alreadyCommitSize - unCommitSize;
-            ColumnMetadata[] columnMetadatas = new ColumnMetadata[generatedKeyColumns.size()];
-            while (keysSet.next()) {
-                T entity = entities.get(index);
-                for (int i = 0; i < generatedKeyColumns.size(); i++) {
-                    ColumnMetadata columnMetadata = columnMetadatas[i];
-                    if (columnMetadata == null) {
-                        String columnName = generatedKeyColumns.get(i);
-                        String propertyName = entityMetadata.getPropertyNameNotNull(columnName);
-                        columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                        columnMetadatas[i] = columnMetadata;
-                    }
 
-                    Object value = keysSet.getObject(i + 1);
-                    Object newValue = EasyClassUtil.convertValueToRequiredType(value, columnMetadata.getPropertyType());
-                    PropertySetterCaller<Object> beanSetter = columnMetadata.getSetterCaller();
-                    beanSetter.call(entity, newValue);
+            try(ResultSet keysSet = ps.getGeneratedKeys();
+                EasyStreamResultSet easyStreamResultSet = new EasyStreamResultSet(keysSet, null)){
+                //未提交数量
+                int unCommitSize = alreadyCommitSize % BATCH_GROUP_COUNT;
+                int index = unCommitSize == 0 ? alreadyCommitSize - BATCH_GROUP_COUNT : alreadyCommitSize - unCommitSize;
+                ColumnMetadata[] columnMetadatas = new ColumnMetadata[generatedKeyColumns.size()];
+                while (keysSet.next()) {
+                    T entity = entities.get(index);
+                    for (int i = 0; i < generatedKeyColumns.size(); i++) {
+                        ColumnMetadata columnMetadata = columnMetadatas[i];
+                        if (columnMetadata == null) {
+                            String columnName = generatedKeyColumns.get(i);
+                            String propertyName = entityMetadata.getPropertyNameNotNull(columnName);
+                            columnMetadata = entityMetadata.getColumnNotNull(propertyName);
+                            columnMetadatas[i] = columnMetadata;
+                        }
+
+                        Object value = columnMetadata.getJdbcTypeHandler().getValue(new BasicJdbcProperty(i, columnMetadata.getPropertyType()), easyStreamResultSet);
+//                    Object value = keysSet.getObject(i + 1);
+//                    Object newValue = EasyClassUtil.convertValueToRequiredType(value, columnMetadata.getPropertyType());
+                        PropertySetterCaller<Object> beanSetter = columnMetadata.getSetterCaller();
+                        beanSetter.call(entity, value);
 //                        Method setter = getSetter(property, entityClass);
 //                        callSetter(entity,setter, property, newValue);
+                    }
+                    index++;
                 }
-                index++;
             }
         }
     }

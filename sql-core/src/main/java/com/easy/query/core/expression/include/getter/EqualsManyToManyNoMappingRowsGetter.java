@@ -1,17 +1,13 @@
 package com.easy.query.core.expression.include.getter;
 
-import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.common.collection.CollectionDescriptor;
 import com.easy.query.core.expression.sql.include.RelationExtraEntity;
 import com.easy.query.core.expression.sql.include.RelationValue;
-import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadata;
-import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadataFactory;
-import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
-import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +46,7 @@ public class EqualsManyToManyNoMappingRowsGetter extends AbstractIncludeGetter i
      * @return
      */
     protected <TNavigateEntity> Map<RelationValue, Collection<TNavigateEntity>> getTargetToManyMap(List<RelationExtraEntity> includes) {
-        Class<?> collectionType = EasyClassUtil.getCollectionImplType(navigateMetadata.getNavigateOriginalPropertyType());
+        CollectionDescriptor collectionDescriptor = EasyClassUtil.getCollectionDescriptorByType(navigateMetadata.getNavigateOriginalPropertyType());
         Map<RelationValue, Collection<TNavigateEntity>> resultMap = new HashMap<>();
         int i = 0;
         for (RelationExtraEntity target : includes) {
@@ -58,8 +54,8 @@ public class EqualsManyToManyNoMappingRowsGetter extends AbstractIncludeGetter i
             if (targetRelationId.isNull()) {
                 continue;
             }
-            Collection<TNavigateEntity> objects = resultMap.computeIfAbsent(targetRelationId, k -> (Collection<TNavigateEntity>) EasyClassUtil.newInstance(collectionType));
-            objects.add((TNavigateEntity) target.getEntity());
+            Collection<TNavigateEntity> objects = resultMap.computeIfAbsent(targetRelationId, k -> EasyObjectUtil.typeCastNotNull(collectionDescriptor.newCollection()));
+            objects.add(EasyObjectUtil.typeCastNullable(target.getEntity()));
             i++;
         }
         return resultMap;

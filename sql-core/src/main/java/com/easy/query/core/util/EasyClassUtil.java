@@ -2,6 +2,10 @@ package com.easy.query.core.util;
 
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
 import com.easy.query.core.common.bean.FastBeanProperty;
+import com.easy.query.core.common.collection.ArrayListCollectionDescriptor;
+import com.easy.query.core.common.collection.CollectionDescriptor;
+import com.easy.query.core.common.collection.HasSetCollectionDescriptor;
+import com.easy.query.core.common.collection.ImplTypeCollectionDescriptor;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -22,7 +26,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -432,17 +435,17 @@ public class EasyClassUtil {
         return !Modifier.isAbstract(mod) || !Modifier.isInterface(mod);
     }
 
-    public static Class<? extends Collection> getCollectionImplType(Class<?> type) {
+    public static CollectionDescriptor getCollectionDescriptorByType(Class<?> type) {
         if (canInstance(type.getModifiers())) {
-            return (Class<? extends Collection>) type;
+            return new ImplTypeCollectionDescriptor((Class<? extends Collection>) type);
         }
 
         if (List.class.isAssignableFrom(type)) {
-            return ArrayList.class;
+            return new ArrayListCollectionDescriptor();
         }
 
         if (Set.class.isAssignableFrom(type)) {
-            return HashSet.class;
+            return new HasSetCollectionDescriptor();
         }
 
         throw new IllegalStateException("navigate not support type:" + getSimpleName(type));

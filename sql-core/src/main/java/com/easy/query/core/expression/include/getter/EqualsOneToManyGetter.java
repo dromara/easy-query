@@ -1,9 +1,11 @@
 package com.easy.query.core.expression.include.getter;
 
+import com.easy.query.core.common.collection.CollectionDescriptor;
 import com.easy.query.core.expression.sql.include.RelationExtraEntity;
 import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,7 +37,7 @@ public class EqualsOneToManyGetter extends AbstractIncludeGetter implements Rela
      * @return
      */
     protected <TNavigateEntity> Map<RelationValue, Collection<TNavigateEntity>> getTargetToManyMap(List<RelationExtraEntity> includes) {
-        Class<?> collectionType = EasyClassUtil.getCollectionImplType(navigateOriginalPropertyType);
+        CollectionDescriptor collectionDescriptor = EasyClassUtil.getCollectionDescriptorByType(navigateOriginalPropertyType);
         Map<RelationValue, Collection<TNavigateEntity>> resultMap = new HashMap<>();
 
         for (RelationExtraEntity target : includes) {
@@ -43,7 +45,7 @@ public class EqualsOneToManyGetter extends AbstractIncludeGetter implements Rela
             if(targetRelationId.isNull()){
                 continue;
             }
-            Collection<TNavigateEntity> objects = resultMap.computeIfAbsent(targetRelationId, k -> (Collection<TNavigateEntity>) EasyClassUtil.newInstance(collectionType));
+            Collection<TNavigateEntity> objects = resultMap.computeIfAbsent(targetRelationId, k -> EasyObjectUtil.typeCastNotNull(collectionDescriptor.newCollection()));
             objects.add((TNavigateEntity) target.getEntity());
         }
         return resultMap;

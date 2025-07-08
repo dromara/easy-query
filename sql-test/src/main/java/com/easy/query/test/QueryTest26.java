@@ -4,6 +4,8 @@ import com.bestvike.linq.Linq;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.base.ClassProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.core.basic.api.database.CodeFirstCommand;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -20,6 +22,7 @@ import com.easy.query.test.dto.TopicType1VO;
 import com.easy.query.test.dto.TopicTypeVO;
 import com.easy.query.test.dto.proxy.TopicType1VOProxy;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.MySQLGenerateKey;
 import com.easy.query.test.entity.SysUserEncrypt;
 import com.easy.query.test.entity.SysUserEncrypt2;
 import com.easy.query.test.entity.Topic;
@@ -41,6 +44,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -746,6 +750,42 @@ public class QueryTest26 extends BaseTest {
                 });
         Assert.assertEquals(100001, a.intValue());
 
+
+    }
+
+
+    @Test
+    public void testGenerateKeys(){
+        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
+        {
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(MySQLGenerateKey.class));
+            codeFirstCommand.executeWithTransaction(s->s.commit());
+        }
+        {
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MySQLGenerateKey.class));
+            codeFirstCommand.executeWithTransaction(s->s.commit());
+
+        }
+        {
+
+            MySQLGenerateKey mySQLGenerateKey = new MySQLGenerateKey();
+            mySQLGenerateKey.setName("test");
+            System.out.println("插入前"+mySQLGenerateKey);
+            easyEntityQuery.insertable(mySQLGenerateKey).executeRows(true);
+            System.out.println("插入后"+mySQLGenerateKey);
+
+            MySQLGenerateKey mySQLGenerateKey1 = easyEntityQuery.queryable(MySQLGenerateKey.class).whereById(1).singleOrNull();
+            System.out.println("查询后"+mySQLGenerateKey1);
+            Assert.assertNotNull(mySQLGenerateKey1);
+            Assert.assertNotNull(mySQLGenerateKey1.getId());
+            Assert.assertEquals(1, (int)mySQLGenerateKey1.getId());
+            Assert.assertNotNull(mySQLGenerateKey1.getNow());
+            LocalDateTime now = LocalDateTime.now();
+            Assert.assertEquals(mySQLGenerateKey1.getNow().getYear(),now.getYear());
+            Assert.assertEquals(mySQLGenerateKey1.getNow().getMonth(),now.getMonth());
+            Assert.assertEquals(mySQLGenerateKey1.getNow().getDayOfYear(),now.getDayOfYear());
+            Assert.assertEquals(mySQLGenerateKey1.getNow().getHour(),now.getHour());
+        }
 
     }
 }

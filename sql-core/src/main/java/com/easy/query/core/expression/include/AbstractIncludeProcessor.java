@@ -1,14 +1,13 @@
 package com.easy.query.core.expression.include;
 
+import com.easy.query.core.common.collection.CollectionDescriptor;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.expression.sql.include.RelationExtraEntity;
-import com.easy.query.core.expression.sql.include.RelationNullValueValidator;
 import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadata;
 import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadataFactory;
-import com.easy.query.core.expression.sql.include.relation.RelationValueFactory;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyArrayUtil;
@@ -37,7 +36,7 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
     protected final EntityMetadata targetEntityMetadata;
     protected final String[] targetColumnMetadataPropertyNames;
 
-    protected Class<?> collectionType;
+    protected CollectionDescriptor collectionDescriptor;
 
     public AbstractIncludeProcessor(IncludeParserResult includeParserResult, QueryRuntimeContext runtimeContext) {
         this.entities = includeParserResult.getRelationExtraEntities();
@@ -78,16 +77,16 @@ public abstract class AbstractIncludeProcessor implements IncludeProcessor {
         return resultMap;
     }
 
-    protected Class<?> getCollectionType() {
-        if (collectionType == null) {
-            collectionType = EasyClassUtil.getCollectionImplType(includeParserResult.getNavigateOriginalPropertyType());
+    protected CollectionDescriptor getCollectionDescriptor() {
+        if (collectionDescriptor == null) {
+            collectionDescriptor = EasyClassUtil.getCollectionDescriptorByType(includeParserResult.getNavigateOriginalPropertyType());
         }
-        return collectionType;
+        return collectionDescriptor;
     }
 
     protected <TNavigateEntity> Collection<TNavigateEntity> createManyCollection() {
-        Class<?> collectionType = getCollectionType();
-        return EasyObjectUtil.typeCastNullable(EasyClassUtil.newInstance(collectionType));
+        Collection<?> collection = getCollectionDescriptor().newCollection();
+        return EasyObjectUtil.typeCastNullable(collection);
     }
 
     protected Map<RelationValue, Object> getTargetDirectMap(List<RelationExtraEntity> includes, List<Object> mappingRows) {

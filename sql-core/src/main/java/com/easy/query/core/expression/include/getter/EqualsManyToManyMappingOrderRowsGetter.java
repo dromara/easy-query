@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.include.getter;
 
+import com.easy.query.core.common.collection.CollectionDescriptor;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.sql.include.RelationExtraEntity;
 import com.easy.query.core.expression.sql.include.RelationValue;
@@ -9,6 +10,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -63,7 +65,7 @@ public class EqualsManyToManyMappingOrderRowsGetter extends AbstractIncludeGette
      * @return
      */
     protected <TNavigateEntity> Map<RelationValue, Collection<EntityIndex<TNavigateEntity>>> getTargetToManyMap(List<RelationExtraEntity> includes) {
-        Class<?> collectionType = EasyClassUtil.getCollectionImplType(navigateMetadata.getNavigateOriginalPropertyType());
+        CollectionDescriptor collectionDescriptor = EasyClassUtil.getCollectionDescriptorByType(navigateMetadata.getNavigateOriginalPropertyType());
         Map<RelationValue, Collection<EntityIndex<TNavigateEntity>>> resultMap = new HashMap<>();
         int i = 0;
         for (RelationExtraEntity target : includes) {
@@ -71,8 +73,8 @@ public class EqualsManyToManyMappingOrderRowsGetter extends AbstractIncludeGette
             if (targetRelationId.isNull()) {
                 continue;
             }
-            Collection<EntityIndex<TNavigateEntity>> objects = resultMap.computeIfAbsent(targetRelationId, k -> (Collection<EntityIndex<TNavigateEntity>>) EasyClassUtil.newInstance(collectionType));
-            objects.add(new EntityIndex<>((TNavigateEntity) target.getEntity(), i));
+            Collection<EntityIndex<TNavigateEntity>> objects = resultMap.computeIfAbsent(targetRelationId, k -> EasyObjectUtil.typeCastNotNull(collectionDescriptor.newCollection()));
+            objects.add(new EntityIndex<>(EasyObjectUtil.typeCastNullable(target.getEntity()), i));
             i++;
         }
         return resultMap;

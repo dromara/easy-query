@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.include;
 
+import com.easy.query.core.common.collection.CollectionDescriptor;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
@@ -34,7 +35,7 @@ public class PropertyEqualsIncludeProcessor implements PropertyIncludeProcessor 
     protected final EntityMetadata targetEntityMetadata;
     protected final String[] targetColumnMetadataPropertyNames;
 
-    protected Class<?> collectionType;
+    protected CollectionDescriptor collectionDescriptor;
 
     public PropertyEqualsIncludeProcessor(IncludeParserResult includeParserResult, QueryRuntimeContext runtimeContext) {
         this.entities = includeParserResult.getRelationExtraEntities();
@@ -204,7 +205,7 @@ public class PropertyEqualsIncludeProcessor implements PropertyIncludeProcessor 
      * @return
      */
     protected <TNavigateEntity> Map<RelationValue, Collection<TNavigateEntity>> getTargetToManyMap(List<RelationExtraEntity> includes) {
-        Class<?> collectionType = EasyClassUtil.getCollectionImplType(includeParserResult.getNavigateOriginalPropertyType());
+        CollectionDescriptor collectionDescriptor = EasyClassUtil.getCollectionDescriptorByType(includeParserResult.getNavigateOriginalPropertyType());
         Map<RelationValue, Collection<TNavigateEntity>> resultMap = new HashMap<>();
 
         for (RelationExtraEntity target : includes) {
@@ -212,8 +213,8 @@ public class PropertyEqualsIncludeProcessor implements PropertyIncludeProcessor 
             if(targetRelationId.isNull()){
                 continue;
             }
-            Collection<TNavigateEntity> objects = resultMap.computeIfAbsent(targetRelationId, k -> (Collection<TNavigateEntity>) EasyClassUtil.newInstance(collectionType));
-            objects.add((TNavigateEntity) target.getEntity());
+            Collection<TNavigateEntity> objects = resultMap.computeIfAbsent(targetRelationId, k -> EasyObjectUtil.typeCastNotNull(collectionDescriptor.newCollection()));
+            objects.add(EasyObjectUtil.typeCastNullable(target.getEntity()));
         }
         return resultMap;
     }
@@ -231,16 +232,16 @@ public class PropertyEqualsIncludeProcessor implements PropertyIncludeProcessor 
         return resultMap;
     }
 
-    protected Class<?> getCollectionType() {
-        if (collectionType == null) {
-            collectionType = EasyClassUtil.getCollectionImplType(includeParserResult.getNavigateOriginalPropertyType());
+    protected CollectionDescriptor getCollectionDescriptor() {
+        if (collectionDescriptor == null) {
+            collectionDescriptor = EasyClassUtil.getCollectionDescriptorByType(includeParserResult.getNavigateOriginalPropertyType());
         }
-        return collectionType;
+        return collectionDescriptor;
     }
 
     protected <TNavigateEntity> Collection<TNavigateEntity> createManyCollection() {
-        Class<?> collectionType = getCollectionType();
-        return EasyObjectUtil.typeCastNullable(EasyClassUtil.newInstance(collectionType));
+        CollectionDescriptor collection = getCollectionDescriptor();
+        return EasyObjectUtil.typeCastNotNull(collection.newCollection());
     }
 
     protected Map<RelationValue, Object> getTargetDirectMap(List<RelationExtraEntity> includes, List<Object> mappingRows) {

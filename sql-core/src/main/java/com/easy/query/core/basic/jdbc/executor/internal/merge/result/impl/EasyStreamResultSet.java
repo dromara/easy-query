@@ -162,7 +162,9 @@ public final class EasyStreamResultSet implements StreamResultSet {
             log.error("result set close error.",ex);
         }
         try {
-            preparedStatement.close();
+            if(preparedStatement!=null){
+                preparedStatement.close();
+            }
         }catch (SQLException ex){
             log.error("prepared statement close error.",ex);
         }
