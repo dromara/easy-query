@@ -2,6 +2,7 @@ package com.easy.query.core.basic.api.internal;
 
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
+import com.easy.query.core.expression.builder.core.PropagationValueFilter;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 
 /**
@@ -34,5 +35,13 @@ public interface ExpressionConfigurable<TChain> extends Interceptable<TChain>,
 
     TChain useConnectionMode(ConnectionModeEnum connectionMode);
 
+    /**
+     * 对表达式添加查询条件过滤器
+     * {@link ValueFilter} 普通过滤器 NotNullOrEmptyValueFilter.DEFAULT
+     * {@link PropagationValueFilter} 支持传递到子查询的过滤器 NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS
+     *
+     * @param valueFilter
+     * @return
+     */
     TChain filterConfigure(ValueFilter valueFilter);
 }

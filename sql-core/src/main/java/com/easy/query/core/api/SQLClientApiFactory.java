@@ -42,7 +42,16 @@ public interface SQLClientApiFactory {
     JdbcExecutor createJdbcExecutor(QueryRuntimeContext runtimeContext);
 
     <T> ClientQueryable<T> createQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext);
-    <T> ClientQueryable<T> createSubQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext, ExpressionContext expressionContext);
+
+    /**
+     * 创建表达式子查询
+     * @param clazz
+     * @param runtimeContext
+     * @param parentExpressionContext 父表达式上下文
+     * @return
+     * @param <T>
+     */
+    <T> ClientQueryable<T> createSubQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext, ExpressionContext parentExpressionContext);
     <T> ClientQueryable<T> createQueryable(Class<T> clazz, QueryRuntimeContext runtimeContext, ExpressionContext expressionContext);
 
     default <T> ClientQueryable<T> createQueryable(String sql, Class<T> clazz, QueryRuntimeContext runtimeContext) {
