@@ -7,9 +7,6 @@ import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
-import com.easy.query.core.inject.ServiceCollection;
-import com.easy.query.core.inject.ServiceProvider;
-import com.easy.query.core.inject.impl.ServiceCollectionImpl;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
@@ -20,10 +17,8 @@ import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.common.MD5Util;
 import com.easy.query.test.entity.BlogEntity;
-import com.easy.query.test.entity.Topic;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.M8TestIndex;
-import com.easy.query.test.mysql8.entity.M8User;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
@@ -680,6 +675,24 @@ public class MySQL8Test2 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id` AS `value1`,GROUP_CONCAT(DISTINCT t.`content` SEPARATOR ?) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals(",(String),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
+    }
+
+    @Test
+    public void testAA(){
+
+//        easyEntityQuery.queryable(SysBankCard.class)
+//                        .where(bank_card -> {
+//                            bank_card.user().appendOn();
+//                        })
+        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .subQueryConfigure(s -> s.bankCards(), bk -> bk.where(x -> x.code().eq("1")))
+                .where(user -> {
+                    user.bankCards().any(b -> b.type().eq("11"));
+                    user.bankCards().any(b -> b.type().eq("22"));
+                }).toList();
 
 
     }

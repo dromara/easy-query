@@ -177,6 +177,7 @@ public class DbManager {
                     builder.setMssqlMinBigDecimalScale(solonEasyQueryProperties.getMssqlMinBigDecimalScale());
                     builder.setIncludeLimitMode(solonEasyQueryProperties.getIncludeLimitMode());
                     builder.setSaveComment(solonEasyQueryProperties.getSaveComment());
+                    builder.setMaxInClauseSize(solonEasyQueryProperties.getMaxInClauseSize());
                 });
 
 

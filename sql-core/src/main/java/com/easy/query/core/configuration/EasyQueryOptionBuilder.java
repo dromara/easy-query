@@ -93,6 +93,10 @@ public class EasyQueryOptionBuilder {
      */
     private IncludeLimitModeEnum includeLimitMode;
     private boolean saveComment;
+    /**
+     * in inClause的参数个数限制
+     */
+    private int maxInClauseSize;
 
 
     public EasyQueryOptionBuilder() {
@@ -128,6 +132,7 @@ public class EasyQueryOptionBuilder {
         this.mssqlMinBigDecimalScale = 0;
         this.includeLimitMode = IncludeLimitModeEnum.UNION_ALL;
         this.saveComment = false;
+        this.maxInClauseSize = 9999999;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -286,6 +291,10 @@ public class EasyQueryOptionBuilder {
         this.saveComment = saveComment;
     }
 
+    public void setMaxInClauseSize(int maxInClauseSize) {
+        this.maxInClauseSize = maxInClauseSize;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -320,6 +329,7 @@ public class EasyQueryOptionBuilder {
                 this.shardingQueryInTransaction,
                 this.mssqlMinBigDecimalScale,
                 this.includeLimitMode,
-                this.saveComment);
+                this.saveComment,
+                this.maxInClauseSize);
     }
 }

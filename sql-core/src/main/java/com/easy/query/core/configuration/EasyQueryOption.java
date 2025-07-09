@@ -137,6 +137,7 @@ public class EasyQueryOption {
      */
     private final IncludeLimitModeEnum includeLimitMode;
     private final boolean saveComment;
+    private final int maxInClauseSize;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy,
                            SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode,
@@ -147,12 +148,12 @@ public class EasyQueryOption {
                            int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
                            boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold,
                            boolean printSql, boolean startTimeJob, boolean defaultTrack,
-                           int relationGroupSize,  long reverseOffsetThreshold,
+                           int relationGroupSize, long reverseOffsetThreshold,
                            boolean warningColumnMiss, int shardingFetchSize, boolean mapToBeanStrict,
                            String defaultSchema, long resultSizeLimit, boolean printNavSql,
                            ShardingQueryInTransactionEnum shardingQueryInTransaction, int mssqlMinBigDecimalScale,
                            IncludeLimitModeEnum includeLimitMode,
-                           boolean saveComment) {
+                           boolean saveComment, int maxInClauseSize) {
 
 
         if (executorMaximumPoolSize > 0) {
@@ -190,6 +191,9 @@ public class EasyQueryOption {
         if (relationGroupSize < 1) {
             throw new IllegalArgumentException("invalid arguments: relationGroupSize < 1.");
         }
+        if (maxInClauseSize < 1) {
+            throw new IllegalArgumentException("invalid arguments: maxInClauseSize < 1.");
+        }
         this.deleteThrowError = deleteThrowError;
         this.insertStrategy = SQLExecuteStrategyEnum.getDefaultStrategy(insertStrategy, SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS);
         this.updateStrategy = SQLExecuteStrategyEnum.getDefaultStrategy(updateStrategy, SQLExecuteStrategyEnum.ALL_COLUMNS);
@@ -224,6 +228,7 @@ public class EasyQueryOption {
         this.mssqlMinBigDecimalScale = mssqlMinBigDecimalScale;
         this.includeLimitMode = includeLimitMode;
         this.saveComment = saveComment;
+        this.maxInClauseSize = maxInClauseSize;
     }
 
     public int getMaxShardingRouteCount() {
@@ -321,6 +326,7 @@ public class EasyQueryOption {
     public int getRelationGroupSize() {
         return relationGroupSize;
     }
+
     public boolean enableReverseOrder(long offset) {
         if (this.reverseOffsetThreshold <= 0) {
             return false;
@@ -366,5 +372,9 @@ public class EasyQueryOption {
 
     public boolean isSaveComment() {
         return saveComment;
+    }
+
+    public int getMaxInClauseSize() {
+        return maxInClauseSize;
     }
 }

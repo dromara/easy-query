@@ -3,11 +3,17 @@ package com.easy.query.test;
 import com.bestvike.linq.Linq;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.base.ClassProxy;
+import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
+import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.configuration.EasyQueryOption;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
@@ -18,6 +24,7 @@ import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Include;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.oracle.config.OracleDatabaseConfiguration;
 import com.easy.query.test.dto.TopicType1VO;
 import com.easy.query.test.dto.TopicTypeVO;
 import com.easy.query.test.dto.proxy.TopicType1VOProxy;
@@ -32,6 +39,8 @@ import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.listener.ListenerContextManager;
+import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.mysql8.dto.BankCardGroupBO;
 import com.easy.query.test.mysql8.dto.proxy.BankCardGroupBOProxy;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
@@ -787,5 +796,156 @@ public class QueryTest26 extends BaseTest {
             Assert.assertEquals(mySQLGenerateKey1.getNow().getHour(),now.getHour());
         }
 
+    }
+
+    @Test
+    public void testMaxInCaluse(){
+
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
+        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(dataSource)
+                .optionConfigure(op -> {
+                    op.setMaxInClauseSize(10);
+                })
+                .useDatabaseConfigure(new OracleDatabaseConfiguration())
+                .replaceService(JdbcExecutorListener.class, myJdbcListener)
+                .build();
+        DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+                ArrayList<String> strings = new ArrayList<>();
+                for (int i = 0; i < 21; i++) {
+                    strings.add(i + "");
+                }
+                List<Topic> list = defaultEasyEntityQuery.queryable(Topic.class)
+                        .whereByIds(strings)
+                        .toList();
+            } catch (Exception ex) {
+
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE (\"id\" IN (?,?,?,?,?,?,?,?,?,?) OR \"id\" IN (?,?,?,?,?,?,?,?,?,?) OR \"id\" IN (?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("0(String),1(String),2(String),3(String),4(String),5(String),6(String),7(String),8(String),9(String),10(String),11(String),12(String),13(String),14(String),15(String),16(String),17(String),18(String),19(String),20(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+
+        }
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+                ArrayList<String> strings = new ArrayList<>();
+                for (int i = 0; i < 21; i++) {
+                    strings.add(i + "");
+                }
+                List<Topic> list = defaultEasyEntityQuery.queryable(Topic.class)
+                        .where(t_topic -> {
+                            t_topic.id().in( strings);
+                        })
+                        .toList();
+            } catch (Exception ex) {
+
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE (\"id\" IN (?,?,?,?,?,?,?,?,?,?) OR \"id\" IN (?,?,?,?,?,?,?,?,?,?) OR \"id\" IN (?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("0(String),1(String),2(String),3(String),4(String),5(String),6(String),7(String),8(String),9(String),10(String),11(String),12(String),13(String),14(String),15(String),16(String),17(String),18(String),19(String),20(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+
+        }
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+                ArrayList<String> strings = new ArrayList<>();
+                for (int i = 0; i < 21; i++) {
+                    strings.add(i + "");
+                }
+                List<Topic> list = defaultEasyEntityQuery.queryable(Topic.class)
+                        .where(t_topic -> {
+                            t_topic.title().contains("123");
+                            t_topic.id().in( strings);
+                        })
+                        .toList();
+            } catch (Exception ex) {
+
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE \"title\" LIKE ('%'||TO_CHAR(?)||'%') AND (\"id\" IN (?,?,?,?,?,?,?,?,?,?) OR \"id\" IN (?,?,?,?,?,?,?,?,?,?) OR \"id\" IN (?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("123(String),0(String),1(String),2(String),3(String),4(String),5(String),6(String),7(String),8(String),9(String),10(String),11(String),12(String),13(String),14(String),15(String),16(String),17(String),18(String),19(String),20(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+                ArrayList<String> strings = new ArrayList<>();
+                for (int i = 0; i < 21; i++) {
+                    strings.add(i + "");
+                }
+                List<Topic> list = defaultEasyEntityQuery.queryable(Topic.class)
+                        .where(t_topic -> {
+                            t_topic.id().in( strings);
+                            t_topic.or(()->{
+                                t_topic.title().contains("123");
+                                t_topic.id().in( strings);
+                                t_topic.id().in( strings);
+                            });
+                        })
+                        .toList();
+            } catch (Exception ex) {
+
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE (\"id\" IN (?,?,?,?,?,?,?,?,?,?) OR \"id\" IN (?,?,?,?,?,?,?,?,?,?) OR \"id\" IN (?)) AND (\"title\" LIKE ('%'||TO_CHAR(?)||'%') OR (\"id\" IN (?,?,?,?,?,?,?,?,?,?) OR \"id\" IN (?,?,?,?,?,?,?,?,?,?) OR \"id\" IN (?)) OR (\"id\" IN (?,?,?,?,?,?,?,?,?,?) OR \"id\" IN (?,?,?,?,?,?,?,?,?,?) OR \"id\" IN (?)))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("0(String),1(String),2(String),3(String),4(String),5(String),6(String),7(String),8(String),9(String),10(String),11(String),12(String),13(String),14(String),15(String),16(String),17(String),18(String),19(String),20(String),123(String),0(String),1(String),2(String),3(String),4(String),5(String),6(String),7(String),8(String),9(String),10(String),11(String),12(String),13(String),14(String),15(String),16(String),17(String),18(String),19(String),20(String),0(String),1(String),2(String),3(String),4(String),5(String),6(String),7(String),8(String),9(String),10(String),11(String),12(String),13(String),14(String),15(String),16(String),17(String),18(String),19(String),20(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            try {
+                ArrayList<String> strings = new ArrayList<>();
+                for (int i = 0; i < 21; i++) {
+                    strings.add(i + "");
+                }
+                List<Topic> list = defaultEasyEntityQuery.queryable(Topic.class)
+                        .where(t_topic -> {
+                            t_topic.and(()->{
+                                t_topic.id().in( strings);
+                                t_topic.or(()->{
+                                    t_topic.title().contains("123");
+                                    t_topic.id().in( strings);
+                                    t_topic.id().in( strings);
+                                });
+                            });
+                        })
+                        .toList();
+            } catch (Exception ex) {
+
+            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT \"id\",\"stars\",\"title\",\"create_time\" FROM \"t_topic\" WHERE ((\"id\" IN (?,?,?,?,?,?,?,?,?,?) OR \"id\" IN (?,?,?,?,?,?,?,?,?,?) OR \"id\" IN (?)) AND (\"title\" LIKE ('%'||TO_CHAR(?)||'%') OR (\"id\" IN (?,?,?,?,?,?,?,?,?,?) OR \"id\" IN (?,?,?,?,?,?,?,?,?,?) OR \"id\" IN (?)) OR (\"id\" IN (?,?,?,?,?,?,?,?,?,?) OR \"id\" IN (?,?,?,?,?,?,?,?,?,?) OR \"id\" IN (?))))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("0(String),1(String),2(String),3(String),4(String),5(String),6(String),7(String),8(String),9(String),10(String),11(String),12(String),13(String),14(String),15(String),16(String),17(String),18(String),19(String),20(String),123(String),0(String),1(String),2(String),3(String),4(String),5(String),6(String),7(String),8(String),9(String),10(String),11(String),12(String),13(String),14(String),15(String),16(String),17(String),18(String),19(String),20(String),0(String),1(String),2(String),3(String),4(String),5(String),6(String),7(String),8(String),9(String),10(String),11(String),12(String),13(String),14(String),15(String),16(String),17(String),18(String),19(String),20(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+
+        }
     }
 }

@@ -166,6 +166,7 @@ public class SpringBootStarterBuilder {
                     builder.setMssqlMinBigDecimalScale(easyQueryProperties.getMssqlMinBigDecimalScale());
                     builder.setIncludeLimitMode(easyQueryProperties.getIncludeLimitMode());
                     builder.setSaveComment(easyQueryProperties.isSaveComment());
+                    builder.setMaxInClauseSize(easyQueryProperties.getMaxInClauseSize());
                 })
                 .customConfigure(s -> {
                     switch (easyQueryProperties.getDatabase()) {

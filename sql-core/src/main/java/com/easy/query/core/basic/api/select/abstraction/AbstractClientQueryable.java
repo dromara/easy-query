@@ -1168,17 +1168,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public ClientQueryable<T1> whereById(boolean condition, Object id) {
         if (condition) {
 
-            PredicateSegment where = entityQueryExpressionBuilder.getWhere();
+//            PredicateSegment where = entityQueryExpressionBuilder.getWhere();
             TableAvailable table = entityQueryExpressionBuilder.getTable(0).getEntityTable();
             String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table);
-            AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
-            ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(keyProperty);
-            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, entityQueryExpressionBuilder.getExpressionContext());
-            ColumnValue2Segment compareValue2Segment = EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, entityQueryExpressionBuilder.getExpressionContext(), id, SQLPredicateCompareEnum.EQ.isLike());
 
-            andPredicateSegment
-                    .setPredicate(new ColumnValuePredicate(column2Segment, compareValue2Segment, SQLPredicateCompareEnum.EQ));
-            where.addPredicateSegment(andPredicateSegment);
+            WherePredicate<T1> wherePredicate = getSQLExpressionProvider1().getWherePredicate(getSQLExpressionProvider1().getWhereFilterContext());
+            wherePredicate.eq(keyProperty,id);
         }
         return this;
     }
@@ -1187,18 +1182,22 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public <TProperty> ClientQueryable<T1> whereByIds(boolean condition, Collection<TProperty> ids) {
 
         if (condition) {
-            PredicateSegment where = entityQueryExpressionBuilder.getWhere();
+//            PredicateSegment where = entityQueryExpressionBuilder.getWhere();
             TableAvailable table = entityQueryExpressionBuilder.getTable(0).getEntityTable();
             String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table);
-            AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
-            ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(keyProperty);
-            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
-//            List<ColumnValue2Segment> columnValue2Segments = ids.stream().map(o -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o)).collect(Collectors.toList());
-            List<ColumnValue2Segment> columnValue2Segments = EasyCollectionUtil.select(ids, (o, i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o));
 
-            andPredicateSegment
-                    .setPredicate(new ColumnCollectionPredicate(column2Segment, columnValue2Segments, SQLPredicateCompareEnum.IN, expressionContext));
-            where.addPredicateSegment(andPredicateSegment);
+            WherePredicate<T1> wherePredicate = getSQLExpressionProvider1().getWherePredicate(getSQLExpressionProvider1().getWhereFilterContext());
+            wherePredicate.in(keyProperty,ids);
+//
+//            AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
+//            ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(keyProperty);
+//            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
+////            List<ColumnValue2Segment> columnValue2Segments = ids.stream().map(o -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o)).collect(Collectors.toList());
+//            List<ColumnValue2Segment> columnValue2Segments = EasyCollectionUtil.select(ids, (o, i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o));
+//
+//            andPredicateSegment
+//                    .setPredicate(new ColumnCollectionPredicate(column2Segment, columnValue2Segments, SQLPredicateCompareEnum.IN, expressionContext));
+//            where.addPredicateSegment(andPredicateSegment);
         }
         return this;
     }

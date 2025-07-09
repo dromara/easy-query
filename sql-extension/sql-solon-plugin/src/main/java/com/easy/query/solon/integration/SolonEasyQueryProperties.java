@@ -27,6 +27,10 @@ public class SolonEasyQueryProperties {
     private final static Boolean deleteThrow = true;
     private final static Boolean sharding = false;
     private final static Boolean saveComment = false;
+    /**
+     * in inClause的参数个数限制
+     */
+    private final static int maxInClauseSize = 9999999;
     private final static DatabaseEnum database = DatabaseEnum.MYSQL;
     private final static NameConversionEnum nameConversion = NameConversionEnum.UNDERLINED;
     private final static MapKeyConversionEnum mapKeyConversion = MapKeyConversionEnum.DEFAULT;
@@ -361,6 +365,9 @@ public class SolonEasyQueryProperties {
 
     public int getMssqlMinBigDecimalScale() {
         return this.props.getInt("mssql-min-big-decimal-scale", mssqlMinBigDecimalScale);
+    }
+    public int getMaxInClauseSize() {
+        return this.props.getInt("max-in-clause-size", maxInClauseSize);
     }
 
     public int getMaxShardingQueryLimit() {

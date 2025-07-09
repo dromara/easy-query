@@ -53,6 +53,10 @@ public class EasyQueryProperties {
     private IncludeLimitModeEnum includeLimitMode = IncludeLimitModeEnum.UNION_ALL;
     private boolean saveComment = false;
     /**
+     * in inClause的参数个数限制
+     */
+    private int maxInClauseSize = 9999999;
+    /**
      * 仅分片时有效默认同时5个线程5
      */
     private int maxShardingQueryLimit = 5;
@@ -505,6 +509,14 @@ public class EasyQueryProperties {
 
     public void setSaveComment(boolean saveComment) {
         this.saveComment = saveComment;
+    }
+
+    public int getMaxInClauseSize() {
+        return maxInClauseSize;
+    }
+
+    public void setMaxInClauseSize(int maxInClauseSize) {
+        this.maxInClauseSize = maxInClauseSize;
     }
 
     public EasyQueryProperties() {

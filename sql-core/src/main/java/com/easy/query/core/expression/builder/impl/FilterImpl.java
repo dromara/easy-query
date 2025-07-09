@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.builder.impl;
 
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SQLPredicateCompare;
@@ -39,6 +40,7 @@ import com.easy.query.core.util.EasyColumnSegmentUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -303,6 +305,32 @@ public class FilterImpl implements Filter {
     @Override
     public Filter in(TableAvailable table, String property, Collection<?> collection) {
         if (conditionAppend(table, property, collection)) {
+            EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
+            int maxInClauseSize = easyQueryOption.getMaxInClauseSize();
+            if (collection.size() > maxInClauseSize) {
+                List<? extends List<?>> partition = EasyCollectionUtil.partition(new ArrayList<>(collection), maxInClauseSize);
+                if( this.nextPredicateSegment instanceof OrPredicateSegment){
+                    or(f -> {
+                        for (List<?> objects : partition) {
+                            f.in(table, property, objects).or();
+                        }
+                    });
+                }else{
+                    and(f -> {
+                        for (List<?> objects : partition) {
+                            f.in(table, property, objects).or();
+                        }
+                    });
+                }
+            } else {
+                in0(table, property, collection);
+            }
+        }
+        return this;
+    }
+
+    private Filter in0(TableAvailable table, String property, Collection<?> collection) {
+        if (conditionAppend(table, property, collection)) {
             ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
             Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
 //            List<ColumnValue2Segment> columnValue2Segments = collection.stream().map(o -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o)).collect(Collectors.toList());
@@ -384,7 +412,7 @@ public class FilterImpl implements Filter {
         sqlFunction.consume(new SQLNativeChainExpressionContextImpl(table, sqlNativeExpressionContext));
         sqlNativeExpressionContext.value(left);
         sqlNativeExpressionContext.value(right);
-        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment + " BETWEEN {" + sqlFunction.paramMarks() + "} AND {" + (sqlFunction.paramMarks()+1) + "}", sqlNativeExpressionContext));
+        nextPredicateSegment.setPredicate(new SQLNativePredicateImpl(expressionContext, sqlSegment + " BETWEEN {" + sqlFunction.paramMarks() + "} AND {" + (sqlFunction.paramMarks() + 1) + "}", sqlNativeExpressionContext));
         next();
     }
 
