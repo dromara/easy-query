@@ -1,6 +1,7 @@
 package com.easy.query.mssql.config;
 
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
+import com.easy.query.core.configuration.EasyQueryOptionBuilder;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.extension.casewhen.SQLCaseWhenBuilderFactory;
@@ -28,5 +29,12 @@ public class MsSQLDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(DatabaseMigrationProvider.class, MsSQLDatabaseMigrationProvider.class);
         services.addService(MigrationEntityParser.class, MsSQLMigrationEntityParser.class);
         services.addService(SQLCaseWhenBuilderFactory.class, MsSQLCaseWhenBuilderFactory.class);
+    }
+
+    @Override
+    public void optionConfigure(EasyQueryOptionBuilder easyQueryOptionBuilder) {
+        if (easyQueryOptionBuilder.getMaxInClauseSize() == EasyQueryOptionBuilder.MAX_IN_CLAUSE_SIZE) {
+            easyQueryOptionBuilder.setMaxInClauseSize(32767);
+        }
     }
 }

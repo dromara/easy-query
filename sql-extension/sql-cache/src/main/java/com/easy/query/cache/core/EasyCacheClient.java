@@ -1,7 +1,6 @@
 package com.easy.query.cache.core;
 
 
-import com.easy.query.cache.core.base.ClearParameter;
 import com.easy.query.cache.core.common.CacheKey;
 import com.easy.query.cache.core.queryable.AllCacheQueryable;
 import com.easy.query.cache.core.queryable.KvCacheQueryable;

@@ -2,6 +2,7 @@ package com.easy.query.dameng.config;
 
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
+import com.easy.query.core.configuration.EasyQueryOptionBuilder;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.func.SQLFunc;
@@ -29,5 +30,12 @@ public class DamengDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(DatabaseMigrationProvider.class, DamengDatabaseMigrationProvider.class);
         services.addService(MigrationEntityParser.class, DamengMigrationEntityParser.class);
         services.addService(DatabaseCodeFirst.class, DamengDatabaseCodeFirst.class);
+    }
+
+    @Override
+    public void optionConfigure(EasyQueryOptionBuilder easyQueryOptionBuilder) {
+        if (easyQueryOptionBuilder.getMaxInClauseSize() == EasyQueryOptionBuilder.MAX_IN_CLAUSE_SIZE) {
+            easyQueryOptionBuilder.setMaxInClauseSize(1000);
+        }
     }
 }

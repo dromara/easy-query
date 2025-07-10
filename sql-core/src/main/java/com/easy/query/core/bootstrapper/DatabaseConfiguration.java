@@ -1,5 +1,6 @@
 package com.easy.query.core.bootstrapper;
 
+import com.easy.query.core.configuration.EasyQueryOptionBuilder;
 import com.easy.query.core.inject.ServiceCollection;
 
 /**
@@ -9,5 +10,8 @@ import com.easy.query.core.inject.ServiceCollection;
  * @author xuejiaming
  */
 public interface DatabaseConfiguration {
+   default void optionConfigure(EasyQueryOptionBuilder easyQueryOptionBuilder){
+
+   }
     void configure(ServiceCollection services);
 }

@@ -12,6 +12,7 @@ import com.easy.query.core.enums.sharding.ConnectionModeEnum;
  * @author xuejiaming
  */
 public class EasyQueryOptionBuilder {
+    public static final int MAX_IN_CLAUSE_SIZE=9999999;
 
     private boolean deleteThrowError;
     private SQLExecuteStrategyEnum insertStrategy;
@@ -132,7 +133,7 @@ public class EasyQueryOptionBuilder {
         this.mssqlMinBigDecimalScale = 0;
         this.includeLimitMode = IncludeLimitModeEnum.UNION_ALL;
         this.saveComment = false;
-        this.maxInClauseSize = 9999999;
+        this.maxInClauseSize = MAX_IN_CLAUSE_SIZE;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -293,6 +294,10 @@ public class EasyQueryOptionBuilder {
 
     public void setMaxInClauseSize(int maxInClauseSize) {
         this.maxInClauseSize = maxInClauseSize;
+    }
+
+    public int getMaxInClauseSize() {
+        return maxInClauseSize;
     }
 
     public EasyQueryOption build() {
