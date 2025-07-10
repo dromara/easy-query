@@ -6,7 +6,6 @@ import com.easy.query.cache.core.EasyCacheClient;
 import com.easy.query.cache.core.common.CacheKey;
 import com.easy.query.cache.core.provider.EasyCacheProvider;
 import com.easy.query.cache.core.CacheRuntimeContext;
-import com.easy.query.cache.core.base.ClearParameter;
 import com.easy.query.cache.core.impl.all.DefaultAllCacheQueryable;
 import com.easy.query.cache.core.impl.kv.DefaultKvCacheQueryable;
 import com.easy.query.cache.core.queryable.AllCacheQueryable;
