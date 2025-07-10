@@ -49,18 +49,14 @@ import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLGroupByExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
-import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.fetcher.EntityFetcher;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyNavigateUtil;
 import com.easy.query.core.util.EasyObjectUtil;
-import com.easy.query.core.util.EasySQLExpressionUtil;
-import com.easy.query.core.util.EasySQLJoinUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
-import java.math.BigDecimal;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.List;
@@ -453,7 +449,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
             });
             TableAvailable table = valueHolder.getValue().getOriginalTable();
             String value = valueHolder.getValue().getNavValue();
-            getClientQueryable().subQueryToGroupJoin(manyJoinSelector -> manyJoinSelector.manyColumn(table, value));
+            getClientQueryable().subQueryToGroupJoin(manyJoinSelector -> manyJoinSelector.subQueryProperty(table, value));
         }
         return getQueryable();
     }
@@ -470,8 +466,8 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
             });
             TableAvailable table = valueHolder.getValue().getOriginalTable();
             String value = valueHolder.getValue().getNavValue();
-            getClientQueryable().subQueryConfigure(manyJoinSelector -> manyJoinSelector.manyColumn(table, value), cq -> {
-                ClientQueryable<T2> innerClientQueryable = EasyObjectUtil.typeCastNullable(cq);
+            getClientQueryable().subQueryConfigure(manyJoinSelector -> manyJoinSelector.subQueryProperty(table, value), cq -> {
+                ClientQueryable<T2> innerClientQueryable = EasyObjectUtil.typeCastNotNull(cq);
                 T2Proxy tPropertyProxy = EntityQueryProxyManager.create(innerClientQueryable.queryClass());
                 EasyEntityQueryable<T2Proxy, T2> entityQueryable = new EasyEntityQueryable<>(tPropertyProxy, innerClientQueryable);
                 adapterExpression.apply(entityQueryable);

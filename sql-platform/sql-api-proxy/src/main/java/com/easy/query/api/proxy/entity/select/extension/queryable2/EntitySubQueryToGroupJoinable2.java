@@ -30,7 +30,7 @@ public interface EntitySubQueryToGroupJoinable2<T1Proxy extends ProxyEntity<T1Pr
             });
             TableAvailable table = valueHolder.getValue().getOriginalTable();
             String value = valueHolder.getValue().getValue();
-            getClientQueryable2().subQueryToGroupJoin((mj1, mj2) -> mj1.manyColumn(table, value));
+            getClientQueryable2().subQueryToGroupJoin((mj1, mj2) -> mj1.subQueryProperty(table, value));
 
         }
         return getQueryable2();

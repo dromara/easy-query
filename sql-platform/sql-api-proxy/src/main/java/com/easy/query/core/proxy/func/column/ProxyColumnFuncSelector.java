@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.func.column;
 
+import com.easy.query.api.proxy.util.EasyParamExpressionUtil;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.parser.core.base.SimpleSQLTableOwner;
@@ -22,7 +23,16 @@ import java.util.Collection;
 public interface ProxyColumnFuncSelector {
     ColumnFuncSelector getColumnFuncSelector();
 
-    default <T> ProxyColumnFuncSelector expression(PropTypeColumn< T> sqlColumn) {
+    default ProxyColumnFuncSelector parameters(Object... params) {
+        if (params != null) {
+            for (Object param : params) {
+                EasyParamExpressionUtil.acceptParameters(getColumnFuncSelector(), param);
+            }
+        }
+        return this;
+    }
+
+    default <T> ProxyColumnFuncSelector expression(PropTypeColumn<T> sqlColumn) {
         PropTypeColumn.columnFuncSelector(getColumnFuncSelector(), sqlColumn);
         return this;
     }

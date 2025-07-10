@@ -68,7 +68,16 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         }
     }
 
-    public void appendOn(SQLActionExpression1<TProxy> filter) {
+    /**
+     * 请使用{@link #filter(SQLActionExpression1)}
+     * @param filterExpression
+     */
+    @Deprecated
+    public void appendOn(SQLActionExpression1<TProxy> filterExpression) {
+        filter(filterExpression);
+    }
+
+    public void filter(SQLActionExpression1<TProxy> filterExpression) {
         TableAvailable thisTable = getTable();
         if(!(thisTable instanceof RelationEntityTableAvailable)){
             throw new EasyQueryInvalidOperationException("can not use extraFilter for " + EasyClassUtil.getSimpleName(getTable().getEntityClass()));
@@ -81,7 +90,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         PredicateSegment on = entityTableExpressionBuilder.getOn();
         FilterImpl onFilter = new FilterImpl(entitySQLContext.getRuntimeContext(), entitySQLContext.getExpressionContext(), on, false, entitySQLContext.getExpressionContext().getValueFilter());
         getEntitySQLContext()._where(onFilter, () -> {
-            filter.apply(EasyObjectUtil.typeCastNullable(this));
+            filterExpression.apply(EasyObjectUtil.typeCastNullable(this));
         });
     }
 

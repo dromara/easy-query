@@ -59,6 +59,13 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
     SQLManyQueryable<TProxy, T1Proxy, T1> where(SQLActionExpression1<T1Proxy> whereExpression);
 
     /**
+     * 添加独立的条件和subQueryConfigure同理支持后续的子查询全部拥有该条件
+     * 多次设置将只接受最后一次
+     * @param whereExpression
+     */
+    void filter(SQLActionExpression1<T1Proxy> whereExpression);
+
+    /**
      * 仅子查询配置生效
      * manyJoin下使用则会转成独立SubQuery
      *

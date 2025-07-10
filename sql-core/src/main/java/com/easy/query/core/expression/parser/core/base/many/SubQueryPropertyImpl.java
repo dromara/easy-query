@@ -8,11 +8,11 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  *
  * @author xuejiaming
  */
-public class ManyColumnImpl implements ManyColumn {
+public class SubQueryPropertyImpl implements SubQueryProperty {
     private final TableAvailable table;
     private final String navValue;
 
-    public ManyColumnImpl(TableAvailable table,String navValue){
+    public SubQueryPropertyImpl(TableAvailable table, String navValue){
         this.table = table;
         this.navValue = navValue;
     }

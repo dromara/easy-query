@@ -1,8 +1,18 @@
 package com.easy.query.core.proxy.columns.impl;
 
+import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
+import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
+import com.easy.query.core.expression.DefaultRelationTableKey;
+import com.easy.query.core.expression.ImplicitGroupRelationTableKey;
+import com.easy.query.core.expression.ManyConfiguration;
+import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
@@ -15,8 +25,10 @@ import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * create time 2025/3/12 11:54
@@ -103,6 +115,21 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
     public SQLManyQueryable<TProxy, T1Proxy, T1> where(SQLActionExpression1<T1Proxy> whereExpression) {
         subQueryContext.appendWhereExpression(whereExpression);
         return this;
+    }
+
+    @Override
+    public void filter(SQLActionExpression1<T1Proxy> whereExpression) {
+        DefaultRelationTableKey defaultRelationTableKey = new DefaultRelationTableKey(subQueryContext.getLeftTable(), subQueryContext.getProperty());
+//        new EasyClientQueryable<>(clazz, entityQueryExpressionBuilder)
+
+        subQueryContext.getEntityExpressionBuilder().putManyConfiguration(defaultRelationTableKey, new ManyConfiguration(cq -> {
+            ClientQueryable<T1> innerClientQueryable = EasyObjectUtil.typeCastNotNull(cq);
+            T1Proxy propertyProxy = subQueryContext.getPropertyProxy();
+            EasyEntityQueryable<T1Proxy, T1> entityQueryable = new EasyEntityQueryable<>(propertyProxy, innerClientQueryable);
+            entityQueryable.where(whereExpression);
+            return entityQueryable.getClientQueryable();
+        }));
+
     }
 
     @Override

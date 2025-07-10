@@ -20,9 +20,9 @@ import com.easy.query.core.expression.parser.core.base.ColumnResultSelector;
 import com.easy.query.core.expression.parser.core.base.WhereAggregatePredicate;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
-import com.easy.query.core.expression.parser.core.base.many.ManyColumn;
-import com.easy.query.core.expression.parser.core.base.many.ManyJoinSelector;
-import com.easy.query.core.expression.parser.core.base.many.ManyJoinSelectorImpl;
+import com.easy.query.core.expression.parser.core.base.many.SubQueryProperty;
+import com.easy.query.core.expression.parser.core.base.many.SubQueryPropertySelector;
+import com.easy.query.core.expression.parser.core.base.many.SubQueryPropertySelectorImpl;
 import com.easy.query.core.expression.segment.SQLEntitySegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -107,12 +107,12 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractOverrideC
     }
 
     @Override
-    public ClientQueryable2<T1, T2> subQueryToGroupJoin(boolean condition, SQLFuncExpression2<ManyJoinSelector<T1>, ManyJoinSelector<T2>, ManyColumn> manyPropColumnExpression) {
+    public ClientQueryable2<T1, T2> subQueryToGroupJoin(boolean condition, SQLFuncExpression2<SubQueryPropertySelector, SubQueryPropertySelector, SubQueryProperty> manyPropColumnExpression) {
         if (condition) {
             EntityTableExpressionBuilder table1 = entityQueryExpressionBuilder.getTable(0);
             EntityTableExpressionBuilder table2 = entityQueryExpressionBuilder.getTable(1);
-            ManyColumn manyColumn = manyPropColumnExpression.apply(new ManyJoinSelectorImpl<>(table1.getEntityTable()), new ManyJoinSelectorImpl<>(table2.getEntityTable()));
-            EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, manyColumn.getTable(), manyColumn.getNavValue());
+            SubQueryProperty subQueryProperty = manyPropColumnExpression.apply(new SubQueryPropertySelectorImpl(table1.getEntityTable()), new SubQueryPropertySelectorImpl(table2.getEntityTable()));
+            EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, subQueryProperty.getTable(), subQueryProperty.getNavValue());
             TableAvailable leftTable = tableOrRelationalTable.table;
             String property = tableOrRelationalTable.property;
             entityQueryExpressionBuilder.addSubQueryToGroupJoinJoin(new DefaultRelationTableKey(leftTable, property));

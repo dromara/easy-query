@@ -165,6 +165,99 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("123(String),0(Integer),456(String),0(Integer),123(String),123(String),银行(String),%45678%(String),123(Integer),456(Integer),789(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+    @Test
+    public void testManyGroupJoin2_1() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft3<String, Integer, String>> 银行 = easyEntityQuery.queryable(DocUser.class)
+                .subQueryToGroupJoin(o -> o.bankCards())
+                .where(user -> {
+                    user.bankCards().filter(x->{
+                        //支持隐式join和普通属性筛选
+                        x.bank().name().eq("银行");
+                        x.type().like("45678");
+                    });
+                    user.bankCards().where(x -> x.type().eq("123")).
+                            sum(o -> o.code().toNumber(Integer.class))
+                            .eq(123);
+                    user.bankCards().where(x -> x.type().eq("123")).
+                            sum(o -> o.code().toNumber(Integer.class))
+                            .eq(456);
+                    user.bankCards().where(x -> x.type().eq("456")).
+                            sum(o -> o.code().toNumber(Integer.class))
+                            .eq(789);
+                })
+                .orderBy(user -> {
+                    user.bankCards().where(x -> x.type().eq("123")).
+                            sum(o -> o.code().toNumber(Integer.class)).asc();
+                    user.bankCards().where(x -> x.type().eq("123")).
+                            max(o -> o.code()).desc();
+                })
+                .select(user -> Select.DRAFT.of(
+                        user.id(),
+                        user.bankCards().where(x -> x.type().eq("123")).
+                                sum(o -> o.code().toNumber(Integer.class)),
+                        user.bankCards().where(x -> x.type().eq("123")).
+                                min(o -> o.code())
+                ))
+                .toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `value1`,IFNULL(t3.`__sum2__`,0) AS `value2`,t3.`__min5__` AS `value3` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum2__`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum3__`,MAX((CASE WHEN t1.`type` = ? THEN t1.`code` ELSE NULL END)) AS `__max4__`,MIN((CASE WHEN t1.`type` = ? THEN t1.`code` ELSE NULL END)) AS `__min5__` FROM `doc_bank_card` t1 INNER JOIN `doc_bank` t2 ON t2.`id` = t1.`bank_id` WHERE t2.`name` = ? AND t1.`type` LIKE ? GROUP BY t1.`uid`) t3 ON t3.`uid` = t.`id` WHERE IFNULL(t3.`__sum2__`,0) = ? AND IFNULL(t3.`__sum2__`,0) = ? AND IFNULL(t3.`__sum3__`,0) = ? ORDER BY IFNULL(t3.`__sum2__`,0) ASC,t3.`__max4__` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),0(Integer),456(String),0(Integer),123(String),123(String),银行(String),%45678%(String),123(Integer),456(Integer),789(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testManyGroupJoin2_2() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft3<String, Integer, String>> 银行 = easyEntityQuery.queryable(DocUser.class)
+                .subQueryToGroupJoin(o -> o.bankCards())
+                .where(user -> {
+                    user.bankCards().where(x -> x.type().eq("123")).
+                            sum(o -> o.code().toNumber(Integer.class))
+                            .eq(123);
+                    user.bankCards().where(x -> x.type().eq("123")).
+                            sum(o -> o.code().toNumber(Integer.class))
+                            .eq(456);
+                    user.bankCards().where(x -> x.type().eq("456")).
+                            sum(o -> o.code().toNumber(Integer.class))
+                            .eq(789);
+
+                    user.bankCards().filter(x->{
+                        //支持隐式join和普通属性筛选
+                        x.bank().name().eq("银行");
+                        x.type().like("45678");
+                    });
+                })
+                .orderBy(user -> {
+                    user.bankCards().where(x -> x.type().eq("123")).
+                            sum(o -> o.code().toNumber(Integer.class)).asc();
+                    user.bankCards().where(x -> x.type().eq("123")).
+                            max(o -> o.code()).desc();
+                })
+                .select(user -> Select.DRAFT.of(
+                        user.id(),
+                        user.bankCards().where(x -> x.type().eq("123")).
+                                sum(o -> o.code().toNumber(Integer.class)),
+                        user.bankCards().where(x -> x.type().eq("123")).
+                                min(o -> o.code())
+                ))
+                .toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id` AS `value1`,IFNULL(t5.`__sum2__`,0) AS `value2`,t5.`__min4__` AS `value3` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum2__`,SUM((CASE WHEN t1.`type` = ? THEN CAST(t1.`code` AS SIGNED) ELSE ? END)) AS `__sum3__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` LEFT JOIN (SELECT t3.`uid` AS `uid`,SUM((CASE WHEN t3.`type` = ? THEN CAST(t3.`code` AS SIGNED) ELSE ? END)) AS `__sum2__`,MAX((CASE WHEN t3.`type` = ? THEN t3.`code` ELSE NULL END)) AS `__max3__`,MIN((CASE WHEN t3.`type` = ? THEN t3.`code` ELSE NULL END)) AS `__min4__` FROM `doc_bank_card` t3 INNER JOIN `doc_bank` t4 ON t4.`id` = t3.`bank_id` WHERE t4.`name` = ? AND t3.`type` LIKE ? GROUP BY t3.`uid`) t5 ON t5.`uid` = t.`id` WHERE IFNULL(t2.`__sum2__`,0) = ? AND IFNULL(t2.`__sum2__`,0) = ? AND IFNULL(t2.`__sum3__`,0) = ? ORDER BY IFNULL(t5.`__sum2__`,0) ASC,t5.`__max3__` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),0(Integer),456(String),0(Integer),123(String),0(Integer),123(String),123(String),银行(String),%45678%(String),123(Integer),456(Integer),789(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
 
 
     @Test

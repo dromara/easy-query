@@ -2,8 +2,8 @@ package com.easy.query.core.basic.api.select.extension.queryable;
 
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.parser.core.base.many.ManyColumn;
-import com.easy.query.core.expression.parser.core.base.many.ManyJoinSelector;
+import com.easy.query.core.expression.parser.core.base.many.SubQueryProperty;
+import com.easy.query.core.expression.parser.core.base.many.SubQueryPropertySelector;
 
 /**
  * create time 2025/3/8 08:31
@@ -12,9 +12,9 @@ import com.easy.query.core.expression.parser.core.base.many.ManyJoinSelector;
  * @author xuejiaming
  */
 public interface SubQueryToGroupJoinable1<T1> {
-    default ClientQueryable<T1> subQueryToGroupJoin(SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression) {
+    default ClientQueryable<T1> subQueryToGroupJoin(SQLFuncExpression1<SubQueryPropertySelector, SubQueryProperty> manyPropColumnExpression) {
         return subQueryToGroupJoin(true, manyPropColumnExpression);
     }
 
-    ClientQueryable<T1> subQueryToGroupJoin(boolean condition, SQLFuncExpression1<ManyJoinSelector<T1>, ManyColumn> manyPropColumnExpression);
+    ClientQueryable<T1> subQueryToGroupJoin(boolean condition, SQLFuncExpression1<SubQueryPropertySelector, SubQueryProperty> manyPropColumnExpression);
 }

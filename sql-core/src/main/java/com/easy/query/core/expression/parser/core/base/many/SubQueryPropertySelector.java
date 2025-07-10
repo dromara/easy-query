@@ -8,12 +8,12 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  *
  * @author xuejiaming
  */
-public interface ManyJoinSelector<T1> {
+public interface SubQueryPropertySelector {
     /**
      * 支持多级比如[school.user.books]
      * @param property
      * @return
      */
-    ManyColumn manyColumn(String property);
-    ManyColumn manyColumn(TableAvailable table, String property);
+    SubQueryProperty subQueryProperty(String property);
+    SubQueryProperty subQueryProperty(TableAvailable table, String property);
 }

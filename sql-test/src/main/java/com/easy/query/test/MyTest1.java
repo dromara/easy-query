@@ -510,6 +510,7 @@ public class MyTest1 extends BaseTest {
         listenerContextManager.clear();
 
     }
+
     @Test
     public void testSelect1() {
 
@@ -682,6 +683,7 @@ public class MyTest1 extends BaseTest {
         Assert.assertEquals("2021-03-04T05:06(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testSelect6_2() {
 
@@ -711,6 +713,7 @@ public class MyTest1 extends BaseTest {
         Assert.assertEquals("2021-03-04T05:06(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testSelect6_3() {
 
@@ -1178,7 +1181,9 @@ public class MyTest1 extends BaseTest {
                     t1.score().isNotNull();
                 })
                 .groupBy((t, t1) -> GroupKeys.of(
-                        t.expression().sqlSegment("IFNULL({0},{1})", c -> c.expression(t.createTime()).value(LocalDateTime.of(2022, 1, 1, 1, 2))).asAnyType(LocalDateTime.class),
+                        t.expression().sqlSegment("IFNULL({0},{1})", c -> c.parameters(
+                                        t.createTime(), LocalDateTime.of(2022, 1, 1, 1, 2)
+                                )).asAnyType(LocalDateTime.class),
                         t1.score().nullOrDefault(BigDecimal.ZERO)
                 ))
                 .select(o -> Select.DRAFT.of(

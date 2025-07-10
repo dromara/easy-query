@@ -12,8 +12,6 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.configuration.EasyQueryOption;
-import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
@@ -532,7 +530,7 @@ public class QueryTest26 extends BaseTest {
 
             List<SysBankCard> list = easyEntityQuery.queryable(SysBankCard.class)
                     .where(bank_card -> {
-                        bank_card.bank().appendOn(t -> {
+                        bank_card.bank().filter(t -> {
                             t.or(() -> {
                                 t.name().like("工商银行");
                                 t.name().contains("建设银行");
@@ -558,7 +556,7 @@ public class QueryTest26 extends BaseTest {
         try {
             List<SysBankCard> list = easyEntityQuery.queryable(SysBankCard.class)
                     .where(bank_card -> {
-                        bank_card.bank().appendOn(t -> {
+                        bank_card.bank().filter(t -> {
                             t.or(() -> {
                                 t.name().like("工商银行");
                                 t.name().contains("建设银行");

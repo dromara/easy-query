@@ -8,7 +8,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
  *
  * @author xuejiaming
  */
-public interface ManyColumn {
+public interface SubQueryProperty {
     TableAvailable getTable();
     String getNavValue();
 }
