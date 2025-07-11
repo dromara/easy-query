@@ -22,7 +22,10 @@ import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Include;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
+import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.oracle.config.OracleDatabaseConfiguration;
+import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
 import com.easy.query.test.dto.TopicType1VO;
 import com.easy.query.test.dto.TopicTypeVO;
 import com.easy.query.test.dto.proxy.TopicType1VOProxy;
@@ -487,6 +490,12 @@ public class QueryTest26 extends BaseTest {
     public void includeFlat() {
 
         List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
+//                .include(s->{
+//                    s.schoolTeachers().flatElement().schoolClasses().navigateInclude().where(a -> a.name().like("123"));
+//
+//
+//                    s.schoolStudents().flatElement().schoolStudentAddress().navigateInlcude().where(a -> a.name().like("123"));
+//                })
                 .includeMany(s -> {
                     return new Include<>(s.schoolTeachers().flatElement().schoolClasses())
                             .where(a -> a.name().like("123"))
@@ -601,7 +610,7 @@ public class QueryTest26 extends BaseTest {
     }
 
     @Test
-    public void test(){
+    public void test() {
         EntityQueryable<BlogEntityProxy, BlogEntity> queryable = easyEntityQuery.queryable(BlogEntity.class);
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = queryable.getSQLEntityExpressionBuilder();
         sqlEntityExpressionBuilder.setOffset(1);
@@ -629,7 +638,7 @@ public class QueryTest26 extends BaseTest {
 
 
         Map<String, List<Fruit>> collect = fruits.stream().collect(Collectors.groupingBy(o -> o.getColor()));
-        List<ColorCategory> result=new ArrayList<>();
+        List<ColorCategory> result = new ArrayList<>();
         for (Map.Entry<String, List<Fruit>> stringListEntry : collect.entrySet()) {
 
             String key = stringListEntry.getKey();
@@ -683,7 +692,7 @@ public class QueryTest26 extends BaseTest {
     }
 
     @Data
-    public static class ShapeCategory{
+    public static class ShapeCategory {
 
         /**
          * 形状
@@ -692,6 +701,7 @@ public class QueryTest26 extends BaseTest {
 
         public List<Fruit> fruits;
     }
+
     @Test
     public void testChunk3() {
         HashMap<String, BlogEntity> ids = new HashMap<>();
@@ -726,6 +736,7 @@ public class QueryTest26 extends BaseTest {
         Assert.assertEquals(100, a.intValue());
 
     }
+
     @Test
     public void testChunk5() {
         AtomicInteger a = new AtomicInteger(0);
@@ -742,6 +753,7 @@ public class QueryTest26 extends BaseTest {
 
 
     }
+
     @Test
     public void testChunk6() {
         AtomicInteger a = new AtomicInteger(0);
@@ -762,42 +774,42 @@ public class QueryTest26 extends BaseTest {
 
 
     @Test
-    public void testGenerateKeys(){
+    public void testGenerateKeys() {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         {
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(MySQLGenerateKey.class));
-            codeFirstCommand.executeWithTransaction(s->s.commit());
+            codeFirstCommand.executeWithTransaction(s -> s.commit());
         }
         {
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MySQLGenerateKey.class));
-            codeFirstCommand.executeWithTransaction(s->s.commit());
+            codeFirstCommand.executeWithTransaction(s -> s.commit());
 
         }
         {
 
             MySQLGenerateKey mySQLGenerateKey = new MySQLGenerateKey();
             mySQLGenerateKey.setName("test");
-            System.out.println("插入前"+mySQLGenerateKey);
+            System.out.println("插入前" + mySQLGenerateKey);
             easyEntityQuery.insertable(mySQLGenerateKey).executeRows(true);
-            System.out.println("插入后"+mySQLGenerateKey);
+            System.out.println("插入后" + mySQLGenerateKey);
 
             MySQLGenerateKey mySQLGenerateKey1 = easyEntityQuery.queryable(MySQLGenerateKey.class).whereById(1).singleOrNull();
-            System.out.println("查询后"+mySQLGenerateKey1);
+            System.out.println("查询后" + mySQLGenerateKey1);
             Assert.assertNotNull(mySQLGenerateKey1);
             Assert.assertNotNull(mySQLGenerateKey1.getId());
-            Assert.assertEquals(1, (int)mySQLGenerateKey1.getId());
+            Assert.assertEquals(1, (int) mySQLGenerateKey1.getId());
             Assert.assertNotNull(mySQLGenerateKey1.getNow());
             LocalDateTime now = LocalDateTime.now();
-            Assert.assertEquals(mySQLGenerateKey1.getNow().getYear(),now.getYear());
-            Assert.assertEquals(mySQLGenerateKey1.getNow().getMonth(),now.getMonth());
-            Assert.assertEquals(mySQLGenerateKey1.getNow().getDayOfYear(),now.getDayOfYear());
-            Assert.assertEquals(mySQLGenerateKey1.getNow().getHour(),now.getHour());
+            Assert.assertEquals(mySQLGenerateKey1.getNow().getYear(), now.getYear());
+            Assert.assertEquals(mySQLGenerateKey1.getNow().getMonth(), now.getMonth());
+            Assert.assertEquals(mySQLGenerateKey1.getNow().getDayOfYear(), now.getDayOfYear());
+            Assert.assertEquals(mySQLGenerateKey1.getNow().getHour(), now.getHour());
         }
 
     }
 
     @Test
-    public void testMaxInCaluse(){
+    public void testMaxInCaluse() {
 
         ListenerContextManager listenerContextManager = new ListenerContextManager();
         MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
@@ -846,7 +858,7 @@ public class QueryTest26 extends BaseTest {
                 }
                 List<Topic> list = defaultEasyEntityQuery.queryable(Topic.class)
                         .where(t_topic -> {
-                            t_topic.id().in( strings);
+                            t_topic.id().in(strings);
                         })
                         .toList();
             } catch (Exception ex) {
@@ -872,7 +884,7 @@ public class QueryTest26 extends BaseTest {
                 List<Topic> list = defaultEasyEntityQuery.queryable(Topic.class)
                         .where(t_topic -> {
                             t_topic.title().contains("123");
-                            t_topic.id().in( strings);
+                            t_topic.id().in(strings);
                         })
                         .toList();
             } catch (Exception ex) {
@@ -896,11 +908,11 @@ public class QueryTest26 extends BaseTest {
                 }
                 List<Topic> list = defaultEasyEntityQuery.queryable(Topic.class)
                         .where(t_topic -> {
-                            t_topic.id().in( strings);
-                            t_topic.or(()->{
+                            t_topic.id().in(strings);
+                            t_topic.or(() -> {
                                 t_topic.title().contains("123");
-                                t_topic.id().in( strings);
-                                t_topic.id().in( strings);
+                                t_topic.id().in(strings);
+                                t_topic.id().in(strings);
                             });
                         })
                         .toList();
@@ -925,12 +937,12 @@ public class QueryTest26 extends BaseTest {
                 }
                 List<Topic> list = defaultEasyEntityQuery.queryable(Topic.class)
                         .where(t_topic -> {
-                            t_topic.and(()->{
-                                t_topic.id().in( strings);
-                                t_topic.or(()->{
+                            t_topic.and(() -> {
+                                t_topic.id().in(strings);
+                                t_topic.or(() -> {
                                     t_topic.title().contains("123");
-                                    t_topic.id().in( strings);
-                                    t_topic.id().in( strings);
+                                    t_topic.id().in(strings);
+                                    t_topic.id().in(strings);
                                 });
                             });
                         })
@@ -946,4 +958,5 @@ public class QueryTest26 extends BaseTest {
 
         }
     }
+
 }

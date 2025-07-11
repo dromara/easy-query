@@ -6,8 +6,10 @@ import com.easy.query.core.basic.api.internal.LogicDeletable;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.columns.impl.DefaultSubquerySQLQueryableFactory;
 import com.easy.query.core.proxy.impl.SQLColumnIncludeColumn2Impl;
+import com.easy.query.core.proxy.sql.Include;
 import com.easy.query.core.util.EasyObjectUtil;
 
 /**
@@ -64,6 +66,9 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
      * @param whereExpression
      */
     void filter(SQLActionExpression1<T1Proxy> whereExpression);
+
+
+//    Include<T1Proxy, T1> navigateInclude();
 
     /**
      * 仅子查询配置生效

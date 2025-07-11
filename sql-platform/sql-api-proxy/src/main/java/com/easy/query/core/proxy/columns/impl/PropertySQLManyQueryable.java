@@ -15,6 +15,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SQLManyQueryable;
 import com.easy.query.core.proxy.columns.SQLQueryable;
@@ -25,6 +26,7 @@ import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
+import com.easy.query.core.proxy.sql.Include;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.math.BigDecimal;
@@ -131,6 +133,11 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
         }));
 
     }
+
+//    @Override
+//    public Include<T1Proxy, T1> navigateInclude() {
+//        return new Include<>(this);
+//    }
 
     @Override
     public void any(SQLActionExpression1<T1Proxy> whereExpression) {

@@ -123,4 +123,20 @@ public interface EntityIncludeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
         }
         return getQueryable();
     }
+//    default EntityQueryable<T1Proxy, T1> include(SQLActionExpression1<T1Proxy> navigateIncludeSQLExpression) {
+//        T1Proxy t1Proxy = getQueryable().get1Proxy();
+//        ValueHolder<IncludeAvailable> includeAvailableValueHolder=new ValueHolder<>();
+//        t1Proxy.getEntitySQLContext()._include(()->{
+//            IncludeAvailable includeAvailable = navigateIncludeSQLExpression.apply(t1Proxy);
+//            includeAvailableValueHolder.setValue(includeAvailable);
+//        });
+//        IncludeAvailable value = includeAvailableValueHolder.getValue();
+//        if(value!=null){
+//            IncludePathTreeNode includePathTreeRoot = EasyUtil.getIncludePathTreeRoot(value);
+//            EasyUtil.includeMany(this.getClientQueryable(), includePathTreeRoot);
+//            value.getIncludes().clear();
+//            value.getFunctions().clear();
+//        }
+//        return getQueryable();
+//    }
 }

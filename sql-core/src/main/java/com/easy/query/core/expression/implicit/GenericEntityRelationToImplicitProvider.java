@@ -30,6 +30,8 @@ import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.include.RelationExtraEntity;
 import com.easy.query.core.func.def.PartitionBySQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -186,16 +188,27 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
         OrderBySQLBuilderSegmentImpl orderBySQLBuilderSegment = new OrderBySQLBuilderSegmentImpl();
         order.copyTo(orderBySQLBuilderSegment);
         order.clear();
-
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = clientQueryable.getSQLEntityExpressionBuilder();
         return clientQueryable.select(Map.class, x -> {
             x.columnAll();
 
 
             PartitionBySQLFunction partitionBySQLFunction = runtimeContext.fx().rowNumberOver(s -> {
-                for (String column : targetPropertiesOrPrimary) {
-                    s.column(column);
+                if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
+                    EntityTableExpressionBuilder recentlyTableExpressionBuilder = sqlEntityExpressionBuilder.getRecentlyTable();
+                    TableAvailable entityTable = recentlyTableExpressionBuilder.getEntityTable();
+
+                    for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {
+                        s.column(entityTable, selfMappingProperty);
+                    }
+                }else{
+                    for (String column : targetPropertiesOrPrimary) {
+                        s.column(column);
+                    }
                 }
             });
+
+
             if (EasySQLSegmentUtil.isNotEmpty(orderBySQLBuilderSegment)) {
                 partitionBySQLFunction.addOrder(orderBySQLBuilderSegment);
             }
