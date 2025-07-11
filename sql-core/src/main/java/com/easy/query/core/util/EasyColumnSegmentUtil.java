@@ -104,6 +104,7 @@ public class EasyColumnSegmentUtil {
     public static ColumnValue2Segment createColumnCompareValue2Segment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, Object val, boolean isLike) {
 
         SQLParameter sqlParameter =createSQLParameter(table,columnMetadata,val,isLike);
+
         ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();
         if (columnValueSQLConverter == null) {
             return new ColumnValue2SegmentImpl(table, columnMetadata, expressionContext, sqlParameter);
@@ -112,6 +113,11 @@ public class EasyColumnSegmentUtil {
             columnValueSQLConverter.valueConvert(table, columnMetadata, sqlParameter, sqlPropertyConverter, expressionContext.getRuntimeContext(), true);
             return new ColumnValue2NativeSegmentImpl(table, columnMetadata, expressionContext, sqlParameter, sqlPropertyConverter.getColumnSegment());
         }
+    }
+    public static ColumnValue2Segment createColumnOnlyCompareValue2Segment(TableAvailable table, ExpressionContext expressionContext, Object val, boolean isLike) {
+
+        SQLParameter sqlParameter =new EasyConstSQLParameter(table,null,val);
+        return new ColumnValue2SegmentImpl(table, null, expressionContext, sqlParameter);
     }
     public static ColumnValue2Segment createColumnCompareValue2Segment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, Object val, boolean isLike,boolean isCompareValue) {
 

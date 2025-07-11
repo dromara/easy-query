@@ -67,6 +67,7 @@ public interface Filter extends SQLNative<Filter> {
      * @return children
      */
     Filter eq(TableAvailable table, String property, Object val);
+    Filter eqColumn(TableAvailable table, String columnName, Object val);
 
     /**
      * 不等于 column <> val

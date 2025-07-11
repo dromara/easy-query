@@ -128,7 +128,7 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
         ClientQueryable<T1> clientQueryable = runtimeContext.getSQLClientApiFactory().createSubQueryable(entityClass, runtimeContext, entityExpressionBuilder.getExpressionContext());
         SQLFuncExpression1<ClientQueryable<?>, ClientQueryable<?>> queryableSQLFuncExpression1 = Optional.ofNullable(manyConfiguration).map(x -> x.getConfigureExpression()).orElse(null);
         if (queryableSQLFuncExpression1 != null) {
-            clientQueryable = EasyObjectUtil.typeCastNullable(queryableSQLFuncExpression1.apply(clientQueryable));
+            clientQueryable = EasyObjectUtil.typeCastNotNull(queryableSQLFuncExpression1.apply(clientQueryable));
         }
 
 
@@ -143,7 +143,7 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
                         EntityMetadata middleEntityMetadata = middle.getEntityMetadata();
                         for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {
                             ColumnMetadata columnMetadata = middleEntityMetadata.getColumnNotNull(selfMappingProperty);
-                            middle.columnAs(selfMappingProperty, columnMetadata.getName());
+                            middle.columnAs(selfMappingProperty, "__"+columnMetadata.getName()+"__");
                         }
                     });
         } else {

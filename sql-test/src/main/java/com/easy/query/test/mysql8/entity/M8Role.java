@@ -10,6 +10,7 @@ import com.easy.query.test.mysql8.entity.proxy.M8RoleProxy;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -26,6 +27,7 @@ public class M8Role implements ProxyEntityAvailable<M8Role, M8RoleProxy> {
     @Column(primaryKey = true)
     private String id;
     private String name;
+    private LocalDateTime createTime;
 
     @Navigate(value = RelationTypeEnum.ManyToMany, selfProperty = {M8Role.Fields.id}, selfMappingProperty = {M8RoleMenu.Fields.role_id}, mappingClass = M8RoleMenu.class, targetProperty = {M8Menu.Fields.id}, targetMappingProperty = {M8RoleMenu.Fields.menu_id})
     private List<M8Menu> menus;

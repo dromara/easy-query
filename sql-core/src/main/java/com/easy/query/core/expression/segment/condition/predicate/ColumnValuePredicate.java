@@ -35,7 +35,7 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        return column2Segment.toSQL(toSQLContext) + " " + compare.getSQL() + " "+columnValue2Segment.toSQL(toSQLContext);
+        return column2Segment.toSQL(toSQLContext) + " " + compare.getSQL() + " " + columnValue2Segment.toSQL(toSQLContext);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
 
     @Override
     public Predicate cloneSQLColumnSegment() {
-        return new ColumnValuePredicate(column2Segment,columnValue2Segment,compare);
+        return new ColumnValuePredicate(column2Segment, columnValue2Segment, compare);
     }
 
     @Override

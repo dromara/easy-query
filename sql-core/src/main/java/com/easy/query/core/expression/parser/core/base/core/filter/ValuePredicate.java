@@ -85,6 +85,13 @@ public interface ValuePredicate<T1, TChain> extends EntitySQLTableOwner<T1>, Fil
         }
         return castChain();
     }
+    default TChain eqColumn(boolean condition, String columnName, Object val) {
+
+        if (condition) {
+            getFilter().eqColumn(getTable(), columnName, val);
+        }
+        return castChain();
+    }
 
 
     /**

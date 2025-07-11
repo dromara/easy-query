@@ -122,7 +122,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t2.`id` AS `id`,t2.`uid` AS `uid`,t2.`code` AS `code`,t2.`type` AS `type`,t2.`bank_id` AS `bank_id` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,(ROW_NUMBER() OVER (PARTITION BY t1.`uid` ORDER BY t1.`id` ASC)) AS `__row__` FROM `doc_bank_card` t1 WHERE t1.`type` = ?) t2 WHERE t2.`__row__` = ?) t4 ON t4.`uid` = t.`id` LEFT JOIN (SELECT t6.`id` AS `id`,t6.`uid` AS `uid`,t6.`code` AS `code`,t6.`type` AS `type`,t6.`bank_id` AS `bank_id` FROM (SELECT t5.`id`,t5.`uid`,t5.`code`,t5.`type`,t5.`bank_id`,(ROW_NUMBER() OVER (PARTITION BY t5.`uid` ORDER BY t5.`id` ASC)) AS `__row__` FROM `doc_bank_card` t5) t6 WHERE t6.`__row__` = ?) t8 ON t8.`uid` = t.`id` WHERE t4.`bank_id` = ? AND t4.`type` = ? AND t8.`type` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,(ROW_NUMBER() OVER (PARTITION BY t1.`uid` ORDER BY t1.`id` ASC)) AS `__row__` FROM `doc_bank_card` t1 WHERE t1.`type` = ?) t3 ON (t3.`uid` = t.`id` AND t3.`__row__` = ?) LEFT JOIN (SELECT t4.`id`,t4.`uid`,t4.`code`,t4.`type`,t4.`bank_id`,(ROW_NUMBER() OVER (PARTITION BY t4.`uid` ORDER BY t4.`id` ASC)) AS `__row__` FROM `doc_bank_card` t4) t6 ON (t6.`uid` = t.`id` AND t6.`__row__` = ?) WHERE t3.`bank_id` = ? AND t3.`type` = ? AND t6.`type` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),1(Integer),3(Integer),123(String),123(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -144,7 +144,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t2.`id` AS `id`,t2.`uid` AS `uid`,t2.`code` AS `code`,t2.`type` AS `type`,t2.`bank_id` AS `bank_id` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,(ROW_NUMBER() OVER (PARTITION BY t1.`uid` ORDER BY IFNULL(t1.`code`,?) DESC)) AS `__row__` FROM `doc_bank_card` t1) t2 WHERE t2.`__row__` = ?) t4 ON t4.`uid` = t.`id` WHERE t4.`type` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,(ROW_NUMBER() OVER (PARTITION BY t1.`uid` ORDER BY IFNULL(t1.`code`,?) DESC)) AS `__row__` FROM `doc_bank_card` t1) t3 ON (t3.`uid` = t.`id` AND t3.`__row__` = ?) WHERE t3.`type` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("x(String),3(Integer),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -170,7 +170,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t2.`id` AS `id`,t2.`uid` AS `uid`,t2.`code` AS `code`,t2.`type` AS `type`,t2.`bank_id` AS `bank_id` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,(ROW_NUMBER() OVER (PARTITION BY t1.`uid` ORDER BY IFNULL(t1.`code`,?) DESC)) AS `__row__` FROM `doc_bank_card` t1) t2 WHERE t2.`__row__` = ?) t4 ON t4.`uid` = t.`id` WHERE t4.`type` = ? ORDER BY t4.`type` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age` FROM `doc_user` t LEFT JOIN (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,(ROW_NUMBER() OVER (PARTITION BY t1.`uid` ORDER BY IFNULL(t1.`code`,?) DESC)) AS `__row__` FROM `doc_bank_card` t1) t3 ON (t3.`uid` = t.`id` AND t3.`__row__` = ?) WHERE t3.`type` = ? ORDER BY t3.`type` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("x(String),3(Integer),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -203,7 +203,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t4.`type` AS `value1`,t4.`code` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t2.`id` AS `id`,t2.`uid` AS `uid`,t2.`code` AS `code`,t2.`type` AS `type`,t2.`bank_id` AS `bank_id` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,(ROW_NUMBER() OVER (PARTITION BY t1.`uid` ORDER BY IFNULL(t1.`code`,?) DESC)) AS `__row__` FROM `doc_bank_card` t1) t2 WHERE t2.`__row__` = ?) t4 ON t4.`uid` = t.`id` WHERE t4.`type` = ? ORDER BY t4.`type` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t3.`type` AS `value1`,t3.`code` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,(ROW_NUMBER() OVER (PARTITION BY t1.`uid` ORDER BY IFNULL(t1.`code`,?) DESC)) AS `__row__` FROM `doc_bank_card` t1) t3 ON (t3.`uid` = t.`id` AND t3.`__row__` = ?) WHERE t3.`type` = ? ORDER BY t3.`type` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("x(String),3(Integer),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -226,7 +226,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t2.`__max2__` AS `value1`,t6.`type` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,MAX((CASE WHEN t1.`type` = ? THEN t1.`code` ELSE NULL END)) AS `__max2__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` LEFT JOIN (SELECT t4.`id` AS `id`,t4.`uid` AS `uid`,t4.`code` AS `code`,t4.`type` AS `type`,t4.`bank_id` AS `bank_id` FROM (SELECT t3.`id`,t3.`uid`,t3.`code`,t3.`type`,t3.`bank_id`,(ROW_NUMBER() OVER (PARTITION BY t3.`uid` ORDER BY t3.`id` ASC)) AS `__row__` FROM `doc_bank_card` t3 WHERE t3.`type` = ?) t4 WHERE t4.`__row__` = ?) t6 ON t6.`uid` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t2.`__max2__` AS `value1`,t5.`type` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,MAX((CASE WHEN t1.`type` = ? THEN t1.`code` ELSE NULL END)) AS `__max2__` FROM `doc_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` LEFT JOIN (SELECT t3.`id`,t3.`uid`,t3.`code`,t3.`type`,t3.`bank_id`,(ROW_NUMBER() OVER (PARTITION BY t3.`uid` ORDER BY t3.`id` ASC)) AS `__row__` FROM `doc_bank_card` t3 WHERE t3.`type` = ?) t5 ON (t5.`uid` = t.`id` AND t5.`__row__` = ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),123(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -252,7 +252,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t3.`__max2__` AS `value1`,t7.`type` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t2.`uid` AS `uid`,MAX(t2.`code`) AS `__max2__` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id` FROM `doc_bank_card` t1 WHERE t1.`type` = ? LIMIT 3 OFFSET 3) t2 GROUP BY t2.`uid`) t3 ON t3.`uid` = t.`id` LEFT JOIN (SELECT t5.`id` AS `id`,t5.`uid` AS `uid`,t5.`code` AS `code`,t5.`type` AS `type`,t5.`bank_id` AS `bank_id` FROM (SELECT t4.`id`,t4.`uid`,t4.`code`,t4.`type`,t4.`bank_id`,(ROW_NUMBER() OVER (PARTITION BY t4.`uid` ORDER BY t4.`id` ASC)) AS `__row__` FROM `doc_bank_card` t4 WHERE t4.`type` = ?) t5 WHERE t5.`__row__` = ?) t7 ON t7.`uid` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t3.`__max2__` AS `value1`,t6.`type` AS `value2` FROM `doc_user` t LEFT JOIN (SELECT t2.`uid` AS `uid`,MAX(t2.`code`) AS `__max2__` FROM (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id` FROM `doc_bank_card` t1 WHERE t1.`type` = ? LIMIT 3 OFFSET 3) t2 GROUP BY t2.`uid`) t3 ON t3.`uid` = t.`id` LEFT JOIN (SELECT t4.`id`,t4.`uid`,t4.`code`,t4.`type`,t4.`bank_id`,(ROW_NUMBER() OVER (PARTITION BY t4.`uid` ORDER BY t4.`id` ASC)) AS `__row__` FROM `doc_bank_card` t4 WHERE t4.`type` = ?) t6 ON (t6.`uid` = t.`id` AND t6.`__row__` = ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),123(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -275,7 +275,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t LEFT JOIN (SELECT t4.`id` AS `id`,t4.`name` AS `name`,t4.`class_id` AS `class_id` FROM (SELECT t2.`class_id` AS `class_id`,t1.`id`,t1.`name`,(ROW_NUMBER() OVER (PARTITION BY t2.`class_id`, t1.`id` ORDER BY t1.`name` ASC)) AS `__row__` FROM `school_teacher` t1 INNER JOIN `school_class_teacher` t2 ON t1.`id` = t2.`teacher_id` WHERE t1.`name` LIKE ?) t4 WHERE t4.`__row__` = ?) t6 ON t6.`class_id` = t.`id` WHERE t6.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t LEFT JOIN (SELECT t2.`class_id` AS `__class_id__`,t1.`id`,t1.`name`,(ROW_NUMBER() OVER (PARTITION BY t2.`class_id` ORDER BY t1.`name` ASC)) AS `__row__` FROM `school_teacher` t1 INNER JOIN `school_class_teacher` t2 ON t1.`id` = t2.`teacher_id` WHERE t1.`name` LIKE ?) t5 ON (t5.`__class_id__` = t.`id` AND t5.`__row__` = ?) WHERE t5.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%小明%(String),1(Integer),%123123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -361,7 +361,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`age`,t.`create_time` FROM `m8_user` t LEFT JOIN (SELECT t4.`id` AS `id`,t4.`name` AS `name`,t4.`user_id` AS `user_id` FROM (SELECT t2.`user_id` AS `user_id`,t1.`id`,t1.`name`,(ROW_NUMBER() OVER (PARTITION BY t2.`user_id`, t1.`id` ORDER BY t1.`name` ASC)) AS `__row__` FROM `m8_role` t1 INNER JOIN `m8_user_role` t2 ON t1.`id` = t2.`role_id` WHERE t1.`name` LIKE ?) t4 WHERE t4.`__row__` = ?) t6 ON t6.`user_id` = t.`id` WHERE t6.`name` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`age`,t.`create_time` FROM `m8_user` t LEFT JOIN (SELECT t2.`user_id` AS `__user_id__`,t1.`id`,t1.`name`,t1.`create_time`,(ROW_NUMBER() OVER (PARTITION BY t2.`user_id` ORDER BY t1.`name` ASC)) AS `__row__` FROM `m8_role` t1 INNER JOIN `m8_user_role` t2 ON t1.`id` = t2.`role_id` WHERE t1.`name` LIKE ?) t5 ON (t5.`__user_id__` = t.`id` AND t5.`__row__` = ?) WHERE t5.`name` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%小明角色%(String),1(Integer),123123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -384,7 +384,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`user_id`,t.`user_name`,t.`user_age`,t.`create_time` FROM `m8_user2` t LEFT JOIN (SELECT t4.`role_id` AS `role_id`,t4.`role_name` AS `role_name`,t4.`user_id` AS `user_id` FROM (SELECT t2.`user_id` AS `user_id`,t1.`role_id`,t1.`role_name`,(ROW_NUMBER() OVER (PARTITION BY t2.`user_id`, t1.`role_id` ORDER BY t1.`role_name` ASC)) AS `__row__` FROM `m8_role2` t1 INNER JOIN `m8_user_role2` t2 ON t1.`role_id` = t2.`role_id` WHERE t1.`role_name` LIKE ?) t4 WHERE t4.`__row__` = ?) t6 ON t6.`user_id` = t.`user_id` WHERE t6.`role_name` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`user_id`,t.`user_name`,t.`user_age`,t.`create_time` FROM `m8_user2` t LEFT JOIN (SELECT t2.`user_id` AS `__user_id__`,t1.`role_id`,t1.`role_name`,(ROW_NUMBER() OVER (PARTITION BY t2.`user_id` ORDER BY t1.`role_name` ASC)) AS `__row__` FROM `m8_role2` t1 INNER JOIN `m8_user_role2` t2 ON t1.`role_id` = t2.`role_id` WHERE t1.`role_name` LIKE ?) t5 ON (t5.`__user_id__` = t.`user_id` AND t5.`__row__` = ?) WHERE t5.`role_name` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%小明角色%(String),1(Integer),123123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -406,7 +406,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`user_id`,t.`user_name`,t.`user_age`,t.`create_time` FROM `m8_user2` t LEFT JOIN (SELECT t2.`book_id` AS `book_id`,t2.`user_id` AS `user_id`,t2.`book_name` AS `book_name`,t2.`book_price` AS `book_price` FROM (SELECT t1.`book_id`,t1.`user_id`,t1.`book_name`,t1.`book_price`,(ROW_NUMBER() OVER (PARTITION BY t1.`user_id` ORDER BY CASE WHEN t1.`book_price` IS NULL THEN 1 ELSE 0 END ASC,t1.`book_price` DESC)) AS `__row__` FROM `m8_user_book` t1 WHERE t1.`book_price` > ?) t2 WHERE t2.`__row__` = ?) t4 ON t4.`user_id` = t.`user_id` WHERE t4.`book_price` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`user_id`,t.`user_name`,t.`user_age`,t.`create_time` FROM `m8_user2` t LEFT JOIN (SELECT t1.`book_id`,t1.`user_id`,t1.`book_name`,t1.`book_price`,(ROW_NUMBER() OVER (PARTITION BY t1.`user_id` ORDER BY CASE WHEN t1.`book_price` IS NULL THEN 1 ELSE 0 END ASC,t1.`book_price` DESC)) AS `__row__` FROM `m8_user_book` t1 WHERE t1.`book_price` > ?) t3 ON (t3.`user_id` = t.`user_id` AND t3.`__row__` = ?) WHERE t3.`book_price` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("100(BigDecimal),1(Integer),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 
@@ -639,8 +639,27 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`age`,t.`create_time` FROM `m8_user` t LEFT JOIN (SELECT t4.`id` AS `id`,t4.`name` AS `name`,t4.`user_id` AS `user_id` FROM (SELECT t2.`user_id` AS `user_id`,t1.`id`,t1.`name`,(ROW_NUMBER() OVER (PARTITION BY t2.`user_id`, t1.`id` ORDER BY t1.`name` ASC)) AS `__row__` FROM `m8_role` t1 INNER JOIN `m8_user_role` t2 ON t1.`id` = t2.`role_id`) t4 WHERE t4.`__row__` = ?) t6 ON t6.`user_id` = t.`id` WHERE t6.`name` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`age`,t.`create_time` FROM `m8_user` t LEFT JOIN (SELECT t2.`user_id` AS `__user_id__`,t1.`id`,t1.`name`,t1.`create_time`,(ROW_NUMBER() OVER (PARTITION BY t2.`user_id` ORDER BY t1.`name` ASC)) AS `__row__` FROM `m8_role` t1 INNER JOIN `m8_user_role` t2 ON t1.`id` = t2.`role_id`) t5 ON (t5.`__user_id__` = t.`id` AND t5.`__row__` = ?) WHERE t5.`name` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),管理员(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
+    }
+    @Test
+    public void partitionByFirst2() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<M8User> admin = easyEntityQuery.queryable(M8User.class)
+                .where(m -> {
+                    m.roles().orderBy(s->s.name().asc()).first().createTime().le(LocalDateTime.of(2020,1,1,1,1));
+                }).toList();
+
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`age`,t.`create_time` FROM `m8_user` t LEFT JOIN (SELECT t2.`user_id` AS `__user_id__`,t1.`id`,t1.`name`,t1.`create_time`,(ROW_NUMBER() OVER (PARTITION BY t2.`user_id` ORDER BY t1.`name` ASC)) AS `__row__` FROM `m8_role` t1 INNER JOIN `m8_user_role` t2 ON t1.`id` = t2.`role_id`) t5 ON (t5.`__user_id__` = t.`id` AND t5.`__row__` = ?) WHERE t5.`create_time` <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),2020-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
 
     }

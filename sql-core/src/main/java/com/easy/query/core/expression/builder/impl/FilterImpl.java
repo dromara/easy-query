@@ -12,6 +12,7 @@ import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.expression.segment.Column2Segment;
+import com.easy.query.core.expression.segment.ColumnOnly2SegmentImpl;
 import com.easy.query.core.expression.segment.ColumnValue2Segment;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
@@ -183,6 +184,17 @@ public class FilterImpl implements Filter {
     }
 
     @Override
+    public Filter eqColumn(TableAvailable table, String columnName, Object val) {
+        Column2Segment column2Segment = new ColumnOnly2SegmentImpl(table, columnName, expressionContext);
+        SQLPredicateCompare reallyPredicateCompare = getReallyPredicateCompare(SQLPredicateCompareEnum.EQ);
+        ColumnValue2Segment compareValue2Segment = EasyColumnSegmentUtil.createColumnOnlyCompareValue2Segment(table,  expressionContext, val, reallyPredicateCompare.isLike());
+
+        nextPredicateSegment.setPredicate(new ColumnValuePredicate(column2Segment, compareValue2Segment, reallyPredicateCompare));
+        next();
+        return this;
+    }
+
+    @Override
     public Filter ne(TableAvailable table, String property, Object val) {
         if (conditionAppend(table, property, val)) {
             appendThisPredicate(table, property, val, SQLPredicateCompareEnum.NE);
@@ -309,13 +321,13 @@ public class FilterImpl implements Filter {
             int maxInClauseSize = easyQueryOption.getMaxInClauseSize();
             if (collection.size() > maxInClauseSize) {
                 List<? extends List<?>> partition = EasyCollectionUtil.partition(new ArrayList<>(collection), maxInClauseSize);
-                if( this.nextPredicateSegment instanceof OrPredicateSegment){
+                if (this.nextPredicateSegment instanceof OrPredicateSegment) {
                     or(f -> {
                         for (List<?> objects : partition) {
                             f.in(table, property, objects).or();
                         }
                     });
-                }else{
+                } else {
                     and(f -> {
                         for (List<?> objects : partition) {
                             f.in(table, property, objects).or();

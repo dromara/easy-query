@@ -248,30 +248,30 @@ public class EasyRelationalUtil {
             EntityMetadata partitionByEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType());
 
             String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
-            ClientQueryable<?> select = clientQueryable.where(m -> m.eq("__row__", index + 1))
-                    .select(navigateMetadata.getNavigatePropertyType(), o -> {
-                        for (Map.Entry<String, ColumnMetadata> columnMetadataEntry : partitionByEntityMetadata.getProperty2ColumnMap().entrySet()) {
-//                            o.column(columnMetadataEntry.getValue().getName());
-                            o.sqlNativeSegment("{0}", c -> {
-                                c.expression(columnMetadataEntry.getValue().getName());
-                                c.setAlias(columnMetadataEntry.getValue().getName());
-                            });
-                        }
-                        if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
-                            EntityMetadata mappingEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getMappingClass());
-                            for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {
-                                ColumnMetadata columnMetadata = mappingEntityMetadata.getColumnNotNull(selfMappingProperty);
-//                                o.columnAs(columnMetadata.getName(), columnMetadata.getName());
-                                o.sqlNativeSegment("{0}", c -> {
-                                    c.expression(columnMetadata.getName());
-                                    c.setAlias(columnMetadata.getName());
-                                });
-                            }
-                        }
-                    });
+//            ClientQueryable<?> select = clientQueryable.where(m -> m.eq("__row__", index + 1))
+//                    .select(navigateMetadata.getNavigatePropertyType(), o -> {
+//                        for (Map.Entry<String, ColumnMetadata> columnMetadataEntry : partitionByEntityMetadata.getProperty2ColumnMap().entrySet()) {
+////                            o.column(columnMetadataEntry.getValue().getName());
+//                            o.sqlNativeSegment("{0}", c -> {
+//                                c.expression(columnMetadataEntry.getValue().getName());
+//                                c.setAlias(columnMetadataEntry.getValue().getName());
+//                            });
+//                        }
+//                        if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
+//                            EntityMetadata mappingEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getMappingClass());
+//                            for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {
+//                                ColumnMetadata columnMetadata = mappingEntityMetadata.getColumnNotNull(selfMappingProperty);
+////                                o.columnAs(columnMetadata.getName(), columnMetadata.getName());
+//                                o.sqlNativeSegment("{0}", c -> {
+//                                    c.expression(columnMetadata.getName());
+//                                    c.setAlias(columnMetadata.getName());
+//                                });
+//                            }
+//                        }
+//                    });
 
             RelationEntityTableAvailable rightTable = new RelationEntityTableAvailable(key, leftTable, partitionByEntityMetadata, true);
-            entityExpressionBuilder.getExpressionContext().extract(select.getSQLEntityExpressionBuilder().getExpressionContext());
+            entityExpressionBuilder.getExpressionContext().extract(clientQueryable.getSQLEntityExpressionBuilder().getExpressionContext());
             ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();
             MultiTableTypeEnum joinType = MultiTableTypeEnum.LEFT_JOIN;
             if (index == 0 && navigateMetadata.isRequired()) {
@@ -294,16 +294,18 @@ public class EasyRelationalUtil {
                         String selfMappingColumnName = selfMappingColumnNames[i];
                         String selfProperty = navigateMetadata.getSelfPropertiesOrPrimary()[i];
                         sqlPredicate.sqlNativeSegment("{0} = {1}", c -> {
-                            c.columnName(selfMappingColumnName);
+                            c.columnName("__"+selfMappingColumnName+"__");
                             c.expression(leftTable, selfProperty);
                         });
                     }
 //                    sqlPredicate.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), selfMappingColumnNames, navigateMetadata.getSelfPropertiesOrPrimary());
                 });
+                sqlPredicate.eqColumn(true, "__row__", index + 1);
             } else {
                 sqlPredicate.and(() -> {
                     sqlPredicate.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), targetPropertiesOrPrimary, navigateMetadata.getSelfPropertiesOrPrimary());
                 });
+                sqlPredicate.eqColumn(true, "__row__", index + 1);
             }
 //            sqlPredicate.and(() -> {
 //                sqlPredicate.multiEq(true, new SimpleEntitySQLTableOwner<>(leftTable), targetPropertiesOrPrimary, navigateMetadata.getSelfPropertiesOrPrimary());
