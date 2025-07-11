@@ -12,18 +12,23 @@ import com.easy.query.cache.core.queryable.AllCacheQueryable;
 import com.easy.query.core.api.pagination.DefaultPageResult;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -34,12 +39,13 @@ import java.util.stream.Stream;
  *
  * @author xuejiaming
  */
-public class DefaultAllCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEntity>, TEntity extends ProxyEntityAvailable<TEntity, T1Proxy> & CacheAllEntity> extends AbstractSingleCacheQueryable<TEntity> implements AllCacheQueryable<T1Proxy,TEntity> {
+public class DefaultAllCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEntity>, TEntity extends ProxyEntityAvailable<TEntity, T1Proxy> & CacheAllEntity> extends AbstractSingleCacheQueryable<TEntity> implements AllCacheQueryable<T1Proxy, TEntity> {
     private final T1Proxy t1Proxy;
     private final ClientQueryable<TEntity> indexQueryable;
+
     public DefaultAllCacheQueryable(CacheRuntimeContext cacheRuntimeContext, Class<TEntity> entityClass) {
         super(cacheRuntimeContext, entityClass);
-        this.indexQueryable=easyQueryClient.queryable(entityClass).asNoTracking();
+        this.indexQueryable = easyQueryClient.queryable(entityClass).asNoTracking();
         this.t1Proxy = EntityQueryProxyManager.create(entityClass);
     }
 
@@ -48,14 +54,39 @@ public class DefaultAllCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEnti
         if (EasyCollectionUtil.isEmpty(ids)) {
             return new ArrayList<>(0);
         }
+        return getStreamBy(ids).collect(Collectors.toList());
+    }
+
+    private Stream<TEntity> getStreamBy(Collection<String> ids) {
+
         List<Pair<String, TEntity>> caches = doGet(ids);
 
         Set<String> idSet = new HashSet<>(ids);
         Stream<TEntity> select = caches.stream().filter(o -> idSet.contains(o.getObject1()) && o.getObject2() != null)
                 .map(o -> o.getObject2());
-        return filterResult(select).collect(Collectors.toList());
+        return filterResult(select);
     }
 
+
+    @Override
+    public Map<String, TEntity> toMap(Collection<String> ids) {
+        if (EasyCollectionUtil.isEmpty(ids)) {
+            return new HashMap<>();
+        }
+        return getStreamBy(ids).collect(Collectors.toMap(o -> getKey(o), o -> o, (v1, v2) -> {
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getInstanceSimpleName(entityClass) + " cache have duplicates.");
+        }, HashMap::new));
+    }
+
+    @Override
+    public Map<String, TEntity> toLinkedMap(Collection<String> ids) {
+        if (EasyCollectionUtil.isEmpty(ids)) {
+            return new LinkedHashMap<>();
+        }
+        return getStreamBy(ids).collect(Collectors.toMap(o -> getKey(o), o -> o, (v1, v2) -> {
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getInstanceSimpleName(entityClass) + " cache have duplicates.");
+        }, LinkedHashMap::new));
+    }
 
     @Override
     public boolean any(String id) {
@@ -157,7 +188,7 @@ public class DefaultAllCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEnti
     private List<Pair<String, TEntity>> getCacheByIds(Set<String> ids) {
         ClientQueryable<TEntity> entityQueryable = getEndEntityQueryable(this.queryable);
         String queryableKey = getQueryableKey(entityQueryable);
-        return easyCacheProvider.cache(entityClass, entityClass,  queryableKey, ids, otherIds -> {
+        return easyCacheProvider.cache(entityClass, entityClass, queryableKey, ids, otherIds -> {
             return toKeyAndEntity(getEntities(otherIds, entityQueryable));
         });
     }
@@ -215,7 +246,7 @@ public class DefaultAllCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEnti
         return this;
     }
 
-//
+    //
 //    @Override
 //    public TEntity firstOrDefault(String id, TEntity def) {
 //
@@ -242,11 +273,11 @@ public class DefaultAllCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEnti
 //                    return defaultSelect(otherIds);
 //                });
 //    }
-@Override
-public AllCacheQueryable<T1Proxy, TEntity> filter(boolean condition, CachePredicate<TEntity> predicate) {
-    if (condition) {
-        addFilter(predicate);
+    @Override
+    public AllCacheQueryable<T1Proxy, TEntity> filter(boolean condition, CachePredicate<TEntity> predicate) {
+        if (condition) {
+            addFilter(predicate);
+        }
+        return this;
     }
-    return this;
-}
 }

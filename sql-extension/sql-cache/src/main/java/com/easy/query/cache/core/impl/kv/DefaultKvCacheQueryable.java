@@ -9,15 +9,20 @@ import com.easy.query.cache.core.base.CachePredicate;
 import com.easy.query.cache.core.impl.AbstractSingleCacheQueryable;
 import com.easy.query.cache.core.queryable.KvCacheQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,11 +46,34 @@ public class DefaultKvCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEntit
         if (EasyCollectionUtil.isEmpty(ids)) {
             return Collections.emptyList();
         }
+        return getStreamBy(ids).collect(Collectors.toList());
+    }
+    public Stream<TEntity> getStreamBy(Collection<String> ids) {
         List<Pair<String, TEntity>> caches = doGet(ids);
         Set<String> idSet = new HashSet<>(ids);
         Stream<TEntity> select = caches.stream().filter(o -> o.getObject2() != null && idSet.contains(o.getObject1()))
                 .map(o -> o.getObject2());
-        return filterResult(select).collect(Collectors.toList());
+        return filterResult(select);
+    }
+
+    @Override
+    public Map<String, TEntity> toMap(Collection<String> ids) {
+        if (EasyCollectionUtil.isEmpty(ids)) {
+            return new HashMap<>();
+        }
+        return getStreamBy(ids).collect(Collectors.toMap(o -> getKey(o), o -> o, (v1, v2) -> {
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getInstanceSimpleName(entityClass) + " cache have duplicates.");
+        }, HashMap::new));
+    }
+
+    @Override
+    public Map<String, TEntity> toLinkedMap(Collection<String> ids) {
+        if (EasyCollectionUtil.isEmpty(ids)) {
+            return new LinkedHashMap<>();
+        }
+        return getStreamBy(ids).collect(Collectors.toMap(o -> getKey(o), o -> o, (v1, v2) -> {
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getInstanceSimpleName(entityClass) + " cache have duplicates.");
+        }, LinkedHashMap::new));
     }
 
     protected List<Pair<String, TEntity>> doGet(Collection<String> ids) {

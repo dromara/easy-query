@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * create time 2023/5/16 10:35
@@ -72,6 +73,8 @@ public interface SingleCacheQueryable<TEntity extends CacheEntity> extends Cache
     }
 
     List<TEntity> toList(Collection<String> ids);
+    Map<String,TEntity> toMap(Collection<String> ids);
+    Map<String,TEntity> toLinkedMap(Collection<String> ids);
 
     boolean any(String id);
 }

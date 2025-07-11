@@ -14,6 +14,7 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.inject.ServiceProvider;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -39,6 +40,7 @@ public abstract class AbstractBaseCacheQueryable<TEntity extends CacheEntity> im
     protected final CacheEntitySchema cacheEntitySchema;
     protected final QueryRuntimeContext runtimeContext;
     protected final EntityMetadata entityMetadata;
+    protected final ColumnMetadata keyColumnMetadata;
     protected final ClientQueryable<TEntity> queryable;
     protected List<Function<ClientQueryable<TEntity>, ClientQueryable<TEntity>>> functions;
     private List<CachePredicate<TEntity>> filters;
@@ -58,6 +60,7 @@ public abstract class AbstractBaseCacheQueryable<TEntity extends CacheEntity> im
             throw new IllegalArgumentException(entityClass.getSimpleName() + " plz add annotation @CacheEntitySchema");
         }
         this.cacheEntitySchema = cacheEntitySchema;
+        this.keyColumnMetadata = entityMetadata.getColumnNotNull(cacheEntitySchema.value());
         this.queryable = easyQueryClient.queryable(entityClass)
                 .asNoTracking();
         this.functions = new ArrayList<>();
@@ -84,7 +87,7 @@ public abstract class AbstractBaseCacheQueryable<TEntity extends CacheEntity> im
     }
 
     protected String getKey(TEntity entity) {
-        Object val = entityMetadata.getColumnNotNull(cacheEntitySchema.value()).getGetterCaller().apply(entity);
+        Object val = keyColumnMetadata.getGetterCaller().apply(entity);
         if (val == null) {
             throw new IllegalArgumentException(String.format("CacheEntitySchema.value [%s] is null", cacheEntitySchema.value()));
         }
