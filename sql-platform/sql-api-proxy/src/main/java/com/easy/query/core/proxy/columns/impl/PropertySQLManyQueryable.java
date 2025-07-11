@@ -134,11 +134,6 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
 
     }
 
-//    @Override
-//    public Include<T1Proxy, T1> navigateInclude() {
-//        return new Include<>(this);
-//    }
-
     @Override
     public void any(SQLActionExpression1<T1Proxy> whereExpression) {
         subQueryContext.appendWhereExpression(whereExpression);

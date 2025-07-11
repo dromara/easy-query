@@ -67,9 +67,6 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
      */
     void filter(SQLActionExpression1<T1Proxy> whereExpression);
 
-
-//    Include<T1Proxy, T1> navigateInclude();
-
     /**
      * 仅子查询配置生效
      * manyJoin下使用则会转成独立SubQuery
