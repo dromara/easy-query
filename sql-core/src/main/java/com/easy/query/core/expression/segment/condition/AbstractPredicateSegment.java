@@ -9,6 +9,7 @@ import com.easy.query.core.expression.segment.index.SegmentIndex;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,7 +20,7 @@ import java.util.Objects;
  * @Description: 文件说明
  * create time 2023/2/14 23:05
  */
-public abstract class AbstractPredicateSegment implements PredicateSegment,ShardingPredicateSegment {
+public abstract class AbstractPredicateSegment implements PredicateSegment, ShardingPredicateSegment {
     protected List<PredicateSegment> children;
     protected Predicate predicate;
     protected final boolean root;
@@ -56,8 +57,9 @@ public abstract class AbstractPredicateSegment implements PredicateSegment,Shard
     }
 
     public AbstractPredicateSegment(Predicate predicate) {
-       this(predicate,false);
+        this(predicate, false);
     }
+
     public AbstractPredicateSegment(Predicate predicate, boolean root) {
         setPredicate(predicate);
         this.root = root;
@@ -120,6 +122,38 @@ public abstract class AbstractPredicateSegment implements PredicateSegment,Shard
     }
 
     @Override
+    public List<Predicate> getRootPredicates() {
+        if (isPredicate()) {
+            return Collections.singletonList(predicate);
+        } else {
+            List<Predicate> predicates = new ArrayList<>();
+            if (root) {
+                if (this instanceof AndPredicateSegment) {
+                    if (children != null) {
+                        for (PredicateSegment child : children) {
+                            predicates.addAll(child.getRootPredicates());
+                        }
+                    }
+                }
+            } else {
+                if (this instanceof AndPredicateSegment) {
+                    if (children != null && children.size() == 1) {
+                        for (PredicateSegment child : children) {
+                            predicates.addAll(child.getRootPredicates());
+                        }
+                    }
+                }
+            }
+            return predicates;
+        }
+    }
+
+    @Override
+    public PredicateSegment clonePredicateSegment() {
+        return null;
+    }
+
+    @Override
     public SegmentIndex buildPredicateIndex() {
         EasyPredicateIndexContext easyPredicateContext = new EasyPredicateIndexContext();
         buildPredicateIndex(easyPredicateContext);
@@ -142,10 +176,10 @@ public abstract class AbstractPredicateSegment implements PredicateSegment,Shard
     @Override
     public void copyTo(PredicateSegment predicateSegment) {
         if (isPredicate()) {
-            if(predicate instanceof SubQueryPredicate){
+            if (predicate instanceof SubQueryPredicate) {
                 SubQueryPredicate subQueryPredicate = (SubQueryPredicate) predicate;
                 predicateSegment.setPredicate(subQueryPredicate);
-            }else{
+            } else {
                 predicateSegment.setPredicate(predicate);
             }
         } else {
@@ -178,7 +212,7 @@ public abstract class AbstractPredicateSegment implements PredicateSegment,Shard
                 boolean allOr = true;
 
                 for (PredicateSegment child : children) {
-                    if(child.isNotEmpty()){
+                    if (child.isNotEmpty()) {
                         if (child instanceof AndPredicateSegment) {
                             allOr = false;
                             if (sql.length() != 0) {
@@ -198,9 +232,9 @@ public abstract class AbstractPredicateSegment implements PredicateSegment,Shard
                     if (root && (allAnd || allOr)) {
                         return sql.toString();
                     } else {
-                        if(children.size()==1){
+                        if (children.size() == 1) {
                             return sql.toString();
-                        }else{
+                        } else {
                             return "(" + sql + ")";
                         }
                     }

@@ -5,6 +5,8 @@ import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 import com.easy.query.core.expression.segment.index.SegmentIndex;
 
+import java.util.List;
+
 /**
  * @FileName: PredicateSegment.java
  * @Description: 文件说明
@@ -38,6 +40,8 @@ public interface PredicateSegment extends SQLSegment {
      * @return 返回true表示是被中断的
      */
     boolean forEach(BreakConsumer<Predicate> consumer);
+
+    List<Predicate> getRootPredicates();
     SegmentIndex buildPredicateIndex();
 
     void copyTo(PredicateSegment predicateSegment);
