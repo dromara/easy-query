@@ -41,7 +41,12 @@ public interface PredicateSegment extends SQLSegment {
      */
     boolean forEach(BreakConsumer<Predicate> consumer);
 
-    List<Predicate> getRootPredicates();
+    /**
+     * 获取where的第一层级的条件且只有一个条件的
+     * 且第一层是and的表达式片段
+     * @return
+     */
+    List<Predicate> getFlatAndPredicates();
     SegmentIndex buildPredicateIndex();
 
     void copyTo(PredicateSegment predicateSegment);

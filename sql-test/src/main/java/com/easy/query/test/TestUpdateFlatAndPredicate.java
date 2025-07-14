@@ -2,29 +2,24 @@ package com.easy.query.test;
 
 import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.enums.SQLPredicateCompare;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 import com.easy.query.core.expression.segment.condition.predicate.ValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ValuesPredicate;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.Topic;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * create time 2025/7/13 21:26
@@ -32,7 +27,7 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public class QueryTest27 extends BaseTest {
+public class TestUpdateFlatAndPredicate extends BaseTest {
 
     @Test
     public void testExpressionKey() {
@@ -55,8 +50,8 @@ public class QueryTest27 extends BaseTest {
         PredicateSegment where = expression.getWhere();
         List<Object> keyValues = new ArrayList<>();
 
-        List<Predicate> rootPredicates = where.getRootPredicates();
-        for (Predicate predicate : rootPredicates) {
+        List<Predicate> flatAndPredicates = where.getFlatAndPredicates();
+        for (Predicate predicate : flatAndPredicates) {
 
             if (predicate.getTable() == fromTable && predicate.getPropertyName() != null &&
                     (predicate.getOperator() == SQLPredicateCompareEnum.EQ || predicate.getOperator() == SQLPredicateCompareEnum.IN)) {
@@ -183,6 +178,27 @@ public class QueryTest27 extends BaseTest {
 
                             t_blog.id().eq("123123123");
                             t_blog.id().eq("1231231231");
+                        });
+                    });
+                }).getUpdateExpressionBuilder();
+
+        EntityUpdateSQLExpression expression = updateExpressionBuilder.toExpression();
+        List<Object> keyValues = getKeyValues(expression);
+        Assert.assertEquals(0,keyValues.size());
+//        Assert.assertEquals("123123123",keyValues.get(0));
+    }
+    @Test
+    public void testExpressionKey8() {
+        EntityUpdateExpressionBuilder updateExpressionBuilder = easyEntityQuery.updatable(Topic.class)
+                .setColumns(t -> t.title().set("123"))
+                .where(t -> {
+                    t.or(()->{
+                        t.id().eq("123123123");
+                        t.id().eq("1231231231");
+                        t.and(()->{
+
+                            t.id().eq("123123123");
+                            t.id().eq("1231231231");
                         });
                     });
                 }).getUpdateExpressionBuilder();

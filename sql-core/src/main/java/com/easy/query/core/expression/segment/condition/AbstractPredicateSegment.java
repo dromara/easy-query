@@ -16,8 +16,6 @@ import java.util.Objects;
 
 /**
  * @author xuejiaming
- * @FileName: PredicateSegment.java
- * @Description: 文件说明
  * create time 2023/2/14 23:05
  */
 public abstract class AbstractPredicateSegment implements PredicateSegment, ShardingPredicateSegment {
@@ -122,7 +120,7 @@ public abstract class AbstractPredicateSegment implements PredicateSegment, Shar
     }
 
     @Override
-    public List<Predicate> getRootPredicates() {
+    public List<Predicate> getFlatAndPredicates() {
         if (isPredicate()) {
             return Collections.singletonList(predicate);
         } else {
@@ -131,7 +129,7 @@ public abstract class AbstractPredicateSegment implements PredicateSegment, Shar
                 if (this instanceof AndPredicateSegment) {
                     if (children != null) {
                         for (PredicateSegment child : children) {
-                            predicates.addAll(child.getRootPredicates());
+                            predicates.addAll(child.getFlatAndPredicates());
                         }
                     }
                 }
@@ -139,7 +137,7 @@ public abstract class AbstractPredicateSegment implements PredicateSegment, Shar
                 if (this instanceof AndPredicateSegment) {
                     if (children != null && children.size() == 1) {
                         for (PredicateSegment child : children) {
-                            predicates.addAll(child.getRootPredicates());
+                            predicates.addAll(child.getFlatAndPredicates());
                         }
                     }
                 }
