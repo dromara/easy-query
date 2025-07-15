@@ -12,6 +12,7 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
@@ -22,12 +23,15 @@ import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Include;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.dameng.config.DamengDatabaseConfiguration;
 import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.oracle.config.OracleDatabaseConfiguration;
 import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
+import com.easy.query.test.dto.MyDTO;
 import com.easy.query.test.dto.TopicType1VO;
 import com.easy.query.test.dto.TopicTypeVO;
+import com.easy.query.test.dto.proxy.MyDTOProxy;
 import com.easy.query.test.dto.proxy.TopicType1VOProxy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MySQLGenerateKey;
@@ -952,5 +956,82 @@ public class QueryTest26 extends BaseTest {
 
         }
     }
+
+    @Test
+    public void testAAA() {
+
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
+        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(dataSource)
+                .optionConfigure(op -> {
+                    op.setDeleteThrowError(false);
+                    op.setExecutorCorePoolSize(1);
+                    op.setExecutorMaximumPoolSize(2);
+                    op.setMaxShardingQueryLimit(1);
+                    op.setUpdateStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS);
+                })
+                .useDatabaseConfigure(new DamengDatabaseConfiguration())
+                .replaceService(JdbcExecutorListener.class, myJdbcListener)
+                .build();
+        DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+
+        try {
+            defaultEasyEntityQuery.deletable(SysBankCard.class)
+                    .where(bank_card -> {
+                        bank_card.user().id().eq("123");
+                    }).executeRows();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
+//
+//    @Test
+//    public void testAAA1() {
+//
+//        ListenerContextManager listenerContextManager = new ListenerContextManager();
+//        MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
+//        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+//                .setDefaultDataSource(dataSource)
+//                .optionConfigure(op -> {
+//                    op.setDeleteThrowError(false);
+//                    op.setExecutorCorePoolSize(1);
+//                    op.setExecutorMaximumPoolSize(2);
+//                    op.setMaxShardingQueryLimit(1);
+//                    op.setUpdateStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS);
+//                })
+//                .useDatabaseConfigure(new OracleDatabaseConfiguration())
+//                .replaceService(JdbcExecutorListener.class, myJdbcListener)
+//                .build();
+//        DefaultEasyEntityQuery defaultEasyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+//
+//        try {
+//            defaultEasyEntityQuery.deletable(SysBankCard.class)
+//                    .where(bank_card -> {
+//                        bank_card.user().id().eq("123");
+//                    }).executeRows();
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
+//
+//    }
+//
+//    @Test
+//    public void testAAX() {
+//        List<MyDTO> list = easyEntityQuery.queryable(Topic.class)
+//                .leftJoin(BlogEntity.class, (t_topic, t_blog) -> {
+//                    t_topic.id().eq(t_blog.id());
+//                })
+//                .where((t_topic, t_blog) -> {
+//                    t_topic.title().isNotBlank();
+//                }).select((t_topic, t_blog) -> new MyDTOProxy()
+//                        .column1().set(t_topic.id())
+//                        .column2().set(t_topic.title())
+//                        .column3().set(t_blog.id())
+//                        .column4().set(t_blog.title())
+//
+//                ).toList();
+//    }
 
 }

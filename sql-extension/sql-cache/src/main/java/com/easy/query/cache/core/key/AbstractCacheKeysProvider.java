@@ -1,9 +1,6 @@
 package com.easy.query.cache.core.key;
 
-import com.easy.query.cache.core.CacheAllEntity;
-import com.easy.query.cache.core.CacheEntity;
 import com.easy.query.cache.core.CacheKvEntity;
-import com.easy.query.cache.core.EasyCacheOption;
 import com.easy.query.cache.core.annotation.CacheEntitySchema;
 import com.easy.query.cache.core.base.CacheMethodEnum;
 import com.easy.query.cache.core.common.CacheDeleteEvent;
@@ -11,21 +8,17 @@ import com.easy.query.cache.core.common.CacheKey;
 import com.easy.query.cache.core.common.DefaultCacheKey;
 import com.easy.query.cache.core.util.EasyCacheUtil;
 import com.easy.query.core.api.client.EasyQueryClient;
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.trigger.TriggerEvent;
 import com.easy.query.core.trigger.TriggerTypeEnum;
-import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * create time 2025/7/6 16:58
@@ -116,7 +109,7 @@ public abstract class AbstractCacheKeysProvider implements CacheKeysProvider {
             CacheEntitySchema cacheEntitySchema = EasyCacheUtil.getCacheEntitySchema(entityMetadata.getEntityClass());
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(cacheEntitySchema.value());
             for (Object entity : triggerEvent.getEntities()) {
-                String cacheKeyValue = getCacheEntityCacheKey(columnMetadata, entity, cacheEntitySchema);
+                String cacheKeyValue = getCacheEntityCacheKeyOrNull(columnMetadata, entity);
                 cacheKeys.addAll(
                         getCacheKeys(triggerEvent.getTriggerTime(), LocalDateTime.now(), tableName, getCacheMethod(triggerEvent.getType()), cacheKeyValue)
                 );
@@ -139,7 +132,7 @@ public abstract class AbstractCacheKeysProvider implements CacheKeysProvider {
             CacheEntitySchema cacheEntitySchema = EasyCacheUtil.getCacheEntitySchema(entityMetadata.getEntityClass());
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(cacheEntitySchema.value());
             for (Object entity : triggerEvent.getEntities()) {
-                String cacheKeyValue = getCacheEntityCacheKey(columnMetadata, entity, cacheEntitySchema);
+                String cacheKeyValue = getCacheEntityCacheKeyOrNull(columnMetadata, entity);
                 CacheDeleteEvent cacheDeleteEvent = CacheDeleteEvent.build(cacheKeyValue, getCacheMethod(triggerEvent.getType()).getCode(), triggerEvent.getTriggerTime(), now, tableName);
                 events.add(cacheDeleteEvent);
             }
@@ -149,10 +142,10 @@ public abstract class AbstractCacheKeysProvider implements CacheKeysProvider {
     }
 
 
-    private String getCacheEntityCacheKey(ColumnMetadata columnMetadata, Object cacheEntity, CacheEntitySchema cacheEntitySchema) {
+    private String getCacheEntityCacheKeyOrNull(ColumnMetadata columnMetadata, Object cacheEntity) {
         Object val = columnMetadata.getGetterCaller().apply(cacheEntity);
         if (val == null) {
-            throw new IllegalArgumentException(String.format("CacheEntitySchema.value [%s] is null", cacheEntitySchema.value()));
+            return null;
         }
         return val.toString();
     }
