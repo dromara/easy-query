@@ -59,6 +59,11 @@ public class MsSQLFuncImpl extends SQLFuncImpl {
     }
 
     @Override
+    public SQLFunction random() {
+        return new MsSQLRandomSQLFunction();
+    }
+
+    @Override
     public SQLFunction utcNow() {
         return MsSQLUtcNowSQLFunction.INSTANCE;
     }

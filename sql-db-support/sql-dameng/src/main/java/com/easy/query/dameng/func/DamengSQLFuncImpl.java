@@ -48,6 +48,11 @@ public class DamengSQLFuncImpl extends SQLFuncImpl {
 //    }
 
     @Override
+    public SQLFunction random() {
+        return new DamengRandomSQLFunction();
+    }
+
+    @Override
     public SQLFunction now() {
         return DamengNowSQLFunction.INSTANCE;
     }

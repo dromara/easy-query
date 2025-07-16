@@ -57,6 +57,7 @@ import com.easy.query.core.func.def.impl.NowSQLFunction;
 import com.easy.query.core.func.def.impl.NullDefaultSQLFunction;
 import com.easy.query.core.func.def.impl.NumberCalcSQLFunction;
 import com.easy.query.core.func.def.impl.OrderByNullsModeSQLFunction;
+import com.easy.query.core.func.def.impl.RandomSQLFunction;
 import com.easy.query.core.func.def.impl.RankOverSQLFunction;
 import com.easy.query.core.func.def.impl.ReplaceSQLFunction;
 import com.easy.query.core.func.def.impl.RightPadSQLFunction;
@@ -222,6 +223,10 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction utcNow() {
         return UtcNowSQLFunction.INSTANCE;
+    }
+    @Override
+    public SQLFunction random() {
+        return new RandomSQLFunction();
     }
 
     @Override

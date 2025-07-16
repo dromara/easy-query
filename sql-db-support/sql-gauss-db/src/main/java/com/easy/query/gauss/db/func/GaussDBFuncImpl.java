@@ -49,6 +49,12 @@ public class GaussDBFuncImpl extends SQLFuncImpl {
 //        return new PgSQLStringJoinSQLFunction(separator, concatExpressions);
 //    }
 
+
+    @Override
+    public SQLFunction random() {
+        return new GaussDBRandomSQLFunction();
+    }
+
     @Override
     public SQLFunction now() {
         return GaussDBNowSQLFunction.INSTANCE;

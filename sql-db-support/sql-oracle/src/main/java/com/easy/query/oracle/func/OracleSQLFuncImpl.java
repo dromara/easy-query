@@ -161,4 +161,9 @@ public class OracleSQLFuncImpl extends SQLFuncImpl {
     public SQLFunction indexOf(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new OracleIndexOfSQLFunction(getColumnExpressions(sqlExpression));
     }
+
+    @Override
+    public SQLFunction random() {
+        return new OracleRandomSQLFunction();
+    }
 }

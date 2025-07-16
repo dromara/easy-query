@@ -38,6 +38,11 @@ public class ClickHouseFuncImpl extends SQLFuncImpl {
     }
 
     @Override
+    public SQLFunction random() {
+        return new ClickHouseRandomSQLFunction();
+    }
+
+    @Override
     public SQLFunction plusDateTime(SQLActionExpression1<ColumnFuncSelector> sqlExpression, long duration, TimeUnit timeUnit) {
         return new ClickHouseDateTimePlusSQLFunction(getColumnExpressions(sqlExpression), duration, timeUnit);
     }

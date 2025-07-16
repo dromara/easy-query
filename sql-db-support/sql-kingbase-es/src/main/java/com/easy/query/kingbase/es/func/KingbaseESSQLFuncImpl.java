@@ -47,6 +47,12 @@ public class KingbaseESSQLFuncImpl extends SQLFuncImpl {
 //        return new PgSQLStringJoinSQLFunction(separator, concatExpressions);
 //    }
 
+
+    @Override
+    public SQLFunction random() {
+        return new KingbaseESRandomSQLFunction();
+    }
+
     @Override
     public SQLFunction now() {
         return KingbaseESNowSQLFunction.INSTANCE;

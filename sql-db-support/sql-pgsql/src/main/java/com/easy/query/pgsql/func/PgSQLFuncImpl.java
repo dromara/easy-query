@@ -68,6 +68,11 @@ public class PgSQLFuncImpl extends SQLFuncImpl {
     }
 
     @Override
+    public SQLFunction random() {
+        return new PgSQLRandomSQLFunction();
+    }
+
+    @Override
     public DistinctDefaultSQLFunction avg(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new PgSQLAvgSQLFunction(getColumnExpressions(sqlExpression));
     }

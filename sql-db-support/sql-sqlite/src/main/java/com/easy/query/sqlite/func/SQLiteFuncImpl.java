@@ -146,4 +146,9 @@ public class SQLiteFuncImpl extends SQLFuncImpl {
         }
         return likeSQLFunction;
     }
+
+    @Override
+    public SQLFunction random() {
+        return new SQLiteRandomSQLFunction();
+    }
 }

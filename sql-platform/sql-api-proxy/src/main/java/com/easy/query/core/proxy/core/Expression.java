@@ -191,6 +191,9 @@ public class Expression {
     public DateTimeTypeExpression<LocalDateTime> utcNow() {
         return new DateTimeTypeExpressionImpl<>(entitySQLContext, null, null, SQLFunc::utcNow, LocalDateTime.class);
     }
+    public NumberTypeExpression<BigDecimal> random() {
+        return new NumberTypeExpressionImpl<>(entitySQLContext, null, null, SQLFunc::random, BigDecimal.class);
+    }
 
     /**
      * COUNT(*)
