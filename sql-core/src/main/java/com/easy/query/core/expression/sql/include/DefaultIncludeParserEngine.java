@@ -92,7 +92,8 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
 
             for (int i = 1; i < navigateMetadata.getDirectMapping().length; i++) {
                 String nextNavProperty = navigateMetadata.getDirectMapping()[i];
-                NavigateMetadata nextNavigateMetadata = selfNavigateMetadata.getEntityMetadata().getNavigateNotNull(nextNavProperty);
+                EntityMetadata nextEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(selfNavigateMetadata.getNavigatePropertyType());
+                NavigateMetadata nextNavigateMetadata = nextEntityMetadata.getNavigateNotNull(nextNavProperty);
                 String[] selfPropertiesOrPrimary = selfNavigateMetadata.getSelfPropertiesOrPrimary();
                 String[] targetPropertiesOrPrimary = selfNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
                 EntityMetadata selfEntityMetadata = selfNavigateMetadata.getEntityMetadata();
