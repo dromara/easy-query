@@ -1,11 +1,17 @@
 package com.easy.query.api.proxy.base;
 
+import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
+import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.columns.SQLAnyColumn;
+import com.easy.query.core.proxy.extension.functions.type.impl.AnyTypeExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLColumnSetPropColumnImpl;
 import com.easy.query.core.proxy.impl.SQLColumnSetValueImpl;
+import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Map;
@@ -50,4 +56,13 @@ public class MapProxy extends AbstractProxyEntity<MapProxy, Map<String, Object>>
         return getAnyColumn(key, propType);
     }
 
+    public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> MapProxy selectAllFieldKeys(TRProxy proxy) {
+        EntityMetadata entityMetadata = proxy.getTable().getEntityMetadata();
+        for (Map.Entry<String, ColumnMetadata> stringColumnMetadataEntry : entityMetadata.getProperty2ColumnMap().entrySet()) {
+            String propertyName = stringColumnMetadataEntry.getKey();
+            ColumnMetadata value = stringColumnMetadataEntry.getValue();
+            put(propertyName,getAnyTypeColumn(propertyName,value.getPropertyType()));
+        }
+        return castChain();
+    }
 }

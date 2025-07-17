@@ -29,6 +29,10 @@ import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.bank.SysUserBook;
+import com.easy.query.test.mysql8.entity.many.M8Area;
+import com.easy.query.test.mysql8.entity.many.M8AreaBuild;
+import com.easy.query.test.mysql8.entity.many.M8City;
+import com.easy.query.test.mysql8.entity.many.M8Province;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.math.BigDecimal;
@@ -110,10 +114,12 @@ public class BaseTest {
         databaseCodeFirst.createDatabaseIfNotExists();
 //        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class,SysBank.class, SysBankCard.class,  SysUserBook.class, M8Comment.class));
 //        codeFirstCommand.executeWithTransaction(s -> s.commit());
-        CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(SysUser.class, SysBankCard.class, SysBank.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class, M8ParentChild.class));
+        CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(SysUser.class, SysBankCard.class, SysBank.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class, M8ParentChild.class,
+                M8Province.class, M8City.class, M8Area.class, M8AreaBuild.class));
         codeFirstCommand2.executeWithTransaction(s -> s.commit());
 
-        CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class, SysBank.class, SysBankCard.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class,M8ParentChild.class));
+        CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class, SysBank.class, SysBankCard.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class, M8ParentChild.class,
+                M8Province.class, M8City.class, M8Area.class, M8AreaBuild.class));
         codeFirstCommand1.executeWithTransaction(s -> {
             System.out.println(s.getSQL());
             s.commit();
@@ -125,11 +131,19 @@ public class BaseTest {
         easyEntityQuery.deletable(M8Parent.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(M8Child.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(M8ParentChild.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
+        easyEntityQuery.deletable(M8Province.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
+        easyEntityQuery.deletable(M8City.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
+        easyEntityQuery.deletable(M8Area.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
+        easyEntityQuery.deletable(M8AreaBuild.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         ArrayList<SysBank> banks = new ArrayList<>();
         ArrayList<SysBankCard> bankCards = new ArrayList<>();
         ArrayList<SysUser> users = new ArrayList<>();
         ArrayList<SysUserBook> userBooks = new ArrayList<>();
         ArrayList<M8Comment> comments = new ArrayList<>();
+        ArrayList<M8Province> provinces = new ArrayList<>();
+        ArrayList<M8City> cities = new ArrayList<>();
+        ArrayList<M8Area> areas = new ArrayList<>();
+        ArrayList<M8AreaBuild> builds = new ArrayList<>();
         {
             SysBank sysBank = new SysBank();
             sysBank.setId("1");
@@ -336,6 +350,82 @@ public class BaseTest {
                 }
             }
         }
+        {
+
+            M8Province m8Province = new M8Province();
+            m8Province.setId("p1");
+            m8Province.setName("浙江");
+            provinces.add(m8Province);
+            {
+
+                M8City m8City = new M8City();
+                m8City.setId("c1");
+                m8City.setPid(m8Province.getId());
+                m8City.setName("杭州");
+                cities.add(m8City);
+                {
+
+                    M8Area m8Area = new M8Area();
+                    m8Area.setId("a1");
+                    m8Area.setCid(m8City.getId());
+                    m8Area.setName("上城区");
+                    areas.add(m8Area);
+                    {
+                        M8AreaBuild m8AreaBuild = new M8AreaBuild();
+                        m8AreaBuild.setId("b1");
+                        m8AreaBuild.setAid(m8Area.getId());
+                        m8AreaBuild.setName("科创楼");
+                        builds.add(m8AreaBuild);
+                    }
+                    {
+                        M8AreaBuild m8AreaBuild = new M8AreaBuild();
+                        m8AreaBuild.setId("b2");
+                        m8AreaBuild.setAid(m8Area.getId());
+                        m8AreaBuild.setName("创新楼");
+                        builds.add(m8AreaBuild);
+                    }
+                }
+                {
+
+                    M8Area m8Area = new M8Area();
+                    m8Area.setId("a2");
+                    m8Area.setCid(m8City.getId());
+                    m8Area.setName("下城区");
+                    areas.add(m8Area);
+                    {
+                        M8AreaBuild m8AreaBuild = new M8AreaBuild();
+                        m8AreaBuild.setId("b3");
+                        m8AreaBuild.setAid(m8Area.getId());
+                        m8AreaBuild.setName("创业楼");
+                        builds.add(m8AreaBuild);
+                    }
+                }
+            }
+            {
+
+                M8City m8City = new M8City();
+                m8City.setId("c2");
+                m8City.setPid(m8Province.getId());
+                m8City.setName("宁波");
+                cities.add(m8City);
+                {
+
+                    M8Area m8Area = new M8Area();
+                    m8Area.setId("a3");
+                    m8Area.setCid(m8City.getId());
+                    m8Area.setName("宁波A");
+                    areas.add(m8Area);
+                }
+                {
+
+                    M8Area m8Area = new M8Area();
+                    m8Area.setId("a4");
+                    m8Area.setCid(m8City.getId());
+                    m8Area.setName("宁波B");
+                    areas.add(m8Area);
+                }
+            }
+        }
 
 
         easyEntityQuery.insertable(banks).executeRows();
@@ -344,8 +434,12 @@ public class BaseTest {
         easyEntityQuery.insertable(userBooks).executeRows();
         easyEntityQuery.insertable(comments).executeRows();
         easyEntityQuery.insertable(parents).batch().executeRows();
-        easyEntityQuery.insertable(Linq.of(parentChildren).orderBy(s->s.getId()).toList()).batch().executeRows();
-        easyEntityQuery.insertable(Linq.of(children).orderBy(s->s.getId()).toList()).batch().executeRows();
+        easyEntityQuery.insertable(provinces).batch().executeRows();
+        easyEntityQuery.insertable(cities).batch().executeRows();
+        easyEntityQuery.insertable(areas).batch().executeRows();
+        easyEntityQuery.insertable(builds).batch().executeRows();
+        easyEntityQuery.insertable(Linq.of(parentChildren).orderBy(s -> s.getId()).toList()).batch().executeRows();
+        easyEntityQuery.insertable(Linq.of(children).orderBy(s -> s.getId()).toList()).batch().executeRows();
 
     }
 
