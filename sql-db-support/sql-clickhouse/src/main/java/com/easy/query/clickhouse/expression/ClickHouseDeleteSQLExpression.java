@@ -30,9 +30,7 @@ public class ClickHouseDeleteSQLExpression extends DeleteSQLExpressionImpl {
         StringBuilder sql = new StringBuilder();
         sql.append("ALTER TABLE ");
         sql.append(tableName);
-        sql.append(" DELETE ");
-        EasySQLExpressionUtil.joinUpdateDeleteTableAppend(sql, tables, toSQLContext);
-        sql.append(" WHERE ");
+        sql.append(" DELETE WHERE ");
         sql.append(where.toSQL(toSQLContext));
         return sql.toString();
     }

@@ -23,6 +23,7 @@ import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.RelationExtraColumn;
 import com.easy.query.core.metadata.RelationExtraMetadata;
 import com.easy.query.core.util.EasyArrayUtil;
+import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyIncludeUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -84,6 +85,72 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         return relationExtraEntities;
     }
 
+    private void checkNavigatePropertyType(NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext) {
+        if (EasyArrayUtil.isNotEmpty(navigateMetadata.getDirectMapping())) {
+            String navigateProperty = navigateMetadata.getDirectMapping()[0];
+            NavigateMetadata selfNavigateMetadata = navigateMetadata.getEntityMetadata().getNavigateNotNull(navigateProperty);
+
+            for (int i = 1; i < navigateMetadata.getDirectMapping().length; i++) {
+                String nextNavProperty = navigateMetadata.getDirectMapping()[i];
+                NavigateMetadata nextNavigateMetadata = selfNavigateMetadata.getEntityMetadata().getNavigateNotNull(nextNavProperty);
+                String[] selfPropertiesOrPrimary = selfNavigateMetadata.getSelfPropertiesOrPrimary();
+                String[] targetPropertiesOrPrimary = selfNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
+                EntityMetadata selfEntityMetadata = selfNavigateMetadata.getEntityMetadata();
+                checkPropType(selfEntityMetadata, selfPropertiesOrPrimary, nextNavigateMetadata.getEntityMetadata(), targetPropertiesOrPrimary);
+                selfNavigateMetadata = nextNavigateMetadata;
+            }
+
+        } else {
+            checkNavigatePropertyType0(navigateMetadata, runtimeContext);
+        }
+    }
+
+    private void checkNavigatePropertyType0(NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext) {
+        if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
+            EntityMetadata mappingEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getMappingClass());
+            {
+                String[] selfPropertiesOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
+                String[] selfMappingProperties = navigateMetadata.getSelfMappingProperties();
+                EntityMetadata selfEntityMetadata = navigateMetadata.getEntityMetadata();
+                checkPropType(selfEntityMetadata, selfPropertiesOrPrimary, mappingEntityMetadata, selfMappingProperties);
+            }
+
+            {
+                String[] targetMappingProperties = navigateMetadata.getTargetMappingProperties();
+                String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
+                EntityMetadata targetEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType());
+                checkPropType(mappingEntityMetadata, targetMappingProperties, targetEntityMetadata, targetPropertiesOrPrimary);
+            }
+
+        } else {
+            EntityMetadata targetEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType());
+            String[] selfPropertiesOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
+            String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
+            EntityMetadata selfEntityMetadata = navigateMetadata.getEntityMetadata();
+            checkPropType(selfEntityMetadata, selfPropertiesOrPrimary, targetEntityMetadata, targetPropertiesOrPrimary);
+        }
+    }
+
+    private void checkPropType(EntityMetadata selfEntityMetadata, String[] selfPropertiesOrPrimary, EntityMetadata targetEntityMetadata, String[] targetPropertiesOrPrimary) {
+
+        for (int i = 0; i < selfPropertiesOrPrimary.length; i++) {
+            String self = selfPropertiesOrPrimary[i];
+            ColumnMetadata selfColumnMetadata = selfEntityMetadata.getColumnNotNull(self);
+            String target = targetPropertiesOrPrimary[i];
+            ColumnMetadata targetColumnMetadata = targetEntityMetadata.getColumnNotNull(target);
+            if (!Objects.equals(selfColumnMetadata.getPropertyType(), targetColumnMetadata.getPropertyType())) {
+                log.warn(String.format("self:[%s] prop:[%s] type:[%s],target:[%s] prop:[%s] type:[%s]. Please ensure both fields have the same data type.",
+                        EasyClassUtil.getSimpleName(selfEntityMetadata.getEntityClass()),
+                        self,
+                        EasyClassUtil.getSimpleName(selfColumnMetadata.getPropertyType()),
+                        EasyClassUtil.getSimpleName(targetEntityMetadata.getEntityClass()),
+                        target,
+                        EasyClassUtil.getSimpleName(targetColumnMetadata.getPropertyType())
+                ));
+            }
+        }
+    }
+
     @Override
     public <TR> IncludeParserResult process(ExpressionContext expressionContext, EntityMetadata entityMetadata, List<TR> result, IncludeNavigateExpression includeExpression) {
         IncludeNavigateParams includeNavigateParams = includeExpression.getIncludeNavigateParams();
@@ -94,6 +161,8 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
         }
 
         QueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
+        //检查导航属性类型防止无法关联上导致报错
+        checkNavigatePropertyType(navigateMetadata, runtimeContext);
         List<RelationExtraEntity> relationExtraEntities = getRelationExtraEntities(expressionContext, result);
         IncludeParseContext includeParseContext = new IncludeParseContext(includeNavigateParams);
         includeParseContext.setIncludeQueryableExpression(queryableExpression);
@@ -254,7 +323,7 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                             return includeQueryable.select(aliasClassType, t -> {
                                 columnIncludeExpression.getIncludeSelectorExpression().apply(t.getAsSelector());
 //                                if (includeParseContext.getIncludeNavigateParams().getFlatClassType() == null) {
-                                    processorExtraSelect(entityMetadataManager, aliasClassType, t);
+                                processorExtraSelect(entityMetadataManager, aliasClassType, t);
 //                                }
                                 EasySQLExpressionUtil.appendSelfExtraTargetProperty(sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());
                                 EasySQLExpressionUtil.appendTargetExtraTargetProperty(selfNavigateMetadata, sqlEntityExpressionBuilder, t.getSQLNative(), t.getTable());

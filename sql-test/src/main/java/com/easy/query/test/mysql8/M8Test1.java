@@ -237,7 +237,6 @@ public class M8Test1 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
 
-
         List<Part1<SysBankCard, String>> list1 = easyEntityQuery.queryable(SysBankCard.class)
                 .where(bank_card -> {
                     bank_card.id().isNotNull();
@@ -257,13 +256,13 @@ public class M8Test1 extends BaseTest {
             System.out.println(entity + ":" + partitionColumn1);
         }
     }
+
     @Test
     public void testQuery2() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-
 
 
         List<Part1<SysBankCard, String>> list1 = easyEntityQuery.queryable(SysBankCard.class)
@@ -362,6 +361,7 @@ public class M8Test1 extends BaseTest {
             }
         }
     }
+
     @Test
     public void test25() {
 
@@ -396,5 +396,20 @@ public class M8Test1 extends BaseTest {
                 Assert.assertEquals("u1(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             }
         }
+    }
+
+
+    @Test
+    public void testSelfTargetTypeDiff() {
+        Exception ex = null;
+        try {
+            List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                    .includes(user -> user.bankCardIntList())
+                    .toList();
+        } catch (Exception e) {
+            ex = e;
+        }
+        Assert.assertNotNull(ex);
+        Assert.assertEquals("java.sql.SQLDataException: Cannot determine value type from string 'u1'",ex.getMessage());
     }
 }

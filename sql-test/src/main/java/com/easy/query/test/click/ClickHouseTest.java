@@ -88,7 +88,7 @@ public class ClickHouseTest extends ClickHouseBaseTest {
         Assert.assertNotNull(exception);
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("ALTER TABLE `t_topic` DELETE `t_topic` WHERE `ID` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("ALTER TABLE `t_topic` DELETE WHERE `ID` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -112,7 +112,7 @@ public class ClickHouseTest extends ClickHouseBaseTest {
         Assert.assertNotNull(exception);
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("ALTER TABLE `t_topic` DELETE `t_topic` WHERE `ID` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("ALTER TABLE `t_topic` DELETE WHERE `ID` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }

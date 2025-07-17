@@ -111,6 +111,12 @@ public @interface Navigate {
     /**
      * xToOne中间表
      *
+     * <blockquote><pre>
+     * {@code
+     * @Navigate(value = RelationTypeEnum.ManyToOne,directMapping = {"comUser","myCompany"})
+     *                    }
+     * </pre></blockquote>
+     *
      * @return
      */
     String[] directMapping() default {};
