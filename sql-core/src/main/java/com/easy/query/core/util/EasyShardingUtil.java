@@ -109,8 +109,8 @@ public class EasyShardingUtil {
             selectIndex++;
             boolean aggregateColumn = EasySQLSegmentUtil.isAggregateColumn(selectColumn);
             if (!aggregateColumn) {
-                ColumnSegmentImpl selectColumnSegment = (ColumnSegmentImpl) selectColumn;
-                String selectPropertyName = selectColumnSegment.getPropertyName();
+                Column2Segment selectColumnSegment = (Column2Segment) selectColumn;
+                String selectPropertyName = selectColumnSegment.getColumnMetadata().getPropertyName();
                 if (Objects.equals(selectColumnSegment.getTable(), columnTable) && Objects.equals(selectPropertyName, propertyName)) {
                     return new EntityPropertyGroup(columnTable, propertyName, selectIndex);
                 }
