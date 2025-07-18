@@ -60,4 +60,11 @@ public class SysBank implements ProxyEntityAvailable<SysBank, SysBankProxy> {
             selfProperty = {"id"},
             targetProperty = {"bankId"})
     private SysBankCard bankCard1;
+
+
+    @Navigate(value = RelationTypeEnum.ManyToMany,
+            selfProperty = {SysBank.Fields.id},
+            selfMappingProperty = {SysBankCard.Fields.bankId},
+            mappingClass = SysBankCard.class, targetProperty = {SysUser.Fields.id}, targetMappingProperty = {SysBankCard.Fields.uid})
+    private List<SysUser> users;
 }

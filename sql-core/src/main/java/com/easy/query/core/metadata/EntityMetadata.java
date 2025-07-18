@@ -392,7 +392,13 @@ public class EntityMetadata {
         //获取导航类型如果是单个对象则为对象类型如果是集合属性那么为集合内泛型类型
         Class<?> navigateType = getNavigateType(toMany, field, fastBeanProperty);
         if (navigateType == null) {
-            throw new EasyQueryInvalidOperationException("entity:["+EasyClassUtil.getSimpleName(entityClass)+"] not found navigate type, property:[" + property + "]");
+            StringBuilder msg = new StringBuilder();
+            msg.append("entity:[").append(EasyClassUtil.getSimpleName(entityClass)).append("] not found navigate type, property:[").append(property).append("]");
+            if (toMany) {
+                //请确认属性property是使用了List<...>或者Set<...>等集合类型
+                msg.append("Please confirm that the property [").append(property).append("] is defined as a collection type, such as List<...> or Set<...>.");
+            }
+            throw new EasyQueryInvalidOperationException(msg.toString());
         }
 
         List<NavigateOrderProp> orderProps = toMany

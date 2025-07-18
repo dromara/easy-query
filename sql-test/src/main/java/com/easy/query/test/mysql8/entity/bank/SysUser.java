@@ -69,4 +69,5 @@ public class SysUser implements ProxyEntityAvailable<SysUser, SysUserProxy> {
             @OrderByProperty(property = "code",asc = false,mode = OrderByPropertyModeEnum.NULLS_FIRST),
     },partitionOrder = PartitionOrderEnum.NAVIGATE)
     private List<SysBankCard> bankCard4s;
+
 }

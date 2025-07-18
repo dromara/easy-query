@@ -17,6 +17,7 @@ import com.easy.query.core.expression.executor.parser.PrepareParseResult;
 import com.easy.query.core.expression.executor.parser.QueryPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.SequenceParseResult;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.Column2Segment;
 import com.easy.query.core.expression.segment.GroupByColumnSegment;
 import com.easy.query.core.expression.segment.OrderBySegment;
 import com.easy.query.core.expression.segment.SQLSegment;
@@ -86,6 +87,23 @@ public class EasyShardingUtil {
     public static PropertyGroup findFirstPropertyGroupNotNull(List<SQLSegment> selectColumns, ColumnSegmentImpl columnSegment, EntityQuerySQLExpression easyQuerySQLExpression) {
         TableAvailable columnTable = columnSegment.getTable();
         String propertyName = columnSegment.getPropertyName();
+        int selectIndex = -1;
+        for (SQLSegment selectColumn : selectColumns) {
+            selectIndex++;
+            boolean aggregateColumn = EasySQLSegmentUtil.isAggregateColumn(selectColumn);
+            if (!aggregateColumn) {
+                ColumnSegmentImpl selectColumnSegment = (ColumnSegmentImpl) selectColumn;
+                String selectPropertyName = selectColumnSegment.getPropertyName();
+                if (Objects.equals(selectColumnSegment.getTable(), columnTable) && Objects.equals(selectPropertyName, propertyName)) {
+                    return new EntityPropertyGroup(columnTable, propertyName, selectIndex);
+                }
+            }
+        }
+        return new EntityPropertyGroup(columnTable, propertyName, -1);
+    }
+    public static PropertyGroup findFirstPropertyGroupNotNull(List<SQLSegment> selectColumns, Column2Segment columnSegment, EntityQuerySQLExpression easyQuerySQLExpression) {
+        TableAvailable columnTable = columnSegment.getTable();
+        String propertyName = columnSegment.getColumnMetadata().getPropertyName();
         int selectIndex = -1;
         for (SQLSegment selectColumn : selectColumns) {
             selectIndex++;

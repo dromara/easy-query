@@ -1,5 +1,6 @@
 package com.easy.query.test.mysql8;
 
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -9,8 +10,14 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.core.draft.Draft3;
+import com.easy.query.core.proxy.core.draft.proxy.Draft3Proxy;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.PartitionByTypeExpression;
+import com.easy.query.core.proxy.part.Part1;
+import com.easy.query.core.proxy.part.proxy.Part1Proxy;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.doc.entity.DocBank;
@@ -30,10 +37,15 @@ import com.easy.query.test.mysql8.entity.M8User2;
 import com.easy.query.test.mysql8.entity.M8UserBook;
 import com.easy.query.test.mysql8.entity.M8UserRole;
 import com.easy.query.test.mysql8.entity.M8UserRole2;
+import com.easy.query.test.mysql8.entity.bank.SysBank;
+import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.proxy.M8MenuProxy;
 import com.easy.query.test.mysql8.entity.proxy.M8UserProxy;
 import com.easy.query.test.mysql8.entity.proxy.M8UserRoleProxy;
+import com.easy.query.test.mysql8.vo.UserAndBankCount;
+import com.easy.query.test.mysql8.vo.proxy.UserAndBankCountProxy;
+import lombok.var;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -471,8 +483,8 @@ public class ManyJoinTest extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<M8User> admin = easyEntityQuery.queryable(M8User.class)
-                .subQueryToGroupJoin(s->s.roles())
-                .subQueryConfigure(s->s.roles(),s->s.subQueryToGroupJoin(r->r.menus()))
+                .subQueryToGroupJoin(s -> s.roles())
+                .subQueryConfigure(s -> s.roles(), s -> s.subQueryToGroupJoin(r -> r.menus()))
                 .where(m -> {
                     m.roles().any(r -> {
                         r.menus().any(menu -> menu.name().eq("admin"));
@@ -489,11 +501,12 @@ public class ManyJoinTest extends BaseTest {
 
     }
 
-    private <TMember extends Number> NumberTypeExpression<BigDecimal> createColumn(M8UserProxy u, SQLFuncExpression1<M8MenuProxy,ColumnNumberFunctionAvailable<TMember>> columnSelector){
-        return  u.roles().sumBigDecimal(role -> {
+    private <TMember extends Number> NumberTypeExpression<BigDecimal> createColumn(M8UserProxy u, SQLFuncExpression1<M8MenuProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
+        return u.roles().sumBigDecimal(role -> {
             return role.menus().where(menu -> menu.name().like("admin")).sum(columnSelector);
         });
     }
+
     @Test
     public void testMany2Many2GroupJoin2() {
 
@@ -517,8 +530,8 @@ public class ManyJoinTest extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<M8User> admin = easyEntityQuery.queryable(M8User.class)
-                .subQueryToGroupJoin(s->s.roles())
-                .subQueryConfigure(s->s.roles(),s->s.subQueryToGroupJoin(r->r.menus()))
+                .subQueryToGroupJoin(s -> s.roles())
+                .subQueryConfigure(s -> s.roles(), s -> s.subQueryToGroupJoin(r -> r.menus()))
                 .where(m -> {
 
                     m.roles().flatElement().menus().any(menu -> menu.name().eq("admin"));
@@ -533,14 +546,15 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
     @Test
     public void testMany2Many2GroupJoin24() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<M8User> admin = easyEntityQuery.queryable(M8User.class)
-                .subQueryToGroupJoin(s->s.roles())
-                .subQueryConfigure(s->s.roles(),s->s.subQueryToGroupJoin(r->r.menus()))
+                .subQueryToGroupJoin(s -> s.roles())
+                .subQueryConfigure(s -> s.roles(), s -> s.subQueryToGroupJoin(r -> r.menus()))
                 .where(m -> {
 
                     m.roles().flatElement().id().eq("123");
@@ -555,13 +569,14 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
     @Test
     public void testMany2Many2GroupJoin3() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<M8User> admin = easyEntityQuery.queryable(M8User.class)
-                .configure(o->{
+                .configure(o -> {
                     o.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN);
                 })
                 .where(m -> {
@@ -580,13 +595,14 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
     @Test
     public void testMany2Many2GroupJoin4() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<M8User> admin = easyEntityQuery.queryable(M8User.class)
-                .configure(o->{
+                .configure(o -> {
                     o.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN);
                 })
                 .where(m -> {
@@ -602,13 +618,14 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
     @Test
     public void testMany2Many2GroupJoin5() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<M8User> admin = easyEntityQuery.queryable(M8User.class)
-                .configure(o->{
+                .configure(o -> {
                     o.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN);
                 })
                 .where(m -> {
@@ -625,6 +642,7 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
     @Test
     public void partitionByFirst() {
 
@@ -632,7 +650,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<M8User> admin = easyEntityQuery.queryable(M8User.class)
                 .where(m -> {
-                    m.roles().orderBy(s->s.name().asc()).first().name().eq("管理员");
+                    m.roles().orderBy(s -> s.name().asc()).first().name().eq("管理员");
                 }).toList();
 
 
@@ -644,6 +662,7 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
     @Test
     public void partitionByFirst2() {
 
@@ -651,7 +670,7 @@ public class ManyJoinTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         List<M8User> admin = easyEntityQuery.queryable(M8User.class)
                 .where(m -> {
-                    m.roles().orderBy(s->s.name().asc()).first().createTime().le(LocalDateTime.of(2020,1,1,1,1));
+                    m.roles().orderBy(s -> s.name().asc()).first().createTime().le(LocalDateTime.of(2020, 1, 1, 1, 1));
                 }).toList();
 
 
@@ -660,6 +679,34 @@ public class ManyJoinTest extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`age`,t.`create_time` FROM `m8_user` t LEFT JOIN (SELECT t2.`user_id` AS `__user_id__`,t1.`id`,t1.`name`,t1.`create_time`,(ROW_NUMBER() OVER (PARTITION BY t2.`user_id` ORDER BY t1.`name` ASC)) AS `__row__` FROM `m8_role` t1 INNER JOIN `m8_user_role` t2 ON t1.`id` = t2.`role_id`) t5 ON (t5.`__user_id__` = t.`id` AND t5.`__row__` = ?) WHERE t5.`create_time` <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),2020-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
+    }
+
+    @Test
+    public void test111() {
+
+        var userIdQuery = easyEntityQuery.queryable(SysBankCard.class)
+                .groupBy(bank_card -> GroupKeys.of(bank_card.bankId(), bank_card.uid()))
+                .select(group -> new UserAndBankCountProxy()
+                        .bankId().set(group.key1())
+                        .uid().set(group.key2())
+                        .bankCount().set(group.count())
+                ).select(o -> Select.PART.of(
+                        o,
+                        o.expression().rowNumberOver().partitionBy(o.bankId()).orderByDescending(o.bankCount())
+                )).where(userBankCount->{
+                    userBankCount.partColumn1().eq(3L);
+                }).selectColumn(userBankCount -> userBankCount.entityTable().uid());
+
+
+        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                .where(user -> {
+                    user.id().in(userIdQuery);
+                })
+                .orderBy(user -> {
+                    user.createTime().desc();
+                }).toList();
 
 
     }
