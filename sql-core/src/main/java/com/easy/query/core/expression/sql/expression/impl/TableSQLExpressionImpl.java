@@ -42,6 +42,11 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     }
 
     @Override
+    public QueryRuntimeContext getQueryRuntimeContext() {
+        return runtimeContext;
+    }
+
+    @Override
     public EntityMetadata getEntityMetadata() {
         return entityTable.getEntityMetadata();
     }
@@ -57,6 +62,7 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     }
 
 
+    @Override
     public Function<String, String> getTableNameAs() {
         return tableNameAs;
     }
@@ -69,6 +75,11 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
     @Override
     public void setSchemaAs(Function<String, String> schemaAs) {
         this.schemaAs = schemaAs;
+    }
+
+    @Override
+    public Function<String, String> getSchemaAs() {
+        return schemaAs;
     }
 
     @Override

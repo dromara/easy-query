@@ -61,7 +61,7 @@ public class ShardingExecutor {
 //            return tResults;
 //        }
         //将数据以每个数据源进行聚合
-        List<DataSourceSQLExecutorUnit> dataSourceSQLExecutorUnits = EasyUtil.groupBy(executionUnits.stream(), ExecutionUnit::getDataSourceName)
+        List<DataSourceSQLExecutorUnit> dataSourceSQLExecutorUnits = EasyCollectionUtil.groupBy(executionUnits.stream(), ExecutionUnit::getDataSourceName)
                 .map(o -> getSQLExecutorGroups(streamMergeContext, o)).collect(Collectors.toList());
         //如果本身就只有一条要执行的sql那么就不需要另外开启线程并行执行,直接当前线程执行即可
         if (dataSourceSQLExecutorUnits.size() == 1) {

@@ -1,13 +1,17 @@
 package com.easy.query.test;
 
+import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.api.pagination.EasyShardingPageResult;
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.dto.TopicShardingGroup;
 import com.easy.query.test.dto.TopicSubQueryBlog;
 import com.easy.query.test.entity.Topic;
@@ -16,13 +20,16 @@ import com.easy.query.test.entity.TopicShardingDataSource;
 import com.easy.query.test.entity.TopicShardingDataSourceTime;
 import com.easy.query.test.entity.TopicShardingTime;
 import com.easy.query.test.entity.proxy.TopicShardingTimeProxy;
+import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -1094,5 +1101,56 @@ public class ShardingTest extends ShardingBaseTest {
                         o.count(s -> s.id()).as(TopicShardingGroup::getIdCount)
                 ))
                 .toList();
+    }
+
+    @Test
+    public void shardingTestMap(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Map<String, Object>> list = easyEntityQuery.queryable(TopicSharding.class)
+                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.SHARDING_UNION_ALL))
+                .where(t -> {
+                    t.id().in(Arrays.asList("20000","20001"));
+                })
+                .groupBy(t -> GroupKeys.of(t.createTime()))
+                .select(group -> {
+                    MapProxy mapProxy = new MapProxy();
+                    mapProxy.put("createTime", group.groupTable().createTime());
+                    mapProxy.put("idCount", group.count(t -> t.id()));
+                    return mapProxy;
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`create_time` AS `createTime`,COUNT(t.`id`) AS `idCount` FROM (SELECT * FROM `t_topic_sharding_0` UNION ALL SELECT * FROM `t_topic_sharding_1` UNION ALL SELECT * FROM `t_topic_sharding_2`) t WHERE t.`id` IN (?,?) GROUP BY t.`create_time`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("20000(String),20001(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void shardingTestMap1(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Map<String, Object>> list = easyEntityQuery.queryable(TopicSharding.class)
+                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.SHARDING_UNION_ALL))
+                .where(t -> {
+                    t.id().in(Arrays.asList("20000","20001"));
+                })
+                .groupBy(t -> GroupKeys.of(t.createTime()))
+                .select(group -> {
+                    MapProxy mapProxy = new MapProxy();
+                    mapProxy.put("createTime", group.groupTable().createTime().asLocalDate());
+                    mapProxy.put("idCount", group.count(t -> t.id()));
+                    return mapProxy;
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`create_time` AS `createTime`,COUNT(t.`id`) AS `idCount` FROM (SELECT * FROM `t_topic_sharding_0` UNION ALL SELECT * FROM `t_topic_sharding_1` UNION ALL SELECT * FROM `t_topic_sharding_2`) t WHERE t.`id` IN (?,?) GROUP BY t.`create_time`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("20000(String),20001(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 }

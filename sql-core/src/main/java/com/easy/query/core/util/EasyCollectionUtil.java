@@ -1,5 +1,7 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.basic.jdbc.executor.internal.common.GroupByValue;
+import com.easy.query.core.basic.jdbc.executor.internal.common.GroupByValueImpl;
 import com.easy.query.core.common.Consumer2;
 import com.easy.query.core.common.collection.CollectionDescriptor;
 import com.easy.query.core.exception.EasyQueryResultSizeLimitException;
@@ -21,6 +23,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author xuejiaming
@@ -29,6 +33,10 @@ import java.util.function.Supplier;
  * create time 2023/2/26 14:07
  */
 public class EasyCollectionUtil {
+    public static <T, K> Stream<GroupByValue<K, T>> groupBy(Stream<T> stream, Function<T, K> keyExtractor) {
+        Map<K, List<T>> map = stream.collect(Collectors.groupingBy(keyExtractor));
+        return map.entrySet().stream().map(e -> new GroupByValueImpl<>(e.getKey(), e.getValue()));
+    }
     public static <TNavigateEntity> Collection<TNavigateEntity> createManyCollection(NavigateMetadata navigateMetadata) {
         CollectionDescriptor collectionDescriptor = EasyClassUtil.getCollectionDescriptorByType(navigateMetadata.getNavigateOriginalPropertyType());
         return EasyObjectUtil.typeCastNullable(collectionDescriptor.newCollection());

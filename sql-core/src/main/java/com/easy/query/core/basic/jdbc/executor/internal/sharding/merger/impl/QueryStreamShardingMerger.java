@@ -35,6 +35,9 @@ public class QueryStreamShardingMerger extends AbstractShardingMerger<QueryExecu
 
     protected StreamResultSet streamMergeToSingle(StreamMergeContext streamMergeContext, List<StreamResultSet> streamResults) throws SQLException {
 
+//        if(EasyCollectionUtil.isSingle(streamResults)){
+//            return EasyCollectionUtil.first(streamResults);
+//        }
         StreamResultSet streamResultSet = multiStreamMerge(streamMergeContext, streamResults);
         if (!streamMergeContext.hasBehavior(MergeBehaviorEnum.PAGINATION)||streamMergeContext.hasBehavior(MergeBehaviorEnum.SEQUENCE_PAGINATION)) {
             return streamResultSet;

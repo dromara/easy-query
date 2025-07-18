@@ -40,6 +40,7 @@ public class AnonymousEntityTableSQLExpressionImpl extends TableSQLExpressionImp
     public void setLinkAs(Function<String, String> linkAs) {
     }
 
+
     @Override
     public void setTableSegmentAs(BiFunction<String, String, String> segmentAs) {
     }

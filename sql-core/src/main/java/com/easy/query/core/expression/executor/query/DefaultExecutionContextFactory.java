@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.common.ExecutionUnit;
 import com.easy.query.core.basic.jdbc.executor.internal.common.SQLRouteUnit;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.configuration.EasyQueryOption;
+import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryShardingRouteExecuteMoreException;
 import com.easy.query.core.expression.executor.parser.EntityPrepareParseResult;
 import com.easy.query.core.expression.executor.parser.ExecutionContext;
@@ -22,12 +23,17 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
 import com.easy.query.core.sharding.EasyQueryDataSource;
+import com.easy.query.core.sharding.rewrite.DefaultRewriteRouteUnit;
 import com.easy.query.core.sharding.rewrite.RewriteContext;
 import com.easy.query.core.sharding.rewrite.RewriteContextFactory;
+import com.easy.query.core.sharding.rewrite.RewriteRouteUnit;
 import com.easy.query.core.sharding.router.RouteContext;
 import com.easy.query.core.sharding.router.RouteContextFactory;
+import com.easy.query.core.sharding.router.RouteUnit;
+import com.easy.query.core.sharding.router.ShardingRouteResult;
 import com.easy.query.core.util.EasyClassUtil;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -83,6 +89,8 @@ public class DefaultExecutionContextFactory implements ExecutionContextFactory {
 //        NativeSqlQueryCompilerContext nativeSqlQueryCompilerContext = new NativeSqlQueryCompilerContext(prepareParseResult);
         //无需分片的情况下
         RouteContext routeContext = routeContextFactory.createRouteContext(prepareParseResult);
+        List<RouteUnit> routeUnits = routeContext.getShardingRouteResult().getRouteUnits();
+
         RewriteContext rewriteContext = rewriteContextFactory.rewriteShardingExpression(prepareParseResult, routeContext);
         if (prepareParseResult instanceof PredicatePrepareParseResult) {
             if (rewriteContext.getRewriteRouteUnits().size() >= easyQueryOption.getMaxShardingRouteCount()) {

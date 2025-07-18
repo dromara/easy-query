@@ -53,12 +53,6 @@ public class EasyUtil {
 
     private EasyUtil() {
     }
-
-    public static <T, K> Stream<GroupByValue<K, T>> groupBy(Stream<T> stream, Function<T, K> keyExtractor) {
-        Map<K, List<T>> map = stream.collect(Collectors.groupingBy(keyExtractor));
-        return map.entrySet().stream().map(e -> new GroupByValueImpl<>(e.getKey(), e.getValue()));
-    }
-
     public static EntityTableExpressionBuilder getPredicateTableByOffset(EntityQueryExpressionBuilder sqlEntityExpression, int offsetForward) {
         List<EntityTableExpressionBuilder> tables = sqlEntityExpression.getTables();
         if (tables.isEmpty()) {

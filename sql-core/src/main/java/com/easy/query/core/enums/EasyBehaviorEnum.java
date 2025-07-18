@@ -43,7 +43,11 @@ public enum EasyBehaviorEnum {
     /**
      * 所有的子查询转GroupJoin
      */
-    ALL_SUB_QUERY_GROUP_JOIN(1<<11);
+    ALL_SUB_QUERY_GROUP_JOIN(1<<11),
+    /**
+     * 分片使用UNION_ALL
+     */
+    SHARDING_UNION_ALL(1<<12);
 
     private final int code;
 

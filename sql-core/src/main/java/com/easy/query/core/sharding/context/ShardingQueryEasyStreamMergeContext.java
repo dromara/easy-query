@@ -3,6 +3,7 @@ package com.easy.query.core.sharding.context;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyOrder;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.MergeBehaviorEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.executor.parser.EasyQueryPrepareParseResult;
@@ -45,10 +46,15 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
         super(executorContext, executionContext, easyQueryPrepareParseResult.isSharding());
         this.easyQueryPrepareParseResult = easyQueryPrepareParseResult;
         this.querySQLExpression = easyQueryPrepareParseResult.getEntityPredicateSQLExpression();
-        this.orders = getOrders(querySQLExpression);
-        this.groups = getGroups(querySQLExpression);
         this.groupMergeContext = new GroupMergeContext();
-        initGroupMergeContext();
+        if (!executorContext.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.SHARDING_UNION_ALL)) {
+            this.orders = getOrders(querySQLExpression);
+            this.groups = getGroups(querySQLExpression);
+            initGroupMergeContext();
+        } else {
+            this.orders = new ArrayList<>();
+            this.groups = new ArrayList<>();
+        }
     }
 
     private void initGroupMergeContext() {
@@ -105,11 +111,6 @@ public class ShardingQueryEasyStreamMergeContext extends EntityStreamMergeContex
 
                 if (sqlSegment instanceof ColumnSegmentImpl) {
                     ColumnSegmentImpl columnSegment = (ColumnSegmentImpl) sqlSegment;
-
-                    PropertyGroup propertyGroup = EasyShardingUtil.findFirstPropertyGroupNotNull(projects.getSQLSegments(), columnSegment, querySQLExpression);
-                    groups.add(propertyGroup);
-                } else if (sqlSegment instanceof Column2Segment) {
-                    Column2Segment columnSegment = (Column2Segment) sqlSegment;
 
                     PropertyGroup propertyGroup = EasyShardingUtil.findFirstPropertyGroupNotNull(projects.getSQLSegments(), columnSegment, querySQLExpression);
                     groups.add(propertyGroup);

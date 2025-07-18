@@ -26,6 +26,10 @@ import java.sql.SQLException;
 import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -284,6 +288,14 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
     public Timestamp getTimestamp(int columnIndex) throws SQLException {
         Object value = currentRow.get(columnIndex - 1);
         setWasNull(value == null);
+        if(value instanceof LocalDateTime){
+            return Timestamp.valueOf((LocalDateTime)value);
+        }
+        if(value instanceof LocalDate){
+
+            long ts = ((LocalDate)value).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            return new Timestamp(ts);
+        }
         return (Timestamp) value;
     }
 
