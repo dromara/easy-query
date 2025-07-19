@@ -1124,7 +1124,7 @@ public class ShardingTest extends ShardingBaseTest {
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`create_time` AS `createTime`,COUNT(t.`id`) AS `idCount` FROM (SELECT * FROM `t_topic_sharding_0` UNION ALL SELECT * FROM `t_topic_sharding_1` UNION ALL SELECT * FROM `t_topic_sharding_2`) t WHERE t.`id` IN (?,?) GROUP BY t.`create_time`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`create_time` AS `createTime`,COUNT(t.`id`) AS `idCount` FROM (SELECT * FROM `t_topic_sharding_0` UNION ALL SELECT * FROM `t_topic_sharding_2`) t WHERE t.`id` IN (?,?) GROUP BY t.`create_time`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("20000(String),20001(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -1149,7 +1149,7 @@ public class ShardingTest extends ShardingBaseTest {
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`create_time` AS `createTime`,COUNT(t.`id`) AS `idCount` FROM (SELECT * FROM `t_topic_sharding_0` UNION ALL SELECT * FROM `t_topic_sharding_1` UNION ALL SELECT * FROM `t_topic_sharding_2`) t WHERE t.`id` IN (?,?) GROUP BY t.`create_time`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`create_time` AS `createTime`,COUNT(t.`id`) AS `idCount` FROM (SELECT * FROM `t_topic_sharding_0` UNION ALL SELECT * FROM `t_topic_sharding_2`) t WHERE t.`id` IN (?,?) GROUP BY t.`create_time`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("20000(String),20001(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
