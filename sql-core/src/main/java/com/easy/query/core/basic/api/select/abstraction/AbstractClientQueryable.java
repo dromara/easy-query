@@ -1106,10 +1106,16 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         }
 
                         EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
+                        EntityMetadata resultEntityMetadata = entityMetadataManager.getEntityMetadata(with.queryClass());
 
 //                        if(!entityEntityMetadata.getEntityClass().equals(entityNavigateMetadata.getNavigatePropertyType())){
 //                            throw new EasyQueryInvalidOperationException("NavigateFlat 仅支持基本类型和数据库类型");
 //                        }
+                        if (flatClassTypeEntityMetadata != null) {
+                            selectAutoInclude0(entityMetadataManager, with, entityEntityMetadata, flatClassTypeEntityMetadata, null, configureArgument, false, 0);
+
+                            selectAutoIncludeFlat0(entityMetadataManager, with, entityEntityMetadata, flatClassTypeEntityMetadata);
+                        }
                         selectAutoIncludeFlat0(entityMetadataManager, with, entityEntityMetadata, mappingPathTreeChild, false);
 
                         if (!(basicType && !allChildrenIsProps)) {
@@ -1165,7 +1171,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table);
 
             WherePredicate<T1> wherePredicate = getSQLExpressionProvider1().getWherePredicate(getSQLExpressionProvider1().getWhereFilterContext());
-            wherePredicate.eq(keyProperty,id);
+            wherePredicate.eq(keyProperty, id);
         }
         return this;
     }
@@ -1179,7 +1185,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table);
 
             WherePredicate<T1> wherePredicate = getSQLExpressionProvider1().getWherePredicate(getSQLExpressionProvider1().getWhereFilterContext());
-            wherePredicate.in(keyProperty,ids);
+            wherePredicate.in(keyProperty, ids);
 //
 //            AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
 //            ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(keyProperty);

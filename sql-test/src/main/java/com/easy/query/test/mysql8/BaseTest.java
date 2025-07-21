@@ -31,6 +31,7 @@ import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.bank.SysUserBook;
 import com.easy.query.test.mysql8.entity.many.M8Area;
 import com.easy.query.test.mysql8.entity.many.M8AreaBuild;
+import com.easy.query.test.mysql8.entity.many.M8AreaBuildLicense;
 import com.easy.query.test.mysql8.entity.many.M8City;
 import com.easy.query.test.mysql8.entity.many.M8Province;
 import com.zaxxer.hikari.HikariDataSource;
@@ -119,7 +120,7 @@ public class BaseTest {
         codeFirstCommand2.executeWithTransaction(s -> s.commit());
 
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class, SysBank.class, SysBankCard.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class, M8ParentChild.class,
-                M8Province.class, M8City.class, M8Area.class, M8AreaBuild.class));
+                M8Province.class, M8City.class, M8Area.class, M8AreaBuild.class,M8AreaBuildLicense.class));
         codeFirstCommand1.executeWithTransaction(s -> {
             System.out.println(s.getSQL());
             s.commit();
@@ -135,6 +136,7 @@ public class BaseTest {
         easyEntityQuery.deletable(M8City.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(M8Area.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(M8AreaBuild.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
+        easyEntityQuery.deletable(M8AreaBuildLicense.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         ArrayList<SysBank> banks = new ArrayList<>();
         ArrayList<SysBankCard> bankCards = new ArrayList<>();
         ArrayList<SysUser> users = new ArrayList<>();
@@ -144,6 +146,7 @@ public class BaseTest {
         ArrayList<M8City> cities = new ArrayList<>();
         ArrayList<M8Area> areas = new ArrayList<>();
         ArrayList<M8AreaBuild> builds = new ArrayList<>();
+        ArrayList<M8AreaBuildLicense> buildLicenses = new ArrayList<>();
         {
             SysBank sysBank = new SysBank();
             sysBank.setId("1");
@@ -383,6 +386,11 @@ public class BaseTest {
                         m8AreaBuild.setAid(m8Area.getId());
                         m8AreaBuild.setName("创新楼");
                         builds.add(m8AreaBuild);
+                        M8AreaBuildLicense m8AreaBuildLicense = new M8AreaBuildLicense();
+                        m8AreaBuildLicense.setId("l1");
+                        m8AreaBuildLicense.setBuildId(m8AreaBuild.getId());
+                        m8AreaBuildLicense.setNo("license123");
+                        buildLicenses.add(m8AreaBuildLicense);
                     }
                 }
                 {
@@ -438,6 +446,7 @@ public class BaseTest {
         easyEntityQuery.insertable(cities).batch().executeRows();
         easyEntityQuery.insertable(areas).batch().executeRows();
         easyEntityQuery.insertable(builds).batch().executeRows();
+        easyEntityQuery.insertable(buildLicenses).batch().executeRows();
         easyEntityQuery.insertable(Linq.of(parentChildren).orderBy(s -> s.getId()).toList()).batch().executeRows();
         easyEntityQuery.insertable(Linq.of(children).orderBy(s -> s.getId()).toList()).batch().executeRows();
 

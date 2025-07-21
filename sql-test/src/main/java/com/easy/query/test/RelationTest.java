@@ -743,7 +743,7 @@ public class RelationTest extends BaseTest {
                 }
 
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
+                Assert.assertEquals(27, listenerContext.getJdbcExecuteAfterArgs().size());
 
                 {
 
@@ -824,7 +824,7 @@ public class RelationTest extends BaseTest {
                 }
 
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
+                Assert.assertEquals(27, listenerContext.getJdbcExecuteAfterArgs().size());
 
                 {
 
@@ -1087,7 +1087,7 @@ public class RelationTest extends BaseTest {
                 }
 
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
+                Assert.assertEquals(27, listenerContext.getJdbcExecuteAfterArgs().size());
 
                 {
 
@@ -1167,7 +1167,7 @@ public class RelationTest extends BaseTest {
                 }
 
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
+                Assert.assertEquals(27, listenerContext.getJdbcExecuteAfterArgs().size());
 
                 {
 

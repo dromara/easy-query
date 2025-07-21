@@ -165,6 +165,7 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("123(String),0(Integer),456(String),0(Integer),123(String),123(String),银行(String),%45678%(String),123(Integer),456(Integer),789(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void testManyGroupJoin2_1() {
 
@@ -172,10 +173,11 @@ public class QueryTest22 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
 
+
         List<Draft3<String, Integer, String>> 银行 = easyEntityQuery.queryable(DocUser.class)
                 .subQueryToGroupJoin(o -> o.bankCards())
                 .where(user -> {
-                    user.bankCards().filter(x->{
+                    user.bankCards().filter(x -> {
                         //支持隐式join和普通属性筛选
                         x.bank().name().eq("银行");
                         x.type().like("45678");
@@ -211,6 +213,7 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("123(String),0(Integer),456(String),0(Integer),123(String),123(String),银行(String),%45678%(String),123(Integer),456(Integer),789(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void testManyGroupJoin2_2() {
 
@@ -231,7 +234,7 @@ public class QueryTest22 extends BaseTest {
                             sum(o -> o.code().toNumber(Integer.class))
                             .eq(789);
 
-                    user.bankCards().filter(x->{
+                    user.bankCards().filter(x -> {
                         //支持隐式join和普通属性筛选
                         x.bank().name().eq("银行");
                         x.type().like("45678");
@@ -1322,30 +1325,31 @@ public class QueryTest22 extends BaseTest {
         Assert.assertEquals("123(String),1(Integer),0(Long),0(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
-@Test
-    public void testaa() {
-        boolean useOrder=false;
-    List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
-            .where(t_blog -> {
-                t_blog.or(()->{
-                    t_blog.title().like("123");
-                    t_blog.id().like("123");
-                    t_blog.star().eq(1);
-                });
-            })
-            .orderBy(useOrder,t_blog -> {
 
-                t_blog.expression().caseWhen(() -> {
-                            t_blog.title().eq("123");
-                        }).then(1)
-                        .caseWhen(() -> {
-                            t_blog.title().eq("456");
-                        }).then(2)
-                        .elseEnd(3)
-                        .asc();
-            })
-            .orderBy(useOrder,t_blog -> t_blog.star().asc())
-            .toList();
-}
+    @Test
+    public void testaa() {
+        boolean useOrder = false;
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.or(() -> {
+                        t_blog.title().like("123");
+                        t_blog.id().like("123");
+                        t_blog.star().eq(1);
+                    });
+                })
+                .orderBy(useOrder, t_blog -> {
+
+                    t_blog.expression().caseWhen(() -> {
+                                t_blog.title().eq("123");
+                            }).then(1)
+                            .caseWhen(() -> {
+                                t_blog.title().eq("456");
+                            }).then(2)
+                            .elseEnd(3)
+                            .asc();
+                })
+                .orderBy(useOrder, t_blog -> t_blog.star().asc())
+                .toList();
+    }
 
 }
