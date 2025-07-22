@@ -13,6 +13,7 @@ import java.lang.annotation.Target;
  * NavigateFlat支持获取穿透数据库对象到VO
  * 如果NavigateFlat了一个VO又在同级对象下获取了这个VO的id那么将会报错
  * 目标对象必须是集合不可以是单个对象如果是单个对象必须是基本类型或数据库实体
+ * navigateFlat如果展开集合后希望查询单个属性比如toOne的那么应该要把最后一层的集合保留
  *
  * @author xuejiaming
  */

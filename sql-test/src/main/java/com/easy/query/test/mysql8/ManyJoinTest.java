@@ -24,11 +24,15 @@ import com.easy.query.test.doc.entity.DocBank;
 import com.easy.query.test.doc.entity.DocBankCard;
 import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.doc.entity.DocUserBook;
+import com.easy.query.test.entity.blogtest.RoleMenu;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.SchoolClassTeacher;
 import com.easy.query.test.entity.school.SchoolTeacher;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.dto.M8RoleDTO;
+import com.easy.query.test.mysql8.dto.M8RoleDTO2;
 import com.easy.query.test.mysql8.entity.M8Menu;
+import com.easy.query.test.mysql8.entity.M8MenuOwner;
 import com.easy.query.test.mysql8.entity.M8Role;
 import com.easy.query.test.mysql8.entity.M8Role2;
 import com.easy.query.test.mysql8.entity.M8RoleMenu;
@@ -52,6 +56,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -67,7 +72,7 @@ public class ManyJoinTest extends BaseTest {
     public void before() {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
-        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBankCard.class, DocBank.class, DocUser.class, DocUserBook.class, SchoolClass.class, SchoolTeacher.class, SchoolClassTeacher.class, M8User.class, M8Role.class, M8UserRole.class, M8User2.class, M8Role2.class, M8UserRole2.class, M8UserBook.class, M8RoleMenu.class, M8Menu.class));
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBankCard.class, DocBank.class, DocUser.class, DocUserBook.class, SchoolClass.class, SchoolTeacher.class, SchoolClassTeacher.class, M8User.class, M8Role.class, M8UserRole.class, M8User2.class, M8Role2.class, M8UserRole2.class, M8UserBook.class, M8RoleMenu.class, M8Menu.class, M8MenuOwner.class));
         codeFirstCommand.executeWithTransaction(s -> s.commit());
         {
             easyEntityQuery.deletable(DocBankCard.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
@@ -86,6 +91,7 @@ public class ManyJoinTest extends BaseTest {
             easyEntityQuery.deletable(M8UserBook.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
             easyEntityQuery.deletable(M8RoleMenu.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
             easyEntityQuery.deletable(M8Menu.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
+            easyEntityQuery.deletable(M8MenuOwner.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
         }
 
         {
@@ -102,9 +108,39 @@ public class ManyJoinTest extends BaseTest {
             M8Role2 m8Role2 = new M8Role2();
             m8Role2.setRoleId("456");
             m8Role2.setRoleName("456role");
+
+            ArrayList<M8Role> m8Roles = new ArrayList<>();
+            ArrayList<M8RoleMenu> m8RoleMenus = new ArrayList<>();
+            ArrayList<M8Menu> m8Menus = new ArrayList<>();
+            ArrayList<M8MenuOwner> m8MenuOwners = new ArrayList<>();
+            M8Role m8Role = new M8Role();
+            m8Role.setId("r123");
+            m8Role.setName("测试角色");
+            m8Role.setCreateTime(LocalDateTime.of(2020, 1, 1, 0, 0));
+            m8Roles.add(m8Role);
+            M8RoleMenu roleMenu = new M8RoleMenu();
+            roleMenu.setId("rm123");
+            roleMenu.setRoleId("r123");
+            roleMenu.setMenuId("m123");
+            m8RoleMenus.add(roleMenu);
+            M8Menu m8Menu = new M8Menu();
+            m8Menu.setId("m123");
+            m8Menu.setName("测试菜单");
+            m8Menu.setPath("/admin");
+            m8Menu.setOwnerId("o123");
+            m8Menus.add(m8Menu);
+            M8MenuOwner m8MenuOwner = new M8MenuOwner();
+            m8MenuOwner.setId("o123");
+            m8MenuOwner.setName("测试所属菜单");
+            m8MenuOwners.add(m8MenuOwner);
+
             easyEntityQuery.insertable(m8User2).executeRows();
             easyEntityQuery.insertable(m8UserRole2).executeRows();
             easyEntityQuery.insertable(m8Role2).executeRows();
+            easyEntityQuery.insertable(m8Roles).executeRows();
+            easyEntityQuery.insertable(m8RoleMenus).executeRows();
+            easyEntityQuery.insertable(m8Menus).executeRows();
+            easyEntityQuery.insertable(m8MenuOwners).executeRows();
         }
     }
 
@@ -695,7 +731,7 @@ public class ManyJoinTest extends BaseTest {
                 ).select(o -> Select.PART.of(
                         o,
                         o.expression().rowNumberOver().partitionBy(o.bankId()).orderByDescending(o.bankCount())
-                )).where(userBankCount->{
+                )).where(userBankCount -> {
                     userBankCount.partColumn1().eq(3L);
                 }).selectColumn(userBankCount -> userBankCount.entityTable().uid());
 
@@ -709,5 +745,22 @@ public class ManyJoinTest extends BaseTest {
                 }).toList();
 
 
+    }
+
+
+    @Test
+    public void testFlatMenuOwner(){
+        List<M8RoleDTO> list = easyEntityQuery.queryable(M8Role.class)
+                .selectAutoInclude(M8RoleDTO.class)
+                .toList();
+        System.out.println("123");
+    }
+
+    @Test
+    public void testFlatMenuOwner1(){
+        List<M8RoleDTO2> list = easyEntityQuery.queryable(M8Role.class)
+                .selectAutoInclude(M8RoleDTO2.class)
+                .toList();
+        System.out.println("123");
     }
 }

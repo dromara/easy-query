@@ -52,6 +52,8 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
             }
             Object entity = oneToOneGetter.getIncludeValue(subRelationKey);
             if (entity != null) {
+                //如果报错cast那么请确认是否保留了最后一层的集合
+                //NavigateFlat 展开最后一层后如果使用了ManyToOne或者OneToOne的对象那么必须保留最后一层集合不可以直接Flat到对象
                 setEntityValue(entity, includeEntity.getEntity());
             }
         }
@@ -76,6 +78,8 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
             }
             Object targetEntity = directToOneGetter.getIncludeValue(selfRelationId);
             if (targetEntity != null) {
+                //如果报错cast那么请确认是否保留了最后一层的集合
+                //NavigateFlat 展开最后一层后如果使用了ManyToOne或者OneToOne的对象那么必须保留最后一层集合不可以直接Flat到对象
                 setEntityValue(entity.getEntity(), targetEntity);
             }
         }
@@ -99,6 +103,8 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
             }
             Object entityInclude = manyToOneGetter.getIncludeValue(relationId);
             if (entityInclude != null) {
+                //如果报错cast那么请确认是否保留了最后一层的集合
+                //NavigateFlat 展开最后一层后如果使用了ManyToOne或者OneToOne的对象那么必须保留最后一层集合不可以直接Flat到对象
                 setEntityValue(entity.getEntity(), entityInclude);
             }
         }

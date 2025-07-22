@@ -29,6 +29,6 @@ public class M8Role implements ProxyEntityAvailable<M8Role, M8RoleProxy> {
     private String name;
     private LocalDateTime createTime;
 
-    @Navigate(value = RelationTypeEnum.ManyToMany, selfProperty = {M8Role.Fields.id}, selfMappingProperty = {M8RoleMenu.Fields.role_id}, mappingClass = M8RoleMenu.class, targetProperty = {M8Menu.Fields.id}, targetMappingProperty = {M8RoleMenu.Fields.menu_id})
+    @Navigate(value = RelationTypeEnum.ManyToMany, selfProperty = {M8Role.Fields.id}, selfMappingProperty = {M8RoleMenu.Fields.roleId}, mappingClass = M8RoleMenu.class, targetProperty = {M8Menu.Fields.id}, targetMappingProperty = {M8RoleMenu.Fields.menuId})
     private List<M8Menu> menus;
 }
