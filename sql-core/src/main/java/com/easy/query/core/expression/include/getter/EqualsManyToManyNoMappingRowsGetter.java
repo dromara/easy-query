@@ -21,10 +21,12 @@ import java.util.Map;
 public class EqualsManyToManyNoMappingRowsGetter extends AbstractIncludeGetter implements RelationIncludeGetter {
     private final String[] targetPropertyNames;
     private final Map<RelationValue, Collection<RelationExtraEntity>> targetToManyMap;
+    private final CollectionDescriptor collectionDescriptor;
 
     public EqualsManyToManyNoMappingRowsGetter(NavigateMetadata navigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes) {
         super(navigateMetadata);
         this.targetPropertyNames = targetPropertyNames;
+        this.collectionDescriptor = EasyClassUtil.getCollectionDescriptorByType(navigateMetadata.getNavigateOriginalPropertyType());
         this.targetToManyMap = getTargetToManyMap(includes);
     }
 
@@ -38,6 +40,11 @@ public class EqualsManyToManyNoMappingRowsGetter extends AbstractIncludeGetter i
         return targetToManyMap.computeIfAbsent(relationValue, k -> createManyCollection());
     }
 
+    @Override
+    public Object getFlatPaddingValue() {
+        return collectionDescriptor.newCollection();
+    }
+
     /**
      * 获取对象关系id为key的对象集合为value的map
      *
@@ -46,7 +53,6 @@ public class EqualsManyToManyNoMappingRowsGetter extends AbstractIncludeGetter i
      * @return
      */
     protected <TNavigateEntity> Map<RelationValue, Collection<TNavigateEntity>> getTargetToManyMap(List<RelationExtraEntity> includes) {
-        CollectionDescriptor collectionDescriptor = EasyClassUtil.getCollectionDescriptorByType(navigateMetadata.getNavigateOriginalPropertyType());
         Map<RelationValue, Collection<TNavigateEntity>> resultMap = new HashMap<>();
         int i = 0;
         for (RelationExtraEntity target : includes) {

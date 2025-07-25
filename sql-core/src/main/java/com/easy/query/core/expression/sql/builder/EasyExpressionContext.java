@@ -77,6 +77,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private Boolean printNavSQL;
     private ConfigureArgument configureArgument;
     private boolean reverseOrder;
+    private Map<Object,Object> flatClassMap;
 
     public EasyExpressionContext(QueryRuntimeContext runtimeContext, ContextTypeEnum type) {
 
@@ -116,6 +117,7 @@ public class EasyExpressionContext implements ExpressionContext {
         }
         this.groupSize = easyQueryOption.getRelationGroupSize();
         this.resultSizeLimit = easyQueryOption.getResultSizeLimit();
+        this.flatClassMap = new HashMap<>();
     }
 
     @Override
@@ -561,5 +563,10 @@ public class EasyExpressionContext implements ExpressionContext {
     @Override
     public boolean isReverseOrder() {
         return this.reverseOrder;
+    }
+
+    @Override
+    public Map<Object, Object> getFlatClassMap() {
+        return flatClassMap;
     }
 }

@@ -24,13 +24,14 @@ public class EqualsDirectToOneGetter implements RelationIncludeGetter {
     private final QueryRuntimeContext runtimeContext;
     private final RelationValueColumnMetadataFactory relationValueColumnMetadataFactory;
     private final NavigateMetadata navigateMetadata;
+    private final EntityMetadata targetEntityMetadata;
     private final Map<RelationValue, Object> targetToManyMap;
 
     public EqualsDirectToOneGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, List<RelationExtraEntity> includes, List<Object> mappingRow) {
         this.runtimeContext = runtimeContext;
         this.relationValueColumnMetadataFactory = runtimeContext.getRelationValueColumnMetadataFactory();
         this.navigateMetadata = navigateMetadata;
-
+        this.targetEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType());
         this.targetToManyMap = getTargetDirectMap(includes,mappingRow);
     }
 
@@ -87,5 +88,10 @@ public class EqualsDirectToOneGetter implements RelationIncludeGetter {
     @Override
     public Object getIncludeValue(RelationValue relationValue) {
         return targetToManyMap.get(relationValue);
+    }
+
+    @Override
+    public Object getFlatPaddingValue() {
+        return targetEntityMetadata.getBeanConstructorCreator().get();
     }
 }

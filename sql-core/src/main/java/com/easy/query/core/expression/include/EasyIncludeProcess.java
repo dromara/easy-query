@@ -11,8 +11,11 @@ import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * create time 2023/7/16 18:30
@@ -41,6 +44,8 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
         if (!oneToOneGetter.include()) {
             return;
         }
+        Class<?> flatClassType = includeParserResult.getIncludeNavigateParams().getFlatClassType();
+        Map<Object, Object> flatClassMap = includeParserResult.getFlatClassMap();
         HashSet<RelationValue> checkToOne = new HashSet<>();
         for (RelationExtraEntity includeEntity : includes) {
             RelationValue subRelationKey = includeEntity.getRelationExtraColumns(targetColumnMetadataPropertyNames);
@@ -54,7 +59,14 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
             if (entity != null) {
                 //如果报错cast那么请确认是否保留了最后一层的集合
                 //NavigateFlat 展开最后一层后如果使用了ManyToOne或者OneToOne的对象那么必须保留最后一层集合不可以直接Flat到对象
-                setEntityValue(entity, includeEntity.getEntity());
+//                setEntityValue(entity, includeEntity.getEntity());
+                if (flatClassType != null) {//特殊处理
+                    Object flatPaddingValue = oneToOneGetter.getFlatPaddingValue();
+                    flatClassMap.put(flatPaddingValue, includeEntity.getEntity());
+                    setEntityValue(entity, flatPaddingValue);
+                } else {
+                    setEntityValue(entity, includeEntity.getEntity());
+                }
             }
         }
     }
@@ -70,6 +82,8 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
         if (!directToOneGetter.include()) {
             return;
         }
+        Class<?> flatClassType = includeParserResult.getIncludeNavigateParams().getFlatClassType();
+        Map<Object, Object> flatClassMap = includeParserResult.getFlatClassMap();
         String[] directSelfPropertiesOrPrimary = includeParserResult.getNavigateMetadata().getDirectSelfPropertiesOrPrimary(runtimeContext);
         for (RelationExtraEntity entity : entities) {
             RelationValue selfRelationId = entity.getRelationExtraColumns(directSelfPropertiesOrPrimary);
@@ -80,10 +94,19 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
             if (targetEntity != null) {
                 //如果报错cast那么请确认是否保留了最后一层的集合
                 //NavigateFlat 展开最后一层后如果使用了ManyToOne或者OneToOne的对象那么必须保留最后一层集合不可以直接Flat到对象
-                setEntityValue(entity.getEntity(), targetEntity);
+//                setEntityValue(entity.getEntity(), targetEntity);
+
+                if (flatClassType != null) {//特殊处理
+                    Object flatPaddingValue = directToOneGetter.getFlatPaddingValue();
+                    flatClassMap.put(flatPaddingValue, targetEntity);
+                    setEntityValue(entity.getEntity(), flatPaddingValue);
+                } else {
+                    setEntityValue(entity.getEntity(), targetEntity);
+                }
             }
         }
     }
+
 
     @Override
     protected void ManyToOneProcess(List<RelationExtraEntity> includes) {
@@ -96,6 +119,8 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
         if (!manyToOneGetter.include()) {
             return;
         }
+        Class<?> flatClassType = includeParserResult.getIncludeNavigateParams().getFlatClassType();
+        Map<Object, Object> flatClassMap = includeParserResult.getFlatClassMap();
         for (RelationExtraEntity entity : entities) {
             RelationValue relationId = entity.getRelationExtraColumns(selfRelationColumn);
             if (relationId.isNull()) {
@@ -105,7 +130,14 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
             if (entityInclude != null) {
                 //如果报错cast那么请确认是否保留了最后一层的集合
                 //NavigateFlat 展开最后一层后如果使用了ManyToOne或者OneToOne的对象那么必须保留最后一层集合不可以直接Flat到对象
-                setEntityValue(entity.getEntity(), entityInclude);
+
+                if (flatClassType != null) {//特殊处理
+                    Object flatPaddingValue = manyToOneGetter.getFlatPaddingValue();
+                    flatClassMap.put(flatPaddingValue, entityInclude);
+                    setEntityValue(entity.getEntity(), flatPaddingValue);
+                } else {
+                    setEntityValue(entity.getEntity(), entityInclude);
+                }
             }
         }
     }
@@ -154,7 +186,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
 
         EntityRelationPropertyProvider entityRelationPropertyProvider = selfNavigateMetadata.getEntityRelationPropertyProvider();
         //entities如果size只有1就不需要后续操作
-        RelationIncludeGetter manyToManyGetter = entityRelationPropertyProvider.getManyToManyGetter(runtimeContext, selfNavigateMetadata, targetColumnMetadataPropertyNames, includes, mappingRows,includeParserResult.isHasOrder());
+        RelationIncludeGetter manyToManyGetter = entityRelationPropertyProvider.getManyToManyGetter(runtimeContext, selfNavigateMetadata, targetColumnMetadataPropertyNames, includes, mappingRows, includeParserResult.isHasOrder());
         if (manyToManyGetter == null) {
             throw new EasyQueryInvalidOperationException("Please implement the getManyToManyGetter method first.");
         }

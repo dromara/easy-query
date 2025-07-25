@@ -347,4 +347,9 @@ public class EmptyExpressionContext implements ExpressionContext{
     public boolean isReverseOrder() {
         return false;
     }
+
+    @Override
+    public Map<Object, Object> getFlatClassMap() {
+        return Collections.emptyMap();
+    }
 }

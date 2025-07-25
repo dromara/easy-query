@@ -37,7 +37,7 @@ public class M8RoleDTO {
     public static class InternalOwner {
         @NavigateFlat(pathAlias = "menuOwner.id")
         private String id;
-        @NavigateFlat(pathAlias = "menuOwner.id")
+        @NavigateFlat(pathAlias = "menuOwner.name")
         private String name;
     }
 

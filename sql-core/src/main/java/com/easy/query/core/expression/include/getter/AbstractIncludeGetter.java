@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.include.getter;
 
+import com.easy.query.core.common.collection.CollectionDescriptor;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -15,12 +16,14 @@ import java.util.Collection;
  */
 public abstract class AbstractIncludeGetter {
     protected final NavigateMetadata navigateMetadata;
+    protected final CollectionDescriptor collectionDescriptor;
 
     public AbstractIncludeGetter(NavigateMetadata navigateMetadata){
         this.navigateMetadata = navigateMetadata;
+        this.collectionDescriptor = EasyClassUtil.getCollectionDescriptorByType(navigateMetadata.getNavigateOriginalPropertyType());
     }
 
     protected <TNavigateEntity> Collection<TNavigateEntity> createManyCollection() {
-        return EasyCollectionUtil.createManyCollection(navigateMetadata);
+        return EasyObjectUtil.typeCastNullable(collectionDescriptor.newCollection());
     }
 }

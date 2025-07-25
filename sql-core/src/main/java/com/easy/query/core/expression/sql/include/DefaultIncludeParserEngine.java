@@ -67,10 +67,6 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                 }));
         int i = 0;
         for (TEntity entity : entities) {
-
-//            Map<String, Object> extraColumns = relationExtraMetadata.getRelationExtraColumnList().get(i);
-//            RelationExtraEntity relationExtraEntity = new RelationExtraEntityImpl(entity, extraColumns, extraColumnMetadata, expressionContext.getRuntimeContext().getRelationValueFactory());
-//            relationExtraEntities.add(relationExtraEntity);
             //普通include走这边
             if (EasyCollectionUtil.isNotEmpty(relationExtraMetadata.getRelationExtraColumnList())) {
                 Map<String, Object> extraColumns = relationExtraMetadata.getRelationExtraColumnList().get(i);
@@ -239,10 +235,12 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
             relationIds.clear();
             relationIds.addAll(targetIds);
         }
+        Map<Object, Object> flatClassMap = expressionContext.getFlatClassMap();
         //导航属性追踪与否
         List<RelationExtraEntity> includeResult = relationIds.isEmpty() ? EasyCollectionUtil.emptyList() : EasyIncludeUtil.queryableExpressionGroupExecute(queryRelationGroupSize, includeParseContext.getIncludeQueryableExpression(), includeNavigateParams, relationIds, q -> {
             ExpressionContext innerExpressionContext = q.getSQLEntityExpressionBuilder().getExpressionContext();
             List<?> list = q.toList();
+            flatClassMap.putAll(innerExpressionContext.getFlatClassMap());
             return getRelationExtraEntities(innerExpressionContext, list);
         }, ignoreGroupSize);
         return new DefaultIncludeParserResult(entityMetadata, navigateMetadata, relationExtraEntities, navigateMetadata.getRelationType(),
@@ -261,7 +259,9 @@ public class DefaultIncludeParserEngine implements IncludeParserEngine {
                 includeParseContext.getIncludeNavigateParams().getNavigateFlatMetadataList(),
                 includeParseContext.getIncludeNavigateParams().getFlatQueryEntityMetadata(),
                 includeParseContext.getDirectMapping(),
-                includeParseContext.getIncludeNavigateParams().isHasOrder()
+                includeParseContext.getIncludeNavigateParams().isHasOrder(),
+                includeParseContext.getIncludeNavigateParams(),
+                flatClassMap
         );
     }
 

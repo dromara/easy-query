@@ -1,8 +1,11 @@
 package com.easy.query.core.expression.include.getter;
 
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.sql.include.RelationExtraEntity;
 import com.easy.query.core.expression.sql.include.RelationValue;
+import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
@@ -17,7 +20,8 @@ import java.util.Map;
  */
 public class EqualsManyToOneGetter implements RelationIncludeGetter{
     private final Map<RelationValue, ?> includeMap;
-    public EqualsManyToOneGetter(String[] targetPropertyNames, List<RelationExtraEntity> includes){
+    private final EntityMetadata targetEntityMetadata;
+    public EqualsManyToOneGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes){
         //因为是多对一所以获取关联数据key为主键的map
         this.includeMap = EasyCollectionUtil.collectionToMap(includes, x -> {
             RelationValue relationExtraColumns = x.getRelationExtraColumns(targetPropertyNames);
@@ -31,6 +35,7 @@ public class EqualsManyToOneGetter implements RelationIncludeGetter{
                 throw new EasyQueryInvalidOperationException("The relationship value ‘" + key + "’ appears to have duplicates: [" + EasyClassUtil.getInstanceSimpleName(old) + "]. Please confirm whether the data represents a One or Many relationship.");
             }
         });
+        this.targetEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType());
     }
     @Override
     public boolean include() {
@@ -40,5 +45,10 @@ public class EqualsManyToOneGetter implements RelationIncludeGetter{
     @Override
     public Object getIncludeValue(RelationValue relationValue) {
         return includeMap.get(relationValue);
+    }
+
+    @Override
+    public Object getFlatPaddingValue() {
+        return targetEntityMetadata.getBeanConstructorCreator().get();
     }
 }

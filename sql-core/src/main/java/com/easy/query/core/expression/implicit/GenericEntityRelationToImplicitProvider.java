@@ -143,7 +143,7 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
                         EntityMetadata middleEntityMetadata = middle.getEntityMetadata();
                         for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {
                             ColumnMetadata columnMetadata = middleEntityMetadata.getColumnNotNull(selfMappingProperty);
-                            middle.columnAs(selfMappingProperty, "__"+columnMetadata.getName()+"__");
+                            middle.columnAs(selfMappingProperty, "__" + columnMetadata.getName() + "__");
                         }
                     });
         } else {
@@ -201,7 +201,7 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
                     for (String selfMappingProperty : navigateMetadata.getSelfMappingProperties()) {
                         s.column(entityTable, selfMappingProperty);
                     }
-                }else{
+                } else {
                     for (String column : targetPropertiesOrPrimary) {
                         s.column(column);
                     }
@@ -241,7 +241,7 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
 
     @Override
     public RelationIncludeGetter getOneToOneGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] selfRelationColumn, Collection<RelationExtraEntity> entities) {
-        return new EqualsOneToOneGetter(selfRelationColumn, entities);
+        return new EqualsOneToOneGetter(runtimeContext, navigateMetadata, selfRelationColumn, entities);
     }
 
     @Override
@@ -251,7 +251,7 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
 
     @Override
     public RelationIncludeGetter getManyToOneGetter(QueryRuntimeContext runtimeContext, NavigateMetadata navigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes) {
-        return new EqualsManyToOneGetter(targetPropertyNames, includes);
+        return new EqualsManyToOneGetter(runtimeContext, navigateMetadata, targetPropertyNames, includes);
     }
 
     @Override

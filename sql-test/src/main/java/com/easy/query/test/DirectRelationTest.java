@@ -7,11 +7,14 @@ import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.dto.Direct1DTO;
+import com.easy.query.test.dto.Direct1DTO2;
 import com.easy.query.test.entity.direct.Direct1;
 import com.easy.query.test.entity.direct.Direct2;
 import com.easy.query.test.entity.direct.Direct3;
 import com.easy.query.test.entity.direct.Direct4;
 import com.easy.query.test.entity.direct.Direct5;
+import com.easy.query.test.entity.school.SchoolStudent;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,6 +22,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * create time 2025/3/1 22:14
@@ -295,21 +299,79 @@ public class DirectRelationTest extends BaseTest {
         }
     }
 
-//    @Test
-//    public void test4() {
-//
-//        easyEntityQuery.queryable(SchoolStudent.class)
-//                .includeMany(d -> {
-//                    d.schoolClass().include();
-//                    d.schoolClass().schoolStudents().include();
-//                    d.schoolClass().schoolStudents().includeFilter(s->s.);
-//                })
-//        easyEntityQuery.queryable(Direct1.class)
-//                .includeMany(d -> IncludeMany.of(
-//                        d.direct2(),
-//                        d.direct5(),
-//                        d.direct4().direct5()
-//                ))
-//                .where(d -> d.direct5().c21().eq("1234"))
-//    }
+    @Test
+    public void test4() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Direct1DTO> list = easyEntityQuery.queryable(Direct1.class)
+                .selectAutoInclude(Direct1DTO.class)
+                .toList();
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`c1`,t.`c2`,t.`c3`,t.`c4` FROM `direct1` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `c8` AS `__relation__c8`,`c9` AS `__relation__c9`,`c7` AS `__relation__c7` FROM `direct2` WHERE `c7` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT t.`c11`,t.`c12`,t.`c13`,t.`c14` AS `__relation__c14`,t.`c15` AS `__relation__c15` FROM `direct3` t WHERE ((t.`c13` =? AND t.`c14` =?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("8(String),9(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+
+        for (Direct1DTO direct1DTO : list) {
+            if(Objects.equals(direct1DTO.getC1(),"1")){
+                Assert.assertNotNull(direct1DTO.getDirect3());
+                Assert.assertEquals("11", direct1DTO.getDirect3().getC11());
+                Assert.assertEquals("15", direct1DTO.getDirect3().getC20());
+
+            }else{
+                Assert.assertNull(direct1DTO.getDirect3());
+            }
+        }
+        System.out.println(list);
+    }
+    @Test
+    public void test5() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Direct1DTO2> list = easyEntityQuery.queryable(Direct1.class)
+                .selectAutoInclude(Direct1DTO2.class)
+                .toList();
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`c1`,t.`c2`,t.`c3`,t.`c4` FROM `direct1` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `c8` AS `__relation__c8`,`c9` AS `__relation__c9`,`c7` AS `__relation__c7` FROM `direct2` WHERE `c7` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+
+        for (Direct1DTO2 direct1DTO : list) {
+            if(Objects.equals(direct1DTO.getC1(),"1")){
+                Assert.assertNotNull(direct1DTO.getDirect3());
+                Assert.assertEquals("11", direct1DTO.getDirect3().getC11());
+
+            }else{
+                Assert.assertNull(direct1DTO.getDirect3());
+            }
+        }
+        System.out.println(list);
+    }
 }

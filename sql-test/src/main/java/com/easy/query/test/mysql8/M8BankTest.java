@@ -1519,21 +1519,14 @@ public class M8BankTest extends BaseTest {
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
-        Exception ea = null;
-        try {
 
-            String arg = "myArg";
-            List<SysBank2DTO> list = easyEntityQuery.queryable(SysBank.class)
-                    .configure(o -> {
-                        o.setConfigureArgument(arg);
-                    })
-                    .selectAutoInclude(SysBank2DTO.class)
-                    .toList();
-
-        } catch (Exception e) {
-            ea = e;
-        }
-        Assert.assertNotNull(ea);
+        String arg = "myArg";
+        List<SysBank2DTO> list = easyEntityQuery.queryable(SysBank.class)
+                .configure(o -> {
+                    o.setConfigureArgument(arg);
+                })
+                .selectAutoInclude(SysBank2DTO.class)
+                .toList();
         listenerContextManager.clear();
 
         {

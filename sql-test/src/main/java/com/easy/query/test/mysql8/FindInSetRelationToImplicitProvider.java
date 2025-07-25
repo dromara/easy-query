@@ -168,5 +168,10 @@ public class FindInSetRelationToImplicitProvider implements EntityRelationProper
             }
             return objects;
         }
+
+        @Override
+        public Object getFlatPaddingValue() {
+            return null;
+        }
     }
 }

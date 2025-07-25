@@ -27,10 +27,12 @@ import java.util.stream.Collectors;
 public class EasyFlatIncludeProcessor extends EasyIncludeProcess {
     private final NavigateFlatMetadata navigateFlatMetadata;
     private Property<Object, Collection<?>> navigateFlatGetter;
+    private final boolean flatClassObject;
 
     public EasyFlatIncludeProcessor(NavigateFlatMetadata navigateFlatMetadata, IncludeParserResult includeParserResult, QueryRuntimeContext runtimeContext) {
         super(includeParserResult, runtimeContext);
         this.navigateFlatMetadata = navigateFlatMetadata;
+        this.flatClassObject = !navigateFlatMetadata.isToMany() && !navigateFlatMetadata.isBasicType();
         //生成多个targetNaviaget在process的时候for调用
         initNavigateFlatGetter(includeParserResult, includeParserResult.getFlatQueryEntityMetadata(), navigateFlatMetadata, runtimeContext);
 
@@ -71,8 +73,9 @@ public class EasyFlatIncludeProcessor extends EasyIncludeProcess {
             while (iterator.hasNext()) {
                 Property<Object, ?> getter = iterator.next();
                 collectionValues = collectionValues.stream().map(o -> {
-                    return getCollectionValue(o, getter);
-                }).flatMap(o -> o.stream()).filter(o -> o != null).distinct().collect(Collectors.toList());
+                            return getCollectionValue(o, getter);
+                        }).flatMap(o -> o.stream()).filter(o -> o != null)
+                        .distinct().collect(Collectors.toList());
             }
             return collectionValues;
         };
@@ -102,7 +105,13 @@ public class EasyFlatIncludeProcessor extends EasyIncludeProcess {
             if (navigateFlatMetadata.isToMany()) {
                 navigateFlatMetadata.getBeanSetter().call(entity, values);
             } else {
-                navigateFlatMetadata.getBeanSetter().call(entity, EasyCollectionUtil.firstOrNull(values));
+                Object val = EasyCollectionUtil.firstOrNull(values);
+                if(flatClassObject){
+                    Object target = includeParserResult.getFlatClassMap().get(val);
+                    navigateFlatMetadata.getBeanSetter().call(entity, target);
+                }else{
+                    navigateFlatMetadata.getBeanSetter().call(entity, val);
+                }
             }
         } else {
             super.setEntityValue(entity, value);

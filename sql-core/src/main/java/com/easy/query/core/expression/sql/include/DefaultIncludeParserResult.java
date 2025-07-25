@@ -4,9 +4,12 @@ import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateFlatMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +41,8 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
     private final EntityMetadata flatQueryEntityMetadata;
     private final String[] directMapping;
     private final boolean hasOrder;
+    private final IncludeNavigateParams includeNavigateParams;
+    private final Map<Object,Object> flatClassMap;
 
     public DefaultIncludeParserResult(EntityMetadata entityMetadata,
                                       NavigateMetadata navigateMetadata,
@@ -58,7 +63,8 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
                                       List<NavigateFlatMetadata> navigateFlatMetadataList,
                                       EntityMetadata flatQueryEntityMetadata,
                                       String[] directMapping,
-                                      boolean hasOrder){
+                                      boolean hasOrder,
+                                      IncludeNavigateParams includeNavigateParams,Map<Object,Object> flatClassMap){
 
         this.entityMetadata = entityMetadata;
         this.navigateMetadata = navigateMetadata;
@@ -80,6 +86,8 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
         this.flatQueryEntityMetadata = flatQueryEntityMetadata;
         this.directMapping = directMapping;
         this.hasOrder = hasOrder;
+        this.includeNavigateParams = includeNavigateParams;
+        this.flatClassMap = flatClassMap;
     }
     @Override
     public EntityMetadata getEntityMetadata() {
@@ -182,5 +190,15 @@ public class DefaultIncludeParserResult implements IncludeParserResult{
     @Override
     public boolean isHasOrder() {
         return hasOrder;
+    }
+
+    @Override
+    public IncludeNavigateParams getIncludeNavigateParams() {
+        return includeNavigateParams;
+    }
+
+    @Override
+    public Map<Object,Object> getFlatClassMap() {
+        return flatClassMap;
     }
 }

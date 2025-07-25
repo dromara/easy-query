@@ -2,7 +2,6 @@ package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.basic.extension.conversion.ColumnReader;
-import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.enums.ContextTypeEnum;
 import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
@@ -17,7 +16,6 @@ import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.expression.sql.builder.internal.ExpressionContextInterceptor;
 import com.easy.query.core.expression.sql.fill.FillExpression;
 import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
-import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.RelationExtraMetadata;
@@ -128,4 +126,6 @@ public interface ExpressionContext extends RuntimeContextAvailable {
     ConfigureArgument getConfigureArgument();
     void setReverseOrder(boolean reverseOrder);
     boolean isReverseOrder();
+    Map<Object,Object> getFlatClassMap();
+
 }

@@ -22,11 +22,13 @@ public class EqualsOneToManyGetter extends AbstractIncludeGetter implements Rela
     private final Class<?> navigateOriginalPropertyType;
     private final String[] targetPropertyNames;
     private final Map<RelationValue, Collection<RelationExtraEntity>> targetToManyMap;
+    private final CollectionDescriptor collectionDescriptor;
 
     public EqualsOneToManyGetter(NavigateMetadata selfNavigateMetadata, String[] targetPropertyNames, List<RelationExtraEntity> includes) {
         super(selfNavigateMetadata);
         this.navigateOriginalPropertyType = selfNavigateMetadata.getNavigateOriginalPropertyType();
         this.targetPropertyNames = targetPropertyNames;
+        this.collectionDescriptor = EasyClassUtil.getCollectionDescriptorByType(navigateOriginalPropertyType);
         this.targetToManyMap = getTargetToManyMap(includes);
     }
     /**
@@ -37,7 +39,6 @@ public class EqualsOneToManyGetter extends AbstractIncludeGetter implements Rela
      * @return
      */
     protected <TNavigateEntity> Map<RelationValue, Collection<TNavigateEntity>> getTargetToManyMap(List<RelationExtraEntity> includes) {
-        CollectionDescriptor collectionDescriptor = EasyClassUtil.getCollectionDescriptorByType(navigateOriginalPropertyType);
         Map<RelationValue, Collection<TNavigateEntity>> resultMap = new HashMap<>();
 
         for (RelationExtraEntity target : includes) {
@@ -58,6 +59,11 @@ public class EqualsOneToManyGetter extends AbstractIncludeGetter implements Rela
     @Override
     public Object getIncludeValue(RelationValue relationValue) {
         return targetToManyMap.computeIfAbsent(relationValue, k -> createManyCollection());
+    }
+
+    @Override
+    public Object getFlatPaddingValue() {
+        return this.collectionDescriptor.newCollection();
     }
 
 }

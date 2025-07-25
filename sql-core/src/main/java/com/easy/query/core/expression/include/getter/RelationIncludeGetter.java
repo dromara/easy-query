@@ -21,4 +21,5 @@ public interface RelationIncludeGetter {
      * @return 需要返回self关联了哪些
      */
     Object getIncludeValue(RelationValue relationValue);
+    Object getFlatPaddingValue();
 }

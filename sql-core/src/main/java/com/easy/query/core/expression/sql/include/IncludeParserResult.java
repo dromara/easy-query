@@ -5,6 +5,7 @@ import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateFlatMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 
@@ -59,5 +60,8 @@ public interface IncludeParserResult {
     List<NavigateFlatMetadata> getNavigateFlatMetadataList();
     EntityMetadata getFlatQueryEntityMetadata();
     boolean isHasOrder();
+    IncludeNavigateParams getIncludeNavigateParams();
+
+    Map<Object,Object> getFlatClassMap();
 
 }

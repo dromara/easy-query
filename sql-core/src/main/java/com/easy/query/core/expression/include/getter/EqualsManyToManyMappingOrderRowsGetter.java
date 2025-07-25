@@ -108,4 +108,9 @@ public class EqualsManyToManyMappingOrderRowsGetter extends AbstractIncludeGette
         }
         return resultMap;
     }
+
+    @Override
+    public Object getFlatPaddingValue() {
+        return createManyCollection();
+    }
 }
