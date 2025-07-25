@@ -206,9 +206,11 @@ public class SpringBootStarterBuilder {
                         case DB2:
                             new DB2DatabaseConfiguration().configure(s);
                             break;
-                        default:
+                        case SQL92:
                             new DefaultDatabaseConfiguration().configure(s);
                             break;
+                        default:
+                            throw new UnsupportedOperationException("Please select the correct database dialect. For Spring-related configuration, set it in the yml file, for example:[easy-query.database: mysql]");
 
                     }
                 })

@@ -8,9 +8,9 @@ package com.easy.query.solon.integration.option;
  */
 public enum DatabaseEnum {
     /**
-     * 无
+     * 未知
      */
-    DEFAULT,
+    UNKNOWN,
     /**
      * mysql
      */
@@ -28,5 +28,6 @@ public enum DatabaseEnum {
     SQLITE,
     CLICKHOUSE,
     GAUSS_DB,
-    DB2
+    DB2,
+    SQL92
 }

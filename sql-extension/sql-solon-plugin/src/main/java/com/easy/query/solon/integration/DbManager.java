@@ -15,6 +15,7 @@ import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.ShardingEntityExpressionExecutor;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
+import com.easy.query.core.bootstrapper.DefaultDatabaseConfiguration;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.bootstrapper.EasyQueryBuilderConfiguration;
 import com.easy.query.core.common.EasyQueryTrackInvoker;
@@ -85,9 +86,9 @@ public class DbManager {
     public InvokeTryFinally allInvokeTryFinally = null;
 
 
-    public static Supplier<HolderFactory> injectHolderFactory =()-> DefaultHolderFactory.DEFAULT;
+    public static Supplier<HolderFactory> injectHolderFactory = () -> DefaultHolderFactory.DEFAULT;
 
-    public static void replace(Supplier<HolderFactory> injectHolderFactory){
+    public static void replace(Supplier<HolderFactory> injectHolderFactory) {
         DbManager.injectHolderFactory = injectHolderFactory;
     }
 
@@ -182,9 +183,10 @@ public class DbManager {
 
 
         DatabaseConfiguration databaseConfigure = getDatabaseConfigure(solonEasyQueryProperties);
-        if (databaseConfigure != null) {
-            easyQueryBuilderConfiguration.useDatabaseConfigure(databaseConfigure);
+        if (databaseConfigure == null) {
+            throw new UnsupportedOperationException("Please select the correct database dialect. For solon-related configuration, set it in the yml file, for example:[easy-query.database: mysql]");
         }
+        easyQueryBuilderConfiguration.useDatabaseConfigure(databaseConfigure);
         useNameConversion(solonEasyQueryProperties, easyQueryBuilderConfiguration);
         useMapKeyConversion(solonEasyQueryProperties, easyQueryBuilderConfiguration);
         usePropertyMode(solonEasyQueryProperties, easyQueryBuilderConfiguration);
@@ -194,7 +196,7 @@ public class DbManager {
             easyQueryBuilderConfiguration
                     .replaceService(SQLParameterPrintFormat.class, MyBatisSQLParameterPrintFormat.class);
         }
-        if(Boolean.TRUE.equals(solonEasyQueryProperties.getSharding())){
+        if (Boolean.TRUE.equals(solonEasyQueryProperties.getSharding())) {
             easyQueryBuilderConfiguration
                     .replaceService(EntityExpressionExecutor.class, ShardingEntityExpressionExecutor.class);
         }
@@ -245,6 +247,7 @@ public class DbManager {
                 break;
         }
     }
+
     private static void useMappingStrategy(SolonEasyQueryProperties solonEasyQueryProperties, EasyQueryBuilderConfiguration easyQueryBuilderConfiguration) {
         EntityMappingStrategyEnum mappingStrategy = solonEasyQueryProperties.getMappingStrategy();
         switch (mappingStrategy) {
@@ -311,6 +314,8 @@ public class DbManager {
                 return new GaussDBDatabaseConfiguration();
             case DB2:
                 return new DB2DatabaseConfiguration();
+            case SQL92:
+                return new DefaultDatabaseConfiguration();
         }
         return null;
     }

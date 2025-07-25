@@ -70,6 +70,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 请使用{@link #filter(SQLActionExpression1)}
+     *
      * @param filterExpression
      */
     @Deprecated
@@ -79,7 +80,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     public void filter(SQLActionExpression1<TProxy> filterExpression) {
         TableAvailable thisTable = getTable();
-        if(!(thisTable instanceof RelationEntityTableAvailable)){
+        if (!(thisTable instanceof RelationEntityTableAvailable)) {
             throw new EasyQueryInvalidOperationException("can not use extraFilter for " + EasyClassUtil.getSimpleName(getTable().getEntityClass()));
         }
         RelationTableKey relationTableKey = ((RelationEntityTableAvailable) thisTable).getRelationTableKey();

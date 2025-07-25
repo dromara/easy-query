@@ -34,7 +34,7 @@ public class EasyQueryProperties {
      * 是否启用分片
      */
     private Boolean sharding = false;
-    private DatabaseEnum database = DatabaseEnum.DEFAULT;
+    private DatabaseEnum database = DatabaseEnum.UNKNOWN;
     private SQLParameterPrintEnum sqlParameterPrint = SQLParameterPrintEnum.DEFAULT;
     private NameConversionEnum nameConversion = NameConversionEnum.UNDERLINED;
     private MapKeyConversionEnum mapKeyConversion = MapKeyConversionEnum.DEFAULT;

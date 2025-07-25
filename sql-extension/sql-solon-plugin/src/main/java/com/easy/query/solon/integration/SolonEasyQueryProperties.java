@@ -31,7 +31,7 @@ public class SolonEasyQueryProperties {
      * in inClause的参数个数限制
      */
     private final static int maxInClauseSize = 9999999;
-    private final static DatabaseEnum database = DatabaseEnum.MYSQL;
+    private final static DatabaseEnum database = DatabaseEnum.UNKNOWN;
     private final static NameConversionEnum nameConversion = NameConversionEnum.UNDERLINED;
     private final static MapKeyConversionEnum mapKeyConversion = MapKeyConversionEnum.DEFAULT;
     private final static SQLExecuteStrategyEnum insertStrategy = SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
@@ -202,6 +202,8 @@ public class SolonEasyQueryProperties {
                     return DatabaseEnum.GAUSS_DB;
                 case "db2":
                     return DatabaseEnum.DB2;
+                case "sql92":
+                    return DatabaseEnum.SQL92;
             }
             return null;
         });
