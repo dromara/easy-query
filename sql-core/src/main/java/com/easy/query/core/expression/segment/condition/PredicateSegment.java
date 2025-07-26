@@ -3,6 +3,7 @@ package com.easy.query.core.expression.segment.condition;
 import com.easy.query.core.expression.lambda.BreakConsumer;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
+import com.easy.query.core.expression.segment.condition.predicate.PredicateUnit;
 import com.easy.query.core.expression.segment.index.SegmentIndex;
 
 import java.util.List;
@@ -47,9 +48,14 @@ public interface PredicateSegment extends SQLSegment {
      * @return
      */
     List<Predicate> getFlatAndPredicates();
+    List<PredicateSegment> getFlatAndPredicateSegments();
     SegmentIndex buildPredicateIndex();
 
     void copyTo(PredicateSegment predicateSegment);
     PredicateSegment clonePredicateSegment();
+
+    void removeChildren(PredicateSegment predicateSegment);
+
+    void reset();
 
 }

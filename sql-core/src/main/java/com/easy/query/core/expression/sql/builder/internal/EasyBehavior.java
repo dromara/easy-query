@@ -30,6 +30,14 @@ public final class EasyBehavior {
             return true;
         }
     }
+    public EasyBehavior add(EasyBehaviorEnum easyBehavior){
+        if (hasBehavior(easyBehavior)) {
+            return this;
+        } else {
+            behavior = EasyBitwiseUtil.addBit(behavior, easyBehavior.getCode());
+            return this;
+        }
+    }
 
     public boolean removeBehavior(EasyBehaviorEnum easyBehavior) {
         if (hasBehavior(easyBehavior)) {
@@ -37,6 +45,13 @@ public final class EasyBehavior {
             return true;
         }
         return false;
+    }
+    public EasyBehavior remove(EasyBehaviorEnum easyBehavior) {
+        if (hasBehavior(easyBehavior)) {
+            behavior = EasyBitwiseUtil.removeBit(behavior, easyBehavior.getCode());
+            return this;
+        }
+        return this;
     }
 
     public void copyTo(EasyBehavior easyBehavior) {

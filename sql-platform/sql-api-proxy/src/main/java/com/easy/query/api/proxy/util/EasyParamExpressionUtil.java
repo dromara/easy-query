@@ -1,6 +1,7 @@
 package com.easy.query.api.proxy.util;
 
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.scec.expression.ColumnConstParameterExpressionImpl;
 import com.easy.query.core.expression.segment.scec.expression.ColumnPropertyExpressionImpl;
@@ -64,6 +65,9 @@ public class EasyParamExpressionUtil {
         }  else if (value instanceof PredicateSegment) {
             PredicateSegment  sqlSegment = (PredicateSegment) value;
             columnFuncSelector.expression(sqlSegment);
+        }  else if (value instanceof SQLSegment) {
+            SQLSegment  sqlSegment = (SQLSegment) value;
+            columnFuncSelector.sql(sqlSegment);
         }  else if (value instanceof Collection) {
             Collection<?>  collection = (Collection) value;
             columnFuncSelector.collection(collection);

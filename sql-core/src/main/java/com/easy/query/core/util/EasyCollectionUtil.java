@@ -115,6 +115,17 @@ public class EasyCollectionUtil {
         return sources.size() == 1;
     }
 
+    public static <TSource, TElement> Set<TElement> toSetBy(Collection<TSource> sources, Function<TSource, TElement> selector) {
+        int size = sources.size();
+        Set<TElement> result = new HashSet<>(size);
+        int i = 0;
+        for (TSource source : sources) {
+            TElement element = selector.apply(source);
+            result.add(element);
+            i++;
+        }
+        return result;
+    }
     public static <TSource, TElement> List<TElement> select(Collection<TSource> sources, Selector<TSource, TElement> selector) {
         int size = sources.size();
         List<TElement> result = new ArrayList<>(size);

@@ -28,9 +28,11 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
+import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.core.PropagationValueFilter;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.builder.core.ValueFilter;
+import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLActionExpression10;
 import com.easy.query.core.expression.lambda.SQLActionExpression2;
@@ -107,6 +109,12 @@ import java.util.stream.Collectors;
  */
 public class EasySQLExpressionUtil {
     private EasySQLExpressionUtil() {
+    }
+    public static AndPredicateSegment resolve(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, SQLActionExpression1<Filter> filterExpression) {
+        AndPredicateSegment andPredicateSegment = new AndPredicateSegment(true);
+        FilterImpl filter = new FilterImpl(runtimeContext, expressionContext, andPredicateSegment, false, expressionContext.getValueFilter());
+        filterExpression.apply(filter);
+        return andPredicateSegment;
     }
     public static void propagationValueFilter(ClientQueryable<?> clientQueryable,ExpressionContext expressionContext){
 

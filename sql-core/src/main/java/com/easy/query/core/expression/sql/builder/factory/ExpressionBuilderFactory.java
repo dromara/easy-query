@@ -38,7 +38,7 @@ public interface ExpressionBuilderFactory {
        return createAnonymousEntityTableExpressionBuilder(new EntityTableAvailable(entityMetadata,true),multiTableType,entityQueryExpressionBuilder);
    }
     EntityTableExpressionBuilder createAnonymousEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder);
-    AnonymousManyJoinEntityTableExpressionBuilder createAnonymousManyGroupEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder, String[] defaultKeys);
+    AnonymousManyJoinEntityTableExpressionBuilder createAnonymousManyGroupEntityTableExpressionBuilder(ExpressionContext expressionContext,TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder, String[] defaultKeys);
     EntityQueryExpressionBuilder createEntityQueryExpressionBuilder(ExpressionContext sqlExpressionContext,Class<?> queryClass);
     default EntityQueryExpressionBuilder createAnonymousQueryExpressionBuilder(String sql, Collection<Object> sqlParams, ExpressionContext sqlExpressionContext, Class<?> queryClass){
         return new AnonymousQueryExpressionBuilder(sql,sqlParams,sqlExpressionContext,queryClass);

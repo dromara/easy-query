@@ -76,8 +76,8 @@ public class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFac
     }
 
     @Override
-    public AnonymousManyJoinEntityTableExpressionBuilder createAnonymousManyGroupEntityTableExpressionBuilder(TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder, String[] defaultKeys) {
-        return new AnonymousManyJoinDefaultTableExpressionBuilder(tableAvailable, multiTableType, entityQueryExpressionBuilder, defaultKeys);
+    public AnonymousManyJoinEntityTableExpressionBuilder createAnonymousManyGroupEntityTableExpressionBuilder(ExpressionContext expressionContext,TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder, String[] defaultKeys) {
+        return new AnonymousManyJoinDefaultTableExpressionBuilder(expressionContext,tableAvailable, multiTableType, entityQueryExpressionBuilder, defaultKeys);
     }
 
     @Override

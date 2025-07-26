@@ -37,6 +37,11 @@ public class SQLSegmentParamExpressionImpl implements SQLSegmentParamExpression 
     }
 
     @Override
+    public SQLSegment getSQLSegment() {
+        return sqlSegment;
+    }
+
+    @Override
     public void accept(TableVisitor visitor) {
         EasySQLSegmentUtil.sqlSegmentTableVisit(sqlSegment, visitor);
     }

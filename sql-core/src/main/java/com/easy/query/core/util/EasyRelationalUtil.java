@@ -198,7 +198,7 @@ public class EasyRelationalUtil {
                 joinType = MultiTableTypeEnum.INNER_JOIN;
             }
 
-            EntityTableExpressionBuilder tableExpressionBuilder = expressionBuilderFactory.createAnonymousManyGroupEntityTableExpressionBuilder(rightTable, joinType, manyQueryable.getSQLEntityExpressionBuilder(), targetPropertiesOrPrimary);
+            EntityTableExpressionBuilder tableExpressionBuilder = expressionBuilderFactory.createAnonymousManyGroupEntityTableExpressionBuilder(entityExpressionBuilder.getExpressionContext(), rightTable, joinType, manyQueryable.getSQLEntityExpressionBuilder(), targetPropertiesOrPrimary);
 
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
 
@@ -277,7 +277,7 @@ public class EasyRelationalUtil {
             if (index == 0 && navigateMetadata.isRequired()) {
                 joinType = MultiTableTypeEnum.INNER_JOIN;
             }
-            EntityTableExpressionBuilder tableExpressionBuilder = expressionBuilderFactory.createAnonymousManyGroupEntityTableExpressionBuilder(rightTable, joinType, clientQueryable.getSQLEntityExpressionBuilder(), targetPropertiesOrPrimary);
+            EntityTableExpressionBuilder tableExpressionBuilder = expressionBuilderFactory.createAnonymousManyGroupEntityTableExpressionBuilder(entityExpressionBuilder.getExpressionContext(), rightTable, joinType, clientQueryable.getSQLEntityExpressionBuilder(), targetPropertiesOrPrimary);
 
             AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
 
@@ -294,7 +294,7 @@ public class EasyRelationalUtil {
                         String selfMappingColumnName = selfMappingColumnNames[i];
                         String selfProperty = navigateMetadata.getSelfPropertiesOrPrimary()[i];
                         sqlPredicate.sqlNativeSegment("{0} = {1}", c -> {
-                            c.columnName("__"+selfMappingColumnName+"__");
+                            c.columnName("__" + selfMappingColumnName + "__");
                             c.expression(leftTable, selfProperty);
                         });
                     }

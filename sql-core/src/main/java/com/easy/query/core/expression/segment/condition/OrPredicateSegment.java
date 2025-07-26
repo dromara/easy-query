@@ -29,7 +29,7 @@ public class OrPredicateSegment extends AbstractPredicateSegment {
 
     @Override
     public PredicateSegment clonePredicateSegment() {
-        OrPredicateSegment orPredicateSegment = new OrPredicateSegment(predicate, root);
+        OrPredicateSegment orPredicateSegment = new OrPredicateSegment(root);
         copyTo(orPredicateSegment);
         return orPredicateSegment;
     }

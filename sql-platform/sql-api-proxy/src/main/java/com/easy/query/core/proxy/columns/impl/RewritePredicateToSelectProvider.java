@@ -8,9 +8,11 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
+import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.func.def.impl.PredicateWrapperSQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
@@ -18,6 +20,7 @@ import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SubQueryContext;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.impl.BooleanTypeExpressionImpl;
@@ -127,69 +130,77 @@ public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Prox
     }
 
 
+    private DefaultSQLGroupQueryable<T1Proxy> getDefaultSQLGroupQueryable() {
+        DefaultSQLGroupQueryable<T1Proxy> t1ProxyDefaultSQLGroupQueryable = new DefaultSQLGroupQueryable<>(getPropertyProxy(), getPropertyProxy().getEntitySQLContext(), getSubQueryContext().getWhereExpression());
+        PredicateSegment predicateSegment = t1ProxyDefaultSQLGroupQueryable.getPredicateSegment();
+        manyGroupJoinEntityTableExpressionBuilder.addPredicateSegment(predicateSegment);
+        return t1ProxyDefaultSQLGroupQueryable;
+    }
+
     /**
      * 返回非null的boolean
+     *
      * @return
      */
     public BooleanTypeExpression<Boolean> anyValue() {
-        NumberTypeExpression<Long> count = new DefaultSQLGroupQueryable<>(getPropertyProxy(), getPropertyProxy().getEntitySQLContext(), getSubQueryContext().getWhereExpression()).count();
-        BooleanTypeExpressionImpl<Boolean> any = new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("(CASE WHEN {0} > 0 THEN {1} ELSE {2} END)", c -> {
+        DefaultSQLGroupQueryable<T1Proxy> defaultSQLGroupQueryable = getDefaultSQLGroupQueryable();
+        NumberTypeExpression<Long> count = defaultSQLGroupQueryable.count();
+//        BooleanTypeExpression<Boolean> any = Expression.of(getPropertyProxy().getEntitySQLContext()).valueOf(() -> {
+//            count.gt(0L);
+//        });
+        BooleanTypeExpressionImpl<Boolean> any = new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("({0} > 0)", c -> {
             PropTypeColumn.columnFuncSelector(c, count);
-            c.value(true);
-            c.value(false);
-//            c.sqlFunc(f.booleanConstantSQLFunction(true));
-//            c.sqlFunc(f.booleanConstantSQLFunction(false));
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(any, "any");
-        return new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f ->  {
-            if(required){
-                return  f.anySQLFunction("{0}",c->c.column(alias));
-            }else{
-                return  f.nullOrDefault(c->c.column(alias).value(false));
+        return new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> {
+            if (required) {
+                return f.anySQLFunction("{0}", c -> c.column(alias));
+            } else {
+                return f.nullOrDefault(c -> c.column(alias).value(false));
             }
         }, Boolean.class);
     }
 
     public BooleanTypeExpression<Boolean> noneValue() {
-        NumberTypeExpression<Long> count = new DefaultSQLGroupQueryable<>(getPropertyProxy(), getPropertyProxy().getEntitySQLContext(), getSubQueryContext().getWhereExpression()).count();
-        BooleanTypeExpressionImpl<Boolean> none = new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("(CASE WHEN {0} > 0 THEN {1} ELSE {2} END)", c -> {
+        DefaultSQLGroupQueryable<T1Proxy> defaultSQLGroupQueryable = getDefaultSQLGroupQueryable();
+        NumberTypeExpression<Long> count = defaultSQLGroupQueryable.count();
+        BooleanTypeExpressionImpl<Boolean> none = new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("({0} <= 0)", c -> {
             PropTypeColumn.columnFuncSelector(c, count);
-            c.value(false);
-            c.value(true);
-//            c.sqlFunc(f.booleanConstantSQLFunction(false));
-//            c.sqlFunc(f.booleanConstantSQLFunction(true));
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(none, "none");
         return new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> {
-            if(required){
-                return  f.anySQLFunction("{0}",c->c.column(alias));
-            }else{
-                return f.nullOrDefault(c->c.column(alias).value(true));
+            if (required) {
+                return f.anySQLFunction("{0}", c -> c.column(alias));
+            } else {
+                return f.nullOrDefault(c -> c.column(alias).value(true));
             }
         }, Boolean.class);
     }
 
 
     public BooleanTypeExpression<Boolean> flatElementFilterValue(SQLPredicateExpression sqlPredicateExpression) {
-        NumberTypeExpression<Long> count = new FlatElementSQLAnyQueryable(getPropertyProxy().getEntitySQLContext(), sqlPredicateExpression).count();
-        BooleanTypeExpressionImpl<Boolean> any = new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("(CASE WHEN {0} > 0 THEN {1} ELSE {2} END)", c -> {
+        FlatElementSQLAnyQueryable flatElementSQLAnyQueryable = new FlatElementSQLAnyQueryable(getPropertyProxy().getEntitySQLContext(), sqlPredicateExpression);
+        PredicateSegment predicateSegment = flatElementSQLAnyQueryable.getPredicateSegment();
+        manyGroupJoinEntityTableExpressionBuilder.addPredicateSegment(predicateSegment);
+        NumberTypeExpression<Long> count = flatElementSQLAnyQueryable.count();
+        BooleanTypeExpressionImpl<Boolean> any = new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("({0} > 0)", c -> {
             PropTypeColumn.columnFuncSelector(c, count);
-            c.value(true);
-            c.value(false);
-//            c.sqlFunc(f.booleanConstantSQLFunction(true));
-//            c.sqlFunc(f.booleanConstantSQLFunction(false));
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(any, "any");
         return new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> {
-            if(required){
-                return  f.anySQLFunction("{0}",c->c.column(alias));
-            }else{
-                return f.nullOrDefault(c->c.column(alias).value(false));
+            if (required) {
+                return f.anySQLFunction("{0}", c -> c.column(alias));
+            } else {
+                return f.nullOrDefault(c -> c.column(alias).value(false));
             }
         }, Boolean.class);
     }
+
     public BooleanTypeExpression<Boolean> flatElementAggregateFilterValue(SQLAggregatePredicateExpression sqlAggregatePredicateExpression) {
-        NumberTypeExpression<Long> count = new FlatElementJoinSQLAnyQueryable(getPropertyProxy().getEntitySQLContext(), sqlAggregatePredicateExpression).count();
+        FlatElementJoinSQLAnyQueryable flatElementJoinSQLAnyQueryable = new FlatElementJoinSQLAnyQueryable(getPropertyProxy().getEntitySQLContext(), sqlAggregatePredicateExpression);
+        PredicateSegment predicateSegment = flatElementJoinSQLAnyQueryable.getPredicateSegment();
+        manyGroupJoinEntityTableExpressionBuilder.addPredicateSegment(predicateSegment);
+        NumberTypeExpression<Long> count = flatElementJoinSQLAnyQueryable.count();
         BooleanTypeExpressionImpl<Boolean> any = new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("(CASE WHEN {0} > 0 THEN {1} ELSE {2} END)", c -> {
             PropTypeColumn.columnFuncSelector(c, count);
             c.value(true);
@@ -199,10 +210,10 @@ public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Prox
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(any, "any");
         return new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> {
-            if(required){
-                return  f.anySQLFunction("{0}",c->c.column(alias));
-            }else{
-                return f.nullOrDefault(c->c.column(alias).value(false));
+            if (required) {
+                return f.anySQLFunction("{0}", c -> c.column(alias));
+            } else {
+                return f.nullOrDefault(c -> c.column(alias).value(false));
             }
         }, Boolean.class);
     }

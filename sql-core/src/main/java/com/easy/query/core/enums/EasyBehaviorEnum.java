@@ -47,7 +47,11 @@ public enum EasyBehaviorEnum {
     /**
      * 分片使用UNION_ALL
      */
-    SHARDING_UNION_ALL(1<<12);
+    SHARDING_UNION_ALL(1<<12),
+    /**
+     * 子查询转GroupJoin自动合并
+     */
+    SUB_QUERY_GROUP_JOIN_AUTO_MERGE(1<<13);
 
     private final int code;
 

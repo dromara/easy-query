@@ -749,7 +749,7 @@ public class ManyJoinTest extends BaseTest {
 
 
     @Test
-    public void testFlatMenuOwner(){
+    public void testFlatMenuOwner() {
         List<M8RoleDTO> list = easyEntityQuery.queryable(M8Role.class)
                 .selectAutoInclude(M8RoleDTO.class)
                 .toList();
@@ -757,10 +757,194 @@ public class ManyJoinTest extends BaseTest {
     }
 
     @Test
-    public void testFlatMenuOwner1(){
+    public void testFlatMenuOwner1() {
         List<M8RoleDTO2> list = easyEntityQuery.queryable(M8Role.class)
                 .selectAutoInclude(M8RoleDTO2.class)
                 .toList();
         System.out.println("123");
+    }
+
+    @Test
+    public void testGroupJoinCombine() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Draft2<String, Long>> list = easyEntityQuery.queryable(SysUser.class)
+                .configure(o -> o.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(user -> {
+                    user.bankCards().any(o -> {
+                        o.code().eq("123");
+                    });
+                }).select(user -> Select.DRAFT.of(
+                        user.name(),
+                        user.bankCards().where(o -> o.code().eq("123")).count()
+                )).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`name` AS `value1`,IFNULL(t2.`__count3__`,0) AS `value2` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t1.`code` = ? THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any2__`,COUNT((CASE WHEN t1.`code` = ? THEN ? ELSE NULL END)) AS `__count3__` FROM `t_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`name` AS `value1`,IFNULL(t2.`__count3__`,0) AS `value2` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(CASE WHEN COUNT((CASE WHEN t1.`code` = ? THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any2__`,COUNT((CASE WHEN t1.`code` = ? THEN ? ELSE NULL END)) AS `__count3__` FROM `t_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(Integer),true(Boolean),false(Boolean),123(String),1(Integer),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
+    }
+
+    @Test
+    public void test2GroupJoinCombine() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        easyEntityQuery.updatable(SysUser.class)
+                .setColumns(user -> user.id().setNull())
+                .configure(o -> o.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(user -> {
+                    user.bankCards().any(o -> {
+                        o.code().eq("123");
+                    });
+                    user.id().isNull();
+                }).executeRows();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`age`,t.`create_time` FROM `m8_user` t LEFT JOIN (SELECT t2.`user_id` AS `__user_id__`,t1.`id`,t1.`name`,t1.`create_time`,(ROW_NUMBER() OVER (PARTITION BY t2.`user_id` ORDER BY t1.`name` ASC)) AS `__row__` FROM `m8_role` t1 INNER JOIN `m8_user_role` t2 ON t1.`id` = t2.`role_id`) t5 ON (t5.`__user_id__` = t.`id` AND t5.`__row__` = ?) WHERE t5.`create_time` <= ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),2020-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
+    }
+
+
+    @Test
+    public void test3GroupJoinCombine() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Draft2<String, Long>> list = easyEntityQuery.queryable(SysUser.class)
+                .configure(o -> o.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(user -> {
+                    user.bankCards().any(o -> {
+                        o.type().eq("456");
+                        o.code().eq("123");
+                        o.user().name().eq("123");
+                    });
+                }).select(user -> Select.DRAFT.of(
+                        user.name(),
+                        user.bankCards().where(o -> {
+                            o.code().eq("123");
+                            o.type().eq("4567");
+                            o.user().name().eq("123");
+                        }).count()
+                )).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`name` AS `value1`,IFNULL(t2.`__count3__`,0) AS `value2` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE NULL END)) > 0) AS `__any2__`,COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE NULL END)) AS `__count3__` FROM `t_bank_card` t1 LEFT JOIN `t_sys_user` t3 ON t3.`id` = t1.`uid` WHERE t1.`code` = ? AND t3.`name` = ? GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("456(String),1(Integer),4567(String),1(Integer),123(String),123(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
+    }
+
+
+
+    @Test
+    public void test4GroupJoinCombine() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Draft2<String, Long>> list = easyEntityQuery.queryable(SysUser.class)
+                .configure(o -> o.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(user -> {
+                    user.bankCards().any(o -> {
+                        o.or(()->{
+                            o.type().eq("456");
+                            o.code().eq("123");
+                        });
+                        o.user().name().eq("123");
+                    });
+                }).select(user -> Select.DRAFT.of(
+                        user.name(),
+                        user.bankCards().where(o -> {
+                            o.or(()->{
+                                o.code().eq("123");
+                                o.type().eq("4567");
+                            });
+                            o.user().name().eq("123");
+                        }).count()
+                )).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`name` AS `value1`,IFNULL(t2.`__count3__`,0) AS `value2` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(COUNT((CASE WHEN (t1.`type` = ? OR t1.`code` = ?) THEN ? ELSE NULL END)) > 0) AS `__any2__`,COUNT((CASE WHEN (t1.`code` = ? OR t1.`type` = ?) THEN ? ELSE NULL END)) AS `__count3__` FROM `t_bank_card` t1 LEFT JOIN `t_sys_user` t3 ON t3.`id` = t1.`uid` WHERE t3.`name` = ? GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("456(String),123(String),1(Integer),123(String),4567(String),1(Integer),123(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
+    }
+
+    @Test
+    public void test5GroupJoinCombine() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Draft2<String, Long>> list = easyEntityQuery.queryable(SysUser.class)
+                .configure(o -> o.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(user -> {
+                    user.bankCards().any(o -> {
+                        o.or(()->{
+                            o.code().eq("123");
+                            o.type().eq("4567");
+                        });
+                        o.user().name().eq("123");
+                    });
+                }).select(user -> Select.DRAFT.of(
+                        user.name(),
+                        user.bankCards().where(o -> {
+                            o.or(()->{
+                                o.code().eq("123");
+                                o.type().eq("4567");
+                            });
+                            o.user().name().eq("123");
+                        }).count()
+                )).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`name` AS `value1`,IFNULL(t2.`__count3__`,0) AS `value2` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(COUNT(?) > 0) AS `__any2__`,COUNT(?) AS `__count3__` FROM `t_bank_card` t1 LEFT JOIN `t_sys_user` t3 ON t3.`id` = t1.`uid` WHERE (t1.`code` = ? OR t1.`type` = ?) AND t3.`name` = ? GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),1(Integer),123(String),4567(String),123(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
+    }
+    @Test
+    public void test6GroupJoinCombine() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Draft2<String, Long>> list = easyEntityQuery.queryable(SysUser.class)
+                .configure(o -> o.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(user -> {
+                    user.bankCards().filter(o->{
+                        o.or(()->{
+                            o.code().eq("123");
+                            o.type().eq("4567");
+                        });
+                        o.user().name().eq("123");
+                    });
+
+                    user.bankCards().any();
+                }).select(user -> Select.DRAFT.of(
+                        user.name(),
+                        user.bankCards().count()
+                )).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`name` AS `value1`,IFNULL(t2.`__count3__`,0) AS `value2` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(COUNT(?) > 0) AS `__any2__`,COUNT(?) AS `__count3__` FROM `t_bank_card` t1 LEFT JOIN `t_sys_user` t3 ON t3.`id` = t1.`uid` WHERE (t1.`code` = ? OR t1.`type` = ?) AND t3.`name` = ? GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),1(Integer),123(String),4567(String),123(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
     }
 }

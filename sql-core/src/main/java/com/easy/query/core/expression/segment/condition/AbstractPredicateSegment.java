@@ -147,6 +147,23 @@ public abstract class AbstractPredicateSegment implements PredicateSegment, Shar
     }
 
     @Override
+    public List<PredicateSegment> getFlatAndPredicateSegments() {
+        if (isPredicate()) {
+            return Collections.singletonList(this);
+        } else {
+            List<PredicateSegment> predicates = new ArrayList<>();
+            if (root) {
+                if (this instanceof AndPredicateSegment) {
+                    if (children != null) {
+                        predicates.addAll(children);
+                    }
+                }
+            }
+            return predicates;
+        }
+    }
+
+    @Override
     public PredicateSegment clonePredicateSegment() {
         return null;
     }
@@ -200,6 +217,18 @@ public abstract class AbstractPredicateSegment implements PredicateSegment, Shar
     }
 
     @Override
+    public void removeChildren(PredicateSegment predicateSegment) {
+
+        if (children != null) {
+            for (PredicateSegment child : children) {
+                if(child==predicateSegment){
+                    child.reset();
+                }
+            }
+        }
+    }
+
+    @Override
     public String toSQL(ToSQLContext toSQLContext) {
         if (isPredicate()) {
             return predicate.toSQL(toSQLContext);
@@ -242,4 +271,12 @@ public abstract class AbstractPredicateSegment implements PredicateSegment, Shar
         }
     }
 
+    @Override
+    public void reset() {
+        if (children != null) {
+            children.clear();
+            children = null;
+        }
+        predicate = null;
+    }
 }

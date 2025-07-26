@@ -30,7 +30,7 @@ public class AndPredicateSegment extends AbstractPredicateSegment {
 
     @Override
     public PredicateSegment clonePredicateSegment() {
-        AndPredicateSegment andPredicateSegment = new AndPredicateSegment(predicate, root);
+        AndPredicateSegment andPredicateSegment = new AndPredicateSegment(root);
         copyTo(andPredicateSegment);
         return andPredicateSegment;
     }
