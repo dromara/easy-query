@@ -45,8 +45,8 @@ public class M8OrderTest extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`no`,t.`price`,t.`create_time` FROM `t_order` t INNER JOIN (SELECT t1.`order_id` AS `orderId`,(CASE WHEN COUNT((CASE WHEN t1.`price` > ? THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `t_order_item` t1 GROUP BY t1.`order_id`) t2 ON t2.`orderId` = t.`id` WHERE t2.`__any2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("1(BigDecimal),1(Integer),true(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id`,t.`no`,t.`price`,t.`create_time` FROM `t_order` t INNER JOIN (SELECT t1.`order_id` AS `orderId`,(COUNT(?) > 0) AS `__any2__` FROM `t_order_item` t1 WHERE t1.`price` > ? GROUP BY t1.`order_id`) t2 ON t2.`orderId` = t.`id` WHERE t2.`__any2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),1(BigDecimal),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 
@@ -66,8 +66,8 @@ public class M8OrderTest extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`no`,t.`price`,t.`create_time` FROM `t_order` t INNER JOIN (SELECT t1.`order_id` AS `orderId`,(CASE WHEN COUNT((CASE WHEN t1.`price` IS NULL THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `t_order_item` t1 GROUP BY t1.`order_id`) t2 ON t2.`orderId` = t.`id` WHERE t2.`__any2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("1(Integer),true(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id`,t.`no`,t.`price`,t.`create_time` FROM `t_order` t INNER JOIN (SELECT t1.`order_id` AS `orderId`,(COUNT(?) > 0) AS `__any2__` FROM `t_order_item` t1 WHERE t1.`price` IS NULL GROUP BY t1.`order_id`) t2 ON t2.`orderId` = t.`id` WHERE t2.`__any2__` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 

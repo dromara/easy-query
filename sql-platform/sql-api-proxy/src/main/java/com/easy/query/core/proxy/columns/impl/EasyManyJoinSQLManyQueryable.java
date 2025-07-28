@@ -4,7 +4,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.expression.segment.GroupJoinPredicateSegmentContext;
 import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.proxy.PropTypeColumn;
@@ -126,8 +126,8 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
 
     private DefaultSQLGroupQueryable<T1Proxy> getDefaultSQLGroupQueryable(){
         DefaultSQLGroupQueryable<T1Proxy> t1ProxyDefaultSQLGroupQueryable = new DefaultSQLGroupQueryable<>(rewritePredicateToSelectProvider.getPropertyProxy(), rewritePredicateToSelectProvider.getPropertyProxy().getEntitySQLContext(), rewritePredicateToSelectProvider.getSubQueryContext().getWhereExpression());
-        PredicateSegment predicateSegment = t1ProxyDefaultSQLGroupQueryable.getPredicateSegment();
-        rewritePredicateToSelectProvider.getManyGroupJoinEntityTableExpressionBuilder().addPredicateSegment(predicateSegment);
+        GroupJoinPredicateSegmentContext groupJoinPredicateSegmentContext = t1ProxyDefaultSQLGroupQueryable.getGroupJoinPredicateSegmentContext();
+        rewritePredicateToSelectProvider.getManyGroupJoinEntityTableExpressionBuilder().addGroupJoinPredicateSegmentContext(groupJoinPredicateSegmentContext);
         return t1ProxyDefaultSQLGroupQueryable;
     }
 

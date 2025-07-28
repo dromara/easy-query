@@ -1,5 +1,6 @@
 package com.easy.query.core.configuration;
 
+import com.easy.query.core.enums.GroupJoinModeEnum;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
@@ -138,6 +139,7 @@ public class EasyQueryOption {
     private final IncludeLimitModeEnum includeLimitMode;
     private final boolean saveComment;
     private final int maxInClauseSize;
+    private final GroupJoinModeEnum groupJoinMode;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy,
                            SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode,
@@ -153,7 +155,7 @@ public class EasyQueryOption {
                            String defaultSchema, long resultSizeLimit, boolean printNavSql,
                            ShardingQueryInTransactionEnum shardingQueryInTransaction, int mssqlMinBigDecimalScale,
                            IncludeLimitModeEnum includeLimitMode,
-                           boolean saveComment, int maxInClauseSize) {
+                           boolean saveComment, int maxInClauseSize, GroupJoinModeEnum groupJoinMode) {
 
 
         if (executorMaximumPoolSize > 0) {
@@ -229,6 +231,7 @@ public class EasyQueryOption {
         this.includeLimitMode = includeLimitMode;
         this.saveComment = saveComment;
         this.maxInClauseSize = maxInClauseSize;
+        this.groupJoinMode = groupJoinMode;
     }
 
     public int getMaxShardingRouteCount() {
@@ -376,5 +379,9 @@ public class EasyQueryOption {
 
     public int getMaxInClauseSize() {
         return maxInClauseSize;
+    }
+
+    public GroupJoinModeEnum getGroupJoinMode() {
+        return groupJoinMode;
     }
 }

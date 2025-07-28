@@ -10,6 +10,8 @@ import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.segment.GroupJoinColumnSegment;
 import com.easy.query.core.expression.segment.GroupJoinColumnSegmentImpl;
+import com.easy.query.core.expression.segment.GroupJoinPredicateSegmentContext;
+import com.easy.query.core.expression.segment.GroupJoinPredicateSegmentContextImpl;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.impl.DefaultSQLSegment;
@@ -39,22 +41,23 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     protected final SQLActionExpression1<TProxy> predicate;
     protected final TProxy groupTable;
     protected final EntitySQLContext entitySQLContext;
-    protected final PredicateSegment predicateSegment;
+    protected final GroupJoinPredicateSegmentContext groupJoinPredicateSegmentContext;
     protected boolean distinct = false;
 
     public DefaultSQLGroupQueryable(TProxy groupTable, EntitySQLContext entitySQLContext, SQLActionExpression1<TProxy> predicate) {
         this.groupTable = groupTable;
         this.entitySQLContext = entitySQLContext;
         this.predicate = predicate;
-        this.predicateSegment = predicate == null ? null : EasySQLExpressionUtil.resolve(entitySQLContext.getRuntimeContext(), entitySQLContext.getExpressionContext(), filter -> {
+        PredicateSegment predicateSegment = predicate == null ? null : EasySQLExpressionUtil.resolve(entitySQLContext.getRuntimeContext(), entitySQLContext.getExpressionContext(), filter -> {
             entitySQLContext._where(filter, () -> {
                 predicate.apply(groupTable);
             });
         });
+        this.groupJoinPredicateSegmentContext=new GroupJoinPredicateSegmentContextImpl(predicateSegment);
     }
 
-    public PredicateSegment getPredicateSegment() {
-        return predicateSegment;
+    public GroupJoinPredicateSegmentContext getGroupJoinPredicateSegmentContext() {
+        return groupJoinPredicateSegmentContext;
     }
 
     @Override
@@ -72,7 +75,7 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
             }, Long.class);
         } else {
 
-            PropTypeColumn<?> preColumn = new PredicateCaseWhenBuilder(this.getEntitySQLContext(), predicateSegment).then(1).elseEnd(null);
+            PropTypeColumn<?> preColumn = new PredicateCaseWhenBuilder(this.getEntitySQLContext(), groupJoinPredicateSegmentContext).then(1).elseEnd(null);
 //            PropTypeColumn<?> preColumn = new PredicateCaseWhenBuilder(this.getEntitySQLContext(), predicateSegment).then(1).elseEnd(null, Long.class);
             return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
                 return fx.count(x -> {
@@ -84,7 +87,7 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     @Override
     public <TMember> NumberTypeExpression<Long> count(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector) {
         PropTypeColumn<TMember> column = columnSelector.apply(groupTable);
-        PropTypeColumn<?> preColumn = predicate == null ? column : new PredicateCaseWhenBuilder(this.getEntitySQLContext(), predicateSegment).then(column).elseEnd(null, Long.class);
+        PropTypeColumn<?> preColumn = predicate == null ? column : new PredicateCaseWhenBuilder(this.getEntitySQLContext(), groupJoinPredicateSegmentContext).then(column).elseEnd(null, Long.class);
         return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
             return fx.count(x -> {
                 PropTypeColumn.columnFuncSelector(x, preColumn);
@@ -105,7 +108,7 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     @Override
     public <TMember extends Number> NumberTypeExpression<TMember> sum(SQLFuncExpression1<TProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
         ColumnNumberFunctionAvailable<TMember> column = columnSelector.apply(groupTable);
-        PropTypeColumn<?> preColumn = predicate == null ? column : new PredicateCaseWhenBuilder(this.getEntitySQLContext(), predicateSegment).then(column).elseEnd(0, column.getPropertyType());
+        PropTypeColumn<?> preColumn = predicate == null ? column : new PredicateCaseWhenBuilder(this.getEntitySQLContext(), groupJoinPredicateSegmentContext).then(column).elseEnd(0, column.getPropertyType());
         return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
             return fx.sum(x -> {
                 PropTypeColumn.columnFuncSelector(x, preColumn);
@@ -137,7 +140,7 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     @Override
     public <TMember extends Number> NumberTypeExpression<BigDecimal> avg(SQLFuncExpression1<TProxy, ColumnNumberFunctionAvailable<TMember>> columnSelector) {
         ColumnNumberFunctionAvailable<TMember> column = columnSelector.apply(groupTable);
-        PropTypeColumn<?> preColumn = predicate == null ? column : new PredicateCaseWhenBuilder(this.getEntitySQLContext(), predicateSegment).then(column).elseEnd(null, column.getPropertyType());
+        PropTypeColumn<?> preColumn = predicate == null ? column : new PredicateCaseWhenBuilder(this.getEntitySQLContext(), groupJoinPredicateSegmentContext).then(column).elseEnd(null, column.getPropertyType());
         return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
             return fx.avg(x -> {
                 PropTypeColumn.columnFuncSelector(x, preColumn);
@@ -148,7 +151,7 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     @Override
     public <TMember> AnyTypeExpression<TMember> max(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector) {
         PropTypeColumn<TMember> column = columnSelector.apply(groupTable);
-        PropTypeColumn<?> preColumn = predicate == null ? column : new PredicateCaseWhenBuilder(this.getEntitySQLContext(), predicateSegment).then(column).elseEnd(null, column.getPropertyType());
+        PropTypeColumn<?> preColumn = predicate == null ? column : new PredicateCaseWhenBuilder(this.getEntitySQLContext(), groupJoinPredicateSegmentContext).then(column).elseEnd(null, column.getPropertyType());
         return new AnyTypeExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
             return fx.max(x -> {
                 PropTypeColumn.columnFuncSelector(x, preColumn);
@@ -159,7 +162,7 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     @Override
     public <TMember> AnyTypeExpression<TMember> min(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector) {
         PropTypeColumn<TMember> column = columnSelector.apply(groupTable);
-        PropTypeColumn<?> preColumn = predicate == null ? column : new PredicateCaseWhenBuilder(this.getEntitySQLContext(), predicateSegment).then(column).elseEnd(null, column.getPropertyType());
+        PropTypeColumn<?> preColumn = predicate == null ? column : new PredicateCaseWhenBuilder(this.getEntitySQLContext(), groupJoinPredicateSegmentContext).then(column).elseEnd(null, column.getPropertyType());
         return new AnyTypeExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
             return fx.min(x -> {
                 PropTypeColumn.columnFuncSelector(x, preColumn);
@@ -170,7 +173,7 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     @Override
     public <TMember> StringTypeExpression<String> joining(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector, String delimiter) {
         PropTypeColumn<TMember> column = columnSelector.apply(groupTable);
-        PropTypeColumn<?> preColumn = predicate == null ? column : new PredicateCaseWhenBuilder(this.getEntitySQLContext(), predicateSegment).then(column).elseEnd(null, column.getPropertyType());
+        PropTypeColumn<?> preColumn = predicate == null ? column : new PredicateCaseWhenBuilder(this.getEntitySQLContext(), groupJoinPredicateSegmentContext).then(column).elseEnd(null, column.getPropertyType());
         return new StringTypeExpressionImpl<>(this.getEntitySQLContext(), preColumn.getTable(), preColumn.getValue(), fx -> {
             return fx.joining(x -> {
                 x.value(delimiter);

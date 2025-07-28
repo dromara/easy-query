@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.expression.builder.impl.AsSelectorImpl;
 import com.easy.query.core.expression.many2group.ManyGroupJoinProjectKey;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.GroupJoinPredicateSegmentContext;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
@@ -12,7 +13,6 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.func.def.impl.PredicateWrapperSQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
@@ -20,7 +20,6 @@ import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SubQueryContext;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.impl.BooleanTypeExpressionImpl;
@@ -132,8 +131,8 @@ public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Prox
 
     private DefaultSQLGroupQueryable<T1Proxy> getDefaultSQLGroupQueryable() {
         DefaultSQLGroupQueryable<T1Proxy> t1ProxyDefaultSQLGroupQueryable = new DefaultSQLGroupQueryable<>(getPropertyProxy(), getPropertyProxy().getEntitySQLContext(), getSubQueryContext().getWhereExpression());
-        PredicateSegment predicateSegment = t1ProxyDefaultSQLGroupQueryable.getPredicateSegment();
-        manyGroupJoinEntityTableExpressionBuilder.addPredicateSegment(predicateSegment);
+        GroupJoinPredicateSegmentContext groupJoinPredicateSegmentContext = t1ProxyDefaultSQLGroupQueryable.getGroupJoinPredicateSegmentContext();
+        manyGroupJoinEntityTableExpressionBuilder.addGroupJoinPredicateSegmentContext(groupJoinPredicateSegmentContext);
         return t1ProxyDefaultSQLGroupQueryable;
     }
 
@@ -148,7 +147,7 @@ public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Prox
 //        BooleanTypeExpression<Boolean> any = Expression.of(getPropertyProxy().getEntitySQLContext()).valueOf(() -> {
 //            count.gt(0L);
 //        });
-        BooleanTypeExpressionImpl<Boolean> any = new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("({0} > 0)", c -> {
+        BooleanTypeExpressionImpl<Boolean> any = new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.booleanSQLFunction("({0} > 0)", c -> {
             PropTypeColumn.columnFuncSelector(c, count);
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(any, "any");
@@ -164,7 +163,7 @@ public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Prox
     public BooleanTypeExpression<Boolean> noneValue() {
         DefaultSQLGroupQueryable<T1Proxy> defaultSQLGroupQueryable = getDefaultSQLGroupQueryable();
         NumberTypeExpression<Long> count = defaultSQLGroupQueryable.count();
-        BooleanTypeExpressionImpl<Boolean> none = new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("({0} <= 0)", c -> {
+        BooleanTypeExpressionImpl<Boolean> none = new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.booleanSQLFunction("({0} <= 0)", c -> {
             PropTypeColumn.columnFuncSelector(c, count);
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(none, "none");
@@ -180,10 +179,10 @@ public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Prox
 
     public BooleanTypeExpression<Boolean> flatElementFilterValue(SQLPredicateExpression sqlPredicateExpression) {
         FlatElementSQLAnyQueryable flatElementSQLAnyQueryable = new FlatElementSQLAnyQueryable(getPropertyProxy().getEntitySQLContext(), sqlPredicateExpression);
-        PredicateSegment predicateSegment = flatElementSQLAnyQueryable.getPredicateSegment();
-        manyGroupJoinEntityTableExpressionBuilder.addPredicateSegment(predicateSegment);
+        GroupJoinPredicateSegmentContext groupJoinPredicateSegmentContext = flatElementSQLAnyQueryable.getGroupJoinPredicateSegmentContext();
+        manyGroupJoinEntityTableExpressionBuilder.addGroupJoinPredicateSegmentContext(groupJoinPredicateSegmentContext);
         NumberTypeExpression<Long> count = flatElementSQLAnyQueryable.count();
-        BooleanTypeExpressionImpl<Boolean> any = new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("({0} > 0)", c -> {
+        BooleanTypeExpressionImpl<Boolean> any = new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.booleanSQLFunction("({0} > 0)", c -> {
             PropTypeColumn.columnFuncSelector(c, count);
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(any, "any");
@@ -198,15 +197,11 @@ public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Prox
 
     public BooleanTypeExpression<Boolean> flatElementAggregateFilterValue(SQLAggregatePredicateExpression sqlAggregatePredicateExpression) {
         FlatElementJoinSQLAnyQueryable flatElementJoinSQLAnyQueryable = new FlatElementJoinSQLAnyQueryable(getPropertyProxy().getEntitySQLContext(), sqlAggregatePredicateExpression);
-        PredicateSegment predicateSegment = flatElementJoinSQLAnyQueryable.getPredicateSegment();
-        manyGroupJoinEntityTableExpressionBuilder.addPredicateSegment(predicateSegment);
+        GroupJoinPredicateSegmentContext groupJoinPredicateSegmentContext = flatElementJoinSQLAnyQueryable.getGroupJoinPredicateSegmentContext();
+        manyGroupJoinEntityTableExpressionBuilder.addGroupJoinPredicateSegmentContext(groupJoinPredicateSegmentContext);
         NumberTypeExpression<Long> count = flatElementJoinSQLAnyQueryable.count();
-        BooleanTypeExpressionImpl<Boolean> any = new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.anySQLFunction("(CASE WHEN {0} > 0 THEN {1} ELSE {2} END)", c -> {
+        BooleanTypeExpressionImpl<Boolean> any = new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.booleanSQLFunction("({0} <= 0)", c -> {
             PropTypeColumn.columnFuncSelector(c, count);
-            c.value(true);
-            c.value(false);
-//            c.sqlFunc(f.booleanConstantSQLFunction(true));
-//            c.sqlFunc(f.booleanConstantSQLFunction(false));
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(any, "any");
         return new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), alias, f -> {

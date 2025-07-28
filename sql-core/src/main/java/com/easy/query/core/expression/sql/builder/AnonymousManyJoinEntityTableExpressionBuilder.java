@@ -1,6 +1,7 @@
 package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.expression.many2group.ManyGroupJoinProjectKey;
+import com.easy.query.core.expression.segment.GroupJoinPredicateSegmentContext;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 
 import java.util.List;
@@ -17,8 +18,8 @@ public interface AnonymousManyJoinEntityTableExpressionBuilder extends Anonymous
     String[] getDefaultSelectKeys();
     Map<ManyGroupJoinProjectKey, Integer> getProjectAliasMap();
 
-    void addPredicateSegment(PredicateSegment predicateSegment);
-    List<PredicateSegment> getPredicateSegments();
+    void addGroupJoinPredicateSegmentContext(GroupJoinPredicateSegmentContext groupJoinPredicateSegmentContext);
+    List<GroupJoinPredicateSegmentContext> getGroupJoinPredicateSegmentContexts();
 
 //    AnonymousEntityTableExpressionBuilder getManyJoinEntityTableExpressionBuilder();
 }

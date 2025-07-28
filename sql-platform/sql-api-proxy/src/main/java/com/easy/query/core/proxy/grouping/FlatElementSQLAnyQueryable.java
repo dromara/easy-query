@@ -5,6 +5,8 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.segment.GroupJoinPredicateSegmentContext;
+import com.easy.query.core.expression.segment.GroupJoinPredicateSegmentContextImpl;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -25,24 +27,25 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
 public class FlatElementSQLAnyQueryable {
     private final SQLPredicateExpression predicate;
     private final EntitySQLContext entitySQLContext;
-    private final PredicateSegment predicateSegment;
+    private final GroupJoinPredicateSegmentContext groupJoinPredicateSegmentContext;
 
     public FlatElementSQLAnyQueryable(EntitySQLContext entitySQLContext, SQLPredicateExpression predicate) {
         this.entitySQLContext = entitySQLContext;
         this.predicate = predicate;
-        this.predicateSegment = EasySQLExpressionUtil.resolve(entitySQLContext.getRuntimeContext(), entitySQLContext.getExpressionContext(), filter -> {
+        PredicateSegment predicateSegment = EasySQLExpressionUtil.resolve(entitySQLContext.getRuntimeContext(), entitySQLContext.getExpressionContext(), filter -> {
             predicate.accept(filter);
         });
+        this.groupJoinPredicateSegmentContext=new GroupJoinPredicateSegmentContextImpl(predicateSegment);
     }
 
 
-    public PredicateSegment getPredicateSegment() {
-        return predicateSegment;
+    public GroupJoinPredicateSegmentContext getGroupJoinPredicateSegmentContext() {
+        return groupJoinPredicateSegmentContext;
     }
 
     public NumberTypeExpression<Long> count() {
 
-        PropTypeColumn<?> preColumn = new PredicateCaseWhenBuilder(this.entitySQLContext, predicateSegment).then(1).elseEnd(null, Long.class);
+        PropTypeColumn<?> preColumn = new PredicateCaseWhenBuilder(this.entitySQLContext, groupJoinPredicateSegmentContext).then(1).elseEnd(null, Long.class);
         return new NumberTypeExpressionImpl<>(this.entitySQLContext, preColumn.getTable(), preColumn.getValue(), fx -> {
             return fx.count(x -> {
                 PropTypeColumn.columnFuncSelector(x, preColumn);

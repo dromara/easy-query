@@ -2,6 +2,7 @@ package com.easy.query.sql.starter.config;
 
 
 import com.easy.query.core.enums.EntityMappingStrategyEnum;
+import com.easy.query.core.enums.GroupJoinModeEnum;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
@@ -56,6 +57,10 @@ public class EasyQueryProperties {
      * in inClause的参数个数限制
      */
     private int maxInClauseSize = 9999999;
+    /**
+     * 子查询转groupJoin条件策略
+     */
+    private GroupJoinModeEnum groupJoinMode = GroupJoinModeEnum.DEFAULT;
     /**
      * 仅分片时有效默认同时5个线程5
      */
@@ -517,6 +522,14 @@ public class EasyQueryProperties {
 
     public void setMaxInClauseSize(int maxInClauseSize) {
         this.maxInClauseSize = maxInClauseSize;
+    }
+
+    public GroupJoinModeEnum getGroupJoinMode() {
+        return groupJoinMode;
+    }
+
+    public void setGroupJoinMode(GroupJoinModeEnum groupJoinMode) {
+        this.groupJoinMode = groupJoinMode;
     }
 
     public EasyQueryProperties() {

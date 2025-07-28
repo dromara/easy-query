@@ -218,11 +218,14 @@ public abstract class AbstractPredicateSegment implements PredicateSegment, Shar
 
     @Override
     public void removeChildren(PredicateSegment predicateSegment) {
-
-        if (children != null) {
-            for (PredicateSegment child : children) {
-                if(child==predicateSegment){
-                    child.reset();
+        if (this == predicateSegment) {
+            this.reset();
+        } else {
+            if (children != null) {
+                for (PredicateSegment child : children) {
+                    if (child == predicateSegment) {
+                        child.reset();
+                    }
                 }
             }
         }

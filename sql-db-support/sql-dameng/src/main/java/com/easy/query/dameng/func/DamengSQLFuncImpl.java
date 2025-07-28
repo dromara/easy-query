@@ -7,6 +7,7 @@ import com.easy.query.core.func.SQLFuncImpl;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelector;
+import com.easy.query.core.func.def.BooleanSQLFunction;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
@@ -154,5 +155,16 @@ public class DamengSQLFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction indexOf(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new DamengIndexOfSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction booleanSQLFunction(String sqlSegment, SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        SQLFunction sqlFunction = anySQLFunction(sqlSegment, sqlExpression);
+        SQLActionExpression1<ColumnFuncSelector> sqlExpressionFunc = columnFuncSelector -> {
+            columnFuncSelector.sqlFunc(sqlFunction);
+            columnFuncSelector.value(true);
+            columnFuncSelector.value(false);
+        };
+        return new DamengBooleanSQLFunction(getColumnExpressions(sqlExpressionFunc));
     }
 }

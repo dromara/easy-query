@@ -123,7 +123,6 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
     public void filter(SQLActionExpression1<T1Proxy> whereExpression) {
         DefaultRelationTableKey defaultRelationTableKey = new DefaultRelationTableKey(subQueryContext.getLeftTable(), subQueryContext.getProperty());
 //        new EasyClientQueryable<>(clazz, entityQueryExpressionBuilder)
-
         subQueryContext.getEntityExpressionBuilder().putManyConfiguration(defaultRelationTableKey, new ManyConfiguration(cq -> {
             ClientQueryable<T1> innerClientQueryable = EasyObjectUtil.typeCastNotNull(cq);
             T1Proxy propertyProxy = subQueryContext.getPropertyProxy();

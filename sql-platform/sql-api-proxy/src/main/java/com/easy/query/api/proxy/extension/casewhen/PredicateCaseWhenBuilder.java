@@ -1,9 +1,8 @@
 package com.easy.query.api.proxy.extension.casewhen;
 
 import com.easy.query.api.proxy.util.EasyParamExpressionUtil;
-import com.easy.query.core.expression.segment.GroupJoinColumnSegment;
 import com.easy.query.core.expression.segment.GroupJoinColumnSegmentImpl;
-import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.expression.segment.GroupJoinPredicateSegmentContext;
 import com.easy.query.core.expression.segment.impl.DefaultSQLSegment;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 import com.easy.query.core.proxy.core.EntitySQLContext;
@@ -21,12 +20,12 @@ import com.easy.query.core.util.EasySQLExpressionUtil;
  */
 public class PredicateCaseWhenBuilder {
     private final EntitySQLContext entitySQLContext;
-    private final PredicateSegment predicateSegment;
+    private final GroupJoinPredicateSegmentContext groupJoinPredicateSegmentContext;
     private  Object then;
 
-    public PredicateCaseWhenBuilder(EntitySQLContext entitySQLContext, PredicateSegment predicateSegment){
+    public PredicateCaseWhenBuilder(EntitySQLContext entitySQLContext, GroupJoinPredicateSegmentContext groupJoinPredicateSegmentContext){
         this.entitySQLContext = entitySQLContext;
-        this.predicateSegment = predicateSegment;
+        this.groupJoinPredicateSegmentContext = groupJoinPredicateSegmentContext;
     }
 
     public <TV> PredicateCaseWhenBuilder then(TV then) {
@@ -43,7 +42,7 @@ public class PredicateCaseWhenBuilder {
 
         DefaultSQLSegment thenSegment = new DefaultSQLSegment(toSQLContext -> EasySQLExpressionUtil.parseParamExpression(entitySQLContext.getExpressionContext(), thenParamExpression, toSQLContext).toString(), visitor -> thenParamExpression.accept(visitor));
         DefaultSQLSegment elseSegment = new DefaultSQLSegment(toSQLContext -> EasySQLExpressionUtil.parseParamExpression(entitySQLContext.getExpressionContext(), elseEndParamExpression, toSQLContext).toString(), visitor -> elseEndParamExpression.accept(visitor));
-        GroupJoinColumnSegmentImpl groupJoinColumnSegment = new GroupJoinColumnSegmentImpl(predicateSegment, thenSegment, elseSegment);
+        GroupJoinColumnSegmentImpl groupJoinColumnSegment = new GroupJoinColumnSegmentImpl(groupJoinPredicateSegmentContext, thenSegment, elseSegment);
         return new AnyTypeExpressionImpl<>(entitySQLContext, null, null, f -> f.anySQLFunction("{0}",c->{
             c.sql(groupJoinColumnSegment);
         }), resultClass);

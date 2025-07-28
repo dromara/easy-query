@@ -3,6 +3,9 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.enums.MapKeyModeEnum;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.basic.extension.track.EntityState;
+import com.easy.query.core.basic.extension.track.EntityValueState;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
@@ -58,6 +61,73 @@ public class QueryTest27 extends BaseTest {
 
             Object o = stringObjectMap.get("createTime");
             Assert.assertNotNull(o);
+        }
+    }
+
+
+    @Test
+    public void testDiff() {
+        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
+        try {
+            trackManager.begin();
+
+            Topic topic = new Topic();
+            topic.setId("123");
+            topic.setTitle("456");
+
+            easyEntityQuery.addTracking(topic);
+
+
+            topic.setStars(1);
+            topic.setTitle("567");
+
+
+            EntityState entityState = easyEntityQuery.getTrackEntityStateNotNull(topic);
+            EntityValueState entityValueState = entityState.getEntityValueState("title");
+            Assert.assertTrue(entityValueState.isChanged());
+            System.out.println("title是否有变动:" + entityValueState.isChanged());
+            if (entityValueState.isChanged()) {
+                System.out.println("title变动了:" + entityValueState.getOriginal() + "------->" + entityValueState.getCurrent());
+            }
+            Assert.assertTrue(entityValueState.isChanged());
+
+
+        } finally {
+
+            trackManager.release();
+        }
+    }
+    @Test
+    public void testDiff2() {
+        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
+        try {
+            trackManager.begin();
+
+            Topic topic = new Topic();
+            topic.setId("123");
+            topic.setTitle("456");
+
+            easyEntityQuery.addTracking(topic);
+
+
+            topic.setStars(1);
+            topic.setTitle("456");
+
+
+            EntityState entityState = easyEntityQuery.getTrackEntityStateNotNull(topic);
+
+            EntityValueState entityValueState = entityState.getEntityValueState("title");
+            Assert.assertFalse(entityValueState.isChanged());
+            System.out.println("title是否有变动:" + entityValueState.isChanged());
+            if (entityValueState.isChanged()) {
+                System.out.println("title变动了:" + entityValueState.getOriginal() + "------->" + entityValueState.getCurrent());
+            }
+            Assert.assertFalse(entityValueState.isChanged());
+
+
+        } finally {
+
+            trackManager.release();
         }
     }
 }

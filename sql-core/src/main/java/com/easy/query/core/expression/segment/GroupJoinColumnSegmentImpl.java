@@ -8,6 +8,8 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
+import java.util.function.Function;
+
 /**
  * create time 2025/7/26 15:38
  * 文件说明
@@ -15,20 +17,31 @@ import com.easy.query.core.util.EasyStringUtil;
  * @author xuejiaming
  */
 public class GroupJoinColumnSegmentImpl implements GroupJoinColumnSegment {
-    private final PredicateSegment predicateSegment;
+    private final GroupJoinPredicateSegmentContext groupJoinPredicateSegmentContext;
     private final SQLSegment then;
     private final SQLSegment elseEnd;
     private String alias;
+    private Function<PredicateSegment, PredicateSegment> predicateSegmentAs;
 
-    public GroupJoinColumnSegmentImpl(PredicateSegment predicateSegment, SQLSegment then, SQLSegment elseEnd) {
-        this.predicateSegment = predicateSegment;
+    public GroupJoinColumnSegmentImpl(GroupJoinPredicateSegmentContext groupJoinPredicateSegmentContext, SQLSegment then, SQLSegment elseEnd) {
+        this.groupJoinPredicateSegmentContext = groupJoinPredicateSegmentContext;
         this.then = then;
         this.elseEnd = elseEnd;
     }
 
     @Override
     public PredicateSegment getPredicateSegment() {
-        return predicateSegment;
+        return groupJoinPredicateSegmentContext.getPredicateSegment();
+    }
+
+    @Override
+    public void setPredicateSegmentAs(Function<PredicateSegment, PredicateSegment> predicateSegmentAs) {
+        this.predicateSegmentAs = predicateSegmentAs;
+    }
+
+    @Override
+    public Function<PredicateSegment, PredicateSegment> getPredicateSegmentAs() {
+        return predicateSegmentAs;
     }
 
     @Override
@@ -38,7 +51,7 @@ public class GroupJoinColumnSegmentImpl implements GroupJoinColumnSegment {
 
     @Override
     public ColumnSegment cloneSQLColumnSegment() {
-        return new GroupJoinColumnSegmentImpl(predicateSegment, then, elseEnd);
+        return new GroupJoinColumnSegmentImpl(groupJoinPredicateSegmentContext, then, elseEnd);
     }
 
     @Override
@@ -63,8 +76,8 @@ public class GroupJoinColumnSegmentImpl implements GroupJoinColumnSegment {
 
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
-        String predicateSegmentSQL = predicateSegment.toSQL(toSQLContext);
-        if(EasyStringUtil.isBlank(predicateSegmentSQL)){
+        String predicateSegmentSQL = getPredicateSegmentSQL(toSQLContext);
+        if (EasyStringUtil.isBlank(predicateSegmentSQL)) {
             return then.toSQL(toSQLContext);
         }
         StringBuilder sql = new StringBuilder();
@@ -74,10 +87,18 @@ public class GroupJoinColumnSegmentImpl implements GroupJoinColumnSegment {
         return sql.toString();
     }
 
+    private String getPredicateSegmentSQL(ToSQLContext toSQLContext) {
+        PredicateSegment toSQLPredicateSegment = groupJoinPredicateSegmentContext.getToSQLPredicateSegment();
+        if (toSQLPredicateSegment != null) {
+            return toSQLPredicateSegment.toSQL(toSQLContext);
+        }
+        return null;
+    }
+
     @Override
     public void accept(TableVisitor visitor) {
 
-        EasySQLSegmentUtil.tableVisit(predicateSegment, visitor);
+        EasySQLSegmentUtil.tableVisit(groupJoinPredicateSegmentContext.getPredicateSegment(), visitor);
         EasySQLSegmentUtil.sqlSegmentTableVisit(then, visitor);
         EasySQLSegmentUtil.sqlSegmentTableVisit(elseEnd, visitor);
     }

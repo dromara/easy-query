@@ -9,6 +9,7 @@ import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.func.column.ColumnFuncSelectorImpl;
 import com.easy.query.core.func.def.AnySQLFunction;
+import com.easy.query.core.func.def.BooleanSQLFunction;
 import com.easy.query.core.func.def.DistinctDefaultSQLFunction;
 import com.easy.query.core.func.def.PartitionBySQLFunction;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
@@ -224,6 +225,7 @@ public class SQLFuncImpl implements SQLFunc {
     public SQLFunction utcNow() {
         return UtcNowSQLFunction.INSTANCE;
     }
+
     @Override
     public SQLFunction random() {
         return new RandomSQLFunction();
@@ -351,6 +353,11 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction anySQLFunction(String sqlSegment, SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new AnySQLFunction(sqlSegment, getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction booleanSQLFunction(String sqlSegment, SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new BooleanSQLFunction(anySQLFunction(sqlSegment, sqlExpression));
     }
 
     @Override

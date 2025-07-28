@@ -377,7 +377,7 @@ public class Expression {
         FilterImpl filter = new FilterImpl(entityExpressionBuilder.getRuntimeContext(), entityExpressionBuilder.getExpressionContext(), andPredicateSegment, false, entityExpressionBuilder.getExpressionContext().getValueFilter());
         this.entitySQLContext.getCurrentEntitySQLContext()._where(filter, sqlActionExpression);
 
-        return new BooleanTypeExpressionImpl<>(entitySQLContext, null, null, f -> f.anySQLFunction("({0})", c -> {
+        return new BooleanTypeExpressionImpl<>(entitySQLContext, null, null, f -> f.booleanSQLFunction("({0})", c -> {
             c.expression(andPredicateSegment);
         }), Boolean.class);
     }

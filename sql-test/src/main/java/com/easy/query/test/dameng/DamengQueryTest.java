@@ -3,6 +3,7 @@ package com.easy.query.test.dameng;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.core.draft.Draft1;
@@ -20,7 +21,12 @@ import lombok.experimental.FieldNameConstants;
 import org.junit.Assert;
 import org.junit.Test;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -458,11 +464,22 @@ public class DamengQueryTest extends DamengBaseTest {
     }
     @Test
     public void subQueryTest1(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
         List<DamengMyTopic> list = entityQuery.queryable(DamengMyTopic.class)
                 .subQueryToGroupJoin(s->s.myTopics())
                 .where(d -> {
                     d.myTopics().any();
                 }).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.\"ID\",t.\"STARS\",t.\"TITLE\",t.\"CREATE_TIME\" FROM \"MY_TOPIC\" t LEFT JOIN (SELECT t1.\"TITLE\" AS \"title\",(CASE WHEN (COUNT(*) > 0) THEN ? ELSE ? END) AS \"__any2__\" FROM \"MY_TOPIC\" t1 GROUP BY t1.\"TITLE\") t2 ON t2.\"title\" = t.\"ID\" WHERE NVL(t2.\"__any2__\",?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("true(Boolean),false(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 
     @Test

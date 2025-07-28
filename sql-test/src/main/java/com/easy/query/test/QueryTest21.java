@@ -482,7 +482,7 @@ public class QueryTest21 extends BaseTest {
         listenerContextManager.clear();
 
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-        Assert.assertEquals("SELECT t.`title` AS `value1`,COUNT(DISTINCT (CASE WHEN 1 = 1 THEN ? ELSE NULL END)) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`title` LIKE ? GROUP BY t.`title`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`title` AS `value1`,COUNT(DISTINCT ?) AS `value2` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`title` LIKE ? GROUP BY t.`title`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }

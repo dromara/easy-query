@@ -165,6 +165,7 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
     SQLFunction like(SQLActionExpression1<ColumnFuncSelector> sqlExpression, boolean like, SQLLikeEnum sqlLike);
 
     SQLFunction anySQLFunction(String sqlSegment, SQLActionExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction booleanSQLFunction(String sqlSegment, SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
     SQLFunction booleanConstantSQLFunction(boolean trueOrFalse);
 }

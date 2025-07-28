@@ -7,8 +7,7 @@ import java.util.Objects;
 
 /**
  * @author xuejiaming
- * @FileName: EntryState.java
- * @Description: 文件说明
+ * 只表示当时那一刻的数据状态
  * create time 2023/3/18 21:22
  */
 public class EntityValueState {
@@ -45,7 +44,7 @@ public class EntityValueState {
 
     public boolean notChanged() {
         if (isChange != null) {
-            return isChange;
+            return !isChange;
         }
         boolean nc = notChanged0();
         this.isChange = !nc;
@@ -63,7 +62,7 @@ public class EntityValueState {
             return false;
         }
         if (Comparable.class.isAssignableFrom(columnMetadata.getPropertyType())) {
-            return ((Comparable<?>) original).compareTo(EasyObjectUtil.typeCastNullable(current)) == 0;
+            return ((Comparable<?>) original).compareTo(EasyObjectUtil.typeCastNotNull(current)) == 0;
         }
         return Objects.equals(original, current);
     }

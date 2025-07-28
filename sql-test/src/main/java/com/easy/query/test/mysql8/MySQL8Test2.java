@@ -118,8 +118,8 @@ public class MySQL8Test2 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t3.`id`,t3.`name`,t3.`create_time`,t3.`__part__column1` AS `__part__column1` FROM (SELECT t.`id`,t.`name`,t.`create_time`,IFNULL(t2.`__count2__`,0) AS `__part__column1` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,COUNT(*) AS `__count2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` WHERE t.`name` LIKE ?) t3 LEFT JOIN `t_bank_card` t4 ON t3.`id` = t4.`bank_id` LEFT JOIN (SELECT t5.`bank_id` AS `bankId`,(CASE WHEN COUNT(*) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `t_bank_card` t5 GROUP BY t5.`bank_id`) t6 ON t6.`bankId` = t3.`id` WHERE t3.`__part__column1` = t4.`type` AND IFNULL(t6.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("%银行%(String),true(Boolean),false(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t3.`id`,t3.`name`,t3.`create_time`,t3.`__part__column1` AS `__part__column1` FROM (SELECT t.`id`,t.`name`,t.`create_time`,IFNULL(t2.`__count2__`,0) AS `__part__column1` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,COUNT(*) AS `__count2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` WHERE t.`name` LIKE ?) t3 LEFT JOIN `t_bank_card` t4 ON t3.`id` = t4.`bank_id` LEFT JOIN (SELECT t5.`bank_id` AS `bankId`,(COUNT(*) > 0) AS `__any2__` FROM `t_bank_card` t5 GROUP BY t5.`bank_id`) t6 ON t6.`bankId` = t3.`id` WHERE t3.`__part__column1` = t4.`type` AND IFNULL(t6.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%银行%(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 
@@ -175,8 +175,8 @@ public class MySQL8Test2 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time` FROM `t_bank_card` t LEFT JOIN (SELECT t1.`id`,t1.`name`,t1.`create_time`,(SELECT COUNT(*) FROM `t_bank_card` t2 WHERE t2.`bank_id` = t1.`id`) AS `__part__column1` FROM `t_bank` t1 WHERE t1.`name` LIKE ?) t4 ON t.`bank_id` = t4.`id` LEFT JOIN (SELECT t5.`bank_id` AS `bankId`,(CASE WHEN COUNT(*) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `t_bank_card` t5 GROUP BY t5.`bank_id`) t6 ON t6.`bankId` = t4.`id` WHERE IFNULL(t6.`__any2__`,?) = ? AND t4.`__part__column1` = t.`type`", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("%银行%(String),true(Boolean),false(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time` FROM `t_bank_card` t LEFT JOIN (SELECT t1.`id`,t1.`name`,t1.`create_time`,(SELECT COUNT(*) FROM `t_bank_card` t2 WHERE t2.`bank_id` = t1.`id`) AS `__part__column1` FROM `t_bank` t1 WHERE t1.`name` LIKE ?) t4 ON t.`bank_id` = t4.`id` LEFT JOIN (SELECT t5.`bank_id` AS `bankId`,(COUNT(*) > 0) AS `__any2__` FROM `t_bank_card` t5 GROUP BY t5.`bank_id`) t6 ON t6.`bankId` = t4.`id` WHERE IFNULL(t6.`__any2__`,?) = ? AND t4.`__part__column1` = t.`type`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%银行%(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 
@@ -205,8 +205,8 @@ public class MySQL8Test2 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time` FROM `t_bank_card` t LEFT JOIN (SELECT t1.`id`,t1.`name`,t1.`create_time`,IFNULL(t3.`__count2__`,0) AS `__part__column1` FROM `t_bank` t1 LEFT JOIN (SELECT t2.`bank_id` AS `bankId`,COUNT(*) AS `__count2__` FROM `t_bank_card` t2 GROUP BY t2.`bank_id`) t3 ON t3.`bankId` = t1.`id` WHERE t1.`name` LIKE ?) t5 ON t.`bank_id` = t5.`id` LEFT JOIN (SELECT t6.`bank_id` AS `bankId`,(CASE WHEN COUNT(*) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `t_bank_card` t6 GROUP BY t6.`bank_id`) t7 ON t7.`bankId` = t5.`id` WHERE IFNULL(t7.`__any2__`,?) = ? AND t5.`__part__column1` = t.`type`", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("%银行%(String),true(Boolean),false(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time` FROM `t_bank_card` t LEFT JOIN (SELECT t1.`id`,t1.`name`,t1.`create_time`,IFNULL(t3.`__count2__`,0) AS `__part__column1` FROM `t_bank` t1 LEFT JOIN (SELECT t2.`bank_id` AS `bankId`,COUNT(*) AS `__count2__` FROM `t_bank_card` t2 GROUP BY t2.`bank_id`) t3 ON t3.`bankId` = t1.`id` WHERE t1.`name` LIKE ?) t5 ON t.`bank_id` = t5.`id` LEFT JOIN (SELECT t6.`bank_id` AS `bankId`,(COUNT(*) > 0) AS `__any2__` FROM `t_bank_card` t6 GROUP BY t6.`bank_id`) t7 ON t7.`bankId` = t5.`id` WHERE IFNULL(t7.`__any2__`,?) = ? AND t5.`__part__column1` = t.`type`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%银行%(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 
@@ -439,8 +439,35 @@ public class MySQL8Test2 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,(CASE WHEN COUNT((CASE WHEN 1 = 1 THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("1(Integer),true(Boolean),false(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,(COUNT(?) > 0) AS `__any2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void testFilterConfigure3_1() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
+                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(bank -> {
+                    bank.name().eq("");
+                    bank.bankCards().any(s -> {
+                        s.type().eq("");
+                        s.code().eq("123");
+                    });
+                    bank.bankCards().any(s -> {
+                        s.type().eq("");
+                    });
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,(COUNT((CASE WHEN t1.`code` = ? THEN ? ELSE NULL END)) > 0) AS `__any2__`,(COUNT(?) > 0) AS `__any3__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ? AND IFNULL(t2.`__any3__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),1(Integer),1(Integer),false(Boolean),true(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
     @Test
     public void testFilterConfigure4() {
@@ -460,8 +487,8 @@ public class MySQL8Test2 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,(CASE WHEN COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE NULL END)) > 0 THEN ? ELSE ? END) AS `__any2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("(String),1(Integer),true(Boolean),false(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,(COUNT(?) > 0) AS `__any2__` FROM `t_bank_card` t1 WHERE t1.`type` = ? GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
     @Test
     public void testFilterConfigure5() {

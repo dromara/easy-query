@@ -166,4 +166,14 @@ public class OracleSQLFuncImpl extends SQLFuncImpl {
     public SQLFunction random() {
         return new OracleRandomSQLFunction();
     }
+    @Override
+    public SQLFunction booleanSQLFunction(String sqlSegment, SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        SQLFunction sqlFunction = anySQLFunction(sqlSegment, sqlExpression);
+        SQLActionExpression1<ColumnFuncSelector> sqlExpressionFunc = columnFuncSelector -> {
+            columnFuncSelector.sqlFunc(sqlFunction);
+            columnFuncSelector.value(true);
+            columnFuncSelector.value(false);
+        };
+        return new OracleBooleanSQLFunction(getColumnExpressions(sqlExpressionFunc));
+    }
 }

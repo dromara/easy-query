@@ -1,6 +1,7 @@
 package com.easy.query.solon.integration;
 
 import com.easy.query.core.enums.EntityMappingStrategyEnum;
+import com.easy.query.core.enums.GroupJoinModeEnum;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
@@ -31,6 +32,7 @@ public class SolonEasyQueryProperties {
      * in inClause的参数个数限制
      */
     private final static int maxInClauseSize = 9999999;
+    private final static GroupJoinModeEnum groupJoinMode = GroupJoinModeEnum.DEFAULT;
     private final static DatabaseEnum database = DatabaseEnum.UNKNOWN;
     private final static NameConversionEnum nameConversion = NameConversionEnum.UNDERLINED;
     private final static MapKeyConversionEnum mapKeyConversion = MapKeyConversionEnum.DEFAULT;
@@ -204,6 +206,18 @@ public class SolonEasyQueryProperties {
                     return DatabaseEnum.DB2;
                 case "sql92":
                     return DatabaseEnum.SQL92;
+            }
+            return null;
+        });
+    }
+    public GroupJoinModeEnum getGroupJoinMode() {
+        return getOrDef("group-join-mode", groupJoinMode, v -> {
+            String vl = v.toLowerCase();
+            switch (vl) {
+                case "default":
+                    return GroupJoinModeEnum.DEFAULT;
+                case "auto":
+                    return GroupJoinModeEnum.AUTO;
             }
             return null;
         });
