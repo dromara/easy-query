@@ -1,6 +1,7 @@
 package com.easy.query.test.mysql8;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -11,6 +12,7 @@ import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
+import com.easy.query.core.proxy.core.draft.Draft5;
 import com.easy.query.core.proxy.core.draft.proxy.Draft3Proxy;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
@@ -44,6 +46,7 @@ import com.easy.query.test.mysql8.entity.M8UserRole2;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
+import com.easy.query.test.mysql8.entity.bank.proxy.SysBankCardProxy;
 import com.easy.query.test.mysql8.entity.proxy.M8MenuProxy;
 import com.easy.query.test.mysql8.entity.proxy.M8UserProxy;
 import com.easy.query.test.mysql8.entity.proxy.M8UserRoleProxy;
@@ -1205,5 +1208,51 @@ public class ManyJoinTest extends BaseTest {
         Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
 
+    }
+    @Test
+    public void test16GroupJoinCombinePage() {
+
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        EasyPageResult<Draft1<String>> pageResult = easyEntityQuery.queryable(SysUser.class)
+                .configure(o -> o.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(user -> {
+                }).orderBy(user -> {
+                    user.bankCards().where(x -> x.type().eq("123")).max(s -> s.openTime()).asc(OrderByModeEnum.NULLS_LAST);
+                }).select(user -> Select.DRAFT.of(
+                        user.name()
+                )).toPageResult(1, 20);
+        listenerContextManager.clear();
+
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT COUNT(*) FROM `t_sys_user` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("-1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`name` AS `value1` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,MAX(t1.`open_time`) AS `__max2__` FROM `t_bank_card` t1 WHERE t1.`type` = ? GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` ORDER BY CASE WHEN t2.`__max2__` IS NULL THEN 1 ELSE 0 END ASC,t2.`__max2__` ASC LIMIT 2", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+
+    }
+
+
+    @Test
+    public void testLastCard(){
+        List<Draft5<String, String, String, String, String>> list = easyEntityQuery.queryable(SysUser.class)
+                .select(user -> {
+                    //按用户的银行卡开户时间倒序取第一张
+                    SysBankCardProxy lastBankCard = user.bankCards().orderBy(card -> card.openTime().desc()).first();
+                    return Select.DRAFT.of(
+                            user.id(),
+                            user.name(),
+                            lastBankCard.code(),
+                            lastBankCard.type(),
+                            lastBankCard.bank().name()
+                    );
+                }).toList();
     }
 }

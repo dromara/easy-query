@@ -44,7 +44,7 @@ public class ColumnWithColumnPredicate implements Predicate {
 
     @Override
     public Predicate cloneSQLColumnSegment() {
-        throw new UnsupportedOperationException();
+        return new ColumnWithColumnPredicate(leftColumn2Segment, rightColumn2Segment, compare);
     }
 
     @Override

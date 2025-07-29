@@ -106,6 +106,6 @@ public class ColumnMultiCollectionPredicate implements ValuesPredicate, Sharding
 
     @Override
     public Collection<SQLParameter> getParameters() {
-        throw new UnsupportedOperationException();
+        return new ArrayList<>();
     }
 }

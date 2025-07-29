@@ -41,7 +41,7 @@ public class ColumnInSubQueryPredicate implements SubQueryPredicate {
 
     @Override
     public Predicate cloneSQLColumnSegment() {
-        throw new UnsupportedOperationException();
+        return new ColumnInSubQueryPredicate(column2Segment, subQuery.cloneQueryable(), compare, expressionContext);
     }
 
     @Override

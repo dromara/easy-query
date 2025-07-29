@@ -25,17 +25,17 @@ public class ColumnNoneSubQueryPredicate implements SubQueryPredicate {
 
     @Override
     public TableAvailable getTable() {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
     public String getPropertyName() {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
     public Predicate cloneSQLColumnSegment() {
-        throw new UnsupportedOperationException();
+        return new ColumnNoneSubQueryPredicate(subQuery.cloneQueryable(), runtimeContext);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ColumnNoneSubQueryPredicate implements SubQueryPredicate {
 
     @Override
     public SQLPredicateCompare getOperator() {
-        throw new UnsupportedOperationException();
+        return SQLPredicateCompareEnum.NOT_EXISTS;
     }
 
     @Override

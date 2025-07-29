@@ -26,17 +26,17 @@ public class ColumnExistsSubQueryPredicate implements SubQueryPredicate {
 
     @Override
     public TableAvailable getTable() {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
     public String getPropertyName() {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
     public Predicate cloneSQLColumnSegment() {
-        throw new UnsupportedOperationException();
+        return new ColumnExistsSubQueryPredicate(subQuery.cloneQueryable(), sqlPredicateCompare, runtimeContext);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ColumnExistsSubQueryPredicate implements SubQueryPredicate {
 
     @Override
     public SQLPredicateCompare getOperator() {
-        throw new UnsupportedOperationException();
+       return sqlPredicateCompare;
     }
 
     @Override
@@ -61,7 +61,6 @@ public class ColumnExistsSubQueryPredicate implements SubQueryPredicate {
 
     @Override
     public SubQueryPredicate cloneSubQueryPredicate() {
-
         return new ColumnExistsSubQueryPredicate(subQuery.cloneQueryable(), sqlPredicateCompare, runtimeContext);
     }
 

@@ -115,6 +115,6 @@ public class ColumnRelationCollectionPredicate implements ValuesPredicate, Shard
 
     @Override
     public Collection<SQLParameter> getParameters() {
-        throw new UnsupportedOperationException();
+        return new ArrayList<>();
     }
 }

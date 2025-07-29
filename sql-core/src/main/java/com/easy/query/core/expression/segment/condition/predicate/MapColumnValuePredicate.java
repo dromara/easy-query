@@ -45,7 +45,7 @@ public class MapColumnValuePredicate implements ValuePredicate, ShardingPredicat
 
     @Override
     public String getPropertyName() {
-        throw  new UnsupportedOperationException();
+        return null;
     }
 
     @Override

@@ -38,12 +38,12 @@ public class MapColumnNullAssertPredicate implements Predicate {
 
     @Override
     public String getPropertyName() {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
     public Predicate cloneSQLColumnSegment() {
-        throw new UnsupportedOperationException();
+        return new MapColumnNullAssertPredicate(table, columnName, compare, runtimeContext);
     }
 
     @Override

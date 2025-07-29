@@ -47,7 +47,7 @@ public class ColumnEqualsPropertyPredicate implements Predicate,ValuePredicate {
 
     @Override
     public Predicate cloneSQLColumnSegment() {
-        throw new UnsupportedOperationException();
+        return new ColumnEqualsPropertyPredicate(column2Segment, columnValue2Segment);
     }
 
 

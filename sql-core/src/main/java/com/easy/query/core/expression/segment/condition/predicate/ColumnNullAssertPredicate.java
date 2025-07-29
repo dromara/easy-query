@@ -40,7 +40,7 @@ public class ColumnNullAssertPredicate implements Predicate {
 
     @Override
     public Predicate cloneSQLColumnSegment() {
-        throw new UnsupportedOperationException();
+        return new ColumnNullAssertPredicate(column2Segment, compare);
     }
 
     @Override
