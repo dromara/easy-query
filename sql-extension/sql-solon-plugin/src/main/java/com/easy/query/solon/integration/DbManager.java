@@ -136,9 +136,14 @@ public class DbManager {
         Props dsProps;
 
         if (Utils.isNotEmpty(bw.name())) {
-            dsProps = bw.context().cfg().getProp(CommonConstant.TAG + "." + bw.name());
+            String cfgPropPrefix = CommonConstant.TAG + "." + bw.name();
+            dsProps = bw.context().cfg().getProp(cfgPropPrefix);
+            if(dsProps.isEmpty() || !dsProps.containsKey("database")) {
+                throw new UnsupportedOperationException("Please set the configuration for the data source "+bw.name()+" dialect in the yml file with specific key " + cfgPropPrefix + ".database");
+            }
         } else {
-            dsProps = new Props();
+            // all the data source bean must has a name
+            throw new UnsupportedOperationException("The data source bean must has a name, please set the name for the data source bean.");
         }
         String configName = "ds-" + (bw.name() == null ? "" : bw.name());
         SolonEasyQueryProperties solonEasyQueryProperties = new SolonEasyQueryProperties(dsProps);
