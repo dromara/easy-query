@@ -139,7 +139,7 @@ public class DbManager {
             String cfgPropPrefix = CommonConstant.TAG + "." + bw.name();
             dsProps = bw.context().cfg().getProp(cfgPropPrefix);
             if(dsProps.isEmpty() || !dsProps.containsKey("database")) {
-                throw new UnsupportedOperationException("Please set the configuration for the data source "+bw.name()+" dialect in the yml file with specific key " + cfgPropPrefix + ".database");
+                throw new UnsupportedOperationException("Please set the configuration for the data source ["+bw.name()+"] dialect in the yml file with specific key " + cfgPropPrefix + ".database");
             }
         } else {
             // all the data source bean must has a name

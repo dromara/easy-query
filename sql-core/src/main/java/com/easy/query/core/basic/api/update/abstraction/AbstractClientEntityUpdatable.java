@@ -57,7 +57,7 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
         if (entities == null || entities.isEmpty()) {
             throw new EasyQueryException("不支持空对象的update");
         }
-        this.entities= new ArrayList<>(entities);
+        this.entities = new ArrayList<>(entities);
 
         this.entityUpdateExpressionBuilder = entityUpdateExpression;
         QueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
@@ -112,8 +112,9 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
         List<EntityInterceptor> entityInterceptors = getEntityInterceptors();
         Class<?> entityClass = entityMetadata.getEntityClass();
         TrackContext trackContext = getTrackContextOrNull();
-        List<Object> trackEntities = new LinkedList<>();
-        if (EasyCollectionUtil.isNotEmpty(entityInterceptors) || trackContext != null) {
+        boolean hasTrackContent = trackContext != null;
+        if (EasyCollectionUtil.isNotEmpty(entityInterceptors) || hasTrackContent) {
+            List<Object> trackEntities = new ArrayList<>(hasTrackContent ? entities.size() : 0);
             for (T entity : entities) {
                 for (EntityInterceptor entityInterceptor : entityInterceptors) {
                     entityInterceptor.configureUpdate(entityClass, entityUpdateExpressionBuilder, entity);
@@ -124,8 +125,9 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
                     }
                 }
             }
+            return trackEntities;
         }
-        return trackEntities;
+        return EasyCollectionUtil.emptyList();
     }
 
     protected List<EntityInterceptor> getEntityInterceptors() {
@@ -206,7 +208,7 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
 
     @Override
     public ClientEntityUpdatable<T> configure(SQLActionExpression1<ContextConfigurer> configurer) {
-        if(configurer!=null){
+        if (configurer != null) {
             configurer.apply(new ContextConfigurerImpl(entityUpdateExpressionBuilder.getExpressionContext()));
         }
         return this;
@@ -222,9 +224,9 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
 
     @Override
     public ClientEntityUpdatable<T> ignoreVersion(boolean ignored) {
-        if(ignored){
+        if (ignored) {
             entityUpdateExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.IGNORE_VERSION);
-        }else{
+        } else {
             entityUpdateExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.IGNORE_VERSION);
         }
         return this;
