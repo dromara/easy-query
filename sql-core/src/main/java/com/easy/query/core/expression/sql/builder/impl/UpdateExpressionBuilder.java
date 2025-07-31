@@ -11,6 +11,7 @@ import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
+import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.ManyConfiguration;
@@ -169,7 +170,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
     @Override
     public EntityUpdateSQLExpression toExpression(@NotNull Object entity) {
-        Objects.requireNonNull(entity,"UpdateExpressionBuilder entity is null.");
+        Objects.requireNonNull(entity, "UpdateExpressionBuilder entity is null.");
         checkTable();
         EntityTableExpressionBuilder entityTableExpressionBuilder = getTables().get(0);
         return entityToExpression(entity, entityTableExpressionBuilder);
@@ -207,7 +208,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         PredicateSegment sqlWhere = sqlPredicateFilter(tableExpressionBuilder, where);
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
         EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
-        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata,tableExpressionBuilder.toExpression());
+        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata, tableExpressionBuilder.toExpression());
 
         addRelationTables(easyUpdateSQLExpression);
 
@@ -262,11 +263,11 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
 
         PredicateSegment sqlWhere = sqlPredicateFilter(tableExpressionBuilder, where);
         //替换掉配置的片段
-        SQLBuilderSegment updateSet = updateSetConfigurer(tableExpressionBuilder,getUpdateSetSegment(sqlWhere, entity, tableExpressionBuilder, entityUpdateSetProcessor),entity);
+        SQLBuilderSegment updateSet = updateSetConfigurer(tableExpressionBuilder, getUpdateSetSegment(sqlWhere, entity, tableExpressionBuilder, entityUpdateSetProcessor), entity);
 
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
         EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
-        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata,tableExpressionBuilder.toExpression());
+        EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata, tableExpressionBuilder.toExpression());
 
 
         updateSet.copyTo(easyUpdateSQLExpression.getSetColumns());
@@ -274,7 +275,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         return easyUpdateSQLExpression;
     }
 
-    private SQLBuilderSegment updateSetConfigurer(TableExpressionBuilder tableExpressionBuilder, SQLBuilderSegment updateSet,@NotNull Object entity) {
+    private SQLBuilderSegment updateSetConfigurer(TableExpressionBuilder tableExpressionBuilder, SQLBuilderSegment updateSet, @NotNull Object entity) {
         EntityMetadata entityMetadata = tableExpressionBuilder.getEntityTable().getEntityMetadata();
 
         //如果更新拦截器不为空
@@ -286,7 +287,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
             Predicate<Interceptor> interceptorFilter = getExpressionContext().getInterceptorFilter();
             for (UpdateEntityColumnInterceptor updateEntityColumnInterceptor : updateEntityColumnInterceptors) {
                 if (interceptorFilter.test(updateEntityColumnInterceptor)) {
-                    updateEntityColumnInterceptor.configure(entityMetadata.getEntityClass(), this, columnOnlySelector,entity);
+                    updateEntityColumnInterceptor.configure(entityMetadata.getEntityClass(), this, columnOnlySelector, entity);
                 }
             }
         }
@@ -525,23 +526,24 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         for (EntityTableExpressionBuilder table : super.tables) {
             updateExpressionBuilder.getTables().add(table.copyEntityTableExpressionBuilder());
         }
-        if(hasRelationTables()){
+        if (hasRelationTables()) {
             for (Map.Entry<RelationTableKey, EntityTableExpressionBuilder> entry : relationTables.entrySet()) {
                 updateExpressionBuilder.getRelationTables().put(entry.getKey(), entry.getValue().copyEntityTableExpressionBuilder());
             }
         }
-        if(super.manyConfigurationMaps!=null){
+        if (super.manyConfigurationMaps != null) {
             for (Map.Entry<RelationTableKey, ManyConfiguration> manyJoinConfigurationEntry : super.manyConfigurationMaps.entrySet()) {
-                updateExpressionBuilder.putManyConfiguration(manyJoinConfigurationEntry.getKey(),manyJoinConfigurationEntry.getValue());
+                updateExpressionBuilder.putManyConfiguration(manyJoinConfigurationEntry.getKey(), manyJoinConfigurationEntry.getValue());
             }
         }
-        if(super.manyJoinConfigurationSets!=null){
-            for (RelationTableKey manyJoinConfigurationSet : super.manyJoinConfigurationSets) {
-                updateExpressionBuilder.addSubQueryToGroupJoinJoin(manyJoinConfigurationSet);
+        if (super.manyJoinConfigurationMaps != null) {
+            for (Map.Entry<RelationTableKey, SubQueryModeEnum> subQueryModeKv : super.manyJoinConfigurationMaps.entrySet()) {
+                updateExpressionBuilder.putSubQueryToGroupJoinJoin(subQueryModeKv.getKey(), subQueryModeKv.getValue());
             }
         }
         return updateExpressionBuilder;
     }
+
     @Override
     public void accept(TableVisitor visitor) {
         visitor.visit(getTable(0).getEntityTable());

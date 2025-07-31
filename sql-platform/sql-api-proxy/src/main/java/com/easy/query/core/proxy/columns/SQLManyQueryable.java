@@ -3,6 +3,7 @@ package com.easy.query.core.proxy.columns;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.api.internal.ExpressionConfigurable;
 import com.easy.query.core.basic.api.internal.LogicDeletable;
+import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -67,6 +68,7 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
      */
     void filter(SQLActionExpression1<T1Proxy> whereExpression);
 
+    void mode(SubQueryModeEnum subQueryMode);
     /**
      * 仅子查询配置生效
      * manyJoin下使用则会转成独立SubQuery

@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.sql.builder;
 
+import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
@@ -9,7 +10,6 @@ import com.easy.query.core.expression.visitor.TableVisitor;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -39,9 +39,9 @@ public interface EntityExpressionBuilder extends ExpressionBuilder, RuntimeConte
     ManyConfiguration putManyConfiguration(RelationTableKey relationTableKey, ManyConfiguration manyConfiguration);
     ManyConfiguration getManyConfiguration(RelationTableKey relationTableKey);
     Map<RelationTableKey, ManyConfiguration> getManyConfigurations();
-    void addSubQueryToGroupJoinJoin(RelationTableKey relationTableKey);
-    boolean hasSubQueryToGroupJoin(RelationTableKey relationTableKey);
-    Set<RelationTableKey> getManyJoinConfigurationSets();
+    void putSubQueryToGroupJoinJoin(RelationTableKey relationTableKey, SubQueryModeEnum subQueryMode);
+    SubQueryModeEnum getSubQueryToGroupJoin(RelationTableKey relationTableKey);
+    Map<RelationTableKey,SubQueryModeEnum> getManyJoinConfigurationMaps();
     //    EntityTableExpressionBuilder removeRelationEntityTableExpression(RelationTableKey relationTableKey);
     Map<RelationTableKey, EntityTableExpressionBuilder> getRelationTables();
 

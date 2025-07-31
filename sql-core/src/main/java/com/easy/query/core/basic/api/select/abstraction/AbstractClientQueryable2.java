@@ -7,6 +7,7 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.api.select.extension.queryable2.override.AbstractOverrideClientQueryable2;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.DefaultRelationTableKey;
 import com.easy.query.core.expression.lambda.SQLActionExpression2;
@@ -115,7 +116,7 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractOverrideC
             EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, subQueryProperty.getTable(), subQueryProperty.getNavValue());
             TableAvailable leftTable = tableOrRelationalTable.table;
             String property = tableOrRelationalTable.property;
-            entityQueryExpressionBuilder.addSubQueryToGroupJoinJoin(new DefaultRelationTableKey(leftTable, property));
+            entityQueryExpressionBuilder.putSubQueryToGroupJoinJoin(new DefaultRelationTableKey(leftTable, property), SubQueryModeEnum.GROUP_JOIN);
         }
         return this;
     }

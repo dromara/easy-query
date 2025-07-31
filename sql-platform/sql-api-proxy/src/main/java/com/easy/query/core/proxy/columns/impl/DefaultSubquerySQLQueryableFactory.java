@@ -7,13 +7,12 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.common.OffsetLimitEntry;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.DefaultRelationTableKey;
 import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.RelationTableKey;
-import com.easy.query.core.expression.builder.core.PropagationValueFilter;
-import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.implicit.EntityRelationToImplicitGroupProvider;
 import com.easy.query.core.expression.implicit.EntityRelationToImplicitPartitionByProvider;
@@ -59,52 +58,56 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
 
         EntityRelationPropertyProvider entityRelationPredicateProvider = navigateMetadata.getEntityRelationPropertyProvider();
         boolean hasBehavior = expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN);
-        if (navigateMetadata.isSubQueryToGroupJoin() || hasBehavior || entityExpressionBuilder.hasSubQueryToGroupJoin(defaultRelationTableKey)) {
-            EntityRelationPropertyProvider entityRelationPropertyProvider = navigateMetadata.getEntityRelationPropertyProvider();
-            if (entityRelationPropertyProvider instanceof EntityRelationToImplicitGroupProvider) {
-                EntityRelationToImplicitGroupProvider entityRelationToImplicitGroupProvider = (EntityRelationToImplicitGroupProvider) entityRelationPropertyProvider;
-                ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(defaultRelationTableKey);
-                ManyConfiguration finalManyConfiguration = new ManyConfiguration(clientQueryable -> {
-                    if (manyConfiguration != null) {
-                        manyConfiguration.getConfigureExpression().apply(clientQueryable);
-                    }
-                    if (hasBehavior) {
-                        clientQueryable.configure(op -> {
-                            op.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN);
-                        });
-                    }
-                    EntityQueryable<T1Proxy, T1> entityQueryable = new EasyEntityQueryable<>(propertyProxy, EasyObjectUtil.typeCastNullable(clientQueryable));
-                    if (subQueryContext.getConfigureExpression() != null) {
-                        subQueryContext.getConfigureExpression().apply(entityQueryable);
-                        subQueryContext.setConfigureExpression(null);
-                    }
-                    if (subQueryContext.hasElements()) {
+        if (navigateMetadata.isSubQueryToGroupJoin() || hasBehavior) {
+            SubQueryModeEnum subQueryMode = entityExpressionBuilder.getSubQueryToGroupJoin(defaultRelationTableKey);
+            if (subQueryMode != SubQueryModeEnum.SUB_QUERY_ONLY) {
 
-
-                        if (subQueryContext.getWhereExpression() != null) {
-                            entityQueryable.where(subQueryContext.getWhereExpression());
-                            subQueryContext.setWhereExpression(null);
+                EntityRelationPropertyProvider entityRelationPropertyProvider = navigateMetadata.getEntityRelationPropertyProvider();
+                if (entityRelationPropertyProvider instanceof EntityRelationToImplicitGroupProvider) {
+                    EntityRelationToImplicitGroupProvider entityRelationToImplicitGroupProvider = (EntityRelationToImplicitGroupProvider) entityRelationPropertyProvider;
+                    ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(defaultRelationTableKey);
+                    ManyConfiguration finalManyConfiguration = new ManyConfiguration(clientQueryable -> {
+                        if (manyConfiguration != null) {
+                            manyConfiguration.getConfigureExpression().apply(clientQueryable);
                         }
-                        if (subQueryContext.getOrderByExpression() != null) {
-                            entityQueryable.orderBy(subQueryContext.getOrderByExpression());
-                            subQueryContext.setOrderByExpression(null);
+                        if (hasBehavior) {
+                            clientQueryable.configure(op -> {
+                                op.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN);
+                            });
+                        }
+                        EntityQueryable<T1Proxy, T1> entityQueryable = new EasyEntityQueryable<>(propertyProxy, EasyObjectUtil.typeCastNullable(clientQueryable));
+                        if (subQueryContext.getConfigureExpression() != null) {
+                            subQueryContext.getConfigureExpression().apply(entityQueryable);
+                            subQueryContext.setConfigureExpression(null);
                         }
                         if (subQueryContext.hasElements()) {
-                            entityQueryable.limit(subQueryContext.getOffset(), subQueryContext.getLimit());
-                            entityQueryable = entityQueryable.select(s -> s);
+
+
+                            if (subQueryContext.getWhereExpression() != null) {
+                                entityQueryable.where(subQueryContext.getWhereExpression());
+                                subQueryContext.setWhereExpression(null);
+                            }
+                            if (subQueryContext.getOrderByExpression() != null) {
+                                entityQueryable.orderBy(subQueryContext.getOrderByExpression());
+                                subQueryContext.setOrderByExpression(null);
+                            }
+                            if (subQueryContext.hasElements()) {
+                                entityQueryable.limit(subQueryContext.getOffset(), subQueryContext.getLimit());
+                                entityQueryable = entityQueryable.select(s -> s);
+                            }
+                            return entityQueryable.getClientQueryable();
                         }
-                        return entityQueryable.getClientQueryable();
-                    }
-                    return clientQueryable;
-                });
-                AnonymousManyJoinEntityTableExpressionBuilder anonymousManyJoinEntityTableExpressionBuilder = entityRelationToImplicitGroupProvider.toImplicitGroup(entityExpressionBuilder, leftTable, navigateMetadata, finalManyConfiguration);
+                        return clientQueryable;
+                    });
+                    AnonymousManyJoinEntityTableExpressionBuilder anonymousManyJoinEntityTableExpressionBuilder = entityRelationToImplicitGroupProvider.toImplicitGroup(entityExpressionBuilder, leftTable, navigateMetadata, finalManyConfiguration);
 
-                EntityTableExpressionBuilder manyJoinTableExpressionBuilder = anonymousManyJoinEntityTableExpressionBuilder.getEntityQueryExpressionBuilder().getTable(0);
-                T1Proxy manyJoinPropertyProxy = propertyProxy.create(manyJoinTableExpressionBuilder.getEntityTable(), anonymousManyJoinEntityTableExpressionBuilder.getEntityQueryExpressionBuilder(), runtimeContext);
-                manyJoinPropertyProxy.setNavValue(fullName);
-                manyJoinPropertyProxy.getEntitySQLContext().setContextHolder(subQueryContext.getEntitySQLContext().getContextHolder());
-                return new EasyManyJoinSQLManyQueryable<>(subQueryContext, anonymousManyJoinEntityTableExpressionBuilder, manyJoinPropertyProxy);
+                    EntityTableExpressionBuilder manyJoinTableExpressionBuilder = anonymousManyJoinEntityTableExpressionBuilder.getEntityQueryExpressionBuilder().getTable(0);
+                    T1Proxy manyJoinPropertyProxy = propertyProxy.create(manyJoinTableExpressionBuilder.getEntityTable(), anonymousManyJoinEntityTableExpressionBuilder.getEntityQueryExpressionBuilder(), runtimeContext);
+                    manyJoinPropertyProxy.setNavValue(fullName);
+                    manyJoinPropertyProxy.getEntitySQLContext().setContextHolder(subQueryContext.getEntitySQLContext().getContextHolder());
+                    return new EasyManyJoinSQLManyQueryable<>(subQueryContext, anonymousManyJoinEntityTableExpressionBuilder, manyJoinPropertyProxy);
 
+                }
             }
         }
 

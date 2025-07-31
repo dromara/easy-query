@@ -3,6 +3,7 @@ package com.easy.query.core.expression.sql.builder.impl;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.ManyConfiguration;
@@ -275,9 +276,9 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
                 deleteExpressionBuilder.putManyConfiguration(manyJoinConfigurationEntry.getKey(),manyJoinConfigurationEntry.getValue());
             }
         }
-        if(super.manyJoinConfigurationSets!=null){
-            for (RelationTableKey manyJoinConfigurationSet : super.manyJoinConfigurationSets) {
-                deleteExpressionBuilder.addSubQueryToGroupJoinJoin(manyJoinConfigurationSet);
+        if(super.manyJoinConfigurationMaps !=null){
+            for (Map.Entry<RelationTableKey, SubQueryModeEnum> subQueryModeKv : super.manyJoinConfigurationMaps.entrySet()) {
+                deleteExpressionBuilder.putSubQueryToGroupJoinJoin(subQueryModeKv.getKey(),subQueryModeKv.getValue());
             }
         }
 

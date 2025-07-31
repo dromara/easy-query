@@ -1,21 +1,15 @@
 package com.easy.query.core.proxy.columns.impl;
 
-import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
-import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
+import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.expression.DefaultRelationTableKey;
-import com.easy.query.core.expression.ImplicitGroupRelationTableKey;
 import com.easy.query.core.expression.ManyConfiguration;
-import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SQLManyQueryable;
 import com.easy.query.core.proxy.columns.SQLQueryable;
@@ -26,11 +20,10 @@ import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
-import com.easy.query.core.proxy.sql.Include;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.math.BigDecimal;
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * create time 2025/3/12 11:54
@@ -131,6 +124,13 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
             return entityQueryable.getClientQueryable();
         }));
 
+    }
+
+    @Override
+    public void mode(SubQueryModeEnum subQueryMode) {
+        Objects.requireNonNull(subQueryMode,"subQueryMode cant be null");
+        DefaultRelationTableKey defaultRelationTableKey = new DefaultRelationTableKey(subQueryContext.getLeftTable(), subQueryContext.getProperty());
+        subQueryContext.getEntityExpressionBuilder().putSubQueryToGroupJoinJoin(defaultRelationTableKey, subQueryMode);
     }
 
     @Override

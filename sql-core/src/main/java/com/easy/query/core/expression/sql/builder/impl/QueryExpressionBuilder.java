@@ -5,6 +5,7 @@ import com.easy.query.core.common.reverse.DefaultReverseEach;
 import com.easy.query.core.common.reverse.EmptyReverseEach;
 import com.easy.query.core.common.reverse.ReverseEach;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.RelationTableKey;
@@ -350,9 +351,10 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
                 queryExpressionBuilder.putManyConfiguration(manyJoinConfigurationEntry.getKey(),manyJoinConfigurationEntry.getValue());
             }
         }
-        if(super.manyJoinConfigurationSets!=null){
-            for (RelationTableKey manyJoinConfigurationSet : super.manyJoinConfigurationSets) {
-                queryExpressionBuilder.addSubQueryToGroupJoinJoin(manyJoinConfigurationSet);
+        if(super.manyJoinConfigurationMaps !=null){
+            for (Map.Entry<RelationTableKey, SubQueryModeEnum> subQueryModeKv : super.manyJoinConfigurationMaps.entrySet()) {
+
+                queryExpressionBuilder.putSubQueryToGroupJoinJoin(subQueryModeKv.getKey(),subQueryModeKv.getValue());
             }
         }
         return queryExpressionBuilder;

@@ -7,6 +7,7 @@ import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.EntityValueState;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
@@ -289,6 +290,37 @@ public class QueryTest27 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`username`,t.`phone`,t.`id_card`,t.`address` FROM `easy-query-test`.`t_sys_user` t LEFT JOIN `BlogAbc` t1 ON t1.`deleted` = ? AND t1.`id` = t.`id` LEFT JOIN (SELECT t2.`title` AS `title`,(COUNT(?) > 0) AS `__any2__` FROM `BInner` t2 WHERE t2.`deleted` = ? AND t2.`star` = ? GROUP BY t2.`title`) t3 ON t3.`title` = t.`id` WHERE t1.`star` = ? AND IFNULL(t3.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),1(Integer),false(Boolean),1(Integer),1(Integer),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testAAA45() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                    .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                    .where(o -> {
+                        o.myBlog().configure(r -> {
+                            r.asTable("BlogAbc");
+                        });
+                        o.blogs().mode(SubQueryModeEnum.SUB_QUERY_ONLY);
+                        o.myBlog().star().eq(1);
+                        o.blogs().configure(x->x.asTable("BInner")).where(x -> {
+                            x.star().eq(1);
+                        }).any();
+//                    o.blogs().where(o->o._configurer().)
+                    }).toList();
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`username`,t.`phone`,t.`id_card`,t.`address` FROM `easy-query-test`.`t_sys_user` t LEFT JOIN `BlogAbc` t1 ON t1.`deleted` = ? AND t1.`id` = t.`id` WHERE t1.`star` = ? AND EXISTS (SELECT 1 FROM `BInner` t2 WHERE t2.`deleted` = ? AND t2.`title` = t.`id` AND t2.`star` = ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),1(Integer),false(Boolean),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 }

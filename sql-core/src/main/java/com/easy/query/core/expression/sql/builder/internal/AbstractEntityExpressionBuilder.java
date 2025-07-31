@@ -3,6 +3,7 @@ package com.easy.query.core.expression.sql.builder.internal;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.RelationTableKey;
@@ -12,7 +13,6 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -35,7 +35,7 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
     protected final List<EntityTableExpressionBuilder> tables;
     protected Map<RelationTableKey, EntityTableExpressionBuilder> relationTables;
     protected Map<RelationTableKey, ManyConfiguration> manyConfigurationMaps;
-    protected Set<RelationTableKey> manyJoinConfigurationSets;
+    protected Map<RelationTableKey,SubQueryModeEnum> manyJoinConfigurationMaps;
 
     public AbstractEntityExpressionBuilder(ExpressionContext expressionContext, Class<?> queryClass) {
         this.expressionContext = expressionContext;
@@ -125,23 +125,23 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
     }
 
     @Override
-    public void addSubQueryToGroupJoinJoin(RelationTableKey relationTableKey) {
-        if (manyJoinConfigurationSets == null) {
-            this.manyJoinConfigurationSets = new HashSet<>();
+    public void putSubQueryToGroupJoinJoin(RelationTableKey relationTableKey, SubQueryModeEnum subQueryMode) {
+        if (manyJoinConfigurationMaps == null) {
+            this.manyJoinConfigurationMaps = new HashMap<>();
         }
-        manyJoinConfigurationSets.add(relationTableKey);
+        manyJoinConfigurationMaps.put(relationTableKey,subQueryMode);
     }
 
     @Override
-    public boolean hasSubQueryToGroupJoin(RelationTableKey relationTableKey) {
-        if (manyJoinConfigurationSets == null) {
-            return false;
+    public SubQueryModeEnum getSubQueryToGroupJoin(RelationTableKey relationTableKey) {
+        if (manyJoinConfigurationMaps == null) {
+            return null;
         }
-        return manyJoinConfigurationSets.contains(relationTableKey);
+        return manyJoinConfigurationMaps.get(relationTableKey);
     }
     @Override
-    public Set<RelationTableKey> getManyJoinConfigurationSets() {
-        return manyJoinConfigurationSets;
+    public Map<RelationTableKey,SubQueryModeEnum> getManyJoinConfigurationMaps() {
+        return manyJoinConfigurationMaps;
     }
     //
 //    @Override

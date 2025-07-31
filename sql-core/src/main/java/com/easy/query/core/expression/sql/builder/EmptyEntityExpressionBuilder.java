@@ -2,6 +2,7 @@ package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.context.EmptyQueryRuntimeContext;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.sql.expression.EntitySQLExpression;
@@ -66,17 +67,17 @@ public class EmptyEntityExpressionBuilder implements EntityExpressionBuilder{
     }
 
     @Override
-    public void addSubQueryToGroupJoinJoin(RelationTableKey relationTableKey) {
+    public void putSubQueryToGroupJoinJoin(RelationTableKey relationTableKey, SubQueryModeEnum subQueryMode) {
 
     }
 
     @Override
-    public boolean hasSubQueryToGroupJoin(RelationTableKey relationTableKey) {
-        return false;
+    public SubQueryModeEnum getSubQueryToGroupJoin(RelationTableKey relationTableKey) {
+        return null;
     }
 
     @Override
-    public Set<RelationTableKey> getManyJoinConfigurationSets() {
+    public Map<RelationTableKey,SubQueryModeEnum> getManyJoinConfigurationMaps() {
         return null;
     }
 
