@@ -4,7 +4,6 @@ import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.EasyBehaviorEnum;
-import com.easy.query.core.enums.GroupJoinModeEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.expression.many2group.ManyGroupJoinProjectKey;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -65,8 +64,7 @@ public class AnonymousManyJoinDefaultTableExpressionBuilder extends AnonymousDef
 
     @Override
     public EntityTableSQLExpression toExpression() {
-        EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
-        if (GroupJoinModeEnum.AUTO == easyQueryOption.getGroupJoinMode()&&!expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.GROUP_JOIN_NOT_ALLOW_AUTO_MERGE)) {
+        if (!expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.GROUP_JOIN_NOT_ALLOW_AUTO_MERGE)) {
             //子查询转groupJoin条件都以case when出现在select projects中可能会存在有直接any的表达式那么这种情况不应该合并表达式
             if (this.groupJoinPredicateSegmentContexts.stream().map(o->{
                 o.setPredicateSegmentAs(null);

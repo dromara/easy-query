@@ -41,10 +41,19 @@ public interface DSLStringAssertPredicate<TProperty> extends TablePropColumn, En
            }));
         }
     }
+
+    /**
+     * 断言列为空字符串
+     * eg. (column IS NULL OR column = '' OR LTRIM(column) = '')
+     */
     default void isBlank() {
          isBlank(true);
     }
 
+    /**
+     * 断言列为空字符串
+     * eg. (column IS NULL OR column = '' OR LTRIM(column) = '')
+     */
     default void isBlank(boolean condition){
         if(condition){
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {
@@ -54,10 +63,19 @@ public interface DSLStringAssertPredicate<TProperty> extends TablePropColumn, En
             }));
         }
     }
+
+    /**
+     * 断言列不是空字符串
+     * eg. (column IS NOT NULL AND column <> '' AND LTRIM(column) <> '')
+     */
     default void isNotBlank() {
          isNotBlank(true);
     }
 
+    /**
+     * 断言列不是空字符串
+     * eg. (column IS NOT NULL AND column <> '' AND LTRIM(column) <> '')
+     */
     default void isNotBlank(boolean condition){
         if(condition){
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> {

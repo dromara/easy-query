@@ -13,6 +13,8 @@ import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.proxy.columns.impl.DefaultSubquerySQLQueryableFactory;
+import com.easy.query.core.proxy.configurer.DefaultTableConfigurer;
+import com.easy.query.core.proxy.configurer.TableConfigurer;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extra.EntityExtraAutoIncludeConfigure;
 import com.easy.query.core.proxy.extra.EntityExtraAutoIncludeConfigureImpl;
@@ -93,6 +95,10 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         getEntitySQLContext()._where(onFilter, () -> {
             filterExpression.apply(EasyObjectUtil.typeCastNullable(this));
         });
+    }
+
+    public void configure(SQLActionExpression1<TableConfigurer<TProxy, TEntity>> configurer) {
+        configurer.apply(new DefaultTableConfigurer<>(entitySQLContext, castChain()));
     }
 
     protected <T, N> N __cast(T original) {

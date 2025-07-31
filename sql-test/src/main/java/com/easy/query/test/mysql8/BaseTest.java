@@ -12,7 +12,6 @@ import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.QueryConfiguration;
-import com.easy.query.core.enums.GroupJoinModeEnum;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
@@ -91,7 +90,6 @@ public class BaseTest {
                     op.setDefaultTrack(true);
                     op.setIncludeLimitMode(IncludeLimitModeEnum.PARTITION);
                     op.setRelationGroupSize(50);
-                    op.setGroupJoinMode(GroupJoinModeEnum.AUTO);
                 })
 //                .replaceService(Column2MapKeyConversion.class, UpperColumn2MapKeyConversion.class)
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())

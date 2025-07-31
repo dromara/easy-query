@@ -167,7 +167,6 @@ public class SpringBootStarterBuilder {
                     builder.setIncludeLimitMode(easyQueryProperties.getIncludeLimitMode());
                     builder.setSaveComment(easyQueryProperties.isSaveComment());
                     builder.setMaxInClauseSize(easyQueryProperties.getMaxInClauseSize());
-                    builder.setGroupJoinMode(easyQueryProperties.getGroupJoinMode());
                 })
                 .customConfigure(s -> {
                     switch (easyQueryProperties.getDatabase()) {

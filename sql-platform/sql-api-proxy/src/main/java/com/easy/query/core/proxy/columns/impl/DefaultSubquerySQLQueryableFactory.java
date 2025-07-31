@@ -73,13 +73,14 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
                             op.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN);
                         });
                     }
+                    EntityQueryable<T1Proxy, T1> entityQueryable = new EasyEntityQueryable<>(propertyProxy, EasyObjectUtil.typeCastNullable(clientQueryable));
+                    if (subQueryContext.getConfigureExpression() != null) {
+                        subQueryContext.getConfigureExpression().apply(entityQueryable);
+                        subQueryContext.setConfigureExpression(null);
+                    }
                     if (subQueryContext.hasElements()) {
 
-                        EntityQueryable<T1Proxy, T1> entityQueryable = new EasyEntityQueryable<>(propertyProxy, EasyObjectUtil.typeCastNullable(clientQueryable));
-                        if (subQueryContext.getConfigureExpression() != null) {
-                            subQueryContext.getConfigureExpression().apply(entityQueryable);
-                            subQueryContext.setConfigureExpression(null);
-                        }
+
                         if (subQueryContext.getWhereExpression() != null) {
                             entityQueryable.where(subQueryContext.getWhereExpression());
                             subQueryContext.setWhereExpression(null);
@@ -116,11 +117,11 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
         }
         EntityQueryable<T1Proxy, T1> queryable = new EasyEntityQueryable<>(propertyProxy, implicitSubQuery);
 
+        if (subQueryContext.getConfigureExpression() != null) {
+            subQueryContext.getConfigureExpression().apply(queryable);
+            subQueryContext.setConfigureExpression(null);
+        }
         if (subQueryContext.hasElements()) {
-            if (subQueryContext.getConfigureExpression() != null) {
-                subQueryContext.getConfigureExpression().apply(queryable);
-                subQueryContext.setConfigureExpression(null);
-            }
             if (subQueryContext.getWhereExpression() != null) {
                 queryable.where(subQueryContext.getWhereExpression());
                 subQueryContext.setWhereExpression(null);

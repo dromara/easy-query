@@ -184,7 +184,6 @@ public class DbManager {
                     builder.setIncludeLimitMode(solonEasyQueryProperties.getIncludeLimitMode());
                     builder.setSaveComment(solonEasyQueryProperties.getSaveComment());
                     builder.setMaxInClauseSize(solonEasyQueryProperties.getMaxInClauseSize());
-                    builder.setGroupJoinMode(solonEasyQueryProperties.getGroupJoinMode());
                 });
 
 
