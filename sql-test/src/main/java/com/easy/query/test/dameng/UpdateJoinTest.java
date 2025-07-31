@@ -106,6 +106,10 @@ public class UpdateJoinTest extends DamengBaseTest {
         entityQuery.insertable(damengMyTopic)
                 .onConflictThen(o->o.FETCHER.allFields()).executeRows();
         listenerContextManager.clear();
+        entityQuery.deletable(damengMyTopic)
+                .allowDeleteStatement(true)
+                .disableLogicDelete()
+                .executeRows();
     }
 
 }

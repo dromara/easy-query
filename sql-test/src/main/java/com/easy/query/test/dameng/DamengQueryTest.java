@@ -12,6 +12,7 @@ import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.cache.JsonUtil;
 import com.easy.query.test.dameng.entity.DamengMyTopic;
 import com.easy.query.test.dameng.entity.DamengMyTopicDTO;
 import com.easy.query.test.dameng.entity.proxy.DamengMyTopicProxy;
@@ -128,6 +129,7 @@ public class DamengQueryTest extends DamengBaseTest {
                 .toPageResult(2, 20);
         List<DamengMyTopic> data = topicPageResult.getData();
         Assert.assertEquals(20, data.size());
+        System.out.println(JsonUtil.object2JsonStr(data));
         for (int i = 0; i < 20; i++) {
             DamengMyTopic msSQLMyTopic = data.get(i);
             Assert.assertEquals(msSQLMyTopic.getId(), String.valueOf(i + 20));
