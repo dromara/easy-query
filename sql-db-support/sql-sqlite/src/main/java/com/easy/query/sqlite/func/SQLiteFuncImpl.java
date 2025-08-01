@@ -151,4 +151,14 @@ public class SQLiteFuncImpl extends SQLFuncImpl {
     public SQLFunction random() {
         return new SQLiteRandomSQLFunction();
     }
+    @Override
+    public SQLFunction booleanSQLFunction(String sqlSegment, SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        SQLFunction sqlFunction = anySQLFunction(sqlSegment, sqlExpression);
+        SQLActionExpression1<ColumnFuncSelector> sqlExpressionFunc = columnFuncSelector -> {
+            columnFuncSelector.sqlFunc(sqlFunction);
+            columnFuncSelector.value(true);
+            columnFuncSelector.value(false);
+        };
+        return new SQLiteBooleanSQLFunction(getColumnExpressions(sqlExpressionFunc));
+    }
 }

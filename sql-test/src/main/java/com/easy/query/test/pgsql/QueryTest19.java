@@ -8,6 +8,7 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.key.MapKey;
 import com.easy.query.api.proxy.key.MapKeys;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
@@ -510,5 +511,31 @@ public class QueryTest19 extends PgSQLBaseTest {
         Object o = maps.get(0).get("aa");
         Assert.assertEquals("ab", o);
     }
+
+
+    @Test
+     public void test(){
+        BlogEntity blogEntity = entityQuery.queryable(BlogEntity.class).includes(t_blog -> t_blog.users()).where(t_blog -> {
+            t_blog.title().eq("title0");
+        }).singleNotNull();
+        Assert.assertNotNull(blogEntity.getUsers());
+        Assert.assertEquals(1,blogEntity.getUsers().size());
+        List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(t_blog -> {
+                    t_blog.users().count().gt(0L);
+                }).toList();
+        List<BlogEntity> list1 = entityQuery.queryable(BlogEntity.class)
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(t_blog -> {
+                    t_blog.users().any();
+                }).toList();
+        List<BlogEntity> list2 = entityQuery.queryable(BlogEntity.class)
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(t_blog -> {
+                    t_blog.users().where(s->s.id().isNotBlank()).any();
+                }).toList();
+    }
+
 
 }

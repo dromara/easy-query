@@ -141,4 +141,15 @@ public class KingbaseESSQLFuncImpl extends SQLFuncImpl {
     public SQLFunction indexOf(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new KingbaseESIndexOfSQLFunction(getColumnExpressions(sqlExpression));
     }
+
+    @Override
+    public SQLFunction booleanSQLFunction(String sqlSegment, SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        SQLFunction sqlFunction = anySQLFunction(sqlSegment, sqlExpression);
+        SQLActionExpression1<ColumnFuncSelector> sqlExpressionFunc = columnFuncSelector -> {
+            columnFuncSelector.sqlFunc(sqlFunction);
+            columnFuncSelector.value(true);
+            columnFuncSelector.value(false);
+        };
+        return new KingbaseESBooleanSQLFunction(getColumnExpressions(sqlExpressionFunc));
+    }
 }

@@ -86,4 +86,14 @@ public class ClickHouseFuncImpl extends SQLFuncImpl {
     public SQLFunction utcNow() {
         return ClickHouseUtcNowSQLFunction.INSTANCE;
     }
+    @Override
+    public SQLFunction booleanSQLFunction(String sqlSegment, SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        SQLFunction sqlFunction = anySQLFunction(sqlSegment, sqlExpression);
+        SQLActionExpression1<ColumnFuncSelector> sqlExpressionFunc = columnFuncSelector -> {
+            columnFuncSelector.sqlFunc(sqlFunction);
+            columnFuncSelector.value(true);
+            columnFuncSelector.value(false);
+        };
+        return new ClickHouseBooleanSQLFunction(getColumnExpressions(sqlExpressionFunc));
+    }
 }

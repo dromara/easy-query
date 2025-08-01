@@ -143,4 +143,14 @@ public class GaussDBFuncImpl extends SQLFuncImpl {
     public SQLFunction indexOf(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new GaussDBIndexOfSQLFunction(getColumnExpressions(sqlExpression));
     }
+    @Override
+    public SQLFunction booleanSQLFunction(String sqlSegment, SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        SQLFunction sqlFunction = anySQLFunction(sqlSegment, sqlExpression);
+        SQLActionExpression1<ColumnFuncSelector> sqlExpressionFunc = columnFuncSelector -> {
+            columnFuncSelector.sqlFunc(sqlFunction);
+            columnFuncSelector.value(true);
+            columnFuncSelector.value(false);
+        };
+        return new GaussDBBooleanSQLFunction(getColumnExpressions(sqlExpressionFunc));
+    }
 }
