@@ -14,6 +14,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -45,6 +46,7 @@ public class KingbaseESMigrationEntityParser extends DefaultMigrationEntityParse
         columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("numeric(16,2)", null));
         columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("TIMESTAMP", null));
         columnTypeMap.put(LocalDate.class, new ColumnDbTypeResult("DATE", null));
+        columnTypeMap.put(LocalTime.class, new ColumnDbTypeResult("TIME", null));
         columnTypeMap.put(String.class, new ColumnDbTypeResult("VARCHAR(255)", null));
         columnTypeMap.put(UUID.class, new ColumnDbTypeResult("UUID", null));
     }

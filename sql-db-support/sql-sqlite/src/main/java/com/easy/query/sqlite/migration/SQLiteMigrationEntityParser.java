@@ -6,6 +6,7 @@ import com.easy.query.core.migration.DefaultMigrationEntityParser;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -39,6 +40,7 @@ public class SQLiteMigrationEntityParser extends DefaultMigrationEntityParser {
         columnTypeMap.put(BigDecimal.class, new ColumnDbTypeResult("decimal(16,2)", null));
         columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("TEXT", null));
         columnTypeMap.put(LocalDate.class, new ColumnDbTypeResult("TEXT", null));
+        columnTypeMap.put(LocalTime.class, new ColumnDbTypeResult("TEXT", null));
         columnTypeMap.put(String.class, new ColumnDbTypeResult("nvarchar(255)", null));
         columnTypeMap.put(UUID.class, new ColumnDbTypeResult("character(36)", null));
     }

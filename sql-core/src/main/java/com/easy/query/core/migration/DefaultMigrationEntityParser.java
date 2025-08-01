@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * create time 2025/1/18 20:07
@@ -56,6 +57,7 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
         columnTypeMap.put(LocalDate.class, new ColumnDbTypeResult("DATE", null));
         columnTypeMap.put(LocalTime.class, new ColumnDbTypeResult("TIME", null));
         columnTypeMap.put(String.class, new ColumnDbTypeResult("VARCHAR(255)", null));
+        columnTypeMap.put(UUID.class, new ColumnDbTypeResult("VARCHAR(36)", null));
     }
 
     protected Map<Class<?>, ColumnDbTypeResult> getColumnTypeMap() {
