@@ -78,7 +78,7 @@ List<Company> companies = entityQuery.queryable(Company.class)
         .where(company -> {
           company.users().any(u -> u.name().like("Xiao Ming"));
           company.users().where(u -> u.name().like("Xiao Ming"))
-                  .max(u -> u.birthday()).gt(LocalDateTime.now());
+                  .max(u -> u.birthday()).gt(LocalDateTime.of(2000,1,1,0,0,0));
         }).toList();
 ```
 ### Implicit Grouping

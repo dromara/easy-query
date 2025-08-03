@@ -63,6 +63,7 @@
 `Company` OneToMany `SysUser`
 
 ### 隐式join
+查询用户条件是用户所属企业是xx公司
 ```java
 
 List<SysUser> userInXXCompany = entityQuery.queryable(SysUser.class)
@@ -77,15 +78,19 @@ List<SysUser> userInXXCompany = entityQuery.queryable(SysUser.class)
 
 
 ### 隐式子查询
+查询企业条件是企业必须有小明这个用户并且小明这个用户是2000年1月1日之后出生
 ```java
 
 List<Company> companies = entityQuery.queryable(Company.class)
         .where(company -> {
           company.users().any(u -> u.name().like("小明"));
-          company.users().where(u -> u.name().like("小明")).max(u -> u.birthday()).gt(LocalDateTime.now());
+          company.users().where(u -> u.name().like("小明")).max(u -> u.birthday()).gt(LocalDateTime.of(2000,1,1,0,0,0));
         }).toList();
 ```
 ### 隐式分组
+查询企业条件是企业必须有小明这个用户并且小明这个用户是2000年1月1日之后出生
+
+合并两个子查询使用join group合并
 ```java
 
 List<Company> companies = entityQuery.queryable(Company.class)
@@ -93,17 +98,19 @@ List<Company> companies = entityQuery.queryable(Company.class)
         .subQueryToGroupJoin(company -> company.users())
         .where(company -> {
           company.users().any(u -> u.name().like("小明"));
-          company.users().where(u -> u.name().like("小明")).max(u -> u.birthday()).gt(LocalDateTime.now());
+          company.users().where(u -> u.name().like("小明")).max(u -> u.birthday()).gt(LocalDateTime.of(2000,1,1,0,0,0));
         }).toList();
 ```
 
 ### 隐式分区分组
+查询企业要求企业的所有员工年龄最小的那个是小明并且生日是2000年1月1日之前
+
 ```java
 
 List<Company> companies = entityQuery.queryable(Company.class)
         .where(company -> {
           company.users().orderBy(u->u.birthday().desc()).first().name().eq("小明");
-          company.users().orderBy(u->u.birthday().desc()).element(0).birthday().lt(LocalDateTime.now());
+          company.users().orderBy(u->u.birthday().desc()).element(0).birthday().lt(LocalDateTime.of(2000,1,1,0,0,0));
         }).toList();
 ```
 

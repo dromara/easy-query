@@ -1,6 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.MapProxy;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.enums.MapKeyModeEnum;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.track.EntityState;
@@ -12,6 +13,7 @@ import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -322,5 +324,35 @@ public class QueryTest27 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`username`,t.`phone`,t.`id_card`,t.`address` FROM `easy-query-test`.`t_sys_user` t LEFT JOIN `BlogAbc` t1 ON t1.`deleted` = ? AND t1.`id` = t.`id` WHERE t1.`star` = ? AND EXISTS (SELECT 1 FROM `BInner` t2 WHERE t2.`deleted` = ? AND t2.`title` = t.`id` AND t2.`star` = ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean),1(Integer),false(Boolean),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+    }
+
+    @Test
+     public void testaaaa54(){
+        EntityQueryable<BlogEntityProxy, BlogEntity> where = easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    t_blog.title().eq("123");
+                });
+        List<BlogEntity> list = where.leftJoin(BlogEntity.class, (a, b) -> a.id().eq(b.title()))
+                .leftJoin(BlogEntity.class, (a, b, c) -> c.id().eq(b.title()))
+                .toList();
+    }
+    @Test
+     public void testaaaa541(){
+        EntityQueryable<BlogEntityProxy, BlogEntity> where = easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+                    if(false){
+                        t_blog.title().eq("123");
+                    }
+                });
+        List<BlogEntity> list = where.leftJoin(BlogEntity.class, (a, b) -> a.id().eq(b.title()))
+                .leftJoin(BlogEntity.class, (a, b, c) -> {
+                    if(true){
+                        c.id().eq(b.title());
+                    }
+                })
+                .where((a, b, c) -> {
+                    c.id().eq(b.title());
+                })
+                .toList();
     }
 }

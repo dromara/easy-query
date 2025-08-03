@@ -952,5 +952,15 @@ public class QueryTest24 extends BaseTest {
         listenerContextManager.clear();
     }
 
+//    @Test
+//    public void testQueryRole(){
+//        String userId="xxxxx";
+//        List<SysRole> list = easyEntityQuery.queryable(SysRole.class)
+//                .where(role -> {
+//                    role.users().any(u -> {
+//                        u.id().eq(userId);
+//                    });
+//                }).toList();
+//    }
 
 }
