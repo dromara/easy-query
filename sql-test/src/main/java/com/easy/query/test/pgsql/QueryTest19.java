@@ -20,6 +20,7 @@ import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MyCategory;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.UUIDEntity;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.vo.MyVO;
@@ -31,6 +32,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * create time 2024/11/9 09:26
@@ -538,4 +540,18 @@ public class QueryTest19 extends PgSQLBaseTest {
     }
 
 
+    @Test
+    public void testUUId(){
+        UUID uuid = UUID.randomUUID();
+
+        UUIDEntity uuidEntity = new UUIDEntity();
+        uuidEntity.setId1(uuid);
+        uuidEntity.setId2(uuid);
+
+        entityQuery.insertable(uuidEntity).executeRows();
+
+        UUIDEntity uuidEntity1 = entityQuery.queryable(UUIDEntity.class).firstNotNull();
+        Assert.assertEquals(uuid, uuidEntity1.getId1());
+        Assert.assertEquals(uuid, uuidEntity1.getId2());
+    }
 }

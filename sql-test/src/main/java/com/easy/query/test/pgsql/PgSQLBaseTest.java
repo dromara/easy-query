@@ -21,6 +21,7 @@ import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MyCategoryInterceptor;
 import com.easy.query.test.entity.SysUser;
+import com.easy.query.test.entity.UUIDEntity;
 import com.easy.query.test.interceptor.MyEntityInterceptor;
 import com.easy.query.test.interceptor.MyTenantInterceptor;
 import com.easy.query.test.listener.ListenerContextManager;
@@ -143,12 +144,12 @@ public class PgSQLBaseTest {
         {
 
 
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(DocBankCard.class,DocBank.class,  DocUser.class, SysUser.class));
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(DocBankCard.class,DocBank.class,  DocUser.class, SysUser.class, UUIDEntity.class));
             codeFirstCommand.executeWithTransaction(a->a.commit());
         }
         {
 
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class,DocBankCard.class, DocUser.class, SysUser.class));
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class,DocBankCard.class, DocUser.class, SysUser.class, UUIDEntity.class));
             codeFirstCommand.executeWithTransaction(a->a.commit());
         }
 

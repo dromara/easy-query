@@ -19,6 +19,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.sql.JDBCType;
 
 
 /**
@@ -168,4 +169,5 @@ public @interface Column {
     String renameFrom() default "";
 
     ColumnSQLExpression sqlExpression() default @ColumnSQLExpression(sql = "",  args = {});
+    JDBCType jdbcType() default JDBCType.OTHER;
 }

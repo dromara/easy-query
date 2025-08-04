@@ -1,5 +1,7 @@
 package com.easy.query.pgsql.config;
 
+import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
+import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
@@ -11,6 +13,9 @@ import com.easy.query.pgsql.expression.PostgresSQLExpressionFactory;
 import com.easy.query.pgsql.func.PgSQLFuncImpl;
 import com.easy.query.pgsql.migration.PgSQLDatabaseMigrationProvider;
 import com.easy.query.pgsql.migration.PgSQLMigrationEntityParser;
+import com.easy.query.pgsql.types.UUIDPgSQLTypeHandler;
+
+import java.util.UUID;
 
 /**
  * create time 2023/5/10 13:40
@@ -26,5 +31,10 @@ public class PgSQLDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(SQLFunc.class, PgSQLFuncImpl.class);
         services.addService(DatabaseMigrationProvider.class, PgSQLDatabaseMigrationProvider.class);
         services.addService(MigrationEntityParser.class, PgSQLMigrationEntityParser.class);
+        services.addServiceFactory(JdbcTypeHandlerManager.class,s->{
+            EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager = new EasyJdbcTypeHandlerManager();
+            easyJdbcTypeHandlerManager.appendHandler(UUID.class, UUIDPgSQLTypeHandler.INSTANCE,true);
+            return easyJdbcTypeHandlerManager;
+        });
     }
 }

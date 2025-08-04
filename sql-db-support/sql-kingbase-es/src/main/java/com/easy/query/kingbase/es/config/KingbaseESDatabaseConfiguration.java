@@ -1,5 +1,7 @@
 package com.easy.query.kingbase.es.config;
 
+import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
+import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
@@ -12,6 +14,9 @@ import com.easy.query.kingbase.es.expression.KingbaseESExpressionFactory;
 import com.easy.query.kingbase.es.func.KingbaseESSQLFuncImpl;
 import com.easy.query.kingbase.es.migration.KingbaseESDatabaseMigrationProvider;
 import com.easy.query.kingbase.es.migration.KingbaseESMigrationEntityParser;
+import com.easy.query.kingbase.es.types.UUIDKingbaseESTypeHandler;
+
+import java.util.UUID;
 
 /**
  * create time 2023/7/28 21:11
@@ -28,5 +33,10 @@ public class KingbaseESDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(SQLFunc.class, KingbaseESSQLFuncImpl.class);
         services.addService(DatabaseMigrationProvider.class, KingbaseESDatabaseMigrationProvider.class);
         services.addService(MigrationEntityParser.class, KingbaseESMigrationEntityParser.class);
+        services.addServiceFactory(JdbcTypeHandlerManager.class, s->{
+            EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager = new EasyJdbcTypeHandlerManager();
+            easyJdbcTypeHandlerManager.appendHandler(UUID.class, UUIDKingbaseESTypeHandler.INSTANCE,true);
+            return easyJdbcTypeHandlerManager;
+        });
     }
 }

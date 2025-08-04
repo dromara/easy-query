@@ -1,12 +1,12 @@
-package com.easy.query.core.basic.jdbc.types.handler;
+package com.easy.query.kingbase.es.types;
 
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.types.EasyParameter;
+import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.charset.StandardCharsets;
 import java.sql.JDBCType;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -17,17 +17,14 @@ import java.util.UUID;
  * @Description: 文件说明
  * create time 2023/2/17 21:21
  */
-public class UUIDTypeHandler implements JdbcTypeHandler {
-    public static final UUIDTypeHandler INSTANCE = new UUIDTypeHandler();
+public class UUIDKingbaseESTypeHandler implements JdbcTypeHandler {
+    public static final UUIDKingbaseESTypeHandler INSTANCE = new UUIDKingbaseESTypeHandler();
 
     @Override
     public Object getValue(JdbcProperty jdbcProperty, StreamResultSet streamResultSet) throws SQLException {
         Object object = streamResultSet.getObject(jdbcProperty.getJdbcIndex());
         if(object instanceof String){
             return UUID.fromString((String) object);
-        }
-        if(object instanceof byte[]){
-            return UUID.fromString(new String((byte[]) object, StandardCharsets.UTF_8));
         }
         return object;
     }
@@ -39,12 +36,10 @@ public class UUIDTypeHandler implements JdbcTypeHandler {
             parameter.getPs().setObject(parameter.getIndex(),null);
         }else{
             JDBCType jdbcTType = getJdbcTType(parameter);
-            String uuidStr = value.toString();
-            if (jdbcTType == JDBCType.BINARY) {
-                byte[] bytes = uuidStr.getBytes(StandardCharsets.UTF_8);
-                parameter.getPs().setBytes(parameter.getIndex(), bytes);
+            if (jdbcTType == JDBCType.VARCHAR) {
+                parameter.getPs().setString(parameter.getIndex(), value.toString());
             } else {
-                parameter.getPs().setString(parameter.getIndex(), uuidStr);
+                parameter.getPs().setObject(parameter.getIndex(), value, jdbcTType.getVendorTypeNumber());
             }
         }
     }

@@ -12,6 +12,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.props.BasicJdbcProperty;
 import com.easy.query.core.basic.jdbc.parameter.BeanSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.EasyEntityConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLLikeParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLRawParameter;
@@ -148,13 +149,14 @@ public class EasyJdbcExecutorUtil {
             List<SQLParameter> params = new ArrayList<>(sqlParameters.size());
             for (SQLParameter sqlParameter : sqlParameters) {
                 if (sqlParameter instanceof ConstSQLParameter) {
-                    Object value = toValue(sqlParameter, sqlParameter.getValue());
+                    Object value = toValue(sqlParameter, sqlParameter.getValue(), null);
                     params.add(new EasyConstSQLParameter(sqlParameter.getTableOrNull(), sqlParameter.getPropertyNameOrNull(), value));
                 } else if (sqlParameter instanceof BeanSQLParameter) {
                     BeanSQLParameter beanSQLParameter = (BeanSQLParameter) sqlParameter;
                     beanSQLParameter.setBean(entity);
-                    Object value = toValue(beanSQLParameter, beanSQLParameter.getValue());
-                    params.add(new EasyConstSQLParameter(beanSQLParameter.getTableOrNull(), beanSQLParameter.getPropertyNameOrNull(), value));
+                    ColumnMetadata columnMetadata = getSQLParameterColumnMetadata(sqlParameter);
+                    Object value = toValue(beanSQLParameter, beanSQLParameter.getValue(), columnMetadata);
+                    params.add(new EasyEntityConstSQLParameter(beanSQLParameter.getTableOrNull(), beanSQLParameter.getPropertyNameOrNull(),columnMetadata, value));
                 } else {
                     throw new EasyQueryException("current sql parameter:[" + EasyClassUtil.getSimpleName(sqlParameter.getClass()) + "],property name:[" + sqlParameter.getPropertyNameOrNull() + "] is not implements BeanSQLParameter or ConstSQLParameter");
                 }
@@ -167,9 +169,18 @@ public class EasyJdbcExecutorUtil {
         }
         return Collections.emptyList();
     }
+
+    protected static ColumnMetadata getSQLParameterColumnMetadata(SQLParameter sqlParameter) {
+        if (sqlParameter.getTableOrNull() != null && sqlParameter.getPropertyNameOrNull() != null) {
+            return sqlParameter.getTableOrNull().getEntityMetadata().getColumnNotNull(sqlParameter.getPropertyNameOrNull());
+        }
+        return null;
+    }
+
     public static boolean isPrintSQL(ExecutorContext executorContext) {
         return EasyOptionUtil.isPrintSQL(executorContext.getExpressionContext());
     }
+
     public static void clear(PreparedStatement ps) {
         try {
             if (ps != null) {
@@ -229,22 +240,18 @@ public class EasyJdbcExecutorUtil {
         return value;
     }
 
-    public static Object toValue(SQLParameter sqlParameter, Object value) {
+    public static Object toValue(SQLParameter sqlParameter, Object value, ColumnMetadata columnMetadata) {
         if (value instanceof SQLRawParameter) {
             return ((SQLRawParameter) value).getVal();
         }
-        if (sqlParameter.getTableOrNull() != null) {
-            EntityMetadata entityMetadata = sqlParameter.getTableOrNull().getEntityMetadata();
-            String propertyName = sqlParameter.getPropertyNameOrNull();
-            if (propertyName != null) {
-                ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
-                ValueConverter<?, ?> valueConverter = columnMetadata.getValueConverter();
-                if (value != null) {
-                    Object toValue = toValue(columnMetadata, sqlParameter, value, entityMetadata.getEntityClass(), propertyName);
-                    return valueConverter.serialize(EasyObjectUtil.typeCast(toValue), columnMetadata);
-                }
-                return valueConverter.serialize(null, columnMetadata);
+        if (columnMetadata != null) {
+            EntityMetadata entityMetadata = columnMetadata.getEntityMetadata();
+            ValueConverter<?, ?> valueConverter = columnMetadata.getValueConverter();
+            if (value != null) {
+                Object toValue = toValue(columnMetadata, sqlParameter, value, entityMetadata.getEntityClass(), columnMetadata.getPropertyName());
+                return valueConverter.serialize(EasyObjectUtil.typeCast(toValue), columnMetadata);
             }
+            return valueConverter.serialize(null, columnMetadata);
         }
         return value;
     }
@@ -310,8 +317,8 @@ public class EasyJdbcExecutorUtil {
         if (fillAutoIncrement && EasyCollectionUtil.isNotEmpty(generatedKeyColumns)) {
             assert ps != null;
 
-            try(ResultSet keysSet = ps.getGeneratedKeys();
-                EasyStreamResultSet easyStreamResultSet = new EasyStreamResultSet(keysSet, null)){
+            try (ResultSet keysSet = ps.getGeneratedKeys();
+                 EasyStreamResultSet easyStreamResultSet = new EasyStreamResultSet(keysSet, null)) {
                 //未提交数量
                 int unCommitSize = alreadyCommitSize % BATCH_GROUP_COUNT;
                 int index = unCommitSize == 0 ? alreadyCommitSize - BATCH_GROUP_COUNT : alreadyCommitSize - unCommitSize;

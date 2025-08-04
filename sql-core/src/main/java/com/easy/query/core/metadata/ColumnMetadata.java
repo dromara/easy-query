@@ -13,6 +13,7 @@ import com.easy.query.core.expression.lambda.PropertySetterCaller;
 import com.easy.query.core.util.EasyClassUtil;
 
 import java.beans.PropertyDescriptor;
+import java.sql.JDBCType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -129,6 +130,7 @@ public class ColumnMetadata {
     private final boolean valueObject;
     private final List<ColumnMetadata> valueObjectColumnMetadataList;
     private final Supplier<Object> beanConstructorCreator;
+    private final JDBCType jdbcType;
 
     public ColumnMetadata(ColumnOption columnOption) {
         this.entityMetadata = columnOption.getEntityMetadata();
@@ -158,6 +160,7 @@ public class ColumnMetadata {
 //        this.concurrentUpdateInTrack = columnOption.isConcurrentUpdateInTrack();
         this.generatedSQLColumnGenerator = columnOption.getGeneratedKeySQLColumnGenerator();
         this.primaryKeyGenerator = columnOption.getPrimaryKeyGenerator();
+        this.jdbcType = columnOption.getJdbcType();
 
         if (columnOption.getGetterCaller() == null) {
             throw new IllegalArgumentException("not found " + EasyClassUtil.getSimpleName(columnOption.getEntityMetadata().getEntityClass()) + "." + propertyName + " getter caller");
@@ -310,6 +313,11 @@ public class ColumnMetadata {
     public String getComment() {
         return comment;
     }
+
+    public JDBCType getJdbcType() {
+        return jdbcType;
+    }
+
     //    public boolean isConcurrentUpdateInTrack() {
 //        return concurrentUpdateInTrack;
 //    }

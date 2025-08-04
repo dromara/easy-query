@@ -13,6 +13,8 @@ import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.UUIDEntity;
+import com.easy.query.test.entity.UUIDEntity2;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * create time 2025/7/16 21:28
@@ -354,5 +357,23 @@ public class QueryTest27 extends BaseTest {
                     c.id().eq(b.title());
                 })
                 .toList();
+    }
+
+    @Test
+    public void testUUId(){
+        UUID uuid = UUID.randomUUID();
+
+        UUIDEntity2 uuidEntity = new UUIDEntity2();
+        uuidEntity.setId1(uuid);
+        uuidEntity.setId2(uuid);
+        uuidEntity.setId3(uuid);
+
+        easyEntityQuery.insertable(uuidEntity).executeRows();
+
+        UUIDEntity2 uuidEntity1 = easyEntityQuery.queryable(UUIDEntity2.class).firstNotNull();
+        System.out.println(uuidEntity1);
+        Assert.assertEquals(uuid, uuidEntity1.getId1());
+        Assert.assertEquals(uuid, uuidEntity1.getId2());
+        Assert.assertEquals(uuid, uuidEntity1.getId3());
     }
 }

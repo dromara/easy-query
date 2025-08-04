@@ -12,6 +12,7 @@ import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 
 import java.beans.PropertyDescriptor;
+import java.sql.JDBCType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -61,6 +62,7 @@ public final class ColumnOption {
     private final List<ColumnOption> valueObjectColumnOptions;
     private String fullPropertyName;
     private String comment;
+    private JDBCType jdbcType;
 //    private boolean concurrentUpdateInTrack = false;
 
 
@@ -72,6 +74,7 @@ public final class ColumnOption {
         this.fieldName = fieldName;
         this.valueConverter = DefaultValueConverter.INSTANCE;
         this.valueObject = false;
+        this.jdbcType = JDBCType.OTHER;
         this.valueObjectColumnOptions = new ArrayList<>();
     }
 
@@ -285,6 +288,14 @@ public final class ColumnOption {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public JDBCType getJdbcType() {
+        return jdbcType;
+    }
+
+    public void setJdbcType(JDBCType jdbcType) {
+        this.jdbcType = jdbcType;
     }
 
     //    public boolean isNullable() {

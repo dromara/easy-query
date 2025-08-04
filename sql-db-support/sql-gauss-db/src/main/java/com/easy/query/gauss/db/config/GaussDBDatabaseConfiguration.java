@@ -1,5 +1,7 @@
 package com.easy.query.gauss.db.config;
 
+import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
+import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
@@ -11,6 +13,9 @@ import com.easy.query.gauss.db.expression.GaussDBExpressionFactory;
 import com.easy.query.gauss.db.func.GaussDBFuncImpl;
 import com.easy.query.gauss.db.migration.GaussDBDatabaseMigrationProvider;
 import com.easy.query.gauss.db.migration.GaussDBMigrationEntityParser;
+import com.easy.query.gauss.db.types.UUIDGaussDBTypeHandler;
+
+import java.util.UUID;
 
 /**
  * create time 2024/1/19 22:36
@@ -27,5 +32,10 @@ public class GaussDBDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(SQLFunc.class, GaussDBFuncImpl.class);
         services.addService(DatabaseMigrationProvider.class, GaussDBDatabaseMigrationProvider.class);
         services.addService(MigrationEntityParser.class, GaussDBMigrationEntityParser.class);
+        services.addServiceFactory(JdbcTypeHandlerManager.class, s->{
+            EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager = new EasyJdbcTypeHandlerManager();
+            easyJdbcTypeHandlerManager.appendHandler(UUID.class, UUIDGaussDBTypeHandler.INSTANCE,true);
+            return easyJdbcTypeHandlerManager;
+        });
     }
 }

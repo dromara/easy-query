@@ -12,6 +12,7 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.impl.ConfigurerImpl;
 import com.easy.query.core.expression.builder.impl.OnlySelectorImpl;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -79,6 +81,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
 
     /**
      * 获取本次启用的拦截器
+     *
      * @return
      */
     private List<EntityInterceptor> getEntityInterceptors() {
@@ -93,6 +96,7 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
 
     /**
      * 获取自定义columnMetadata
+     *
      * @param entityMetadata
      * @return
      */
@@ -124,7 +128,11 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
                 //先进行primaryKey的设置在进行拦截器
                 if (hasPrimaryKeyGenerator) {
                     for (ColumnMetadata columnMetadata : keyColumnMetadataList) {
-                        columnMetadata.getPrimaryKeyGenerator().setPrimaryKey(entity, columnMetadata);
+                        PrimaryKeyGenerator primaryKeyGenerator = columnMetadata.getPrimaryKeyGenerator();
+                        if(primaryKeyGenerator==null){
+                            throw new EasyQueryInvalidOperationException("entity:"+entityClass+" column:"+columnMetadata.getPropertyName()+" primary key generator unknown");
+                        }
+                        primaryKeyGenerator.setPrimaryKey(entity, columnMetadata);
                     }
                 }
                 if (hasInterceptor) {
