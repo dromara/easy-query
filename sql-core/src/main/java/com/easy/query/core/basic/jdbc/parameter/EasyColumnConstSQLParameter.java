@@ -10,13 +10,13 @@ import java.sql.JDBCType;
  * @Description: 文件说明
  * create time 2023/2/28 20:47
  */
-public final class EasyEntityConstSQLParameter implements ConstSQLParameter {
+public final class EasyColumnConstSQLParameter implements ConstSQLParameter {
     private final String propertyName;
     private final ColumnMetadata columnMetadata;
     private final Object val;
     private final TableAvailable entityTable;
 
-    public EasyEntityConstSQLParameter(TableAvailable entityTable, String propertyName, ColumnMetadata columnMetadata, Object val) {
+    public EasyColumnConstSQLParameter(TableAvailable entityTable, String propertyName, ColumnMetadata columnMetadata, Object val) {
         this.entityTable = entityTable;
         this.propertyName = propertyName;
         this.columnMetadata = columnMetadata;

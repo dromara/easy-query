@@ -12,7 +12,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.props.BasicJdbcProperty;
 import com.easy.query.core.basic.jdbc.parameter.BeanSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
-import com.easy.query.core.basic.jdbc.parameter.EasyEntityConstSQLParameter;
+import com.easy.query.core.basic.jdbc.parameter.EasyColumnConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLLikeParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLRawParameter;
@@ -148,15 +148,15 @@ public class EasyJdbcExecutorUtil {
 
             List<SQLParameter> params = new ArrayList<>(sqlParameters.size());
             for (SQLParameter sqlParameter : sqlParameters) {
+                ColumnMetadata columnMetadata = getSQLParameterColumnMetadata(sqlParameter);
                 if (sqlParameter instanceof ConstSQLParameter) {
-                    Object value = toValue(sqlParameter, sqlParameter.getValue(), null);
-                    params.add(new EasyConstSQLParameter(sqlParameter.getTableOrNull(), sqlParameter.getPropertyNameOrNull(), value));
+                    Object value = toValue(sqlParameter, sqlParameter.getValue(), columnMetadata);
+                    params.add(new EasyColumnConstSQLParameter(sqlParameter.getTableOrNull(), sqlParameter.getPropertyNameOrNull(), columnMetadata, value));
                 } else if (sqlParameter instanceof BeanSQLParameter) {
                     BeanSQLParameter beanSQLParameter = (BeanSQLParameter) sqlParameter;
                     beanSQLParameter.setBean(entity);
-                    ColumnMetadata columnMetadata = getSQLParameterColumnMetadata(sqlParameter);
                     Object value = toValue(beanSQLParameter, beanSQLParameter.getValue(), columnMetadata);
-                    params.add(new EasyEntityConstSQLParameter(beanSQLParameter.getTableOrNull(), beanSQLParameter.getPropertyNameOrNull(),columnMetadata, value));
+                    params.add(new EasyColumnConstSQLParameter(beanSQLParameter.getTableOrNull(), beanSQLParameter.getPropertyNameOrNull(), columnMetadata, value));
                 } else {
                     throw new EasyQueryException("current sql parameter:[" + EasyClassUtil.getSimpleName(sqlParameter.getClass()) + "],property name:[" + sqlParameter.getPropertyNameOrNull() + "] is not implements BeanSQLParameter or ConstSQLParameter");
                 }
