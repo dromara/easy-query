@@ -151,4 +151,10 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
     void setMigrationParser(MigrationEntityParser migrationParser);
 
     void addTriggerListener(Consumer<TriggerEvent> eventConsumer);
+
+    /**
+     * 按包加载数据库实体对象
+     * @param packageNames
+     */
+    void loadTableEntityByPackage(String ...packageNames);
 }

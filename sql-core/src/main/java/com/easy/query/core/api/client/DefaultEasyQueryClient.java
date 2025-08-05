@@ -1,5 +1,6 @@
 package com.easy.query.core.api.client;
 
+import com.easy.query.core.annotation.Table;
 import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
@@ -38,13 +39,16 @@ import com.easy.query.core.migration.DatabaseMigrationProvider;
 import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.trigger.EntityExpressionTrigger;
 import com.easy.query.core.trigger.TriggerEvent;
+import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
+import com.easy.query.core.util.EasyPackageUtil;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -283,5 +287,30 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         Objects.requireNonNull(eventConsumer, "eventConsumer is null");
         EntityExpressionTrigger entityExpressionTrigger = runtimeContext.getService(EntityExpressionTrigger.class);
         entityExpressionTrigger.addTriggerListener(eventConsumer);
+    }
+
+    @Override
+    public void loadTableEntityByPackage(String... packageNames) {
+        if(packageNames==null||packageNames.length==0){
+            return;
+        }
+        for (String packageName : packageNames) {
+            loadTableEntity(packageName);
+        }
+    }
+    private void loadTableEntity(String packageName) {
+        Set<String> scanClasses = EasyPackageUtil.scanClasses(packageName, true, false);
+        EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
+        for (String scanClass : scanClasses) {
+            try {
+                Class<?> aClass = Class.forName(scanClass);
+                Table tableAnnotation = EasyClassUtil.getAnnotation(aClass, Table.class);
+                if (tableAnnotation != null) {
+                    entityMetadataManager.getEntityMetadata(aClass);
+                }
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

@@ -1,6 +1,5 @@
 package com.easy.query.test.mysql8;
 
-import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
@@ -11,14 +10,9 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
-import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft5;
-import com.easy.query.core.proxy.core.draft.proxy.Draft3Proxy;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
-import com.easy.query.core.proxy.extension.functions.type.PartitionByTypeExpression;
-import com.easy.query.core.proxy.part.Part1;
-import com.easy.query.core.proxy.part.proxy.Part1Proxy;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -26,13 +20,13 @@ import com.easy.query.test.doc.entity.DocBank;
 import com.easy.query.test.doc.entity.DocBankCard;
 import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.doc.entity.DocUserBook;
-import com.easy.query.test.entity.blogtest.RoleMenu;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.SchoolClassTeacher;
 import com.easy.query.test.entity.school.SchoolTeacher;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.dto.M8RoleDTO;
 import com.easy.query.test.mysql8.dto.M8RoleDTO2;
+import com.easy.query.test.mysql8.dto.RoleSelectAutoExtra;
 import com.easy.query.test.mysql8.entity.M8Menu;
 import com.easy.query.test.mysql8.entity.M8MenuOwner;
 import com.easy.query.test.mysql8.entity.M8Role;
@@ -43,14 +37,11 @@ import com.easy.query.test.mysql8.entity.M8User2;
 import com.easy.query.test.mysql8.entity.M8UserBook;
 import com.easy.query.test.mysql8.entity.M8UserRole;
 import com.easy.query.test.mysql8.entity.M8UserRole2;
-import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysBankCardProxy;
 import com.easy.query.test.mysql8.entity.proxy.M8MenuProxy;
 import com.easy.query.test.mysql8.entity.proxy.M8UserProxy;
-import com.easy.query.test.mysql8.entity.proxy.M8UserRoleProxy;
-import com.easy.query.test.mysql8.vo.UserAndBankCount;
 import com.easy.query.test.mysql8.vo.proxy.UserAndBankCountProxy;
 import lombok.var;
 import org.junit.Assert;
@@ -62,7 +53,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * create time 2025/3/6 11:48
@@ -1254,5 +1244,39 @@ public class ManyJoinTest extends BaseTest {
                             lastBankCard.bank().name()
                     );
                 }).toList();
+    }
+
+    @Test
+    public void testFlatExtra(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<RoleSelectAutoExtra> list = easyEntityQuery.queryable(M8Role.class)
+                .selectAutoInclude(RoleSelectAutoExtra.class)
+                .toList();
+        listenerContextManager.clear();
+
+        Assert.assertEquals(4, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `m8_role` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("-1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT `role_id`,`menu_id` FROM `m8_role_menu` WHERE `role_id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("r123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+            Assert.assertEquals("SELECT `owner_id` AS `__relation__ownerId`,`id` AS `__relation__id` FROM `m8_menu` WHERE `id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("m123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+            Assert.assertEquals("SELECT t.`id`,t.`name` FROM `m8_menu` t WHERE t.`name` <> ? AND t.`id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("/123(String),o123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
     }
 }
