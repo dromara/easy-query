@@ -16,6 +16,7 @@ import com.easy.query.core.proxy.grouping.Grouping1;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.dto.MyCategoryDTO;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MyCategory;
 import com.easy.query.test.entity.SysUser;
@@ -553,5 +554,46 @@ public class QueryTest19 extends PgSQLBaseTest {
         UUIDEntity uuidEntity1 = entityQuery.queryable(UUIDEntity.class).firstNotNull();
         Assert.assertEquals(uuid, uuidEntity1.getId1());
         Assert.assertEquals(uuid, uuidEntity1.getId2());
+    }
+    @Test
+    public void testToTreeListDTO() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<MyCategoryDTO> treeList = entityQuery.queryable(MyCategory.class)
+                .where(m -> {
+                    m.id().eq("1");
+                }).asTreeCTE()
+                .select(MyCategoryDTO.class)
+                .toTreeList();
+        Assert.assertEquals(1, treeList.size());
+        MyCategoryDTO myCategory = treeList.get(0);
+        Assert.assertEquals("1", myCategory.getId());
+        Assert.assertEquals(2, myCategory.getChildren().size());
+        for (MyCategoryDTO child : myCategory.getChildren()) {
+            if ("3".equals(child.getId())) {
+                Assert.assertEquals(2, child.getChildren().size());
+                for (MyCategoryDTO childChild : child.getChildren()) {
+
+                    if ("5".equals(childChild.getId())) {
+                        Assert.assertEquals(0, childChild.getChildren().size());
+                    } else if ("6".equals(childChild.getId())) {
+                        Assert.assertEquals(0, childChild.getChildren().size());
+                    } else {
+                        Assert.assertEquals(1, 2);
+                    }
+                }
+            } else if ("4".equals(child.getId())) {
+                Assert.assertEquals(0, child.getChildren().size());
+            } else {
+                Assert.assertEquals(1, 2);
+            }
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("WITH RECURSIVE \"as_tree_cte\" AS ( (SELECT 0 AS \"cte_deep\",t1.\"id\",t1.\"parent_id\",t1.\"name\" FROM \"category\" t1 WHERE t1.\"id\" = ?)  UNION ALL  (SELECT t2.\"cte_deep\" + 1 AS \"cte_deep\",t3.\"id\",t3.\"parent_id\",t3.\"name\" FROM \"as_tree_cte\" t2 INNER JOIN \"category\" t3 ON t3.\"parent_id\" = t2.\"id\") ) SELECT t.\"id\",t.\"parent_id\",t.\"name\" FROM \"as_tree_cte\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+        System.out.println("123");
+//        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS ( (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL)  UNION ALL  (SELECT t2.`cte_deep` + 1 AS `cte_deep`,t3.`id`,t3.`stars`,t3.`title`,t3.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t3.`stars` = t2.`id`) ) SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t WHERE t.`cte_deep` <= ?", sql);
     }
 }
