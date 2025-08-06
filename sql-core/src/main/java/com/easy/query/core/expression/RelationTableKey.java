@@ -12,5 +12,6 @@ import java.util.Objects;
  */
 public interface RelationTableKey {
     TableAvailable getTable();
+    String getProperty();
 }
 

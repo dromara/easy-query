@@ -1010,5 +1010,50 @@ public class QueryTest23 extends BaseTest {
 
     }
 
+    @Test
+    public void filterOn1(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+                .where(bank_card -> {
+                    bank_card.bank().filter(bank -> {
+                        bank.name().contains("工商银行");
+                    });
+                })
+                .toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id` FROM `doc_bank_card` t INNER JOIN `doc_bank` t1 ON t1.`id` = t.`bank_id` AND t1.`name` LIKE CONCAT('%',?,'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("工商银行(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
+    }
+    @Test
+    public void filterOn2(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<DocBankCard> list = easyEntityQuery.queryable(DocBankCard.class)
+                .where(bank_card -> {
+                    bank_card.bank2().filter(bank -> {
+                        bank.name().contains("工商银行");
+                    });
+                })
+                .toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id` FROM `doc_bank_card` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("false(Boolean),30%(String),-1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
 
 }

@@ -12,6 +12,7 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -30,6 +31,7 @@ public class DefaultTableExpressionBuilder implements EntityTableExpressionBuild
     private final ExpressionContext expressionContext;
     protected final QueryRuntimeContext runtimeContext;
     protected PredicateSegment on;
+    protected PredicateSegment filterOn;
     protected Supplier<Boolean> tableLogicDel;
     protected Function<String, String> tableNameAs;
     protected Function<String, String> schemaAs;
@@ -51,6 +53,11 @@ public class DefaultTableExpressionBuilder implements EntityTableExpressionBuild
     @Override
     public EntityMetadata getEntityMetadata() {
         return entityTable.getEntityMetadata();
+    }
+
+    @Override
+    public MultiTableTypeEnum getMultiTableType() {
+        return multiTableType;
     }
 
     @Override
@@ -144,8 +151,21 @@ public class DefaultTableExpressionBuilder implements EntityTableExpressionBuild
     }
 
     @Override
+    public PredicateSegment getFilterOn() {
+        if (filterOn == null) {
+            filterOn = new AndPredicateSegment(true);
+        }
+        return filterOn;
+    }
+
+    @Override
     public boolean hasOn() {
-        return on != null && on.isNotEmpty();
+        return EasySQLSegmentUtil.isNotEmpty(on);
+    }
+
+    @Override
+    public boolean hasFilterOn() {
+        return EasySQLSegmentUtil.isNotEmpty(filterOn);
     }
 
     @Override

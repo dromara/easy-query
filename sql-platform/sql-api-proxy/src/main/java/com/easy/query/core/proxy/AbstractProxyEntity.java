@@ -91,10 +91,12 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
             throw new EasyQueryInvalidOperationException("can not find relation table for " + EasyClassUtil.getSimpleName(getTable().getEntityClass()) + ", field:" + getValue());
         }
         PredicateSegment on = entityTableExpressionBuilder.getOn();
-        FilterImpl onFilter = new FilterImpl(entitySQLContext.getRuntimeContext(), entitySQLContext.getExpressionContext(), on, false, entitySQLContext.getExpressionContext().getValueFilter());
+        PredicateSegment filterOn = entityTableExpressionBuilder.getFilterOn();
+        FilterImpl onFilter = new FilterImpl(entitySQLContext.getRuntimeContext(), entitySQLContext.getExpressionContext(), filterOn, false, entitySQLContext.getExpressionContext().getValueFilter());
         getEntitySQLContext()._where(onFilter, () -> {
             filterExpression.apply(EasyObjectUtil.typeCastNullable(this));
         });
+        on.addPredicateSegment(filterOn);
     }
 
     public void configure(SQLActionExpression1<TableConfigurer<TProxy, TEntity>> configurer) {

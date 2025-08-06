@@ -13,5 +13,7 @@ public interface TableExpressionBuilder extends ExpressionBuilder {
     Class<?> getEntityClass();
     PredicateSegment getOn();
     boolean hasOn();
+    PredicateSegment getFilterOn();
+    boolean hasFilterOn();
     TableAvailable getEntityTable();
 }

@@ -36,4 +36,9 @@ public class DefaultRelationTableKey implements RelationTableKey {
     public TableAvailable getTable() {
         return table;
     }
+
+    @Override
+    public String getProperty() {
+        return property;
+    }
 }

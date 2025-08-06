@@ -54,6 +54,11 @@ public class DocBankCard implements ProxyEntityAvailable<DocBankCard, DocBankCar
     @ForeignKey
     private DocBank bank;
 
+    @NotNull
+    @Valid
+    @Navigate(value = RelationTypeEnum.ManyToOne, selfProperty = Fields.bankId)
+    private DocBank bank2;
+
 
     @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {DocBankCard.Fields.id}, targetProperty = {DocPart.Fields.cardId})
     private List<DocPart> parts;

@@ -19,6 +19,7 @@ import java.util.function.Supplier;
  */
 public interface EntityTableExpressionBuilder extends TableExpressionBuilder {
     EntityMetadata getEntityMetadata();
+    MultiTableTypeEnum getMultiTableType();
     void setMultiTableType(MultiTableTypeEnum multiTableType);
     void setTableNameAs(Function<String, String> tableNameAs);
 

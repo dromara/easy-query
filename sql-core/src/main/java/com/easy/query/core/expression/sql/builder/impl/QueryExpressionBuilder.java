@@ -5,6 +5,7 @@ import com.easy.query.core.common.reverse.DefaultReverseEach;
 import com.easy.query.core.common.reverse.EmptyReverseEach;
 import com.easy.query.core.common.reverse.ReverseEach;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.ManyConfiguration;
@@ -259,6 +260,10 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
                 RelationTableKey key = relationTableKV.getKey();
                 EntityTableExpressionBuilder value = relationTableKV.getValue();
                 TableAvailable entityTable = value.getEntityTable();
+                //如果手动filter了并且是inner join那么这个表不可以被忽略
+                if (value.getMultiTableType() == MultiTableTypeEnum.INNER_JOIN && value.hasFilterOn() && EasySQLSegmentUtil.isNotEmpty(value.getFilterOn())) {
+                    EasySQLSegmentUtil.tableVisit(value.getFilterOn(), expressionTableVisitor);
+                }
                 //判断where order group having select是否使用了relationTable
                 reverseEach = new ChainReverseEach(reverseEach, new DefaultReverseEach(() -> {
                     if (expressionTableVisitor.containsTable(entityTable)) {
@@ -275,7 +280,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
             }
             reverseEach.invoke();
             if (EasyCollectionUtil.isNotEmpty(tableSQLExpressions)) {
-                for (int i = tableSQLExpressions.size()-1; i >=0; i--) {
+                for (int i = tableSQLExpressions.size() - 1; i >= 0; i--) {
                     EntityTableSQLExpression tableExpression = tableSQLExpressions.get(i);
                     tableSortProcessor.appendTable(tableExpression);
                 }
@@ -346,15 +351,15 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
                 queryExpressionBuilder.getRelationTables().put(relationTableKV.getKey(), relationTableKV.getValue().copyEntityTableExpressionBuilder());
             }
         }
-        if(super.manyConfigurationMaps!=null){
+        if (super.manyConfigurationMaps != null) {
             for (Map.Entry<RelationTableKey, ManyConfiguration> manyJoinConfigurationEntry : super.manyConfigurationMaps.entrySet()) {
-                queryExpressionBuilder.putManyConfiguration(manyJoinConfigurationEntry.getKey(),manyJoinConfigurationEntry.getValue());
+                queryExpressionBuilder.putManyConfiguration(manyJoinConfigurationEntry.getKey(), manyJoinConfigurationEntry.getValue());
             }
         }
-        if(super.manyJoinConfigurationMaps !=null){
+        if (super.manyJoinConfigurationMaps != null) {
             for (Map.Entry<RelationTableKey, SubQueryModeEnum> subQueryModeKv : super.manyJoinConfigurationMaps.entrySet()) {
 
-                queryExpressionBuilder.putSubQueryToGroupJoinJoin(subQueryModeKv.getKey(),subQueryModeKv.getValue());
+                queryExpressionBuilder.putSubQueryToGroupJoinJoin(subQueryModeKv.getKey(), subQueryModeKv.getValue());
             }
         }
         return queryExpressionBuilder;
