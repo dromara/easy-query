@@ -129,6 +129,9 @@ public class DefaultTableExpressionBuilder implements EntityTableExpressionBuild
         if (on != null) {
             on.copyTo(tableExpressionBuilder.getOn());
         }
+        if (filterOn != null) {
+            filterOn.copyTo(tableExpressionBuilder.getFilterOn());
+        }
         tableExpressionBuilder.setTableNameAs(this.tableNameAs);
         tableExpressionBuilder.setSchemaAs(this.schemaAs);
         tableExpressionBuilder.setTableLinkAs(this.linkAs);

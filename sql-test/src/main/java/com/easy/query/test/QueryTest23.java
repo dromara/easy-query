@@ -36,6 +36,8 @@ import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.m2m.UserAccount;
 import com.easy.query.test.entity.school.SchoolClass;
+import com.easy.query.test.entity.testrelation.TestUserEntity;
+import com.easy.query.test.entity.testrelation.vo.TestUserDTO;
 import com.easy.query.test.listener.ListenerContext;
 import lombok.Data;
 import org.junit.Assert;
@@ -1053,6 +1055,48 @@ public class QueryTest23 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id` FROM `doc_bank_card` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //        Assert.assertEquals("false(Boolean),30%(String),-1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
+    }
+    @Test
+    public void filterOn3(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        easyEntityQuery.queryable(DocBankCard.class)
+                .where(bank_card -> {
+                    bank_card.bank().filter(bank -> {
+                        bank.name().contains("工商银行");
+                    });
+                })
+                .count();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT COUNT(*) FROM `doc_bank_card` t INNER JOIN `doc_bank` t1 ON t1.`id` = t.`bank_id` AND t1.`name` LIKE CONCAT('%',?,'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("false(Boolean),30%(String),-1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void filterOn4(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        easyEntityQuery.queryable(DocBankCard.class)
+                .where(bank_card -> {
+                    bank_card.bank().filter(bank -> {
+                        bank.name().notContains("工商银行");
+                    });
+                })
+                .toPageResult(1,2);
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(1, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT COUNT(*) FROM `doc_bank_card` t INNER JOIN `doc_bank` t1 ON t1.`id` = t.`bank_id` AND (NOT (t1.`name` LIKE CONCAT('%',?,'%')))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
     }
 
 
