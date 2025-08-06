@@ -157,4 +157,6 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
      * @param packageNames
      */
     void loadTableEntityByPackage(String ...packageNames);
+
+    void syncTableByPackage(String ...packageNames);
 }

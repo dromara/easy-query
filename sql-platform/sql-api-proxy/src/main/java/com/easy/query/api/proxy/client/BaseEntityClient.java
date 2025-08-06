@@ -150,4 +150,12 @@ public interface BaseEntityClient extends EasyBaseQuery {
     default void loadTableEntityByPackage(String... packageNames) {
         getEasyQueryClient().loadTableEntityByPackage(packageNames);
     }
+
+    /**
+     * 按包加载数据库实体对象并且自动执行ddl操作
+     * @param packageNames
+     */
+    default void syncTableByPackage(String ...packageNames){
+        getEasyQueryClient().syncTableByPackage(packageNames);
+    }
 }

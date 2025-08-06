@@ -2,6 +2,7 @@ package com.easy.query.core.api.client;
 
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.api.SQLClientApiFactory;
+import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
 import com.easy.query.core.basic.api.delete.ClientExpressionDeletable;
@@ -31,6 +32,8 @@ import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFacto
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.expression.sql.include.IncludeProvider;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
@@ -50,12 +53,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * @author xuejiaming
  * create time 2023/3/6 13:30
  */
 public class DefaultEasyQueryClient implements EasyQueryClient {
+    private final Log log = LogFactory.getLog(DefaultEasyQueryClient.class);
     private final QueryRuntimeContext runtimeContext;
     private final SQLClientApiFactory easySQLApiFactory;
 
@@ -291,13 +296,14 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
 
     @Override
     public void loadTableEntityByPackage(String... packageNames) {
-        if(packageNames==null||packageNames.length==0){
+        if (packageNames == null) {
             return;
         }
         for (String packageName : packageNames) {
             loadTableEntity(packageName);
         }
     }
+
     private void loadTableEntity(String packageName) {
         Set<String> scanClasses = EasyPackageUtil.scanClasses(packageName, true, false);
         EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
@@ -311,6 +317,23 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    @Override
+    public void syncTableByPackage(String... packageNames) {
+        loadTableEntityByPackage(packageNames);
+        EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
+        DatabaseCodeFirst databaseCodeFirst = getDatabaseCodeFirst();
+        List<EntityMetadata> entityMetadata = entityMetadataManager.getAllLoadedEntityMetadata();
+        List<Class<?>> tableEntities = entityMetadata.stream().filter(s -> s.getTableName() != null).map(s -> s.getEntityClass()).collect(Collectors.toList());
+        List<List<Class<?>>> partition = EasyCollectionUtil.partition(tableEntities, 20);
+        for (List<Class<?>> entityMetadataList : partition) {
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(entityMetadataList);
+            codeFirstCommand.executeWithTransaction(s -> {
+                log.info("执行sql:" + s.getSQL());
+                s.commit();
+            });
         }
     }
 }

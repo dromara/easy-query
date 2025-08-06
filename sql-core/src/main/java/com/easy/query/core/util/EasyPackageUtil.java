@@ -1,12 +1,9 @@
 package com.easy.query.core.util;
 
 
-import java.io.File;
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
