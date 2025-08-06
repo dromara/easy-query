@@ -1098,6 +1098,30 @@ public class QueryTest23 extends BaseTest {
 //                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
     }
+    @Test
+    public void filterOn5(){
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        easyEntityQuery.queryable(DocBankCard.class)
+                .where(bank_card -> {
+                    bank_card.bank().filter(bank -> {
+                        bank.name().notContains("工商银行");
+                    });
+                    bank_card.bank().filter(bank -> {
+                        bank.name().notContains("工商银行");
+                    });
+                })
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(1, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id` FROM `doc_bank_card` t INNER JOIN `doc_bank` t1 ON t1.`id` = t.`bank_id` AND (NOT (t1.`name` LIKE CONCAT('%',?,'%'))) AND (NOT (t1.`name` LIKE CONCAT('%',?,'%')))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
 
 
 }

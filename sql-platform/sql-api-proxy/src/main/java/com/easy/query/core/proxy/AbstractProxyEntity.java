@@ -9,6 +9,7 @@ import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -90,13 +91,15 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         if (entityTableExpressionBuilder == null) {
             throw new EasyQueryInvalidOperationException("can not find relation table for " + EasyClassUtil.getSimpleName(getTable().getEntityClass()) + ", field:" + getValue());
         }
-        PredicateSegment on = entityTableExpressionBuilder.getOn();
-        PredicateSegment filterOn = entityTableExpressionBuilder.getFilterOn();
-        FilterImpl onFilter = new FilterImpl(entitySQLContext.getRuntimeContext(), entitySQLContext.getExpressionContext(), filterOn, false, entitySQLContext.getExpressionContext().getValueFilter());
+        AndPredicateSegment filterPredicate = new AndPredicateSegment(true);
+        FilterImpl onFilter = new FilterImpl(entitySQLContext.getRuntimeContext(), entitySQLContext.getExpressionContext(), filterPredicate, false, entitySQLContext.getExpressionContext().getValueFilter());
         getEntitySQLContext()._where(onFilter, () -> {
             filterExpression.apply(EasyObjectUtil.typeCastNullable(this));
         });
-        on.addPredicateSegment(filterOn);
+        PredicateSegment on = entityTableExpressionBuilder.getOn();
+        PredicateSegment filterOn = entityTableExpressionBuilder.getFilterOn();
+        on.addPredicateSegment(filterPredicate);
+        filterOn.addPredicateSegment(filterPredicate);
     }
 
     public void configure(SQLActionExpression1<TableConfigurer<TProxy, TEntity>> configurer) {
