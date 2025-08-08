@@ -162,7 +162,7 @@ public class EmptySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> imp
     @Override
     public T1Proxy flatElement(SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> flatAdapterExpression) {
         QueryRuntimeContext runtimeContext = this.getEntitySQLContext().getRuntimeContext();
-        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), new ProxyFlatElementEntitySQLContext(this,null, runtimeContext, flatAdapterExpression));
+        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), new ProxyFlatElementEntitySQLContext(this,null,this.getEntitySQLContext().getContextHolder(), runtimeContext, flatAdapterExpression));
         tPropertyProxy.setNavValue(getNavValue());
         return tPropertyProxy;
     }

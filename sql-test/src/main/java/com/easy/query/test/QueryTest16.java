@@ -6,6 +6,8 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.Select;
@@ -40,6 +42,28 @@ public class QueryTest16 extends BaseTest {
 
     @Test
     public void test1() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+            List<SysUser> managers = easyEntityQuery.queryable(SysUser.class)
+                    .where(s -> {
+                        //筛选条件为角色集合里面有角色名称叫做管理员的
+                        s.roles().flatElement().menus().any(menu -> {
+                            menu.route().eq("/admin");
+                        });
+                    }).toList();
+        } catch (Exception ex) {
+
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t WHERE EXISTS (SELECT 1 FROM `t_role` t1 WHERE EXISTS (SELECT 1 FROM `t_user_role` t2 WHERE t2.`role_id` = t1.`id` AND t2.`user_id` = t.`id` LIMIT 1) AND EXISTS (SELECT 1 FROM `t_menu` t3 WHERE EXISTS (SELECT 1 FROM `t_role_menu` t4 WHERE t4.`menu_id` = t3.`id` AND t4.`role_id` = t1.`id` LIMIT 1) AND t3.`route` = ? LIMIT 1) LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("/admin(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
 //        List<Draft2<String, Long>> list = easyEntityQuery.queryable(SysUser.class)
 //                .where(user -> user.name().like("123"))
 //                .select(user -> Select.DRAFT.of(
@@ -107,7 +131,59 @@ public class QueryTest16 extends BaseTest {
 //                    s.roles().flatElement().name().eq("管理员");
 //                }).toList();
     }
-//
+
+    @Test
+    public void test2() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+            List<SysUser> managers = easyEntityQuery.queryable(SysUser.class)
+                    .where(s -> {
+                        //筛选条件为角色集合里面有角色名称叫做管理员的
+                        s.roles().mode(SubQueryModeEnum.GROUP_JOIN);
+                        s.roles().flatElement().menus().any(menu -> {
+                            menu.route().eq("/admin");
+                        });
+                    }).toList();
+        } catch (Exception ex) {
+
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN (SELECT t2.`user_id` AS `user_id`,(COUNT(?) > 0) AS `__any2__` FROM `t_role` t1 INNER JOIN `t_user_role` t2 ON t1.`id` = t2.`role_id` WHERE EXISTS (SELECT 1 FROM `t_menu` t5 WHERE EXISTS (SELECT 1 FROM `t_role_menu` t6 WHERE t6.`menu_id` = t5.`id` AND t6.`role_id` = t1.`id` LIMIT 1) AND t5.`route` = ? LIMIT 1) GROUP BY t2.`user_id`) t4 ON t4.`user_id` = t.`id` WHERE IFNULL(t4.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),/admin(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void test3() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+            List<SysUser> managers = easyEntityQuery.queryable(SysUser.class)
+                    .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                    .where(s -> {
+                        //筛选条件为角色集合里面有角色名称叫做管理员的
+                        s.roles().flatElement().menus().any(menu -> {
+                            menu.route().eq("/admin");
+                        });
+                    }).toList();
+        } catch (Exception ex) {
+
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN (SELECT t2.`user_id` AS `user_id`,(COUNT(?) <= 0) AS `__any2__` FROM `t_role` t1 INNER JOIN `t_user_role` t2 ON t1.`id` = t2.`role_id` LEFT JOIN (SELECT t6.`role_id` AS `role_id`,(COUNT(?) > 0) AS `__any2__` FROM `t_menu` t5 INNER JOIN `t_role_menu` t6 ON t5.`id` = t6.`menu_id` WHERE t5.`route` = ? GROUP BY t6.`role_id`) t8 ON t8.`role_id` = t1.`id` WHERE IFNULL(t8.`__any2__`,?) = ? GROUP BY t2.`user_id`) t4 ON t4.`user_id` = t.`id` WHERE IFNULL(t4.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),1(Integer),/admin(String),false(Boolean),true(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    //
 //    @Test
 //    public void test2() {
 //        List<SysUser> 收货员 = easyEntityQuery.queryable(SysUser.class)
@@ -178,21 +254,21 @@ public class QueryTest16 extends BaseTest {
 //
     @Test
     public void test8() {
-       try {
-           List<SysUser> userInHz = easyEntityQuery.queryable(SysUser.class)
-                   .where(s -> {
-                       s.address().relationLogicDelete(()->false);
+        try {
+            List<SysUser> userInHz = easyEntityQuery.queryable(SysUser.class)
+                    .where(s -> {
+                        s.address().relationLogicDelete(() -> false);
 //                    EntityTableExpressionBuilder entityTableExpressionBuilder = s.getEntitySQLContext().getEntityExpressionBuilder().getRelationTables().get(new RelationTableKey(s.getEntityClass(), s.address().getTable().getEntityClass()));
 //                    entityTableExpressionBuilder.setTableLogicDelete(()->false);
-                       //隐式子查询会自动join用户表和地址表
-                       s.or(() -> {
-                           s.address().city().eq("杭州市");
-                           s.address().city().eq("绍兴市");
-                       });
-                   }).toList();
-       }catch (Exception ex){
+                        //隐式子查询会自动join用户表和地址表
+                        s.or(() -> {
+                            s.address().city().eq("杭州市");
+                            s.address().city().eq("绍兴市");
+                        });
+                    }).toList();
+        } catch (Exception ex) {
 
-       }
+        }
     }
 //    @Test
 //    public void test8_1() {
@@ -759,14 +835,14 @@ public class QueryTest16 extends BaseTest {
 ////                    }).gt(2L);
 ////                }).toList();
 //
-    ////        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
-    ////                .where(user -> {
-    ////                    user.books().where(book -> {
-    ////                        book.author().eq("金庸");
-    ////                    }).count().gt(2L);
-    ////                }).toList();
-//    }
 
+    /// /        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+    /// /                .where(user -> {
+    /// /                    user.books().where(book -> {
+    /// /                        book.author().eq("金庸");
+    /// /                    }).count().gt(2L);
+    /// /                }).toList();
+//    }
     @Test
     public void test14() {
 
@@ -1185,8 +1261,9 @@ public class QueryTest16 extends BaseTest {
 //                                .where(role -> {
 //                                    role.name().eq("管理员");
 //                                    user.id().eq(role.id());
-    ////                                    SysUserProxy u = user.create(user.getTable(), role.getEntitySQLContext());
-    ////                                    u.id().eq(role.id());
+
+    /// /                                    SysUserProxy u = user.create(user.getTable(), role.getEntitySQLContext());
+    /// /                                    u.id().eq(role.id());
 //                                });
 //                    });
 //                }).toList();
@@ -1303,7 +1380,7 @@ public class QueryTest16 extends BaseTest {
                     .where(com -> com.name().like("xx公司"));
             try {
                 long total = query.cloneQueryable().count();
-            }catch (Exception ex){
+            } catch (Exception ex) {
 
             }
             try {
@@ -1313,7 +1390,7 @@ public class QueryTest16 extends BaseTest {
                                 .selectAll(com)
                                 .useTotalAge().set(com.users().sum(u -> u.age()))
                         ).toList();
-            }catch (Exception ex){
+            } catch (Exception ex) {
 
             }
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
