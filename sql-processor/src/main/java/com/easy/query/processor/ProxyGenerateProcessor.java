@@ -35,11 +35,14 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.JavaFileObject;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -272,8 +275,15 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 System.out.println(">>>>>ERROR: can not mk dirs by easy-query processor for: " + genJavaFile.getParentFile());
                 return;
             }
-
-            writer = new PrintWriter(new FileOutputStream(genJavaFile));
+            int bufferSize = 32 * 1024; // 32KB缓冲区
+            writer = new BufferedWriter(
+                    new OutputStreamWriter(
+                            new FileOutputStream(genJavaFile),
+                            StandardCharsets.UTF_8
+                    ),
+                    bufferSize
+            );
+//            writer = new PrintWriter(new FileOutputStream(genJavaFile));
             writer.write(genContent);
             writer.flush();
         } catch (IOException e) {

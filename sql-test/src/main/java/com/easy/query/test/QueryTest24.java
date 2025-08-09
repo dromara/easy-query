@@ -633,7 +633,7 @@ public class QueryTest24 extends BaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT (t.`create_time` < ? AND t.`title` = ?) FROM `t_blog` t WHERE t.`deleted` = ? AND (t.`create_time` < ?) = ? AND IFNULL(t.`create_time`,?) < ? AND IFNULL(t.`create_time`,t.`create_time`) > ? AND t.`create_time` < ? AND t.`create_time` < t.`create_time` AND IFNULL(t.`create_time`,t.`create_time`) < t.`create_time` AND date_add(t.`create_time`, interval (?) day) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT (t.`create_time` < ? AND t.`title` = ?) FROM `t_blog` t WHERE t.`deleted` = ? AND (t.`create_time` < ?) = ? AND IFNULL(t.`create_time`,?) < ? AND IFNULL(t.`create_time`,t.`create_time`) > ? AND t.`create_time` < ? AND t.`create_time` < t.`create_time` AND IFNULL(t.`create_time`,t.`create_time`) > t.`create_time` AND date_add(t.`create_time`, interval (?) day) > ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("2020-01-01T00:00(LocalDateTime),123(String),false(Boolean),2020-01-01T00:00(LocalDateTime),true(Boolean),2022-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime),2020-01-01T00:00(LocalDateTime),1(Long),2020-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 
