@@ -376,7 +376,7 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
         Expression.of(this.getCurrentEntitySQLContext()).sql("{0}",c->c.expression(isAfterValue));
     }
     default <T> void isAfter(ColumnDateTimeFunctionAvailable<T> time) {
-        BooleanTypeExpression<Boolean> isAfterValue = dateTimeCompareExpression(time, this, this.getCurrentEntitySQLContext(), false);
+        BooleanTypeExpression<Boolean> isAfterValue = dateTimeCompareExpression(time, this, this.getCurrentEntitySQLContext(), true);
         Expression.of(this.getCurrentEntitySQLContext()).sql("{0}",c->c.expression(isAfterValue));
     }
 
