@@ -15,6 +15,7 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyRelationalUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.lang.reflect.Field;
@@ -43,16 +44,18 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
             return null;
         }
         TableAvailable entityTable = entityQueryExpressionBuilder.getTable(tableIndex).getEntityTable();
-        EntityMetadata entityMetadata = entityTable.getEntityMetadata();
+        EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, entityTable, property, strictMode);
 
-        ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(property);
+        EntityMetadata entityMetadata = tableOrRelationalTable.table.getEntityMetadata();
+
+        ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(tableOrRelationalTable.property);
         if (columnMetadata == null) {
             if (strictMode) {
                 throw new EasyQueryWhereInvalidOperationException("property name:[" + property + "] not found query entity class:" + EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()));
             }
             return null;
         }
-        return new WhereObjectEntry(entityTable, property);
+        return new WhereObjectEntry(tableOrRelationalTable.table, tableOrRelationalTable.property);
     }
 
     /**

@@ -150,7 +150,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
 
 //            StringBuilder tablesContent = new StringBuilder();
-            roundEnv.getElementsAnnotatedWith(EntityProxy.class).forEach((Consumer<Element>) entityClassElement -> {
+            roundEnv.getElementsAnnotatedWith(EntityProxy.class)
+                    .forEach((Consumer<Element>) entityClassElement -> {
 
 //                String proxyEntityName = entityClassElement.getSimpleName().toString();
 
