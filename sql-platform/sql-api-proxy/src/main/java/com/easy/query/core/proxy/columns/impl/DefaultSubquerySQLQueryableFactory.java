@@ -131,7 +131,7 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
         ManyConfiguration manyConfiguration = entityExpressionBuilder.getManyConfiguration(defaultRelationTableKey);
 
         if (manyConfiguration != null) {
-            implicitSubQuery = EasyObjectUtil.typeCastNullable(manyConfiguration.getConfigureExpression().apply(implicitSubQuery));
+            implicitSubQuery = EasyObjectUtil.typeCastNotNull(manyConfiguration.getConfigureExpression().apply(implicitSubQuery));
         }
         EntityQueryable<T1Proxy, T1> queryable = new EasyEntityQueryable<>(propertyProxy, implicitSubQuery);
 

@@ -5,13 +5,10 @@ import com.easy.query.core.common.ValueHolder;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.metadata.IncludePathTreeNode;
-import com.easy.query.core.metadata.PathTreeBuilder;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.expression.parser.core.available.IncludeAvailable;
 import com.easy.query.core.util.EasyUtil;
-
-import java.util.List;
 
 /**
  * create time 2023/8/17 13:34

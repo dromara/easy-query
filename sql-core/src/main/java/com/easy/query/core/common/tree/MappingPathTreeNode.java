@@ -1,5 +1,6 @@
-package com.easy.query.core.metadata;
+package com.easy.query.core.common.tree;
 
+import com.easy.query.core.metadata.NavigateFlatMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;

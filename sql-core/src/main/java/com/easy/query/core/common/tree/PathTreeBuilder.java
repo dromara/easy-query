@@ -1,4 +1,7 @@
-package com.easy.query.core.metadata;
+package com.easy.query.core.common.tree;
+
+import com.easy.query.core.metadata.IncludePathTreeNode;
+import com.easy.query.core.metadata.NavigateFlatMetadata;
 
 import java.util.function.Consumer;
 
@@ -46,5 +49,6 @@ public class PathTreeBuilder {
             currentNode = childNode;
         }
     }
+
 
 }

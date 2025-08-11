@@ -4,8 +4,6 @@ import com.easy.query.core.annotation.ExpressionArg;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.extension.conversion.ExpArg;
 import com.easy.query.core.basic.extension.conversion.ExpArgTypeEnum;
-import com.easy.query.core.basic.jdbc.executor.internal.common.GroupByValue;
-import com.easy.query.core.basic.jdbc.executor.internal.common.GroupByValueImpl;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.IncludeAvailable;
@@ -16,7 +14,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.IncludePathTreeNode;
-import com.easy.query.core.metadata.PathTreeBuilder;
+import com.easy.query.core.common.tree.PathTreeBuilder;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -27,14 +25,9 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author xuejiaming
