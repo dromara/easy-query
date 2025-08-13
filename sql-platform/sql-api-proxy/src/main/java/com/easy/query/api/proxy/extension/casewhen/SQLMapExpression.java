@@ -1,6 +1,6 @@
 package com.easy.query.api.proxy.extension.casewhen;
 
-import com.easy.query.api.proxy.util.EasyParamExpressionUtil;
+import com.easy.query.api.proxy.util.EasyProxyParamExpressionUtil;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
@@ -89,7 +89,7 @@ public class SQLMapExpression {
     }
 
     public <TV, TProperty> AnyTypeExpression<TProperty> elseEnd(TV elseValue, Class<TProperty> resultClass) {
-        ParamExpression paramExpression = EasyParamExpressionUtil.getParamExpression(entitySQLContext, elseValue);
+        ParamExpression paramExpression = EasyProxyParamExpressionUtil.getParamExpression(entitySQLContext, elseValue);
         SQLFunction sqlFunction = caseWhenBuilder.elseEnd(paramExpression);
         return new AnyTypeExpressionImpl<>(entitySQLContext, null, null, f -> sqlFunction, resultClass);
     }

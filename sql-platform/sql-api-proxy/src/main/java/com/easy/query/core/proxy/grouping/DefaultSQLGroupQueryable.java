@@ -1,22 +1,11 @@
 package com.easy.query.core.proxy.grouping;
 
-import com.easy.query.api.proxy.extension.casewhen.CaseWhenEntityBuilder;
 import com.easy.query.api.proxy.extension.casewhen.PredicateCaseWhenBuilder;
-import com.easy.query.api.proxy.util.EasyParamExpressionUtil;
-import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.expression.builder.Filter;
-import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.segment.GroupJoinColumnSegment;
-import com.easy.query.core.expression.segment.GroupJoinColumnSegmentImpl;
 import com.easy.query.core.expression.segment.GroupJoinPredicateSegmentContext;
 import com.easy.query.core.expression.segment.GroupJoinPredicateSegmentContextImpl;
-import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.segment.impl.DefaultSQLSegment;
-import com.easy.query.core.expression.segment.scec.expression.ParamExpression;
-import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;

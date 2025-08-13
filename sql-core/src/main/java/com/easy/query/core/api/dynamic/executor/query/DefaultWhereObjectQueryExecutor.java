@@ -19,20 +19,26 @@ import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.DefaultRelationTableKey;
 import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.RelationTableKey;
+import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.builder.impl.AsSelectorImpl;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.implicit.EntityRelationToImplicitGroupProvider;
 import com.easy.query.core.expression.many2group.ManyGroupJoinProjectKey;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.GroupJoinPredicateSegmentContextImpl;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.builder.ProjectSQLBuilderSegmentImpl;
+import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
+import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.extension.casewhen.ClientPredicateCaseWhenBuilder;
+import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
@@ -40,7 +46,7 @@ import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
-import com.easy.query.core.util.EasyRelationalUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
@@ -95,7 +101,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
         boolean strictMode = q.strict();
         switch (mode) {
             case SINGLE: {
-                int tableIndex = q.tableIndex();
+//                int tableIndex = q.tableIndex();
 //
 //                //获取映射的对象名称
 //                String queryPropertyName = fieldName;
@@ -210,6 +216,13 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
                 treeNode.setEntityQueryExpressionBuilder(anonymousManyJoinEntityTableExpressionBuilder.getEntityQueryExpressionBuilder());
                 treeNode.setTable(manyJoinTableExpressionBuilder.getEntityTable());
                 treeNode.setAnonymousManyJoinEntityTableExpressionBuilder(anonymousManyJoinEntityTableExpressionBuilder);
+                {
+
+                    FilterImpl filter = new FilterImpl(treeNode.getEntityQueryExpressionBuilder().getRuntimeContext(), treeNode.getEntityQueryExpressionBuilder().getExpressionContext(), new AndPredicateSegment(true), false, treeNode.getEntityQueryExpressionBuilder().getExpressionContext().getValueFilter());
+
+                    treeNode.setFilter(filter);
+                }
+                //构建一个filter然后用这个filter配合resolve
                 return;
             }
         }
@@ -224,6 +237,8 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
 
         treeNode.setEntityQueryExpressionBuilder(implicitSubQuery.getSQLEntityExpressionBuilder());
         treeNode.setTable(implicitSubQuery.getSQLEntityExpressionBuilder().getTable(0).getEntityTable());
+        FilterImpl filter = new FilterImpl(treeNode.getEntityQueryExpressionBuilder().getRuntimeContext(), treeNode.getEntityQueryExpressionBuilder().getExpressionContext(), treeNode.getEntityQueryExpressionBuilder().getWhere(), false, treeNode.getEntityQueryExpressionBuilder().getExpressionContext().getValueFilter());
+        treeNode.setFilter(filter);
     }
 
     private boolean subQueryToGroupJoin(boolean isSubQueryToGroupJoin, boolean hasBehavior, SubQueryModeEnum subQueryMode) {
@@ -255,6 +270,13 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
         QueryPathTreeNode root = new QueryPathTreeNode(null);
         root.setTable(entityTable);
         root.setEntityQueryExpressionBuilder(entityQueryExpressionBuilder);
+
+        {
+
+            FilterImpl filter = new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getWhere(), false, entityQueryExpressionBuilder.getExpressionContext().getValueFilter());
+
+            root.setFilter(filter);
+        }
         for (Field field : allFields) {
             boolean accessible = field.isAccessible();
 
@@ -302,6 +324,9 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
                                 TableAvailable relationTable = entityRelationToImplicitProvider.toImplicitJoin(child.getEntityQueryExpressionBuilder(), current.getTable(), part);
 
                                 child.setTable(relationTable);
+
+                                child.setEntityQueryExpressionBuilder(current.getEntityQueryExpressionBuilder());
+                                child.setFilter(current.getFilter());
                             } else {
                                 //创建新的表达式查询builder
                                 setSubQueryTreeNode(child, current.getTable(), part, current.getEntityQueryExpressionBuilder(), navigateMetadata);
@@ -310,14 +335,14 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
                         } else if (columnMetadata != null) {
                             child.setTable(current.getTable());
                             child.setEntityQueryExpressionBuilder(current.getEntityQueryExpressionBuilder());
+                            child.setFilter(current.getFilter());
                         }
                         current.addChild(child);
                     }
-                    current = child;
                     if (isLast) {
-                        child.setVal(val);
-                        child.setCondition(q);
+                        child.addCondition(q,val,field);
                     }
+                    current = child;
                 }
             } catch (Exception e) {
                 throw new EasyQueryException(e);
@@ -336,8 +361,10 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
     }
 
     private void acceptCondition(QueryPathTreeNode node, QueryPathTreeNode parent) {
-        if (node.getVal() != null) {
-            acceptCondition0(node.getEntityQueryExpressionBuilder(), node.getCondition(), node.getTable(), node.getFieldName(), node.getVal());
+        if (EasyCollectionUtil.isNotEmpty(node.getConditions())) {
+            for (QueryPathTreeNode.ConditionVal condition : node.getConditions()) {
+                acceptCondition0(node.getEntityQueryExpressionBuilder(),node.getFilter(), condition.condition, node.getTable(), node.getFieldName(), condition.val);
+            }
 
 
         }
@@ -347,11 +374,22 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
         if (node.getNavigateMetadata() != null) {
             if (node.getNavigateMetadata().getRelationType() == RelationTypeEnum.OneToMany || node.getNavigateMetadata().getRelationType() == RelationTypeEnum.ManyToMany) {
                 if (node.getAnonymousManyJoinEntityTableExpressionBuilder() != null) {
-                    String any = getOrAppendGroupProjects(parent.getEntityQueryExpressionBuilder(), node.getAnonymousManyJoinEntityTableExpressionBuilder(), "any");
+
+                    PredicateSegment predicateSegment = node.getFilter().getRootPredicateSegment();
+                    GroupJoinPredicateSegmentContextImpl groupJoinPredicateSegmentContext = new GroupJoinPredicateSegmentContextImpl(predicateSegment);
+                    node.getAnonymousManyJoinEntityTableExpressionBuilder().addGroupJoinPredicateSegmentContext(groupJoinPredicateSegmentContext);
+                    SQLFunction sqlFunction = new ClientPredicateCaseWhenBuilder(node.getEntityQueryExpressionBuilder().getRuntimeContext(), node.getEntityQueryExpressionBuilder().getExpressionContext(), groupJoinPredicateSegmentContext)
+                            .then(1).elseEnd(null);
+
+//                    count()case when
+//                    this.groupJoinPredicateSegmentContext=
+
+                    String any = getOrAppendGroupProjects(parent.getEntityQueryExpressionBuilder(), node.getAnonymousManyJoinEntityTableExpressionBuilder(), "any",sqlFunction);
 
                     new EasyClientQueryable<>(parent.getEntityQueryExpressionBuilder().getQueryClass(), parent.getEntityQueryExpressionBuilder())
                             .where(o -> {
-                                o.getFilter().eq(node.getAnonymousManyJoinEntityTableExpressionBuilder().getEntityTable(), any, true);
+
+                                o.getFilter().eq(node.getAnonymousManyJoinEntityTableExpressionBuilder().getEntityTable(), o.fx().nullOrDefault(any,false), true);
                             });
                 } else {
                     new EasyClientQueryable<>(parent.getEntityQueryExpressionBuilder().getQueryClass(), parent.getEntityQueryExpressionBuilder())
@@ -367,13 +405,14 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
     }
 
 
-    public String getOrAppendGroupProjects(EntityExpressionBuilder entityExpressionBuilder, AnonymousManyJoinEntityTableExpressionBuilder anonymousManyJoinEntityTableExpressionBuilder, String methodName) {
+    public String getOrAppendGroupProjects(EntityExpressionBuilder entityExpressionBuilder, AnonymousManyJoinEntityTableExpressionBuilder anonymousManyJoinEntityTableExpressionBuilder, String methodName,SQLFunction sqlFunction) {
 
         EntityQueryExpressionBuilder entityQueryExpressionBuilder = anonymousManyJoinEntityTableExpressionBuilder.getEntityQueryExpressionBuilder();
         TableAvailable manyGroupJoinTable = anonymousManyJoinEntityTableExpressionBuilder.getEntityTable();
         ProjectSQLBuilderSegmentImpl projectSQLBuilderSegment = new ProjectSQLBuilderSegmentImpl();
         AsSelectorImpl asSelector = new AsSelectorImpl(entityQueryExpressionBuilder, projectSQLBuilderSegment, manyGroupJoinTable.getEntityMetadata());
-        asSelector.sqlNativeSegment("(COUNT(*) > 0)", c -> {
+        asSelector.sqlNativeSegment("(COUNT({0}) > 0)", c -> {
+            c.sqlFunction(sqlFunction);
         });
         //表达式可能使用了隐式join需要将表进行对齐
         entityExpressionBuilder.getExpressionContext().getTableContext().extract(entityQueryExpressionBuilder.getExpressionContext().getTableContext());
@@ -395,14 +434,13 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
         return aliasSegment.getAlias();
     }
 
-    private void acceptCondition0(EntityQueryExpressionBuilder entityQueryExpressionBuilder, EasyWhereCondition q, TableAvailable table, String fieldName, Object val) {
+    private void acceptCondition0(EntityQueryExpressionBuilder entityQueryExpressionBuilder, Filter filter, EasyWhereCondition q, TableAvailable table, String fieldName, Object val) {
 
         List<WhereObjectEntry> queries = getQueryPropertiesOrNull(entityQueryExpressionBuilder, table, q, fieldName);
         if (EasyCollectionUtil.isEmpty(queries)) {
             return;
         }
 
-        FilterImpl filter = new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), entityQueryExpressionBuilder.getWhere(), false, entityQueryExpressionBuilder.getExpressionContext().getValueFilter());
 
         switch (q.type()) {
             case EQUAL: {
@@ -621,7 +659,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
     }
 
     //数组处理
-    private void rangePairArray(Object[] pairArray, List<WhereObjectEntry> queries, FilterImpl filter, MergeTuple2<SQLPredicateCompareEnum, SQLPredicateCompareEnum> sqlPredicateCompareEnum) {
+    private void rangePairArray(Object[] pairArray, List<WhereObjectEntry> queries, Filter filter, MergeTuple2<SQLPredicateCompareEnum, SQLPredicateCompareEnum> sqlPredicateCompareEnum) {
 
         if (queries.size() > 1) {
             filter.and(x -> {

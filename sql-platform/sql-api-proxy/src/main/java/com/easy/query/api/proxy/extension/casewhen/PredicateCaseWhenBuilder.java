@@ -1,6 +1,6 @@
 package com.easy.query.api.proxy.extension.casewhen;
 
-import com.easy.query.api.proxy.util.EasyParamExpressionUtil;
+import com.easy.query.api.proxy.util.EasyProxyParamExpressionUtil;
 import com.easy.query.core.expression.segment.GroupJoinColumnSegmentImpl;
 import com.easy.query.core.expression.segment.GroupJoinPredicateSegmentContext;
 import com.easy.query.core.expression.segment.impl.DefaultSQLSegment;
@@ -37,8 +37,8 @@ public class PredicateCaseWhenBuilder {
         return EasyObjectUtil.typeCastNullable(elseEnd(elseValue, Object.class));
     }
     public <TV, TProperty> AnyTypeExpression<TProperty> elseEnd(TV elseValue, Class<TProperty> resultClass) {
-        ParamExpression thenParamExpression = EasyParamExpressionUtil.getParamExpression(entitySQLContext, then);
-        ParamExpression elseEndParamExpression = EasyParamExpressionUtil.getParamExpression(entitySQLContext, elseValue);
+        ParamExpression thenParamExpression = EasyProxyParamExpressionUtil.getParamExpression(entitySQLContext, then);
+        ParamExpression elseEndParamExpression = EasyProxyParamExpressionUtil.getParamExpression(entitySQLContext, elseValue);
 
         DefaultSQLSegment thenSegment = new DefaultSQLSegment(toSQLContext -> EasySQLExpressionUtil.parseParamExpression(entitySQLContext.getExpressionContext(), thenParamExpression, toSQLContext).toString(), visitor -> thenParamExpression.accept(visitor));
         DefaultSQLSegment elseSegment = new DefaultSQLSegment(toSQLContext -> EasySQLExpressionUtil.parseParamExpression(entitySQLContext.getExpressionContext(), elseEndParamExpression, toSQLContext).toString(), visitor -> elseEndParamExpression.accept(visitor));

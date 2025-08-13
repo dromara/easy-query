@@ -154,9 +154,14 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
 
     /**
      * 按包加载数据库实体对象
+     *
      * @param packageNames
      */
-    void loadTableEntityByPackage(String ...packageNames);
+    void loadTableEntityByPackage(String... packageNames);
 
-    void syncTableByPackage(String ...packageNames);
+    default void syncTableByPackage(String... packageNames) {
+        syncTableByPackage(Integer.MAX_VALUE, packageNames);
+    }
+
+    void syncTableByPackage(int groupSize, String... packageNames);
 }

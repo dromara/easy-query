@@ -15,8 +15,8 @@ import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
-import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
+import com.easy.query.core.util.EasyParamExpressionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +28,7 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public class EasyParamExpressionUtil {
+public class EasyProxyParamExpressionUtil {
 
     public static ParamExpression getParamExpression(@NotNull EntitySQLContext entitySQLContext, @Nullable Object value) {
         if (value == null) {
@@ -37,18 +37,16 @@ public class EasyParamExpressionUtil {
         if (value instanceof SQLColumn) {
             SQLColumn<?, ?> sqlColumn = (SQLColumn<?, ?>) value;
             return new ColumnPropertyExpressionImpl(sqlColumn.getTable(), sqlColumn.getValue(), entitySQLContext.getEntityExpressionBuilder().getExpressionContext());
-        } else if (value instanceof Query) {
-            Query<?> query = (Query<?>) value;
-            return new SubQueryParamExpressionImpl(query);
         } else if (value instanceof DSLSQLFunctionAvailable) {
             DSLSQLFunctionAvailable dslSQLFunction = (DSLSQLFunctionAvailable) value;
             SQLFunction sqlFunction = dslSQLFunction.func().apply(entitySQLContext.getRuntimeContext().fx());
             ExpressionContext expressionContext = entitySQLContext.getEntityExpressionBuilder().getExpressionContext();
             return new SQLSegmentParamExpressionImpl(sqlFunction, expressionContext, dslSQLFunction.getTable(), expressionContext.getRuntimeContext(), null);
         } else {
-            return new ColumnConstParameterExpressionImpl(value);
+            return EasyParamExpressionUtil.getParamExpression(value);
         }
     }
+
     public static ColumnFuncSelector acceptParameters(ColumnFuncSelector columnFuncSelector, @Nullable Object value) {
         if (value == null) {
             columnFuncSelector.value(null);
@@ -62,17 +60,17 @@ public class EasyParamExpressionUtil {
         } else if (value instanceof SQLFunction) {
             SQLFunction dslSQLFunction = (SQLFunction) value;
             columnFuncSelector.sqlFunc(dslSQLFunction);
-        }  else if (value instanceof PredicateSegment) {
-            PredicateSegment  sqlSegment = (PredicateSegment) value;
+        } else if (value instanceof PredicateSegment) {
+            PredicateSegment sqlSegment = (PredicateSegment) value;
             columnFuncSelector.expression(sqlSegment);
-        }  else if (value instanceof SQLSegment) {
-            SQLSegment  sqlSegment = (SQLSegment) value;
+        } else if (value instanceof SQLSegment) {
+            SQLSegment sqlSegment = (SQLSegment) value;
             columnFuncSelector.sql(sqlSegment);
-        }  else if (value instanceof Collection) {
-            Collection<?>  collection = (Collection) value;
+        } else if (value instanceof Collection) {
+            Collection<?> collection = (Collection) value;
             columnFuncSelector.collection(collection);
-        }   else if (value instanceof PropTypeColumn) {
-            PropTypeColumn<?>  propTypeColumn = (PropTypeColumn) value;
+        } else if (value instanceof PropTypeColumn) {
+            PropTypeColumn<?> propTypeColumn = (PropTypeColumn) value;
             PropTypeColumn.columnFuncSelector(columnFuncSelector, propTypeColumn);
         } else {
             columnFuncSelector.value(value);

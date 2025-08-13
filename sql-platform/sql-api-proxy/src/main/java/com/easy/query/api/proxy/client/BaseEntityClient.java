@@ -145,6 +145,7 @@ public interface BaseEntityClient extends EasyBaseQuery {
 
     /**
      * 按包加载数据库实体对象
+     *
      * @param packageNames
      */
     default void loadTableEntityByPackage(String... packageNames) {
@@ -153,9 +154,14 @@ public interface BaseEntityClient extends EasyBaseQuery {
 
     /**
      * 按包加载数据库实体对象并且自动执行ddl操作
+     *
      * @param packageNames
      */
-    default void syncTableByPackage(String ...packageNames){
+    default void syncTableByPackage(String... packageNames) {
         getEasyQueryClient().syncTableByPackage(packageNames);
+    }
+
+    default void syncTableByPackage(int groupSize, String... packageNames) {
+        getEasyQueryClient().syncTableByPackage(groupSize, packageNames);
     }
 }

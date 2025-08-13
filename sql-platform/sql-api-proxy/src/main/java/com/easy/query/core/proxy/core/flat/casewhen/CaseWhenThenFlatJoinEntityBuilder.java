@@ -1,10 +1,9 @@
 package com.easy.query.core.proxy.core.flat.casewhen;
 
-import com.easy.query.api.proxy.util.EasyParamExpressionUtil;
+import com.easy.query.api.proxy.util.EasyProxyParamExpressionUtil;
 import com.easy.query.core.expression.builder.impl.AggregateFilterImpl;
 import com.easy.query.core.extension.casewhen.SQLCaseWhenBuilder;
 import com.easy.query.core.proxy.SQLAggregatePredicateExpression;
-import com.easy.query.core.proxy.SQLPredicateExpression;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 
 /**
@@ -29,7 +28,7 @@ public class CaseWhenThenFlatJoinEntityBuilder {
     public <TV> FlatElementCaseWhenEntityBuilder then(TV then) {
         sqlCaseWhenBuilder.caseWhen(filter -> {
             sqlAggregatePredicateExpression.accept(new AggregateFilterImpl(filter.getExpressionContext(),filter.getRootPredicateSegment()));
-        }, EasyParamExpressionUtil.getParamExpression(entitySQLContext,then));
+        }, EasyProxyParamExpressionUtil.getParamExpression(entitySQLContext,then));
         return caseWhenEntityBuilder;
     }
 

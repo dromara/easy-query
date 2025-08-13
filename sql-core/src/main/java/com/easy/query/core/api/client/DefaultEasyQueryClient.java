@@ -321,13 +321,13 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
     }
 
     @Override
-    public void syncTableByPackage(String... packageNames) {
+    public void syncTableByPackage(int groupSize,String... packageNames) {
         loadTableEntityByPackage(packageNames);
         EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
         DatabaseCodeFirst databaseCodeFirst = getDatabaseCodeFirst();
         List<EntityMetadata> entityMetadata = entityMetadataManager.getAllLoadedEntityMetadata();
         List<Class<?>> tableEntities = entityMetadata.stream().filter(s -> s.getTableName() != null).map(s -> s.getEntityClass()).collect(Collectors.toList());
-        List<List<Class<?>>> partition = EasyCollectionUtil.partition(tableEntities, 20);
+        List<List<Class<?>>> partition = EasyCollectionUtil.partition(tableEntities, groupSize);
         for (List<Class<?>> entityMetadataList : partition) {
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(entityMetadataList);
             codeFirstCommand.executeWithTransaction(s -> {
