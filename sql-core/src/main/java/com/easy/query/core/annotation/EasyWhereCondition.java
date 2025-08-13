@@ -41,16 +41,6 @@ public @interface EasyWhereCondition {
     boolean allowEmptyStrings() default false;
 
     /**
-     * 严格模式
-     * 如果属性没有映射到对象上报错
-     * 如果表 {@param tableIndex} 不在当前上下文中也报错
-     *
-     * @return 是否严格
-     * @throws EasyQueryWhereInvalidOperationException
-     */
-    boolean strict() default true;
-
-    /**
      * 映射的属性名称,空表示原属性名称
      *
      * @return 属性名

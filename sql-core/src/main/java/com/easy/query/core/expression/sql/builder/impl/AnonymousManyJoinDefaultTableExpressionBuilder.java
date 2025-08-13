@@ -159,7 +159,7 @@ public class AnonymousManyJoinDefaultTableExpressionBuilder extends AnonymousDef
 //    public AnonymousEntityTableExpressionBuilder getManyJoinEntityTableExpressionBuilder() {
 //        EntityQueryExpressionBuilder entityQueryExpressionBuilder = this.getEntityQueryExpressionBuilder();
 //        EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
-//        return (AnonymousEntityTableExpressionBuilder) table;
+//        return (AnonymousEntityTableExpressionBuilder) table;q
 //    }
 
 }

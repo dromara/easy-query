@@ -376,4 +376,22 @@ public class QueryTest27 extends BaseTest {
         Assert.assertEquals(uuid, uuidEntity1.getId2());
         Assert.assertEquals(uuid, uuidEntity1.getId3());
     }
+
+    @Test
+    public void testCountSubQueryCount(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                    .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                    .where(t_blog -> {
+                        t_blog.star().le(t_blog.users().count());
+                    }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN (SELECT t1.`id` AS `id`,COUNT(*) AS `__count2__` FROM `easy-query-test`.`t_sys_user` t1 GROUP BY t1.`id`) t2 ON t2.`id` = t.`title` WHERE t.`deleted` = ? AND  t.`star` <= IFNULL(t2.`__count2__`,0)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 }
