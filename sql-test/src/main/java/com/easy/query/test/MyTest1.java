@@ -1,10 +1,8 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.BigDecimalProxy;
-import com.easy.query.api.proxy.base.LongProxy;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft1;

@@ -14,6 +14,14 @@ public class Draft3<T1, T2, T3> extends AbstractDraft implements ProxyEntityAvai
     private T1 value1;
     private T2 value2;
     private T3 value3;
+    public Draft3(T1 value1, T2 value2, T3 value3) {
+        this.value1 = value1;
+        this.value2 = value2;
+        this.value3 = value3;
+    }
+
+    public Draft3() {
+    }
 
     public T1 getValue1() {
         return value1;

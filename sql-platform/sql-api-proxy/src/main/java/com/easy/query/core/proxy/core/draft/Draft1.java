@@ -19,6 +19,12 @@ public class Draft1<T1> extends AbstractDraft implements ProxyEntityAvailable<Dr
 
     private T1 value1;
 
+    public Draft1(T1 value1){
+        this.value1 = value1;
+    }
+    public Draft1(){
+    }
+
     public T1 getValue1() {
         return value1;
     }

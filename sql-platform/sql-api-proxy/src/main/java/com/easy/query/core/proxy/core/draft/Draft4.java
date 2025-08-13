@@ -16,6 +16,16 @@ public class Draft4<T1, T2, T3, T4> extends AbstractDraft implements ProxyEntity
     private T3 value3;
     private T4 value4;
 
+    public Draft4(T1 value1, T2 value2, T3 value3, T4 value4) {
+        this.value1 = value1;
+        this.value2 = value2;
+        this.value3 = value3;
+        this.value4 = value4;
+    }
+
+    public Draft4() {
+    }
+
     public T1 getValue1() {
         return value1;
     }
