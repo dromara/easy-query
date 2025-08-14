@@ -38,7 +38,7 @@ public class OracleQuerySQLExpression extends QuerySQLExpressionImpl {
         boolean root = EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
         if (root) {
             if (entitySQLExpressionMetadata.getExpressionContext().hasDeclareExpressions()) {
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder("WITH ");
                 List<ExpressionBuilder> declareExpressions = entitySQLExpressionMetadata.getExpressionContext().getDeclareExpressions();
                 for (ExpressionBuilder declareExpression : declareExpressions) {
                     SQLExpression expression = declareExpression.toExpression();

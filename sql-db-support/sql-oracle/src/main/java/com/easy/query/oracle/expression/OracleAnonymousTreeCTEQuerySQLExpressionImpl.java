@@ -33,7 +33,7 @@ public class OracleAnonymousTreeCTEQuerySQLExpressionImpl implements AnonymousEn
         EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
         String quoteCteTableName = EasySQLExpressionUtil.getQuoteName(getRuntimeContext(), this.cteTableName);
         String cols = EasySQLExpressionUtil.getCTEColumns(getRuntimeContext(), querySQLExpression);
-        StringBuilder sql = new StringBuilder("WITH ").append(quoteCteTableName).append(" (").append(cols).append(") AS (");
+        StringBuilder sql = new StringBuilder().append(quoteCteTableName).append(" (").append(cols).append(") AS (");
         String cteSQL = querySQLExpression.toSQL(toSQLContext);
         sql.append(cteSQL).append(") ");
         return sql.toString();
