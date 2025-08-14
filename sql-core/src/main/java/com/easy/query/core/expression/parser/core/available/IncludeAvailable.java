@@ -11,7 +11,7 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public interface Include2Available {
+public interface IncludeAvailable {
     String getNavValue();
 
     List<Function<ClientQueryable<?>,ClientQueryable<?>>> getFunctions();

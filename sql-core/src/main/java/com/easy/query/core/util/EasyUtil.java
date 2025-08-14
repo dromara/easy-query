@@ -6,7 +6,7 @@ import com.easy.query.core.basic.extension.conversion.ExpArg;
 import com.easy.query.core.basic.extension.conversion.ExpArgTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.expression.parser.core.available.Include2Available;
+import com.easy.query.core.expression.parser.core.available.IncludeAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
@@ -239,10 +239,10 @@ public class EasyUtil {
             });
         }
     }
-    public static IncludePathTreeNode getIncludePathTreeRoot(List<Include2Available> includes) {
+    public static IncludePathTreeNode getIncludePathTreeRoot(List<IncludeAvailable> includes) {
 
         IncludePathTreeNode root = new IncludePathTreeNode("EASY-QUERY-INCLUDE-ROOT");
-        for (Include2Available include : includes) {
+        for (IncludeAvailable include : includes) {
             String[] paths = include.getNavValue().split("\\.");
             PathTreeBuilder.insertPath(root, paths, new IncludePathTreeNode.IncludeFunction(include.getFunctions()));
         }

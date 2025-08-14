@@ -4,7 +4,7 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.common.ValueHolder;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.parser.core.available.Include2Available;
+import com.easy.query.core.expression.parser.core.available.IncludeAvailable;
 import com.easy.query.core.metadata.IncludePathTreeNode;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
@@ -115,16 +115,16 @@ public interface EntityIncludeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
         return include(true, navigateIncludeSQLExpression, includeAdapterExpression, groupSize);
     }
 
-    default EntityQueryable<T1Proxy, T1> includeBy(SQLFuncExpression1<T1Proxy, List<Include2Available>> navigateIncludeSQLExpression) {
+    default EntityQueryable<T1Proxy, T1> includeBy(SQLFuncExpression1<T1Proxy, List<IncludeAvailable>> navigateIncludeSQLExpression) {
         T1Proxy t1Proxy = getQueryable().get1Proxy();
-        ValueHolder<List<Include2Available>> includeAvailableValueHolder=new ValueHolder<>();
+        ValueHolder<List<IncludeAvailable>> includeAvailableValueHolder=new ValueHolder<>();
         t1Proxy.getEntitySQLContext()._include(()->{
-            List<Include2Available> values = navigateIncludeSQLExpression.apply(t1Proxy);
+            List<IncludeAvailable> values = navigateIncludeSQLExpression.apply(t1Proxy);
             if(values!=null){
                 includeAvailableValueHolder.setValue(values);
             }
         });
-        List<Include2Available> values = includeAvailableValueHolder.getValue();
+        List<IncludeAvailable> values = includeAvailableValueHolder.getValue();
         if(values!=null){
             IncludePathTreeNode includePathTreeRoot = EasyUtil.getIncludePathTreeRoot(values);
             EasyUtil.includeMany(this.getClientQueryable(), includePathTreeRoot);

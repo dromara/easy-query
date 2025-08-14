@@ -1,6 +1,6 @@
 package com.easy.query.core.proxy.sql;
 
-import com.easy.query.core.expression.parser.core.available.Include2Available;
+import com.easy.query.core.expression.parser.core.available.IncludeAvailable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * @author xuejiaming
  */
 public class Include {
-    public static List<Include2Available> of(Include2Available ...include2s) {
+    public static List<IncludeAvailable> of(IncludeAvailable...include2s) {
         if(include2s==null){
             return null;
         }
