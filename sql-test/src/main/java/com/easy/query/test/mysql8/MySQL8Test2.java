@@ -23,6 +23,8 @@ import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysBankProxy;
+import com.easy.query.test.mysql8.view.TreeC;
+import com.easy.query.test.mysql8.view.proxy.TreeCProxy;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -720,6 +722,29 @@ public class MySQL8Test2 extends BaseTest {
                     user.bankCards().any(b -> b.type().eq("11"));
                     user.bankCards().any(b -> b.type().eq("22"));
                 }).toList();
+
+
+    }
+
+    @Test
+    public  void cteViewTree1(){
+        List<TreeC> list = easyEntityQuery.queryable(TreeC.class)
+                .asTreeCTE()
+                .toList();
+    }
+
+    @Test
+    public  void cteViewTree2(){
+        List<TreeC> list = easyEntityQuery.queryable(TreeA.class)
+                .leftJoin(TreeB.class, (a, b) -> a.id().eq(b.aid()))
+                .select((t1, t2) -> {
+
+                    TreeCProxy treeCProxy = new TreeCProxy();
+                    treeCProxy.selectAll(t1);
+                    treeCProxy.pid().set(t2.aid());
+                    return treeCProxy;
+                }).asTreeCTECustom(s -> s.id(), s -> s.pid())
+                .toList();
 
 
     }

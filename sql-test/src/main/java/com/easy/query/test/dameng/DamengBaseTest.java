@@ -14,6 +14,8 @@ import com.easy.query.dameng.config.DamengDatabaseConfiguration;
 import com.easy.query.test.dameng.entity.DamengMyTopic;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
+import com.easy.query.test.mysql8.TreeA;
+import com.easy.query.test.mysql8.TreeB;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.time.LocalDateTime;
@@ -76,6 +78,12 @@ public abstract class DamengBaseTest {
         DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DamengMyTopic.class));
         codeFirstCommand.executeWithTransaction(s->s.commit());
+
+        CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(TreeA.class, TreeB.class));
+        codeFirstCommand1.executeWithTransaction(e->e.commit());
+
+        CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.syncTableCommand(Arrays.asList(TreeA.class, TreeB.class));
+        codeFirstCommand2.executeWithTransaction(s->s.commit());
 
         entityQuery.deletable(DamengMyTopic.class).where(d -> d.id().isNotNull()).allowDeleteStatement(true).disableLogicDelete().executeRows();
         boolean topicAny = entityQuery.queryable(DamengMyTopic.class).any();

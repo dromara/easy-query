@@ -24,6 +24,7 @@ import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.UUIDEntity;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.view.TreeC;
 import com.easy.query.test.vo.MyVO;
 import com.easy.query.test.vo.proxy.MyVOProxy;
 import org.junit.Assert;
@@ -595,5 +596,13 @@ public class QueryTest19 extends PgSQLBaseTest {
         listenerContextManager.clear();
         System.out.println("123");
 //        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS ( (SELECT 0 AS `cte_deep`,t1.`id`,t1.`stars`,t1.`title`,t1.`create_time` FROM `t_topic` t1 WHERE t1.`id` IS NOT NULL)  UNION ALL  (SELECT t2.`cte_deep` + 1 AS `cte_deep`,t3.`id`,t3.`stars`,t3.`title`,t3.`create_time` FROM `as_tree_cte` t2 INNER JOIN `t_topic` t3 ON t3.`stars` = t2.`id`) ) SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `as_tree_cte` t WHERE t.`cte_deep` <= ?", sql);
+    }
+
+
+    @Test
+    public  void cteViewTree1(){
+        List<TreeC> list = entityQuery.queryable(TreeC.class)
+                .asTreeCTE()
+                .toList();
     }
 }

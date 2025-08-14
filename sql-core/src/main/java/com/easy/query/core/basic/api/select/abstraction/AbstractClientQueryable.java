@@ -1581,6 +1581,46 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return asTreeCTECustom(treeNavigateMetadata.getSelfPropertiesOrPrimary(), treeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), treeCteConfigurerExpression);
     }
 
+    private ClientQueryable2<T1, T1> getCTEJoinQueryable(ClientQueryable<T1> queryable, String cteTableName, String[] codeProperties, String[] parentCodeProperties, boolean up) {
+
+        Class<T1> thisQueryClass = queryClass();
+        ClientQueryable2<T1, T1> t1T1ClientQueryable2 = queryable.asTable(cteTableName)
+                .innerJoin(thisQueryClass, (t, t1) -> {
+                    if (up) {
+                        t1.multiEq(true, t, codeProperties, parentCodeProperties);
+                    } else {
+                        t1.multiEq(true, t, parentCodeProperties, codeProperties);
+                    }
+                });
+        return t1T1ClientQueryable2;
+//        boolean joinSelf = this.entityQueryExpressionBuilder.getTables().size() == 1 && this.entityQueryExpressionBuilder.getRelationTables().isEmpty();
+//        if (joinSelf) {
+//
+//            EntityTableExpressionBuilder recentlyTable = this.entityQueryExpressionBuilder.getRecentlyTable();
+//            boolean anonymousTable = recentlyTable instanceof AnonymousEntityTableExpressionBuilder;
+//            if (!anonymousTable) {
+//                Class<T1> thisQueryClass = queryClass();
+//                return queryable.asTable(cteTableName)
+//                        .innerJoin(thisQueryClass, (t, t1) -> {
+//                            if (up) {
+//                                t1.multiEq(true, t, codeProperties, parentCodeProperties);
+//                            } else {
+//                                t1.multiEq(true, t, parentCodeProperties, codeProperties);
+//                            }
+//                        });
+//            }
+//        }
+//        ClientQueryable<T1> t1ClientQueryable = queryable.cloneQueryable();
+//        return queryable.asTable(cteTableName)
+//                .innerJoin(t1ClientQueryable, (t, t1) -> {
+//                    if (up) {
+//                        t1.multiEq(true, t, codeProperties, parentCodeProperties);
+//                    } else {
+//                        t1.multiEq(true, t, parentCodeProperties, codeProperties);
+//                    }
+//                });
+    }
+
     private ClientQueryable<T1> asTreeCTECustom(String[] codeProperties, String[] parentCodeProperties, SQLActionExpression1<TreeCTEConfigurer> treeCteConfigurerExpression) {
 
         //将当前表达式的expression builder放入新表达式的声明里面新表达式还是当前的T类型
@@ -1595,18 +1635,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         SQLActionExpression1<WherePredicate<?>> childFilter = treeCTEOption.getChildFilter();
         Class<T1> thisQueryClass = queryClass();
 
+
         ClientQueryable<T1> queryable = runtimeContext.getSQLClientApiFactory().createSubQueryable(thisQueryClass, runtimeContext, expressionContext);
         ExpressionContext innerJoinExpressionContext = queryable.getSQLEntityExpressionBuilder().getExpressionContext();
         innerJoinExpressionContext.extract(this.entityQueryExpressionBuilder.getExpressionContext());
         this.entityQueryExpressionBuilder.getExpressionContext().extendFrom(innerJoinExpressionContext);
-        ClientQueryable<T1> cteQueryable = queryable.asTable(cteTableName)
-                .innerJoin(thisQueryClass, (t, t1) -> {
-                    if (up) {
-                        t1.multiEq(true, t, codeProperties, parentCodeProperties);
-                    } else {
-                        t1.multiEq(true, t, parentCodeProperties, codeProperties);
-                    }
-                })
+        ClientQueryable<T1> cteQueryable = getCTEJoinQueryable(queryable, cteTableName, codeProperties, parentCodeProperties, up)
                 .where(childFilter != null, (child, parent) -> {
                     childFilter.apply(child);
                 })

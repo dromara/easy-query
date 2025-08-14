@@ -15,7 +15,7 @@ import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.MapUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.impl.AnonymousTreeCTEQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.impl.AnonymousTreeCTERECURSIVEQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousUnionQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousCteTableQueryExpressionBuilder;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -47,7 +47,7 @@ public interface ExpressionBuilderFactory {
         return new AnonymousUnionQueryExpressionBuilder(entityQueryExpressionBuilders,sqlExpressionContext,queryClass,sqlUnion);
     }
     default EntityQueryExpressionBuilder createAnonymousCTEQueryExpressionBuilder(String cteTableName,EntityQueryExpressionBuilder sqlAnonymousUnionEntityQueryExpressionBuilder, ExpressionContext queryExpressionContext, Class<?> queryClass){
-        return new AnonymousTreeCTEQueryExpressionBuilder(cteTableName,sqlAnonymousUnionEntityQueryExpressionBuilder,queryExpressionContext,queryClass);
+        return new AnonymousTreeCTERECURSIVEQueryExpressionBuilder(cteTableName,sqlAnonymousUnionEntityQueryExpressionBuilder,queryExpressionContext,queryClass);
     }
     default EntityQueryExpressionBuilder createAnonymousWithTableQueryExpressionBuilder(String withTableName,EntityQueryExpressionBuilder sqlAnonymousUnionEntityQueryExpressionBuilder, ExpressionContext queryExpressionContext, Class<?> queryClass){
         return new AnonymousCteTableQueryExpressionBuilder(withTableName,sqlAnonymousUnionEntityQueryExpressionBuilder,queryExpressionContext,queryClass);

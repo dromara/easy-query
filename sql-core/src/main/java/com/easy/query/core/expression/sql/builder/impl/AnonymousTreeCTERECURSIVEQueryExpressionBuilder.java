@@ -12,12 +12,12 @@ import com.easy.query.core.expression.sql.expression.impl.EntitySQLExpressionMet
  *
  * @author xuejiaming
  */
-public class AnonymousTreeCTEQueryExpressionBuilder extends QueryExpressionBuilder implements SQLAnonymousEntityQueryExpressionBuilder {
+public class AnonymousTreeCTERECURSIVEQueryExpressionBuilder extends QueryExpressionBuilder implements SQLAnonymousEntityQueryExpressionBuilder {
 
     private final String cteTableName;
     private final EntityQueryExpressionBuilder sqlAnonymousUnionEntityQueryExpressionBuilder;
 
-    public AnonymousTreeCTEQueryExpressionBuilder(String cteTableName,EntityQueryExpressionBuilder sqlAnonymousUnionEntityQueryExpressionBuilder, ExpressionContext queryExpressionContext, Class<?> queryClass) {
+    public AnonymousTreeCTERECURSIVEQueryExpressionBuilder(String cteTableName, EntityQueryExpressionBuilder sqlAnonymousUnionEntityQueryExpressionBuilder, ExpressionContext queryExpressionContext, Class<?> queryClass) {
         super(queryExpressionContext, queryClass);
         this.cteTableName = cteTableName;
         this.sqlAnonymousUnionEntityQueryExpressionBuilder = sqlAnonymousUnionEntityQueryExpressionBuilder;
@@ -40,5 +40,10 @@ public class AnonymousTreeCTEQueryExpressionBuilder extends QueryExpressionBuild
     @Override
     public EntityQueryExpressionBuilder cloneEntityExpressionBuilder() {
         return runtimeContext.getExpressionBuilderFactory().createAnonymousCTEQueryExpressionBuilder(this.cteTableName,this.sqlAnonymousUnionEntityQueryExpressionBuilder,expressionContext,queryClass);
+    }
+
+
+    public String getCteTableName() {
+        return cteTableName;
     }
 }

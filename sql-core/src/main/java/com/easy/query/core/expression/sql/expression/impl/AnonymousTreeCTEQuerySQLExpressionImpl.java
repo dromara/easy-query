@@ -32,7 +32,7 @@ public class AnonymousTreeCTEQuerySQLExpressionImpl implements AnonymousEntityQu
     public String toSQL(ToSQLContext toSQLContext) {
         EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
         String quoteCteTableName = EasySQLExpressionUtil.getQuoteName(getRuntimeContext(), this.cteTableName);
-        StringBuilder sql = new StringBuilder("RECURSIVE ").append(quoteCteTableName).append(" AS (");
+        StringBuilder sql = new StringBuilder().append(quoteCteTableName).append(" AS (");
         String cteSQL = querySQLExpression.toSQL(toSQLContext);
         sql.append(cteSQL).append(") ");
         return sql.toString();

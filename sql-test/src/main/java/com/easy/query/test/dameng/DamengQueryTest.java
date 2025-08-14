@@ -17,6 +17,7 @@ import com.easy.query.test.dameng.entity.DamengMyTopic;
 import com.easy.query.test.dameng.entity.DamengMyTopicDTO;
 import com.easy.query.test.dameng.entity.proxy.DamengMyTopicProxy;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.view.TreeC;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 import org.junit.Assert;
@@ -502,5 +503,11 @@ public class DamengQueryTest extends DamengBaseTest {
          System.out.println(maps);
         Object o = maps.get(0).get("aa");
         Assert.assertEquals("ab",o);
+    }
+    @Test
+    public  void cteViewTree1(){
+        List<TreeC> list = entityQuery.queryable(TreeC.class)
+                .asTreeCTE()
+                .toList();
     }
 }

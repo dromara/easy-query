@@ -18,6 +18,7 @@ import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.builder.core.ValueFilterFactory;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.TableContext;
+import com.easy.query.core.expression.sql.builder.impl.AnonymousCteTableQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.expression.sql.builder.internal.ExpressionContextInterceptor;
 import com.easy.query.core.expression.sql.fill.FillExpression;
@@ -34,9 +35,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * create time 2023/3/3 23:06
@@ -287,9 +290,19 @@ public class EasyExpressionContext implements ExpressionContext {
         this.hasSubQuery = true;
         tableContext.extract(otherExpressionContext.getTableContext());
         if (otherExpressionContext.hasDeclareExpressions()) {
-            for (ExpressionBuilder declareExpression : otherExpressionContext.getDeclareExpressions()) {
-                getDeclareExpressions().add(declareExpression);
+            copyDeclareExpression(getDeclareExpressions(), otherExpressionContext.getDeclareExpressions());
+        }
+    }
+    private void copyDeclareExpression(List<ExpressionBuilder> sourceDeclareExpressions,List<ExpressionBuilder> targetDeclareExpressions){
+
+        Set<String> cteTables = sourceDeclareExpressions.stream().filter(o -> (o instanceof AnonymousCteTableQueryExpressionBuilder)).map(o -> ((AnonymousCteTableQueryExpressionBuilder) o).getCteTableName()).collect(Collectors.toSet());
+        for (ExpressionBuilder declareExpression : targetDeclareExpressions) {
+            if(declareExpression instanceof AnonymousCteTableQueryExpressionBuilder){
+                if(cteTables.contains(((AnonymousCteTableQueryExpressionBuilder) declareExpression).getCteTableName())){
+                    continue;
+                }
             }
+            getDeclareExpressions().add(declareExpression);
         }
     }
 
@@ -321,7 +334,8 @@ public class EasyExpressionContext implements ExpressionContext {
             otherExpressionContext.getColumnIncludeMaps().putAll(this.columnIncludeMaps);
         }
         if (hasDeclareExpressions()) {
-            otherExpressionContext.getDeclareExpressions().addAll(this.declareExpressions);
+
+            copyDeclareExpression(otherExpressionContext.getDeclareExpressions(), this.declareExpressions);
         }
         if (this.propTypes != null) {
             otherExpressionContext.setResultPropTypes(new ResultColumnMetadata[this.propTypes.length]);

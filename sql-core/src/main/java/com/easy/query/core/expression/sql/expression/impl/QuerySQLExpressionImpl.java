@@ -5,6 +5,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.impl.AnonymousTreeCTERECURSIVEQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.SQLExpression;
@@ -172,6 +173,11 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
             if (entitySQLExpressionMetadata.getExpressionContext().hasDeclareExpressions()) {
                 StringBuilder sb = new StringBuilder("WITH ");
                 List<ExpressionBuilder> declareExpressions = entitySQLExpressionMetadata.getExpressionContext().getDeclareExpressions();
+
+                boolean isRecursive = EasyCollectionUtil.any(declareExpressions, s -> s instanceof AnonymousTreeCTERECURSIVEQueryExpressionBuilder);
+                if(isRecursive){
+                    sb.append("RECURSIVE ");
+                }
                 for (ExpressionBuilder declareExpression : declareExpressions) {
                     SQLExpression expression = declareExpression.toExpression();
                     String sql = expression.toSQL(toSQLContext);

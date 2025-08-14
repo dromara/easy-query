@@ -27,6 +27,8 @@ import com.easy.query.test.interceptor.MyTenantInterceptor;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
+import com.easy.query.test.mysql8.TreeA;
+import com.easy.query.test.mysql8.TreeB;
 import com.easy.query.test.sharding.FixShardingInitializer;
 import com.easy.query.test.sharding.TopicShardingTableRoute;
 import com.easy.query.test.sharding.TopicShardingTimeTableRoute;
@@ -144,12 +146,12 @@ public class PgSQLBaseTest {
         {
 
 
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(DocBankCard.class,DocBank.class,  DocUser.class, SysUser.class, UUIDEntity.class));
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(DocBankCard.class,DocBank.class,  DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class));
             codeFirstCommand.executeWithTransaction(a->a.commit());
         }
         {
 
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class,DocBankCard.class, DocUser.class, SysUser.class, UUIDEntity.class));
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class,DocBankCard.class, DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class));
             codeFirstCommand.executeWithTransaction(a->a.commit());
         }
 

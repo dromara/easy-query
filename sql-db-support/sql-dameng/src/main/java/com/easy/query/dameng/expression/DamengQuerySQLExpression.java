@@ -38,13 +38,14 @@ public class DamengQuerySQLExpression extends QuerySQLExpressionImpl {
         boolean root = EasySQLExpressionUtil.expressionInvokeRoot(toSQLContext);
         if (root) {
             if (entitySQLExpressionMetadata.getExpressionContext().hasDeclareExpressions()) {
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new StringBuilder("WITH ");
                 List<ExpressionBuilder> declareExpressions = entitySQLExpressionMetadata.getExpressionContext().getDeclareExpressions();
                 for (ExpressionBuilder declareExpression : declareExpressions) {
                     SQLExpression expression = declareExpression.toExpression();
                     String sql = expression.toSQL(toSQLContext);
-                    sb.append(sql).append(" ");
+                    sb.append(sql).append(",");
                 }
+                sb.deleteCharAt(sb.length() - 1);
                 sb.append(toSQL0(true, toSQLContext));
                 return sb.toString();
             }

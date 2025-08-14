@@ -13,4 +13,5 @@ public class PostgresSQLQuerySQLExpression extends QuerySQLExpressionImpl {
     public PostgresSQLQuerySQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata) {
         super(entitySQLExpressionMetadata);
     }
+
 }
