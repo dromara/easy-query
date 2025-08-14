@@ -463,7 +463,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
             case LIKE:
             case LIKE_MATCH_LEFT:
             case LIKE_MATCH_RIGHT: {
-                SQLLikeEnum sqlLike = getSQLLike(q.type());
+                SQLLikeEnum sqlLike = getSQLLike(whereConditionType);
                 if (fieldConditions.size() > 1) {
                     filter.and(x -> {
                         for (QueryPathTreeNode.FieldCondition fieldCondition : fieldConditions) {
@@ -478,7 +478,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
             case CONTAINS:
             case STARTS_WITH:
             case ENDS_WITH: {
-                SQLLikeEnum sqlLike = getSQLJavaLike(q.type());
+                SQLLikeEnum sqlLike = getSQLLike(whereConditionType);
                 SQLFunc fx = filter.getRuntimeContext().fx();
                 if (fieldConditions.size() > 1) {
                     filter.and(x -> {
@@ -644,7 +644,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
             case RANGE_CLOSED:
             case RANGE_CLOSED_OPEN:
             case RANGE_OPEN_CLOSED: {
-                MergeTuple2<SQLPredicateCompareEnum, SQLPredicateCompareEnum> sqlPredicateCompareEnum = EasyWhereCondition.Condition.getSQLPredicateCompareEnum(q.type());
+                MergeTuple2<SQLPredicateCompareEnum, SQLPredicateCompareEnum> sqlPredicateCompareEnum = EasyWhereCondition.Condition.getSQLPredicateCompareEnum(whereConditionType);
                 if (val.getClass().isArray()) {
                     Object[] valArray = (Object[]) val;
                     if (EasyArrayUtil.isNotEmpty(valArray)) {
@@ -710,23 +710,15 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
     private SQLLikeEnum getSQLLike(EasyWhereCondition.Condition like) {
         switch (like) {
             case LIKE:
-                return SQLLikeEnum.LIKE_PERCENT_ALL;
-            case LIKE_MATCH_LEFT:
-                return SQLLikeEnum.LIKE_PERCENT_RIGHT;
-            case LIKE_MATCH_RIGHT:
-                return SQLLikeEnum.LIKE_PERCENT_LEFT;
-        }
-        throw new UnsupportedOperationException("where object cant get sql like");
-    }
-    private SQLLikeEnum getSQLJavaLike(EasyWhereCondition.Condition like) {
-        switch (like) {
             case CONTAINS:
                 return SQLLikeEnum.LIKE_PERCENT_ALL;
+            case LIKE_MATCH_LEFT:
             case STARTS_WITH:
                 return SQLLikeEnum.LIKE_PERCENT_RIGHT;
+            case LIKE_MATCH_RIGHT:
             case ENDS_WITH:
                 return SQLLikeEnum.LIKE_PERCENT_LEFT;
         }
-        throw new UnsupportedOperationException("where object cant get sql java like");
+        throw new UnsupportedOperationException("where object cant get sql like");
     }
 }
