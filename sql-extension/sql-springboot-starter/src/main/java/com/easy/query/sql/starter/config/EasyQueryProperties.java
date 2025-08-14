@@ -1,6 +1,7 @@
 package com.easy.query.sql.starter.config;
 
 
+import com.easy.query.core.enums.DefaultConditionEnum;
 import com.easy.query.core.enums.EntityMappingStrategyEnum;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
@@ -170,6 +171,10 @@ public class EasyQueryProperties {
      * 映射策略
      */
     private EntityMappingStrategyEnum mappingStrategy = EntityMappingStrategyEnum.PROPERTY_FIRST;
+    /**
+     * 默认WhereObject使用的查询类型
+     */
+    private DefaultConditionEnum defaultCondition = DefaultConditionEnum.LIKE;
 
     public Boolean getEnable() {
         return enable;
@@ -517,6 +522,14 @@ public class EasyQueryProperties {
 
     public void setMaxInClauseSize(int maxInClauseSize) {
         this.maxInClauseSize = maxInClauseSize;
+    }
+
+    public DefaultConditionEnum getDefaultCondition() {
+        return defaultCondition;
+    }
+
+    public void setDefaultCondition(DefaultConditionEnum defaultCondition) {
+        this.defaultCondition = defaultCondition;
     }
 
     public EasyQueryProperties() {

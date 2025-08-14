@@ -7,7 +7,10 @@ import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.tree.QueryPathTreeNode;
 import com.easy.query.core.common.tuple.MergeTuple2;
+import com.easy.query.core.configuration.EasyQueryOption;
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.DefaultConditionEnum;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.enums.SQLLikeEnum;
@@ -15,7 +18,6 @@ import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
-import com.easy.query.core.exception.EasyQueryWhereInvalidOperationException;
 import com.easy.query.core.expression.DefaultRelationTableKey;
 import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.RelationTableKey;
@@ -26,6 +28,7 @@ import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.implicit.EntityRelationToImplicitGroupProvider;
 import com.easy.query.core.expression.many2group.ManyGroupJoinProjectKey;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContextImpl;
 import com.easy.query.core.expression.segment.GroupJoinPredicateSegmentContextImpl;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
@@ -38,9 +41,9 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.extension.casewhen.ClientPredicateCaseWhenBuilder;
+import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
-import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
@@ -65,7 +68,10 @@ import java.util.ServiceLoader;
  * @author xuejiaming
  */
 public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor {
-
+    private final EasyQueryOption easyQueryOption;
+    public DefaultWhereObjectQueryExecutor(QueryConfiguration queryConfiguration){
+        this.easyQueryOption = queryConfiguration.getEasyQueryOption();
+    }
 
     /**
      * 返回大于等于propNames长度的tableIndex索引数组
@@ -274,8 +280,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
 
         if (root.hasChildren()) {
             for (QueryPathTreeNode child : root.getChildren()) {
-
-                acceptCondition(child, root);
+                acceptCondition(child, root, object);
             }
         }
     }
@@ -325,16 +330,16 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
         return current;
     }
 
-    private void acceptCondition(QueryPathTreeNode node, QueryPathTreeNode parent) {
+    private void acceptCondition(QueryPathTreeNode node, QueryPathTreeNode parent, Object whereObjectEntity) {
         if (EasyCollectionUtil.isNotEmpty(node.getConditions())) {
             for (QueryPathTreeNode.ConditionVal condition : node.getConditions()) {
-                acceptCondition0(node.getEntityQueryExpressionBuilder(), node.getFilter(), condition.condition, node.getFieldName(), condition.val, condition.fieldConditions);
+                acceptCondition0(whereObjectEntity, node.getFilter(), condition.condition, condition.val, condition.fieldConditions);
             }
 
 
         }
         for (QueryPathTreeNode child : node.getChildren()) {
-            acceptCondition(child, node);
+            acceptCondition(child, node, whereObjectEntity);
         }
         if (node.getNavigateMetadata() != null) {
             if (node.getNavigateMetadata().getRelationType() == RelationTypeEnum.OneToMany || node.getNavigateMetadata().getRelationType() == RelationTypeEnum.ManyToMany) {
@@ -399,50 +404,59 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
         return aliasSegment.getAlias();
     }
 
-    private void acceptCondition0(EntityQueryExpressionBuilder entityQueryExpressionBuilder, Filter filter, EasyWhereCondition q, String fieldName, Object val, List<QueryPathTreeNode.FieldCondition> fieldConditions) {
+    protected EasyWhereCondition.Condition getWhereConditionType(EasyWhereCondition condition, Object whereObjectEntity) {
+        if (condition.type() == EasyWhereCondition.Condition.DEFAULT) {
+            if(easyQueryOption.getDefaultCondition()== DefaultConditionEnum.CONTAINS){
+                return EasyWhereCondition.Condition.CONTAINS;
+            }
+            return EasyWhereCondition.Condition.LIKE;
+        }
+        return condition.type();
+    }
 
-        List<QueryPathTreeNode.FieldCondition> queries = fieldConditions;
+    private void acceptCondition0(Object whereObjectEntity, Filter filter, EasyWhereCondition q, Object val, List<QueryPathTreeNode.FieldCondition> fieldConditions) {
+
         if (EasyCollectionUtil.isEmpty(fieldConditions)) {
             return;
         }
 
-
-        switch (q.type()) {
+        EasyWhereCondition.Condition whereConditionType = getWhereConditionType(q, whereObjectEntity);
+        switch (whereConditionType) {
             case EQUAL: {
-                if (queries.size() > 1) {
+                if (fieldConditions.size() > 1) {
                     filter.and(x -> {
-                        for (QueryPathTreeNode.FieldCondition fieldCondition : queries) {
+                        for (QueryPathTreeNode.FieldCondition fieldCondition : fieldConditions) {
                             x.eq(fieldCondition.table, fieldCondition.property, val).or();
                         }
                     });
                 } else {
-                    filter.eq(queries.get(0).table, queries.get(0).property, val);
+                    filter.eq(fieldConditions.get(0).table, fieldConditions.get(0).property, val);
                 }
             }
             break;
             case GREATER_THAN:
             case RANGE_LEFT_OPEN: {
-                if (queries.size() > 1) {
+                if (fieldConditions.size() > 1) {
                     filter.and(x -> {
-                        for (QueryPathTreeNode.FieldCondition fieldCondition : queries) {
+                        for (QueryPathTreeNode.FieldCondition fieldCondition : fieldConditions) {
                             x.gt(fieldCondition.table, fieldCondition.property, val).or();
                         }
                     });
                 } else {
-                    filter.gt(queries.get(0).table, queries.get(0).property, val);
+                    filter.gt(fieldConditions.get(0).table, fieldConditions.get(0).property, val);
                 }
             }
             break;
             case LESS_THAN:
             case RANGE_RIGHT_OPEN: {
-                if (queries.size() > 1) {
+                if (fieldConditions.size() > 1) {
                     filter.and(x -> {
-                        for (QueryPathTreeNode.FieldCondition fieldCondition : queries) {
+                        for (QueryPathTreeNode.FieldCondition fieldCondition : fieldConditions) {
                             x.lt(fieldCondition.table, fieldCondition.property, val).or();
                         }
                     });
                 } else {
-                    filter.lt(queries.get(0).table, queries.get(0).property, val);
+                    filter.lt(fieldConditions.get(0).table, fieldConditions.get(0).property, val);
                 }
             }
             break;
@@ -450,66 +464,98 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
             case LIKE_MATCH_LEFT:
             case LIKE_MATCH_RIGHT: {
                 SQLLikeEnum sqlLike = getSQLLike(q.type());
-                if (queries.size() > 1) {
+                if (fieldConditions.size() > 1) {
                     filter.and(x -> {
-                        for (QueryPathTreeNode.FieldCondition fieldCondition : queries) {
+                        for (QueryPathTreeNode.FieldCondition fieldCondition : fieldConditions) {
                             x.like(fieldCondition.table, fieldCondition.property, val, sqlLike).or();
                         }
                     });
                 } else {
-                    filter.like(queries.get(0).table, queries.get(0).property, val, sqlLike);
+                    filter.like(fieldConditions.get(0).table, fieldConditions.get(0).property, val, sqlLike);
+                }
+            }
+            break;
+            case CONTAINS:
+            case STARTS_WITH:
+            case ENDS_WITH: {
+                SQLLikeEnum sqlLike = getSQLJavaLike(q.type());
+                SQLFunc fx = filter.getRuntimeContext().fx();
+                if (fieldConditions.size() > 1) {
+                    filter.and(x -> {
+                        for (QueryPathTreeNode.FieldCondition fieldCondition : fieldConditions) {
+
+                            SQLFunction likeSQLFunction = fx.like(s->{
+                                s.column(fieldCondition.table, fieldCondition.property);
+                                s.value(val);
+                            },true, sqlLike);
+                            x.sqlNativeSegment(likeSQLFunction.sqlSegment(fieldCondition.table),c->{
+                                likeSQLFunction.consume(new SQLNativeChainExpressionContextImpl(fieldCondition.table,c));
+                            }).or();
+
+                        }
+                    });
+                } else {
+                    TableAvailable table = fieldConditions.get(0).table;
+                    String property = fieldConditions.get(0).property;
+                    SQLFunction likeSQLFunction = fx.like(s->{
+                        s.column(table, property);
+                        s.value(val);
+                    },true, sqlLike);
+                    filter.sqlNativeSegment(likeSQLFunction.sqlSegment(table),c->{
+                        likeSQLFunction.consume(new SQLNativeChainExpressionContextImpl(table,c));
+                    });
                 }
             }
             break;
             case GREATER_THAN_EQUAL:
             case RANGE_LEFT_CLOSED: {
-                if (queries.size() > 1) {
+                if (fieldConditions.size() > 1) {
                     filter.and(x -> {
-                        for (QueryPathTreeNode.FieldCondition fieldCondition : queries) {
+                        for (QueryPathTreeNode.FieldCondition fieldCondition : fieldConditions) {
                             x.ge(fieldCondition.table, fieldCondition.property, val).or();
                         }
                     });
                 } else {
-                    filter.ge(queries.get(0).table, queries.get(0).property, val);
+                    filter.ge(fieldConditions.get(0).table, fieldConditions.get(0).property, val);
                 }
             }
             break;
             case LESS_THAN_EQUAL:
             case RANGE_RIGHT_CLOSED: {
-                if (queries.size() > 1) {
+                if (fieldConditions.size() > 1) {
                     filter.and(x -> {
-                        for (QueryPathTreeNode.FieldCondition fieldCondition : queries) {
+                        for (QueryPathTreeNode.FieldCondition fieldCondition : fieldConditions) {
                             x.le(fieldCondition.table, fieldCondition.property, val).or();
                         }
                     });
                 } else {
-                    filter.le(queries.get(0).table, queries.get(0).property, val);
+                    filter.le(fieldConditions.get(0).table, fieldConditions.get(0).property, val);
                 }
             }
             break;
             case IN:
                 if (val.getClass().isArray()) {
                     if (EasyArrayUtil.isNotEmpty((Object[]) val)) {
-                        if (queries.size() > 1) {
+                        if (fieldConditions.size() > 1) {
                             filter.and(x -> {
-                                for (QueryPathTreeNode.FieldCondition fieldCondition : queries) {
+                                for (QueryPathTreeNode.FieldCondition fieldCondition : fieldConditions) {
                                     x.in(fieldCondition.table, fieldCondition.property, (Object[]) val).or();
                                 }
                             });
                         } else {
-                            filter.in(queries.get(0).table, queries.get(0).property, (Object[]) val);
+                            filter.in(fieldConditions.get(0).table, fieldConditions.get(0).property, (Object[]) val);
                         }
                     }
                 } else {
                     if (EasyCollectionUtil.isNotEmpty((Collection<?>) val)) {
-                        if (queries.size() > 1) {
+                        if (fieldConditions.size() > 1) {
                             filter.and(x -> {
-                                for (QueryPathTreeNode.FieldCondition fieldCondition : queries) {
+                                for (QueryPathTreeNode.FieldCondition fieldCondition : fieldConditions) {
                                     x.in(fieldCondition.table, fieldCondition.property, (Collection<?>) val).or();
                                 }
                             });
                         } else {
-                            filter.in(queries.get(0).table, queries.get(0).property, (Collection<?>) val);
+                            filter.in(fieldConditions.get(0).table, fieldConditions.get(0).property, (Collection<?>) val);
                         }
                     }
                 }
@@ -517,39 +563,39 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
             case NOT_IN:
                 if (val.getClass().isArray()) {
                     if (EasyArrayUtil.isNotEmpty((Object[]) val)) {
-                        if (queries.size() > 1) {
+                        if (fieldConditions.size() > 1) {
                             filter.and(x -> {
-                                for (QueryPathTreeNode.FieldCondition fieldCondition : queries) {
+                                for (QueryPathTreeNode.FieldCondition fieldCondition : fieldConditions) {
                                     x.notIn(fieldCondition.table, fieldCondition.property, (Object[]) val).or();
                                 }
                             });
                         } else {
-                            filter.notIn(queries.get(0).table, queries.get(0).property, (Object[]) val);
+                            filter.notIn(fieldConditions.get(0).table, fieldConditions.get(0).property, (Object[]) val);
                         }
                     }
                 } else {
                     if (EasyCollectionUtil.isNotEmpty((Collection<?>) val)) {
-                        if (queries.size() > 1) {
+                        if (fieldConditions.size() > 1) {
                             filter.and(x -> {
-                                for (QueryPathTreeNode.FieldCondition fieldCondition : queries) {
+                                for (QueryPathTreeNode.FieldCondition fieldCondition : fieldConditions) {
                                     x.notIn(fieldCondition.table, fieldCondition.property, (Collection<?>) val).or();
                                 }
                             });
                         } else {
-                            filter.notIn(queries.get(0).table, queries.get(0).property, (Collection<?>) val);
+                            filter.notIn(fieldConditions.get(0).table, fieldConditions.get(0).property, (Collection<?>) val);
                         }
                     }
                 }
                 break;
             case NOT_EQUAL: {
-                if (queries.size() > 1) {
+                if (fieldConditions.size() > 1) {
                     filter.and(x -> {
-                        for (QueryPathTreeNode.FieldCondition fieldCondition : queries) {
+                        for (QueryPathTreeNode.FieldCondition fieldCondition : fieldConditions) {
                             x.ne(fieldCondition.table, fieldCondition.property, val).or();
                         }
                     });
                 } else {
-                    filter.ne(queries.get(0).table, queries.get(0).property, val);
+                    filter.ne(fieldConditions.get(0).table, fieldConditions.get(0).property, val);
                 }
             }
             break;
@@ -557,9 +603,9 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
                 if (val.getClass().isArray()) {
                     if (EasyArrayUtil.isNotEmpty((Object[]) val)) {
 
-                        if (queries.size() > 1) {
+                        if (fieldConditions.size() > 1) {
                             filter.and(x -> {
-                                for (QueryPathTreeNode.FieldCondition fieldCondition : queries) {
+                                for (QueryPathTreeNode.FieldCondition fieldCondition : fieldConditions) {
                                     for (Object o : (Object[]) val) {
                                         x.eq(fieldCondition.table, fieldCondition.property, o).or();
                                     }
@@ -568,16 +614,16 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
                         } else {
                             filter.and(f -> {
                                 for (Object o : (Object[]) val) {
-                                    f.eq(queries.get(0).table, queries.get(0).property, o).or();
+                                    f.eq(fieldConditions.get(0).table, fieldConditions.get(0).property, o).or();
                                 }
                             });
                         }
                     }
                 } else {
                     if (EasyCollectionUtil.isNotEmpty((Collection<?>) val)) {
-                        if (queries.size() > 1) {
+                        if (fieldConditions.size() > 1) {
                             filter.and(x -> {
-                                for (QueryPathTreeNode.FieldCondition fieldCondition : queries) {
+                                for (QueryPathTreeNode.FieldCondition fieldCondition : fieldConditions) {
                                     for (Object o : (Collection<?>) val) {
                                         x.eq(fieldCondition.table, fieldCondition.property, o).or();
                                     }
@@ -586,7 +632,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
                         } else {
                             filter.and(f -> {
                                 for (Object o : (Collection<?>) val) {
-                                    f.eq(queries.get(0).table, queries.get(0).property, o).or();
+                                    f.eq(fieldConditions.get(0).table, fieldConditions.get(0).property, o).or();
                                 }
                             });
                         }
@@ -607,13 +653,13 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
                             pairArray[1] = valArray[1];
                         }
 
-                        rangePairArray(pairArray, queries, filter, sqlPredicateCompareEnum);
+                        rangePairArray(pairArray, fieldConditions, filter, sqlPredicateCompareEnum);
                     }
                 } else {
                     Collection<?> valCollection = (Collection<?>) val;
                     if (EasyCollectionUtil.isNotEmpty(valCollection)) {
                         Object[] pairArray = getPairArray(valCollection);
-                        rangePairArray(pairArray, queries, filter, sqlPredicateCompareEnum);
+                        rangePairArray(pairArray, fieldConditions, filter, sqlPredicateCompareEnum);
                     }
                 }
             }
@@ -671,5 +717,16 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
                 return SQLLikeEnum.LIKE_PERCENT_LEFT;
         }
         throw new UnsupportedOperationException("where object cant get sql like");
+    }
+    private SQLLikeEnum getSQLJavaLike(EasyWhereCondition.Condition like) {
+        switch (like) {
+            case CONTAINS:
+                return SQLLikeEnum.LIKE_PERCENT_ALL;
+            case STARTS_WITH:
+                return SQLLikeEnum.LIKE_PERCENT_RIGHT;
+            case ENDS_WITH:
+                return SQLLikeEnum.LIKE_PERCENT_LEFT;
+        }
+        throw new UnsupportedOperationException("where object cant get sql java like");
     }
 }

@@ -1,5 +1,6 @@
 package com.easy.query.core.configuration;
 
+import com.easy.query.core.enums.DefaultConditionEnum;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
@@ -98,6 +99,7 @@ public class EasyQueryOptionBuilder {
      * in inClause的参数个数限制
      */
     private int maxInClauseSize;
+    private DefaultConditionEnum defaultCondition;
 
 
     public EasyQueryOptionBuilder() {
@@ -134,6 +136,7 @@ public class EasyQueryOptionBuilder {
         this.includeLimitMode = IncludeLimitModeEnum.UNION_ALL;
         this.saveComment = false;
         this.maxInClauseSize = MAX_IN_CLAUSE_SIZE;
+        this.defaultCondition = DefaultConditionEnum.LIKE;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -300,6 +303,10 @@ public class EasyQueryOptionBuilder {
         return maxInClauseSize;
     }
 
+    public void setDefaultCondition(DefaultConditionEnum defaultCondition) {
+        this.defaultCondition = defaultCondition;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -335,6 +342,7 @@ public class EasyQueryOptionBuilder {
                 this.mssqlMinBigDecimalScale,
                 this.includeLimitMode,
                 this.saveComment,
-                this.maxInClauseSize);
+                this.maxInClauseSize,
+                this.defaultCondition);
     }
 }

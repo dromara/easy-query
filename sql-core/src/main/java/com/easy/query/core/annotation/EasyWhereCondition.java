@@ -27,6 +27,7 @@ public @interface EasyWhereCondition {
      * 查询条件表索引 from表index为0，join一次加1
      * SELECT * FROM table t [LEFT | RIGHT | INNER] JOIN table1 t1 ON .....
      * 如果当前字段作用到 table表 {@param tableIndex}=0 如果作用到 table1表 {@param tableIndex}=1
+     * 隐式join不会生效，隐式join根据关系属性路径来匹配
      *
      * @return 表索引
      */
@@ -75,9 +76,10 @@ public @interface EasyWhereCondition {
      *
      * @return
      */
-    Condition type() default Condition.LIKE;
+    Condition type() default Condition.DEFAULT;
 
     enum Condition {
+        DEFAULT,
         //等于
         EQUAL
         //不等于
@@ -117,7 +119,13 @@ public @interface EasyWhereCondition {
         //[left..right)
         , RANGE_CLOSED_OPEN
         //(left..right]
-        , RANGE_OPEN_CLOSED;
+        , RANGE_OPEN_CLOSED
+        //模糊查询不会将'%'和'_'视作通配符
+        , CONTAINS
+        //左模糊 like 'word%' 不会将'%'和'_'视作通配符
+        , STARTS_WITH
+        //右模糊 like '%word' 不会将'%'和'_'视作通配符
+        , ENDS_WITH;
 
 
         public static MergeTuple2<SQLPredicateCompareEnum,SQLPredicateCompareEnum> getSQLPredicateCompareEnum(Condition condition) {

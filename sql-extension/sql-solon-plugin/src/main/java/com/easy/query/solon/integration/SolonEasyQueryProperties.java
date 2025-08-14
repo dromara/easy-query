@@ -1,5 +1,6 @@
 package com.easy.query.solon.integration;
 
+import com.easy.query.core.enums.DefaultConditionEnum;
 import com.easy.query.core.enums.EntityMappingStrategyEnum;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
@@ -40,6 +41,10 @@ public class SolonEasyQueryProperties {
     private final static PropertyModeEnum propertyMode = PropertyModeEnum.SAME_AS_ENTITY;
     private final static ShardingQueryInTransactionEnum shardingQueryInTransaction = ShardingQueryInTransactionEnum.SERIALIZABLE;
     private final static EntityMappingStrategyEnum mappingStrategy = EntityMappingStrategyEnum.PROPERTY_FIRST;
+    /**
+     * 默认WhereObject使用的查询类型
+     */
+    private final static DefaultConditionEnum defaultCondition = DefaultConditionEnum.LIKE;
     /**
      * 建议19
      */
@@ -290,6 +295,18 @@ public class SolonEasyQueryProperties {
                     return SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS;
                 case "only_null_columns":
                     return SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS;
+            }
+            return null;
+        });
+    }
+
+    public DefaultConditionEnum getDefaultCondition() {
+        return getOrDef("default-condition", defaultCondition, v -> {
+            switch (v) {
+                case "like":
+                    return DefaultConditionEnum.LIKE;
+                case "contains":
+                    return DefaultConditionEnum.CONTAINS;
             }
             return null;
         });

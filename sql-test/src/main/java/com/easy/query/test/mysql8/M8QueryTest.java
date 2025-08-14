@@ -13,6 +13,7 @@ import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.dto.BankCardQueryDTO;
 import com.easy.query.test.mysql8.dto.SysUserQueryDTO;
+import com.easy.query.test.mysql8.dto.SysUserQueryDTO2;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import org.junit.Assert;
@@ -147,5 +148,30 @@ public class M8QueryTest extends BaseTest{
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(COUNT(?) > 0) AS `__any2__` FROM `t_bank_card` t1 INNER JOIN `t_bank` t3 ON t3.`id` = t1.`bank_id` WHERE t1.`code` LIKE ? AND t1.`type` LIKE ? AND t3.`name` IN (?,?) GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),%123%(String),%储蓄卡%(String),工商银行(String),建设银行(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void whereObject6(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        SysUserQueryDTO2 queryDTO = new SysUserQueryDTO2();
+        queryDTO.setBankCardCode("123%");
+        queryDTO.setBankCardType("储蓄_卡");
+        queryDTO.setBankCardType2("储蓄卡");
+        queryDTO.setBankCardType3("储蓄卡");
+        queryDTO.setBankCardBankNames(Arrays.asList("工商银行","建设银行"));
+        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .whereObject(queryDTO)
+                .where(user -> {
+                })
+                .toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(COUNT(?) > 0) AS `__any2__` FROM `t_bank_card` t1 INNER JOIN `t_bank` t3 ON t3.`id` = t1.`bank_id` WHERE LOCATE(?,t1.`code`) = 1 AND t3.`name` IN (?,?) AND LOCATE(?,t1.`type`) > 0 AND t1.`type` LIKE CONCAT('%',?) AND t1.`type` LIKE CONCAT('%',?,'%') GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),123%(String),工商银行(String),建设银行(String),储蓄_卡(String),储蓄卡(String),储蓄卡(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 }

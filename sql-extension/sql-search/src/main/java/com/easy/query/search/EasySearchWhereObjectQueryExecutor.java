@@ -1,6 +1,7 @@
 package com.easy.query.search;
 
 import com.easy.query.core.api.dynamic.executor.query.DefaultWhereObjectQueryExecutor;
+import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.search.executor.EasySearchQueryExecutor;
 
@@ -13,7 +14,8 @@ import com.easy.query.search.executor.EasySearchQueryExecutor;
 public class EasySearchWhereObjectQueryExecutor extends DefaultWhereObjectQueryExecutor {
     private final EasySearchQueryExecutor easySearchQueryExecutor;
 
-    public EasySearchWhereObjectQueryExecutor(EasySearchQueryExecutor easySearchQueryExecutor){
+    public EasySearchWhereObjectQueryExecutor(EasySearchQueryExecutor easySearchQueryExecutor,QueryConfiguration queryConfiguration){
+        super(queryConfiguration);
         this.easySearchQueryExecutor = easySearchQueryExecutor;
     }
     @Override
