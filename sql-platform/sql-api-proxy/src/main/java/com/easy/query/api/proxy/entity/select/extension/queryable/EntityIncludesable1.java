@@ -9,13 +9,15 @@ import com.easy.query.core.proxy.columns.SQLQueryable;
 
 /**
  * create time 2023/8/17 13:34
- * 文件说明
+ * 建议使用{@link EntityIncludeable1#includeBy(SQLFuncExpression1)}
  *
  * @author xuejiaming
  */
+@Deprecated
 public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends ClientEntityQueryableAvailable<T1>, EntityQueryableAvailable<T1Proxy, T1> {
 
     /**
+     * 建议使用{@link EntityIncludeable1#includeBy(SQLFuncExpression1)}
      * <blockquote><pre>
      * {@code
      * easyEntityQuery.queryable(SchoolStudent.class)
@@ -28,15 +30,26 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
      * @param <TProperty>
      * @return
      */
+    @Deprecated
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression) {
         return includes(navigateIncludeSQLExpression, null, null);
     }
 
+    /**
+     * 建议使用{@link EntityIncludeable1#includeBy(SQLFuncExpression1)}
+     * @param condition
+     * @param navigateIncludeSQLExpression
+     * @return
+     * @param <TPropertyProxy>
+     * @param <TProperty>
+     */
+    @Deprecated
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(boolean condition, SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression) {
         return includes(condition, navigateIncludeSQLExpression, null, null);
     }
 
     /**
+     * 建议使用{@link EntityIncludeable1#includeBy(SQLFuncExpression1)}
      * <blockquote><pre>
      * {@code
      * easyEntityQuery.queryable(SchoolStudent.class)
@@ -50,15 +63,27 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
      * @param <TProperty>
      * @return
      */
+    @Deprecated
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression, Integer groupSize) {
         return includes(navigateIncludeSQLExpression, null, groupSize);
     }
 
+    /**
+     * 建议使用{@link EntityIncludeable1#includeBy(SQLFuncExpression1)}
+     * @param condition
+     * @param navigateIncludeSQLExpression
+     * @param groupSize
+     * @return
+     * @param <TPropertyProxy>
+     * @param <TProperty>
+     */
+    @Deprecated
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(boolean condition, SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression, Integer groupSize) {
         return includes(condition, navigateIncludeSQLExpression, null, groupSize);
     }
 
     /**
+     * 建议使用{@link EntityIncludeable1#includeBy(SQLFuncExpression1)}
      * <blockquote><pre>
      * {@code
      * easyEntityQuery.queryable(SchoolStudent.class)
@@ -72,14 +97,35 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
      * @param <TProperty>
      * @return
      */
+    @Deprecated
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression) {
         return includes(true, navigateIncludeSQLExpression, includeAdapterExpression, null);
     }
 
+    /**
+     * 建议使用{@link EntityIncludeable1#includeBy(SQLFuncExpression1)}
+     * @param condition
+     * @param navigateIncludeSQLExpression
+     * @param includeAdapterExpression
+     * @return
+     * @param <TPropertyProxy>
+     * @param <TProperty>
+     */
+    @Deprecated
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(boolean condition, SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression) {
         return includes(condition, navigateIncludeSQLExpression, includeAdapterExpression, null);
     }
 
+    /**
+     * 建议使用{@link EntityIncludeable1#includeBy(SQLFuncExpression1)}
+     * @param navigateIncludeSQLExpression
+     * @param includeAdapterExpression
+     * @param groupSize
+     * @return
+     * @param <TPropertyProxy>
+     * @param <TProperty>
+     */
+    @Deprecated
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
         return includes(true, navigateIncludeSQLExpression, includeAdapterExpression, groupSize);
     }
@@ -99,6 +145,7 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
      * @param <TProperty>
      * @return
      */
+    @Deprecated
     <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty extends ProxyEntityAvailable<TProperty, TPropertyProxy>> EntityQueryable<T1Proxy, T1> includes(boolean condition, SQLFuncExpression1<T1Proxy, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize);
 
 

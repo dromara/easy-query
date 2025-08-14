@@ -27,8 +27,6 @@ import com.easy.query.test.dto.autodto.SchoolClassAOProp9;
 import com.easy.query.test.dto.autodto.SchoolStudentDTOAO111;
 import com.easy.query.test.dto.autodto.SchoolStudentDTOAO222;
 import com.easy.query.test.dto.autodto.SchoolStudentDTOxxx;
-import com.easy.query.test.entity.BlogEntity;
-import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.base.Area;
 import com.easy.query.test.entity.base.City;
@@ -37,7 +35,6 @@ import com.easy.query.test.entity.base.Province;
 import com.easy.query.test.entity.base.proxy.CityProxy;
 import com.easy.query.test.entity.base.proxy.MyProvinceVOProxy;
 import com.easy.query.test.entity.base.proxy.ProvinceProxy;
-import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.entity.school.SchoolClassAggregate;
 import com.easy.query.test.entity.school.SchoolClassTeacher;
@@ -50,10 +47,9 @@ import com.easy.query.test.entity.school.dto.SchoolClassOnlyVO;
 import com.easy.query.test.entity.school.dto.SchoolClassVO;
 import com.easy.query.test.entity.school.dto.SchoolStudentOnlyVO;
 import com.easy.query.test.entity.school.dto.SchoolStudentVO;
-import com.easy.query.test.entity.school.dto.SchoolTeacherVO;
 import com.easy.query.test.entity.school.dto.proxy.SchoolClassVOProxy;
 import com.easy.query.test.entity.school.dto.proxy.SchoolStudentVOProxy;
-import com.easy.query.test.entity.school.proxy.SchoolStudentAddressProxy;
+import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
 import com.easy.query.test.listener.ListenerContext;
 import lombok.var;
 import org.junit.Assert;
@@ -195,14 +191,11 @@ public class RelationTest extends BaseTest {
                 listenerContextManager.startListen(listenerContext);
                 System.out.println("------------------");
                 List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .includeMany(s -> {
-                            return new Include<>(s.schoolTeachers().flatElement().schoolClasses())
-                                    .where(a -> a.name().like("123"))
-                                    .thenInclude(s.schoolStudents().flatElement().schoolClass())
-                                    .where(x -> x.schoolStudents().flatElement().name().eq("123"))
-                                    .thenInclude(s.schoolStudents())
-                                    .where(x -> x.name().ne("123"));
-                        }).toList();
+                        .includeBy(s->Include.of(
+                                s.schoolTeachers().flatElement().schoolClasses().asIncludeQueryable().where(a -> a.name().like("123")),
+                                s.schoolStudents().flatElement().schoolClass().asIncludeQueryable().where(x -> x.schoolStudents().flatElement().name().eq("123")),
+                                s.schoolStudents().asIncludeQueryable().where(x -> x.name().ne("123"))
+                        )).toList();
 
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
                 Assert.assertEquals(7, listenerContext.getJdbcExecuteAfterArgs().size());
@@ -248,6 +241,62 @@ public class RelationTest extends BaseTest {
                 ListenerContext listenerContext = new ListenerContext(true);
                 listenerContextManager.startListen(listenerContext);
                 System.out.println("------------------");
+
+
+                List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
+                        .includeBy(s->Include.of(
+                                s.schoolStudents().flatElement().schoolStudentAddress().asIncludeQueryable(),
+                                s.schoolTeachers().where(x->x.id().isNotNull()).orderBy(x->x.name().asc()).asIncludeQueryable()
+                        ))
+                        .select(SchoolClassVO.class)
+                        .toList();
+                System.out.println("------------------");
+
+
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+                Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_class` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                    Assert.assertEquals("SELECT t.`id`,t.`class_id`,t.`name` FROM `school_student` t WHERE t.`class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+                    Assert.assertEquals("SELECT t.`id`,t.`student_id`,t.`address` FROM `school_student_address` t WHERE t.`student_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+                    Assert.assertEquals("SELECT `class_id`,`teacher_id` FROM `school_class_teacher` WHERE `class_id` IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+                    Assert.assertEquals("SELECT t.`id`,t.`name` FROM `school_teacher` t WHERE t.`id` IS NOT NULL AND t.`id` IN (?,?) ORDER BY t.`name` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("teacher1(String),teacher2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+
+                Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
+
+                listenerContextManager.clear();
+                for (SchoolClassVO schoolClassVO : listx) {
+                    Assert.assertNotNull(schoolClassVO.getSchoolStudents());
+                    Assert.assertNotNull(schoolClassVO.getSchoolTeachers());
+                    for (SchoolStudentVO schoolStudent : schoolClassVO.getSchoolStudents()) {
+                        Assert.assertNotNull(schoolStudent.getSchoolStudentAddress());
+                    }
+                }
+            }
+            {
+
+                ListenerContext listenerContext = new ListenerContext(true);
+                listenerContextManager.startListen(listenerContext);
+                System.out.println("------------------");
 //                List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
 //                        //返回班级下的所有学生 班级和学生是一对多
 //                        .includes(s -> s.schoolStudents(), x -> {
@@ -261,12 +310,11 @@ public class RelationTest extends BaseTest {
 
 
                 List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includeMany(s -> {
-                            //返回班级下的所有学生 班级和学生是一对多 返回学生下的所有学生地址 学生和学生地址是一对一
-                            return new Include<>(s.schoolStudents().flatElement().schoolStudentAddress())
-                                    //返回班级下面的所有老师 老师和班级多对多
-                                    .thenInclude(s.schoolTeachers());
-                        })
+                        .includeBy(s->Include.of(
+                                s.schoolStudents().flatElement().schoolStudentAddress().asIncludeQueryable(),
+                                s.schoolTeachers().asIncludeQueryable()
+
+                        ))
                         .select(SchoolClassVO.class)
                         .toList();
                 System.out.println("------------------");

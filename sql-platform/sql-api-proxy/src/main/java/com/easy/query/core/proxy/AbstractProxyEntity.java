@@ -25,6 +25,8 @@ import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAsEntryImpl;
 import com.easy.query.core.proxy.impl.SQLSelectIgnoreImpl;
 import com.easy.query.core.proxy.impl.SQLSelectKeysImpl;
+import com.easy.query.core.proxy.sql.EasyIncludeQueryable;
+import com.easy.query.core.proxy.sql.IncludeQueryable;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -350,5 +352,9 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      */
     public EntityExtraAutoIncludeConfigure<TProxy, TEntity> EXTRA_AUTO_INCLUDE_CONFIGURE() {
         return new EntityExtraAutoIncludeConfigureImpl<>();
+    }
+
+    public IncludeQueryable<TProxy,TEntity> asIncludeQueryable(){
+        return new EasyIncludeQueryable<>(castChain());
     }
 }

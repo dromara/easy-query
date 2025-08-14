@@ -10,7 +10,9 @@ import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.columns.impl.DefaultSubquerySQLQueryableFactory;
 import com.easy.query.core.proxy.impl.SQLColumnIncludeColumn2Impl;
+import com.easy.query.core.proxy.sql.EasyIncludeQueryable;
 import com.easy.query.core.proxy.sql.Include;
+import com.easy.query.core.proxy.sql.IncludeQueryable;
 import com.easy.query.core.util.EasyObjectUtil;
 
 /**
@@ -64,11 +66,13 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
     /**
      * 添加独立的条件和subQueryConfigure同理支持后续的子查询全部拥有该条件
      * 多次设置将只接受最后一次
+     *
      * @param whereExpression
      */
     void filter(SQLActionExpression1<T1Proxy> whereExpression);
 
     void mode(SubQueryModeEnum subQueryMode);
+
     /**
      * 仅子查询配置生效
      * manyJoin下使用则会转成独立SubQuery
@@ -114,6 +118,10 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
         T1Proxy t1Proxy = propertyProxy.create(null, this.getEntitySQLContext());
         getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(columnProxy.getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy.getProxy(), t1Proxy, navigateSelectExpression));
         return EasyObjectUtil.typeCastNullable(this.getSubQueryContext().getLeftTableProxy());
+    }
+
+    default IncludeQueryable<T1Proxy, T1> asIncludeQueryable() {
+        return new EasyIncludeQueryable<>(this);
     }
 
 }
