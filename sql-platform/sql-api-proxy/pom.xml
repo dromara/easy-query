@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.easy-query</groupId>
         <artifactId>sql-platform</artifactId>
-        <version>3.0.75</version>
+        <version>3.0.76</version>
     </parent>
 
     <name>sql-api-proxy</name>

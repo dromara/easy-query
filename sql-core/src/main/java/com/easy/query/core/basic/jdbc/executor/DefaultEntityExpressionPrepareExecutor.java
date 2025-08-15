@@ -15,7 +15,6 @@ import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityPredicateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.expression.EntityPredicateSQLExpression;
-import com.easy.query.core.expression.sql.expression.EntityUpdateSQLExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.trigger.EntityExpressionTrigger;
@@ -74,7 +73,10 @@ public class DefaultEntityExpressionPrepareExecutor implements EntityExpressionP
     public <T> long insert(ExecutorContext executorContext, List<T> entities, EntityInsertExpressionBuilder entityInsertExpressionBuilder, boolean fillAutoIncrement) {
         long rows = entityExpressionExecutor.insert(executorContext, entities, entityInsertExpressionBuilder, fillAutoIncrement);
         if (entityExpressionTrigger.hasListener()) {
-            entityExpressionTrigger.trigger(entities.get(0).getClass(), entities, getTriggerType(executorContext.getExecuteMethod()), executorContext.getCreateTime(), executorContext.getRuntimeContext());
+            Class<?> entityClass = entities.get(0).getClass();
+            if(entityExpressionTrigger.support(entityClass)){
+                entityExpressionTrigger.trigger(entityClass, entities, getTriggerType(executorContext.getExecuteMethod()), executorContext.getCreateTime(), executorContext.getRuntimeContext());
+            }
         }
         return rows;
     }
@@ -83,7 +85,10 @@ public class DefaultEntityExpressionPrepareExecutor implements EntityExpressionP
     public <T> long executeRows(ExecutorContext executorContext, EntityExpressionBuilder entityExpressionBuilder, List<T> entities) {
         long rows = entityExpressionExecutor.executeRows(executorContext, entityExpressionBuilder, entities);
         if (entityExpressionTrigger.hasListener()) {
-            entityExpressionTrigger.trigger(entities.get(0).getClass(), entities, getTriggerType(executorContext.getExecuteMethod()), executorContext.getCreateTime(), executorContext.getRuntimeContext());
+            Class<?> entityClass = entities.get(0).getClass();
+            if(entityExpressionTrigger.support(entityClass)){
+                entityExpressionTrigger.trigger(entityClass, entities, getTriggerType(executorContext.getExecuteMethod()), executorContext.getCreateTime(), executorContext.getRuntimeContext());
+            }
         }
         return rows;
     }
@@ -93,9 +98,11 @@ public class DefaultEntityExpressionPrepareExecutor implements EntityExpressionP
         long rows = entityExpressionExecutor.executeRows(executorContext, entityPredicateExpressionBuilder, entityPredicateSQLExpression);
         if (entityExpressionTrigger.hasListener()) {
             Class<?> entityClass = entityPredicateExpressionBuilder.getTable(0).getEntityTable().getEntityClass();
-            //尝试从表达式中获取实体
-            List<?> singleKeyEntities = getSingleKeyEntities(rows, entityPredicateSQLExpression);
-            entityExpressionTrigger.trigger(entityClass, singleKeyEntities, getTriggerType(executorContext.getExecuteMethod()), executorContext.getCreateTime(), executorContext.getRuntimeContext());
+            if (entityExpressionTrigger.support(entityClass)) {
+                //尝试从表达式中获取实体
+                List<?> singleKeyEntities = getSingleKeyEntities(rows, entityPredicateSQLExpression);
+                entityExpressionTrigger.trigger(entityClass, singleKeyEntities, getTriggerType(executorContext.getExecuteMethod()), executorContext.getCreateTime(), executorContext.getRuntimeContext());
+            }
         }
         return rows;
     }

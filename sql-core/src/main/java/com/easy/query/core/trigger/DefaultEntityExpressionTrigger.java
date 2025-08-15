@@ -25,6 +25,11 @@ public class DefaultEntityExpressionTrigger implements EntityExpressionTrigger {
     }
 
     @Override
+    public boolean support(@NotNull Class<?> entityClass) {
+        return true;
+    }
+
+    @Override
     public void trigger(@NotNull Class<?> entityClass, @Nullable List<?> entities, @NotNull TriggerTypeEnum type, @NotNull LocalDateTime triggerTime, @NotNull QueryRuntimeContext runtimeContext) {
         TriggerEvent triggerEvent = new TriggerEvent(entityClass, entities, type, triggerTime, runtimeContext);
         for (Consumer<TriggerEvent> trigger : triggers) {
