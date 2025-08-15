@@ -64,23 +64,56 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
         return columnTypeMap;
     }
 
+    protected String replaceSqlTypeLength(String sqlType, int length, int scale) {
+        if (sqlType == null || sqlType.isEmpty()) {
+            return sqlType;
+        }
+        if (length < 0) {
+            return sqlType;
+        }
+
+        // 查找第一个 '('
+        int idx = sqlType.indexOf('(');
+        String baseType;
+        if (idx > 0) {
+            baseType = sqlType.substring(0, idx).trim();
+        } else {
+            baseType = sqlType.trim();
+        }
+
+        // 拼接
+        StringBuilder sb = new StringBuilder(baseType);
+        if (length > 0) {
+            sb.append('(').append(length);
+            if (scale > 0) {
+                sb.append(',').append(scale);
+            }
+            sb.append(')');
+        }
+        return sb.toString();
+    }
+
     @Override
     public ColumnDbTypeResult getColumnDbType(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
         Field declaredField = entityMigrationMetadata.getFieldByColumnMetadata(columnMetadata);
         Column annotation = declaredField.getAnnotation(Column.class);
-        String dbDefault=null;
+        String dbDefault = null;
+        int length = -1;
+        int scale = 0;
         if (annotation != null) {
             String dbType = annotation.dbType();
+            length = annotation.length();
+            scale = annotation.scale();
             dbDefault = annotation.dbDefault();
             if (EasyStringUtil.isNotBlank(dbType)) {
                 return new ColumnDbTypeResult(dbType, dbDefault);
             }
         }
         ColumnDbTypeResult columnDbTypeResult = getColumnTypeMap().get(columnMetadata.getPropertyType());
-        if(EasyStringUtil.isNotBlank(dbDefault)){
-            return new ColumnDbTypeResult(columnDbTypeResult.columnType,dbDefault);
+        if (EasyStringUtil.isNotBlank(dbDefault)) {
+            return new ColumnDbTypeResult(replaceSqlTypeLength(columnDbTypeResult.columnType, length, scale), dbDefault);
         }
-        return columnDbTypeResult;
+        return new ColumnDbTypeResult(replaceSqlTypeLength(columnDbTypeResult.columnType, length, scale), columnDbTypeResult.defValue);
     }
 
     @Override

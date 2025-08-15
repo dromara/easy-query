@@ -168,6 +168,19 @@ public @interface Column {
      */
     String renameFrom() default "";
 
+    /**
+     * 表示字段的整体长度
+     * 当字段为BigDecimal表示整体精度比如18那么就是decimal(18,scale)
+     * @return
+     */
+    int length() default -1;
+
+    /**
+     * 表示BigDecimal的小数位精度当length大于0时生效
+     * @return
+     */
+    int scale() default 0;
+
     ColumnSQLExpression sqlExpression() default @ColumnSQLExpression(sql = "",  args = {});
     JDBCType jdbcType() default JDBCType.OTHER;
 }
