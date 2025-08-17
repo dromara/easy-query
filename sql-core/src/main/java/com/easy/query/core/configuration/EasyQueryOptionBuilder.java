@@ -133,7 +133,7 @@ public class EasyQueryOptionBuilder {
         this.resultSizeLimit = -1L;
         this.shardingQueryInTransaction = ShardingQueryInTransactionEnum.SERIALIZABLE;
         this.mssqlMinBigDecimalScale = 0;
-        this.includeLimitMode = IncludeLimitModeEnum.UNION_ALL;
+        this.includeLimitMode = IncludeLimitModeEnum.PARTITION;
         this.saveComment = false;
         this.maxInClauseSize = MAX_IN_CLAUSE_SIZE;
         this.defaultCondition = DefaultConditionEnum.LIKE;

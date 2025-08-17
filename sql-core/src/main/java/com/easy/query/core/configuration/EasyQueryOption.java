@@ -139,6 +139,9 @@ public class EasyQueryOption {
     private final IncludeLimitModeEnum includeLimitMode;
     private final boolean saveComment;
     private final int maxInClauseSize;
+    /**
+     * 为字符串时的默认条件
+     */
     private final DefaultConditionEnum defaultCondition;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy,

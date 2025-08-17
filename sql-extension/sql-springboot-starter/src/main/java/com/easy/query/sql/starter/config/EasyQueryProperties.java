@@ -49,9 +49,9 @@ public class EasyQueryProperties {
      */
     private int mssqlMinBigDecimalScale = 0;
     /**
-     * 一对多拉取带limit的时候使用哪种模式默认UNION_ALL
+     * 一对多拉取带limit的时候使用哪种模式默认PARTITION
      */
-    private IncludeLimitModeEnum includeLimitMode = IncludeLimitModeEnum.UNION_ALL;
+    private IncludeLimitModeEnum includeLimitMode = IncludeLimitModeEnum.PARTITION;
     private boolean saveComment = false;
     /**
      * in inClause的参数个数限制

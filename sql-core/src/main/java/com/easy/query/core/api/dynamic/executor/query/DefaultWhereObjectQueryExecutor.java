@@ -7,10 +7,7 @@ import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.tree.QueryPathTreeNode;
 import com.easy.query.core.common.tuple.MergeTuple2;
-import com.easy.query.core.configuration.EasyQueryOption;
-import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
-import com.easy.query.core.enums.DefaultConditionEnum;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.enums.SQLLikeEnum;
@@ -59,7 +56,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.ServiceLoader;
 
 /**
  * create time 2023/9/26 08:27
@@ -68,9 +64,10 @@ import java.util.ServiceLoader;
  * @author xuejiaming
  */
 public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor {
-    private final EasyQueryOption easyQueryOption;
-    public DefaultWhereObjectQueryExecutor(QueryConfiguration queryConfiguration){
-        this.easyQueryOption = queryConfiguration.getEasyQueryOption();
+    private final WhereConditionProvider whereConditionProvider;
+
+    public DefaultWhereObjectQueryExecutor(WhereConditionProvider whereConditionProvider) {
+        this.whereConditionProvider = whereConditionProvider;
     }
 
     /**
@@ -333,7 +330,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
     private void acceptCondition(QueryPathTreeNode node, QueryPathTreeNode parent, Object whereObjectEntity) {
         if (EasyCollectionUtil.isNotEmpty(node.getConditions())) {
             for (QueryPathTreeNode.ConditionVal condition : node.getConditions()) {
-                acceptCondition0(whereObjectEntity, node.getFilter(), condition.condition, condition.val, condition.fieldConditions);
+                acceptCondition0(whereObjectEntity, node.getFilter(), condition.condition, condition.field, condition.val, condition.fieldConditions);
             }
 
 
@@ -404,23 +401,13 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
         return aliasSegment.getAlias();
     }
 
-    protected EasyWhereCondition.Condition getWhereConditionType(EasyWhereCondition condition, Object whereObjectEntity) {
-        if (condition.type() == EasyWhereCondition.Condition.DEFAULT) {
-            if(easyQueryOption.getDefaultCondition()== DefaultConditionEnum.CONTAINS){
-                return EasyWhereCondition.Condition.CONTAINS;
-            }
-            return EasyWhereCondition.Condition.LIKE;
-        }
-        return condition.type();
-    }
-
-    private void acceptCondition0(Object whereObjectEntity, Filter filter, EasyWhereCondition q, Object val, List<QueryPathTreeNode.FieldCondition> fieldConditions) {
+    private void acceptCondition0(Object whereObjectEntity, Filter filter, EasyWhereCondition q, Field field, Object val, List<QueryPathTreeNode.FieldCondition> fieldConditions) {
 
         if (EasyCollectionUtil.isEmpty(fieldConditions)) {
             return;
         }
 
-        EasyWhereCondition.Condition whereConditionType = getWhereConditionType(q, whereObjectEntity);
+        EasyWhereCondition.Condition whereConditionType = whereConditionProvider.getQueryCondition(whereObjectEntity, field, val, q.type());
         switch (whereConditionType) {
             case EQUAL: {
                 if (fieldConditions.size() > 1) {
@@ -484,12 +471,12 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
                     filter.and(x -> {
                         for (QueryPathTreeNode.FieldCondition fieldCondition : fieldConditions) {
 
-                            SQLFunction likeSQLFunction = fx.like(s->{
+                            SQLFunction likeSQLFunction = fx.like(s -> {
                                 s.column(fieldCondition.table, fieldCondition.property);
                                 s.value(val);
-                            },true, sqlLike);
-                            x.sqlNativeSegment(likeSQLFunction.sqlSegment(fieldCondition.table),c->{
-                                likeSQLFunction.consume(new SQLNativeChainExpressionContextImpl(fieldCondition.table,c));
+                            }, true, sqlLike);
+                            x.sqlNativeSegment(likeSQLFunction.sqlSegment(fieldCondition.table), c -> {
+                                likeSQLFunction.consume(new SQLNativeChainExpressionContextImpl(fieldCondition.table, c));
                             }).or();
 
                         }
@@ -497,12 +484,12 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
                 } else {
                     TableAvailable table = fieldConditions.get(0).table;
                     String property = fieldConditions.get(0).property;
-                    SQLFunction likeSQLFunction = fx.like(s->{
+                    SQLFunction likeSQLFunction = fx.like(s -> {
                         s.column(table, property);
                         s.value(val);
-                    },true, sqlLike);
-                    filter.sqlNativeSegment(likeSQLFunction.sqlSegment(table),c->{
-                        likeSQLFunction.consume(new SQLNativeChainExpressionContextImpl(table,c));
+                    }, true, sqlLike);
+                    filter.sqlNativeSegment(likeSQLFunction.sqlSegment(table), c -> {
+                        likeSQLFunction.consume(new SQLNativeChainExpressionContextImpl(table, c));
                     });
                 }
             }

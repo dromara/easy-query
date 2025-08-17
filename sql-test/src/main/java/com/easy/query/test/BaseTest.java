@@ -18,6 +18,7 @@ import com.easy.query.core.configuration.ShardingDataSource;
 import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
 import com.easy.query.core.configuration.bean.entity.EntityPropertyDescriptorMatcher;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.cache.BlogPredicateInterceptor;
@@ -166,6 +167,7 @@ public abstract class BaseTest {
                     op.setDeleteThrowError(false);
                     op.setDefaultDataSourceName("ds2020");
                     op.setReverseOffsetThreshold(10);
+                    op.setIncludeLimitMode(IncludeLimitModeEnum.UNION_ALL);
                 })
 //                .replaceService(Column2MapKeyConversion.class, UpperColumn2MapKeyConversion.class)
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())

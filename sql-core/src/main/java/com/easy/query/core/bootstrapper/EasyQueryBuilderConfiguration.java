@@ -4,7 +4,9 @@ import com.easy.query.core.api.SQLClientApiFactory;
 import com.easy.query.core.api.client.DefaultEasyQueryClient;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.api.def.DefaultSQLClientApiFactory;
+import com.easy.query.core.api.dynamic.executor.query.DefaultWhereConditionProvider;
 import com.easy.query.core.api.dynamic.executor.query.DefaultWhereObjectQueryExecutor;
+import com.easy.query.core.api.dynamic.executor.query.WhereConditionProvider;
 import com.easy.query.core.api.dynamic.executor.query.WhereObjectQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.DefaultObjectSortQueryExecutor;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
@@ -209,6 +211,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(JdbcSQLExecutor.class, DefaultJdbcSQLExecutor.class)
                 //whereObject的默认实现
                 .replaceService(WhereObjectQueryExecutor.class, DefaultWhereObjectQueryExecutor.class)
+                .replaceService(WhereConditionProvider.class, DefaultWhereConditionProvider.class)
                 //orderByObject的默认实现
                 .replaceService(ObjectSortQueryExecutor.class, DefaultObjectSortQueryExecutor.class)
                 //jdbc执行的监听用于统计耗时sql

@@ -50,9 +50,9 @@ public class SolonEasyQueryProperties {
      */
     private final static int mssqlMinBigDecimalScale = 0;
     /**
-     * 一对多拉取带limit的时候使用哪种模式默认UNION_ALL
+     * 一对多拉取带limit的时候使用哪种模式默认PARTITION
      */
-    private final static IncludeLimitModeEnum includeLimitMode = IncludeLimitModeEnum.UNION_ALL;
+    private final static IncludeLimitModeEnum includeLimitMode = IncludeLimitModeEnum.PARTITION;
     /**
      * 仅分片时有效默认同时5个线程5
      */
