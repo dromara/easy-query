@@ -110,13 +110,15 @@ import java.util.stream.Collectors;
 public class EasySQLExpressionUtil {
     private EasySQLExpressionUtil() {
     }
+
     public static AndPredicateSegment resolve(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, SQLActionExpression1<Filter> filterExpression) {
         AndPredicateSegment andPredicateSegment = new AndPredicateSegment(true);
         FilterImpl filter = new FilterImpl(runtimeContext, expressionContext, andPredicateSegment, false, expressionContext.getValueFilter());
         filterExpression.apply(filter);
         return andPredicateSegment;
     }
-    public static void propagationValueFilter(ClientQueryable<?> clientQueryable,ExpressionContext expressionContext){
+
+    public static void propagationValueFilter(ClientQueryable<?> clientQueryable, ExpressionContext expressionContext) {
 
         //todo 如果启用了全局filterConfigure传递
         ValueFilter valueFilter = expressionContext.getValueFilter();
@@ -125,7 +127,7 @@ public class EasySQLExpressionUtil {
         }
     }
 
-    public static void invokeInterceptors(EntityMetadata entityMetadata, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, ExpressionContext expressionContext, WherePredicate<Object> sqlPredicate){
+    public static void invokeInterceptors(EntityMetadata entityMetadata, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, ExpressionContext expressionContext, WherePredicate<Object> sqlPredicate) {
         //如果当前对象是存在拦截器的那么就通过stream获取剩余的拦截器
         List<PredicateFilterInterceptor> predicateFilterInterceptors = entityMetadata.getPredicateFilterInterceptors();
         if (EasyCollectionUtil.isNotEmpty(predicateFilterInterceptors)) {
@@ -138,13 +140,13 @@ public class EasySQLExpressionUtil {
         }
     }
 
-    public static boolean withTableInDeclareExpressions(List<ExpressionBuilder> declareExpressions,Class<?> cteTableClass, String cteTableName) {
+    public static boolean withTableInDeclareExpressions(List<ExpressionBuilder> declareExpressions, Class<?> cteTableClass, String cteTableName) {
         boolean hasWithTable = false;
         for (ExpressionBuilder declareExpression : declareExpressions) {
             if (declareExpression instanceof CteTableAvailable) {
                 CteTableAvailable cteTableAvailable = (CteTableAvailable) declareExpression;
                 String declareWithTableName = cteTableAvailable.getCteTableName();
-                if (Objects.equals(declareWithTableName, cteTableName)&&Objects.equals(cteTableAvailable.cteTableClass(),cteTableClass)) {
+                if (Objects.equals(declareWithTableName, cteTableName) && Objects.equals(cteTableAvailable.cteTableClass(), cteTableClass)) {
                     hasWithTable = true;
                     break;
                 }

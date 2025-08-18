@@ -124,8 +124,11 @@ public class DefaultIncludeProvider implements IncludeProvider {
                         }).select(Map.class, x -> {
                             x.columnAll();
 //                            for (Map.Entry<String, ColumnMetadata> columnMetadataKv : x.getTable().getEntityMetadata().getProperty2ColumnMap().entrySet()) {
-//
-//                                x.columnAs(columnMetadataKv.getKey(),columnMetadataKv.getValue().getName());
+//                                x.sqlNativeSegment("{0}", c -> {
+//                                    c.expression(columnMetadataKv.getKey());
+//                                    c.setAlias(columnMetadataKv.getValue().getName());
+//                                });
+////                                x.columnAs(columnMetadataKv.getKey(),columnMetadataKv.getValue().getName());
 //                            }
 
 
@@ -160,6 +163,8 @@ public class DefaultIncludeProvider implements IncludeProvider {
                                 });
                             }
                         });
+                partitionQueryable.getSQLEntityExpressionBuilder().getExpressionContext().getRelationExtraMetadata().getRelationExtraColumnMap().clear();
+                partitionQueryable.getSQLEntityExpressionBuilder().getExpressionContext().getRelationExtraMetadata().getRelationExtraColumnList().clear();
                 return EasyObjectUtil.typeCastNullable(partitionQueryable);
 
             } else if (easyQueryOption.getIncludeLimitMode() == IncludeLimitModeEnum.UNION_ALL) {
