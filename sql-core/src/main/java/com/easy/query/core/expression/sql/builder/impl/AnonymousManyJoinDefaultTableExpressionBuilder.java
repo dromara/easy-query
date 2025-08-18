@@ -64,6 +64,7 @@ public class AnonymousManyJoinDefaultTableExpressionBuilder extends AnonymousDef
 
     @Override
     public EntityTableSQLExpression toExpression() {
+        //应该以配置项作为主要的
         if (!expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.GROUP_JOIN_NOT_ALLOW_AUTO_MERGE)) {
             //子查询转groupJoin条件都以case when出现在select projects中可能会存在有直接any的表达式那么这种情况不应该合并表达式
             if (this.groupJoinPredicateSegmentContexts.stream().map(o->{
@@ -94,10 +95,13 @@ public class AnonymousManyJoinDefaultTableExpressionBuilder extends AnonymousDef
                         if(appendPredicateSegment.isNotEmpty()){
                             entityQueryExpressionBuilder.getWhere().addPredicateSegment(appendPredicateSegment.clonePredicateSegment());
                         }
-                        for (PredicateUnit predicateUnit : value.predicateUnits) {
-                            predicateUnit.groupJoinPredicateSegmentContext.setPredicateSegmentAs(predicateSegment -> null);
-                        }
+                        //不应该移除除非只有一个了
+//                        for (PredicateUnit predicateUnit : value.predicateUnits) {
+//                            predicateUnit.groupJoinPredicateSegmentContext.setPredicateSegmentAs(predicateSegment -> null);
+//                        }
                     }
+
+
 //                    List<List<PredicateUnit>> predicateUnitList = this.predicateSegments.stream().map(predicateSegment -> {
 //                        return predicateSegment.getFlatAndPredicateSegments().stream().map(ps -> {
 //                            ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(entityQueryExpressionBuilder.getExpressionContext().getTableContext());

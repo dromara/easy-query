@@ -7,6 +7,8 @@ import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.core.expression.segment.GroupJoinColumnSegmentImpl;
+import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
@@ -23,6 +25,8 @@ import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysBankProxy;
+import com.easy.query.test.mysql8.entity.bank.proxy.SysUserProxy;
+import com.easy.query.test.mysql8.entity.many.M8Province;
 import com.easy.query.test.mysql8.view.TreeC;
 import com.easy.query.test.mysql8.view.proxy.TreeCProxy;
 import org.junit.Assert;
@@ -748,4 +752,31 @@ public class MySQL8Test2 extends BaseTest {
 
 
     }
+
+    @Test
+    public void testSumCount(){
+//        GroupJoinColumnSegmentImpl
+         easyEntityQuery.queryable(M8Province.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
+                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(m -> {
+                    m.name().contains("浙江");
+                })
+                .select(m -> Select.DRAFT.of(
+                        m.cities().sum(c -> {
+                            return c.areas().where(a -> {
+                                a.id().contains("123");
+                                a.name().contains("绍兴");
+                            }).count();
+                        }),
+                        m.cities().sum(c -> {
+                            return c.areas().where(a -> {
+                                a.id().contains("123");
+                                a.name().contains("绍兴1");
+                            }).count();
+                        })
+                )).toPageResult(1,2);
+    }
+
+
 }
