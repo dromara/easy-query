@@ -122,11 +122,11 @@ public class DefaultIncludeProvider implements IncludeProvider {
 //                        navigateMetadata.predicateFilterApply(o);
                             });
                         }).select(Map.class, x -> {
-//                            x.columnAll();
-                            for (Map.Entry<String, ColumnMetadata> columnMetadataKv : x.getTable().getEntityMetadata().getProperty2ColumnMap().entrySet()) {
-
-                                x.columnAs(columnMetadataKv.getKey(),columnMetadataKv.getValue().getName());
-                            }
+                            x.columnAll();
+//                            for (Map.Entry<String, ColumnMetadata> columnMetadataKv : x.getTable().getEntityMetadata().getProperty2ColumnMap().entrySet()) {
+//
+//                                x.columnAs(columnMetadataKv.getKey(),columnMetadataKv.getValue().getName());
+//                            }
 
 
                             PartitionBySQLFunction partitionBySQLFunction = runtimeContext.fx().rowNumberOver(s -> {
