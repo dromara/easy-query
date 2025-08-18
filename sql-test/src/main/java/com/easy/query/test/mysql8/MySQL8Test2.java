@@ -29,6 +29,7 @@ import com.easy.query.test.mysql8.entity.bank.proxy.SysUserProxy;
 import com.easy.query.test.mysql8.entity.many.M8Province;
 import com.easy.query.test.mysql8.view.TreeC;
 import com.easy.query.test.mysql8.view.proxy.TreeCProxy;
+import com.easy.query.test.mysql8.vo.SysBankXDTO;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -819,6 +820,23 @@ public class MySQL8Test2 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT IFNULL(t2.`__count2__`,0) AS `value1`,IFNULL(t2.`__count3__`,0) AS `value2` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE NULL END)) AS `__count2__`,COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE NULL END)) AS `__count3__` FROM `m8_city` t1 WHERE t1.`name` LIKE ? GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%绍兴1%(String),1(Integer),%绍兴2%(String),1(Integer),%绍兴%(String),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void includePartitionBy(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysBankXDTO> list = easyEntityQuery.queryable(SysBank.class)
+                .selectAutoInclude(SysBankXDTO.class)
+                .toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t2.`id` AS `id`,t2.`uid` AS `uid`,t2.`code` AS `code`,t2.`type` AS `type`,t2.`bank_id` AS `__relation__bankId` FROM (SELECT t1.`id` AS `id`,t1.`uid` AS `uid`,t1.`code` AS `code`,t1.`type` AS `type`,t1.`bank_id` AS `bank_id`,t1.`open_time` AS `open_time` FROM (SELECT t.`id` AS `id`,t.`uid` AS `uid`,t.`code` AS `code`,t.`type` AS `type`,t.`bank_id` AS `bank_id`,t.`open_time` AS `open_time`,(ROW_NUMBER() OVER (PARTITION BY t.`bank_id`)) AS `__row__` FROM `t_bank_card` t WHERE t.`bank_id` IN (?,?,?)) t1 WHERE t1.`__row__` >= ? AND t1.`__row__` <= ?) t2", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String),2(String),3(String),1(Long),2(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 
