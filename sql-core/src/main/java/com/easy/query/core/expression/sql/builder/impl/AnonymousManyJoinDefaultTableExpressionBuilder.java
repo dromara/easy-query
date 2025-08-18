@@ -96,9 +96,11 @@ public class AnonymousManyJoinDefaultTableExpressionBuilder extends AnonymousDef
                             entityQueryExpressionBuilder.getWhere().addPredicateSegment(appendPredicateSegment.clonePredicateSegment());
                         }
                         //不应该移除除非只有一个了
-//                        for (PredicateUnit predicateUnit : value.predicateUnits) {
+                        for (PredicateUnit predicateUnit : value.predicateUnits) {
+
+                            predicateUnit.groupJoinPredicateSegmentContext.getPredicateSegment().removeChildren(predicateUnit.predicateSegment);
 //                            predicateUnit.groupJoinPredicateSegmentContext.setPredicateSegmentAs(predicateSegment -> null);
-//                        }
+                        }
                     }
 
 

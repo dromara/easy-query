@@ -756,26 +756,70 @@ public class MySQL8Test2 extends BaseTest {
     @Test
     public void testSumCount(){
 //        GroupJoinColumnSegmentImpl
-         easyEntityQuery.queryable(M8Province.class)
-                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
-                .where(m -> {
-                    m.name().contains("浙江");
-                })
-                .select(m -> Select.DRAFT.of(
-                        m.cities().sum(c -> {
-                            return c.areas().where(a -> {
-                                a.id().contains("123");
-                                a.name().contains("绍兴");
-                            }).count();
-                        }),
-                        m.cities().sum(c -> {
-                            return c.areas().where(a -> {
-                                a.id().contains("123");
-                                a.name().contains("绍兴1");
-                            }).count();
-                        })
-                )).toPageResult(1,2);
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+            easyEntityQuery.queryable(M8Province.class)
+                    .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
+                    .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                    .where(m -> {
+                        m.name().contains("浙江");
+                    })
+                    .select(m -> Select.DRAFT.of(
+                            m.cities().sum(c -> {
+                                return c.areas().where(a -> {
+                                    a.id().contains("123");
+                                    a.name().contains("绍兴");
+                                }).count();
+                            }),
+                            m.cities().sum(c -> {
+                                return c.areas().where(a -> {
+                                    a.id().contains("123");
+                                    a.name().contains("绍兴1");
+                                }).count();
+                            })
+                    )).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT IFNULL(t2.`__sum2__`,0) AS `value1`,IFNULL(t2.`__sum3__`,0) AS `value2` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,SUM(IFNULL(t4.`__count2__`,0)) AS `__sum2__`,SUM(IFNULL(t4.`__count3__`,0)) AS `__sum3__` FROM `m8_city` t1 LEFT JOIN (SELECT t3.`cid` AS `cid`,COUNT((CASE WHEN t3.`name` LIKE CONCAT('%',?,'%') THEN ? ELSE NULL END)) AS `__count2__`,COUNT((CASE WHEN t3.`name` LIKE CONCAT('%',?,'%') THEN ? ELSE NULL END)) AS `__count3__` FROM `m8_area` t3 WHERE t3.`id` LIKE CONCAT('%',?,'%') GROUP BY t3.`cid`) t4 ON t4.`cid` = t1.`id` GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("绍兴(String),1(Integer),绍兴1(String),1(Integer),123(String),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testMerge(){
+//        GroupJoinColumnSegmentImpl
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+            easyEntityQuery.queryable(M8Province.class)
+                    .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
+                    .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                    .where(m -> {
+                        m.name().contains("浙江");
+                    })
+                    .select(m -> Select.DRAFT.of(
+                            m.cities().where(c->{
+                                c.name().like("绍兴");
+                                c.name().like("绍兴1");
+                            }).count(),
+                            m.cities().where(c->{
+                                c.name().like("绍兴");
+                                c.name().like("绍兴2");
+                            }).count()
+                    )).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT IFNULL(t2.`__count2__`,0) AS `value1`,IFNULL(t2.`__count3__`,0) AS `value2` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE NULL END)) AS `__count2__`,COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE NULL END)) AS `__count3__` FROM `m8_city` t1 WHERE t1.`name` LIKE ? GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%绍兴1%(String),1(Integer),%绍兴2%(String),1(Integer),%绍兴%(String),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
     }
 
 
