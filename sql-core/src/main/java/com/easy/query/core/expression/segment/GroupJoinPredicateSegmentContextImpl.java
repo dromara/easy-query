@@ -12,31 +12,50 @@ import java.util.function.Function;
  */
 public class GroupJoinPredicateSegmentContextImpl implements GroupJoinPredicateSegmentContext {
     private final PredicateSegment predicateSegment;
+    private PredicateSegment mergePredicateSegment;
     private Function<PredicateSegment, PredicateSegment> predicateSegmentAs;
 
-    public GroupJoinPredicateSegmentContextImpl(PredicateSegment predicateSegment){
+    public GroupJoinPredicateSegmentContextImpl(PredicateSegment predicateSegment) {
         this.predicateSegment = predicateSegment;
+        if(predicateSegment!=null){
+            this.mergePredicateSegment = predicateSegment.clonePredicateSegment();
+        }
     }
+
     @Override
     public PredicateSegment getPredicateSegment() {
+        return mergePredicateSegment;
+    }
+
+    @Override
+    public PredicateSegment getOriginalPredicateSegment() {
         return predicateSegment;
     }
 
     @Override
     public PredicateSegment getToSQLPredicateSegment() {
-        if(predicateSegmentAs==null){
-            return predicateSegment;
+        if (predicateSegmentAs == null) {
+            return mergePredicateSegment;
         }
-        return predicateSegmentAs.apply(predicateSegment);
+        return predicateSegmentAs.apply(mergePredicateSegment);
     }
 
     @Override
     public void setPredicateSegmentAs(Function<PredicateSegment, PredicateSegment> predicateSegmentAs) {
-        this.predicateSegmentAs=predicateSegmentAs;
+        this.predicateSegmentAs = predicateSegmentAs;
     }
 
     @Override
     public Function<PredicateSegment, PredicateSegment> getPredicateSegmentAs() {
         return predicateSegmentAs;
+    }
+
+    @Override
+    public GroupJoinPredicateSegmentContext cloneGroupJoinPredicateSegmentContext() {
+        if (predicateSegment == null) {
+            return this;
+        }
+        this.mergePredicateSegment=predicateSegment.clonePredicateSegment();
+        return this;
     }
 }

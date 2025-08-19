@@ -12,8 +12,11 @@ import java.util.function.Function;
  */
 public interface GroupJoinPredicateSegmentContext {
     PredicateSegment getPredicateSegment();
+    PredicateSegment getOriginalPredicateSegment();
     PredicateSegment getToSQLPredicateSegment();
 
     void setPredicateSegmentAs(Function<PredicateSegment,PredicateSegment> predicateSegmentAs);
     Function<PredicateSegment,PredicateSegment> getPredicateSegmentAs();
+
+    GroupJoinPredicateSegmentContext cloneGroupJoinPredicateSegmentContext();
 }

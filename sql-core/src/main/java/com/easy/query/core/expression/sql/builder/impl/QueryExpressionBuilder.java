@@ -259,6 +259,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
             for (Map.Entry<RelationTableKey, EntityTableExpressionBuilder> relationTableKV : getRelationTables().entrySet()) {
                 RelationTableKey key = relationTableKV.getKey();
                 EntityTableExpressionBuilder value = relationTableKV.getValue();
+
                 TableAvailable entityTable = value.getEntityTable();
                 //如果手动filter了并且是inner join那么这个表不可以被忽略
                 if (value.getMultiTableType() == MultiTableTypeEnum.INNER_JOIN && value.hasFilterOn() && EasySQLSegmentUtil.isNotEmpty(value.getFilterOn())) {

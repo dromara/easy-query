@@ -57,13 +57,14 @@ public class AnonymousManyJoinDefaultTableExpressionBuilder extends AnonymousDef
         anonymousTableExpressionBuilder.getProjectAliasMap().putAll(this.projectAliasMap);
         for (GroupJoinPredicateSegmentContext groupJoinPredicateSegmentContext : this.groupJoinPredicateSegmentContexts) {
             groupJoinPredicateSegmentContext.setPredicateSegmentAs(null);
-            anonymousTableExpressionBuilder.getGroupJoinPredicateSegmentContexts().add(groupJoinPredicateSegmentContext);
+            anonymousTableExpressionBuilder.getGroupJoinPredicateSegmentContexts().add(groupJoinPredicateSegmentContext.cloneGroupJoinPredicateSegmentContext());
         }
         return anonymousTableExpressionBuilder;
     }
 
     @Override
     public EntityTableSQLExpression toExpression() {
+
         //应该以配置项作为主要的
         if (!expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.GROUP_JOIN_NOT_ALLOW_AUTO_MERGE)) {
             //子查询转groupJoin条件都以case when出现在select projects中可能会存在有直接any的表达式那么这种情况不应该合并表达式
@@ -81,6 +82,7 @@ public class AnonymousManyJoinDefaultTableExpressionBuilder extends AnonymousDef
                     }
                 } else {
                     List<List<PredicateUnit>> predicateUnitList = this.groupJoinPredicateSegmentContexts.stream().map(content -> {
+                        content.cloneGroupJoinPredicateSegmentContext();
                         return content.getPredicateSegment().getFlatAndPredicateSegments().stream().map(ps -> {
                             ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(entityQueryExpressionBuilder.getExpressionContext().getTableContext());
                             String sql = ps.toSQL(toSQLContext);
@@ -93,38 +95,19 @@ public class AnonymousManyJoinDefaultTableExpressionBuilder extends AnonymousDef
                     for (PredicateUnitItem value : commonPredicateUnits.values()) {
                         PredicateSegment appendPredicateSegment = value.mainPredicateUnit.predicateSegment;
                         if(appendPredicateSegment.isNotEmpty()){
-                            entityQueryExpressionBuilder.getWhere().addPredicateSegment(appendPredicateSegment.clonePredicateSegment());
+                            PredicateSegment predicateSegment = appendPredicateSegment.clonePredicateSegment();
+                            entityQueryExpressionBuilder.getWhere().addPredicateSegment(predicateSegment);
                         }
                         //不应该移除除非只有一个了
                         for (PredicateUnit predicateUnit : value.predicateUnits) {
-
-                            predicateUnit.groupJoinPredicateSegmentContext.getPredicateSegment().removeChildren(predicateUnit.predicateSegment);
+                            PredicateSegment predicateSegment = predicateUnit.groupJoinPredicateSegmentContext.getPredicateSegment();
+                            predicateSegment.removeChildren(predicateUnit.predicateSegment);
 //                            predicateUnit.groupJoinPredicateSegmentContext.setPredicateSegmentAs(predicateSegment -> null);
                         }
                     }
-
-
-//                    List<List<PredicateUnit>> predicateUnitList = this.predicateSegments.stream().map(predicateSegment -> {
-//                        return predicateSegment.getFlatAndPredicateSegments().stream().map(ps -> {
-//                            ToSQLContext toSQLContext = DefaultToSQLContext.defaultToSQLContext(entityQueryExpressionBuilder.getExpressionContext().getTableContext());
-//                            String sql = ps.toSQL(toSQLContext);
-//                            String parameterString = EasySQLUtil.sqlParameterToString(toSQLContext.getParameters());
-//                            return new PredicateUnit(sql, parameterString, ps, predicateSegment);
-//                        }).collect(Collectors.toList());
-//                    }).sorted((a, b) -> a.size() - b.size()).collect(Collectors.toList());//将最短的放在第一位后续按最短的来进行判断
-//                    Map<String, PredicateUnitItem> commonPredicateUnits = EasySQLSegmentUtil.findCommonPredicateUnits(predicateUnitList);
-//
-//                    for (PredicateUnitItem value : commonPredicateUnits.values()) {
-//                        entityQueryExpressionBuilder.getWhere().addPredicateSegment(value.mainPredicateUnit.predicateSegment.clonePredicateSegment());
-//                        for (PredicateUnit predicateUnit : value.predicateUnits) {
-//                            predicateUnit.parentPredicateSegment.removeChildren(predicateUnit.predicateSegment);
-//                        }
-//                    }
                 }
             }
         }
-
-
         EntityTableSQLExpression anonymousTableSQLExpression = runtimeContext.getExpressionFactory().createAnonymousEntityTableSQLExpression(entityTable, multiTableType, entityQueryExpressionBuilder.toExpression(), runtimeContext);
         if (EasySQLSegmentUtil.isNotEmpty(on)) {
             anonymousTableSQLExpression.setOn(on.clonePredicateSegment());

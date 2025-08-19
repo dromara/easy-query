@@ -33,4 +33,7 @@ public class M8City implements ProxyEntityAvailable<M8City , M8CityProxy> {
     @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {M8City.Fields.id}, targetProperty = {M8Area.Fields.cid})
     private List<M8Area> areas;
 
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {M8City.Fields.id}, targetProperty = {M8Area.Fields.cid})
+    private List<M8Area> areas2;
+
 }

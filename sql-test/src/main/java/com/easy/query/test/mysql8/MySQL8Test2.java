@@ -411,6 +411,7 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals("(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void testFilterConfigure2() {
 
@@ -431,6 +432,7 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t WHERE EXISTS (SELECT 1 FROM `t_bank_card` t1 WHERE t1.`bank_id` = t.`id` LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
 
     }
+
     @Test
     public void testFilterConfigure3() {
 
@@ -440,7 +442,7 @@ public class MySQL8Test2 extends BaseTest {
 
         List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(bank -> {
                     bank.name().eq("");
                     bank.bankCards().any(s -> s.type().eq(""));
@@ -452,6 +454,7 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,(COUNT(?) > 0) AS `__any2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
     public void testFilterConfigure3_1() {
 
@@ -461,7 +464,7 @@ public class MySQL8Test2 extends BaseTest {
 
         List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(bank -> {
                     bank.name().eq("");
                     bank.bankCards().any(s -> {
@@ -479,6 +482,7 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,(COUNT((CASE WHEN t1.`code` = ? THEN ? ELSE NULL END)) > 0) AS `__any2__`,(COUNT(?) > 0) AS `__any3__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ? AND IFNULL(t2.`__any3__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),1(Integer),1(Integer),false(Boolean),true(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
     public void testFilterConfigure4() {
 
@@ -488,7 +492,7 @@ public class MySQL8Test2 extends BaseTest {
 
         List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(bank -> {
                     bank.name().eq("");
                     bank.bankCards().any(s -> s.type().eq(""));
@@ -500,6 +504,7 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,(COUNT(?) > 0) AS `__any2__` FROM `t_bank_card` t1 WHERE t1.`type` = ? GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
     public void testFilterConfigure5() {
 
@@ -509,10 +514,10 @@ public class MySQL8Test2 extends BaseTest {
 
         List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(bank -> {
                     bank.name().eq("");
-                    bank.bankCards().orderBy(s->s.type().asc()).first().type().eq("");
+                    bank.bankCards().orderBy(s -> s.type().asc()).first().type().eq("");
                 }).toList();
 
         listenerContextManager.clear();
@@ -521,6 +526,7 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //        Assert.assertEquals("(String),1(Integer),true(Boolean),false(Boolean),(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
     public void testFilterConfigure6() {
 
@@ -530,10 +536,10 @@ public class MySQL8Test2 extends BaseTest {
 
         List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(bank -> {
                     bank.name().eq("");
-                    bank.bankCards().where(x->x.id().eq("")).orderBy(s->s.type().asc()).first().type().eq("");
+                    bank.bankCards().where(x -> x.id().eq("")).orderBy(s -> s.type().asc()).first().type().eq("");
                 }).toList();
 
         listenerContextManager.clear();
@@ -542,6 +548,7 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //        Assert.assertEquals("(String),1(Integer),true(Boolean),false(Boolean),(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
     public void testFilterConfigure7() {
 
@@ -551,10 +558,10 @@ public class MySQL8Test2 extends BaseTest {
 
         List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(bank -> {
                     bank.name().eq("");
-                    bank.bankCards().where(x->x.id().eq("1")).orderBy(s->s.type().asc()).first().type().eq("");
+                    bank.bankCards().where(x -> x.id().eq("1")).orderBy(s -> s.type().asc()).first().type().eq("");
                 }).toList();
 
         listenerContextManager.clear();
@@ -563,6 +570,7 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //        Assert.assertEquals("(String),1(Integer),true(Boolean),false(Boolean),(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
     public void testFilterConfigure8() {
 
@@ -572,10 +580,10 @@ public class MySQL8Test2 extends BaseTest {
 
         List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(bank -> {
                     bank.name().eq("");
-                    bank.bankCards().where(x->x.id().eq("")).orderBy(s->s.type().asc()).first().type().eq("1");
+                    bank.bankCards().where(x -> x.id().eq("")).orderBy(s -> s.type().asc()).first().type().eq("1");
                 }).toList();
 
         listenerContextManager.clear();
@@ -584,6 +592,7 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time`,(ROW_NUMBER() OVER (PARTITION BY t1.`bank_id` ORDER BY t1.`type` ASC)) AS `__row__` FROM `t_bank_card` t1 WHERE t1.`id` = ?) t3 ON (t3.`bank_id` = t.`id` AND t3.`__row__` = ?) WHERE t3.`type` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("(String),1(Integer),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
     public void testFilterConfigure9() {
 
@@ -593,10 +602,10 @@ public class MySQL8Test2 extends BaseTest {
 
         List<SysBank> list = easyEntityQuery.queryable(SysBank.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(bank -> {
                     bank.name().eq("");
-                    bank.bankCards().where(x->x.id().eq("")).orderBy(s->s.type().asc()).first().type().eq("1");
+                    bank.bankCards().where(x -> x.id().eq("")).orderBy(s -> s.type().asc()).first().type().eq("1");
                 }).toList();
 
         listenerContextManager.clear();
@@ -605,6 +614,7 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`id`,t1.`uid`,t1.`code`,t1.`type`,t1.`bank_id`,t1.`open_time`,(ROW_NUMBER() OVER (PARTITION BY t1.`bank_id` ORDER BY t1.`type` ASC)) AS `__row__` FROM `t_bank_card` t1) t3 ON (t3.`bank_id` = t.`id` AND t3.`__row__` = ?) WHERE t3.`type` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
     public void testFilterConfigure10() {
 
@@ -616,7 +626,7 @@ public class MySQL8Test2 extends BaseTest {
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
                 .where(bank -> {
                     bank.name().eq("");
-                    bank.expression().exists(()->{
+                    bank.expression().exists(() -> {
                         return bank.expression().subQueryable(SysBankCard.class)
                                 .where(bank_card -> {
                                     bank_card.bankId().eq(bank.id());
@@ -631,6 +641,7 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t WHERE EXISTS (SELECT 1 FROM `t_bank_card` t1 WHERE t1.`bank_id` = t.`id`)", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //        Assert.assertEquals("1(Integer),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+
     @Test
     public void testFilterConfigure11() {
 
@@ -642,7 +653,7 @@ public class MySQL8Test2 extends BaseTest {
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
                 .where(bank -> {
                     bank.name().eq("");
-                    bank.expression().exists(()->{
+                    bank.expression().exists(() -> {
                         return bank.expression().subQueryable(SysBankCard.class)
                                 .where(bank_card -> {
                                     bank_card.bankId().eq(bank.id());
@@ -659,7 +670,7 @@ public class MySQL8Test2 extends BaseTest {
     }
 
     @Test
-     public void testGroupConcat1(){
+    public void testGroupConcat1() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -688,7 +699,7 @@ public class MySQL8Test2 extends BaseTest {
     }
 
     @Test
-     public void testGroupConcat2(){
+    public void testGroupConcat2() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -699,7 +710,7 @@ public class MySQL8Test2 extends BaseTest {
                     .groupBy(t_blog -> GroupKeys.of(t_blog.id()))
                     .select(group -> Select.DRAFT.of(
                             group.key1(),
-                            group.expression().sqlSegment("GROUP_CONCAT(DISTINCT {0} SEPARATOR {1})",c->{
+                            group.expression().sqlSegment("GROUP_CONCAT(DISTINCT {0} SEPARATOR {1})", c -> {
                                 c.expression(group.groupTable().content()).value(",");
                             }).asStr()
                     )).toList();
@@ -717,14 +728,14 @@ public class MySQL8Test2 extends BaseTest {
     }
 
     @Test
-    public void testAA(){
+    public void testAA() {
 
 //        easyEntityQuery.queryable(SysBankCard.class)
 //                        .where(bank_card -> {
 //                            bank_card.user().appendOn();
 //                        })
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .subQueryConfigure(s -> s.bankCards(), bk -> bk.where(x -> x.code().eq("1")))
                 .where(user -> {
                     user.bankCards().any(b -> b.type().eq("11"));
@@ -735,14 +746,14 @@ public class MySQL8Test2 extends BaseTest {
     }
 
     @Test
-    public  void cteViewTree1(){
+    public void cteViewTree1() {
         List<TreeC> list = easyEntityQuery.queryable(TreeC.class)
                 .asTreeCTE()
                 .toList();
     }
 
     @Test
-    public  void cteViewTree2(){
+    public void cteViewTree2() {
         List<TreeC> list = easyEntityQuery.queryable(TreeA.class)
                 .leftJoin(TreeB.class, (a, b) -> a.id().eq(b.aid()))
                 .select((t1, t2) -> {
@@ -758,33 +769,41 @@ public class MySQL8Test2 extends BaseTest {
     }
 
     @Test
-    public void testSumCount(){
+    public void testSumCount() {
 //        GroupJoinColumnSegmentImpl
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-            easyEntityQuery.queryable(M8Province.class)
-                    .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
-                    .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
-                    .where(m -> {
-                        m.name().contains("浙江");
-                    })
-                    .select(m -> Select.DRAFT.of(
-                            m.cities().sum(c -> {
+        easyEntityQuery.queryable(M8Province.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(m -> {
+                    m.name().contains("浙江");
+                })
+                .select(m -> Select.DRAFT.of(
+                        m.cities().sum(c -> {
+                            if (true) {
+
                                 return c.areas().where(a -> {
                                     a.id().contains("123");
                                     a.name().contains("绍兴");
                                 }).count();
-                            }),
-                            m.cities().sum(c -> {
-                                return c.areas().where(a -> {
+                            } else {
+                                return c.areas2().where(a -> {
                                     a.id().contains("123");
-                                    a.name().contains("绍兴1");
+                                    a.name().contains("绍兴");
                                 }).count();
-                            })
-                    )).toList();
+                            }
+                        }),
+                        m.cities().sum(c -> {
+                            return c.areas().where(a -> {
+                                a.id().contains("123");
+                                a.name().contains("绍兴1");
+                            }).count();
+                        })
+                )).toList();
 
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -793,30 +812,31 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals("绍兴(String),1(Integer),绍兴1(String),1(Integer),123(String),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testMerge(){
+    public void testMerge() {
 //        GroupJoinColumnSegmentImpl
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-            easyEntityQuery.queryable(M8Province.class)
-                    .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
-                    .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
-                    .where(m -> {
-                        m.name().contains("浙江");
-                    })
-                    .select(m -> Select.DRAFT.of(
-                            m.cities().where(c->{
-                                c.name().like("绍兴");
-                                c.name().like("绍兴1");
-                            }).count(),
-                            m.cities().where(c->{
-                                c.name().like("绍兴");
-                                c.name().like("绍兴2");
-                            }).count()
-                    )).toList();
+        easyEntityQuery.queryable(M8Province.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(m -> {
+                    m.name().contains("浙江");
+                })
+                .select(m -> Select.DRAFT.of(
+                        m.cities().where(c -> {
+                            c.name().like("绍兴");
+                            c.name().like("绍兴1");
+                        }).count(),
+                        m.cities().where(c -> {
+                            c.name().like("绍兴");
+                            c.name().like("绍兴2");
+                        }).count()
+                )).toList();
 
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -827,8 +847,182 @@ public class MySQL8Test2 extends BaseTest {
     }
 
     @Test
-    public void includePartitionBy(){
+    public void testMerge2() {
+//        GroupJoinColumnSegmentImpl
 
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        easyEntityQuery.queryable(M8Province.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(m -> {
+                    m.name().contains("浙江");
+                    m.id().le(
+
+                            m.cities().where(c -> {
+                                c.name().isNotNull();
+                                c.id().isNotNull();
+                            }).count()
+                    );
+                })
+                .select(m -> Select.DRAFT.of(
+                        m.expression().valueOf(() -> {
+                            m.id().le(
+                                    m.cities().where(c -> {
+                                        c.name().isNotNull();
+                                        c.id().isNotNull();
+                                    }).count()
+                            );
+                        })
+                )).toPageResult(1, 2);
+
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT COUNT(*) FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,COUNT(?) AS `__count2__` FROM `m8_city` t1 WHERE t1.`name` IS NOT NULL AND t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') AND  t.`id` <= IFNULL(t2.`__count2__`,0)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT ( t.`id` <= IFNULL(t2.`__count2__`,0)) AS `value1` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,COUNT(?) AS `__count2__` FROM `m8_city` t1 WHERE t1.`name` IS NOT NULL AND t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') AND  t.`id` <= IFNULL(t2.`__count2__`,0) LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testMerge3() {
+//        GroupJoinColumnSegmentImpl
+
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        easyEntityQuery.queryable(M8Province.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(m -> {
+                    m.name().contains("浙江");
+                    m.id().le(
+
+                            m.cities().where(c -> {
+                                c.name().isNotNull();
+                                c.id().isNotNull();
+                            }).count()
+                    );
+                })
+                .select(m -> Select.DRAFT.of(
+                        m.name()
+                )).toPageResult(1, 2);
+
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT COUNT(*) FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,COUNT(?) AS `__count2__` FROM `m8_city` t1 WHERE t1.`name` IS NOT NULL AND t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') AND  t.`id` <= IFNULL(t2.`__count2__`,0)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`name` AS `value1` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,COUNT(?) AS `__count2__` FROM `m8_city` t1 WHERE t1.`name` IS NOT NULL AND t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') AND  t.`id` <= IFNULL(t2.`__count2__`,0) LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testMerge4() {
+//        GroupJoinColumnSegmentImpl
+
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        easyEntityQuery.queryable(M8Province.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(m -> {
+                    m.name().contains("浙江");
+                })
+                .select(m -> Select.DRAFT.of(
+                        m.expression().valueOf(() -> {
+                            m.id().le(
+                                    m.cities().where(c -> {
+                                        c.name().isNotNull();
+                                        c.id().isNotNull();
+                                    }).count()
+                            );
+                        })
+                )).toPageResult(1, 2);
+
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT COUNT(*) FROM `m8_province` t WHERE t.`name` LIKE CONCAT('%',?,'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT ( t.`id` <= IFNULL(t2.`__count2__`,0)) AS `value1` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,COUNT(?) AS `__count2__` FROM `m8_city` t1 WHERE t1.`name` IS NOT NULL AND t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+    @Test
+    public void testMerge5() {
+//        GroupJoinColumnSegmentImpl
+
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        easyEntityQuery.queryable(M8Province.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(m -> {
+                    m.name().contains("浙江");
+                    m.id().le(
+
+                            m.cities().where(c -> {
+                                c.name().isNotNull();
+                                c.id().isNotNull();
+                            }).count()
+                    );
+                    m.id().ge(
+
+                            m.cities().where(c -> {
+                                c.name().isNull();
+                                c.id().isNotNull();
+                            }).count()
+                    );
+                })
+                .select(m -> Select.DRAFT.of(
+                        m.name()
+                )).toPageResult(1, 2);
+
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT COUNT(*) FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,COUNT((CASE WHEN t1.`name` IS NOT NULL THEN ? ELSE NULL END)) AS `__count2__`,COUNT((CASE WHEN t1.`name` IS NULL THEN ? ELSE NULL END)) AS `__count3__` FROM `m8_city` t1 WHERE t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') AND  t.`id` <= IFNULL(t2.`__count2__`,0) AND  t.`id` >= IFNULL(t2.`__count3__`,0)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer),1(Integer),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`name` AS `value1` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,COUNT((CASE WHEN t1.`name` IS NOT NULL THEN ? ELSE NULL END)) AS `__count2__`,COUNT((CASE WHEN t1.`name` IS NULL THEN ? ELSE NULL END)) AS `__count3__` FROM `m8_city` t1 WHERE t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') AND  t.`id` <= IFNULL(t2.`__count2__`,0) AND  t.`id` >= IFNULL(t2.`__count3__`,0) LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer),1(Integer),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+    }
+
+    @Test
+    public void includePartitionBy() {
 
 
         ListenerContext listenerContext = new ListenerContext(true);
@@ -839,6 +1033,8 @@ public class MySQL8Test2 extends BaseTest {
         List<SysBankXDTO> list = easyEntityQuery.queryable(SysBank.class)
                 .selectAutoInclude(SysBankXDTO.class)
                 .toList();
+
+        listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
         Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
         {
@@ -859,8 +1055,7 @@ public class MySQL8Test2 extends BaseTest {
     }
 
     @Test
-    public void includePartitionBy1(){
-
+    public void includePartitionBy1() {
 
 
         ListenerContext listenerContext = new ListenerContext(true);

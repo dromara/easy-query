@@ -1,5 +1,7 @@
 package com.easy.query.test;
 
+import com.alibaba.druid.sql.SQLUtils;
+import com.alibaba.druid.util.JdbcConstants;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
@@ -1260,4 +1262,11 @@ public class GenericTest extends BaseTest {
         Assert.assertNull(expressionContext.getPrintSQL());
         Assert.assertEquals(true, expressionContext.getPrintNavSQL());
     }
+
+    @Test
+     public void sqlFormat(){
+        SQLUtils.FormatOption opt = new SQLUtils.FormatOption(true, true); // (ucase, pretty)
+         String s1 = SQLUtils.format("SELECT IFNULL(t2.`__sum2__`,0) AS `value1`,IFNULL(t2.`__sum3__`,0) AS `value2` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,SUM(IFNULL(t4.`__count2__`,0)) AS `__sum2__`,SUM(IFNULL(t4.`__count3__`,0)) AS `__sum3__` FROM `m8_city` t1 LEFT JOIN (SELECT t3.`cid` AS `cid`,COUNT((CASE WHEN t3.`name` LIKE CONCAT('%',?,'%') THEN ? ELSE NULL END)) AS `__count2__`,COUNT((CASE WHEN t3.`name` LIKE CONCAT('%',?,'%') THEN ? ELSE NULL END)) AS `__count3__` FROM `m8_area` t3 WHERE t3.`id` LIKE CONCAT('%',?,'%') GROUP BY t3.`cid`) t4 ON t4.`cid` = t1.`id` GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%')", JdbcConstants.KINGBASE, opt);
+        System.out.println(s1);
+     }
 }
