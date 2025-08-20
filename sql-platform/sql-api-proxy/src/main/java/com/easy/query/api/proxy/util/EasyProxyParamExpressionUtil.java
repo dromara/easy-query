@@ -38,14 +38,14 @@ public class EasyProxyParamExpressionUtil {
         if (value == null) {
             return new FormatValueParamExpressionImpl("NULL");
         }
-        if (value instanceof SQLColumn) {
-            SQLColumn<?, ?> sqlColumn = (SQLColumn<?, ?>) value;
-            return new ColumnPropertyExpressionImpl(sqlColumn.getTable(), sqlColumn.getValue(), entitySQLContext.getEntityExpressionBuilder().getExpressionContext());
-        } else if (value instanceof DSLSQLFunctionAvailable) {
+        if (value instanceof DSLSQLFunctionAvailable) {
             DSLSQLFunctionAvailable dslSQLFunction = (DSLSQLFunctionAvailable) value;
             SQLFunction sqlFunction = dslSQLFunction.func().apply(entitySQLContext.getRuntimeContext().fx());
             ExpressionContext expressionContext = entitySQLContext.getEntityExpressionBuilder().getExpressionContext();
             return new SQLSegmentParamExpressionImpl(sqlFunction, expressionContext, dslSQLFunction.getTable(), expressionContext.getRuntimeContext(), null);
+        } else if (value instanceof SQLColumn) {
+            SQLColumn<?, ?> sqlColumn = (SQLColumn<?, ?>) value;
+            return new ColumnPropertyExpressionImpl(sqlColumn.getTable(), sqlColumn.getValue(), entitySQLContext.getEntityExpressionBuilder().getExpressionContext());
         } else {
             return EasyParamExpressionUtil.getParamExpression(value);
         }
