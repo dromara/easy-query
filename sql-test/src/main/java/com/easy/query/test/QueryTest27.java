@@ -3,12 +3,17 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.enums.MapKeyModeEnum;
+import com.easy.query.api.proxy.util.EasyProxyParamExpressionUtil;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.EntityValueState;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.SubQueryModeEnum;
+import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.core.Expression;
+import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
@@ -150,7 +155,7 @@ public class QueryTest27 extends BaseTest {
 
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .where(o -> {
-                    o.myBlog().configure(r->r.disableLogicDelete());
+                    o.myBlog().configure(r -> r.disableLogicDelete());
                     o.myBlog().star().eq(1);
 //                    o.blogs().where(o->o._configurer().)
                 }).toList();
@@ -191,7 +196,7 @@ public class QueryTest27 extends BaseTest {
 
             List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                     .where(o -> {
-                        o.myBlog().configure(r->r.asTable("BlogAbc"));
+                        o.myBlog().configure(r -> r.asTable("BlogAbc"));
                         o.myBlog().star().eq(1);
 //                    o.blogs().where(o->o._configurer().)
                     }).toList();
@@ -216,10 +221,10 @@ public class QueryTest27 extends BaseTest {
 
             List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                     .where(o -> {
-                        o.myBlog().configure(r->r.asTable("BlogAbc"));
+                        o.myBlog().configure(r -> r.asTable("BlogAbc"));
                         o.myBlog().star().eq(1);
                         o.blogs().where(x -> {
-                            x.configure(r->r.asTable("BInner"));
+                            x.configure(r -> r.asTable("BInner"));
                             x.star().eq(1);
                         }).any();
 //                    o.blogs().where(o->o._configurer().)
@@ -267,6 +272,7 @@ public class QueryTest27 extends BaseTest {
         Assert.assertEquals("false(Boolean),1(Integer),false(Boolean),1(Integer),1(Integer),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testAAA43() {
 
@@ -283,7 +289,7 @@ public class QueryTest27 extends BaseTest {
                             r.asTable("BlogAbc");
                         });
                         o.myBlog().star().eq(1);
-                        o.blogs().configure(x->x.asTable("BInner")).where(x -> {
+                        o.blogs().configure(x -> x.asTable("BInner")).where(x -> {
                             x.star().eq(1);
                         }).any();
 //                    o.blogs().where(o->o._configurer().)
@@ -297,6 +303,7 @@ public class QueryTest27 extends BaseTest {
         Assert.assertEquals("false(Boolean),1(Integer),false(Boolean),1(Integer),1(Integer),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testAAA45() {
 
@@ -314,7 +321,7 @@ public class QueryTest27 extends BaseTest {
                         });
                         o.blogs().mode(SubQueryModeEnum.SUB_QUERY_ONLY);
                         o.myBlog().star().eq(1);
-                        o.blogs().configure(x->x.asTable("BInner")).where(x -> {
+                        o.blogs().configure(x -> x.asTable("BInner")).where(x -> {
                             x.star().eq(1);
                         }).any();
 //                    o.blogs().where(o->o._configurer().)
@@ -330,7 +337,7 @@ public class QueryTest27 extends BaseTest {
     }
 
     @Test
-     public void testaaaa54(){
+    public void testaaaa54() {
         EntityQueryable<BlogEntityProxy, BlogEntity> where = easyEntityQuery.queryable(BlogEntity.class)
                 .where(t_blog -> {
                     t_blog.title().eq("123");
@@ -339,17 +346,18 @@ public class QueryTest27 extends BaseTest {
                 .leftJoin(BlogEntity.class, (a, b, c) -> c.id().eq(b.title()))
                 .toList();
     }
+
     @Test
-     public void testaaaa541(){
+    public void testaaaa541() {
         EntityQueryable<BlogEntityProxy, BlogEntity> where = easyEntityQuery.queryable(BlogEntity.class)
                 .where(t_blog -> {
-                    if(false){
+                    if (false) {
                         t_blog.title().eq("123");
                     }
                 });
         List<BlogEntity> list = where.leftJoin(BlogEntity.class, (a, b) -> a.id().eq(b.title()))
                 .leftJoin(BlogEntity.class, (a, b, c) -> {
-                    if(true){
+                    if (true) {
                         c.id().eq(b.title());
                     }
                 })
@@ -360,7 +368,7 @@ public class QueryTest27 extends BaseTest {
     }
 
     @Test
-    public void testUUId(){
+    public void testUUId() {
         UUID uuid = UUID.randomUUID();
 
         UUIDEntity2 uuidEntity = new UUIDEntity2();
@@ -378,20 +386,75 @@ public class QueryTest27 extends BaseTest {
     }
 
     @Test
-    public void testCountSubQueryCount(){
+    public void testCountSubQueryCount() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-            List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
-                    .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
-                    .where(t_blog -> {
-                        t_blog.star().le(t_blog.users().count());
-                    }).toList();
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(t_blog -> {
+                    t_blog.star().le(t_blog.users().count());
+                }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`create_time`,t.`update_time`,t.`create_by`,t.`update_by`,t.`deleted`,t.`title`,t.`content`,t.`url`,t.`star`,t.`publish_time`,t.`score`,t.`status`,t.`order`,t.`is_top`,t.`top` FROM `t_blog` t LEFT JOIN (SELECT t1.`id` AS `id`,COUNT(*) AS `__count2__` FROM `easy-query-test`.`t_sys_user` t1 GROUP BY t1.`id`) t2 ON t2.`id` = t.`title` WHERE t.`deleted` = ? AND  t.`star` <= IFNULL(t2.`__count2__`,0)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+    }
+
+
+    @Test
+    public void staticTestCustomFunction() {
+
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+
+                    findInSet("123", t_blog.content());
+
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND FIND_IN_SET(?,`content`)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void staticTestCustomFunction2() {
+
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .where(t_blog -> {
+
+                    findInSet("123", subStr(t_blog.title(),1,2));
+
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND FIND_IN_SET(?,SUBSTR(`title`,?,?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),123(String),1(Integer),2(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+
+    public static void findInSet(String value, PropTypeColumn<String> column) {
+        Expression expression = EasyProxyParamExpressionUtil.parseContextExpressionByParameters(value, column);
+
+        expression.rawSQL("FIND_IN_SET({0},{1})", value, column);
+    }
+    public static AnyTypeExpression<String> subStr(PropTypeColumn<String> column, int begin, int end) {
+        Expression expression = EasyProxyParamExpressionUtil.parseContextExpressionByParameters(column);
+
+        return expression.rawSQLSegment("SUBSTR({0},{1},{2})",column, begin,end).asAnyType(String.class);
     }
 }

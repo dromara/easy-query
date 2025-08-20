@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import com.alibaba.fastjson2.JSON;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.api.pagination.EasyPageResult;

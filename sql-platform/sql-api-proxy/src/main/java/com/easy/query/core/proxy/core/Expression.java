@@ -79,16 +79,49 @@ public class Expression {
         return new Expression(entitySQLContextAvailable.getEntitySQLContext());
     }
 
+    /**
+     * 支持where having order
+     * 执行片段
+     * @param sqlSegment
+     * @param parameters
+     */
+    public void rawSQL(String sqlSegment, Object... parameters) {
+        sql(true, sqlSegment, c->c.parameters(parameters));
+    }
+
+    /**
+     * 类型片段
+     * @param sqlSegment
+     * @param parameters
+     * @return
+     */
+    public AnyTypeExpression<Object> rawSQLSegment(String sqlSegment, Object... parameters) {
+        return sqlSegment(sqlSegment, c->c.parameters(parameters));
+    }
+
+    /**
+     * 请使用{@link #rawSQLSegment(String, Object...)}
+     * @param sqlSegment
+     * @return
+     */
     public AnyTypeExpression<Object> sqlSegment(String sqlSegment) {
         return sqlSegment(sqlSegment, x -> {
         }, Object.class);
     }
 
+    /**
+     * 请使用{@link #rawSQLSegment(String, Object...)}
+     * @param sqlSegment
+     * @param contextConsume
+     * @return
+     */
+    @Deprecated
     public AnyTypeExpression<Object> sqlSegment(String sqlSegment, SQLActionExpression1<ProxyColumnFuncSelector> contextConsume) {
         return sqlSegment(sqlSegment, contextConsume, Object.class);
     }
 
     /**
+     * 请使用{@link #rawSQLSegment(String, Object...)}
      * 返回group或者selectDraft自定义sql片段
      * <blockquote><pre>
      * {@code
@@ -107,6 +140,7 @@ public class Expression {
      * @param <TR>
      * @return 返回元素sql片段
      */
+    @Deprecated
     public <TR> AnyTypeExpression<TR> sqlSegment(String sqlSegment, SQLActionExpression1<ProxyColumnFuncSelector> contextConsume, Class<TR> resultClass) {
         return new AnyTypeExpressionImpl<>(entitySQLContext, null, null, f -> {
             return f.anySQLFunction(sqlSegment, c -> contextConsume.apply(new ProxyColumnFuncSelectorImpl(c)));
@@ -115,9 +149,11 @@ public class Expression {
 
     /**
      * 支持where having order
+     * 请使用{@link #rawSQL(String, Object...)}
      *
      * @param sqlSegment
      */
+    @Deprecated
     public void sql(String sqlSegment) {
         sql(sqlSegment, c -> {
         });
@@ -125,10 +161,12 @@ public class Expression {
 
     /**
      * 支持where having order
+     * 请使用{@link #rawSQL(String, Object...)}
      *
      * @param condition  是否执行
      * @param sqlSegment
      */
+    @Deprecated
     public void sql(boolean condition, String sqlSegment) {
         sql(condition, sqlSegment, c -> {
         });
@@ -136,21 +174,25 @@ public class Expression {
 
     /**
      * 支持where having order
+     * 请使用{@link #rawSQL(String, Object...)}
      *
      * @param sqlSegment
      * @param contextConsume
      */
+    @Deprecated
     public void sql(String sqlSegment, SQLActionExpression1<ProxyColumnFuncSelector> contextConsume) {
         sql(true, sqlSegment, contextConsume);
     }
 
     /**
      * 支持where having order
+     * 请使用{@link #rawSQL(String, Object...)}
      *
      * @param condition      是否执行
      * @param sqlSegment
      * @param contextConsume
      */
+    @Deprecated
     public void sql(boolean condition, String sqlSegment, SQLActionExpression1<ProxyColumnFuncSelector> contextConsume) {
         if (condition) {
             sqlSegment(sqlSegment, contextConsume).executeSQL();

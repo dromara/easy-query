@@ -29,23 +29,55 @@ public interface ProxyColumnFuncSelector {
         return this;
     }
 
+    /**
+     * 建议使用{@link #parameters(Object...)}
+     * @param sqlColumn
+     * @return
+     * @param <T>
+     */
+    @Deprecated
     default <T> ProxyColumnFuncSelector expression(PropTypeColumn<T> sqlColumn) {
         PropTypeColumn.columnFuncSelector(getColumnFuncSelector(), sqlColumn);
         return this;
     }
 
+    /**
+     * 建议使用{@link #parameters(Object...)}
+     * @param subQuery
+     * @return
+     */
+    @Deprecated
     default ProxyColumnFuncSelector expression(Query<?> subQuery) {
         return subQuery(subQuery);
     }
 
+    /**
+     * 建议使用{@link #parameters(Object...)}
+     * @param sqlFunction
+     * @return
+     */
+    @Deprecated
     default ProxyColumnFuncSelector expression(SQLFunction sqlFunction) {
         return sqlFunc(sqlFunction);
     }
 
+    /**
+     * 建议使用{@link #parameters(Object...)}
+     * @param sqlSegment
+     * @return
+     */
+    @Deprecated
     default ColumnFuncSelector expression(PredicateSegment sqlSegment) {
         return getColumnFuncSelector().expression(sqlSegment);
     }
 
+    /**
+     * 建议使用{@link #parameters(Object...)}
+     * @param collections
+     * @return
+     * @param <T>
+     */
+    @Deprecated
     default <T> ProxyColumnFuncSelector collection(Collection<T> collections) {
         getColumnFuncSelector().collection(collections);
         return this;
