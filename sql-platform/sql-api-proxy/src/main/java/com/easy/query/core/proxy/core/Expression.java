@@ -81,26 +81,48 @@ public class Expression {
 
     /**
      * 支持where having order
-     * 执行片段
-     * @param sqlSegment
-     * @param parameters
+     * 执行片段 直接在where having order中执行 插入片段
+     * <blockquote><pre>
+     * {@code
+     *   List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+     *                 .where(it -> {
+     *                     it.expression().rawSQLCommand("FIND_IN_SET({0},{1})", "3123456", it.idCard());
+     *                 }).toList();
+     *
+     * }
+     * </blockquote></pre>
+     *
+     * @param sqlTemplate sql模板参数使用{0}...{n}
+     * @param parameters 模板参数
      */
-    public void rawSQL(String sqlSegment, Object... parameters) {
-        sql(true, sqlSegment, c->c.parameters(parameters));
+    public void rawSQLCommand(String sqlTemplate, Object... parameters) {
+        sql(true, sqlTemplate, c->c.parameters(parameters));
     }
 
     /**
      * 类型片段
-     * @param sqlSegment
-     * @param parameters
-     * @return
+     *
+     * 类型片段支持比较即后续的操作
+     * <blockquote><pre>
+     * {@code
+     *
+     *  List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+     *          .where(it -> {
+     *              it.expression().rawSQLStatement("SUBSTR({0},{1},{2})", it.idCard(),1,2).asStr().eq("312345");
+     *          }).toList();
+     *
+     * }
+     * </blockquote></pre>
+     * @param sqlTemplate sql模板参数使用{0}...{n}
+     * @param parameters 模板参数
+     * @return 类型表达式
      */
-    public AnyTypeExpression<Object> rawSQLSegment(String sqlSegment, Object... parameters) {
-        return sqlSegment(sqlSegment, c->c.parameters(parameters));
+    public AnyTypeExpression<Object> rawSQLStatement(String sqlTemplate, Object... parameters) {
+        return sqlSegment(sqlTemplate, c->c.parameters(parameters));
     }
 
     /**
-     * 请使用{@link #rawSQLSegment(String, Object...)}
+     * 请使用{@link #rawSQLStatement(String, Object...)}
      * @param sqlSegment
      * @return
      */
@@ -110,7 +132,7 @@ public class Expression {
     }
 
     /**
-     * 请使用{@link #rawSQLSegment(String, Object...)}
+     * 请使用{@link #rawSQLStatement(String, Object...)}
      * @param sqlSegment
      * @param contextConsume
      * @return
@@ -121,11 +143,10 @@ public class Expression {
     }
 
     /**
-     * 请使用{@link #rawSQLSegment(String, Object...)}
+     * 请使用{@link #rawSQLStatement(String, Object...)}
      * 返回group或者selectDraft自定义sql片段
      * <blockquote><pre>
      * {@code
-     *
      *  .select((t, t1, t2) -> new QueryVOProxy() {{
      *      t.sqlType("IFNull({0},{1})",c->c.expression(t.id()).value("1"));
      *      //指定返回类型给draft类型进行明确
@@ -149,7 +170,7 @@ public class Expression {
 
     /**
      * 支持where having order
-     * 请使用{@link #rawSQL(String, Object...)}
+     * 请使用{@link #rawSQLCommand(String, Object...)}
      *
      * @param sqlSegment
      */
@@ -161,7 +182,7 @@ public class Expression {
 
     /**
      * 支持where having order
-     * 请使用{@link #rawSQL(String, Object...)}
+     * 请使用{@link #rawSQLCommand(String, Object...)}
      *
      * @param condition  是否执行
      * @param sqlSegment
@@ -174,7 +195,7 @@ public class Expression {
 
     /**
      * 支持where having order
-     * 请使用{@link #rawSQL(String, Object...)}
+     * 请使用{@link #rawSQLCommand(String, Object...)}
      *
      * @param sqlSegment
      * @param contextConsume
@@ -186,7 +207,7 @@ public class Expression {
 
     /**
      * 支持where having order
-     * 请使用{@link #rawSQL(String, Object...)}
+     * 请使用{@link #rawSQLCommand(String, Object...)}
      *
      * @param condition      是否执行
      * @param sqlSegment

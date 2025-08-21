@@ -11,22 +11,18 @@ import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
-import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
-import com.easy.query.test.entity.UUIDEntity;
 import com.easy.query.test.entity.UUIDEntity2;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -452,8 +448,7 @@ public class QueryTest27 extends BaseTest {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-
-        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+        List<BlogEntity> list2 = easyEntityQuery.queryable(BlogEntity.class)
                 .where(t_blog -> {
 
                     findInSet("123", t_blog.title().nullOrDefault("123"));
@@ -465,16 +460,34 @@ public class QueryTest27 extends BaseTest {
         Assert.assertEquals("false(Boolean),123(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+    @Test
+    public void staticTestCustomFunction4() {
+
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                .where(it -> {
+                    it.expression().rawSQLStatement("SUBSTR({0},{1},{2})", it.idCard(),1,2).asStr().eq("312345");
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`username`,`phone`,`id_card`,`address` FROM `easy-query-test`.`t_sys_user` WHERE SUBSTR(`id_card`,?,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),2(Integer),312345(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 
 
     public static void findInSet(String value, PropTypeColumn<String> column) {
         Expression expression = EasyProxyParamExpressionUtil.parseContextExpressionByParameters(value, column);
 
-        expression.rawSQL("FIND_IN_SET({0},{1})", value, column);
+        expression.rawSQLCommand("FIND_IN_SET({0},{1})", value, column);
     }
     public static AnyTypeExpression<String> subStr(PropTypeColumn<String> column, int begin, int end) {
         Expression expression = EasyProxyParamExpressionUtil.parseContextExpressionByParameters(column);
 
-        return expression.rawSQLSegment("SUBSTR({0},{1},{2})",column, begin,end).asAnyType(String.class);
+        return expression.rawSQLStatement("SUBSTR({0},{1},{2})",column, begin,end).asAnyType(String.class);
     }
 }

@@ -1116,7 +1116,6 @@ public class MyTest1 extends BaseTest {
                 .where((t, t1) -> {
                     t.id().isNotNull();
                     t1.score().isNotNull();
-                    t.expression().sql("FIND_IN_SET({0},{1})", c -> c.parameters("1",t1.score()));
                 })
                 .groupBy((t, t1) -> GroupKeys.of(
                         t.expression().sqlSegment("SUBSTR({0},2,2)", c -> c.expression(t.title())),
