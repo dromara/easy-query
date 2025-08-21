@@ -9,8 +9,7 @@ import com.easy.query.core.proxy.impl.SQLColumnSetPropColumnImpl;
 import com.easy.query.core.proxy.impl.SQLColumnSetValueImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,7 +18,7 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public class MapTypeProxy extends AbstractProxyEntity<MapTypeProxy, Map<String,Object>> {
+public class MapTypeProxy extends AbstractProxyEntity<MapTypeProxy, Map<String,Object>> implements MapTypeAvailable {
 
     private static final Class<Map<String,Object>> entityClass = EasyObjectUtil.typeCastNullable(Map.class);
 
@@ -33,12 +32,12 @@ public class MapTypeProxy extends AbstractProxyEntity<MapTypeProxy, Map<String,O
 
 
     public <TProperty> MapTypeProxy put(MapKey<TProperty> mapKey, Object val) {
-        addPropType(mapKey.getPropType());
+        putPropType(mapKey.getName(),mapKey.getPropType());
         getCurrentEntitySQLContext().accept(new SQLColumnSetValueImpl(null, mapKey.getName(), val));
         return this;
     }
     public <TProperty> MapTypeProxy put(MapKey<TProperty> mapKey, PropTypeColumn<TProperty> val) {
-        addPropType(mapKey.getPropType());
+        putPropType(mapKey.getName(),mapKey.getPropType());
         getCurrentEntitySQLContext().accept(new SQLColumnSetPropColumnImpl(null, mapKey.getName(), val));
         return this;
     }
@@ -46,12 +45,13 @@ public class MapTypeProxy extends AbstractProxyEntity<MapTypeProxy, Map<String,O
         return new SQLAnyColumnImpl<>(this.getEntitySQLContext(), getTable(), mapKey.getName(), mapKey.getPropType());
     }
 
-    private final List<Class<?>> propTypes=new ArrayList<>();
-    public List<Class<?>> _getResultPropTypes() {
+    private final Map<String,Class<?>> propTypes=new HashMap<>();
+    @Override
+    public Map<String,Class<?>> _getResultPropTypes() {
         return propTypes;
     }
-    private void addPropType(Class<?> propType){
-        propTypes.add(propType);
+    private void putPropType(String colName, Class<?> propType){
+        propTypes.put(colName,propType);
     }
 //    public SQLAnyColumn<MapProxy,Object> getColumn(String key){
 //        return getAnyColumn(key,Object.class);

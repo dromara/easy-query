@@ -14,15 +14,21 @@ import com.easy.query.core.metadata.ColumnMetadata;
  * @author xuejiaming
  */
 public class TypeResultColumnMetadata implements ResultColumnMetadata {
+    private final String colName;
     private final Class<?> propertyType;
 
-    public TypeResultColumnMetadata(Class<?> propertyType){
+    public TypeResultColumnMetadata(String colName,Class<?> propertyType){
+        this.colName = colName;
 
         this.propertyType = propertyType;
     }
     @Override
     public Class<?> getPropertyType() {
         return propertyType;
+    }
+
+    public String getColName() {
+        return colName;
     }
 
     @Override

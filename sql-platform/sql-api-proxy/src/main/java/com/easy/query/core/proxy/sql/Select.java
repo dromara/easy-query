@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.sql;
 
+import com.easy.query.api.proxy.base.MapTypeAvailable;
 import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
@@ -78,13 +79,13 @@ public class Select {
         if (trProxy instanceof DraftProxy) {
             DraftProxy draftProxy = (DraftProxy) trProxy;
             expressionContext.setResultPropTypes(draftProxy.getDraftPropTypes());
-        } else if (trProxy instanceof MapTypeProxy) {
-            MapTypeProxy mapTypeProxy = (MapTypeProxy) trProxy;
-            expressionContext.setResultPropTypes(mapTypeProxy._getResultPropTypes().stream().map(x -> new TypeResultColumnMetadata(x)).toArray(ResultColumnMetadata[]::new));
+        } else if (trProxy instanceof MapTypeAvailable) {
+            MapTypeAvailable mapTypeAvailable = (MapTypeAvailable) trProxy;
+            expressionContext.setResultPropTypes(mapTypeAvailable._getResultPropTypes().entrySet().stream().map(x -> new TypeResultColumnMetadata(x.getKey(), x.getValue())).toArray(ResultColumnMetadata[]::new));
         } else if (trProxy instanceof SQLColumn) {
             SQLColumn sqlColumn = (SQLColumn) trProxy;
             //基本类型支持select(x->x.id())但是枚举类型因为不是基本类型所以需要使用valueConverter
-            if (sqlColumn.getTable() != null&&Objects.equals(sqlColumn.getPropertyType(),Object.class)) {
+            if (sqlColumn.getTable() != null && Objects.equals(sqlColumn.getPropertyType(), Object.class)) {
                 EntityMetadata entityMetadata = sqlColumn.getTable().getEntityMetadata();
                 ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(sqlColumn.getValue());
                 if (columnMetadata != null) {
@@ -151,7 +152,6 @@ public class Select {
             return runtimeContext.getEntityMetadataManager().getEntityMetadata(resultProxy.getEntityClass());
         }
     }
-
 
 
 }

@@ -3,6 +3,7 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.enums.MapKeyModeEnum;
+import com.easy.query.api.proxy.enums.ValueTypeMode;
 import com.easy.query.api.proxy.util.EasyProxyParamExpressionUtil;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.track.EntityState;
@@ -23,6 +24,7 @@ import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -404,7 +406,6 @@ public class QueryTest27 extends BaseTest {
     public void staticTestCustomFunction() {
 
 
-
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
@@ -425,14 +426,13 @@ public class QueryTest27 extends BaseTest {
     public void staticTestCustomFunction2() {
 
 
-
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(t_blog -> {
 
-                    findInSet("123", subStr(t_blog.title(),1,2));
+                    findInSet("123", subStr(t_blog.title(), 1, 2));
 
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -441,9 +441,9 @@ public class QueryTest27 extends BaseTest {
         Assert.assertEquals("false(Boolean),123(String),1(Integer),2(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void staticTestCustomFunction3() {
-
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -460,9 +460,9 @@ public class QueryTest27 extends BaseTest {
         Assert.assertEquals("false(Boolean),123(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void staticTestCustomFunction4() {
-
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -470,7 +470,7 @@ public class QueryTest27 extends BaseTest {
 
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .where(it -> {
-                    it.expression().rawSQLStatement("SUBSTR({0},{1},{2})", it.idCard(),1,2).asStr().eq("312345");
+                    it.expression().rawSQLStatement("SUBSTR({0},{1},{2})", it.idCard(), 1, 2).asStr().eq("312345");
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -485,9 +485,71 @@ public class QueryTest27 extends BaseTest {
 
         expression.rawSQLCommand("FIND_IN_SET({0},{1})", value, column);
     }
+
     public static AnyTypeExpression<String> subStr(PropTypeColumn<String> column, int begin, int end) {
         Expression expression = EasyProxyParamExpressionUtil.parseContextExpressionByParameters(column);
 
-        return expression.rawSQLStatement("SUBSTR({0},{1},{2})",column, begin,end).asAnyType(String.class);
+        return expression.rawSQLStatement("SUBSTR({0},{1},{2})", column, begin, end).asAnyType(String.class);
+    }
+
+    @Test
+    public void testMap() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Map<String, Object>> list = easyEntityQuery.queryable(Topic.class)
+                .select(t_topic -> new MapProxy(ValueTypeMode.TRY_TYPE)
+                        .put("a1", t_topic.createTime())
+                        .put("a2", t_topic.createTime().nullOrDefault(LocalDateTime.of(2025, 1, 1, 0, 0, 0)))
+                ).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`create_time` AS `a1`,IFNULL(t.`create_time`,?) AS `a2` FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2025-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+
+        for (Map<String, Object> stringObjectMap : list) {
+
+            {
+
+                Object o = stringObjectMap.get("a1");
+                Assert.assertEquals(LocalDateTime.class, o.getClass());
+            }
+            {
+
+                Object o = stringObjectMap.get("a2");
+                Assert.assertEquals(LocalDateTime.class, o.getClass());
+            }
+        }
+
+    }
+
+    @Test
+    public void testMap2() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Map<String, Object>> list = easyEntityQuery.queryable(Topic.class)
+                .select(t_topic -> new MapProxy(ValueTypeMode.TRY_TYPE).selectAll(t_topic)
+                ).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("2025-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+
+        for (Map<String, Object> stringObjectMap : list) {
+
+            {
+
+                Object o = stringObjectMap.get("create_time");
+                Assert.assertEquals(LocalDateTime.class, o.getClass());
+            }
+        }
+
     }
 }
