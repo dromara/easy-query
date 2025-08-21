@@ -9,10 +9,13 @@ import com.easy.query.core.basic.jdbc.executor.ShardingEntityExpressionExecutor;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.EasyQueryShardingOption;
 import com.easy.query.core.configuration.QueryConfiguration;
+import com.easy.query.core.configuration.dialect.DefaultSQLKeyword;
+import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.router.manager.TableRouteManager;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
+import com.easy.query.h2.config.H2SQLKeyword;
 import com.easy.query.test.h2.domain.ALLTYPE;
 import com.easy.query.test.h2.domain.DefTable;
 import com.easy.query.test.h2.domain.DefTableLeft1;
@@ -121,8 +124,9 @@ public class H2BaseTest {
                     op.setDefaultDataSourceMergePoolSize(20);
                 })
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
-                .replaceService(EntityExpressionExecutor.class,ShardingEntityExpressionExecutor.class)
+                .replaceService(EntityExpressionExecutor.class, ShardingEntityExpressionExecutor.class)
                 .useDatabaseConfigure(new H2DatabaseConfiguration())
+                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
                 .build();
         easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
         QueryRuntimeContext runtimeContext1 = easyEntityQuery.getRuntimeContext();
