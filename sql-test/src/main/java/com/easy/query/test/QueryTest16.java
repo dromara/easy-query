@@ -178,7 +178,7 @@ public class QueryTest16 extends BaseTest {
         }
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN (SELECT t2.`user_id` AS `user_id`,(COUNT(?) <= 0) AS `__any2__` FROM `t_role` t1 INNER JOIN `t_user_role` t2 ON t1.`id` = t2.`role_id` LEFT JOIN (SELECT t6.`role_id` AS `role_id`,(COUNT(?) > 0) AS `__any2__` FROM `t_menu` t5 INNER JOIN `t_role_menu` t6 ON t5.`id` = t6.`menu_id` WHERE t5.`route` = ? GROUP BY t6.`role_id`) t8 ON t8.`role_id` = t1.`id` WHERE IFNULL(t8.`__any2__`,?) = ? GROUP BY t2.`user_id`) t4 ON t4.`user_id` = t.`id` WHERE IFNULL(t4.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN (SELECT t2.`user_id` AS `user_id`,(COUNT(?) > 0) AS `__any2__` FROM `t_role` t1 INNER JOIN `t_user_role` t2 ON t1.`id` = t2.`role_id` LEFT JOIN (SELECT t6.`role_id` AS `role_id`,(COUNT(?) > 0) AS `__any2__` FROM `t_menu` t5 INNER JOIN `t_role_menu` t6 ON t5.`id` = t6.`menu_id` WHERE t5.`route` = ? GROUP BY t6.`role_id`) t8 ON t8.`role_id` = t1.`id` WHERE IFNULL(t8.`__any2__`,?) = ? GROUP BY t2.`user_id`) t4 ON t4.`user_id` = t.`id` WHERE IFNULL(t4.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),1(Integer),/admin(String),false(Boolean),true(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }

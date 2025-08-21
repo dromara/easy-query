@@ -200,7 +200,7 @@ public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Prox
         GroupJoinPredicateSegmentContext groupJoinPredicateSegmentContext = flatElementJoinSQLAnyQueryable.getGroupJoinPredicateSegmentContext();
         manyGroupJoinEntityTableExpressionBuilder.addGroupJoinPredicateSegmentContext(groupJoinPredicateSegmentContext);
         NumberTypeExpression<Long> count = flatElementJoinSQLAnyQueryable.count();
-        BooleanTypeExpressionImpl<Boolean> any = new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.booleanSQLFunction("({0} <= 0)", c -> {
+        BooleanTypeExpressionImpl<Boolean> any = new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), getManyGroupJoinTable(), null, f -> f.booleanSQLFunction("({0} > 0)", c -> {
             PropTypeColumn.columnFuncSelector(c, count);
         }), Boolean.class);
         String alias = getOrAppendGroupProjects(any, "any");
