@@ -1,4 +1,4 @@
-package com.easy.query.pgsql.types;
+package com.easy.query.h2.types;
 
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.props.JdbcProperty;
@@ -15,8 +15,8 @@ import java.util.UUID;
  * @author xuejiaming
  * create time 2023/2/17 21:21
  */
-public class UUIDPgSQLTypeHandler implements JdbcTypeHandler {
-    public static final UUIDPgSQLTypeHandler INSTANCE = new UUIDPgSQLTypeHandler();
+public class UUIDH2SQLTypeHandler implements JdbcTypeHandler {
+    public static final UUIDH2SQLTypeHandler INSTANCE = new UUIDH2SQLTypeHandler();
 
     @Override
     public Object getValue(JdbcProperty jdbcProperty, StreamResultSet streamResultSet) throws SQLException {

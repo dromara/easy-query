@@ -6,6 +6,7 @@ import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.TableIndex;
 import com.easy.query.core.annotation.TableIndexes;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
@@ -110,6 +111,9 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
             }
         }
         ColumnDbTypeResult columnDbTypeResult = getColumnTypeMap().get(columnMetadata.getPropertyType());
+        if (columnDbTypeResult == null) {
+            throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(entityMigrationMetadata.getEntityMetadata().getEntityClass()) + "] field name:" + columnMetadata.getFieldName() + " not found column db type.");
+        }
         if (EasyStringUtil.isNotBlank(dbDefault)) {
             return new ColumnDbTypeResult(replaceSqlTypeLength(columnDbTypeResult.columnType, length, scale), dbDefault);
         }
