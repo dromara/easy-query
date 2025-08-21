@@ -899,7 +899,12 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
             }).toList();
         }
     }
-//
+
+    @Override
+    public EntityQueryable<T1Proxy, T1> thisConfigure(SQLFuncExpression1<EntityQueryable<T1Proxy, T1>, EntityQueryable<T1Proxy, T1>> thisConfigureExpression) {
+        return thisConfigureExpression.apply(this);
+    }
+    //
 //    private <TRProxy extends ProxyEntity<TRProxy, TR>, TR> String getNavValue(TRProxy resultProxy) {
 //         String navValue = resultProxy.getNavValue();
 //        if(navValue==null){

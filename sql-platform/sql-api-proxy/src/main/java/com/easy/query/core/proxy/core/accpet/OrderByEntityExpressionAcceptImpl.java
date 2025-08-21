@@ -21,7 +21,7 @@ public class OrderByEntityExpressionAcceptImpl implements OrderByEntityExpressio
 
     @Override
     public void accept(SQLPredicateExpression sqlPredicateExpression) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("not found where context in order context");
     }
 
     @Override
