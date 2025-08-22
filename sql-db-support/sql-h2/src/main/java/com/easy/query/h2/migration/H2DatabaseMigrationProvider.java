@@ -99,6 +99,9 @@ public class H2DatabaseMigrationProvider extends AbstractDatabaseMigrationProvid
             }
             sql.append(",");
         }
+        if(EasyCollectionUtil.isNotEmpty(entityMetadata.getColumns())){
+            sql.deleteCharAt(sql.length() - 1);
+        }
 //        Collection<String> keyProperties = entityMetadata.getKeyProperties();
 //        if (EasyCollectionUtil.isNotEmpty(keyProperties)) {
 //            sql.append(" ").append(newLine).append(" PRIMARY KEY (");

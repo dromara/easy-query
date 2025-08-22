@@ -2,7 +2,9 @@ package com.easy.query.core.migration;
 
 
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.migration.data.TableMigrationData;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -21,6 +23,10 @@ public class MigrationContext {
 
     public List<Class<?>> getEntities() {
         return entities;
+    }
+
+    public List<TableMigrationData> getTableMigrationDataList(){
+        return Collections.emptyList();
     }
 
 }

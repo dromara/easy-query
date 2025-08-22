@@ -41,29 +41,29 @@ public class EasyToSQLUtil {
         return getQuoteSQLName(sqlKeyword, val1 + "." + val2);
     }
 
-    public static String getSchemaTableName(SQLKeyword sqlKeyword, EntityMetadata entityMetadata, String entityTableName, Function<String, String> schemaAs, Function<String, String> tableNameAs) {
-        String tableName = doGetTableName(entityMetadata, entityTableName, tableNameAs);
-        String schema = getSchema(sqlKeyword, entityMetadata, entityMetadata.getSchemaOrNull(), schemaAs, null);
+    public static String getSchemaTableName(SQLKeyword sqlKeyword, String entitySchema, String entityTableName, Function<String, String> schemaAs, Function<String, String> tableNameAs) {
+        String tableName = doGetTableName(entityTableName, tableNameAs);
+        String schema = getSchema(sqlKeyword, entitySchema, schemaAs, null);
         if (EasyStringUtil.isNotBlank(schema)) {
             return getQuoteSQLName(sqlKeyword, schema) + "." + getQuoteSQLName(sqlKeyword, tableName);
         }
         return getQuoteSQLName(sqlKeyword, tableName);
     }
 
-    public static String getTableName(SQLKeyword sqlKeyword, EntityMetadata entityMetadata, String tableName, Function<String, String> tableNameAs) {
-        return sqlKeyword.getQuoteName(doGetTableName(entityMetadata, tableName, tableNameAs));
+    public static String getTableName(SQLKeyword sqlKeyword, String tableName, Function<String, String> tableNameAs) {
+        return sqlKeyword.getQuoteName(doGetTableName(tableName, tableNameAs));
     }
 
-    public static String getSchema(SQLKeyword sqlKeyword, EntityMetadata entityMetadata, String schema, Function<String, String> schemaAs, String def) {
-        String entitySchema = doGetSchema(entityMetadata, schema, schemaAs);
+    public static String getSchema(SQLKeyword sqlKeyword,  String schema, Function<String, String> schemaAs, String def) {
+        String entitySchema = doGetSchema(schema, schemaAs);
         if (EasyStringUtil.isNotBlank(entitySchema)) {
             return getQuoteSQLName(sqlKeyword, entitySchema);
         }
         return def;
     }
 
-    public static String getSchemaWithoutDatabaseName(EntityMetadata entityMetadata, String schema, Function<String, String> schemaAs, String def) {
-        String entitySchema = doGetSchema(entityMetadata, schema, schemaAs);
+    public static String getSchemaWithoutDatabaseName( String schema, Function<String, String> schemaAs, String def) {
+        String entitySchema = doGetSchema(schema, schemaAs);
         if (EasyStringUtil.isNotBlank(entitySchema)) {
             if (schema.contains(".")) {
                 String[] split = entitySchema.split("\\.");
@@ -75,7 +75,7 @@ public class EasyToSQLUtil {
         return def;
     }
 
-    private static String doGetSchema(EntityMetadata entityMetadata, String schema, Function<String, String> schemaAs) {
+    private static String doGetSchema(String schema, Function<String, String> schemaAs) {
         if (schema != null || schemaAs != null) {
             if (schemaAs != null) {
                 return schemaAs.apply(schema);
@@ -85,18 +85,18 @@ public class EasyToSQLUtil {
         return null;
     }
 
-    private static String doGetTableName(EntityMetadata entityMetadata, String tableName, Function<String, String> tableNameAs) {
+    private static String doGetTableName(String tableName, Function<String, String> tableNameAs) {
         if (tableNameAs != null) {
             String applyTableName = tableNameAs.apply(tableName);
-            return checkTableName(applyTableName, entityMetadata.getEntityClass());
+            return checkTableName(applyTableName);
         }
-        return checkTableName(tableName, entityMetadata.getEntityClass());
+        return checkTableName(tableName);
     }
 
-    private static String checkTableName(String tableName, Class<?> entityClass) {
+    private static String checkTableName(String tableName) {
 
         if (tableName == null) {
-            throw new EasyQueryException("table " + EasyClassUtil.getSimpleName(entityClass) + " cant found mapping table name");
+            throw new EasyQueryException("table cant found mapping table name");
         }
         return tableName;
     }

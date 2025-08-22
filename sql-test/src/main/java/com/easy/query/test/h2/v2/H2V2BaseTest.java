@@ -10,6 +10,7 @@ import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.common.ValueHolder;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.logging.LogFactory;
@@ -41,6 +42,7 @@ import com.easy.query.test.mysql8.entity.many.M8AreaBuildLicense;
 import com.easy.query.test.mysql8.entity.many.M8City;
 import com.easy.query.test.mysql8.entity.many.M8Province;
 import com.zaxxer.hikari.HikariDataSource;
+import org.junit.Assert;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
@@ -115,10 +117,66 @@ public class H2V2BaseTest {
         codeFirstCommand2.executeWithTransaction(s -> s.commit());
 
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(ALLTYPE.class, Topic.class, BlogEntity.class));
+        ValueHolder<String> sqlValueHolder=new ValueHolder<>();
         codeFirstCommand1.executeWithTransaction(s -> {
             System.out.println(s.getSQL());
+            sqlValueHolder.setValue(s.getSQL());
             s.commit();
         });
 
+        String value = sqlValueHolder.getValue();
+
+        Assert.assertEquals("\n" +
+                "CREATE TABLE IF NOT EXISTS \"t_all_type\" ( \n" +
+                "\"id\" VARCHAR(255) NOT NULL  PRIMARY KEY ,\n" +
+                "\"number_decimal\" DECIMAL(16,2) NULL ,\n" +
+                "\"number_float\" FLOAT NULL ,\n" +
+                "\"number_double\" DOUBLE NULL ,\n" +
+                "\"number_short\" SMALLINT NULL ,\n" +
+                "\"number_integer\" INT NULL ,\n" +
+                "\"number_long\" BIGINT NULL ,\n" +
+                "\"number_byte\" TINYINT NULL ,\n" +
+                "\"time_local_date_time\" TIMESTAMP(3) NULL ,\n" +
+                "\"time_local_date\" DATE NULL ,\n" +
+                "\"time_local_time\" TIME NULL ,\n" +
+                "\"only_date\" TIMESTAMP(3) NULL ,\n" +
+                "\"sql_date\" TIMESTAMP(3) NULL ,\n" +
+                "\"only_time\" TIME NULL ,\n" +
+                "\"enable\" BOOLEAN NULL ,\n" +
+                "\"value\" VARCHAR(255) NULL ,\n" +
+                "\"uid\" UUID NULL ,\n" +
+                "\"number_float_basic\" FLOAT NOT NULL  DEFAULT 0,\n" +
+                "\"number_double_basic\" DOUBLE NOT NULL  DEFAULT 0,\n" +
+                "\"number_short_basic\" SMALLINT NOT NULL  DEFAULT 0,\n" +
+                "\"number_integer_basic\" INT NOT NULL  DEFAULT 0,\n" +
+                "\"number_long_basic\" BIGINT NOT NULL  DEFAULT 0,\n" +
+                "\"number_byte_basic\" TINYINT NOT NULL  DEFAULT 0,\n" +
+                "\"enable_basic\" BOOLEAN NOT NULL  DEFAULT 0\n" +
+                ");\n" +
+                "CREATE TABLE IF NOT EXISTS \"t_topic\" ( \n" +
+                "\"id\" VARCHAR(255) NOT NULL  PRIMARY KEY ,\n" +
+                "\"stars\" INT NULL ,\n" +
+                "\"title\" VARCHAR(255) NULL ,\n" +
+                "\"create_time\" TIMESTAMP(3) NULL ,\n" +
+                "\"alias\" VARCHAR(255) NULL \n" +
+                ");\n" +
+                "CREATE TABLE IF NOT EXISTS \"t_blog\" ( \n" +
+                "\"id\" VARCHAR(255) NOT NULL  PRIMARY KEY ,\n" +
+                "\"create_time\" TIMESTAMP(3) NULL  COMMENT '创建时间;创建时间',\n" +
+                "\"update_time\" TIMESTAMP(3) NULL  COMMENT '修改时间;修改时间',\n" +
+                "\"create_by\" VARCHAR(255) NULL  COMMENT '创建人;创建人',\n" +
+                "\"update_by\" VARCHAR(255) NULL  COMMENT '修改人;修改人',\n" +
+                "\"deleted\" BOOLEAN NULL  COMMENT '是否删除;是否删除',\n" +
+                "\"title\" VARCHAR(255) NULL ,\n" +
+                "\"content\" VARCHAR(255) NULL ,\n" +
+                "\"url\" VARCHAR(255) NULL ,\n" +
+                "\"star\" INT NULL ,\n" +
+                "\"publish_time\" TIMESTAMP(3) NULL ,\n" +
+                "\"score\" DECIMAL(16,2) NULL ,\n" +
+                "\"status\" INT NULL ,\n" +
+                "\"order\" DECIMAL(16,2) NULL ,\n" +
+                "\"is_top\" BOOLEAN NULL ,\n" +
+                "\"top\" BOOLEAN NULL \n" +
+                ");",value);
     }
 }

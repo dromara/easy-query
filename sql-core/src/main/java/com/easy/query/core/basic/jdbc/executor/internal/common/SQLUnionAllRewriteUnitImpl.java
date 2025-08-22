@@ -47,7 +47,7 @@ public class SQLUnionAllRewriteUnitImpl implements SQLRewriteUnit {
             for (String realTableName : realTableNames) {
                 EntityMetadata entityMetadata = entityTableSQLExpression.getEntityMetadata();
                 SQLKeyword sqlKeyword = entityTableSQLExpression.getQueryRuntimeContext().getQueryConfiguration().getDialect();
-                String schemaTableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, realTableName, entityTableSQLExpression.getSchemaAs(), null);
+                String schemaTableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata.getSchemaOrNull(), realTableName, entityTableSQLExpression.getSchemaAs(), null);
                 if (!first) {
                     tableSQL.append(" UNION ALL ");
                 }
