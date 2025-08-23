@@ -9,6 +9,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EasyExpressionContext;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
@@ -76,8 +77,8 @@ public class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFac
     }
 
     @Override
-    public AnonymousManyJoinEntityTableExpressionBuilder createAnonymousManyGroupEntityTableExpressionBuilder(ExpressionContext expressionContext,TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder, String[] defaultKeys) {
-        return new AnonymousManyJoinDefaultTableExpressionBuilder(expressionContext,tableAvailable, multiTableType, entityQueryExpressionBuilder, defaultKeys);
+    public AnonymousManyJoinEntityTableExpressionBuilder createAnonymousManyGroupEntityTableExpressionBuilder(EntityExpressionBuilder mainEntityExpressionBuilder,ExpressionContext expressionContext, TableAvailable tableAvailable, MultiTableTypeEnum multiTableType, EntityQueryExpressionBuilder entityQueryExpressionBuilder, String[] defaultKeys) {
+        return new AnonymousManyJoinDefaultTableExpressionBuilder(mainEntityExpressionBuilder,expressionContext,tableAvailable, multiTableType, entityQueryExpressionBuilder, defaultKeys);
     }
 
     @Override

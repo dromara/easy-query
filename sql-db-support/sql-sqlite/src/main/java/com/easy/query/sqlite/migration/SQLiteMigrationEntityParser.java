@@ -41,8 +41,8 @@ public class SQLiteMigrationEntityParser extends DefaultMigrationEntityParser {
         columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("TEXT", null));
         columnTypeMap.put(LocalDate.class, new ColumnDbTypeResult("TEXT", null));
         columnTypeMap.put(LocalTime.class, new ColumnDbTypeResult("TEXT", null));
-        columnTypeMap.put(String.class, new ColumnDbTypeResult("nvarchar(255)", null));
-        columnTypeMap.put(UUID.class, new ColumnDbTypeResult("character(36)", null));
+        columnTypeMap.put(String.class, new ColumnDbTypeResult("VARCHAR(255)", null));
+        columnTypeMap.put(UUID.class, new ColumnDbTypeResult("CHAR(36)", null));
     }
 
     @Override
