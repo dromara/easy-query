@@ -1,4 +1,4 @@
-package com.easy.query.core.expression.sql.builder.common;
+package com.easy.query.core.expression.many2group;
 
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;

@@ -1,55 +1,31 @@
 package com.easy.query.core.expression.sql.builder.impl;
 
-import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
-import com.easy.query.core.enums.RelationTypeEnum;
-import com.easy.query.core.enums.SQLPredicateCompareEnum;
-import com.easy.query.core.expression.RelationTableKey;
+import com.easy.query.core.expression.many2group.SubQueryExtraPredicateProvider;
 import com.easy.query.core.expression.many2group.ManyGroupJoinProjectKey;
 import com.easy.query.core.expression.parser.core.available.RelationTableAvailable;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.WherePredicate;
-import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
-import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
-import com.easy.query.core.expression.segment.ColumnValue2SegmentImpl;
 import com.easy.query.core.expression.segment.GroupJoinPredicateSegmentContext;
-import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
-import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
-import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 import com.easy.query.core.expression.segment.condition.predicate.PredicateUnit;
 import com.easy.query.core.expression.segment.condition.predicate.PredicateUnitItem;
-import com.easy.query.core.expression.segment.condition.predicate.ValuePredicate;
-import com.easy.query.core.expression.segment.condition.predicate.ValuesPredicate;
 import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
-import com.easy.query.core.expression.sql.builder.common.SubQueryExtraAndPredicateUnit;
-import com.easy.query.core.expression.sql.builder.common.SubQueryExtraOrPredicateUnit;
-import com.easy.query.core.expression.sql.builder.common.SubQueryExtraPredicateUnit;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
-import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 import com.easy.query.core.util.EasySQLUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -73,11 +49,15 @@ public class AnonymousManyJoinDefaultTableExpressionBuilder extends AnonymousDef
         this.defaultSelectKeys = defaultSelectKeys;
     }
 
+    public EntityExpressionBuilder getMainEntityExpressionBuilder() {
+        return mainEntityExpressionBuilder;
+    }
+
     @Override
     public EntityTableExpressionBuilder copyEntityTableExpressionBuilder() {
 
 
-        AnonymousManyJoinEntityTableExpressionBuilder anonymousTableExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousManyGroupEntityTableExpressionBuilder(mainEntityExpressionBuilder.cloneEntityExpressionBuilder(), expressionContext, entityTable, multiTableType, entityQueryExpressionBuilder.cloneEntityExpressionBuilder(), defaultSelectKeys);
+        AnonymousManyJoinEntityTableExpressionBuilder anonymousTableExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousManyGroupEntityTableExpressionBuilder(mainEntityExpressionBuilder, expressionContext, entityTable, multiTableType, entityQueryExpressionBuilder.cloneEntityExpressionBuilder(), defaultSelectKeys);
         if (on != null) {
             on.copyTo(anonymousTableExpressionBuilder.getOn());
         }
@@ -138,23 +118,12 @@ public class AnonymousManyJoinDefaultTableExpressionBuilder extends AnonymousDef
 
             //todo 还需要先添加开关
             if (mainEntityExpressionBuilder instanceof EntityQueryExpressionBuilder) {
+                EntityQueryExpressionBuilder mainEntityQueryExpressionBuilder = (EntityQueryExpressionBuilder) mainEntityExpressionBuilder;
+
                 if (entityTable instanceof RelationTableAvailable) {
                     RelationTableAvailable relationTable = (RelationTableAvailable) entityTable;
-                    RelationTableKey relationTableKey = relationTable.getRelationTableKey();
-                    String property = relationTableKey.getProperty();
-                    NavigateMetadata navigateMetadata = relationTable.getOriginalTable().getEntityMetadata().getNavigateNotNull(property);
-
-                    String[] selfProperties = navigateMetadata.getSelfPropertiesOrPrimary();
-                    String[] targetProperties = getTargetProperties(navigateMetadata, runtimeContext);
-                    EntityQueryExpressionBuilder mainEntityQueryExpressionBuilder = (EntityQueryExpressionBuilder) mainEntityExpressionBuilder;
-
-                    if (mainEntityQueryExpressionBuilder.hasWhere()) {
-
-                        List<PredicateSegment> flatAndPredicateSegments = mainEntityQueryExpressionBuilder.getWhere().getFlatAndPredicateSegments();
-                        SQLExpressionInvokeFactory sqlExpressionInvokeFactory = entityQueryExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory();
-                        WherePredicate<Object> wherePredicate = sqlExpressionInvokeFactory.createWherePredicate(entityQueryExpressionBuilder.getTable(0).getEntityTable(), entityQueryExpressionBuilder, entityQueryExpressionBuilder.getWhere());
-                        getWhereExtraPredicateSegment(flatAndPredicateSegments, relationTable.getOriginalTable(), selfProperties, targetProperties, wherePredicate);
-                    }
+                    SubQueryExtraPredicateProvider subQueryExtraPredicateProvider = runtimeContext.getSubQueryExtraPredicateProvider();
+                    subQueryExtraPredicateProvider.process(mainEntityQueryExpressionBuilder, relationTable, entityQueryExpressionBuilder);
                 }
             }
         }
@@ -168,39 +137,6 @@ public class AnonymousManyJoinDefaultTableExpressionBuilder extends AnonymousDef
         return anonymousTableSQLExpression;
     }
 
-    private String[] getTargetProperties(NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext) {
-        if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
-            if (navigateMetadata.getMappingClass() != null) {
-                return navigateMetadata.getSelfMappingProperties();
-            }
-        }
-        return navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
-    }
-
-    private void getWhereExtraPredicateSegment(List<PredicateSegment> flatAndPredicateSegments, TableAvailable fromTable, String[] selfProperties, String[] targetProperties, WherePredicate<Object> wherePredicate) {
-
-        for (PredicateSegment predicateSegment : flatAndPredicateSegments) {
-            if (predicateSegment instanceof AndPredicateSegment) {
-                AndPredicateSegment andPredicateSegment = (AndPredicateSegment) predicateSegment;
-
-                List<Predicate> flatAndPredicates = andPredicateSegment.getFlatAndPredicates();
-                if (EasyCollectionUtil.isNotEmpty(flatAndPredicates)) {
-                    SubQueryExtraPredicateUnit subQueryExtraAndPredicateUnit = new SubQueryExtraAndPredicateUnit(andPredicateSegment, fromTable, selfProperties, targetProperties);
-                    subQueryExtraAndPredicateUnit.invoke(wherePredicate);
-                } else {
-
-                    List<PredicateSegment> children = andPredicateSegment.getChildren();
-                    if (children != null) {
-                        boolean allMatch = children.stream().skip(1).allMatch(o -> o instanceof OrPredicateSegment);
-                        if (allMatch) {
-                            SubQueryExtraOrPredicateUnit subQueryExtraOrPredicateUnit = new SubQueryExtraOrPredicateUnit(andPredicateSegment, fromTable, selfProperties, targetProperties);
-                            subQueryExtraOrPredicateUnit.invoke(wherePredicate);
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     @Override
     public Integer addManyGroupJoinProjectExpression(ManyGroupJoinProjectKey relationTableKey) {

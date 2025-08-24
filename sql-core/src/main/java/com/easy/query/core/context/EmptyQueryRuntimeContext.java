@@ -25,6 +25,7 @@ import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.expression.builder.core.ValueFilterFactory;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
+import com.easy.query.core.expression.many2group.SubQueryExtraPredicateProvider;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
@@ -281,6 +282,11 @@ public class EmptyQueryRuntimeContext implements QueryRuntimeContext{
 
     @Override
     public JdbcSQLExecutor getJdbcSQLExecutor() {
+        return null;
+    }
+
+    @Override
+    public SubQueryExtraPredicateProvider getSubQueryExtraPredicateProvider() {
         return null;
     }
 }

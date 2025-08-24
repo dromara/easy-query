@@ -1,9 +1,8 @@
-package com.easy.query.core.expression.sql.builder.common;
+package com.easy.query.core.expression.many2group;
 
 import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
-import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -76,7 +75,6 @@ public abstract class AbstractSubQueryExtraPredicateUnit implements SubQueryExtr
         }
         return null;
     }
-
     private int getPredicateIndex(String compareProperty) {
         for (int i = 0; i < selfProperties.length; i++) {
             String selfProperty = selfProperties[i];

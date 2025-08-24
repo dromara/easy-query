@@ -25,7 +25,7 @@ public class SQLNativePredicateImpl extends AbstractSQLNativeSegmentImpl impleme
 
     @Override
     public SQLPredicateCompare getOperator() {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override

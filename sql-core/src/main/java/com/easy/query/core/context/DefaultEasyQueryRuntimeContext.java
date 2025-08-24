@@ -13,7 +13,6 @@ import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.extension.print.JdbcSQLPrinter;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
-import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
@@ -28,6 +27,7 @@ import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.expression.builder.core.ValueFilterFactory;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
+import com.easy.query.core.expression.many2group.SubQueryExtraPredicateProvider;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
@@ -105,6 +105,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final RelationNullValueValidator relationNullValueValidator;
     private final SQLCaseWhenBuilderFactory sqlCaseWhenBuilderFactory;
     private final JdbcSQLExecutor jdbcSQLExecutor;
+    private final SubQueryExtraPredicateProvider subQueryExtraPredicateProvider;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -152,7 +153,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           IncludeProvider includeProvider,
                                           RelationNullValueValidator relationNullValueValidator,
                                           SQLCaseWhenBuilderFactory sqlCaseWhenBuilderFactory,
-                                          JdbcSQLExecutor jdbcSQLExecutor) {
+                                          JdbcSQLExecutor jdbcSQLExecutor,
+                                          SubQueryExtraPredicateProvider subQueryExtraPredicateProvider) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -200,6 +202,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.relationNullValueValidator = relationNullValueValidator;
         this.sqlCaseWhenBuilderFactory = sqlCaseWhenBuilderFactory;
         this.jdbcSQLExecutor = jdbcSQLExecutor;
+        this.subQueryExtraPredicateProvider = subQueryExtraPredicateProvider;
     }
 
     @Override
@@ -435,5 +438,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public JdbcSQLExecutor getJdbcSQLExecutor() {
         return jdbcSQLExecutor;
+    }
+
+    @Override
+    public SubQueryExtraPredicateProvider getSubQueryExtraPredicateProvider() {
+        return subQueryExtraPredicateProvider;
     }
 }

@@ -233,8 +233,33 @@ public class MySQL8Test3 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,(COUNT(?) > 0) AS `__any2__` FROM `m8_city` t1 WHERE t1.`name` = ? AND t1.`pid` IN (?,?) GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ? AND t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("1(Integer),杭州(String),p1(String),p2(String),false(Boolean),true(Boolean),p1(String),p2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,(COUNT(?) > 0) AS `__any2__` FROM `m8_city` t1 WHERE t1.`name` = ? AND (t1.`pid` = ? OR t1.`pid` = ? OR t1.`pid` IN (?,?)) GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ? AND (t.`id` = ? OR t.`id` = ? OR t.`id` IN (?,?))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),杭州(String),p1(String),p2(String),p3(String),p4(String),false(Boolean),true(Boolean),p1(String),p2(String),p3(String),p4(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+
+    }
+    @Test
+    public void testGroupJoin4(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<M8Province> list = easyEntityQuery.queryable(M8Province.class)
+                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(m -> {
+                    m.cities().any(c->{
+                        c.id().eq("c1");
+                        c.name().eq("杭州");
+
+                        c.areas().flatElement().name().eq("上城区");
+                    });
+                    m.id().eq("p1");
+                }).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,(COUNT(?) > 0) AS `__any2__` FROM `m8_city` t1 LEFT JOIN (SELECT t3.`cid` AS `cid`,(COUNT(?) > 0) AS `__any2__` FROM `m8_area` t3 WHERE t3.`name` = ? AND t3.`cid` = ? GROUP BY t3.`cid`) t4 ON t4.`cid` = t1.`id` WHERE t1.`id` = ? AND t1.`name` = ? AND IFNULL(t4.`__any2__`,?) = ? AND t1.`pid` = ? GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ? AND t.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),1(Integer),上城区(String),c1(String),c1(String),杭州(String),false(Boolean),true(Boolean),p1(String),false(Boolean),true(Boolean),p1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
 
     }

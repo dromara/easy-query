@@ -1508,8 +1508,8 @@ public class M8BankTest extends BaseTest {
         }
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time`,IFNULL(t2.`__count2__`,0) AS `book_count`,t5.`name` AS `book_name`,t5.`price` AS `book_price` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,COUNT(*) AS `__count2__` FROM `t_sys_user_book` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` LEFT JOIN (SELECT t3.`id`,t3.`name`,t3.`uid`,t3.`price`,(ROW_NUMBER() OVER (PARTITION BY t3.`uid` ORDER BY t3.`price` DESC)) AS `__row__` FROM `t_sys_user_book` t3) t5 ON (t5.`uid` = t.`id` AND t5.`__row__` = ?) WHERE t.`name` <> ? AND t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("1(Integer),myArg(String),u1(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time`,IFNULL(t2.`__count2__`,0) AS `book_count`,t5.`name` AS `book_name`,t5.`price` AS `book_price` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,COUNT(*) AS `__count2__` FROM `t_sys_user_book` t1 WHERE t1.`uid` IN (?,?) GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` LEFT JOIN (SELECT t3.`id`,t3.`name`,t3.`uid`,t3.`price`,(ROW_NUMBER() OVER (PARTITION BY t3.`uid` ORDER BY t3.`price` DESC)) AS `__row__` FROM `t_sys_user_book` t3 WHERE t3.`uid` IN (?,?)) t5 ON (t5.`uid` = t.`id` AND t5.`__row__` = ?) WHERE t.`name` <> ? AND t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("u1(String),u2(String),u1(String),u2(String),1(Integer),myArg(String),u1(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
     }
 
@@ -1543,8 +1543,8 @@ public class M8BankTest extends BaseTest {
         }
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`create_time`,IFNULL(t2.`__count2__`,0) AS `book_count`,t5.`name` AS `book_name`,t5.`price` AS `book_price` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,COUNT(*) AS `__count2__` FROM `t_sys_user_book` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` LEFT JOIN (SELECT t3.`id`,t3.`name`,t3.`uid`,t3.`price`,(ROW_NUMBER() OVER (PARTITION BY t3.`uid` ORDER BY t3.`price` DESC)) AS `__row__` FROM `t_sys_user_book` t3) t5 ON (t5.`uid` = t.`id` AND t5.`__row__` = ?) WHERE t.`name` <> ? AND t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("1(Integer),myArg(String),u1(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`create_time`,IFNULL(t2.`__count2__`,0) AS `book_count`,t5.`name` AS `book_name`,t5.`price` AS `book_price` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,COUNT(*) AS `__count2__` FROM `t_sys_user_book` t1 WHERE t1.`uid` IN (?,?) GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` LEFT JOIN (SELECT t3.`id`,t3.`name`,t3.`uid`,t3.`price`,(ROW_NUMBER() OVER (PARTITION BY t3.`uid` ORDER BY t3.`price` DESC)) AS `__row__` FROM `t_sys_user_book` t3 WHERE t3.`uid` IN (?,?)) t5 ON (t5.`uid` = t.`id` AND t5.`__row__` = ?) WHERE t.`name` <> ? AND t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("u1(String),u2(String),u1(String),u2(String),1(Integer),myArg(String),u1(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
     }
 

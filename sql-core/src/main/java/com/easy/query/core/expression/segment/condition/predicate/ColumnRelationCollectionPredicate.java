@@ -50,6 +50,10 @@ public class ColumnRelationCollectionPredicate implements ValuesPredicate, Shard
         this.valuesPredicate = getValuesPredicate();
     }
 
+    public String[] getPropertyNames() {
+        return propertyNames;
+    }
+
     private Collection<Object> getSingleFromNestCollection(List<List<Object>> collection) {
         ArrayList<Object> result = new ArrayList<>(collection.size());
         for (List<Object> objects : collection) {
@@ -100,6 +104,9 @@ public class ColumnRelationCollectionPredicate implements ValuesPredicate, Shard
 
     @Override
     public String getPropertyName() {
+        if(propertyNames.length==1){
+            return propertyNames[0];
+        }
         return null;
     }
 
@@ -115,6 +122,9 @@ public class ColumnRelationCollectionPredicate implements ValuesPredicate, Shard
 
     @Override
     public Collection<SQLParameter> getParameters() {
+        if(propertyNames.length==1){
+            return valuesPredicate.getParameters();
+        }
         return new ArrayList<>();
     }
 }
