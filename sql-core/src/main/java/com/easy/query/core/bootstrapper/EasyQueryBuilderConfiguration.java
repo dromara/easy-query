@@ -74,7 +74,7 @@ import com.easy.query.core.expression.executor.query.DefaultExecutionContextFact
 import com.easy.query.core.expression.executor.query.ExecutionContextFactory;
 import com.easy.query.core.expression.include.EasyIncludeProcessorFactory;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
-import com.easy.query.core.expression.many2group.DefaultSubQueryExtraPredicateProvider;
+import com.easy.query.core.expression.many2group.NoneSubQueryExtraPredicateProvider;
 import com.easy.query.core.expression.many2group.SubQueryExtraPredicateProvider;
 import com.easy.query.core.expression.parser.factory.DefaultSQLExpressionInvokeFactory;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
@@ -204,7 +204,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(DataSourceManager.class, DefaultDataSourceManager.class)
                 .replaceService(ShardingQueryCountManager.class, DefaultShardingQueryCountManager.class)
                 .replaceService(RouteDescriptorFactory.class, DefaultRouteDescriptorFactor.class)
-                .replaceService(SubQueryExtraPredicateProvider.class, DefaultSubQueryExtraPredicateProvider.class)
+                .replaceService(SubQueryExtraPredicateProvider.class, NoneSubQueryExtraPredicateProvider.class)
                 .replaceService(DataSourceUnitFactory.class, DefaultDataSourceUnitFactory.class)
                 .replaceService(SQLSegmentFactory.class, DefaultSQLSegmentFactory.class)
                 .replaceService(EasyTimeJobManager.class, DefaultEasyTimeJobManager.class)

@@ -13,6 +13,8 @@ import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
+import com.easy.query.core.expression.many2group.DefaultSubQueryExtraPredicateProvider;
+import com.easy.query.core.expression.many2group.SubQueryExtraPredicateProvider;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.common.M8Interceptor;
@@ -99,6 +101,7 @@ public class BaseTest {
 //                .replaceService(EntityMappingRule.class, PropertyEntityMappingRule.class)
                 .replaceService(EntityMappingRule.class, PropertyFirstEntityMappingRule.class)
                 .replaceService(EntityExpressionExecutor.class, MockEntityExpressionExecutor.class)
+                .replaceService(SubQueryExtraPredicateProvider.class, DefaultSubQueryExtraPredicateProvider.class)
 //                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
