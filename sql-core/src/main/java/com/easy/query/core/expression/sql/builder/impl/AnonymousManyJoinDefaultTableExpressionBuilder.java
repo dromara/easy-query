@@ -18,6 +18,7 @@ import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.segment.ColumnValue2SegmentImpl;
 import com.easy.query.core.expression.segment.GroupJoinPredicateSegmentContext;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
+import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
@@ -30,6 +31,9 @@ import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.expression.sql.builder.common.SubQueryExtraAndPredicateUnit;
+import com.easy.query.core.expression.sql.builder.common.SubQueryExtraOrPredicateUnit;
+import com.easy.query.core.expression.sql.builder.common.SubQueryExtraPredicateUnit;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -147,10 +151,10 @@ public class AnonymousManyJoinDefaultTableExpressionBuilder extends AnonymousDef
 
                         if (mainEntityQueryExpressionBuilder.hasWhere()) {
 
-                            List<Predicate> flatAndPredicates = mainEntityQueryExpressionBuilder.getWhere().getFlatAndPredicates();
+                            List<PredicateSegment> flatAndPredicateSegments = mainEntityQueryExpressionBuilder.getWhere().getFlatAndPredicateSegments();
                             SQLExpressionInvokeFactory sqlExpressionInvokeFactory = entityQueryExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory();
                             WherePredicate<Object> wherePredicate = sqlExpressionInvokeFactory.createWherePredicate(entityQueryExpressionBuilder.getTable(0).getEntityTable(), entityQueryExpressionBuilder, entityQueryExpressionBuilder.getWhere());
-                            getWhereExtraPredicateSegment(flatAndPredicates, relationTable.getOriginalTable(), selfProperties, targetProperties, wherePredicate);
+                            getWhereExtraPredicateSegment(flatAndPredicateSegments, relationTable.getOriginalTable(), selfProperties, targetProperties, wherePredicate);
                         }
                     }
                 }
@@ -166,39 +170,24 @@ public class AnonymousManyJoinDefaultTableExpressionBuilder extends AnonymousDef
         return anonymousTableSQLExpression;
     }
 
-    private void getWhereExtraPredicateSegment(List<Predicate> flatAndPredicates, TableAvailable fromTable, String[] selfProperties, String[] targetProperties, WherePredicate<Object> wherePredicate) {
+    private void getWhereExtraPredicateSegment(List<PredicateSegment> flatAndPredicateSegments, TableAvailable fromTable, String[] selfProperties, String[] targetProperties, WherePredicate<Object> wherePredicate) {
 
-        for (Predicate predicate : flatAndPredicates) {
+        for (PredicateSegment predicateSegment : flatAndPredicateSegments) {
+            if (predicateSegment instanceof AndPredicateSegment) {
+                AndPredicateSegment andPredicateSegment = (AndPredicateSegment) predicateSegment;
 
-            if (predicate.getTable() == fromTable &&
-                    (predicate.getOperator() == SQLPredicateCompareEnum.EQ || predicate.getOperator() == SQLPredicateCompareEnum.IN)) {
-                int predicateIndex = getPredicateIndex(selfProperties, predicate.getPropertyName());
-                if (predicateIndex > -1) {
+                List<Predicate> flatAndPredicates = andPredicateSegment.getFlatAndPredicates();
+                if (EasyCollectionUtil.isNotEmpty(flatAndPredicates)) {
+                    SubQueryExtraPredicateUnit subQueryExtraAndPredicateUnit = new SubQueryExtraAndPredicateUnit(andPredicateSegment, fromTable, selfProperties, targetProperties, wherePredicate);
+                    subQueryExtraAndPredicateUnit.invoke();
+                }else{
 
-                    String targetProperty = targetProperties[predicateIndex];
-                    if (predicate.getOperator() == SQLPredicateCompareEnum.EQ) {
-                        if (predicate instanceof ValuePredicate) {
-                            ValuePredicate valuePredicate = (ValuePredicate) predicate;
-                            SQLParameter parameter = valuePredicate.getParameter();
-                            if (parameter instanceof ConstSQLParameter) {
-                                Object value = parameter.getValue();
-                                wherePredicate.eq(targetProperty, value);
-                            }
-                        }
-                    } else if (predicate.getOperator() == SQLPredicateCompareEnum.IN) {
-                        if (predicate instanceof ValuesPredicate) {
-                            ValuesPredicate valuesPredicate = (ValuesPredicate) predicate;
-                            Collection<SQLParameter> parameters = valuesPredicate.getParameters();
-                            List<Object> values = new ArrayList<>();
-                            for (SQLParameter parameter : parameters) {
-                                if (parameter instanceof ConstSQLParameter) {
-                                    Object value = parameter.getValue();
-                                    values.add(value);
-                                }
-                            }
-                            if (EasyCollectionUtil.isNotEmpty(values)) {
-                                wherePredicate.in(targetProperty, values);
-                            }
+                    List<PredicateSegment> children = andPredicateSegment.getChildren();
+                    if (children != null) {
+                        boolean allMatch = children.stream().skip(1).allMatch(o -> o instanceof OrPredicateSegment);
+                        if (allMatch) {
+                            SubQueryExtraOrPredicateUnit subQueryExtraOrPredicateUnit = new SubQueryExtraOrPredicateUnit(andPredicateSegment, fromTable, selfProperties, targetProperties, wherePredicate);
+                            subQueryExtraOrPredicateUnit.invoke();
                         }
                     }
                 }
@@ -243,7 +232,7 @@ public class AnonymousManyJoinDefaultTableExpressionBuilder extends AnonymousDef
         return groupJoinPredicateSegmentContexts;
     }
 
-    //    @Override
+//    @Override
 //    public AnonymousEntityTableExpressionBuilder getManyJoinEntityTableExpressionBuilder() {
 //        EntityQueryExpressionBuilder entityQueryExpressionBuilder = this.getEntityQueryExpressionBuilder();
 //        EntityTableExpressionBuilder table = entityQueryExpressionBuilder.getTable(0);
