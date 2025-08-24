@@ -27,25 +27,23 @@ public abstract class AbstractSubQueryExtraPredicateUnit implements SubQueryExtr
     protected final TableAvailable fromTable;
     protected final String[] selfProperties;
     protected final String[] targetProperties;
-    protected final WherePredicate<Object> wherePredicate;
 
-    public AbstractSubQueryExtraPredicateUnit(TableAvailable fromTable, String[] selfProperties, String[] targetProperties, WherePredicate<Object> wherePredicate) {
+    public AbstractSubQueryExtraPredicateUnit(TableAvailable fromTable, String[] selfProperties, String[] targetProperties) {
         this.fromTable = fromTable;
         this.selfProperties = selfProperties;
         this.targetProperties = targetProperties;
-        this.wherePredicate = wherePredicate;
     }
 
-    protected SQLActionExpression1<WherePredicate<Object>> parsePredicate(Predicate predicate){
+    protected SQLActionExpression1<WherePredicate<Object>> parsePredicate(Predicate predicate) {
         String targetProperty = getTargetPropertyName(predicate);
-        if(targetProperty!=null){
+        if (targetProperty != null) {
             if (predicate.getOperator() == SQLPredicateCompareEnum.EQ) {
                 if (predicate instanceof ValuePredicate) {
                     ValuePredicate valuePredicate = (ValuePredicate) predicate;
                     SQLParameter parameter = valuePredicate.getParameter();
                     if (parameter instanceof ConstSQLParameter) {
                         Object value = parameter.getValue();
-                       return w->w.eq(targetProperty, value);
+                        return w -> w.eq(targetProperty, value);
                     }
                 }
             } else if (predicate.getOperator() == SQLPredicateCompareEnum.IN) {
@@ -60,7 +58,7 @@ public abstract class AbstractSubQueryExtraPredicateUnit implements SubQueryExtr
                         }
                     }
                     if (EasyCollectionUtil.isNotEmpty(values)) {
-                        return w->w.in(targetProperty, values);
+                        return w -> w.in(targetProperty, values);
                     }
                 }
             }
@@ -72,7 +70,7 @@ public abstract class AbstractSubQueryExtraPredicateUnit implements SubQueryExtr
         if (predicate.getTable() == fromTable &&
                 (predicate.getOperator() == SQLPredicateCompareEnum.EQ || predicate.getOperator() == SQLPredicateCompareEnum.IN)) {
             int predicateIndex = getPredicateIndex(predicate.getPropertyName());
-            if(predicateIndex>-1){
+            if (predicateIndex > -1) {
                 return targetProperties[predicateIndex];
             }
         }

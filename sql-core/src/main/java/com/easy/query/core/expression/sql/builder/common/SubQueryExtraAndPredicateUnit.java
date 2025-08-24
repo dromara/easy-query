@@ -26,13 +26,11 @@ public class SubQueryExtraAndPredicateUnit extends AbstractSubQueryExtraPredicat
 
     private final AndPredicateSegment andPredicateSegment;
     private final List<SQLActionExpression1<WherePredicate<Object>>> whereActionList;
-    protected boolean isInvoke;
 
 
-    public SubQueryExtraAndPredicateUnit(AndPredicateSegment andPredicateSegment, TableAvailable fromTable, String[] selfProperties, String[] targetProperties, WherePredicate<Object> wherePredicate) {
-        super(fromTable, selfProperties, targetProperties, wherePredicate);
+    public SubQueryExtraAndPredicateUnit(AndPredicateSegment andPredicateSegment, TableAvailable fromTable, String[] selfProperties, String[] targetProperties) {
+        super(fromTable, selfProperties, targetProperties);
         this.andPredicateSegment = andPredicateSegment;
-        this.isInvoke = true;
         this.whereActionList = new ArrayList<>();
         parsePredicate();
     }
@@ -50,7 +48,7 @@ public class SubQueryExtraAndPredicateUnit extends AbstractSubQueryExtraPredicat
     }
 
     @Override
-    public void invoke() {
+    public void invoke(WherePredicate<Object> wherePredicate) {
         for (SQLActionExpression1<WherePredicate<Object>> predicateSQLAction : whereActionList) {
             predicateSQLAction.apply(wherePredicate);
         }

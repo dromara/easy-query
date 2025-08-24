@@ -4,6 +4,7 @@ import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
@@ -142,20 +143,17 @@ public class AnonymousManyJoinDefaultTableExpressionBuilder extends AnonymousDef
                     RelationTableKey relationTableKey = relationTable.getRelationTableKey();
                     String property = relationTableKey.getProperty();
                     NavigateMetadata navigateMetadata = relationTable.getOriginalTable().getEntityMetadata().getNavigateNotNull(property);
-                    //todo 处理
-                    if (navigateMetadata.getRelationType() == RelationTypeEnum.OneToMany) {
 
-                        String[] selfProperties = navigateMetadata.getSelfPropertiesOrPrimary();
-                        String[] targetProperties = navigateMetadata.getTargetProperties();
-                        EntityQueryExpressionBuilder mainEntityQueryExpressionBuilder = (EntityQueryExpressionBuilder) mainEntityExpressionBuilder;
+                    String[] selfProperties = navigateMetadata.getSelfPropertiesOrPrimary();
+                    String[] targetProperties = getTargetProperties(navigateMetadata, runtimeContext);
+                    EntityQueryExpressionBuilder mainEntityQueryExpressionBuilder = (EntityQueryExpressionBuilder) mainEntityExpressionBuilder;
 
-                        if (mainEntityQueryExpressionBuilder.hasWhere()) {
+                    if (mainEntityQueryExpressionBuilder.hasWhere()) {
 
-                            List<PredicateSegment> flatAndPredicateSegments = mainEntityQueryExpressionBuilder.getWhere().getFlatAndPredicateSegments();
-                            SQLExpressionInvokeFactory sqlExpressionInvokeFactory = entityQueryExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory();
-                            WherePredicate<Object> wherePredicate = sqlExpressionInvokeFactory.createWherePredicate(entityQueryExpressionBuilder.getTable(0).getEntityTable(), entityQueryExpressionBuilder, entityQueryExpressionBuilder.getWhere());
-                            getWhereExtraPredicateSegment(flatAndPredicateSegments, relationTable.getOriginalTable(), selfProperties, targetProperties, wherePredicate);
-                        }
+                        List<PredicateSegment> flatAndPredicateSegments = mainEntityQueryExpressionBuilder.getWhere().getFlatAndPredicateSegments();
+                        SQLExpressionInvokeFactory sqlExpressionInvokeFactory = entityQueryExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory();
+                        WherePredicate<Object> wherePredicate = sqlExpressionInvokeFactory.createWherePredicate(entityQueryExpressionBuilder.getTable(0).getEntityTable(), entityQueryExpressionBuilder, entityQueryExpressionBuilder.getWhere());
+                        getWhereExtraPredicateSegment(flatAndPredicateSegments, relationTable.getOriginalTable(), selfProperties, targetProperties, wherePredicate);
                     }
                 }
             }
@@ -170,6 +168,15 @@ public class AnonymousManyJoinDefaultTableExpressionBuilder extends AnonymousDef
         return anonymousTableSQLExpression;
     }
 
+    private String[] getTargetProperties(NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext) {
+        if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
+            if (navigateMetadata.getMappingClass() != null) {
+                return navigateMetadata.getSelfMappingProperties();
+            }
+        }
+        return navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
+    }
+
     private void getWhereExtraPredicateSegment(List<PredicateSegment> flatAndPredicateSegments, TableAvailable fromTable, String[] selfProperties, String[] targetProperties, WherePredicate<Object> wherePredicate) {
 
         for (PredicateSegment predicateSegment : flatAndPredicateSegments) {
@@ -178,32 +185,21 @@ public class AnonymousManyJoinDefaultTableExpressionBuilder extends AnonymousDef
 
                 List<Predicate> flatAndPredicates = andPredicateSegment.getFlatAndPredicates();
                 if (EasyCollectionUtil.isNotEmpty(flatAndPredicates)) {
-                    SubQueryExtraPredicateUnit subQueryExtraAndPredicateUnit = new SubQueryExtraAndPredicateUnit(andPredicateSegment, fromTable, selfProperties, targetProperties, wherePredicate);
-                    subQueryExtraAndPredicateUnit.invoke();
-                }else{
+                    SubQueryExtraPredicateUnit subQueryExtraAndPredicateUnit = new SubQueryExtraAndPredicateUnit(andPredicateSegment, fromTable, selfProperties, targetProperties);
+                    subQueryExtraAndPredicateUnit.invoke(wherePredicate);
+                } else {
 
                     List<PredicateSegment> children = andPredicateSegment.getChildren();
                     if (children != null) {
                         boolean allMatch = children.stream().skip(1).allMatch(o -> o instanceof OrPredicateSegment);
                         if (allMatch) {
-                            SubQueryExtraOrPredicateUnit subQueryExtraOrPredicateUnit = new SubQueryExtraOrPredicateUnit(andPredicateSegment, fromTable, selfProperties, targetProperties, wherePredicate);
-                            subQueryExtraOrPredicateUnit.invoke();
+                            SubQueryExtraOrPredicateUnit subQueryExtraOrPredicateUnit = new SubQueryExtraOrPredicateUnit(andPredicateSegment, fromTable, selfProperties, targetProperties);
+                            subQueryExtraOrPredicateUnit.invoke(wherePredicate);
                         }
                     }
                 }
             }
         }
-    }
-
-    private int getPredicateIndex(String[] selfProperties, String compareProperty) {
-        int r = -1;
-        for (int i = 0; i < selfProperties.length; i++) {
-            String selfProperty = selfProperties[i];
-            if (Objects.equals(selfProperty, compareProperty)) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     @Override

@@ -22,8 +22,8 @@ public class SubQueryExtraOrPredicateUnit extends AbstractSubQueryExtraPredicate
     private final List<SQLActionExpression1<WherePredicate<Object>>> whereActionList;
     protected boolean isInvoke;
 
-    public SubQueryExtraOrPredicateUnit(AndPredicateSegment andPredicateSegment, TableAvailable fromTable, String[] selfProperties, String[] targetProperties, WherePredicate<Object> wherePredicate) {
-        super(fromTable, selfProperties, targetProperties, wherePredicate);
+    public SubQueryExtraOrPredicateUnit(AndPredicateSegment andPredicateSegment, TableAvailable fromTable, String[] selfProperties, String[] targetProperties) {
+        super(fromTable, selfProperties, targetProperties);
         this.andPredicateSegment = andPredicateSegment;
         this.whereActionList = new ArrayList<>();
         this.isInvoke = true;
@@ -33,7 +33,7 @@ public class SubQueryExtraOrPredicateUnit extends AbstractSubQueryExtraPredicate
     private void parsePredicate() {
         List<PredicateSegment> children = andPredicateSegment.getChildren();
         for (PredicateSegment predicateSegment : children) {
-            if (this.isInvoke) {
+            if (this.isInvoke) {//or里面必须所有的都是这个条件才可以
                 List<Predicate> flatAndPredicates = predicateSegment.getFlatAndPredicates();
                 if (EasyCollectionUtil.isSingle(flatAndPredicates)) {
                     Predicate first = EasyCollectionUtil.first(flatAndPredicates);
@@ -52,7 +52,7 @@ public class SubQueryExtraOrPredicateUnit extends AbstractSubQueryExtraPredicate
     }
 
     @Override
-    public void invoke() {
+    public void invoke(WherePredicate<Object> wherePredicate) {
         if (this.isInvoke) {
             if (EasyCollectionUtil.isNotEmpty(whereActionList)) {
                 wherePredicate.and(() -> {

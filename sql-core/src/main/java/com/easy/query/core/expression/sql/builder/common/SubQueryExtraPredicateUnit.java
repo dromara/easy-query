@@ -1,5 +1,7 @@
 package com.easy.query.core.expression.sql.builder.common;
 
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
+
 /**
  * create time 2025/8/24 08:33
  * 文件说明
@@ -8,5 +10,5 @@ package com.easy.query.core.expression.sql.builder.common;
  */
 public interface SubQueryExtraPredicateUnit {
 
-    void invoke();
+    void invoke(WherePredicate<Object> wherePredicate);
 }
