@@ -1,5 +1,6 @@
 package com.easy.query.test.mysql8;
 
+import com.bestvike.linq.Linq;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -11,6 +12,7 @@ import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.entity.BatchInsert;
 import com.easy.query.test.mysql8.entity.M8Parent;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -284,5 +287,25 @@ public class MySQL8Test3 extends BaseTest {
 
     }
 
+    @Test
+     public void batchTest(){
+        ArrayList<BatchInsert> batchInserts = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            BatchInsert batchInsert = new BatchInsert();
+            batchInsert.setName(String.valueOf(i));
+            batchInserts.add(batchInsert);
+        }
+        List<BatchInsert> collect = batchInserts.stream().sorted((a, b) -> UUID.randomUUID().hashCode() - UUID.randomUUID().hashCode()).collect(Collectors.toList());
+        easyEntityQuery.insertable(collect).batch().executeRows(true);
+        System.out.println(collect);
+        List<BatchInsert> list = easyEntityQuery.queryable(BatchInsert.class)
+                .toList();
+        System.out.println(list);
+        for (BatchInsert batchInsert : list) {
+            BatchInsert batchInsert1 = Linq.of(collect).where(o -> Objects.equals(o.getName(), batchInsert.getName())).firstOrDefault();
+            Assert.assertNotNull(batchInsert1);
+            Assert.assertEquals(batchInsert1.getId(), batchInsert.getId());
+        }
+    }
 
 }

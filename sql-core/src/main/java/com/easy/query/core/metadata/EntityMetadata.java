@@ -406,7 +406,7 @@ public class EntityMetadata {
                 : EasyCollectionUtil.emptyList();
 
         NavigateOption navigateOption = new NavigateOption(this, property, fastBeanProperty.getPropertyType(), navigateType, relationType, selfProperties, targetProperties, orderProps, navigate.offset(), navigate.limit(), navigate.directMapping());
-
+        navigateOption.setIgnoreAutoInclude(navigate.ignoreAutoInclude());
         navigateOption.setPartitionOrder(navigate.partitionOrder());
         if (readMetadata) {
             navigateOption.setSubQueryToGroupJoin(toMany && navigate.subQueryToGroupJoin());

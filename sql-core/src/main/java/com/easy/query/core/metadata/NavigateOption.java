@@ -36,6 +36,7 @@ public class NavigateOption {
     private EntityRelationPropertyProvider entityRelationPropertyProvider;
     private boolean required = false;
     private boolean subQueryToGroupJoin = false;
+    private boolean ignoreAutoInclude = false;
     private PartitionOrderEnum partitionOrder;
 
     public NavigateOption(EntityMetadata entityMetadata,
@@ -179,5 +180,13 @@ public class NavigateOption {
 
     public void setPartitionOrder(PartitionOrderEnum partitionOrder) {
         this.partitionOrder = partitionOrder;
+    }
+
+    public boolean isIgnoreAutoInclude() {
+        return ignoreAutoInclude;
+    }
+
+    public void setIgnoreAutoInclude(boolean ignoreAutoInclude) {
+        this.ignoreAutoInclude = ignoreAutoInclude;
     }
 }

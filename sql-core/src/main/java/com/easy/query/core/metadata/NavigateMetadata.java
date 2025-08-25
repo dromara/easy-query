@@ -68,6 +68,7 @@ public class NavigateMetadata {
     private final boolean required;
     private final boolean subQueryToGroupJoin;
     private final PartitionOrderEnum partitionOrder;
+    private final boolean ignoreAutoInclude;
 
     public NavigateMetadata(NavigateOption navigateOption,
                             Property<Object, ?> getter,
@@ -95,6 +96,7 @@ public class NavigateMetadata {
         this.required = navigateOption.isRequired();
         this.subQueryToGroupJoin = navigateOption.isSubQueryToGroupJoin();
         this.partitionOrder = navigateOption.getPartitionOrder();
+        this.ignoreAutoInclude = navigateOption.isIgnoreAutoInclude();
         if (EasyArrayUtil.isNotEmpty(directMapping)) {
             this.directMappingMetadataMap = new ConcurrentHashMap<>(2);
         } else {
@@ -326,5 +328,9 @@ public class NavigateMetadata {
 
     public PartitionOrderEnum getPartitionOrder() {
         return partitionOrder;
+    }
+
+    public boolean isIgnoreAutoInclude() {
+        return ignoreAutoInclude;
     }
 }

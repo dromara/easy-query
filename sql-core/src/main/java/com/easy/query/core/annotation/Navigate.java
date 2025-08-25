@@ -157,4 +157,11 @@ public @interface Navigate {
      */
     PartitionOrderEnum partitionOrder() default PartitionOrderEnum.THROW;
 
+    /**
+     * 忽略自动包含
+     * 常用于tree+selectAutoInclude查询防止将children误认为是需要被查询的
+     * @return
+     */
+    boolean ignoreAutoInclude() default false;
+
 }

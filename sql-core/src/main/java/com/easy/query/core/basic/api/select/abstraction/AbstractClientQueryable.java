@@ -824,7 +824,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             SQLActionExpression1<ColumnAsSelector<T1, TR>> selectAllExpression = ColumnAsSelector::columnAll;
             selectAllExpression.apply(sqlColumnSelector);
         } else {
-                processorIncludeRelationProperty(sqlColumnSelector.getSQLNative(), sqlColumnSelector.getTable());
+            processorIncludeRelationProperty(sqlColumnSelector.getSQLNative(), sqlColumnSelector.getTable());
 
         }
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable(resultClass, entityMetadata, entityQueryExpressionBuilder);
@@ -976,7 +976,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
         for (NavigateMetadata resultNavigateMetadata : resultNavigateMetadatas) {
             NavigateMetadata entityNavigateMetadata = entityMetadata.getNavigateOrNull(resultNavigateMetadata.getPropertyName());
-            if (entityNavigateMetadata == null) {
+            if (entityNavigateMetadata == null || resultNavigateMetadata.isIgnoreAutoInclude()) {
                 continue;
             }
             //循环引用检查
