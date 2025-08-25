@@ -59,8 +59,8 @@ public class SysBank2DTO {
                 })
                 .select(u -> Select.of(
                         u.userBooks().count().as(Fields.bookCount),
-                        u.userBooks().orderBy(book -> book.price().desc()).firstElement().name().as(Fields.bookName),
-                        u.userBooks().orderBy(book -> book.price().desc()).firstElement().price().as(Fields.bookPrice)
+                        u.userBooks().orderBy(book -> book.price().desc()).first().name().as(Fields.bookName),
+                        u.userBooks().orderBy(book -> book.price().desc()).first().price().as(Fields.bookPrice)
                 ));
 
         private String id;
