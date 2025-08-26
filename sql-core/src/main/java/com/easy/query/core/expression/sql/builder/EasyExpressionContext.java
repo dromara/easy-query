@@ -81,6 +81,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private ConfigureArgument configureArgument;
     private boolean reverseOrder;
     private Map<Object,Object> flatClassMap;
+    private NavigateMetadata treeCteNavigateMetadata;
 
     public EasyExpressionContext(QueryRuntimeContext runtimeContext, ContextTypeEnum type) {
 
@@ -234,6 +235,16 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
+    public boolean isTreeCTE(NavigateMetadata navigateMetadata) {
+        return Objects.equals(this.treeCteNavigateMetadata,navigateMetadata);
+    }
+
+    @Override
+    public void setTreeCTE(NavigateMetadata navigateMetadata) {
+        this.treeCteNavigateMetadata = navigateMetadata;
+    }
+
+    @Override
     public void executeMethod(ExecuteMethodEnum executeMethod, boolean ifUnknown) {
         if (ifUnknown) {
             if (Objects.equals(ExecuteMethodEnum.UNKNOWN, this.executeMethod)) {
@@ -319,6 +330,7 @@ public class EasyExpressionContext implements ExpressionContext {
         otherExpressionContext.filterConfigure(this.valueFilter);
         otherExpressionContext.setConfigureArgument(this.configureArgument);
         otherExpressionContext.setReverseOrder(this.reverseOrder);
+        otherExpressionContext.setTreeCTE(this.treeCteNavigateMetadata);
         if (hasRelationExtraMetadata()) {
             this.relationExtraMetadata.copyTo(otherExpressionContext.getRelationExtraMetadata());
         }
@@ -438,6 +450,7 @@ public class EasyExpressionContext implements ExpressionContext {
         easyExpressionContext.printNavSQL = this.printNavSQL;
         easyExpressionContext.configureArgument = this.configureArgument;
         easyExpressionContext.reverseOrder = this.reverseOrder;
+        easyExpressionContext.treeCteNavigateMetadata=this.treeCteNavigateMetadata;
         if (hasIncludes()) {
             easyExpressionContext.getIncludes().putAll(this.includes);
         }

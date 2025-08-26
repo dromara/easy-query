@@ -18,6 +18,6 @@ public class MyCategoryVO2 {
     private String parentId;
     private String name;
 
-    @Navigate(value = RelationTypeEnum.OneToMany,selfProperty = "id",targetProperty = "parentId",supportNonEntity = true,ignoreAutoInclude = true)
+    @Navigate(value = RelationTypeEnum.OneToMany,selfProperty = "id",targetProperty = "parentId",supportNonEntity = true)
     private List<MyCategoryVO2> children;
 }

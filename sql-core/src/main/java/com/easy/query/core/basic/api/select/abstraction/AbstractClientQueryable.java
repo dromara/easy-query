@@ -973,10 +973,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (EasyCollectionUtil.isEmpty(resultNavigateMetadatas)) {
             return;
         }
-
         for (NavigateMetadata resultNavigateMetadata : resultNavigateMetadatas) {
             NavigateMetadata entityNavigateMetadata = entityMetadata.getNavigateOrNull(resultNavigateMetadata.getPropertyName());
-            if (entityNavigateMetadata == null || resultNavigateMetadata.isIgnoreAutoInclude()) {
+            if (entityNavigateMetadata == null || resultNavigateMetadata.isIgnoreAutoInclude() || expressionContext.isTreeCTE(entityNavigateMetadata)) {
                 continue;
             }
             //循环引用检查
@@ -1579,6 +1578,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (treeNavigateMetadata == null) {
             throw new EasyQueryInvalidOperationException(treeNavigateMetadataTuple2.t2);
         }
+        //设置哪个导航属性为cte树，selectAutoInclude的时候如果判断为该导航则会默认忽略掉该属性
+        expressionContext.setTreeCTE(treeNavigateMetadata);
         return asTreeCTECustom(treeNavigateMetadata.getSelfPropertiesOrPrimary(), treeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), treeCteConfigurerExpression);
     }
 
@@ -1643,6 +1644,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         this.entityQueryExpressionBuilder.getExpressionContext().extendFrom(innerJoinExpressionContext);
         ClientQueryable<T1> cteQueryable = getCTEJoinQueryable(queryable, cteTableName, codeProperties, parentCodeProperties, up)
                 .where(childFilter != null, (child, parent) -> {
+                    assert childFilter != null;
                     childFilter.apply(child);
                 })
                 .select(thisQueryClass, (t, t1) -> {

@@ -125,6 +125,16 @@ public class EmptyExpressionContext implements ExpressionContext{
     }
 
     @Override
+    public boolean isTreeCTE(NavigateMetadata navigateMetadata) {
+        return false;
+    }
+
+    @Override
+    public void setTreeCTE(NavigateMetadata navigateMetadata) {
+
+    }
+
+    @Override
     public void executeMethod(ExecuteMethodEnum executeMethod, boolean ifUnknown) {
 
     }

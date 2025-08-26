@@ -22,6 +22,7 @@ import com.easy.query.core.metadata.RelationExtraMetadata;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -50,6 +51,9 @@ public interface ExpressionContext extends RuntimeContextAvailable {
     void useInterceptor();
     void noInterceptor();
     Predicate<Interceptor> getInterceptorFilter();
+
+    boolean isTreeCTE(NavigateMetadata navigateMetadata);
+    void setTreeCTE(NavigateMetadata navigateMetadata);
 
    default void executeMethod(ExecuteMethodEnum executeMethod){
        executeMethod(executeMethod,false);
