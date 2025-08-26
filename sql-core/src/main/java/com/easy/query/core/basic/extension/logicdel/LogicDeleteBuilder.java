@@ -15,12 +15,14 @@ public class LogicDeleteBuilder {
     private final Class<?> entityClass;
     private final String propertyName;
     private final Class<?> propertyType;
+    private final String param;
 
-    public LogicDeleteBuilder(Class<?> entityClass,String propertyName,Class<?> propertyType){
+    public LogicDeleteBuilder(Class<?> entityClass, String propertyName, Class<?> propertyType, String param) {
         this.entityClass = entityClass;
 
         this.propertyName = propertyName;
         this.propertyType = propertyType;
+        this.param = param;
     }
 
     /**
@@ -30,8 +32,9 @@ public class LogicDeleteBuilder {
      * @param sqlColumnSetterSQLExpression
      */
     public LogicDeleteMetadata build(SQLActionExpression1<WherePredicate<Object>> sqlWherePredicateSQLExpression, SQLActionExpression1<ColumnSetter<Object>> sqlColumnSetterSQLExpression) {
-         return new LogicDeleteMetadata(propertyName, sqlWherePredicateSQLExpression, sqlColumnSetterSQLExpression);
+        return new LogicDeleteMetadata(propertyName, sqlWherePredicateSQLExpression, sqlColumnSetterSQLExpression);
     }
+
     public String getPropertyName() {
         return propertyName;
     }
@@ -42,5 +45,9 @@ public class LogicDeleteBuilder {
 
     public Class<?> getEntityClass() {
         return entityClass;
+    }
+
+    public String getParam() {
+        return param;
     }
 }
