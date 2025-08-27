@@ -19,10 +19,10 @@ import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.RelationExtraMetadata;
+import com.easy.query.core.metadata.TreeDeepItem;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -38,6 +38,9 @@ public interface ExpressionContext extends RuntimeContextAvailable {
 
     ExpressionContextInterceptor getExpressionContextInterceptor();
 
+    String getTreeDeepColumnName();
+    List<TreeDeepItem> getDeepItems();
+    void setTreeDeepColumnName(String treDeepColumnName);
     String getQuoteName(String value);
     void deleteThrow(boolean ifDeleteThrowException);
     boolean isDeleteThrow();

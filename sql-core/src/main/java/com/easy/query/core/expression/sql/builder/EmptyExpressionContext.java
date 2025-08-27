@@ -20,6 +20,7 @@ import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.RelationExtraMetadata;
+import com.easy.query.core.metadata.TreeDeepItem;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,6 +48,21 @@ public class EmptyExpressionContext implements ExpressionContext{
     @Override
     public ContextTypeEnum getType() {
         return null;
+    }
+
+    @Override
+    public String getTreeDeepColumnName() {
+        return "";
+    }
+
+    @Override
+    public void setTreeDeepColumnName(String treDeepColumnName) {
+
+    }
+
+    @Override
+    public List<TreeDeepItem> getDeepItems() {
+        return Collections.emptyList();
     }
 
     @Override

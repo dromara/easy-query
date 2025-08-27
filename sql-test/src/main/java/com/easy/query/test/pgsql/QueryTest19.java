@@ -18,6 +18,7 @@ import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MyCategory;
 import com.easy.query.test.entity.UUIDEntity;
 import com.easy.query.test.entity.vo.MyCategoryVO2;
+import com.easy.query.test.entity.vo.MyCategoryVO3;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.view.TreeC;
 import org.junit.Assert;
@@ -36,6 +37,27 @@ import java.util.UUID;
  * @author xuejiaming
  */
 public class QueryTest19 extends PgSQLBaseTest {
+    @Test
+    public void tree7() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<MyCategoryVO3> list = entityQuery.queryable(MyCategory.class)
+                .where(m -> {
+                    m.id().eq("1");
+                })
+                .asTreeCTE(op->{
+                    op.setDeepColumnName("deep1");
+                })
+                .selectAutoInclude(MyCategoryVO3.class).toTreeList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("WITH RECURSIVE \"as_tree_cte\" AS ( (SELECT 0 AS \"deep1\",t1.\"id\",t1.\"parent_id\",t1.\"name\" FROM \"category\" t1 WHERE t1.\"id\" = ?)  UNION ALL  (SELECT t2.\"deep1\" + 1 AS \"deep1\",t3.\"id\",t3.\"parent_id\",t3.\"name\" FROM \"as_tree_cte\" t2 INNER JOIN \"category\" t3 ON t3.\"parent_id\" = t2.\"id\") ) SELECT t.\"deep1\",t.\"id\",t.\"parent_id\",t.\"name\" FROM \"as_tree_cte\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
     @Test
     public void tree8() {
 

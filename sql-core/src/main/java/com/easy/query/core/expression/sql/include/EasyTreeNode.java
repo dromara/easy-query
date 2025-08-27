@@ -5,6 +5,7 @@ import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,14 +19,16 @@ public class EasyTreeNode<T> {
     private final RelationValue self;
     private final RelationValue target;
     private final NavigateMetadata navigateMetadata;
+    private final long deep;
 
-    public EasyTreeNode(T entity, RelationValue self, RelationValue target,  NavigateMetadata navigateMetadata) {
+    public EasyTreeNode(T entity, RelationValue self, RelationValue target, NavigateMetadata navigateMetadata, long deep) {
         this.entity = entity;
         this.self = self;
         this.target = target;
         this.navigateMetadata = navigateMetadata;
+        this.deep = deep;
         Object children = navigateMetadata.getGetter().apply(entity);
-        if(children==null){
+        if (children == null) {
             navigateMetadata.getSetter().call(entity, EasyCollectionUtil.emptyList());
         }
     }
@@ -35,11 +38,15 @@ public class EasyTreeNode<T> {
     }
 
     public RelationValue getSelf() {
-        return self;
+        return new MultiRelationValue(Arrays.asList(self, deep), null);
     }
 
     public RelationValue getTarget() {
-        return target;
+        return new MultiRelationValue(Arrays.asList(target, deep - 1), null);
+    }
+
+    public long getDeep() {
+        return deep;
     }
 
     public void setChildren(List<EasyTreeNode<T>> children) {

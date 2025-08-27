@@ -23,6 +23,7 @@ import com.easy.query.test.common.MyQueryConfiguration;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.mysql8.entity.BatchInsert;
+import com.easy.query.test.mysql8.entity.Comment;
 import com.easy.query.test.mysql8.entity.M8Child;
 import com.easy.query.test.mysql8.entity.M8Comment;
 import com.easy.query.test.mysql8.entity.M8Parent;
@@ -120,15 +121,16 @@ public class BaseTest {
 //        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class,SysBank.class, SysBankCard.class,  SysUserBook.class, M8Comment.class));
 //        codeFirstCommand.executeWithTransaction(s -> s.commit());
         CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(SysUser.class, SysBankCard.class, SysBank.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class, M8ParentChild.class,
-                M8Province.class, M8City.class, M8Area.class, M8AreaBuild.class, TreeA.class, TreeB.class, BatchInsert.class));
+                M8Province.class, M8City.class, M8Area.class, M8AreaBuild.class, TreeA.class, TreeB.class, BatchInsert.class, Comment.class));
         codeFirstCommand2.executeWithTransaction(s -> s.commit());
 
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class, SysBank.class, SysBankCard.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class, M8ParentChild.class,
-                M8Province.class, M8City.class, M8Area.class, M8AreaBuild.class,M8AreaBuildLicense.class, TreeA.class, TreeB.class, BatchInsert.class));
+                M8Province.class, M8City.class, M8Area.class, M8AreaBuild.class,M8AreaBuildLicense.class, TreeA.class, TreeB.class, BatchInsert.class,Comment.class));
         codeFirstCommand1.executeWithTransaction(s -> {
             System.out.println(s.getSQL());
             s.commit();
         });
+        easyEntityQuery.deletable(Comment.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(SysBankCard.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(SysBank.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(SysUser.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
@@ -439,6 +441,38 @@ public class BaseTest {
             }
         }
 
+        ArrayList<Comment> mycomments = new ArrayList<>();
+        {
+            Comment comment = new Comment();
+            comment.setId("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d");
+            comment.setParentId("0");
+            comment.setContent("写得真详细");
+            comment.setUserId("3b63ddd9-b038-4c24-969e-8b478fe862a5");
+            comment.setPostId("73f5d341-c6df-43a1-afcd-e246c4d1fcc9");
+            comment.setCreateAt(LocalDateTime.of(2020,1,1,0,0));
+            mycomments.add(comment);
+        }
+        {
+            Comment comment = new Comment();
+            comment.setId("01225d2f-e1a5-46d8-8ef9-535b7b1b7754");
+            comment.setParentId("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d");
+            comment.setContent("@用户E 具体是指哪方面？");
+            comment.setUserId("3b63ddd9-b038-4c24-969e-8b478fe862a5");
+            comment.setPostId("73f5d341-c6df-43a1-afcd-e246c4d1fcc9");
+            comment.setCreateAt(LocalDateTime.of(2020,1,2,0,0));
+            mycomments.add(comment);
+        }
+        {
+            Comment comment = new Comment();
+            comment.setId("1bccba2c-7cff-43af-b117-2e518be4422a");
+            comment.setParentId("01225d2f-e1a5-46d8-8ef9-535b7b1b7754");
+            comment.setContent("@用户E 你是指...");
+            comment.setUserId("3b63ddd9-b038-4c24-969e-8b478fe862a5");
+            comment.setPostId("73f5d341-c6df-43a1-afcd-e246c4d1fcc9");
+            comment.setCreateAt(LocalDateTime.of(2020,1,3,0,0));
+            mycomments.add(comment);
+        }
+
 
         easyEntityQuery.insertable(banks).executeRows();
         easyEntityQuery.insertable(bankCards).executeRows();
@@ -451,6 +485,7 @@ public class BaseTest {
         easyEntityQuery.insertable(areas).batch().executeRows();
         easyEntityQuery.insertable(builds).batch().executeRows();
         easyEntityQuery.insertable(buildLicenses).batch().executeRows();
+        easyEntityQuery.insertable(mycomments).batch().executeRows();
         easyEntityQuery.insertable(Linq.of(parentChildren).orderBy(s -> s.getId()).toList()).batch().executeRows();
         easyEntityQuery.insertable(Linq.of(children).orderBy(s -> s.getId()).toList()).batch().executeRows();
 

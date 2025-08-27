@@ -5,6 +5,7 @@ import com.easy.query.core.common.Chunk;
 import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
+import com.easy.query.core.metadata.TreeDeepItem;
 import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
@@ -532,7 +533,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             }
             return list;
         }
-        return EasyTreeUtil.generateTrees(list, entityMetadata, treeNavigateMetadata, runtimeContext);
+        List<TreeDeepItem> deepItems = this.expressionContext.getDeepItems();
+        String treeDeepColumnName = this.expressionContext.getTreeDeepColumnName();
+        return EasyTreeUtil.generateTrees(list, entityMetadata, treeNavigateMetadata, runtimeContext, treeDeepColumnName, deepItems);
     }
 
 
@@ -1637,7 +1640,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         SQLActionExpression1<WherePredicate<?>> childFilter = treeCTEOption.getChildFilter();
         Class<T1> thisQueryClass = queryClass();
 
-
+        expressionContext.setTreeDeepColumnName(deepColumnName);
         ClientQueryable<T1> queryable = runtimeContext.getSQLClientApiFactory().createSubQueryable(thisQueryClass, runtimeContext, expressionContext);
         ExpressionContext innerJoinExpressionContext = queryable.getSQLEntityExpressionBuilder().getExpressionContext();
         innerJoinExpressionContext.extract(this.entityQueryExpressionBuilder.getExpressionContext());
@@ -1668,6 +1671,16 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             myQueryable.where(o -> o.sqlNativeSegment("{0} <= {1}", c -> {
                 c.columnName(deepColumnName).value(limitDeep);
             }));
+        }
+        EntityTableExpressionBuilder fromTable = queryable.getSQLEntityExpressionBuilder().getFromTable();
+        EntityMetadata entityMetadata = fromTable.getEntityMetadata();
+        //对象没有深度字段
+        String propertyNameOrNull = entityMetadata.getPropertyNameOrNull(deepColumnName);
+        if (propertyNameOrNull == null) {
+            myQueryable.select(o -> {
+                o.columnAll();
+                o.sqlNativeSegment("{0}", c -> c.columnName(deepColumnName));
+            });
         }
         return myQueryable;
     }

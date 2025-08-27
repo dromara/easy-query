@@ -26,6 +26,7 @@ import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.RelationExtraMetadata;
+import com.easy.query.core.metadata.TreeDeepItem;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
@@ -80,8 +81,10 @@ public class EasyExpressionContext implements ExpressionContext {
     private Boolean printNavSQL;
     private ConfigureArgument configureArgument;
     private boolean reverseOrder;
-    private Map<Object,Object> flatClassMap;
+    private Map<Object, Object> flatClassMap;
     private NavigateMetadata treeCteNavigateMetadata;
+    private String treeDeepColumnName;
+    private List<TreeDeepItem> treeDeepItems;
 
     public EasyExpressionContext(QueryRuntimeContext runtimeContext, ContextTypeEnum type) {
 
@@ -127,6 +130,26 @@ public class EasyExpressionContext implements ExpressionContext {
     @Override
     public ContextTypeEnum getType() {
         return null;
+    }
+
+    @Override
+    public String getTreeDeepColumnName() {
+        return treeDeepColumnName;
+    }
+
+    @Override
+    public List<TreeDeepItem> getDeepItems() {
+        return treeDeepItems;
+    }
+
+    @Override
+    public void setTreeDeepColumnName(String treeDeepColumnName) {
+        this.treeDeepColumnName = treeDeepColumnName;
+        if (this.treeDeepColumnName != null) {
+            this.treeDeepItems = new ArrayList<>();
+        } else {
+            this.treeDeepItems = null;
+        }
     }
 
     @Override
@@ -236,7 +259,7 @@ public class EasyExpressionContext implements ExpressionContext {
 
     @Override
     public boolean isTreeCTE(NavigateMetadata navigateMetadata) {
-        return Objects.equals(this.treeCteNavigateMetadata,navigateMetadata);
+        return Objects.equals(this.treeCteNavigateMetadata, navigateMetadata);
     }
 
     @Override
@@ -304,12 +327,13 @@ public class EasyExpressionContext implements ExpressionContext {
             copyDeclareExpression(getDeclareExpressions(), otherExpressionContext.getDeclareExpressions());
         }
     }
-    private void copyDeclareExpression(List<ExpressionBuilder> sourceDeclareExpressions,List<ExpressionBuilder> targetDeclareExpressions){
+
+    private void copyDeclareExpression(List<ExpressionBuilder> sourceDeclareExpressions, List<ExpressionBuilder> targetDeclareExpressions) {
 
         Set<String> cteTables = sourceDeclareExpressions.stream().filter(o -> (o instanceof AnonymousCteTableQueryExpressionBuilder)).map(o -> ((AnonymousCteTableQueryExpressionBuilder) o).getCteTableName()).collect(Collectors.toSet());
         for (ExpressionBuilder declareExpression : targetDeclareExpressions) {
-            if(declareExpression instanceof AnonymousCteTableQueryExpressionBuilder){
-                if(cteTables.contains(((AnonymousCteTableQueryExpressionBuilder) declareExpression).getCteTableName())){
+            if (declareExpression instanceof AnonymousCteTableQueryExpressionBuilder) {
+                if (cteTables.contains(((AnonymousCteTableQueryExpressionBuilder) declareExpression).getCteTableName())) {
                     continue;
                 }
             }
@@ -331,6 +355,7 @@ public class EasyExpressionContext implements ExpressionContext {
         otherExpressionContext.setConfigureArgument(this.configureArgument);
         otherExpressionContext.setReverseOrder(this.reverseOrder);
         otherExpressionContext.setTreeCTE(this.treeCteNavigateMetadata);
+        otherExpressionContext.setTreeDeepColumnName(this.treeDeepColumnName);
         if (hasRelationExtraMetadata()) {
             this.relationExtraMetadata.copyTo(otherExpressionContext.getRelationExtraMetadata());
         }
@@ -450,7 +475,10 @@ public class EasyExpressionContext implements ExpressionContext {
         easyExpressionContext.printNavSQL = this.printNavSQL;
         easyExpressionContext.configureArgument = this.configureArgument;
         easyExpressionContext.reverseOrder = this.reverseOrder;
-        easyExpressionContext.treeCteNavigateMetadata=this.treeCteNavigateMetadata;
+        easyExpressionContext.treeCteNavigateMetadata = this.treeCteNavigateMetadata;
+        if (this.treeDeepColumnName != null) {
+            easyExpressionContext.setTreeDeepColumnName(this.treeDeepColumnName);
+        }
         if (hasIncludes()) {
             easyExpressionContext.getIncludes().putAll(this.includes);
         }

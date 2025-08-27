@@ -12,7 +12,9 @@ import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.dto.MyComment;
 import com.easy.query.test.mysql8.entity.BatchInsert;
+import com.easy.query.test.mysql8.entity.Comment;
 import com.easy.query.test.mysql8.entity.M8Parent;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
@@ -306,6 +308,110 @@ public class MySQL8Test3 extends BaseTest {
             Assert.assertNotNull(batchInsert1);
             Assert.assertEquals(batchInsert1.getId(), batchInsert.getId());
         }
+    }
+
+    @Test
+    public void testTree(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Comment> treeList = easyEntityQuery.queryable(Comment.class)
+                .asTreeCTE()
+                .toTreeList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS ( (SELECT 0 AS `cte_deep`,t1.`id`,t1.`parent_id`,t1.`content`,t1.`user_id`,t1.`post_id`,t1.`create_at` FROM `t_comment` t1)  UNION ALL  (SELECT t2.`cte_deep` + 1 AS `cte_deep`,t3.`id`,t3.`parent_id`,t3.`content`,t3.`user_id`,t3.`post_id`,t3.`create_at` FROM `as_tree_cte` t2 INNER JOIN `t_comment` t3 ON t3.`parent_id` = t2.`id`) ) SELECT t.`id`,t.`parent_id`,t.`content`,t.`user_id`,t.`post_id`,t.`create_at`,t.`cte_deep` FROM `as_tree_cte` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("1(Integer),1(Integer),上城区(String),c1(String),c1(String),杭州(String),false(Boolean),true(Boolean),p1(String),false(Boolean),true(Boolean),p1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        {
+
+            Comment comment = treeList.get(0);
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment.getId());
+            Assert.assertEquals("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d",comment.getParentId());
+            Assert.assertEquals(1,comment.getChildren().size());
+            Comment comment1 = comment.getChildren().get(0);
+            Assert.assertEquals("1bccba2c-7cff-43af-b117-2e518be4422a",comment1.getId());
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment1.getParentId());
+            Assert.assertEquals(0,comment1.getChildren().size());
+        }
+
+        {
+            Comment comment = treeList.get(1);
+            Assert.assertEquals("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d",comment.getId());
+            Assert.assertEquals("0",comment.getParentId());
+            Assert.assertEquals(1,comment.getChildren().size());
+            Comment comment1 = comment.getChildren().get(0);
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment1.getId());
+            Assert.assertEquals("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d",comment1.getParentId());
+            Assert.assertEquals(1,comment1.getChildren().size());
+            Comment comment2 = comment1.getChildren().get(0);
+            Assert.assertEquals("1bccba2c-7cff-43af-b117-2e518be4422a",comment2.getId());
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment2.getParentId());
+            Assert.assertEquals(0,comment2.getChildren().size());
+        }
+        {
+            Comment comment = treeList.get(2);
+            Assert.assertEquals("1bccba2c-7cff-43af-b117-2e518be4422a",comment.getId());
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment.getParentId());
+            Assert.assertEquals(0,comment.getChildren().size());
+
+        }
+
+    }
+    @Test
+    public void testTree2(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<MyComment> treeList = easyEntityQuery.queryable(Comment.class)
+                .asTreeCTE(o->{
+                    o.setDeepColumnName("deep");
+                })
+                .selectAutoInclude(MyComment.class)
+                .toTreeList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS ( (SELECT 0 AS `deep`,t1.`id`,t1.`parent_id`,t1.`content`,t1.`user_id`,t1.`post_id`,t1.`create_at` FROM `t_comment` t1)  UNION ALL  (SELECT t2.`deep` + 1 AS `deep`,t3.`id`,t3.`parent_id`,t3.`content`,t3.`user_id`,t3.`post_id`,t3.`create_at` FROM `as_tree_cte` t2 INNER JOIN `t_comment` t3 ON t3.`parent_id` = t2.`id`) ) SELECT t.`id`,t.`parent_id`,t.`content`,t.`user_id`,t.`post_id`,t.`create_at`,t.`deep`,t.`id`,t.`parent_id`,t.`content`,t.`user_id`,t.`post_id`,t.`create_at` FROM `as_tree_cte` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("1(Integer),1(Integer),上城区(String),c1(String),c1(String),杭州(String),false(Boolean),true(Boolean),p1(String),false(Boolean),true(Boolean),p1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        {
+
+            MyComment comment = treeList.get(0);
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment.getId());
+            Assert.assertEquals("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d",comment.getParentId());
+            Assert.assertEquals(1,comment.getChildren().size());
+            MyComment comment1 = comment.getChildren().get(0);
+            Assert.assertEquals("1bccba2c-7cff-43af-b117-2e518be4422a",comment1.getId());
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment1.getParentId());
+            Assert.assertEquals(0,comment1.getChildren().size());
+        }
+
+        {
+            MyComment comment = treeList.get(1);
+            Assert.assertEquals("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d",comment.getId());
+            Assert.assertEquals("0",comment.getParentId());
+            Assert.assertEquals(1,comment.getChildren().size());
+            MyComment comment1 = comment.getChildren().get(0);
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment1.getId());
+            Assert.assertEquals("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d",comment1.getParentId());
+            Assert.assertEquals(1,comment1.getChildren().size());
+            MyComment comment2 = comment1.getChildren().get(0);
+            Assert.assertEquals("1bccba2c-7cff-43af-b117-2e518be4422a",comment2.getId());
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment2.getParentId());
+            Assert.assertEquals(0,comment2.getChildren().size());
+        }
+        {
+            MyComment comment = treeList.get(2);
+            Assert.assertEquals("1bccba2c-7cff-43af-b117-2e518be4422a",comment.getId());
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment.getParentId());
+            Assert.assertEquals(0,comment.getChildren().size());
+
+        }
+
     }
 
 }

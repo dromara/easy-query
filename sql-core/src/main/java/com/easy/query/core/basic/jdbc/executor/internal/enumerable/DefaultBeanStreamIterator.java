@@ -6,14 +6,18 @@ import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
+import com.easy.query.core.basic.jdbc.executor.impl.def.DeepResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.impl.def.RelationExtraResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
+import com.easy.query.core.basic.jdbc.executor.internal.props.BasicJdbcProperty;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.BeanDataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.DataReader;
+import com.easy.query.core.basic.jdbc.executor.internal.reader.DeepColumnDataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.EmptyDataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.PartByPropertyDataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.PropertyDataReader;
 import com.easy.query.core.basic.jdbc.executor.internal.reader.RelationExtraPropertyDataReader;
+import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.common.KeywordTool;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -26,6 +30,7 @@ import com.easy.query.core.util.EasyTrackUtil;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * create time 2023/7/31 16:08
@@ -106,18 +111,9 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
             }
             ResultColumnMetadata resultColumnMetadata = getMapColumnMetadata(i, colName, mapToBeanStrict);
             if (resultColumnMetadata == null) {
-                if (relationExtraMetadata != null) {
-                    Map<String, RelationExtraColumn> relationExtraColumnMap = relationExtraMetadata.getRelationExtraColumnMap();
-                    RelationExtraColumn relationExtraColumn = relationExtraColumnMap.get(colName);
-                    if (relationExtraColumn != null) {
-                        RelationExtraResultColumnMetadata relationExtraResultColumnMetadata = new RelationExtraResultColumnMetadata(i, relationExtraMetadata, relationExtraColumn);
-                        dataReader = new BeanDataReader(dataReader, new RelationExtraPropertyDataReader(relationExtraResultColumnMetadata));
-                        continue;
-                    } else if (easyQueryOption.isWarningColumnMiss()) {
-                        log.warn("!!!sql result column name:[" + colName + "] mapping miss in class:[" + EasyClassUtil.getSimpleName(resultMetadata.getResultClass()) + "]");
-                    }
-                } else if (easyQueryOption.isWarningColumnMiss()) {
-                    log.warn("!!!sql result column name:[" + colName + "] mapping miss in class:[" + EasyClassUtil.getSimpleName(resultMetadata.getResultClass()) + "]");
+                DataReader reader = appendBeanDataReader(i, colName, dataReader);
+                if (reader != null) {
+                    dataReader = reader;
                 }
                 continue;
             }
@@ -128,6 +124,32 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
             }
         }
         return dataReader;
+    }
+
+    private DataReader appendBeanDataReader(int i, String colName, DataReader dataReader) {
+
+        boolean isDeepColumn = Objects.equals(context.getExpressionContext().getTreeDeepColumnName(), colName);
+        if (relationExtraMetadata != null) {
+            Map<String, RelationExtraColumn> relationExtraColumnMap = relationExtraMetadata.getRelationExtraColumnMap();
+            RelationExtraColumn relationExtraColumn = relationExtraColumnMap.get(colName);
+            if (relationExtraColumn != null) {
+                RelationExtraResultColumnMetadata relationExtraResultColumnMetadata = new RelationExtraResultColumnMetadata(i, relationExtraMetadata, relationExtraColumn);
+                return new BeanDataReader(dataReader, new RelationExtraPropertyDataReader(relationExtraResultColumnMetadata));
+            }
+        }
+        if (isDeepColumn) {
+            BasicJdbcProperty basicJdbcProperty = new BasicJdbcProperty(i, Long.class);
+            JdbcTypeHandler jdbcTypeHandler = context.getRuntimeContext().getJdbcTypeHandlerManager().getHandler(long.class);
+            DeepResultColumnMetadata deepResultColumnMetadata = new DeepResultColumnMetadata(context.getExpressionContext().getDeepItems(), jdbcTypeHandler, basicJdbcProperty);
+            return new BeanDataReader(dataReader, new DeepColumnDataReader(deepResultColumnMetadata));
+        } else {
+            if (easyQueryOption.isWarningColumnMiss()) {
+                log.warn("!!!sql result column name:[" + colName + "] mapping miss in class:[" + EasyClassUtil.getSimpleName(resultMetadata.getResultClass()) + "]");
+            }
+        }
+
+        return null;
+
     }
 
     private ColumnReader getValueConverterColumnReader(ResultColumnMetadata resultColumnMetadata) {
