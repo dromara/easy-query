@@ -12,6 +12,7 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.tree.TreeCTEOption;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.expression.sql.builder.internal.ExpressionContextInterceptor;
@@ -51,12 +52,12 @@ public class EmptyExpressionContext implements ExpressionContext{
     }
 
     @Override
-    public String getTreeDeepColumnName() {
-        return "";
+    public TreeCTEOption getTreeCTEOption() {
+        return null;
     }
 
     @Override
-    public void setTreeDeepColumnName(String treDeepColumnName) {
+    public void setTreeCTEOption(TreeCTEOption treeCTEOption) {
 
     }
 

@@ -2,7 +2,6 @@ package com.easy.query.core.expression.sql.builder;
 
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.basic.extension.conversion.ColumnReader;
-import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.configuration.EasyQueryOption;
@@ -17,6 +16,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.builder.core.ValueFilterFactory;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.tree.TreeCTEOption;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousCteTableQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
@@ -30,7 +30,6 @@ import com.easy.query.core.metadata.TreeDeepItem;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -83,7 +82,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private boolean reverseOrder;
     private Map<Object, Object> flatClassMap;
     private NavigateMetadata treeCteNavigateMetadata;
-    private String treeDeepColumnName;
+    private TreeCTEOption treeCTEOption;
     private List<TreeDeepItem> treeDeepItems;
 
     public EasyExpressionContext(QueryRuntimeContext runtimeContext, ContextTypeEnum type) {
@@ -133,8 +132,8 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
-    public String getTreeDeepColumnName() {
-        return treeDeepColumnName;
+    public TreeCTEOption getTreeCTEOption() {
+        return treeCTEOption;
     }
 
     @Override
@@ -143,9 +142,9 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
-    public void setTreeDeepColumnName(String treeDeepColumnName) {
-        this.treeDeepColumnName = treeDeepColumnName;
-        if (this.treeDeepColumnName != null) {
+    public void setTreeCTEOption(TreeCTEOption treeCTEOption) {
+        this.treeCTEOption = treeCTEOption;
+        if (this.treeCTEOption != null) {
             this.treeDeepItems = new ArrayList<>();
         } else {
             this.treeDeepItems = null;
@@ -355,7 +354,7 @@ public class EasyExpressionContext implements ExpressionContext {
         otherExpressionContext.setConfigureArgument(this.configureArgument);
         otherExpressionContext.setReverseOrder(this.reverseOrder);
         otherExpressionContext.setTreeCTE(this.treeCteNavigateMetadata);
-        otherExpressionContext.setTreeDeepColumnName(this.treeDeepColumnName);
+        otherExpressionContext.setTreeCTEOption(this.treeCTEOption);
         if (hasRelationExtraMetadata()) {
             this.relationExtraMetadata.copyTo(otherExpressionContext.getRelationExtraMetadata());
         }
@@ -476,9 +475,7 @@ public class EasyExpressionContext implements ExpressionContext {
         easyExpressionContext.configureArgument = this.configureArgument;
         easyExpressionContext.reverseOrder = this.reverseOrder;
         easyExpressionContext.treeCteNavigateMetadata = this.treeCteNavigateMetadata;
-        if (this.treeDeepColumnName != null) {
-            easyExpressionContext.setTreeDeepColumnName(this.treeDeepColumnName);
-        }
+        easyExpressionContext.setTreeCTEOption(this.treeCTEOption);
         if (hasIncludes()) {
             easyExpressionContext.getIncludes().putAll(this.includes);
         }

@@ -14,43 +14,15 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class EasyTreeNode<T> {
-    private final T entity;
-    private final RelationValue self;
-    private final RelationValue target;
-    private final NavigateMetadata navigateMetadata;
-    private final long deep;
+public interface EasyTreeNode<T> {
 
-    public EasyTreeNode(T entity, RelationValue self, RelationValue target, NavigateMetadata navigateMetadata, long deep) {
-        this.entity = entity;
-        this.self = self;
-        this.target = target;
-        this.navigateMetadata = navigateMetadata;
-        this.deep = deep;
-        Object children = navigateMetadata.getGetter().apply(entity);
-        if (children == null) {
-            navigateMetadata.getSetter().call(entity, EasyCollectionUtil.emptyList());
-        }
-    }
+    T getEntity();
 
-    public T getEntity() {
-        return entity;
-    }
+    RelationValue getSelf();
 
-    public RelationValue getSelf() {
-        return new MultiRelationValue(Arrays.asList(self, deep), null);
-    }
+    RelationValue getTarget();
 
-    public RelationValue getTarget() {
-        return new MultiRelationValue(Arrays.asList(target, deep - 1), null);
-    }
+    long getDeep();
 
-    public long getDeep() {
-        return deep;
-    }
-
-    public void setChildren(List<EasyTreeNode<T>> children) {
-        List<T> select = EasyCollectionUtil.select(children, (e, i) -> e.getEntity());
-        navigateMetadata.getSetter().call(entity, select);
-    }
+    void setChildren(List<EasyTreeNode<T>> children);
 }

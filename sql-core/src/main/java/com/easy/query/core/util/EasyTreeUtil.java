@@ -2,6 +2,10 @@ package com.easy.query.core.util;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.parser.core.base.tree.TreeCTEOption;
+import com.easy.query.core.expression.sql.include.EasyTreeNodeDown;
+import com.easy.query.core.expression.sql.include.EasyTreeNodeUp;
+import com.easy.query.core.expression.sql.include.MultiRelationValue;
 import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.expression.sql.include.EasyTreeNode;
 import com.easy.query.core.expression.sql.include.relation.RelationValueColumnMetadata;
@@ -16,6 +20,7 @@ import com.easy.query.core.util.common.PropertyTreeDeepItemAvailable;
 import com.easy.query.core.util.common.TreeDeepItemAvailable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -38,27 +43,19 @@ public class EasyTreeUtil {
      * @param <T>   节点类型
      * @return 树形结构列表
      */
-    public static <T> List<T> generateTrees(List<T> nodes, EntityMetadata entityMetadata, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext, String treeDeepColumnName, List<TreeDeepItem> deepItems) {
+    public static <T> List<T> generateTrees(List<T> nodes, EntityMetadata entityMetadata, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext, TreeCTEOption treeCTEOption, List<TreeDeepItem> deepItems) {
 
         RelationValueColumnMetadataFactory relationValueColumnMetadataFactory = runtimeContext.getRelationValueColumnMetadataFactory();
         RelationValueColumnMetadata selfRelationValueColumnMetadata = relationValueColumnMetadataFactory.create(entityMetadata, navigateMetadata.getSelfPropertiesOrPrimary());
         RelationValueColumnMetadata targetRelationValueColumnMetadata = relationValueColumnMetadataFactory.create(entityMetadata, navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
-        TreeDeepItemAvailable treeDeepItemAvailable = getTreeDeepItemAvailable(entityMetadata, treeDeepColumnName, deepItems);
+        TreeDeepItemAvailable treeDeepItemAvailable = getTreeDeepItemAvailable(entityMetadata, treeCTEOption, deepItems);
 
         List<EasyTreeNode<T>> roots = new ArrayList<>();
-        ArrayList<EasyTreeNode<T>> easyTreeNodes = new ArrayList<>();
-        int i=0;
-        for (T node : nodes) {
-            RelationValue selfValue = selfRelationValueColumnMetadata.getRelationValue(node);
-            RelationValue targetValue = targetRelationValueColumnMetadata.getRelationValue(node);
-            long deep = treeDeepItemAvailable.getDeep(node, i);
-            EasyTreeNode<T> easyTreeNode = new EasyTreeNode<>(node, selfValue, targetValue, navigateMetadata,deep);
-            if(deep==0){
-                roots.add(easyTreeNode);
-            }else{
-                easyTreeNodes.add(easyTreeNode);
-            }
-            i++;
+        List<EasyTreeNode<T>> easyTreeNodes = new ArrayList<>();
+        if (treeCTEOption.isUp()) {
+            flatNodeToTreeNodeUp(nodes, roots, easyTreeNodes, selfRelationValueColumnMetadata, targetRelationValueColumnMetadata, navigateMetadata, treeDeepItemAvailable);
+        } else {
+            flatNodeToTreeNodeDown(nodes, roots, easyTreeNodes, selfRelationValueColumnMetadata, targetRelationValueColumnMetadata, navigateMetadata, treeDeepItemAvailable);
         }
 
         roots.forEach(r -> {
@@ -67,11 +64,65 @@ public class EasyTreeUtil {
         return roots.stream().map(EasyTreeNode::getEntity).collect(Collectors.toList());
     }
 
-    private static TreeDeepItemAvailable getTreeDeepItemAvailable(EntityMetadata entityMetadata, String treeDeepColumnName, List<TreeDeepItem> deepItems) {
+    private static <T> void flatNodeToTreeNodeUp(List<T> nodes,
+                                                 List<EasyTreeNode<T>> roots,
+                                                 List<EasyTreeNode<T>> easyTreeNodes,
+                                                 RelationValueColumnMetadata selfRelationValueColumnMetadata,
+                                                 RelationValueColumnMetadata targetRelationValueColumnMetadata,
+                                                 NavigateMetadata navigateMetadata,
+                                                 TreeDeepItemAvailable treeDeepItemAvailable) {
+
+        Map<RelationValue, T> targetMap = new HashMap<>();
+        int i = 0;
+        for (T node : nodes) {
+            RelationValue selfValue = selfRelationValueColumnMetadata.getRelationValue(node);
+            RelationValue targetValue = targetRelationValueColumnMetadata.getRelationValue(node);
+            long deep = treeDeepItemAvailable.getDeep(node, i);
+            EasyTreeNodeUp<T> tEasyTreeNodeUp = new EasyTreeNodeUp<>(node, selfValue, targetValue, navigateMetadata, deep);
+            targetMap.put(tEasyTreeNodeUp.getSelf(), node);
+            easyTreeNodes.add(tEasyTreeNodeUp);
+            i++;
+        }
+        Iterator<EasyTreeNode<T>> nodeIterator = easyTreeNodes.iterator();
+        while (nodeIterator.hasNext()){
+            EasyTreeNode<T> node = nodeIterator.next();
+            boolean root = !targetMap.containsKey(node.getTarget());
+            if (root) {
+                roots.add(node);
+                // 从所有节点列表中删除该节点，以免后续重复遍历该节点
+                nodeIterator.remove();
+            }
+        }
+    }
+
+    private static <T> void flatNodeToTreeNodeDown(List<T> nodes,
+                                                   List<EasyTreeNode<T>> roots,
+                                                   List<EasyTreeNode<T>> easyTreeNodes,
+                                                   RelationValueColumnMetadata selfRelationValueColumnMetadata,
+                                                   RelationValueColumnMetadata targetRelationValueColumnMetadata,
+                                                   NavigateMetadata navigateMetadata,
+                                                   TreeDeepItemAvailable treeDeepItemAvailable) {
+
+        int i = 0;
+        for (T node : nodes) {
+            RelationValue selfValue = selfRelationValueColumnMetadata.getRelationValue(node);
+            RelationValue targetValue = targetRelationValueColumnMetadata.getRelationValue(node);
+            long deep = treeDeepItemAvailable.getDeep(node, i);
+            EasyTreeNode<T> easyTreeNode = new EasyTreeNodeDown<>(node, selfValue, targetValue, navigateMetadata, deep);
+            if (deep == 0) {
+                roots.add(easyTreeNode);
+            } else {
+                easyTreeNodes.add(easyTreeNode);
+            }
+            i++;
+        }
+    }
+
+    private static TreeDeepItemAvailable getTreeDeepItemAvailable(EntityMetadata entityMetadata, TreeCTEOption treeCTEOption, List<TreeDeepItem> deepItems) {
         if (EasyCollectionUtil.isEmpty(deepItems)) {
-            String propertyNameOrNull = entityMetadata.getPropertyNameOrNull(treeDeepColumnName);
+            String propertyNameOrNull = entityMetadata.getPropertyNameOrNull(treeCTEOption.getDeepColumnName());
             if (propertyNameOrNull == null) {
-                throw new EasyQueryInvalidOperationException("Unable to obtain depth information, so the corresponding tree structure cannot be constructed. deep column:[" + treeDeepColumnName + "]");
+                throw new EasyQueryInvalidOperationException("Unable to obtain depth information, so the corresponding tree structure cannot be constructed. deep column:[" + treeCTEOption.getDeepColumnName() + "]");
             }
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyNameOrNull);
             return new PropertyTreeDeepItemAvailable(columnMetadata);

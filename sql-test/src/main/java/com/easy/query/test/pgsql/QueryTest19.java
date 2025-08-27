@@ -7,6 +7,7 @@ import com.easy.query.api.proxy.key.MapKey;
 import com.easy.query.api.proxy.key.MapKeys;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
 import com.easy.query.core.proxy.grouping.Grouping1;
@@ -636,6 +637,8 @@ public class QueryTest19 extends PgSQLBaseTest {
 
     @Test
     public  void cteViewTree1(){
+        ServiceProvider service = entityQuery.getRuntimeContext().getService(ServiceProvider.class);
+
         List<TreeC> list = entityQuery.queryable(TreeC.class)
                 .asTreeCTE()
                 .toList();

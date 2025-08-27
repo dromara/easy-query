@@ -11,6 +11,7 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.parser.core.base.tree.TreeCTEOption;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.expression.sql.builder.internal.ExpressionContextInterceptor;
@@ -38,9 +39,9 @@ public interface ExpressionContext extends RuntimeContextAvailable {
 
     ExpressionContextInterceptor getExpressionContextInterceptor();
 
-    String getTreeDeepColumnName();
+    TreeCTEOption getTreeCTEOption();
     List<TreeDeepItem> getDeepItems();
-    void setTreeDeepColumnName(String treDeepColumnName);
+    void setTreeCTEOption(TreeCTEOption treeCTEOption);
     String getQuoteName(String value);
     void deleteThrow(boolean ifDeleteThrowException);
     boolean isDeleteThrow();

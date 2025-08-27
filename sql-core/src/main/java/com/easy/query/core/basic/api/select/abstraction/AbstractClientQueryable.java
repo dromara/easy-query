@@ -534,8 +534,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             return list;
         }
         List<TreeDeepItem> deepItems = this.expressionContext.getDeepItems();
-        String treeDeepColumnName = this.expressionContext.getTreeDeepColumnName();
-        return EasyTreeUtil.generateTrees(list, entityMetadata, treeNavigateMetadata, runtimeContext, treeDeepColumnName, deepItems);
+        TreeCTEOption treeCTEOption = this.expressionContext.getTreeCTEOption();
+        return EasyTreeUtil.generateTrees(list, entityMetadata, treeNavigateMetadata, runtimeContext, treeCTEOption, deepItems);
     }
 
 
@@ -1155,15 +1155,15 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         //todo include
         EasySQLExpressionUtil.appendSelfExtraTargetProperty(entityQueryExpressionBuilder, sqlColumnSelector.getSQLNative(), sqlColumnSelector.getTable());
         // 是否是cte
-        String treeDeepColumnName = entityQueryExpressionBuilder.getExpressionContext().getTreeDeepColumnName();
-        if(treeDeepColumnName!=null){
+        TreeCTEOption treeCTEOption = entityQueryExpressionBuilder.getExpressionContext().getTreeCTEOption();
+        if (treeCTEOption != null) {
 
             EntityTableExpressionBuilder fromTable = entityQueryExpressionBuilder.getFromTable();
             EntityMetadata entityMetadata = fromTable.getEntityMetadata();
             //对象没有深度字段
-            String propertyNameOrNull = entityMetadata.getPropertyNameOrNull(treeDeepColumnName);
+            String propertyNameOrNull = entityMetadata.getPropertyNameOrNull(treeCTEOption.getDeepColumnName());
             if (propertyNameOrNull == null) {
-                sqlColumnSelector.sqlNativeSegment("{0}", c -> c.columnName(treeDeepColumnName));
+                sqlColumnSelector.sqlNativeSegment("{0}", c -> c.columnName(treeCTEOption.getDeepColumnName()));
             }
         }
     }
@@ -1652,7 +1652,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         SQLActionExpression1<WherePredicate<?>> childFilter = treeCTEOption.getChildFilter();
         Class<T1> thisQueryClass = queryClass();
 
-        expressionContext.setTreeDeepColumnName(deepColumnName);
+        expressionContext.setTreeCTEOption(treeCTEOption);
         ClientQueryable<T1> queryable = runtimeContext.getSQLClientApiFactory().createSubQueryable(thisQueryClass, runtimeContext, expressionContext);
         ExpressionContext innerJoinExpressionContext = queryable.getSQLEntityExpressionBuilder().getExpressionContext();
         innerJoinExpressionContext.extract(this.entityQueryExpressionBuilder.getExpressionContext());

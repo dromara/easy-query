@@ -19,6 +19,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.reader.PropertyDataReade
 import com.easy.query.core.basic.jdbc.executor.internal.reader.RelationExtraPropertyDataReader;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.common.KeywordTool;
+import com.easy.query.core.expression.parser.core.base.tree.TreeCTEOption;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.RelationExtraColumn;
@@ -127,8 +128,8 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
     }
 
     private DataReader appendBeanDataReader(int i, String colName, DataReader dataReader) {
-
-        boolean isDeepColumn = Objects.equals(context.getExpressionContext().getTreeDeepColumnName(), colName);
+        TreeCTEOption treeCTEOption = context.getExpressionContext().getTreeCTEOption();
+        boolean isDeepColumn = treeCTEOption != null && Objects.equals(treeCTEOption.getDeepColumnName(), colName);
         if (relationExtraMetadata != null) {
             Map<String, RelationExtraColumn> relationExtraColumnMap = relationExtraMetadata.getRelationExtraColumnMap();
             RelationExtraColumn relationExtraColumn = relationExtraColumnMap.get(colName);
