@@ -375,7 +375,7 @@ public class MySQL8Test3 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS ( (SELECT 0 AS `deep`,t1.`id`,t1.`parent_id`,t1.`content`,t1.`user_id`,t1.`post_id`,t1.`create_at` FROM `t_comment` t1)  UNION ALL  (SELECT t2.`deep` + 1 AS `deep`,t3.`id`,t3.`parent_id`,t3.`content`,t3.`user_id`,t3.`post_id`,t3.`create_at` FROM `as_tree_cte` t2 INNER JOIN `t_comment` t3 ON t3.`parent_id` = t2.`id`) ) SELECT t.`id`,t.`parent_id`,t.`content`,t.`user_id`,t.`post_id`,t.`create_at`,t.`deep`,t.`id`,t.`parent_id`,t.`content`,t.`user_id`,t.`post_id`,t.`create_at` FROM `as_tree_cte` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS ( (SELECT 0 AS `deep`,t1.`id`,t1.`parent_id`,t1.`content`,t1.`user_id`,t1.`post_id`,t1.`create_at` FROM `t_comment` t1)  UNION ALL  (SELECT t2.`deep` + 1 AS `deep`,t3.`id`,t3.`parent_id`,t3.`content`,t3.`user_id`,t3.`post_id`,t3.`create_at` FROM `as_tree_cte` t2 INNER JOIN `t_comment` t3 ON t3.`parent_id` = t2.`id`) ) SELECT t.`id`,t.`parent_id`,t.`content`,t.`user_id`,t.`post_id`,t.`create_at`,t.`deep` FROM `as_tree_cte` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //        Assert.assertEquals("1(Integer),1(Integer),上城区(String),c1(String),c1(String),杭州(String),false(Boolean),true(Boolean),p1(String),false(Boolean),true(Boolean),p1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
         {

@@ -1154,6 +1154,18 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         //如果存在include那么需要对当前结果进行查询
         //todo include
         EasySQLExpressionUtil.appendSelfExtraTargetProperty(entityQueryExpressionBuilder, sqlColumnSelector.getSQLNative(), sqlColumnSelector.getTable());
+        // 是否是cte
+        String treeDeepColumnName = entityQueryExpressionBuilder.getExpressionContext().getTreeDeepColumnName();
+        if(treeDeepColumnName!=null){
+
+            EntityTableExpressionBuilder fromTable = entityQueryExpressionBuilder.getFromTable();
+            EntityMetadata entityMetadata = fromTable.getEntityMetadata();
+            //对象没有深度字段
+            String propertyNameOrNull = entityMetadata.getPropertyNameOrNull(treeDeepColumnName);
+            if (propertyNameOrNull == null) {
+                sqlColumnSelector.sqlNativeSegment("{0}", c -> c.columnName(treeDeepColumnName));
+            }
+        }
     }
 
     @Override
@@ -1672,16 +1684,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 c.columnName(deepColumnName).value(limitDeep);
             }));
         }
-        EntityTableExpressionBuilder fromTable = queryable.getSQLEntityExpressionBuilder().getFromTable();
-        EntityMetadata entityMetadata = fromTable.getEntityMetadata();
-        //对象没有深度字段
-        String propertyNameOrNull = entityMetadata.getPropertyNameOrNull(deepColumnName);
-        if (propertyNameOrNull == null) {
-            myQueryable.select(o -> {
-                o.columnAll();
-                o.sqlNativeSegment("{0}", c -> c.columnName(deepColumnName));
-            });
-        }
+
         return myQueryable;
     }
 
