@@ -13,6 +13,7 @@ import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.dto.MyComment;
+import com.easy.query.test.mysql8.dto.MyComment2;
 import com.easy.query.test.mysql8.entity.BatchInsert;
 import com.easy.query.test.mysql8.entity.Comment;
 import com.easy.query.test.mysql8.entity.M8Parent;
@@ -65,7 +66,7 @@ public class MySQL8Test3 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
         EasyPageResult<Draft1<String>> pageResult = easyEntityQuery.queryable(SysUser.class)
-                .thisConfigure(o->thisConfigure(o))
+                .thisConfigure(o -> thisConfigure(o))
                 .where(user -> {
                     user.name().eq("");
                 }).orderBy(user -> {
@@ -89,19 +90,19 @@ public class MySQL8Test3 extends BaseTest {
 
     }
 
-    public static  <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> EntityQueryable<T1Proxy, T1> thisConfigure(EntityQueryable<T1Proxy, T1> queryable) {
+    public static <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> EntityQueryable<T1Proxy, T1> thisConfigure(EntityQueryable<T1Proxy, T1> queryable) {
         return queryable.filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN));
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN));
     }
 
     @Test
-    public void testFlatElement(){
+    public void testFlatElement() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<M8Province> list = easyEntityQuery.queryable(M8Province.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(m -> {
                     m.cities().flatElement().areas().flatElement().name().eq("123");
                 }).toList();
@@ -114,16 +115,16 @@ public class MySQL8Test3 extends BaseTest {
     }
 
     @Test
-    public void testFlatElement1(){
+    public void testFlatElement1() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<M8Province> list = easyEntityQuery.queryable(M8Province.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(m -> {
-                    m.cities().any(a->{
+                    m.cities().any(a -> {
                         a.areas().flatElement().name().eq("123");
                     });
                 }).toList();
@@ -134,10 +135,10 @@ public class MySQL8Test3 extends BaseTest {
         Assert.assertEquals("1(Integer),1(Integer),123(String),false(Boolean),true(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
 
-
     }
+
     @Test
-    public void testFlatElement2(){
+    public void testFlatElement2() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -155,15 +156,16 @@ public class MySQL8Test3 extends BaseTest {
 
 
     }
+
     @Test
-    public void testFlatElement3(){
+    public void testFlatElement3() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<M8Province> list = easyEntityQuery.queryable(M8Province.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(m -> {
                     m.cities().flatElement().areas().flatElement().builds().flatElement().name().eq("科创楼");
                 }).toList();
@@ -180,13 +182,13 @@ public class MySQL8Test3 extends BaseTest {
     }
 
     @Test
-    public void testGroupJoin(){
+    public void testGroupJoin() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<M8Province> list = easyEntityQuery.queryable(M8Province.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(m -> {
                     m.cities().flatElement().name().eq("杭州");
                     m.id().eq("p1");
@@ -199,17 +201,18 @@ public class MySQL8Test3 extends BaseTest {
 
 
     }
+
     @Test
-    public void testGroupJoin2(){
+    public void testGroupJoin2() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<M8Province> list = easyEntityQuery.queryable(M8Province.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(m -> {
                     m.cities().flatElement().name().eq("杭州");
-                    m.id().in(Arrays.asList("p1","p2"));
+                    m.id().in(Arrays.asList("p1", "p2"));
                 }).toList();
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -219,20 +222,21 @@ public class MySQL8Test3 extends BaseTest {
 
 
     }
+
     @Test
-    public void testGroupJoin3(){
+    public void testGroupJoin3() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<M8Province> list = easyEntityQuery.queryable(M8Province.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(m -> {
                     m.cities().flatElement().name().eq("杭州");
-                    m.or(()->{
+                    m.or(() -> {
                         m.id().eq("p1");
                         m.id().eq("p2");
-                        m.id().in(Arrays.asList("p3","p4"));
+                        m.id().in(Arrays.asList("p3", "p4"));
                     });
                 }).toList();
         listenerContextManager.clear();
@@ -243,16 +247,17 @@ public class MySQL8Test3 extends BaseTest {
 
 
     }
+
     @Test
-    public void testGroupJoin4(){
+    public void testGroupJoin4() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<M8Province> list = easyEntityQuery.queryable(M8Province.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(m -> {
-                    m.cities().any(c->{
+                    m.cities().any(c -> {
                         c.id().eq("c1");
                         c.name().eq("杭州");
 
@@ -268,15 +273,16 @@ public class MySQL8Test3 extends BaseTest {
 
 
     }
+
     @Test
-    public void testMany2Many(){
+    public void testMany2Many() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<M8Parent> list = easyEntityQuery.queryable(M8Parent.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(m -> {
                     m.children2().flatElement().name().eq("123");
                     m.id().eq("123");
@@ -290,7 +296,7 @@ public class MySQL8Test3 extends BaseTest {
     }
 
     @Test
-     public void batchTest(){
+    public void batchTest() {
         ArrayList<BatchInsert> batchInserts = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             BatchInsert batchInsert = new BatchInsert();
@@ -311,7 +317,7 @@ public class MySQL8Test3 extends BaseTest {
     }
 
     @Test
-    public void testTree(){
+    public void testTree() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -328,46 +334,47 @@ public class MySQL8Test3 extends BaseTest {
         {
 
             Comment comment = treeList.get(0);
-            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment.getId());
-            Assert.assertEquals("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d",comment.getParentId());
-            Assert.assertEquals(1,comment.getChildren().size());
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754", comment.getId());
+            Assert.assertEquals("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d", comment.getParentId());
+            Assert.assertEquals(1, comment.getChildren().size());
             Comment comment1 = comment.getChildren().get(0);
-            Assert.assertEquals("1bccba2c-7cff-43af-b117-2e518be4422a",comment1.getId());
-            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment1.getParentId());
-            Assert.assertEquals(0,comment1.getChildren().size());
+            Assert.assertEquals("1bccba2c-7cff-43af-b117-2e518be4422a", comment1.getId());
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754", comment1.getParentId());
+            Assert.assertEquals(0, comment1.getChildren().size());
         }
 
         {
             Comment comment = treeList.get(1);
-            Assert.assertEquals("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d",comment.getId());
-            Assert.assertEquals("0",comment.getParentId());
-            Assert.assertEquals(1,comment.getChildren().size());
+            Assert.assertEquals("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d", comment.getId());
+            Assert.assertEquals("0", comment.getParentId());
+            Assert.assertEquals(1, comment.getChildren().size());
             Comment comment1 = comment.getChildren().get(0);
-            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment1.getId());
-            Assert.assertEquals("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d",comment1.getParentId());
-            Assert.assertEquals(1,comment1.getChildren().size());
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754", comment1.getId());
+            Assert.assertEquals("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d", comment1.getParentId());
+            Assert.assertEquals(1, comment1.getChildren().size());
             Comment comment2 = comment1.getChildren().get(0);
-            Assert.assertEquals("1bccba2c-7cff-43af-b117-2e518be4422a",comment2.getId());
-            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment2.getParentId());
-            Assert.assertEquals(0,comment2.getChildren().size());
+            Assert.assertEquals("1bccba2c-7cff-43af-b117-2e518be4422a", comment2.getId());
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754", comment2.getParentId());
+            Assert.assertEquals(0, comment2.getChildren().size());
         }
         {
             Comment comment = treeList.get(2);
-            Assert.assertEquals("1bccba2c-7cff-43af-b117-2e518be4422a",comment.getId());
-            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment.getParentId());
-            Assert.assertEquals(0,comment.getChildren().size());
+            Assert.assertEquals("1bccba2c-7cff-43af-b117-2e518be4422a", comment.getId());
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754", comment.getParentId());
+            Assert.assertEquals(0, comment.getChildren().size());
 
         }
 
     }
+
     @Test
-    public void testTree2(){
+    public void testTree2() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<MyComment> treeList = easyEntityQuery.queryable(Comment.class)
-                .asTreeCTE(o->{
+                .asTreeCTE(o -> {
                     o.setDeepColumnName("deep");
                 })
                 .selectAutoInclude(MyComment.class)
@@ -381,34 +388,34 @@ public class MySQL8Test3 extends BaseTest {
         {
 
             MyComment comment = treeList.get(0);
-            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment.getId());
-            Assert.assertEquals("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d",comment.getParentId());
-            Assert.assertEquals(1,comment.getChildren().size());
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754", comment.getId());
+            Assert.assertEquals("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d", comment.getParentId());
+            Assert.assertEquals(1, comment.getChildren().size());
             MyComment comment1 = comment.getChildren().get(0);
-            Assert.assertEquals("1bccba2c-7cff-43af-b117-2e518be4422a",comment1.getId());
-            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment1.getParentId());
-            Assert.assertEquals(0,comment1.getChildren().size());
+            Assert.assertEquals("1bccba2c-7cff-43af-b117-2e518be4422a", comment1.getId());
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754", comment1.getParentId());
+            Assert.assertEquals(0, comment1.getChildren().size());
         }
 
         {
             MyComment comment = treeList.get(1);
-            Assert.assertEquals("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d",comment.getId());
-            Assert.assertEquals("0",comment.getParentId());
-            Assert.assertEquals(1,comment.getChildren().size());
+            Assert.assertEquals("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d", comment.getId());
+            Assert.assertEquals("0", comment.getParentId());
+            Assert.assertEquals(1, comment.getChildren().size());
             MyComment comment1 = comment.getChildren().get(0);
-            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment1.getId());
-            Assert.assertEquals("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d",comment1.getParentId());
-            Assert.assertEquals(1,comment1.getChildren().size());
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754", comment1.getId());
+            Assert.assertEquals("03abe9c8-adf1-4934-ae53-3b52c7c3eb2d", comment1.getParentId());
+            Assert.assertEquals(1, comment1.getChildren().size());
             MyComment comment2 = comment1.getChildren().get(0);
-            Assert.assertEquals("1bccba2c-7cff-43af-b117-2e518be4422a",comment2.getId());
-            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment2.getParentId());
-            Assert.assertEquals(0,comment2.getChildren().size());
+            Assert.assertEquals("1bccba2c-7cff-43af-b117-2e518be4422a", comment2.getId());
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754", comment2.getParentId());
+            Assert.assertEquals(0, comment2.getChildren().size());
         }
         {
             MyComment comment = treeList.get(2);
-            Assert.assertEquals("1bccba2c-7cff-43af-b117-2e518be4422a",comment.getId());
-            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754",comment.getParentId());
-            Assert.assertEquals(0,comment.getChildren().size());
+            Assert.assertEquals("1bccba2c-7cff-43af-b117-2e518be4422a", comment.getId());
+            Assert.assertEquals("01225d2f-e1a5-46d8-8ef9-535b7b1b7754", comment.getParentId());
+            Assert.assertEquals(0, comment.getChildren().size());
 
         }
 
