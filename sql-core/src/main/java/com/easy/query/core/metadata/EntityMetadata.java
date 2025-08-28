@@ -765,17 +765,18 @@ public class EntityMetadata {
                     throw new EasyQueryException("multi logic delete not support");
                 }
                 LogicDeleteStrategyEnum strategy = logicDelete.strategy();
+                String param = logicDelete.param();
                 if (Objects.equals(LogicDeleteStrategyEnum.CUSTOM, strategy)) {//使用自定义
                     String strategyName = logicDelete.strategyName();
                     if (EasyStringUtil.isBlank(strategyName)) {
                         throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " logic delete strategy is empty");
                     }
                     LogicDeleteStrategy globalLogicDeleteStrategy = configuration.getLogicDeleteStrategyNotNull(strategyName);
-                    LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(entityClass, property, field.getType());
+                    LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(entityClass, property, field.getType(), param);
                     this.logicDeleteMetadata = globalLogicDeleteStrategy.configureBuild(logicDeleteBuilder);
                 } else {//使用系统默认的
                     LogicDeleteStrategy sysGlobalLogicDeleteStrategy = configuration.getSysLogicDeleteStrategyNotNull(strategy);
-                    LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(entityClass, property, field.getType());
+                    LogicDeleteBuilder logicDeleteBuilder = new LogicDeleteBuilder(entityClass, property, field.getType(), param);
                     this.logicDeleteMetadata = sysGlobalLogicDeleteStrategy.configureBuild(logicDeleteBuilder);
                 }
             }

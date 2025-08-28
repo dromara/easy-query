@@ -23,4 +23,6 @@ public @interface LogicDelete {
      * @return
      */
     String strategyName() default "";
+
+    String param() default "";
 }
