@@ -29,6 +29,8 @@ public class MsSQLDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(DatabaseMigrationProvider.class, MsSQLDatabaseMigrationProvider.class);
         services.addService(MigrationEntityParser.class, MsSQLMigrationEntityParser.class);
         services.addService(SQLCaseWhenBuilderFactory.class, MsSQLCaseWhenBuilderFactory.class);
+        //https://github.com/microsoft/mssql-jdbc/issues/2262 BigDecimal issue
+
     }
 
     @Override

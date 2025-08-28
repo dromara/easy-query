@@ -9,6 +9,9 @@ import java.util.List;
  * @author xuejiaming
  */
 public class TableMigrationData {
+    /**
+     * 无意义用来确定当前类
+     */
     private String key;
     private String schema;
     /**
@@ -21,7 +24,7 @@ public class TableMigrationData {
     private List<ColumnMigrationData> columns;
 
     public String getKey() {
-        return key;
+        return key == null ? tableName : key;
     }
 
     public void setKey(String key) {

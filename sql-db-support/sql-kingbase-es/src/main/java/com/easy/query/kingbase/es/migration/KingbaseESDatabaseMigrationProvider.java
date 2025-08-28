@@ -78,7 +78,7 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
     public MigrationCommand renameTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         String sql = "ALTER TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getOldTableName()) + " RENAME TO " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";";
-        return new DefaultMigrationCommand(entityMetadata, sql);
+        return new DefaultMigrationCommand(sql);
     }
 
     @Override
@@ -146,7 +146,7 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
         if (columnCommentSQL.length() > 0) {
             sql.append(newLine).append(columnCommentSQL);
         }
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 
 
@@ -173,7 +173,7 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
             sql.append(" COMMENT ON COLUMN ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName())).append(" IS ").append(columnComment);
             sql.append(";");
         }
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 
     @Override
@@ -201,14 +201,14 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
             sql.append(" COMMENT ON COLUMN ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName())).append(" IS ").append(columnComment);
             sql.append(";");
         }
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 
 
     @Override
     public MigrationCommand dropTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";");
+        return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";");
     }
 
     @Override
@@ -232,7 +232,7 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
         }
         sql.append(joiner);
         sql.append(");");
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 
     @Override
@@ -257,6 +257,6 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
             sql.append(" ").append(tableForeignKeyResult.action).append(" ");
         }
         sql.append(";");
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 }

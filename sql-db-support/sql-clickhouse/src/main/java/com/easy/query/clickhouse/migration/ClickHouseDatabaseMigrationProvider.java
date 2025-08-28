@@ -78,7 +78,7 @@ public class ClickHouseDatabaseMigrationProvider extends AbstractDatabaseMigrati
     @Override
     public MigrationCommand renameTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        return new DefaultMigrationCommand(entityMetadata, "RENAME TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getOldTableName()) + " TO " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";");
+        return new DefaultMigrationCommand("RENAME TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getOldTableName()) + " TO " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";");
     }
 
     @Override
@@ -146,7 +146,7 @@ public class ClickHouseDatabaseMigrationProvider extends AbstractDatabaseMigrati
         if (columnCommentSQL.length() > 0) {
             sql.append(newLine).append(columnCommentSQL);
         }
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 
     @Override
@@ -172,7 +172,7 @@ public class ClickHouseDatabaseMigrationProvider extends AbstractDatabaseMigrati
             sql.append(" COMMENT ON COLUMN ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName())).append(" IS ").append(columnComment);
             sql.append(";");
         }
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 
     @Override
@@ -200,20 +200,20 @@ public class ClickHouseDatabaseMigrationProvider extends AbstractDatabaseMigrati
             sql.append(" COMMENT ON COLUMN ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName())).append(" IS ").append(columnComment);
             sql.append(";");
         }
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 
 
     @Override
     public MigrationCommand dropTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";");
+        return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";");
     }
 
     @Override
     protected MigrationCommand createIndex(EntityMigrationMetadata entityMigrationMetadata, TableIndexResult tableIndex) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        return new DefaultMigrationCommand(entityMetadata, "-- not support create index:"+tableIndex.indexName);
+        return new DefaultMigrationCommand("-- not support create index:"+tableIndex.indexName);
     }
     @Override
     protected MigrationCommand createTableForeignKey(EntityMigrationMetadata entityMigrationMetadata, TableForeignKeyResult tableForeignKeyResult) {

@@ -1,6 +1,5 @@
 package com.easy.query.core.migration.commands;
 
-import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.migration.MigrationCommand;
 
 /**
@@ -10,17 +9,10 @@ import com.easy.query.core.migration.MigrationCommand;
  * @author xuejiaming
  */
 public class DefaultMigrationCommand implements MigrationCommand {
-    private final EntityMetadata entityMetadata;
     private final String sql;
 
-    public DefaultMigrationCommand(EntityMetadata entityMetadata, String sql){
-        this.entityMetadata = entityMetadata;
+    public DefaultMigrationCommand(String sql){
         this.sql = sql;
-    }
-
-    @Override
-    public EntityMetadata getEntityMetadata() {
-        return entityMetadata;
     }
 
     @Override

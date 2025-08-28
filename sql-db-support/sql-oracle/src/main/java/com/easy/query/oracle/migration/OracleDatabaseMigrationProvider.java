@@ -71,7 +71,7 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
     public MigrationCommand renameTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         String sql = String.format("execute immediate 'ALTER TABLE %s RENAME TO  %s';", getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getOldTableName()), getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()));
-        return new DefaultMigrationCommand(entityMetadata, sql);
+        return new DefaultMigrationCommand(sql);
     }
 
     @Override
@@ -145,7 +145,7 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         }
 
         sql.append(newLine).append("END;");
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 
     @Override
@@ -167,7 +167,7 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 //            sql.append(" COMMENT ON COLUMN ").append(tableName).append(" IS ").append(columnComment);
 //            sql.append(";");
 //        }
-        return new DefaultMigrationCommand(entityMetadata, sql);
+        return new DefaultMigrationCommand(sql);
     }
 
     @Override
@@ -195,14 +195,14 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 //            sql.append(" COMMENT ON COLUMN ").append(tableName).append(" IS ").append(columnComment);
 //            sql.append(";");
 //        }
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 
 
     @Override
     public MigrationCommand dropTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()) + ";");
+        return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()) + ";");
     }
     @Override
     protected MigrationCommand createIndex(EntityMigrationMetadata entityMigrationMetadata, TableIndexResult tableIndex) {
@@ -225,7 +225,7 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         }
         sql.append(joiner);
         sql.append(");");
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 
 
@@ -251,6 +251,6 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
             sql.append(" ").append(tableForeignKeyResult.action).append(" ");
         }
         sql.append(";");
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 }

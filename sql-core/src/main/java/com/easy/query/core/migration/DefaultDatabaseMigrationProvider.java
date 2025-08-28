@@ -4,6 +4,9 @@ import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.migration.commands.DefaultMigrationCommand;
+import com.easy.query.core.migration.data.ColumnMigrationData;
+import com.easy.query.core.migration.data.TableMigrationData;
+import com.easy.query.core.util.EasyBoolUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.core.util.EasyStringUtil;
@@ -56,8 +59,14 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
     public MigrationCommand renameTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         String sql = "ALTER TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getOldTableName()) + " RENAME TO " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";";
-        return new DefaultMigrationCommand(entityMetadata, sql);
+        return new DefaultMigrationCommand(sql);
     }
+
+//    @Override
+//    public MigrationCommand renameTable(TableMigrationData tableMigrationData) {
+//        String sql = "ALTER TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getOldTableName()) + " RENAME TO " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()) + ";";
+//        return new DefaultMigrationCommand(sql);
+//    }
 
     @Override
     public MigrationCommand createTable(EntityMigrationMetadata entityMigrationMetadata) {
@@ -78,7 +87,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             }
             if (column.isGeneratedKey()) {
                 sql.append(" AUTO_INCREMENT");
-            }else{
+            } else {
 
                 if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
                     sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
@@ -113,9 +122,65 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             sql.append(" COMMENT=").append(tableComment);
         }
         sql.append(";");
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 
+//    @Override
+//    public MigrationCommand createTable(TableMigrationData tableMigrationData) {
+////        StringBuilder sql = new StringBuilder();
+////        sql.append("CREATE TABLE IF NOT EXISTS ").append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName())).append(" ( ");
+////        for (ColumnMigrationData column : tableMigrationData.getColumns()) {
+////            sql.append(newLine)
+////                    .append(getQuoteSQLName(column.getName()))
+////                    .append(" ");
+////            ColumnDbTypeResult columnDbTypeResult = new ColumnDbTypeResult(column.getDbType(), column.getDefValue());
+////            sql.append(columnDbTypeResult.columnType);
+////            boolean nullable = EasyBoolUtil.isNotFalse(column.getNullable());
+////            if (nullable) {
+////                sql.append(" NULL ");
+////            } else {
+////                sql.append(" NOT NULL ");
+////            }
+////            if (column.isGeneratedKey()) {
+////                sql.append(" AUTO_INCREMENT");
+////            } else {
+////
+////                if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
+////                    sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
+////                }
+////            }
+////            String columnComment = getColumnComment(entityMigrationMetadata, column, "'");
+////            if (EasyStringUtil.isNotBlank(columnComment)) {
+////                sql.append(" COMMENT ").append(columnComment);
+////            }
+////            sql.append(",");
+////        }
+////        Collection<String> keyProperties = entityMetadata.getKeyProperties();
+////        if (EasyCollectionUtil.isNotEmpty(keyProperties)) {
+////            sql.append(" ").append(newLine).append(" PRIMARY KEY (");
+////            int i = keyProperties.size();
+////            for (String keyProperty : keyProperties) {
+////                i--;
+////                ColumnMetadata keyColumn = entityMetadata.getColumnNotNull(keyProperty);
+////                sql.append(getQuoteSQLName(keyColumn.getName()));
+////                if (i > 0) {
+////                    sql.append(", ");
+////                } else {
+////                    sql.append(")");
+////                }
+////            }
+////        } else {
+////            sql.deleteCharAt(sql.length() - 1);
+////        }
+////        sql.append(newLine).append(") Engine=InnoDB");
+////        String tableComment = getTableComment(entityMigrationMetadata, "'");
+////        if (EasyStringUtil.isNotBlank(tableComment)) {
+////            sql.append(" COMMENT=").append(tableComment);
+////        }
+////        sql.append(";");
+////        return new DefaultMigrationCommand(sql.toString());
+//        return null;
+//    }
 
     @Override
     protected MigrationCommand renameColumn(EntityMigrationMetadata entityMigrationMetadata, String renameFrom, ColumnMetadata column) {
@@ -140,8 +205,33 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             sql.append(" COMMENT ").append(columnComment);
         }
         sql.append(";");
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
+
+//    @Override
+//    protected MigrationCommand renameColumn(TableMigrationData tableMigrationData, String oldColumnName, ColumnMigrationData columnMigrationData) {
+//
+//        StringBuilder sql = new StringBuilder();
+//        sql.append("ALTER TABLE ").append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()))
+//                .append(" CHANGE ").append(getQuoteSQLName(oldColumnName))
+//                .append(" ")
+//                .append(getQuoteSQLName(columnMigrationData.getName())).append(" ");
+//
+//        ColumnDbTypeResult columnDbTypeResult = new ColumnDbTypeResult(columnMigrationData.getDbType(), columnMigrationData.getDefValue());
+//        sql.append(columnDbTypeResult.columnType);
+//        if (EasyBoolUtil.isNotFalse(columnMigrationData.getNullable())) {
+//            sql.append(" NULL");
+//        } else {
+//            sql.append(" NOT NULL");
+//        }
+//
+//        String columnComment = getColumnComment(columnMigrationData, "'");
+//        if (EasyStringUtil.isNotBlank(columnComment)) {
+//            sql.append(" COMMENT ").append(columnComment);
+//        }
+//        sql.append(";");
+//        return new DefaultMigrationCommand(sql.toString());
+//    }
 
     @Override
     protected MigrationCommand addColumn(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata column) {
@@ -166,13 +256,39 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             sql.append(" COMMENT ").append(columnComment);
         }
         sql.append(";");
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
+
+//    @Override
+//    protected MigrationCommand addColumn(TableMigrationData tableMigrationData, ColumnMigrationData columnMigrationData) {
+//
+//        StringBuilder sql = new StringBuilder();
+//        sql.append("ALTER TABLE ").append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()))
+//                .append(" ADD ").append(getQuoteSQLName(columnMigrationData.getName())).append(" ");
+//
+//        ColumnDbTypeResult columnDbTypeResult = new ColumnDbTypeResult(columnMigrationData.getDbType(), columnMigrationData.getDefValue());
+//        sql.append(columnDbTypeResult.columnType);
+//        if (EasyBoolUtil.isNotFalse(columnMigrationData.getNullable())) {
+//            sql.append(" NULL");
+//        } else {
+//            sql.append(" NOT NULL");
+//        }
+//        if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
+//            sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
+//        }
+//
+//        String columnComment = getColumnComment(columnMigrationData, "'");
+//        if (EasyStringUtil.isNotBlank(columnComment)) {
+//            sql.append(" COMMENT ").append(columnComment);
+//        }
+//        sql.append(";");
+//        return new DefaultMigrationCommand(sql.toString());
+//    }
 
     @Override
     public MigrationCommand dropTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";");
+        return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";");
     }
 
     @Override
@@ -196,7 +312,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
         }
         sql.append(joiner);
         sql.append(");");
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 
     @Override
@@ -229,6 +345,6 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             sql.append(" ").append(tableForeignKeyResult.action).append(" ");
         }
         sql.append(";");
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 }

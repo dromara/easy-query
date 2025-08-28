@@ -2,6 +2,7 @@ package com.easy.query.core.migration;
 
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.migration.data.TableMigrationData;
 
 import java.util.List;
 
@@ -30,12 +31,15 @@ public interface DatabaseMigrationProvider {
     boolean tableExists(String schema, String tableName);
 
     MigrationCommand renameTable(EntityMigrationMetadata entityMigrationMetadata);
+//    MigrationCommand renameTable(TableMigrationData tableMigrationData);
 
     MigrationCommand createTable(EntityMigrationMetadata entityMigrationMetadata);
+//    MigrationCommand createTable(TableMigrationData tableMigrationData);
     List<MigrationCommand> createTableIndex(EntityMigrationMetadata entityMigrationMetadata);
     List<MigrationCommand> createTableForeignKey(EntityMigrationMetadata entityMigrationMetadata, QueryRuntimeContext runtimeContext);
 
     List<MigrationCommand> syncTable(EntityMigrationMetadata entityMigrationMetadata, boolean oldTable);
+//    List<MigrationCommand> syncTable(TableMigrationData tableMigrationData, boolean oldTable);
     List<MigrationCommand> syncTableIndex(EntityMigrationMetadata entityMigrationMetadata, boolean oldTable);
     List<MigrationCommand> syncTableForeignKey(EntityMigrationMetadata entityMigrationMetadata, QueryRuntimeContext runtimeContext, boolean oldTable);
 

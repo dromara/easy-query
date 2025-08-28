@@ -9,6 +9,5 @@ import com.easy.query.core.metadata.EntityMetadata;
  * @author xuejiaming
  */
 public interface MigrationCommand {
-    EntityMetadata getEntityMetadata();
     String toSQL();
 }

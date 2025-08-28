@@ -72,7 +72,7 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
     public MigrationCommand renameTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         String sql = "ALTER TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getOldTableName()) + " RENAME TO " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";";
-        return new DefaultMigrationCommand(entityMetadata, sql);
+        return new DefaultMigrationCommand(sql);
     }
 
     @Override
@@ -147,7 +147,7 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 //            sql.append(" COMMENT=").append(tableComment);
 //        }
 //        sql.append(";");
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 
     @Override
@@ -173,7 +173,7 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 //            sql.append(" COMMENT").append(columnComment);
 //        }
         sql.append(";");
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 
     @Override
@@ -199,13 +199,13 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 //            sql.append(" COMMENT").append(columnComment);
 //        }
         sql.append(";");
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 
     @Override
     public MigrationCommand dropTable(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        return new DefaultMigrationCommand(entityMetadata, "DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";");
+        return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()) + ";");
     }
     @Override
     protected MigrationCommand createIndex(EntityMigrationMetadata entityMigrationMetadata, TableIndexResult tableIndex) {
@@ -228,7 +228,7 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         }
         sql.append(joiner);
         sql.append(");");
-        return new DefaultMigrationCommand(entityMetadata, sql.toString());
+        return new DefaultMigrationCommand(sql.toString());
     }
 
     /**

@@ -33,11 +33,11 @@ public class UUIDPgSQLTypeHandler implements JdbcTypeHandler {
         if(value==null){
             parameter.getPs().setObject(parameter.getIndex(),null);
         }else{
-            JDBCType jdbcTType = getJdbcTType(parameter);
-            if (jdbcTType == JDBCType.VARCHAR) {
+            JDBCType jdbcType = getJdbcTType(parameter);
+            if (jdbcType == JDBCType.VARCHAR) {
                 parameter.getPs().setString(parameter.getIndex(), value.toString());
             } else {
-                parameter.getPs().setObject(parameter.getIndex(), value, jdbcTType.getVendorTypeNumber());
+                parameter.getPs().setObject(parameter.getIndex(), value, jdbcType.getVendorTypeNumber());
             }
         }
     }

@@ -5,6 +5,8 @@ import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
+import com.easy.query.core.migration.data.ColumnMigrationData;
+import com.easy.query.core.migration.data.TableMigrationData;
 
 import java.util.List;
 

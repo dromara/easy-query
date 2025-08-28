@@ -282,9 +282,9 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
                     o.sqlFunc(sqlFunction).value(decimals);
-                }, MathMethodEnum.Ceiling);
+                }, MathMethodEnum.Round);
             } else {
-                return fx.math(o -> o.column(this.getValue()).value(decimals), MathMethodEnum.Ceiling);
+                return fx.math(o -> o.column(this.getValue()).value(decimals), MathMethodEnum.Round);
             }
         }, BigDecimal.class);
     }
