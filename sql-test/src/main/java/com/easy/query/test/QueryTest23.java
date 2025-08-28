@@ -928,6 +928,7 @@ public class QueryTest23 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`score` AS `value1`,ABS(t.`score`) AS `value2`,SIN(t.`score`) AS `value3`,FLOOR(t.`score`) AS `value4`,CEILING(t.`score`) AS `value5`,LOG(t.`score`) AS `value6` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`score` AS `value1`,ABS(t.`score`) AS `value2`,SIGN(t.`score`) AS `value3`,FLOOR(t.`score`) AS `value4`,CEILING(t.`score`) AS `value5`,LOG(t.`score`) AS `value6` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }

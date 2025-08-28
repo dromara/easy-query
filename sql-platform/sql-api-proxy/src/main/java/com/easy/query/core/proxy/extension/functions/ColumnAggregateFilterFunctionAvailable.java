@@ -15,20 +15,20 @@ import com.easy.query.core.proxy.core.EntitySQLContext;
  * @author xuejiaming
  */
 public interface ColumnAggregateFilterFunctionAvailable<TProperty, TChain> extends SQLSelectAsExpression, PropTypeColumn<TProperty> {
-    TChain createFilterChainExpression(EntitySQLContext entitySQLContext, PropTypeColumn<?> self, TableAvailable table, String property, SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType);
+    TChain createFilterChainExpression(SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType);
 
     default TChain max() {
-        return createFilterChainExpression(this.getCurrentEntitySQLContext(),this, this.getTable(), this.getValue(), (self,fx) -> {
+        return createFilterChainExpression((self,fx) -> {
             return fx.max(x->{
-                PropTypeColumn.columnFuncSelector(x,self);
+                PropTypeColumn.acceptAnyValue(x,self);
             });
         }, getPropertyType());
     }
 
     default TChain min() {
-        return createFilterChainExpression(this.getCurrentEntitySQLContext(),this, this.getTable(), this.getValue(), (self,fx)  -> {
+        return createFilterChainExpression((self,fx)  -> {
             return fx.min(x->{
-                PropTypeColumn.columnFuncSelector(x,self);
+                PropTypeColumn.acceptAnyValue(x,self);
             });
         }, getPropertyType());
     }

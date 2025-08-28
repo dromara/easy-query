@@ -44,7 +44,7 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
 
     @Override
     default DateTimeFilterTypeExpression<TProperty> max() {
-        return createFilterChainExpression(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return createFilterChainExpression((self, fx) -> {
             return fx.max(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             });
@@ -53,7 +53,7 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
 
     @Override
     default DateTimeFilterTypeExpression<TProperty> min() {
-        return createFilterChainExpression(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return createFilterChainExpression((self, fx) -> {
             return fx.min(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             });
@@ -405,12 +405,12 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
 
 
     @Override
-    default DateTimeTypeExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new DateTimeTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
+    default DateTimeTypeExpression<TProperty> createChainExpression(Function<SQLFunc, SQLFunction> func, Class<?> propType) {
+        return new DateTimeTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), func, propType);
     }
 
     @Override
-    default DateTimeFilterTypeExpression<TProperty> createFilterChainExpression(EntitySQLContext entitySQLContext, PropTypeColumn<?> self, TableAvailable table, String property, SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new DateTimeFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), func, getPropertyType());
+    default DateTimeFilterTypeExpression<TProperty> createFilterChainExpression(SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
+        return new DateTimeFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), func, propType);
     }
 }

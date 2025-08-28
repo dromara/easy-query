@@ -44,8 +44,8 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         ColumnJsonMapFunctionAvailable<TProperty> {
 
     @Override
-    default AnyTypeExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
+    default AnyTypeExpression<TProperty> createChainExpression(Function<SQLFunc, SQLFunction> func, Class<?> propType) {
+        return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), func, propType);
     }
 
     default AnyTypeExpression<TProperty> concat(TablePropColumn... propColumns) {

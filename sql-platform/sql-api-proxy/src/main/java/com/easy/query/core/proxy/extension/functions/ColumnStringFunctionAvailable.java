@@ -40,18 +40,18 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
 
     @Override
     default StringFilterTypeExpression<TProperty> max() {
-        return createFilterChainExpression(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return createFilterChainExpression((self, fx) -> {
             return fx.max(x -> {
-                PropTypeColumn.columnFuncSelector(x, self);
+                PropTypeColumn.acceptAnyValue(x, self);
             });
         }, getPropertyType());
     }
 
     @Override
     default StringFilterTypeExpression<TProperty> min() {
-        return createFilterChainExpression(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return createFilterChainExpression((self, fx) -> {
             return fx.min(x -> {
-                PropTypeColumn.columnFuncSelector(x, self);
+                PropTypeColumn.acceptAnyValue(x, self);
             });
         }, getPropertyType());
     }
@@ -330,10 +330,10 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     default StringFilterTypeExpression<TProperty> joining(String delimiter, boolean distinct) {
-        return createFilterChainExpression(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return createFilterChainExpression((self, fx) -> {
             return fx.joining(x -> {
                 x.value(delimiter);
-                PropTypeColumn.columnFuncSelector(x, self);
+                PropTypeColumn.acceptAnyValue(x, self);
             }, distinct);
         }, String.class);
 
@@ -357,8 +357,8 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     @Override
-    default StringTypeExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
+    default StringTypeExpression<TProperty> createChainExpression(Function<SQLFunc, SQLFunction> func, Class<?> propType) {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), func, propType);
     }
 
     /**
@@ -432,7 +432,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     @Override
-    default StringFilterTypeExpression<TProperty> createFilterChainExpression(EntitySQLContext entitySQLContext, PropTypeColumn<?> self, TableAvailable table, String property, SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new StringFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), func, getPropertyType());
+    default StringFilterTypeExpression<TProperty> createFilterChainExpression(SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
+        return new StringFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), func, propType);
     }
 }

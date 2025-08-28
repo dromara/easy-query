@@ -30,8 +30,8 @@ public interface ColumnJsonMapFunctionAvailable<TProperty> extends ColumnObjectF
         ColumnFunctionCastBooleanAvailable<TProperty> {
 
     @Override
-    default AnyTypeExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
+    default AnyTypeExpression<TProperty> createChainExpression(Function<SQLFunc, SQLFunction> func, Class<?> propType) {
+        return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), func, propType);
     }
 
     default JsonMapTypeExpression<Object> getField(String jsonKey) {

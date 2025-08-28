@@ -29,24 +29,24 @@ public interface ColumnBooleanFunctionAvailable<TProperty> extends ColumnObjectF
 
     @Override
     default BooleanFilterTypeExpression<TProperty> max() {
-        return createFilterChainExpression(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return createFilterChainExpression((self, fx) -> {
             return fx.max(x -> {
-                PropTypeColumn.columnFuncSelector(x, self);
+                PropTypeColumn.acceptAnyValue(x, self);
             });
         }, getPropertyType());
     }
 
     @Override
     default BooleanFilterTypeExpression<TProperty> min() {
-        return createFilterChainExpression(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return createFilterChainExpression((self, fx) -> {
             return fx.min(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             });
         }, getPropertyType());
     }
     @Override
-    default BooleanTypeExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new BooleanTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
+    default BooleanTypeExpression<TProperty> createChainExpression( Function<SQLFunc, SQLFunction> func, Class<?> propType) {
+        return new BooleanTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), func, propType);
     }
 
     /**
@@ -64,7 +64,7 @@ public interface ColumnBooleanFunctionAvailable<TProperty> extends ColumnObjectF
         }, getPropertyType());
     }
     @Override
-    default BooleanFilterTypeExpression<TProperty> createFilterChainExpression(EntitySQLContext entitySQLContext, PropTypeColumn<?> self, TableAvailable table, String property, SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new BooleanFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), func, getPropertyType());
+    default BooleanFilterTypeExpression<TProperty> createFilterChainExpression(SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
+        return new BooleanFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), func, propType);
     }
 }

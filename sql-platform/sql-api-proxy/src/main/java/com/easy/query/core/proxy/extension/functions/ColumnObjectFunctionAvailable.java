@@ -24,7 +24,7 @@ import java.util.function.Function;
  * @author xuejiaming
  */
 public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSelectAsExpression, PropTypeColumn<TProperty> {
-    TChain createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType);
+    TChain createChainExpression(Function<SQLFunc, SQLFunction> func, Class<?> propType);
 
     default NumberFilterTypeExpression<Long> count() {
         return count(false);
@@ -47,7 +47,7 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
     }
 
     default TChain max() {
-        return createChainExpression(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return createChainExpression(fx -> {
             return fx.max(s->{
                 PropTypeColumn.acceptAnyValue(s,this);
             });
@@ -55,7 +55,7 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
     }
 
     default TChain min() {
-        return createChainExpression(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return createChainExpression(fx -> {
             return fx.min(s->{
                 PropTypeColumn.acceptAnyValue(s,this);
             });
@@ -73,9 +73,9 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
     }
 
     default TChain nullOrDefault(SQLActionExpression1<ProxyColumnFuncSelector> selector) {
-        return createChainExpression(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return createChainExpression(fx -> {
             return fx.nullOrDefault(o -> {
-                PropTypeColumn.columnFuncSelector(o, this);
+                PropTypeColumn.acceptAnyValue(o, this);
                 selector.apply(new ProxyColumnFuncSelectorImpl(o));
             });
         }, getPropertyType());

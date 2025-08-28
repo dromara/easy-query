@@ -36,18 +36,18 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 
     @Override
     default NumberFilterTypeExpression<TProperty> max() {
-        return createFilterChainExpression(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return createFilterChainExpression((self, fx) -> {
             return fx.max(x -> {
-                PropTypeColumn.columnFuncSelector(x, self);
+                PropTypeColumn.acceptAnyValue(x, self);
             });
         }, getPropertyType());
     }
 
     @Override
     default NumberFilterTypeExpression<TProperty> min() {
-        return createFilterChainExpression(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return createFilterChainExpression((self, fx) -> {
             return fx.min(x -> {
-                PropTypeColumn.columnFuncSelector(x, self);
+                PropTypeColumn.acceptAnyValue(x, self);
             });
         }, getPropertyType());
     }
@@ -538,12 +538,12 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     @Override
-    default NumberTypeExpression<TProperty> createChainExpression(EntitySQLContext entitySQLContext, TableAvailable table, String property, Function<SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), func, getPropertyType());
+    default NumberTypeExpression<TProperty> createChainExpression(Function<SQLFunc, SQLFunction> func, Class<?> propType) {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), func, propType);
     }
 
     @Override
-    default NumberFilterTypeExpression<TProperty> createFilterChainExpression(EntitySQLContext entitySQLContext, PropTypeColumn<?> self, TableAvailable table, String property, SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
-        return new NumberFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), func, getPropertyType());
+    default NumberFilterTypeExpression<TProperty> createFilterChainExpression(SQLFuncExpression2<PropTypeColumn<?>, SQLFunc, SQLFunction> func, Class<?> propType) {
+        return new NumberFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), func, propType);
     }
 }
