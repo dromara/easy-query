@@ -18,7 +18,6 @@ import com.easy.query.core.proxy.extension.functions.type.filter.NumberFilterTyp
 import com.easy.query.core.proxy.extension.functions.type.filter.impl.NumberSumFilterTypeExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.type.impl.NumberTypeExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.type.filter.impl.NumberFilterTypeExpressionImpl;
-import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.math.BigDecimal;
 import java.util.function.Function;
@@ -185,107 +184,85 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     default NumberTypeExpression<TProperty> abs() {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-//            if (this instanceof DSLSQLFunctionAvailable) {
-//                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-//                return fx.math(o -> {
-//                    o.sqlFunc(sqlFunction);
-//                }, MathMethodEnum.Abs);
-//            } else {
-//                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Abs);
-//            }
             return fx.math(o -> {
-                PropTypeColumn.columnFuncSelector(o, this);
+                PropTypeColumn.acceptAnyValue(o, this);
             }, MathMethodEnum.Abs);
         }, getPropertyType());
     }
 
     /**
+     * 是一种数学类方法，该方法返回一个整数，该整数指定数字的符号
+     * 它的作用就是返回 数值的符号：
+     * •	1.0 → 如果参数大于 0
+     * •	0.0 → 如果参数等于 0
+     * •	-1.0 → 如果参数小于 0
      * 或使用{@link SQLMathExpression}
      *
      * @return
      */
-    default NumberTypeExpression<Integer> sign() {
+    default NumberTypeExpression<Integer> signum() {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Sin);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Sin);
-            }
+            return fx.math(o -> {
+                PropTypeColumn.acceptAnyValue(o, this);
+            }, MathMethodEnum.Signum);
+
         }, Integer.class);
     }
 
     /**
+     * 向下取整
      * 或使用{@link SQLMathExpression}
      *
      * @return
      */
     default NumberTypeExpression<BigDecimal> floor() {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Floor);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Floor);
-            }
+            return fx.math(o -> {
+                PropTypeColumn.acceptAnyValue(o, this);
+            }, MathMethodEnum.Floor);
         }, BigDecimal.class);
     }
 
     /**
+     * 向上取整
      * 或使用{@link SQLMathExpression}
      *
      * @return
      */
     default NumberTypeExpression<BigDecimal> ceiling() {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Ceiling);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Ceiling);
-            }
+            return fx.math(o -> {
+                PropTypeColumn.acceptAnyValue(o, this);
+            }, MathMethodEnum.Ceiling);
         }, BigDecimal.class);
     }
 
     /**
+     * 四舍五入
      * 或使用{@link SQLMathExpression}
      *
      * @return
      */
     default NumberTypeExpression<BigDecimal> round() {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Round);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Round);
-            }
+            return fx.math(o -> {
+                PropTypeColumn.acceptAnyValue(o, this);
+            }, MathMethodEnum.Round);
         }, BigDecimal.class);
     }
 
     /**
+     * 四舍五入
      * 或使用{@link SQLMathExpression}
      *
      * @return
      */
     default NumberTypeExpression<BigDecimal> round(int decimals) {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction).value(decimals);
-                }, MathMethodEnum.Round);
-            } else {
-                return fx.math(o -> o.column(this.getValue()).value(decimals), MathMethodEnum.Round);
-            }
+            return fx.math(o -> {
+                PropTypeColumn.acceptAnyValue(o, this);
+                o.value(decimals);
+            }, MathMethodEnum.Round);
         }, BigDecimal.class);
     }
 
@@ -296,88 +273,52 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     default NumberTypeExpression<BigDecimal> exp() {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Exp);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Exp);
-            }
+            return fx.math(o -> {
+                PropTypeColumn.acceptAnyValue(o, this);
+            }, MathMethodEnum.Exp);
         }, BigDecimal.class);
     }
 
     /**
+     * 要查找其对数的数字
      * 或使用{@link SQLMathExpression}
      *
      * @return
      */
     default NumberTypeExpression<BigDecimal> log() {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Log);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Log);
-            }
+            return fx.math(o -> {
+                PropTypeColumn.acceptAnyValue(o, this);
+            }, MathMethodEnum.Log);
         }, BigDecimal.class);
     }
 
     /**
-     * 或使用{@link SQLMathExpression}
-     *
-     * @return
-     */
-    default NumberTypeExpression<BigDecimal> log(BigDecimal newBase) {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction).value(newBase);
-                }, MathMethodEnum.Log);
-            } else {
-                return fx.math(o -> o.column(this.getValue()).value(newBase), MathMethodEnum.Log);
-            }
-        }, BigDecimal.class);
-    }
-
-    /**
+     * 要查找其对数的数字 以10为低
      * 或使用{@link SQLMathExpression}
      *
      * @return
      */
     default NumberTypeExpression<BigDecimal> log10() {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Log10);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Log10);
-            }
+            return fx.math(o -> {
+                PropTypeColumn.acceptAnyValue(o, this);
+            }, MathMethodEnum.Log10);
         }, BigDecimal.class);
     }
 
-    /**
-     * 或使用{@link SQLMathExpression}
-     *
-     * @return
-     */
-    default NumberTypeExpression<BigDecimal> pow() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Pow);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Pow);
-            }
-        }, BigDecimal.class);
-    }
+//    /**
+//     * 或使用{@link SQLMathExpression}
+//     *
+//     * @return
+//     */
+//    default NumberTypeExpression<BigDecimal> pow() {
+//        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+//            return fx.math(o -> {
+//                PropTypeColumn.acceptAnyValue(o, this);
+//            }, MathMethodEnum.Pow);
+//        }, BigDecimal.class);
+//    }
 
     /**
      * 或使用{@link SQLMathExpression}
@@ -386,14 +327,10 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     default NumberTypeExpression<BigDecimal> pow(BigDecimal exponent) {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction).value(exponent);
-                }, MathMethodEnum.Pow);
-            } else {
-                return fx.math(o -> o.column(this.getValue()).value(exponent), MathMethodEnum.Pow);
-            }
+            return fx.math(o -> {
+                PropTypeColumn.acceptAnyValue(o, this);
+                o.value(exponent);
+            }, MathMethodEnum.Pow);
         }, BigDecimal.class);
     }
 
@@ -405,14 +342,9 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     default NumberTypeExpression<BigDecimal> sqrt() {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Sqrt);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Sqrt);
-            }
+            return fx.math(o -> {
+                PropTypeColumn.acceptAnyValue(o, this);
+            }, MathMethodEnum.Sqrt);
         }, BigDecimal.class);
     }
 
@@ -424,14 +356,9 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     default NumberTypeExpression<BigDecimal> cos() {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Cos);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Cos);
-            }
+            return fx.math(o -> {
+                PropTypeColumn.acceptAnyValue(o, this);
+            }, MathMethodEnum.Cos);
         }, BigDecimal.class);
     }
 
@@ -442,14 +369,9 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     default NumberTypeExpression<BigDecimal> sin() {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Sin);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Sin);
-            }
+            return fx.math(o -> {
+                PropTypeColumn.acceptAnyValue(o, this);
+            }, MathMethodEnum.Sin);
         }, BigDecimal.class);
     }
 
@@ -460,14 +382,9 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     default NumberTypeExpression<BigDecimal> tan() {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Tan);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Tan);
-            }
+            return fx.math(o -> {
+                PropTypeColumn.acceptAnyValue(o, this);
+            }, MathMethodEnum.Tan);
         }, BigDecimal.class);
     }
 
@@ -478,14 +395,9 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     default NumberTypeExpression<BigDecimal> acos() {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Acos);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Acos);
-            }
+            return fx.math(o -> {
+                PropTypeColumn.acceptAnyValue(o, this);
+            }, MathMethodEnum.Acos);
         }, BigDecimal.class);
     }
 
@@ -496,14 +408,9 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     default NumberTypeExpression<BigDecimal> asin() {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Asin);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Asin);
-            }
+            return fx.math(o -> {
+                PropTypeColumn.acceptAnyValue(o, this);
+            }, MathMethodEnum.Asin);
         }, BigDecimal.class);
     }
 
@@ -514,14 +421,9 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     default NumberTypeExpression<BigDecimal> atan() {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Atan);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Atan);
-            }
+            return fx.math(o -> {
+                PropTypeColumn.acceptAnyValue(o, this);
+            }, MathMethodEnum.Atan);
         }, BigDecimal.class);
     }
 
@@ -530,16 +432,15 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      *
      * @return
      */
-    default NumberTypeExpression<BigDecimal> atan2() {
+    default NumberTypeExpression<BigDecimal> atan2(BigDecimal other) {
+        return atan2(Expression.of(this.getEntitySQLContext()).constant(other));
+    }
+    default NumberTypeExpression<BigDecimal> atan2(PropTypeColumn<BigDecimal> other) {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Atan2);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Atan2);
-            }
+            return fx.math(o -> {
+                PropTypeColumn.acceptAnyValue(o, this);
+                PropTypeColumn.acceptAnyValue(o, other);
+            }, MathMethodEnum.Atan2);
         }, BigDecimal.class);
     }
 
@@ -550,14 +451,9 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      */
     default NumberTypeExpression<BigDecimal> truncate() {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.math(o -> {
-                    o.sqlFunc(sqlFunction);
-                }, MathMethodEnum.Truncate);
-            } else {
-                return fx.math(o -> o.column(this.getValue()), MathMethodEnum.Truncate);
-            }
+            return fx.math(o -> {
+                PropTypeColumn.acceptAnyValue(o, this);
+            }, MathMethodEnum.Truncate);
         }, BigDecimal.class);
     }
 
@@ -571,8 +467,8 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     default <TOtherProperty extends Number> NumberTypeExpression<BigDecimal> add(PropTypeColumn<TOtherProperty> other) {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.numberCalc(o -> {
-                PropTypeColumn.columnFuncSelector(o, this);
-                PropTypeColumn.columnFuncSelector(o, other);
+                PropTypeColumn.acceptAnyValue(o, this);
+                PropTypeColumn.acceptAnyValue(o, other);
             }, NumberCalcEnum.NUMBER_ADD);
         }, getPropertyType());
     }
@@ -591,8 +487,8 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     default <TOtherProperty extends Number> NumberTypeExpression<BigDecimal> subtract(PropTypeColumn<TOtherProperty> other) {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.numberCalc(o -> {
-                PropTypeColumn.columnFuncSelector(o, this);
-                PropTypeColumn.columnFuncSelector(o, other);
+                PropTypeColumn.acceptAnyValue(o, this);
+                PropTypeColumn.acceptAnyValue(o, other);
             }, NumberCalcEnum.NUMBER_SUBTRACT);
         }, getPropertyType());
     }
@@ -611,8 +507,8 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     default <TOtherProperty extends Number> NumberTypeExpression<BigDecimal> multiply(PropTypeColumn<TOtherProperty> other) {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.numberCalc(o -> {
-                PropTypeColumn.columnFuncSelector(o, this);
-                PropTypeColumn.columnFuncSelector(o, other);
+                PropTypeColumn.acceptAnyValue(o, this);
+                PropTypeColumn.acceptAnyValue(o, other);
             }, NumberCalcEnum.NUMBER_MULTIPLY);
         }, getPropertyType());
     }
@@ -631,8 +527,8 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     default <TOtherProperty extends Number> NumberTypeExpression<BigDecimal> divide(PropTypeColumn<TOtherProperty> other) {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.numberCalc(o -> {
-                PropTypeColumn.columnFuncSelector(o, this);
-                PropTypeColumn.columnFuncSelector(o, other);
+                PropTypeColumn.acceptAnyValue(o, this);
+                PropTypeColumn.acceptAnyValue(o, other);
             }, NumberCalcEnum.NUMBER_DIVIDE);
         }, getPropertyType());
     }

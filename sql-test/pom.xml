@@ -191,6 +191,11 @@
             <systemPath>${project.basedir}/src/main/resources/libraries/kingbase8-8.6.0.jar</systemPath>
         </dependency>
         <dependency>
+            <groupId>ch.obermuhlner</groupId>
+            <artifactId>big-math</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+        <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
             <version>7.4.1.jre8</version>

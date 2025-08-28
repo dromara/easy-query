@@ -28,7 +28,7 @@ public class MathSQLFunction extends AbstractExpressionSQLFunction {
         switch (mathMethodEnum){
             case Abs:
                 return "ABS({0})";
-            case Sign:
+            case Signum:
                 return "SIGN({0})";
             case Floor:
                 return "FLOOR({0})";

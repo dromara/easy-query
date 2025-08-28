@@ -8,7 +8,7 @@ package com.easy.query.core.func.def.enums;
  */
 public enum MathMethodEnum {
     Abs,
-    Sign,
+    Signum,
     Floor,
     Ceiling,
     Round,

@@ -48,23 +48,17 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
 
     default TChain max() {
         return createChainExpression(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.max(sqlFunction);
-            } else {
-                return fx.max(this.getValue());
-            }
+            return fx.max(s->{
+                PropTypeColumn.acceptAnyValue(s,this);
+            });
         }, getPropertyType());
     }
 
     default TChain min() {
         return createChainExpression(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.min(sqlFunction);
-            } else {
-                return fx.min(this.getValue());
-            }
+            return fx.min(s->{
+                PropTypeColumn.acceptAnyValue(s,this);
+            });
         }, getPropertyType());
     }
 

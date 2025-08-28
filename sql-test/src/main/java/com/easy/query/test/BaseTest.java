@@ -50,6 +50,7 @@ import com.easy.query.test.encryption.MyEncryptionStrategy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.LogicDelTopic;
 import com.easy.query.test.entity.LogicDelTopicCustom;
+import com.easy.query.test.entity.MathTest;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.SysUserEncrypt;
 import com.easy.query.test.entity.Topic;
@@ -82,12 +83,15 @@ import org.redisson.client.codec.StringCodec;
 import org.redisson.config.Config;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author xuejiaming
@@ -391,7 +395,7 @@ public abstract class BaseTest {
         {
             try {
 
-                CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(SysUserEncrypt.class,DocBankCard.class, DocBank.class, UserAccount.class, UserBook.class, DocUser.class, OnRelationA.class, OnRelationB.class, OnRelationC.class, OnRelationD.class, UUIDEntity2.class));
+                CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(SysUserEncrypt.class, DocBankCard.class, DocBank.class, UserAccount.class, UserBook.class, DocUser.class, OnRelationA.class, OnRelationB.class, OnRelationC.class, OnRelationD.class, UUIDEntity2.class, MathTest.class));
                 codeFirstCommand.executeWithTransaction(a -> a.commit());
             } catch (Exception ignored) {
 
@@ -399,9 +403,28 @@ public abstract class BaseTest {
 
         }
         {
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUserEncrypt.class,DocBank.class, UserAccount.class, UserBook.class, DocBankCard.class, DocUser.class, OnRelationA.class, OnRelationB.class, OnRelationC.class, OnRelationD.class, UUIDEntity2.class));
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUserEncrypt.class, DocBank.class, UserAccount.class, UserBook.class, DocBankCard.class, DocUser.class, OnRelationA.class, OnRelationB.class, OnRelationC.class, OnRelationD.class, UUIDEntity2.class, MathTest.class));
             codeFirstCommand.executeWithTransaction(a -> a.commit());
         }
+
+        int size = 10000;
+        List<MathTest> list = new ArrayList<>(size);
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+
+        for (int i = 0; i < size; i++) {
+            MathTest entity = new MathTest();
+            entity.setId(UUID.randomUUID().toString());
+
+            // 随机生成 -1000.00 到 1000.00 的 BigDecimal
+            double value = random.nextDouble(-1000, 1000);
+            BigDecimal bigDecimalValue = BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP);
+
+            entity.setTestValue(bigDecimalValue);
+
+            list.add(entity);
+        }
+
+        easyEntityQuery.insertable(list).batch().executeRows();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.easy.query.test;
 
+import ch.obermuhlner.math.big.BigDecimalMath;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.api.pagination.EasyPageResult;
@@ -36,14 +37,14 @@ import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.m2m.UserAccount;
 import com.easy.query.test.entity.school.SchoolClass;
-import com.easy.query.test.entity.testrelation.TestUserEntity;
-import com.easy.query.test.entity.testrelation.vo.TestUserDTO;
 import com.easy.query.test.listener.ListenerContext;
 import lombok.Data;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -807,7 +808,7 @@ public class QueryTest23 extends BaseTest {
 
         List<Draft2<String, Long>> list = easyEntityQuery.queryable(UserAccount.class)
                 .subQueryToGroupJoin(uc -> uc.books())
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.GROUP_JOIN_NOT_ALLOW_AUTO_MERGE))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.GROUP_JOIN_NOT_ALLOW_AUTO_MERGE))
                 .where(uc -> {
                     uc.books().any(ub -> ub.name().eq("JAVA开发"));
                 }).select(uc -> Select.DRAFT.of(
@@ -822,6 +823,7 @@ public class QueryTest23 extends BaseTest {
         Assert.assertEquals("JAVA开发(String),1(Integer),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void testMany2Many2_1() {
 
@@ -915,7 +917,7 @@ public class QueryTest23 extends BaseTest {
                 .select(t_blog -> Select.DRAFT.of(
                         t_blog.score(),
                         t_blog.score().abs(),
-                        t_blog.score().sign(),
+                        t_blog.score().signum(),
                         t_blog.score().floor(),
                         t_blog.score().ceiling(),
                         t_blog.score().log()
@@ -1013,7 +1015,7 @@ public class QueryTest23 extends BaseTest {
     }
 
     @Test
-    public void filterOn1(){
+    public void filterOn1() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -1035,8 +1037,9 @@ public class QueryTest23 extends BaseTest {
 
 
     }
+
     @Test
-    public void filterOn2(){
+    public void filterOn2() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -1056,8 +1059,9 @@ public class QueryTest23 extends BaseTest {
 //        Assert.assertEquals("false(Boolean),30%(String),-1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void filterOn3(){
+    public void filterOn3() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -1077,8 +1081,9 @@ public class QueryTest23 extends BaseTest {
 //        Assert.assertEquals("false(Boolean),30%(String),-1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void filterOn4(){
+    public void filterOn4() {
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
@@ -1089,7 +1094,7 @@ public class QueryTest23 extends BaseTest {
                         bank.name().notContains("工商银行");
                     });
                 })
-                .toPageResult(1,2);
+                .toPageResult(1, 2);
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
         Assert.assertEquals(1, listenerContext.getJdbcExecuteAfterArgs().size());
         {
@@ -1098,8 +1103,9 @@ public class QueryTest23 extends BaseTest {
 //                    Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
     }
+
     @Test
-    public void filterOn5(){
+    public void filterOn5() {
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
@@ -1123,5 +1129,75 @@ public class QueryTest23 extends BaseTest {
         }
     }
 
+
+    @Test
+    public void testMathx1() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft6<BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal>> list = easyEntityQuery.queryable(BlogEntity.class)
+                .select(t_blog -> Select.DRAFT.of(
+                        t_blog.score(),
+                        t_blog.score().abs(),
+                        t_blog.score().sin(),
+                        t_blog.score().floor(),
+                        t_blog.score().ceiling(),
+                        t_blog.score().log()
+                )).toList();
+        Assert.assertFalse(list.isEmpty());
+        listenerContextManager.clear();
+        for (Draft6<BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal> item : list) {
+            Assert.assertEquals(0, item.getValue1().abs().compareTo(item.getValue2()));
+            MathContext mc = new MathContext(16); // 设置精度 50 位
+            Assert.assertEquals(0, BigDecimalMath.sin(item.getValue1(), mc).compareTo(item.getValue3()));
+            Assert.assertEquals(0, item.getValue1().setScale(0, RoundingMode.FLOOR).compareTo(item.getValue4()));
+            Assert.assertEquals(0, item.getValue1().setScale(0, RoundingMode.CEILING).compareTo(item.getValue5()));
+            Assert.assertEquals(0, BigDecimalMath.log(item.getValue1(), mc).compareTo(item.getValue6()));
+
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`score` AS `value1`,ABS(t.`score`) AS `value2`,SIN(t.`score`) AS `value3`,FLOOR(t.`score`) AS `value4`,CEILING(t.`score`) AS `value5`,LOG(t.`score`) AS `value6` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void testMathx2() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<Draft6<BigDecimal, BigDecimal, Integer, BigDecimal, BigDecimal, BigDecimal>> list = easyEntityQuery.queryable(BlogEntity.class)
+                .select(t_blog -> Select.DRAFT.of(
+                        t_blog.score(),
+                        t_blog.score().round(),
+                        t_blog.score().signum(),
+                        t_blog.score().round(3),
+                        t_blog.score().exp(),
+                        t_blog.score().log10()
+                )).toList();
+        Assert.assertFalse(list.isEmpty());
+        listenerContextManager.clear();
+        for (Draft6<BigDecimal, BigDecimal, Integer, BigDecimal, BigDecimal, BigDecimal> item : list) {
+
+            Assert.assertEquals(0, item.getValue1().setScale(0, RoundingMode.HALF_UP).compareTo(item.getValue2()));
+            Assert.assertEquals(0, item.getValue3().compareTo((Integer) item.getValue1().signum()));
+            Assert.assertEquals(0, item.getValue1().setScale(3, RoundingMode.HALF_UP).compareTo(item.getValue4()));
+            Assert.assertEquals(0, BigDecimalMath.exp(item.getValue1(),new MathContext(16)).compareTo(item.getValue5().setScale(15,RoundingMode.HALF_UP)));
+            Assert.assertEquals(0, BigDecimalMath.log10(item.getValue1(), new MathContext(15)).compareTo(item.getValue6().setScale(16,RoundingMode.HALF_UP)));
+
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`score` AS `value1`,ROUND(t.`score`) AS `value2`,SIGN(t.`score`) AS `value3`,ROUND(t.`score`,?) AS `value4`,EXP(t.`score`) AS `value5`,LOG10(t.`score`) AS `value6` FROM `t_blog` t WHERE t.`deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("3(Integer),false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
 
 }
