@@ -32,14 +32,14 @@ public class MsSQLMathSQLFunction extends AbstractExpressionSQLFunction {
                 return "SIGN({0})";
             case Floor:
             case Truncate:
-                return "FLOOR({0})";
+                return "(CASE WHEN {0} >= 0 THEN FLOOR({0}) ELSE CEILING({0}) END)";
             case Ceiling:
                 return "CEILING({0})";
             case Round:{
                 if(columnExpressions.size()>1){
                     return "ROUND({0},{1})";
                 }
-                return "ROUND({0})";
+                return "ROUND({0},0)";
             }
             case Exp:
                 return "EXP({0})";
@@ -72,7 +72,8 @@ public class MsSQLMathSQLFunction extends AbstractExpressionSQLFunction {
                 if(columnExpressions.size()<2){
                     throw new IllegalArgumentException("Atan2方法至少需要两个参数");
                 }
-                return "ATAN2({0},{1})";
+
+                return "(CASE WHEN {1}<>0 THEN ATAN({0}/{1}) + CASE WHEN {1}<0 AND {0}>=0 THEN PI() WHEN {1}<0 AND {0}<0 THEN -PI() ELSE 0 END WHEN {1}=0 AND {0}>0 THEN PI()/2 WHEN {1}=0 AND {0}<0 THEN -PI()/2 ELSE NULL END)";
             }
         }
         throw new UnsupportedOperationException("不支持当前函数MsSQLMathSQLFunction:"+ mathMethodEnum);

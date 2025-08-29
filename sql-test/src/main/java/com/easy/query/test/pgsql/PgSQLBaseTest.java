@@ -19,6 +19,7 @@ import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.encryption.MyEncryptionStrategy;
 import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.MathTest;
 import com.easy.query.test.entity.MyCategoryInterceptor;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.UUIDEntity;
@@ -36,10 +37,13 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Before;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * create time 2023/5/10 16:08
@@ -146,12 +150,12 @@ public class PgSQLBaseTest {
         {
 
 
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(DocBankCard.class,DocBank.class,  DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class));
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(DocBankCard.class,DocBank.class,  DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class, MathTest.class));
             codeFirstCommand.executeWithTransaction(a->a.commit());
         }
         {
 
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class,DocBankCard.class, DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class));
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class,DocBankCard.class, DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class, MathTest.class));
             codeFirstCommand.executeWithTransaction(a->a.commit());
         }
 
@@ -226,6 +230,26 @@ public class PgSQLBaseTest {
         }
         SysUser sysUser = new SysUser();
         sysUser.setId("title0");
+
+
+        int size = 10000;
+        List<MathTest> list = new ArrayList<>(size);
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+
+        for (int i = 0; i < size; i++) {
+            MathTest entity = new MathTest();
+            entity.setId(UUID.randomUUID().toString());
+
+            // 随机生成 -1000.00 到 1000.00 的 BigDecimal
+            double value = random.nextDouble(-1000, 1000);
+            BigDecimal bigDecimalValue = BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP);
+
+            entity.setTestValue(bigDecimalValue);
+
+            list.add(entity);
+        }
+
+        entityQuery.insertable(list).batch().executeRows();
         entityQuery.insertable(sysUser).executeRows();
         entityQuery.insertable(docUsers).executeRows();
         entityQuery.insertable(docBanks).executeRows();

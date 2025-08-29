@@ -70,12 +70,12 @@ public class DamengMathSQLFunction extends AbstractExpressionSQLFunction {
                 return "ASIN({0})";
             case Atan:
                 return "ATAN({0})";
-//            case Atan2:{
-//                if(columnExpressions.size()<2){
-//                    throw new IllegalArgumentException("Atan2方法至少需要两个参数");
-//                }
-//                return "ATAN2({0},{1})";
-//            }
+            case Atan2:{
+                if(columnExpressions.size()<2){
+                    throw new IllegalArgumentException("Atan2方法至少需要两个参数");
+                }
+                return "ATAN2({0},{1})";
+            }
             case Truncate:
                 return "TRUNC({0},0)";
         }

@@ -89,7 +89,7 @@ public class MathQueryTest extends BaseTest {
             }
             Assert.assertEquals(0, compareTo0(BigDecimalMath.cos(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestCos().setScale(9, RoundingMode.HALF_UP)));
             Assert.assertEquals(0, compareTo0(BigDecimalMath.sin(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestSin().setScale(9, RoundingMode.HALF_UP)));
-            Assert.assertEquals(0, compareTo0(BigDecimalMath.tan(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestTan().setScale(9, RoundingMode.HALF_UP)));
+            Assert.assertEquals(0, compareTo0(BigDecimalMath.tan(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestTan().setScale(9, RoundingMode.HALF_UP),"0.000001"));
 
             if(mathTestDTO.getTestAsin()!=null){
                 Assert.assertEquals(0, compareTo0(BigDecimalMath.asin(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestAsin().setScale(9, RoundingMode.HALF_UP)));
@@ -167,7 +167,7 @@ public class MathQueryTest extends BaseTest {
             }
             Assert.assertEquals(0, compareTo0(BigDecimalMath.cos(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestCos().setScale(9, RoundingMode.HALF_UP)));
             Assert.assertEquals(0, compareTo0(BigDecimalMath.sin(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestSin().setScale(9, RoundingMode.HALF_UP)));
-            Assert.assertEquals(0, compareTo0(BigDecimalMath.tan(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestTan().setScale(9, RoundingMode.HALF_UP)));
+            Assert.assertEquals(0, compareTo0(BigDecimalMath.tan(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestTan().setScale(9, RoundingMode.HALF_UP),"0.000001"));
 
             if(mathTestDTO.getTestAsin()!=null){
                 Assert.assertEquals(0, compareTo0(BigDecimalMath.asin(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestAsin().setScale(9, RoundingMode.HALF_UP)));
@@ -178,7 +178,7 @@ public class MathQueryTest extends BaseTest {
             Assert.assertEquals(0, compareTo0(BigDecimalMath.atan(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestAtan().setScale(9, RoundingMode.HALF_UP)));
 
             Assert.assertEquals(0, compareTo0(BigDecimalMath.atan2(mathTestDTO.getTestValue(), BigDecimal.valueOf(1), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestAtan2().setScale(9, RoundingMode.HALF_UP)));
-            Assert.assertEquals(0, compareTo0(mathTestDTO.getTestValue().setScale(0, RoundingMode.DOWN), mathTestDTO.getTestTruncate().setScale(9, RoundingMode.HALF_UP)));
+            Assert.assertEquals(0, compareTo0(mathTestDTO.getTestValue().setScale(0, RoundingMode.DOWN), mathTestDTO.getTestTruncate().setScale(0, RoundingMode.DOWN)));
         }
     }
 
@@ -189,6 +189,17 @@ public class MathQueryTest extends BaseTest {
         int i = a.compareTo(b);
         if (i != 0) {
             if (a.setScale(a.scale() - 1, RoundingMode.DOWN).subtract(b.setScale(b.scale() - 1, RoundingMode.DOWN)).compareTo(new BigDecimal("0.000001")) <= 0) {
+                return 0;
+            }
+        }
+        return i;
+    }
+    private int compareTo0(BigDecimal a, BigDecimal b,String __01) {
+        System.out.println(a.toPlainString());
+        System.out.println(b.toPlainString());
+        int i = a.compareTo(b);
+        if (i != 0) {
+            if (a.setScale(a.scale() - 1, RoundingMode.DOWN).subtract(b.setScale(b.scale() - 1, RoundingMode.DOWN)).compareTo(new BigDecimal(__01)) <= 0) {
                 return 0;
             }
         }

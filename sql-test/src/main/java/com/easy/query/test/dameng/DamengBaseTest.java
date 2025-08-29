@@ -12,16 +12,21 @@ import com.easy.query.core.configuration.nameconversion.impl.UpperUnderlinedName
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.dameng.config.DamengDatabaseConfiguration;
 import com.easy.query.test.dameng.entity.DamengMyTopic;
+import com.easy.query.test.entity.MathTest;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.mysql8.TreeA;
 import com.easy.query.test.mysql8.TreeB;
 import com.zaxxer.hikari.HikariDataSource;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * create time 2023/7/27 17:27
@@ -79,10 +84,10 @@ public abstract class DamengBaseTest {
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DamengMyTopic.class));
         codeFirstCommand.executeWithTransaction(s->s.commit());
 
-        CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(TreeA.class, TreeB.class));
+        CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(TreeA.class, TreeB.class,MathTest.class));
         codeFirstCommand1.executeWithTransaction(e->e.commit());
 
-        CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.syncTableCommand(Arrays.asList(TreeA.class, TreeB.class));
+        CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.syncTableCommand(Arrays.asList(TreeA.class, TreeB.class,MathTest.class));
         codeFirstCommand2.executeWithTransaction(s->s.commit());
 
         entityQuery.deletable(DamengMyTopic.class).where(d -> d.id().isNotNull()).allowDeleteStatement(true).disableLogicDelete().executeRows();
@@ -99,6 +104,27 @@ public abstract class DamengBaseTest {
             }
             long l = entityQuery.insertable(topics).executeRows();
         }
+
+
+
+        int size = 10000;
+        List<MathTest> list = new ArrayList<>(size);
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+
+        for (int i = 0; i < size; i++) {
+            MathTest entity = new MathTest();
+            entity.setId(UUID.randomUUID().toString());
+
+            // 随机生成 -1000.00 到 1000.00 的 BigDecimal
+            double value = random.nextDouble(-1000, 1000);
+            BigDecimal bigDecimalValue = BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP);
+
+            entity.setTestValue(bigDecimalValue);
+
+            list.add(entity);
+        }
+
+        entityQuery.insertable(list).batch().executeRows();
 
     }
 

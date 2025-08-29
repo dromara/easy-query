@@ -43,7 +43,7 @@ public class GaussDBMathSQLFunction extends AbstractExpressionSQLFunction {
             case Exp:
                 return "EXP({0})";
             case Log:{
-                return "LOG({0})";
+                return "LN({0})";
             }
             case Log10:
                 return "LOG10({0})";
