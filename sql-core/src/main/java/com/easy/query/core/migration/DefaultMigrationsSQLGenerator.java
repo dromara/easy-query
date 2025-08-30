@@ -211,7 +211,6 @@ public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
                 List<IndexMigrationData.EntityField> entityFields = new ArrayList<>();
                 for (TableIndexResult.EntityField field : tableIndex.fields) {
                     IndexMigrationData.EntityField entityField = new IndexMigrationData.EntityField();
-                    entityField.setFieldName(field.fieldName);
                     entityField.setColumnName(field.columnName);
                     entityField.setAsc(field.asc);
                     entityFields.add(entityField);

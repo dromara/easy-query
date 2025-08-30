@@ -1,19 +1,47 @@
 package com.easy.query.core.migration.data;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+
 /**
  * create time 2025/8/21 22:16
- * 文件说明
+ * 列迁移数据
  *
  * @author xuejiaming
  */
 public class ColumnMigrationData {
+    /**
+     * 列名不能为空
+     */
     private String name;
+    /**
+     * 列注释
+     */
     private String comment;
+    /**
+     * 数据库类型不能为空
+     */
     private String dbType;
+    /**
+     * 是否非空
+     */
     private boolean notNull;
+    /**
+     * 是否是自增
+     */
     private boolean generatedKey;
+    /**
+     * 默认值可为空
+     */
     private String defValue;
+    /**
+     * 是否主键
+     */
     private boolean primary;
+    /**
+     * 旧列名
+     */
     private String oldColumnName;
 
     public String getName() {

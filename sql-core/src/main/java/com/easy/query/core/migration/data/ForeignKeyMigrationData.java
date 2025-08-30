@@ -8,11 +8,31 @@ package com.easy.query.core.migration.data;
  */
 public class ForeignKeyMigrationData {
 
+    /**
+     * 外键明不能为空
+     */
     private String name;
+    /**
+     * 外键行为
+     */
     private String action;
+    /**
+     * 当前表
+     */
     private String selfTable;
+    /**
+     * 外键表
+     */
     private String targetTable;
+    /**
+     * 当前表表字段
+     */
     private String[] selfColumn;
+
+    /**
+     * 外键表字段
+     */
+    private String[] targetColumn;
 
     public String[] getTargetColumn() {
         if (targetColumn == null) {
@@ -68,5 +88,4 @@ public class ForeignKeyMigrationData {
         this.name = name;
     }
 
-    private String[] targetColumn;
 }

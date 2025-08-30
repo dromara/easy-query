@@ -70,6 +70,7 @@ public interface DatabaseCodeFirst {
      * 如果表不存在则创建表
      * 如果表存在且class内的属性比数据库列多则自动生成添加列
      * 如果列或者表添加oldName则自动生成rename命令
+     * 同步表命令,不存在生成,存在判断列是否需要额外增加列、索引、外键是否需要重命名表名和列名
      * @param entities 数据库对象集合
      * @return 可同步的表的执行对象
      */
@@ -96,9 +97,32 @@ public interface DatabaseCodeFirst {
         return result;
     }
 
+    /**
+     * 创建表命令
+     * @param tableMigrationDataList
+     * @return
+     */
     CodeFirstCommand createTableCommandByMigrationData(List<TableMigrationData> tableMigrationDataList);
+
+    /**
+     * 删除表命令
+     * @param tableMigrationDataList
+     * @return
+     */
     CodeFirstCommand dropTableCommandByMigrationData(List<TableMigrationData> tableMigrationDataList);
+
+    /**
+     * 删除表命令(判断存在才生成)
+     * @param tableMigrationDataList
+     * @return
+     */
     CodeFirstCommand dropTableIfExistsCommandByMigrationData(List<TableMigrationData> tableMigrationDataList);
+
+    /**
+     * 同步表命令,不存在生成,存在判断列是否需要额外增加列、索引、外键是否需要重命名表名和列名
+     * @param tableMigrationDataList
+     * @return
+     */
     CodeFirstCommand syncTableCommandByMigrationData(List<TableMigrationData> tableMigrationDataList);
 
 

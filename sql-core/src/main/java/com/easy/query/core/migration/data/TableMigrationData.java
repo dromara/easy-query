@@ -5,21 +5,39 @@ import java.util.List;
 
 /**
  * create time 2025/8/21 22:15
- * 文件说明
+ * 表迁移数据
  *
  * @author xuejiaming
  */
 public class TableMigrationData {
+    /**
+     * schema
+     */
     private String schema;
     /**
-     * 表名
+     * 表名不能为空
      */
     private String tableName;
+    /**
+     * 原表名如果有表示要修改表名
+     */
     private String oldTableName;
+    /**
+     * 表注释信息
+     */
     private String comment;
 
+    /**
+     * 列信息
+     */
     private List<ColumnMigrationData> columns;
+    /**
+     * 外键信息
+     */
     private List<ForeignKeyMigrationData> foreignKeys;
+    /**
+     * 索引信息
+     */
     private List<IndexMigrationData> indexes;
 
 

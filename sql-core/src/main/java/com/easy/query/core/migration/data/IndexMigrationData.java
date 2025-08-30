@@ -5,14 +5,23 @@ import java.util.List;
 
 /**
  * create time 2025/8/29 20:00
- * 文件说明
+ * 索引迁移数据
  *
  * @author xuejiaming
  */
 public class IndexMigrationData {
 
+    /**
+     * 索引名称
+     */
     private String indexName;
+    /**
+     * 是否唯一索引
+     */
     private boolean unique;
+    /**
+     * 索引字段
+     */
     private List<EntityField> fields;
 
 
@@ -44,17 +53,14 @@ public class IndexMigrationData {
     }
 
     public static class EntityField {
-        private String fieldName;
+        /**
+         * 索引列名
+         */
         private String columnName;
+        /**
+         * 是否升序
+         */
         private boolean asc;
-
-        public String getFieldName() {
-            return fieldName;
-        }
-
-        public void setFieldName(String fieldName) {
-            this.fieldName = fieldName;
-        }
 
         public String getColumnName() {
             return columnName;
