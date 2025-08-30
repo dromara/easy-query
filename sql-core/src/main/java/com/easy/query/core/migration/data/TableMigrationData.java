@@ -1,5 +1,6 @@
 package com.easy.query.core.migration.data;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -9,10 +10,6 @@ import java.util.List;
  * @author xuejiaming
  */
 public class TableMigrationData {
-    /**
-     * 无意义用来确定当前类
-     */
-    private String key;
     private String schema;
     /**
      * 表名
@@ -22,16 +19,18 @@ public class TableMigrationData {
     private String comment;
 
     private List<ColumnMigrationData> columns;
+    private List<ForeignKeyMigrationData> foreignKeys;
+    private List<IndexMigrationData> indexes;
 
-    public String getKey() {
-        return key == null ? tableName : key;
-    }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
 
     public String getSchema() {
+        return schema;
+    }
+    public String getSchemaOrDefault(String defaultSchema) {
+        if(schema==null){
+            return defaultSchema;
+        }
         return schema;
     }
 
@@ -64,10 +63,35 @@ public class TableMigrationData {
     }
 
     public List<ColumnMigrationData> getColumns() {
+        if(columns==null){
+            return Collections.emptyList();
+        }
         return columns;
     }
 
     public void setColumns(List<ColumnMigrationData> columns) {
         this.columns = columns;
+    }
+
+    public List<ForeignKeyMigrationData> getForeignKeys() {
+        if(foreignKeys==null){
+            return Collections.emptyList();
+        }
+        return foreignKeys;
+    }
+
+    public void setForeignKeys(List<ForeignKeyMigrationData> foreignKeys) {
+        this.foreignKeys = foreignKeys;
+    }
+
+    public List<IndexMigrationData> getIndexes() {
+        if(indexes==null){
+            return Collections.emptyList();
+        }
+        return indexes;
+    }
+
+    public void setIndexes(List<IndexMigrationData> indexes) {
+        this.indexes = indexes;
     }
 }

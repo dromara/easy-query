@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.api.database;
 
 import com.easy.query.core.migration.MigrationCommand;
+import com.easy.query.core.migration.data.TableMigrationData;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.HashMap;
@@ -74,5 +75,33 @@ public interface DatabaseCodeFirst {
      */
     CodeFirstCommand syncTableCommand(List<Class<?>> entities);
 
+
+
+    boolean tableExistsByMigrationData(TableMigrationData tableMigrationData);
+
+    /**
+     * 表是否存在
+     * @param tableMigrationDataList 数据库对象集合
+     * @return 返回表和是否存在的map结构
+     */
+    default Map<String,Boolean> tableExistsByMigrationData(List<TableMigrationData> tableMigrationDataList){
+        if(EasyCollectionUtil.isEmpty(tableMigrationDataList)){
+            return new HashMap<>(0);
+        }
+        HashMap<String, Boolean> result = new HashMap<>(tableMigrationDataList.size());
+        for (TableMigrationData tableMigrationData : tableMigrationDataList) {
+            boolean tableExists = tableExistsByMigrationData(tableMigrationData);
+            result.put(tableMigrationData.getTableName(),tableExists);
+        }
+        return result;
+    }
+
+    CodeFirstCommand createTableCommandByMigrationData(List<TableMigrationData> tableMigrationDataList);
+    CodeFirstCommand dropTableCommandByMigrationData(List<TableMigrationData> tableMigrationDataList);
+    CodeFirstCommand dropTableIfExistsCommandByMigrationData(List<TableMigrationData> tableMigrationDataList);
+    CodeFirstCommand syncTableCommandByMigrationData(List<TableMigrationData> tableMigrationDataList);
+
+
     CodeFirstCommand createCodeFirstCommand(List<MigrationCommand> migrationCommands);
+
 }

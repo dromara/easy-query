@@ -14,6 +14,7 @@ import java.util.List;
  */
 public interface DatabaseMigrationProvider {
     void setMigrationParser(MigrationEntityParser migrationParser);
+    MigrationEntityParser getMigrationEntityParser();
 
     EntityMigrationMetadata createEntityMigrationMetadata(EntityMetadata entityMetadata);
 
@@ -30,19 +31,16 @@ public interface DatabaseMigrationProvider {
 
     boolean tableExists(String schema, String tableName);
 
-    MigrationCommand renameTable(EntityMigrationMetadata entityMigrationMetadata);
-//    MigrationCommand renameTable(TableMigrationData tableMigrationData);
+    MigrationCommand renameTable(TableMigrationData tableMigrationData);
 
-    MigrationCommand createTable(EntityMigrationMetadata entityMigrationMetadata);
-//    MigrationCommand createTable(TableMigrationData tableMigrationData);
-    List<MigrationCommand> createTableIndex(EntityMigrationMetadata entityMigrationMetadata);
-    List<MigrationCommand> createTableForeignKey(EntityMigrationMetadata entityMigrationMetadata, QueryRuntimeContext runtimeContext);
+    MigrationCommand createTable(TableMigrationData tableMigrationData);
+    List<MigrationCommand> createTableIndex(TableMigrationData tableMigrationData);
+    List<MigrationCommand> createTableForeignKey(TableMigrationData tableMigrationData, QueryRuntimeContext runtimeContext);
 
-    List<MigrationCommand> syncTable(EntityMigrationMetadata entityMigrationMetadata, boolean oldTable);
-//    List<MigrationCommand> syncTable(TableMigrationData tableMigrationData, boolean oldTable);
-    List<MigrationCommand> syncTableIndex(EntityMigrationMetadata entityMigrationMetadata, boolean oldTable);
-    List<MigrationCommand> syncTableForeignKey(EntityMigrationMetadata entityMigrationMetadata, QueryRuntimeContext runtimeContext, boolean oldTable);
+    List<MigrationCommand> syncTable(TableMigrationData tableMigrationData, boolean oldTable);
+    List<MigrationCommand> syncTableIndex(TableMigrationData tableMigrationData, boolean oldTable);
+    List<MigrationCommand> syncTableForeignKey(TableMigrationData tableMigrationData, QueryRuntimeContext runtimeContext, boolean oldTable);
 
-    MigrationCommand dropTable(EntityMigrationMetadata entityMigrationMetadata);
+    MigrationCommand dropTable(TableMigrationData tableMigrationData);
 
 }

@@ -15,18 +15,14 @@ import java.util.List;
  */
 public class MigrationContext {
 
-    private final List<Class<?>> entities;
+    private final List<TableMigrationData> tableMigrationDataList;
 
-    public MigrationContext(List<Class<?>> entities) {
-        this.entities = entities;
-    }
-
-    public List<Class<?>> getEntities() {
-        return entities;
+    public MigrationContext(List<TableMigrationData> tableMigrationDataList) {
+        this.tableMigrationDataList = tableMigrationDataList;
     }
 
     public List<TableMigrationData> getTableMigrationDataList(){
-        return Collections.emptyList();
+        return tableMigrationDataList;
     }
 
 }

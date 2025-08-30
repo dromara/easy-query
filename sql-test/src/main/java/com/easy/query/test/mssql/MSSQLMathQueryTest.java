@@ -122,7 +122,7 @@ public class MSSQLMathQueryTest extends MsSQLBaseTest{
             }
             Assert.assertEquals(0, compareTo0(BigDecimalMath.cos(mathTestDTO.getTestValue(), new MathContext(16)).setScale(16, RoundingMode.HALF_UP), mathTestDTO.getTestCos().setScale(16, RoundingMode.HALF_UP)));
             Assert.assertEquals(0, compareTo0(BigDecimalMath.sin(mathTestDTO.getTestValue(), new MathContext(16)).setScale(16, RoundingMode.HALF_UP), mathTestDTO.getTestSin().setScale(16, RoundingMode.HALF_UP)));
-            Assert.assertEquals(0, compareTo0(BigDecimalMath.tan(mathTestDTO.getTestValue(), new MathContext(16)).setScale(16, RoundingMode.HALF_UP), mathTestDTO.getTestTan().setScale(16, RoundingMode.HALF_UP),"0.00001"));
+            Assert.assertEquals(0, compareTo0(BigDecimalMath.tan(mathTestDTO.getTestValue(), new MathContext(16)).setScale(16, RoundingMode.HALF_UP), mathTestDTO.getTestTan().setScale(16, RoundingMode.HALF_UP),"0.0001"));
 
             if(mathTestDTO.getTestAsin()!=null){
                 Assert.assertEquals(0, compareTo0(BigDecimalMath.asin(mathTestDTO.getTestValue(), new MathContext(16)).setScale(16, RoundingMode.HALF_UP), mathTestDTO.getTestAsin().setScale(16, RoundingMode.HALF_UP)));

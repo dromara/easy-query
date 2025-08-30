@@ -8,6 +8,7 @@ import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationContext;
 import com.easy.query.core.migration.MigrationsSQLGenerator;
+import com.easy.query.core.migration.data.TableMigrationData;
 import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.common.MD5Util;
@@ -24,6 +25,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * create time 2025/1/14 14:23
@@ -36,7 +38,9 @@ public class MigrationTest extends BaseTest {
     @Test
     public void createTableSQLTest1() {
         MigrationsSQLGenerator migrationsSQLGenerator = easyEntityQuery.getRuntimeContext().getMigrationsSQLGenerator();
-        MigrationContext migrationContext = new MigrationContext(Arrays.asList(Topic.class, BlogEntity.class, MyMigrationBlog.class));
+        List<TableMigrationData> tableMigrationDataList = Arrays.asList(Topic.class, BlogEntity.class, MyMigrationBlog.class).stream()
+                .map(o -> migrationsSQLGenerator.parseEntity(o)).collect(Collectors.toList());
+        MigrationContext migrationContext = new MigrationContext(tableMigrationDataList);
         List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateMigrationSQL(migrationContext);
         Assert.assertEquals(1, migrationCommands.size());
         for (MigrationCommand migrationCommand : migrationCommands) {
@@ -67,7 +71,9 @@ public class MigrationTest extends BaseTest {
     @Test
     public void createTableSQLTest2() {
         MigrationsSQLGenerator migrationsSQLGenerator = easyEntityQuery.getRuntimeContext().getMigrationsSQLGenerator();
-        MigrationContext migrationContext = new MigrationContext(Arrays.asList(NewTopic.class));
+        List<TableMigrationData> tableMigrationDataList = Arrays.asList(NewTopic.class).stream()
+                .map(o -> migrationsSQLGenerator.parseEntity(o)).collect(Collectors.toList());
+        MigrationContext migrationContext = new MigrationContext(tableMigrationDataList);
         List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateMigrationSQL(migrationContext);
         for (MigrationCommand migrationCommand : migrationCommands) {
             System.out.println(migrationCommand.toSQL());
@@ -82,7 +88,9 @@ public class MigrationTest extends BaseTest {
     @Test
     public void createTableSQLTest3() {
         MigrationsSQLGenerator migrationsSQLGenerator = easyEntityQuery.getRuntimeContext().getMigrationsSQLGenerator();
-        MigrationContext migrationContext = new MigrationContext(Arrays.asList(NewTopic3.class));
+        List<TableMigrationData> tableMigrationDataList = Arrays.asList(NewTopic3.class).stream()
+                .map(o -> migrationsSQLGenerator.parseEntity(o)).collect(Collectors.toList());
+        MigrationContext migrationContext = new MigrationContext(tableMigrationDataList);
         List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateMigrationSQL(migrationContext);
         for (MigrationCommand migrationCommand : migrationCommands) {
             System.out.println(migrationCommand.toSQL());

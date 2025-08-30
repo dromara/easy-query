@@ -17,6 +17,7 @@ import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyStringUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -97,6 +98,7 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
     }
 
     @Override
+    @NotNull
     public ColumnDbTypeResult getColumnDbType(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
         Field declaredField = entityMigrationMetadata.getFieldByColumnMetadata(columnMetadata);
         Column annotation = declaredField.getAnnotation(Column.class);
@@ -147,7 +149,7 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
     }
 
     @Override
-    public Boolean columnExistInDb(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
+    public boolean columnExistInDb(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
 
         Field declaredField = entityMigrationMetadata.getFieldByColumnMetadata(columnMetadata);
         Column annotation = declaredField.getAnnotation(Column.class);
@@ -185,7 +187,7 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
     }
 
     @Override
-    public List<TableIndexResult> getTableIndexes(EntityMigrationMetadata entityMigrationMetadata) {
+    public @NotNull List<TableIndexResult> getTableIndexes(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         ArrayList<TableIndexResult> tableIndexResults = new ArrayList<>();
         TableIndexes tableIndexes = EasyClassUtil.getAnnotation(entityMetadata.getEntityClass(), TableIndexes.class);
@@ -246,6 +248,7 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
     }
 
     @Override
+    @NotNull
     public List<TableForeignKeyResult> getTableForeignKeys(EntityMigrationMetadata entityMigrationMetadata, QueryRuntimeContext runtimeContext) {
 
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();

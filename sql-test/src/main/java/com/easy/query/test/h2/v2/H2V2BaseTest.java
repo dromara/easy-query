@@ -125,7 +125,7 @@ public class H2V2BaseTest {
         });
 
         String value = sqlValueHolder.getValue();
-
+        System.out.println(value);
         Assert.assertEquals("\n" +
                 "CREATE TABLE IF NOT EXISTS \"t_all_type\" ( \n" +
                 "\"id\" VARCHAR(255) NOT NULL  PRIMARY KEY ,\n" +
@@ -157,8 +157,7 @@ public class H2V2BaseTest {
                 "\"id\" VARCHAR(255) NOT NULL  PRIMARY KEY ,\n" +
                 "\"stars\" INT NULL ,\n" +
                 "\"title\" VARCHAR(255) NULL ,\n" +
-                "\"create_time\" TIMESTAMP(3) NULL ,\n" +
-                "\"alias\" VARCHAR(255) NULL \n" +
+                "\"create_time\" TIMESTAMP(3) NULL \n" +
                 ");\n" +
                 "CREATE TABLE IF NOT EXISTS \"t_blog\" ( \n" +
                 "\"id\" VARCHAR(255) NOT NULL  PRIMARY KEY ,\n" +

@@ -10,10 +10,10 @@ public class ColumnMigrationData {
     private String name;
     private String comment;
     private String dbType;
-    private Boolean nullable;
-    private Boolean generatedKey;
+    private boolean notNull;
+    private boolean generatedKey;
     private String defValue;
-    private Boolean primary;
+    private boolean primary;
     private String oldColumnName;
 
     public String getName() {
@@ -40,22 +40,6 @@ public class ColumnMigrationData {
         this.dbType = dbType;
     }
 
-    public Boolean getNullable() {
-        return nullable;
-    }
-
-    public void setNullable(Boolean nullable) {
-        this.nullable = nullable;
-    }
-
-    public Boolean getGeneratedKey() {
-        return generatedKey;
-    }
-
-    public void setGeneratedKey(Boolean generatedKey) {
-        this.generatedKey = generatedKey;
-    }
-
     public String getDefValue() {
         return defValue;
     }
@@ -64,11 +48,27 @@ public class ColumnMigrationData {
         this.defValue = defValue;
     }
 
-    public Boolean getPrimary() {
+    public boolean isNotNull() {
+        return notNull;
+    }
+
+    public void setNotNull(boolean notNull) {
+        this.notNull = notNull;
+    }
+
+    public boolean isGeneratedKey() {
+        return generatedKey;
+    }
+
+    public void setGeneratedKey(boolean generatedKey) {
+        this.generatedKey = generatedKey;
+    }
+
+    public boolean isPrimary() {
         return primary;
     }
 
-    public void setPrimary(Boolean primary) {
+    public void setPrimary(boolean primary) {
         this.primary = primary;
     }
 

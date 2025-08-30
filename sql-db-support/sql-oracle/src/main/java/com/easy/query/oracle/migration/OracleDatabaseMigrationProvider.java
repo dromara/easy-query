@@ -1,33 +1,25 @@
 package com.easy.query.oracle.migration;
 
 import com.easy.query.core.configuration.dialect.SQLKeyword;
-import com.easy.query.core.logging.Log;
-import com.easy.query.core.logging.LogFactory;
-import com.easy.query.core.metadata.ColumnMetadata;
-import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.migration.AbstractDatabaseMigrationProvider;
 import com.easy.query.core.migration.ColumnDbTypeResult;
-import com.easy.query.core.migration.EntityMigrationMetadata;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationEntityParser;
-import com.easy.query.core.migration.TableForeignKeyResult;
-import com.easy.query.core.migration.TableIndexResult;
 import com.easy.query.core.migration.commands.DefaultMigrationCommand;
+import com.easy.query.core.migration.data.ColumnMigrationData;
+import com.easy.query.core.migration.data.ForeignKeyMigrationData;
+import com.easy.query.core.migration.data.IndexMigrationData;
+import com.easy.query.core.migration.data.TableMigrationData;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import javax.sql.DataSource;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -68,42 +60,39 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
     }
 
     @Override
-    public MigrationCommand renameTable(EntityMigrationMetadata entityMigrationMetadata) {
-        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        String sql = String.format("execute immediate 'ALTER TABLE %s RENAME TO  %s';", getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getOldTableName()), getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()));
+    public MigrationCommand renameTable(TableMigrationData tableMigrationData) {
+        String sql = String.format("execute immediate 'ALTER TABLE %s RENAME TO  %s';", getQuoteSQLName(tableMigrationData.getSchema(),tableMigrationData.getOldTableName()), getQuoteSQLName(tableMigrationData.getSchema(),tableMigrationData.getTableName()));
         return new DefaultMigrationCommand(sql);
     }
 
     @Override
-    public MigrationCommand createTable(EntityMigrationMetadata entityMigrationMetadata) {
+    public MigrationCommand createTable(TableMigrationData tableMigrationData) {
 
-        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         StringBuilder sql = new StringBuilder();
         sql.append("BEGIN")
                 .append(newLine);
         StringBuilder columnCommentSQL = new StringBuilder();
 
 
-        String tableComment = getTableComment(entityMigrationMetadata,"''");
+        String tableComment = getTableComment(tableMigrationData,"''");
         if (EasyStringUtil.isNotBlank(tableComment)) {
-            String format = String.format("execute immediate 'COMMENT ON TABLE %s IS %s';", getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()), tableComment);
+            String format = String.format("execute immediate 'COMMENT ON TABLE %s IS %s';", getQuoteSQLName(tableMigrationData.getSchema(),tableMigrationData.getTableName()), tableComment);
             columnCommentSQL.append(newLine)
                     .append(format)
                     .append(newLine);
         }
 
-        sql.append("execute immediate 'CREATE TABLE ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName())).append(" ( ");
-        for (ColumnMetadata column : entityMetadata.getColumns()) {
+        sql.append("execute immediate 'CREATE TABLE ").append(getQuoteSQLName(tableMigrationData.getSchema(),tableMigrationData.getTableName())).append(" ( ");
+        for (ColumnMigrationData column : tableMigrationData.getColumns()) {
             sql.append(newLine)
                     .append(getQuoteSQLName(column.getName()))
                     .append(" ");
-            ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
+            ColumnDbTypeResult columnDbTypeResult = new ColumnDbTypeResult(column.getDbType(), column.getDefValue());
             sql.append(columnDbTypeResult.columnType);
-            boolean nullable = migrationEntityParser.isNullable(entityMigrationMetadata, column);
-            if (nullable) {
-                sql.append(" NULL ");
-            } else {
+            if (column.isNotNull()) {
                 sql.append(" NOT NULL ");
+            } else {
+                sql.append(" NULL ");
             }
             if (column.isGeneratedKey()) {
                 sql.append(" GENERATED BY DEFAULT AS IDENTITY ");
@@ -112,22 +101,21 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
                     sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
                 }
             }
-            String columnComment = getColumnComment(entityMigrationMetadata, column,"''");
+            String columnComment = getColumnComment(column,"''");
             if (EasyStringUtil.isNotBlank(columnComment)) {
-                String format = String.format("execute immediate 'COMMENT ON COLUMN %s.%s IS %s';", getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()), getQuoteSQLName(column.getName()), columnComment);
+                String format = String.format("execute immediate 'COMMENT ON COLUMN %s.%s IS %s';", getQuoteSQLName(tableMigrationData.getSchema(),tableMigrationData.getTableName()), getQuoteSQLName(column.getName()), columnComment);
                 columnCommentSQL.append(newLine)
                         .append(format);
             }
             sql.append(",");
         }
-        Collection<String> keyProperties = entityMetadata.getKeyProperties();
-        if (EasyCollectionUtil.isNotEmpty(keyProperties)) {
+        List<ColumnMigrationData> keys = EasyCollectionUtil.filter(tableMigrationData.getColumns(), s -> s.isPrimary());
+        if (EasyCollectionUtil.isNotEmpty(keys)) {
             sql.append(newLine)
-                    .append(" CONSTRAINT ").append(getQuoteSQLName(getDatabaseName()+"_"+entityMetadata.getTableName()+"_pk1")).append(" ").append(" PRIMARY KEY (");
-            int i = keyProperties.size();
-            for (String keyProperty : keyProperties) {
+                    .append(" CONSTRAINT ").append(getQuoteSQLName(getDatabaseName()+"_"+tableMigrationData.getTableName()+"_pk1")).append(" ").append(" PRIMARY KEY (");
+            int i = keys.size();
+            for (ColumnMigrationData keyColumn : keys) {
                 i--;
-                ColumnMetadata keyColumn = entityMetadata.getColumnNotNull(keyProperty);
                 sql.append(getQuoteSQLName(keyColumn.getName()));
                 if (i > 0) {
                     sql.append(", ");
@@ -149,40 +137,23 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
     }
 
     @Override
-    protected MigrationCommand renameColumn(EntityMigrationMetadata entityMigrationMetadata, String renameFrom, ColumnMetadata column) {
-        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        String sql = String.format("execute immediate 'ALTER TABLE %s RENAME COLUMN %s TO  %s';", getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()), getQuoteSQLName(renameFrom), getQuoteSQLName(column.getName()));
-//
-//        ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
-//        sql.append(columnDbTypeResult.columnType);
-//        if (isNullable(entityMigrationMetadata, column)) {
-//            sql.append(" NULL");
-//        } else {
-//            sql.append(" NOT NULL");
-//        }
-
-//        String columnComment = getColumnComment(entityMigrationMetadata, column);
-//        if (EasyStringUtil.isNotBlank(columnComment)) {
-//            sql.append(newLine);
-//            sql.append(" COMMENT ON COLUMN ").append(tableName).append(" IS ").append(columnComment);
-//            sql.append(";");
-//        }
+    protected MigrationCommand renameColumn(TableMigrationData table, String renameFrom, ColumnMigrationData column) {
+        String sql = String.format("execute immediate 'ALTER TABLE %s RENAME COLUMN %s TO  %s';", getQuoteSQLName(table.getSchema(),table.getTableName()), getQuoteSQLName(renameFrom), getQuoteSQLName(column.getName()));
         return new DefaultMigrationCommand(sql);
     }
 
     @Override
-    protected MigrationCommand addColumn(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata column) {
-        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
+    protected MigrationCommand addColumn(TableMigrationData table, ColumnMigrationData column) {
         StringBuilder sql = new StringBuilder();
-        String format = String.format("execute immediate 'ALTER TABLE %s ADD (", getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()));
+        String format = String.format("execute immediate 'ALTER TABLE %s ADD (", getQuoteSQLName(table.getSchema(),table.getTableName()));
         sql.append(format).append(getQuoteSQLName(column.getName()));
 
-        ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
+        ColumnDbTypeResult columnDbTypeResult = new ColumnDbTypeResult(column.getDbType(), column.getDefValue());
         sql.append(columnDbTypeResult.columnType);
-        if (migrationEntityParser.isNullable(entityMigrationMetadata, column)) {
-            sql.append(" NULL");
-        } else {
+        if (column.isNotNull()) {
             sql.append(" NOT NULL");
+        } else {
+            sql.append(" NULL");
         }
         if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
             sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
@@ -200,27 +171,25 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 
 
     @Override
-    public MigrationCommand dropTable(EntityMigrationMetadata entityMigrationMetadata) {
-        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(entityMetadata.getSchemaOrNull(),entityMetadata.getTableName()) + ";");
+    public MigrationCommand dropTable(TableMigrationData table) {
+        return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(table.getSchema(),table.getTableName()) + ";");
     }
     @Override
-    protected MigrationCommand createIndex(EntityMigrationMetadata entityMigrationMetadata, TableIndexResult tableIndex) {
-        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
+    protected MigrationCommand createIndex(TableMigrationData table, IndexMigrationData tableIndex) {
         StringBuilder sql = new StringBuilder();
         sql.append("CREATE ");
-        if (tableIndex.unique) {
+        if (tableIndex.isUnique()) {
             sql.append("UNIQUE INDEX ");
         } else {
             sql.append("INDEX ");
         }
-        sql.append(tableIndex.indexName);
-        sql.append(" ON ").append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()));
+        sql.append(tableIndex.getIndexName());
+        sql.append(" ON ").append(getQuoteSQLName(table.getSchema(), table.getTableName()));
         sql.append(" (");
         StringJoiner joiner = new StringJoiner(",");
-        for (int i = 0; i < tableIndex.fields.size(); i++) {
-            TableIndexResult.EntityField entityField = tableIndex.fields.get(i);
-            String column = getQuoteSQLName(entityField.columnName) + " " + (entityField.asc ? "ASC" : "DESC");
+        for (int i = 0; i < tableIndex.getFields().size(); i++) {
+            IndexMigrationData.EntityField entityField = tableIndex.getFields().get(i);
+            String column = getQuoteSQLName(entityField.getColumnName()) + " " + (entityField.isAsc() ? "ASC" : "DESC");
             joiner.add(column);
         }
         sql.append(joiner);
@@ -230,25 +199,24 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 
 
     @Override
-    protected MigrationCommand createTableForeignKey(EntityMigrationMetadata entityMigrationMetadata, TableForeignKeyResult tableForeignKeyResult) {
-        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
+    protected MigrationCommand createTableForeignKey(TableMigrationData table, ForeignKeyMigrationData foreignKey) {
         StringBuilder sql = new StringBuilder();
         sql.append("ALTER TABLE ");
-        sql.append(getQuoteSQLName(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName()));
-        sql.append(" ADD CONSTRAINT ").append(tableForeignKeyResult.name);
+        sql.append(getQuoteSQLName(table.getSchema(), table.getTableName()));
+        sql.append(" ADD CONSTRAINT ").append(foreignKey.getName());
         sql.append(" FOREIGN KEY (");
 
-        String selfColumns = Arrays.stream(tableForeignKeyResult.selfColumn).map(self -> getQuoteSQLName(self)).collect(Collectors.joining(","));
+        String selfColumns = Arrays.stream(foreignKey.getSelfColumn()).map(self -> getQuoteSQLName(self)).collect(Collectors.joining(","));
         sql.append(selfColumns);
         sql.append(") REFERENCES ");
-        sql.append(getQuoteSQLName(tableForeignKeyResult.targetTable));
+        sql.append(getQuoteSQLName(foreignKey.getTargetTable()));
         sql.append(" (");
-        String targetColumns = Arrays.stream(tableForeignKeyResult.targetColumn).map(target -> getQuoteSQLName(target)).collect(Collectors.joining(","));
+        String targetColumns = Arrays.stream(foreignKey.getTargetColumn()).map(target -> getQuoteSQLName(target)).collect(Collectors.joining(","));
         sql.append(targetColumns);
         sql.append(")");
 
-        if (EasyStringUtil.isNotBlank(tableForeignKeyResult.action)) {
-            sql.append(" ").append(tableForeignKeyResult.action).append(" ");
+        if (EasyStringUtil.isNotBlank(foreignKey.getAction())) {
+            sql.append(" ").append(foreignKey.getAction()).append(" ");
         }
         sql.append(";");
         return new DefaultMigrationCommand(sql.toString());

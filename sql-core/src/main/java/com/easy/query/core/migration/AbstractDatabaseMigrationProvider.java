@@ -8,6 +8,8 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.migration.data.ColumnMigrationData;
+import com.easy.query.core.migration.data.ForeignKeyMigrationData;
+import com.easy.query.core.migration.data.IndexMigrationData;
 import com.easy.query.core.migration.data.TableMigrationData;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyDatabaseUtil;
@@ -17,6 +19,7 @@ import com.easy.query.core.util.EasyToSQLUtil;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -42,7 +45,13 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
 
     @Override
     public void setMigrationParser(MigrationEntityParser migrationParser) {
+        Objects.requireNonNull(migrationParser, "migrationParser can not be null");
         this.migrationEntityParser = migrationParser;
+    }
+
+    @Override
+    public MigrationEntityParser getMigrationEntityParser() {
+        return migrationEntityParser;
     }
 
     @Override
@@ -75,29 +84,6 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
     public abstract String databaseExistSQL(String databaseName);
 
     public abstract String createDatabaseSQL(String databaseName);
-//
-//    @Override
-//    public MigrationCommand createDatabaseCommand() {
-//        String databaseSQL = "CREATE DATABASE IF NOT EXISTS " + getQuoteSQLName(databaseName) + " ENGINE=Ordinary;";
-//        return new DefaultMigrationCommand(null, databaseSQL);
-//    }
-
-
-    protected @NotNull ColumnDbTypeResult getColumnDbType(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
-        ColumnDbTypeResult columnDbType = migrationEntityParser.getColumnDbType(entityMigrationMetadata, columnMetadata);
-        if (columnDbType == null) {
-            throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(entityMigrationMetadata.getEntityMetadata().getEntityClass()) + "] field name:" + columnMetadata.getFieldName() + " not found column db type.");
-        }
-        return columnDbType;
-    }
-
-    protected String getColumnComment(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata, String quote) {
-        String columnComment = migrationEntityParser.getColumnComment(entityMigrationMetadata, columnMetadata);
-        if (EasyStringUtil.isNotBlank(columnComment)) {
-            return quote + columnComment + quote;
-        }
-        return null;
-    }
 
     protected String getColumnComment(ColumnMigrationData columnMigrationData, String quote) {
         String columnComment = columnMigrationData.getComment();
@@ -107,8 +93,8 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
         return null;
     }
 
-    protected @Nullable String getTableComment(EntityMigrationMetadata entityMigrationMetadata, String quote) {
-        String tableComment = migrationEntityParser.getTableComment(entityMigrationMetadata);
+    protected @Nullable String getTableComment(TableMigrationData tableMigrationData, String quote) {
+        String tableComment = tableMigrationData.getComment();
         if (EasyStringUtil.isNotBlank(tableComment)) {
             return quote + tableComment + quote;
         }
@@ -123,110 +109,50 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
         return EasyDatabaseUtil.getColumns(dataSource, "select * from " + columnTableName + " where 1=2");
     }
 
-//    protected Set<String> getColumnNames(TableMigrationData tableMigrationData, boolean oldTable) {
-//
-//        String columnTableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, tableMigrationData.getSchema(), oldTable ? tableMigrationData.getOldTableName() : tableMigrationData.getTableName(), null, null);
-//        //比较差异
-//        return EasyDatabaseUtil.getColumns(dataSource, "select * from " + columnTableName + " where 1=2");
-//    }
+    protected Set<String> getColumnNames(TableMigrationData tableMigrationData, boolean oldTable) {
 
-    protected Set<String> getTableIndexes(EntityMigrationMetadata entityMigrationMetadata, boolean oldTable) {
-        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-
-//        String columnTableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, oldTable ? entityMetadata.getOldTableName() : entityMetadata.getTableName(), null, null);
+        String columnTableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, tableMigrationData.getSchema(), oldTable ? tableMigrationData.getOldTableName() : tableMigrationData.getTableName(), null, null);
         //比较差异
-        return EasyDatabaseUtil.getTableIndexes(dataSource, oldTable ? entityMetadata.getOldTableName() : entityMetadata.getTableName());
+        return EasyDatabaseUtil.getColumns(dataSource, "select * from " + columnTableName + " where 1=2");
     }
 
-    protected Set<String> getTableForeignKeys(EntityMigrationMetadata entityMigrationMetadata, boolean oldTable) {
-        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-
-//        String columnTableName = EasyToSQLUtil.getSchemaTableName(sqlKeyword, entityMetadata, oldTable ? entityMetadata.getOldTableName() : entityMetadata.getTableName(), null, null);
+    protected Set<String> getTableIndexes(TableMigrationData tableMigrationData, boolean oldTable) {
         //比较差异
-        return EasyDatabaseUtil.getTableForeignKeys(dataSource, oldTable ? entityMetadata.getOldTableName() : entityMetadata.getTableName());
+        return EasyDatabaseUtil.getTableIndexes(dataSource, oldTable ? tableMigrationData.getOldTableName() : tableMigrationData.getTableName());
     }
-
+    protected Set<String> getTableForeignKeys(TableMigrationData tableMigrationData, boolean oldTable) {
+        //比较差异
+        return EasyDatabaseUtil.getTableForeignKeys(dataSource, oldTable ? tableMigrationData.getOldTableName() : tableMigrationData.getTableName());
+    }
     @Override
-    public List<MigrationCommand> syncTable(EntityMigrationMetadata entityMigrationMetadata, boolean oldTable) {
+    public List<MigrationCommand> syncTable(TableMigrationData tableMigrationData, boolean oldTable) {
 
         //比较差异
-        Set<String> tableColumns = getColumnNames(entityMigrationMetadata, oldTable);
+        Set<String> tableColumns = getColumnNames(tableMigrationData, oldTable);
 
         ArrayList<MigrationCommand> migrationCommands = new ArrayList<>();
-        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        for (ColumnMetadata column : entityMetadata.getColumns()) {
-            if (migrationEntityParser.columnExistInDb(entityMigrationMetadata, column)) {
-                if (!tableColumns.contains(column.getName())) {
-                    String columnRenameFrom = migrationEntityParser.getColumnRenameFrom(entityMigrationMetadata, column);
-                    if (EasyStringUtil.isNotBlank(columnRenameFrom) && tableColumns.contains(columnRenameFrom)) {
-                        MigrationCommand migrationCommand = renameColumn(entityMigrationMetadata, columnRenameFrom, column);
-                        migrationCommands.add(migrationCommand);
-                    } else {
-                        MigrationCommand migrationCommand = addColumn(entityMigrationMetadata, column);
-                        migrationCommands.add(migrationCommand);
-                    }
+        for (ColumnMigrationData column : tableMigrationData.getColumns()) {
+            if (!tableColumns.contains(column.getName())) {
+                String oldColumnName = column.getOldColumnName();
+                if (EasyStringUtil.isNotBlank(oldColumnName) && tableColumns.contains(oldColumnName)) {
+                    MigrationCommand migrationCommand = renameColumn(tableMigrationData, oldColumnName, column);
+                    migrationCommands.add(migrationCommand);
+                } else {
+                    MigrationCommand migrationCommand = addColumn(tableMigrationData, column);
+                    migrationCommands.add(migrationCommand);
                 }
             }
         }
         return migrationCommands;
     }
 
-//    @Override
-//    public List<MigrationCommand> syncTable(TableMigrationData tableMigrationData, boolean oldTable) {
-//
-//        //比较差异
-//        Set<String> tableColumns = getColumnNames(tableMigrationData, oldTable);
-//
-//        ArrayList<MigrationCommand> migrationCommands = new ArrayList<>();
-//        for (ColumnMigrationData column : tableMigrationData.getColumns()) {
-//            if (!tableColumns.contains(column.getName())) {
-//                String oldColumnName = column.getOldColumnName();
-//                if (EasyStringUtil.isNotBlank(oldColumnName) && tableColumns.contains(oldColumnName)) {
-//                    MigrationCommand migrationCommand = renameColumn(tableMigrationData, oldColumnName, column);
-//                    migrationCommands.add(migrationCommand);
-//                } else {
-//                    MigrationCommand migrationCommand = addColumn(tableMigrationData, column);
-//                    migrationCommands.add(migrationCommand);
-//                }
-//            }
-//        }
-//        return migrationCommands;
-//    }
-
     @Override
-    public List<MigrationCommand> createTableIndex(EntityMigrationMetadata entityMigrationMetadata) {
-        List<TableIndexResult> tableIndexes = migrationEntityParser.getTableIndexes(entityMigrationMetadata);
+    public List<MigrationCommand> createTableIndex(TableMigrationData tableMigrationData) {
 
-        ArrayList<MigrationCommand> migrationCommands = new ArrayList<>(tableIndexes.size());
-        for (TableIndexResult tableIndex : tableIndexes) {
-            MigrationCommand migrationCommand = createIndex(entityMigrationMetadata, tableIndex);
-            migrationCommands.add(migrationCommand);
-        }
-        return migrationCommands;
-    }
-
-    @Override
-    public List<MigrationCommand> syncTableIndex(EntityMigrationMetadata entityMigrationMetadata, boolean oldTable) {
-        Set<String> dbTableIndexes = getTableIndexes(entityMigrationMetadata, oldTable);
-
-        List<TableIndexResult> tableIndexes = migrationEntityParser.getTableIndexes(entityMigrationMetadata);
-
-        ArrayList<MigrationCommand> migrationCommands = new ArrayList<>(tableIndexes.size());
-        for (TableIndexResult tableIndex : tableIndexes) {
-            if (!dbTableIndexes.contains(tableIndex.indexName)) {
-                MigrationCommand migrationCommand = createIndex(entityMigrationMetadata, tableIndex);
-                migrationCommands.add(migrationCommand);
-            }
-        }
-        return migrationCommands;
-    }
-
-    @Override
-    public List<MigrationCommand> createTableForeignKey(EntityMigrationMetadata entityMigrationMetadata, QueryRuntimeContext runtimeContext) {
-        List<TableForeignKeyResult> tableForeignKeys = migrationEntityParser.getTableForeignKeys(entityMigrationMetadata, runtimeContext);
-        ArrayList<MigrationCommand> migrationCommands = new ArrayList<>(tableForeignKeys.size());
-        for (TableForeignKeyResult tableForeignKeyResult : tableForeignKeys) {
-            MigrationCommand migrationCommand = createTableForeignKey(entityMigrationMetadata, tableForeignKeyResult);
+        List<IndexMigrationData> tableIndexes = tableMigrationData.getIndexes();
+        ArrayList<MigrationCommand> migrationCommands = new ArrayList<>();
+        for (IndexMigrationData tableIndex : tableIndexes) {
+            MigrationCommand migrationCommand = createIndex(tableMigrationData, tableIndex);
             if (migrationCommand != null) {
                 migrationCommands.add(migrationCommand);
             }
@@ -235,13 +161,40 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
     }
 
     @Override
-    public List<MigrationCommand> syncTableForeignKey(EntityMigrationMetadata entityMigrationMetadata, QueryRuntimeContext runtimeContext, boolean oldTable) {
-        Set<String> dbTableIForeignKeys = getTableForeignKeys(entityMigrationMetadata, oldTable);
-        List<TableForeignKeyResult> tableForeignKeys = migrationEntityParser.getTableForeignKeys(entityMigrationMetadata, runtimeContext);
+    public List<MigrationCommand> syncTableIndex(TableMigrationData tableMigrationData, boolean oldTable) {
+        Set<String> dbTableIndexes = getTableIndexes(tableMigrationData, oldTable);
+        ArrayList<MigrationCommand> migrationCommands = new ArrayList<>();
+        List<IndexMigrationData> tableIndexes = tableMigrationData.getIndexes();
+        for (IndexMigrationData tableIndex : tableIndexes) {
+            if (!dbTableIndexes.contains(tableIndex.getIndexName())) {
+                MigrationCommand migrationCommand = createIndex(tableMigrationData, tableIndex);
+                migrationCommands.add(migrationCommand);
+            }
+        }
+        return migrationCommands;
+    }
+    @Override
+    public List<MigrationCommand> createTableForeignKey(TableMigrationData tableMigrationData, QueryRuntimeContext runtimeContext) {
+        List<ForeignKeyMigrationData> foreignKeys = tableMigrationData.getForeignKeys();
+        ArrayList<MigrationCommand> migrationCommands = new ArrayList<>();
+        for (ForeignKeyMigrationData foreignKey : foreignKeys) {
+            MigrationCommand migrationCommand = createTableForeignKey(tableMigrationData, foreignKey);
+            if (migrationCommand != null) {
+                migrationCommands.add(migrationCommand);
+            }
+        }
+        return migrationCommands;
+    }
+
+    @Override
+    public List<MigrationCommand> syncTableForeignKey(TableMigrationData tableMigrationData, QueryRuntimeContext runtimeContext, boolean oldTable) {
+        Set<String> dbTableIForeignKeys = getTableForeignKeys(tableMigrationData, oldTable);
+
+        List<ForeignKeyMigrationData> tableForeignKeys = tableMigrationData.getForeignKeys();
         ArrayList<MigrationCommand> migrationCommands = new ArrayList<>(tableForeignKeys.size());
-        for (TableForeignKeyResult tableForeignKeyResult : tableForeignKeys) {
-            if (!dbTableIForeignKeys.contains(tableForeignKeyResult.name)) {
-                MigrationCommand migrationCommand = createTableForeignKey(entityMigrationMetadata, tableForeignKeyResult);
+        for (ForeignKeyMigrationData foreignKeyMigrationData : tableForeignKeys) {
+            if (!dbTableIForeignKeys.contains(foreignKeyMigrationData.getName())) {
+                MigrationCommand migrationCommand = createTableForeignKey(tableMigrationData, foreignKeyMigrationData);
                 if (migrationCommand != null) {
                     migrationCommands.add(migrationCommand);
                 }
@@ -250,15 +203,17 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
         return migrationCommands;
     }
 
-    protected abstract MigrationCommand renameColumn(EntityMigrationMetadata entityMigrationMetadata, String renameFrom, ColumnMetadata column);
-//    protected abstract MigrationCommand renameColumn(TableMigrationData tableMigrationData, String oldColumnName, ColumnMigrationData columnMigrationData);
 
-    protected abstract MigrationCommand addColumn(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata column);
-//    protected abstract MigrationCommand addColumn(TableMigrationData tableMigrationData, ColumnMigrationData columnMigrationData);
+    protected abstract MigrationCommand renameColumn(TableMigrationData tableMigrationData, String oldColumnName, ColumnMigrationData columnMigrationData);
 
-    protected abstract MigrationCommand createIndex(EntityMigrationMetadata entityMigrationMetadata, TableIndexResult tableIndex);
 
-    protected abstract @Nullable MigrationCommand createTableForeignKey(EntityMigrationMetadata entityMigrationMetadata, TableForeignKeyResult tableForeignKeyResult);
+    protected abstract MigrationCommand addColumn(TableMigrationData tableMigrationData, ColumnMigrationData columnMigrationData);
+
+
+    protected abstract MigrationCommand createIndex(TableMigrationData table, IndexMigrationData tableIndex);
+
+
+    protected abstract @Nullable MigrationCommand createTableForeignKey(TableMigrationData tableMigrationData, ForeignKeyMigrationData foreignKeyMigrationData);
 
     public String getQuoteSQLName(String val) {
         return EasyToSQLUtil.getQuoteSQLName(sqlKeyword, val);

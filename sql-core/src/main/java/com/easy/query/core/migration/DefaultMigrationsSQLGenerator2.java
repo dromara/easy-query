@@ -3,8 +3,12 @@
 //import com.easy.query.core.context.QueryRuntimeContext;
 //import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 //import com.easy.query.core.inject.ServiceProvider;
+//import com.easy.query.core.metadata.ColumnMetadata;
 //import com.easy.query.core.metadata.EntityMetadata;
 //import com.easy.query.core.metadata.EntityMetadataManager;
+//import com.easy.query.core.migration.data.ColumnMigrationData;
+//import com.easy.query.core.migration.data.ForeignKeyMigrationData;
+//import com.easy.query.core.migration.data.IndexMigrationData;
 //import com.easy.query.core.migration.data.TableMigrationData;
 //import com.easy.query.core.util.EasyStringUtil;
 //
@@ -39,12 +43,12 @@
 ////            }
 ////        }
 //        QueryRuntimeContext runtimeContext = serviceProvider.getService(QueryRuntimeContext.class);
-//        for (Class<?> entity : migrationContext.getEntities()) {
-//            TableMigrationData tableMigrationData = new TableMigrationData();
+//        for (Class<?> entityClass : migrationContext.getEntities()) {
+//            TableMigrationData tableMigrationData = parseEntity(entityClass);
 ////            EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entity);
 ////            EntityMigrationMetadata entityMigrationMetadata = databaseMigrationProvider.createEntityMigrationMetadata(entityMetadata);
 //            if (EasyStringUtil.isBlank(tableMigrationData.getTableName())) {
-//                throw new EasyQueryInvalidOperationException(String.format("table migration data key:[%s] not found table name.", tableMigrationData.getKey()));
+//                throw new EasyQueryInvalidOperationException("table migration data not found table name.");
 //            }
 ////            if (sql.length() > 0) {
 ////                sql.append(newLine);
@@ -71,28 +75,28 @@
 //                        //判断是否要创建索引
 //                    } else {
 //                        //表不存在就创建表
-//                        MigrationCommand migrationCommand = databaseMigrationProvider.createTable(entityMigrationMetadata);
+//                        MigrationCommand migrationCommand = databaseMigrationProvider.createTable(tableMigrationData);
 //                        if (migrationCommand != null) {
 //                            migrationCommands.add(migrationCommand);
 //                        }
 //                        //创建外键
-//                        List<MigrationCommand> tableForeignKeyCommands = databaseMigrationProvider.createTableForeignKey(entityMigrationMetadata, runtimeContext);
+//                        List<MigrationCommand> tableForeignKeyCommands = databaseMigrationProvider.createTableForeignKey(tableMigrationData, runtimeContext);
 //                        migrationCommands.addAll(tableForeignKeyCommands);
 //                        //创建索引
-//                        List<MigrationCommand> tableIndexCommands = databaseMigrationProvider.createTableIndex(entityMigrationMetadata);
+//                        List<MigrationCommand> tableIndexCommands = databaseMigrationProvider.createTableIndex(tableMigrationData);
 //                        migrationCommands.addAll(tableIndexCommands);
 //                    }
 //                } else {
 //                    //表不存在就创建表
-//                    MigrationCommand migrationCommand = databaseMigrationProvider.createTable(entityMigrationMetadata);
+//                    MigrationCommand migrationCommand = databaseMigrationProvider.createTable(tableMigrationData);
 //                    if (migrationCommand != null) {
 //                        migrationCommands.add(migrationCommand);
 //                    }
 //                    //创建外键
-//                    List<MigrationCommand> tableForeignKeyCommands = databaseMigrationProvider.createTableForeignKey(entityMigrationMetadata, runtimeContext);
+//                    List<MigrationCommand> tableForeignKeyCommands = databaseMigrationProvider.createTableForeignKey(tableMigrationData, runtimeContext);
 //                    migrationCommands.addAll(tableForeignKeyCommands);
 //                    //创建索引
-//                    List<MigrationCommand> tableIndexCommands = databaseMigrationProvider.createTableIndex(entityMigrationMetadata);
+//                    List<MigrationCommand> tableIndexCommands = databaseMigrationProvider.createTableIndex(tableMigrationData);
 //                    migrationCommands.addAll(tableIndexCommands);
 //                }
 //            } else {
@@ -101,29 +105,12 @@
 //                    migrationCommands.addAll(columns);
 //                }
 //                //创建外键
-//                List<MigrationCommand> tableForeignKeyCommands = databaseMigrationProvider.syncTableForeignKey(entityMigrationMetadata, runtimeContext, false);
+//                List<MigrationCommand> tableForeignKeyCommands = databaseMigrationProvider.syncTableForeignKey(tableMigrationData, runtimeContext, false);
 //                migrationCommands.addAll(tableForeignKeyCommands);
 //                //创建索引
-//                List<MigrationCommand> tableIndexCommands = databaseMigrationProvider.syncTableIndex(entityMigrationMetadata, false);
+//                List<MigrationCommand> tableIndexCommands = databaseMigrationProvider.syncTableIndex(tableMigrationData, false);
 //                migrationCommands.addAll(tableIndexCommands);
 //            }
-//
-////            for (ColumnMetadata column : entityMetadata.getColumns()) {
-////
-////            }
-////            foreach (var tbcol in tb.ColumnsByPosition)
-////            {
-////                sb.Append(" \r\n  ").Append(_commonUtils.QuoteSqlName(tbcol.Attribute.Name)).Append(" ").Append(tbcol.Attribute.DbType);
-////                if (tbcol.Attribute.IsIdentity == true && tbcol.Attribute.DbType.IndexOf("AUTO_INCREMENT", StringComparison.CurrentCultureIgnoreCase) == -1) sb.Append(" AUTO_INCREMENT");
-////                if (string.IsNullOrEmpty(tbcol.Comment) == false) sb.Append(" COMMENT ").Append(_commonUtils.FormatSql("{0}", tbcol.Comment));
-////                sb.Append(",");
-////            }
-////            if (tb.Primarys.Any())
-////            {
-////                sb.Append(" \r\n  PRIMARY KEY (");
-////                foreach (var tbcol in tb.Primarys) sb.Append(_commonUtils.QuoteSqlName(tbcol.Attribute.Name)).Append(", ");
-////                sb.Remove(sb.Length - 2, 2).Append("),");
-////            }
 //
 //        }
 //        return migrationCommands;
@@ -133,13 +120,12 @@
 //    public List<MigrationCommand> generateCreateTableMigrationSQL(MigrationContext migrationContext) {
 //        ArrayList<MigrationCommand> migrationCommands = new ArrayList<>(migrationContext.getEntities().size());
 //        for (Class<?> entity : migrationContext.getEntities()) {
-//            EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entity);
-//            EntityMigrationMetadata entityMigrationMetadata = new EntityMigrationMetadata(entityMetadata);
-//            MigrationCommand migrationCommand = databaseMigrationProvider.createTable(entityMigrationMetadata);
+//            TableMigrationData tableMigrationData = parseEntity(entity);
+//            MigrationCommand migrationCommand = databaseMigrationProvider.createTable(tableMigrationData);
 //            if (migrationCommand != null) {
 //                migrationCommands.add(migrationCommand);
 //            }
-//            List<MigrationCommand> tableIndexCommands = databaseMigrationProvider.createTableIndex(entityMigrationMetadata);
+//            List<MigrationCommand> tableIndexCommands = databaseMigrationProvider.createTableIndex(tableMigrationData);
 //            migrationCommands.addAll(tableIndexCommands);
 //        }
 //        return migrationCommands;
@@ -148,14 +134,14 @@
 //    @Override
 //    public List<MigrationCommand> generateDropTableMigrationSQL(MigrationContext migrationContext, boolean checkTableExists) {
 //        ArrayList<MigrationCommand> migrationCommands = new ArrayList<>(migrationContext.getEntities().size());
-//        for (Class<?> entity : migrationContext.getEntities()) {
+//        for (Class<?> entityClass : migrationContext.getEntities()) {
 //            if (checkTableExists) {
-//                if (!tableExists(entity)) {
+//                if (!tableExists(entityClass)) {
 //                    continue;
 //                }
 //            }
-//            EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entity);
-//            MigrationCommand migrationCommand = databaseMigrationProvider.dropTable(new EntityMigrationMetadata(entityMetadata));
+//            TableMigrationData tableMigrationData = parseEntity(entityClass);
+//            MigrationCommand migrationCommand = databaseMigrationProvider.dropTable(tableMigrationData);
 //            if (migrationCommand != null) {
 //                migrationCommands.add(migrationCommand);
 //            }
@@ -167,5 +153,78 @@
 //    public boolean tableExists(Class<?> entityType) {
 //        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entityType);
 //        return databaseMigrationProvider.tableExists(entityMetadata.getSchemaOrNull(), entityMetadata.getTableName());
+//    }
+//
+//
+//    private TableMigrationData parseEntity(Class<?> entityClass) {
+//        TableMigrationData tableMigrationData = new TableMigrationData();
+//        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entityClass);
+//
+//        EntityMigrationMetadata entityMigrationMetadata = databaseMigrationProvider.createEntityMigrationMetadata(entityMetadata);
+//        tableMigrationData.setSchema(entityMetadata.getSchemaOrNull());
+//        tableMigrationData.setTableName(entityMetadata.getTableName());
+//        tableMigrationData.setOldTableName(entityMetadata.getOldTableName());
+//        List<ColumnMigrationData> columns = new ArrayList<>(entityMetadata.getColumns().size());
+//        for (ColumnMetadata column : entityMetadata.getColumns()) {
+//
+//            boolean exist = databaseMigrationProvider.getMigrationEntityParser().columnExistInDb(entityMigrationMetadata, column);
+//            if (!exist) {
+//                continue;
+//            }
+//
+//            ColumnDbTypeResult columnDbType = databaseMigrationProvider.getMigrationEntityParser().getColumnDbType(entityMigrationMetadata, column);
+//            ColumnMigrationData columnMigrationData = new ColumnMigrationData();
+//            columnMigrationData.setName(column.getName());
+//            String columnComment = databaseMigrationProvider.getMigrationEntityParser().getColumnComment(entityMigrationMetadata, column);
+//            columnMigrationData.setComment(columnComment);
+//            columnMigrationData.setDbType(columnDbType.columnType);
+//            columnMigrationData.setDefValue(columnDbType.defValue);
+//            columnMigrationData.setPrimary(column.isPrimary());
+//            columnMigrationData.setGeneratedKey(column.isGeneratedKey());
+//            columnMigrationData.setNotNull(!column.isNullable());
+//            columnMigrationData.setOldColumnName(column.getFieldName());
+//            String columnRenameFrom = databaseMigrationProvider.getMigrationEntityParser().getColumnRenameFrom(entityMigrationMetadata, column);
+//            columnMigrationData.setOldColumnName(columnRenameFrom);
+//            columns.add(columnMigrationData);
+//
+//        }
+//        tableMigrationData.setColumns(columns);
+//        //索引
+//        List<TableIndexResult> tableIndexes = databaseMigrationProvider.getMigrationEntityParser().getTableIndexes(entityMigrationMetadata);
+//        List<IndexMigrationData> indexes = new ArrayList<>(tableIndexes.size());
+//        for (TableIndexResult tableIndex : tableIndexes) {
+//            IndexMigrationData indexMigrationData = new IndexMigrationData();
+//            indexMigrationData.setIndexName(tableIndex.indexName);
+//            indexMigrationData.setUnique(tableIndex.unique);
+//            if (tableIndex.fields != null) {
+//                List<IndexMigrationData.EntityField> entityFields = new ArrayList<>();
+//                for (TableIndexResult.EntityField field : tableIndex.fields) {
+//                    IndexMigrationData.EntityField entityField = new IndexMigrationData.EntityField();
+//                    entityField.setFieldName(field.fieldName);
+//                    entityField.setColumnName(field.columnName);
+//                    entityField.setAsc(field.asc);
+//                    entityFields.add(entityField);
+//                }
+//                indexMigrationData.setFields(entityFields);
+//            }
+//            indexes.add(indexMigrationData);
+//        }
+//        tableMigrationData.setIndexes(indexes);
+//
+//        //外键
+//        QueryRuntimeContext runtimeContext = serviceProvider.getService(QueryRuntimeContext.class);
+//        List<TableForeignKeyResult> tableForeignKeys = databaseMigrationProvider.getMigrationEntityParser().getTableForeignKeys(entityMigrationMetadata, runtimeContext);
+//        List<ForeignKeyMigrationData> foreignKeys = new ArrayList<>(tableForeignKeys.size());
+//        for (TableForeignKeyResult tableForeignKey : tableForeignKeys) {
+//            ForeignKeyMigrationData foreignKey = new ForeignKeyMigrationData();
+//            foreignKey.setName(tableForeignKey.name);
+//            foreignKey.setSelfTable(tableForeignKey.selfTable);
+//            foreignKey.setTargetTable(tableForeignKey.targetTable);
+//            foreignKey.setSelfColumn(tableForeignKey.selfColumn);
+//            foreignKey.setTargetColumn(tableForeignKey.targetColumn);
+//            foreignKeys.add(foreignKey);
+//        }
+//        tableMigrationData.setForeignKeys(foreignKeys);
+//        return tableMigrationData;
 //    }
 //}

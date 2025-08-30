@@ -1,12 +1,8 @@
 package com.easy.query.core.migration;
 
-import com.easy.query.core.annotation.NotNull;
-import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.metadata.ColumnMetadata;
-import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.migration.data.ColumnMigrationData;
-import com.easy.query.core.migration.data.TableMigrationData;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -48,7 +44,7 @@ public interface MigrationEntityParser {
      * @param columnMetadata
      * @return
      */
-    Boolean columnExistInDb(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata);
+    boolean columnExistInDb(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata);
 
     /**
      * 返回当前表的备注信息
@@ -65,6 +61,8 @@ public interface MigrationEntityParser {
      */
     String getColumnRenameFrom(EntityMigrationMetadata entityMigrationMetadata,ColumnMetadata columnMetadata);
 
+    @NotNull
     List<TableIndexResult> getTableIndexes(EntityMigrationMetadata entityMigrationMetadata);
+    @NotNull
     List<TableForeignKeyResult> getTableForeignKeys(EntityMigrationMetadata entityMigrationMetadata, QueryRuntimeContext runtimeContext);
 }
