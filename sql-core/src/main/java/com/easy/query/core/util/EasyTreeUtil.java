@@ -15,6 +15,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.TreeDeepItem;
+import com.easy.query.core.metadata.TreeSelfTargetItem;
 import com.easy.query.core.util.common.ListTreeDeepItemAvailable;
 import com.easy.query.core.util.common.PropertyTreeDeepItemAvailable;
 import com.easy.query.core.util.common.TreeDeepItemAvailable;
@@ -43,11 +44,11 @@ public class EasyTreeUtil {
      * @param <T>   节点类型
      * @return 树形结构列表
      */
-    public static <T> List<T> generateTrees(List<T> nodes, EntityMetadata entityMetadata, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext, TreeCTEOption treeCTEOption, List<TreeDeepItem> deepItems) {
+    public static <T> List<T> generateTrees(List<T> nodes, EntityMetadata entityMetadata, NavigateMetadata navigateMetadata, TreeSelfTargetItem treeSelfTargetItem , QueryRuntimeContext runtimeContext, TreeCTEOption treeCTEOption, List<TreeDeepItem> deepItems) {
 
         RelationValueColumnMetadataFactory relationValueColumnMetadataFactory = runtimeContext.getRelationValueColumnMetadataFactory();
-        RelationValueColumnMetadata selfRelationValueColumnMetadata = relationValueColumnMetadataFactory.create(entityMetadata, navigateMetadata.getSelfPropertiesOrPrimary());
-        RelationValueColumnMetadata targetRelationValueColumnMetadata = relationValueColumnMetadataFactory.create(entityMetadata, navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
+        RelationValueColumnMetadata selfRelationValueColumnMetadata = relationValueColumnMetadataFactory.create(entityMetadata, treeSelfTargetItem.selfProperties);
+        RelationValueColumnMetadata targetRelationValueColumnMetadata = relationValueColumnMetadataFactory.create(entityMetadata, treeSelfTargetItem.targetProperties);
         TreeDeepItemAvailable treeDeepItemAvailable = getTreeDeepItemAvailable(entityMetadata, treeCTEOption, deepItems);
 
         List<EasyTreeNode<T>> roots = new ArrayList<>();

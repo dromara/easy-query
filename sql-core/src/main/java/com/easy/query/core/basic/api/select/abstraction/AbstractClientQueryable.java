@@ -5,7 +5,10 @@ import com.easy.query.core.common.Chunk;
 import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
+import com.easy.query.core.expression.sql.builder.impl.AnonymousDefaultTableExpressionBuilder;
 import com.easy.query.core.metadata.TreeDeepItem;
+import com.easy.query.core.metadata.TreeSelfTargetItem;
+import com.easy.query.core.util.EasyArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
@@ -522,6 +525,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @NotNull
     @Override
     public List<T1> toTreeList(boolean ignore) {
+
         List<T1> list = this.toList(this.queryClass());
 
         MergeTuple2<NavigateMetadata, String> treeNavigateMetadataTuple2 = getTreeNavigateMetadata(entityMetadata);
@@ -535,7 +539,32 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         }
         List<TreeDeepItem> deepItems = this.expressionContext.getDeepItems();
         TreeCTEOption treeCTEOption = this.expressionContext.getTreeCTEOption();
-        return EasyTreeUtil.generateTrees(list, entityMetadata, treeNavigateMetadata, runtimeContext, treeCTEOption, deepItems);
+        TreeSelfTargetItem treeSelfTargetItem = getTreeSelfTargetItem(treeNavigateMetadata);
+        return EasyTreeUtil.generateTrees(list, entityMetadata, treeNavigateMetadata, treeSelfTargetItem, runtimeContext, treeCTEOption, deepItems);
+    }
+
+    private TreeSelfTargetItem getTreeSelfTargetItem(NavigateMetadata treeNavigateMetadata) {
+        if (EasyStringUtil.isNotBlank(this.entityMetadata.getTableName()) || EasyArrayUtil.isNotEmpty(treeNavigateMetadata.getSelfProperties())) {
+            return new TreeSelfTargetItem(treeNavigateMetadata.getSelfPropertiesOrPrimary(), treeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
+        }
+        EntityTableExpressionBuilder fromTableExpressionBuilder = this.entityQueryExpressionBuilder.getFromTable();
+
+        if (fromTableExpressionBuilder instanceof AnonymousDefaultTableExpressionBuilder) {
+            AnonymousDefaultTableExpressionBuilder anonymousDefaultTableExpressionBuilder = (AnonymousDefaultTableExpressionBuilder) fromTableExpressionBuilder;
+            EntityQueryExpressionBuilder anonymousEntityQueryExpressionBuilder = anonymousDefaultTableExpressionBuilder.getEntityQueryExpressionBuilder();
+            if (EasyCollectionUtil.isSingle(anonymousEntityQueryExpressionBuilder.getTables())) {
+                EntityTableExpressionBuilder fromTable = anonymousEntityQueryExpressionBuilder.getFromTable();
+                EntityMetadata fromTableEntityMetadata = fromTable.getEntityMetadata();
+                if (EasyStringUtil.isNotBlank(fromTableEntityMetadata.getTableName())) {
+                    MergeTuple2<NavigateMetadata, String> fromTableTreeNavigateMetadataTuple = getTreeNavigateMetadata(fromTableEntityMetadata);
+                    NavigateMetadata fromTableTreeNavigateMetadata = fromTableTreeNavigateMetadataTuple.t1;
+                    if (fromTableTreeNavigateMetadata != null) {
+                        return new TreeSelfTargetItem(fromTableTreeNavigateMetadata.getSelfPropertiesOrPrimary(), fromTableTreeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
+                    }
+                }
+            }
+        }
+        return new TreeSelfTargetItem(treeNavigateMetadata.getSelfPropertiesOrPrimary(), treeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
     }
 
 
