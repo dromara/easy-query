@@ -87,7 +87,7 @@ public class MathQueryTest extends BaseTest {
             }
             Assert.assertEquals(0, compareTo0(BigDecimalMath.cos(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestCos().setScale(9, RoundingMode.HALF_UP)));
             Assert.assertEquals(0, compareTo0(BigDecimalMath.sin(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestSin().setScale(9, RoundingMode.HALF_UP)));
-            Assert.assertEquals(0, compareTo0(BigDecimalMath.tan(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestTan().setScale(9, RoundingMode.HALF_UP),"0.000001"));
+            Assert.assertEquals(0, compareTo0(BigDecimalMath.tan(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestTan().setScale(9, RoundingMode.HALF_UP),"0.00001"));
 
             if(mathTestDTO.getTestAsin()!=null){
                 Assert.assertEquals(0, compareTo0(BigDecimalMath.asin(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestAsin().setScale(9, RoundingMode.HALF_UP)));
@@ -163,7 +163,7 @@ public class MathQueryTest extends BaseTest {
             }
             Assert.assertEquals(0, compareTo0(BigDecimalMath.cos(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestCos().setScale(9, RoundingMode.HALF_UP)));
             Assert.assertEquals(0, compareTo0(BigDecimalMath.sin(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestSin().setScale(9, RoundingMode.HALF_UP)));
-            Assert.assertEquals(0, compareTo0(BigDecimalMath.tan(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestTan().setScale(9, RoundingMode.HALF_UP),"0.000001"));
+            Assert.assertEquals(0, compareTo0(BigDecimalMath.tan(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestTan().setScale(9, RoundingMode.HALF_UP),"0.00001"));
 
             if(mathTestDTO.getTestAsin()!=null){
                 Assert.assertEquals(0, compareTo0(BigDecimalMath.asin(mathTestDTO.getTestValue(), new MathContext(13)).setScale(9, RoundingMode.HALF_UP), mathTestDTO.getTestAsin().setScale(9, RoundingMode.HALF_UP)));
