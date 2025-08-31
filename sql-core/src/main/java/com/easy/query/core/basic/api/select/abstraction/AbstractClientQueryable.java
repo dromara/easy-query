@@ -543,9 +543,11 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return EasyTreeUtil.generateTrees(list, entityMetadata, treeNavigateMetadata, treeSelfTargetItem, runtimeContext, treeCTEOption, deepItems);
     }
 
-    private TreeSelfTargetItem getTreeSelfTargetItem(NavigateMetadata treeNavigateMetadata) {
-        if (EasyStringUtil.isNotBlank(this.entityMetadata.getTableName()) || EasyArrayUtil.isNotEmpty(treeNavigateMetadata.getSelfProperties())) {
-            return new TreeSelfTargetItem(treeNavigateMetadata.getSelfPropertiesOrPrimary(), treeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
+    private TreeSelfTargetItem getTreeSelfTargetItem(NavigateMetadata resultTreeNavigateMetadata) {
+        //如果当前返回的对象是表对象或者如果不是表对象就判断self和target已经设置了那么就是用对应的self和target作为组成树时的必要属性
+        if (EasyStringUtil.isNotBlank(this.entityMetadata.getTableName())
+                || EasyArrayUtil.isNotEmpty(resultTreeNavigateMetadata.getSelfProperties())) {
+            return new TreeSelfTargetItem(resultTreeNavigateMetadata.getSelfPropertiesOrPrimary(), resultTreeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
         }
         EntityTableExpressionBuilder fromTableExpressionBuilder = this.entityQueryExpressionBuilder.getFromTable();
 
@@ -559,12 +561,17 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     MergeTuple2<NavigateMetadata, String> fromTableTreeNavigateMetadataTuple = getTreeNavigateMetadata(fromTableEntityMetadata);
                     NavigateMetadata fromTableTreeNavigateMetadata = fromTableTreeNavigateMetadataTuple.t1;
                     if (fromTableTreeNavigateMetadata != null) {
-                        return new TreeSelfTargetItem(fromTableTreeNavigateMetadata.getSelfPropertiesOrPrimary(), fromTableTreeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
+                        //如果from的表self和target都在返回结果中那么才使用
+                        String[] selfProps = fromTableTreeNavigateMetadata.getSelfPropertiesOrPrimary();
+                        String[] targetProps = fromTableTreeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
+                        if (EasyCollectionUtil.all(selfProps, self -> this.entityMetadata.getColumnOrNull(self) != null)
+                                && EasyCollectionUtil.all(targetProps, target -> this.entityMetadata.getColumnOrNull(target) != null))
+                            return new TreeSelfTargetItem(selfProps, targetProps);
                     }
                 }
             }
         }
-        return new TreeSelfTargetItem(treeNavigateMetadata.getSelfPropertiesOrPrimary(), treeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
+        return new TreeSelfTargetItem(resultTreeNavigateMetadata.getSelfPropertiesOrPrimary(), resultTreeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
     }
 
 
