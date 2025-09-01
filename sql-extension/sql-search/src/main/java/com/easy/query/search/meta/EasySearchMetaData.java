@@ -102,6 +102,7 @@ public class EasySearchMetaData {
 
             return new EasySearchMetaData(fields);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new EasySearchInternalException("创建元数据失败: " + searchClass.getName(), e);
         }
     }

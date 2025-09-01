@@ -20,12 +20,13 @@ import java.time.LocalDateTime;
 @Data
 @Table("t_logic_del_topic_custom")
 @EntityProxy
-public class LogicDelTopicCustom implements ProxyEntityAvailable<LogicDelTopicCustom , LogicDelTopicCustomProxy> {
+public class LogicDelTopicCustom implements ProxyEntityAvailable<LogicDelTopicCustom, LogicDelTopicCustomProxy> {
     @Column(primaryKey = true)
     private String id;
     private Integer stars;
     private String title;
-    @LogicDelete(strategy = LogicDeleteStrategyEnum.CUSTOM,strategyName = "MyLogicDelStrategy")
+    @LogicDelete(strategy = LogicDeleteStrategyEnum.CUSTOM, strategyName = "MyLogicDelStrategy")
+//    @MyParam("123")
     private LocalDateTime deletedAt;
     private String deletedUser;
     private LocalDateTime createTime;
