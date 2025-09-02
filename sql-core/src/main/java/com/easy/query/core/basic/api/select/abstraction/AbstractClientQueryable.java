@@ -571,7 +571,15 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 }
             }
         }
-        return new TreeSelfTargetItem(resultTreeNavigateMetadata.getSelfPropertiesOrPrimary(), resultTreeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
+        String[] selfProperties = resultTreeNavigateMetadata.getSelfProperties();
+        if(EasyArrayUtil.isEmpty(selfProperties)){
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(this.entityMetadata.getEntityClass())+" is unable to access selfProperty during tree structure retrieval.");
+        }
+        String[] targetProperties = resultTreeNavigateMetadata.getTargetProperties();
+        if(EasyArrayUtil.isEmpty(targetProperties)){
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(this.entityMetadata.getEntityClass())+" is unable to access targetProperty during tree structure retrieval.");
+        }
+        return new TreeSelfTargetItem(selfProperties, targetProperties);
     }
 
 

@@ -15,6 +15,7 @@ import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.dto.MyComment;
 import com.easy.query.test.mysql8.dto.MyComment2;
 import com.easy.query.test.mysql8.dto.MyComment3;
+import com.easy.query.test.mysql8.dto.MyComment4;
 import com.easy.query.test.mysql8.entity.BatchInsert;
 import com.easy.query.test.mysql8.entity.Comment;
 import com.easy.query.test.mysql8.entity.M8Parent;
@@ -440,7 +441,7 @@ public class MySQL8Test3 extends BaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS ( (SELECT 0 AS `deep`,t1.`id`,t1.`parent_id`,t1.`content`,t1.`user_id`,t1.`post_id`,t1.`create_at` FROM `t_comment` t1)  UNION ALL  (SELECT t2.`deep` + 1 AS `deep`,t3.`id`,t3.`parent_id`,t3.`content`,t3.`user_id`,t3.`post_id`,t3.`create_at` FROM `as_tree_cte` t2 INNER JOIN `t_comment` t3 ON t3.`id` = t2.`parent_id`) ) SELECT t.`id`,t.`parent_id`,t.`content`,t.`user_id`,t.`post_id`,t.`create_at`,t.`deep` FROM `as_tree_cte` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("[MyComment(id=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, parentId=0, content=写得真详细, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-01T00:00, deep=0, children=[]), MyComment(id=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, parentId=0, content=写得真详细, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-01T00:00, deep=1, children=[MyComment(id=01225d2f-e1a5-46d8-8ef9-535b7b1b7754, parentId=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, content=@用户E 具体是指哪方面？, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-02T00:00, deep=0, children=[])]), MyComment(id=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, parentId=0, content=写得真详细, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-01T00:00, deep=2, children=[MyComment(id=01225d2f-e1a5-46d8-8ef9-535b7b1b7754, parentId=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, content=@用户E 具体是指哪方面？, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-02T00:00, deep=1, children=[MyComment(id=1bccba2c-7cff-43af-b117-2e518be4422a, parentId=01225d2f-e1a5-46d8-8ef9-535b7b1b7754, content=@用户E 你是指..., userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-03T00:00, deep=0, children=[])])])]",treeList.toString());
+        Assert.assertEquals("[MyComment(id=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, parentId=0, content=写得真详细, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-01T00:00, deep=0, children=[]), MyComment(id=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, parentId=0, content=写得真详细, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-01T00:00, deep=1, children=[MyComment(id=01225d2f-e1a5-46d8-8ef9-535b7b1b7754, parentId=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, content=@用户E 具体是指哪方面？, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-02T00:00, deep=0, children=[])]), MyComment(id=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, parentId=0, content=写得真详细, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-01T00:00, deep=2, children=[MyComment(id=01225d2f-e1a5-46d8-8ef9-535b7b1b7754, parentId=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, content=@用户E 具体是指哪方面？, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-02T00:00, deep=1, children=[MyComment(id=1bccba2c-7cff-43af-b117-2e518be4422a, parentId=01225d2f-e1a5-46d8-8ef9-535b7b1b7754, content=@用户E 你是指..., userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-03T00:00, deep=0, children=[])])])]", treeList.toString());
 //        Assert.assertEquals("1(Integer),1(Integer),上城区(String),c1(String),c1(String),杭州(String),false(Boolean),true(Boolean),p1(String),false(Boolean),true(Boolean),p1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 
@@ -462,7 +463,30 @@ public class MySQL8Test3 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("WITH RECURSIVE `as_tree_cte` AS ( (SELECT 0 AS `deep`,t1.`id`,t1.`parent_id`,t1.`content`,t1.`user_id`,t1.`post_id`,t1.`create_at` FROM `t_comment` t1)  UNION ALL  (SELECT t2.`deep` + 1 AS `deep`,t3.`id`,t3.`parent_id`,t3.`content`,t3.`user_id`,t3.`post_id`,t3.`create_at` FROM `as_tree_cte` t2 INNER JOIN `t_comment` t3 ON t3.`id` = t2.`parent_id`) ) SELECT t.`id`,t.`parent_id`,t.`content`,t.`user_id`,t.`post_id`,t.`create_at`,t.`deep` FROM `as_tree_cte` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
         System.out.println(treeList.toString());
-        Assert.assertEquals("[MyComment3(id=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, parentId=0, content=写得真详细, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-01T00:00, deep=0, children=[]), MyComment3(id=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, parentId=0, content=写得真详细, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-01T00:00, deep=1, children=[MyComment3(id=01225d2f-e1a5-46d8-8ef9-535b7b1b7754, parentId=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, content=@用户E 具体是指哪方面？, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-02T00:00, deep=0, children=[])]), MyComment3(id=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, parentId=0, content=写得真详细, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-01T00:00, deep=2, children=[MyComment3(id=01225d2f-e1a5-46d8-8ef9-535b7b1b7754, parentId=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, content=@用户E 具体是指哪方面？, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-02T00:00, deep=1, children=[MyComment3(id=1bccba2c-7cff-43af-b117-2e518be4422a, parentId=01225d2f-e1a5-46d8-8ef9-535b7b1b7754, content=@用户E 你是指..., userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-03T00:00, deep=0, children=[])])])]",treeList.toString());
+        Assert.assertEquals("[MyComment3(id=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, parentId=0, content=写得真详细, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-01T00:00, deep=0, children=[]), MyComment3(id=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, parentId=0, content=写得真详细, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-01T00:00, deep=1, children=[MyComment3(id=01225d2f-e1a5-46d8-8ef9-535b7b1b7754, parentId=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, content=@用户E 具体是指哪方面？, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-02T00:00, deep=0, children=[])]), MyComment3(id=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, parentId=0, content=写得真详细, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-01T00:00, deep=2, children=[MyComment3(id=01225d2f-e1a5-46d8-8ef9-535b7b1b7754, parentId=03abe9c8-adf1-4934-ae53-3b52c7c3eb2d, content=@用户E 具体是指哪方面？, userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-02T00:00, deep=1, children=[MyComment3(id=1bccba2c-7cff-43af-b117-2e518be4422a, parentId=01225d2f-e1a5-46d8-8ef9-535b7b1b7754, content=@用户E 你是指..., userId=3b63ddd9-b038-4c24-969e-8b478fe862a5, postId=73f5d341-c6df-43a1-afcd-e246c4d1fcc9, createAt=2020-01-03T00:00, deep=0, children=[])])])]", treeList.toString());
+//        Assert.assertEquals("1(Integer),1(Integer),上城区(String),c1(String),c1(String),杭州(String),false(Boolean),true(Boolean),p1(String),false(Boolean),true(Boolean),p1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+
+    @Test
+    public void testTree5() {
+        Exception ex = null;
+        try {
+
+            List<MyComment4> treeList = easyEntityQuery.queryable(Comment.class)
+                    .where(t_comment -> {
+                        t_comment.parentId().isNotNull();
+                    })
+                    .whereObject(new Comment())
+                    .asTreeCTE()
+                    .selectAutoInclude(MyComment4.class)
+                    .toTreeList();
+        } catch (Exception e) {
+            ex=e;
+        }
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(ex);
+        Assert.assertEquals("MyComment4 is unable to access selfProperty during tree structure retrieval.", ex.getMessage());
 //        Assert.assertEquals("1(Integer),1(Integer),上城区(String),c1(String),c1(String),杭州(String),false(Boolean),true(Boolean),p1(String),false(Boolean),true(Boolean),p1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 

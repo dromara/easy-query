@@ -9,10 +9,13 @@ import com.easy.query.core.common.tuple.EasyTuple3;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.LowerCamelCaseNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.LowerSnakeCaseNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.UpperSnakeCaseNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperUnderlinedNameConversion;
 import com.easy.query.core.expression.builder.Filter;
+import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
@@ -48,6 +51,7 @@ import lombok.NoArgsConstructor;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.beans.PropertyDescriptor;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -407,17 +411,27 @@ public class QueryTest21 extends BaseTest {
         UnderlinedNameConversion underlinedNameConversion = new UnderlinedNameConversion();
         LowerCamelCaseNameConversion lowerCamelCaseNameConversion = new LowerCamelCaseNameConversion();
         DefaultNameConversion defaultNameConversion = new DefaultNameConversion();
+        UpperSnakeCaseNameConversion upperSnakeCaseNameConversion = new UpperSnakeCaseNameConversion();
+        LowerSnakeCaseNameConversion lowerSnakeCaseNameConversion = new LowerSnakeCaseNameConversion();
 
         testNameConversion(defaultNameConversion, "userAge");
         testNameConversion(underlinedNameConversion, "userAge");
         testNameConversion(upperUnderlinedNameConversion, "userAge");
         testNameConversion(lowerCamelCaseNameConversion, "userAge");
         testNameConversion(upperCamelCaseNameConversion, "userAge");
+        testNameConversion(upperSnakeCaseNameConversion, "userAge");
+        testNameConversion(lowerSnakeCaseNameConversion, "userAge");
         testNameConversion(defaultNameConversion, "user_age");
         testNameConversion(underlinedNameConversion, "user_age");
         testNameConversion(upperUnderlinedNameConversion, "user_age");
         testNameConversion(lowerCamelCaseNameConversion, "user_age");
         testNameConversion(upperCamelCaseNameConversion, "user_age");
+        testNameConversion(upperSnakeCaseNameConversion, "user_age");
+        testNameConversion(lowerSnakeCaseNameConversion, "user_age");
+        testNameConversion(upperSnakeCaseNameConversion, "userAge100");
+        testNameConversion(lowerSnakeCaseNameConversion, "userAge100");
+        testNameConversion(upperSnakeCaseNameConversion, "userID");
+        testNameConversion(lowerSnakeCaseNameConversion, "userID");
     }
 
     @Test
@@ -849,9 +863,11 @@ public class QueryTest21 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
 
+        String url=null;
         List<Long> list = easyEntityQuery.queryable(BlogEntity.class)
                 .where(t_blog -> {
                     t_blog.title().like("123");
+
                 }).selectColumn(t_blog -> t_blog.id().count(true)).toList();
         listenerContextManager.clear();
 
@@ -877,5 +893,6 @@ public class QueryTest21 extends BaseTest {
         Assert.assertEquals("false(Boolean),%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
 
 }

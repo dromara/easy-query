@@ -26,7 +26,13 @@ import com.easy.query.core.configuration.column2mapkey.LowerUnderlinedColumn2Map
 import com.easy.query.core.configuration.column2mapkey.UpperColumn2MapKeyConversion;
 import com.easy.query.core.configuration.column2mapkey.UpperUnderlinedColumn2MapKeyConversion;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
-import com.easy.query.core.configuration.nameconversion.impl.*;
+import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.LowerCamelCaseNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.LowerSnakeCaseNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.UpperSnakeCaseNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.UpperUnderlinedNameConversion;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.dameng.config.DamengDatabaseConfiguration;
 import com.easy.query.db2.config.DB2DatabaseConfiguration;
