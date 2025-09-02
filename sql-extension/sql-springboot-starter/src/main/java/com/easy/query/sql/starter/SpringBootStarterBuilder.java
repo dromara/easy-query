@@ -26,11 +26,7 @@ import com.easy.query.core.configuration.column2mapkey.LowerUnderlinedColumn2Map
 import com.easy.query.core.configuration.column2mapkey.UpperColumn2MapKeyConversion;
 import com.easy.query.core.configuration.column2mapkey.UpperUnderlinedColumn2MapKeyConversion;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
-import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
-import com.easy.query.core.configuration.nameconversion.impl.LowerCamelCaseNameConversion;
-import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
-import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
-import com.easy.query.core.configuration.nameconversion.impl.UpperUnderlinedNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.*;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.dameng.config.DamengDatabaseConfiguration;
 import com.easy.query.db2.config.DB2DatabaseConfiguration;
@@ -76,6 +72,12 @@ public class SpringBootStarterBuilder {
                             break;
                         case UPPER_CAMEL_CASE:
                             s.addService(NameConversion.class, UpperCamelCaseNameConversion.class);
+                            break;
+                        case LOWER_SNAKE_CASE:
+                            s.addService(NameConversion.class, LowerSnakeCaseNameConversion.class);
+                            break;
+                        case UPPER_SNAKE_CASE:
+                            s.addService(NameConversion.class, UpperSnakeCaseNameConversion.class);
                             break;
                         case DEFAULT:
                             s.addService(NameConversion.class, DefaultNameConversion.class);

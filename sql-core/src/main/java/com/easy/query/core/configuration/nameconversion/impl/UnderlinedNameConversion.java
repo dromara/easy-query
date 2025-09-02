@@ -13,7 +13,7 @@ public class UnderlinedNameConversion implements NameConversion {
 
     @Override
     public String convert(String name) {
-        if(name==null){
+        if (name == null) {
             return null;
         }
         return EasyStringUtil.toLowerUnderlined(name);

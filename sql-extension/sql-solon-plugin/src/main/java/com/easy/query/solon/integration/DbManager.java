@@ -30,11 +30,7 @@ import com.easy.query.core.configuration.column2mapkey.LowerUnderlinedColumn2Map
 import com.easy.query.core.configuration.column2mapkey.UpperColumn2MapKeyConversion;
 import com.easy.query.core.configuration.column2mapkey.UpperUnderlinedColumn2MapKeyConversion;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
-import com.easy.query.core.configuration.nameconversion.impl.DefaultNameConversion;
-import com.easy.query.core.configuration.nameconversion.impl.LowerCamelCaseNameConversion;
-import com.easy.query.core.configuration.nameconversion.impl.UnderlinedNameConversion;
-import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
-import com.easy.query.core.configuration.nameconversion.impl.UpperUnderlinedNameConversion;
+import com.easy.query.core.configuration.nameconversion.impl.*;
 import com.easy.query.core.datasource.DataSourceUnitFactory;
 import com.easy.query.core.enums.EntityMappingStrategyEnum;
 import com.easy.query.core.logging.Log;
@@ -138,8 +134,8 @@ public class DbManager {
         if (Utils.isNotEmpty(bw.name())) {
             String cfgPropPrefix = CommonConstant.TAG + "." + bw.name();
             dsProps = bw.context().cfg().getProp(cfgPropPrefix);
-            if(dsProps.isEmpty() || !dsProps.containsKey("database")) {
-                throw new UnsupportedOperationException("Please set the configuration for the data source ["+bw.name()+"] dialect in the yml file with specific key " + cfgPropPrefix + ".database");
+            if (dsProps.isEmpty() || !dsProps.containsKey("database")) {
+                throw new UnsupportedOperationException("Please set the configuration for the data source [" + bw.name() + "] dialect in the yml file with specific key " + cfgPropPrefix + ".database");
             }
         } else {
             // all the data source bean must has a name
@@ -238,6 +234,12 @@ public class DbManager {
                 break;
             case UPPER_UNDERLINED:
                 easyQueryBuilderConfiguration.replaceService(NameConversion.class, new UpperUnderlinedNameConversion());
+                break;
+            case LOWER_SNAKE_CASE:
+                easyQueryBuilderConfiguration.replaceService(NameConversion.class, new LowerSnakeCaseNameConversion());
+                break;
+            case UPPER_SNAKE_CASE:
+                easyQueryBuilderConfiguration.replaceService(NameConversion.class, new UpperSnakeCaseNameConversion());
                 break;
         }
     }

@@ -169,11 +169,13 @@ public class SolonEasyQueryProperties {
 
     /**
      * 是否启用分片
+     *
      * @return
      */
     public Boolean getSharding() {
         return this.props.getBool("sharding", sharding);
     }
+
     public Boolean getSaveComment() {
         return this.props.getBool("save-comment", saveComment);
     }
@@ -247,6 +249,10 @@ public class SolonEasyQueryProperties {
                     return NameConversionEnum.UPPER_CAMEL_CASE;
                 case "upper_underlined":
                     return NameConversionEnum.UPPER_UNDERLINED;
+                case "lower_snake_case":
+                    return NameConversionEnum.LOWER_SNAKE_CASE;
+                case "upper_snake_case":
+                    return NameConversionEnum.UPPER_SNAKE_CASE;
             }
             return null;
         });
@@ -385,6 +391,7 @@ public class SolonEasyQueryProperties {
     public int getMssqlMinBigDecimalScale() {
         return this.props.getInt("mssql-min-big-decimal-scale", mssqlMinBigDecimalScale);
     }
+
     public int getMaxInClauseSize() {
         return this.props.getInt("max-in-clause-size", maxInClauseSize);
     }
