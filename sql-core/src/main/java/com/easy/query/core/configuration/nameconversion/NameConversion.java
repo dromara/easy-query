@@ -8,18 +8,21 @@ package com.easy.query.core.configuration.nameconversion;
  */
 public interface NameConversion {
 
-   /**
-    * 注解的后置处理包括@Table和@Column
-    * @param name
-    * @return
-    */
-   default String annotationCovert(Class<?> entityClass,String name,boolean tableAnnotation){
-      return name;
-   }
-   /**
-    * 属性名或者表名转成列名
-    * @param name 属性名或者表名
-    * @return 转换后的列名
-    */
-   String convert(String name);
+    /**
+     * 注解的后置处理包括@Table和@Column
+     *
+     * @param name
+     * @return
+     */
+    default String annotationCovert(Class<?> entityClass, String name, boolean tableAnnotation) {
+        return name;
+    }
+
+    /**
+     * 属性名或者表名转成列名
+     *
+     * @param name 属性名或者表名
+     * @return 转换后的列名
+     */
+    String convert(String name);
 }

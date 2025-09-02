@@ -26,5 +26,9 @@ public enum NameConversionEnum {
     /**
      * 全大写 下划线
      */
-    UPPER_UNDERLINED
+    UPPER_UNDERLINED,
+
+    LOWER_SNAKE_CASE,
+
+    UPPER_SNAKE_CASE,
 }

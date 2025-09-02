@@ -12,7 +12,7 @@ import com.easy.query.core.util.EasyStringUtil;
 public class LowerCamelCaseNameConversion implements NameConversion {
     @Override
     public String convert(String name) {
-        if(name==null){
+        if (name == null) {
             return null;
         }
         return EasyStringUtil.toLowerCaseFirstOne(name);
