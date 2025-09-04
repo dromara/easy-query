@@ -103,10 +103,6 @@ public class EasyQueryOption {
     private final boolean startTimeJob;
 
     /**
-     * 默认是否启用追踪模式
-     */
-    private final boolean defaultTrack;
-    /**
      * include的关联查询每次用多少关联id去关联查询也就是in里面最多多少个关联id
      * 如果超出部分则另起一个查询
      */
@@ -152,7 +148,7 @@ public class EasyQueryOption {
                            String defaultDataSourceName, int defaultDataSourceMergePoolSize,
                            int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
                            boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold,
-                           boolean printSql, boolean startTimeJob, boolean defaultTrack,
+                           boolean printSql, boolean startTimeJob,
                            int relationGroupSize, long reverseOffsetThreshold,
                            boolean warningColumnMiss, int shardingFetchSize, boolean mapToBeanStrict,
                            String defaultSchema, long resultSizeLimit, boolean printNavSql,
@@ -221,7 +217,6 @@ public class EasyQueryOption {
         this.printSql = printSql;
         this.printNavSql = printNavSql;
         this.startTimeJob = startTimeJob;
-        this.defaultTrack = defaultTrack;
         this.relationGroupSize = relationGroupSize;
         this.reverseOffsetThreshold = reverseOffsetThreshold;
         this.warningColumnMiss = warningColumnMiss;
@@ -323,10 +318,6 @@ public class EasyQueryOption {
 
     public boolean isStartTimeJob() {
         return startTimeJob;
-    }
-
-    public boolean isDefaultTrack() {
-        return defaultTrack;
     }
 
     public int getRelationGroupSize() {

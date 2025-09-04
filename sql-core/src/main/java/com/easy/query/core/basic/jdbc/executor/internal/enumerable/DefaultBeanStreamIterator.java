@@ -19,9 +19,13 @@ import com.easy.query.core.basic.jdbc.executor.internal.reader.PropertyDataReade
 import com.easy.query.core.basic.jdbc.executor.internal.reader.RelationExtraPropertyDataReader;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.common.KeywordTool;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEOption;
+import com.easy.query.core.expression.sql.include.ColumnIncludeExpression;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
+import com.easy.query.core.metadata.IncludeNavigateExpression;
+import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.RelationExtraColumn;
 import com.easy.query.core.metadata.RelationExtraMetadata;
 import com.easy.query.core.util.EasyClassUtil;
@@ -30,8 +34,12 @@ import com.easy.query.core.util.EasyTrackUtil;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * create time 2023/7/31 16:08
@@ -46,9 +54,16 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
     protected DataReader dataReader;
     protected RelationExtraMetadata relationExtraMetadata;
     protected Map<String, ColumnReader> resultValueConverterMap;
+    protected List<NavigateMetadata> includes;
 
     public DefaultBeanStreamIterator(ExecutorContext context, StreamResultSet streamResult, ResultMetadata<T> resultMetadata) throws SQLException {
         super(context, streamResult, resultMetadata);
+        if (trackBean) {
+            Map<NavigateMetadata, IncludeNavigateExpression> includes = context.getExpressionContext().getIncludes();
+            this.includes = new ArrayList<>(includes.keySet());
+        }else{
+            this.includes = null;
+        }
     }
 
     @Override
@@ -72,6 +87,7 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
         }
         if (trackBean && bean != null) {
             EntityState entityState = trackManager.getCurrentTrackContext().addQueryTracking(bean);
+            entityState.setIncludes(includes);
             Object entityStateCurrentValue = entityState.getCurrentValue();
             if (entityStateCurrentValue != bean) {//没有附加成功应该返回之前被追加的数据而不是最新查询的数据
                 log.warn("current object tracked,return the traced object instead of the current querying object,track key:" + entityState.getTrackKey());

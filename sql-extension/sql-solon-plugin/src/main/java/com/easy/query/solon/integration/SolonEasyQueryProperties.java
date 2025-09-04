@@ -131,10 +131,6 @@ public class SolonEasyQueryProperties {
      */
     private final static boolean startTimeJob = false;
     /**
-     * 默认是否启用追踪
-     */
-    private final static boolean defaultTrack = false;
-    /**
      * 关联查询每组多少关联id
      */
     private final static int relationGroupSize = 512;
@@ -468,10 +464,6 @@ public class SolonEasyQueryProperties {
         return this.props.getBool("start-time-job", startTimeJob);
     }
 
-
-    public boolean isDefaultTrack() {
-        return this.props.getBool("default-track", defaultTrack);
-    }
 
 
     public int getRelationGroupSize() {

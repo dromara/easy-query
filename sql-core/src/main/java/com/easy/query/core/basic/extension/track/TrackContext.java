@@ -25,6 +25,7 @@ public interface TrackContext {
      */
     @Nullable
     EntityState getTrackEntityState(@Nullable Object entity);
+    EntityState getTrackEntityState(Class<?> entityClass,String trackKey);
 
     Object createAndCopyValue(Object entity, EntityMetadata entityMetadata);
 

@@ -91,7 +91,6 @@ public class BaseTest {
                 .setDefaultDataSource(dataSource)
                 .optionConfigure(op -> {
                     op.setDeleteThrowError(false);
-                    op.setDefaultTrack(true);
                     op.setIncludeLimitMode(IncludeLimitModeEnum.PARTITION);
                     op.setRelationGroupSize(50);
                 })
