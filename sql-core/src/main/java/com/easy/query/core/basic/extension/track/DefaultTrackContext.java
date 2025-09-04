@@ -149,7 +149,8 @@ public class DefaultTrackContext implements TrackContext {
      * @param entityMetadata
      * @return
      */
-    private Object createAndCopyValue(Object entity, EntityMetadata entityMetadata) {
+    @Override
+    public Object createAndCopyValue(Object entity, EntityMetadata entityMetadata) {
 
 //        Class<?> entityClass = entity.getClass();
         Object original = entityMetadata.getBeanConstructorCreator().get();

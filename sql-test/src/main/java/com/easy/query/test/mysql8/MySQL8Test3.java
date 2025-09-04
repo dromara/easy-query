@@ -1,6 +1,7 @@
 package com.easy.query.test.mysql8;
 
 import com.bestvike.linq.Linq;
+import com.easy.query.api.proxy.base.ClassProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -11,6 +12,8 @@ import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.dto.UserBankDTO;
+import com.easy.query.test.dto.proxy.UserBankDTOProxy;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.dto.MyComment;
 import com.easy.query.test.mysql8.dto.MyComment2;
@@ -481,7 +484,7 @@ public class MySQL8Test3 extends BaseTest {
                     .selectAutoInclude(MyComment4.class)
                     .toTreeList();
         } catch (Exception e) {
-            ex=e;
+            ex = e;
         }
 
         listenerContextManager.clear();
@@ -490,4 +493,46 @@ public class MySQL8Test3 extends BaseTest {
 //        Assert.assertEquals("1(Integer),1(Integer),上城区(String),c1(String),c1(String),杭州(String),false(Boolean),true(Boolean),p1(String),false(Boolean),true(Boolean),p1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 
+    @Test
+    public void testDTO1() {
+        List<UserBankDTO> list = easyEntityQuery.queryable(SysUser.class)
+                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .select(user -> new UserBankDTOProxy()
+                        .userId().set(user.id())
+                        .bankCardCount().set(
+                                user.bankCards().count()
+                        )
+                        .firstBankCardCode().set(
+                                user.bankCards().orderBy(bc -> bc.openTime().asc()).first().code()
+                        )
+                )
+                .toList();
+
+    }
+
+
+//    @Test
+//    public void testDTO2() {
+//        easyEntityQuery.queryable(SysBankCard.class)
+//                .select(bank_card -> new ClassProxy<>(UserBankDTO.class)
+//                                .selectAll(bank_card.user())// bankCard join user 返回user.*
+////                        .selectAll(bank_card)// bankCard join user 返回bankCard.*
+//                );
+//        easyEntityQuery.queryable(SysBankCard.class)
+//                .select(UserBankDTO.class, bank_card -> Select.of(
+//                                bank_card.user().FETCHER.allFields(),// bankCard join user 返回user.*
+//                                //bank_card.FETCHER.allFields()// bankCard join user 返回bankCard.*
+//                        )
+//                );
+//
+//        easyEntityQuery.queryable(SysBankCard.class)
+//                .leftJoin(SysUser.class,(bank_card, user) -> bank_card.uid().eq(user.id()))
+//                .select(UserBankDTO.class);//查询的是bankCard.*
+//
+//        easyEntityQuery.queryable(SysBankCard.class)
+//                .leftJoin(SysUser.class,(bank_card, user) -> bank_card.uid().eq(user.id()))
+//                .select(UserBankDTO.class,(bank_card, user) ->Select.of(
+//                        user.FETCHER.allFields()//查询的是user.*
+//                ));
+//    }
 }

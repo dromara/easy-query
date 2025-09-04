@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.extension.track;
 
+import com.easy.query.core.metadata.EntityMetadata;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.exception.EasyQueryException;
@@ -24,6 +25,8 @@ public interface TrackContext {
      */
     @Nullable
     EntityState getTrackEntityState(@Nullable Object entity);
+
+    Object createAndCopyValue(Object entity, EntityMetadata entityMetadata);
 
     default @NotNull EntityState getTrackEntityStateNotNull(@Nullable Object entity) {
         EntityState trackEntityState = getTrackEntityState(entity);

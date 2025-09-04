@@ -103,6 +103,10 @@ public interface BaseEntityClient extends EasyBaseQuery {
      */
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> ExpressionDeletable<TProxy, T> deletable(Class<T> entityClass);
 
+//    <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> ExpressionDeletable<TProxy, T> savable(T entity);
+
+
+
     default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> void loadInclude(T entity, SQLFuncExpression1<TProxy, PropColumn> navigateProperty) {
         if (entity == null) {
             return;

@@ -533,8 +533,7 @@ public class QueryTest27 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<Map<String, Object>> list = easyEntityQuery.queryable(Topic.class)
-                .select(t_topic -> new MapProxy(ValueTypeMode.TRY_TYPE).selectAll(t_topic)
-                ).toList();
+                .select(t_topic -> new MapProxy(ValueTypeMode.TRY_TYPE).selectAll(t_topic)).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
@@ -552,4 +551,11 @@ public class QueryTest27 extends BaseTest {
         }
 
     }
+
+
+    @Test
+    public  void testSave1(){
+//        easyEntityQuery.savable(new Topic()).
+    }
+
 }

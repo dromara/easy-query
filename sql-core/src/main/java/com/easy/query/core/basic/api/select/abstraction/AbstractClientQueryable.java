@@ -457,17 +457,17 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             boolean printSQL = EasyJdbcExecutorUtil.isPrintSQL(jdbcStreamResult.getExecutorContext());
             Iterator<TR> iterator = streamResult.iterator();
 
-            int i = 0;
-            while (iterator.hasNext()) {
-                if (i >= 1) {
+            int total = 0;
+            if (iterator.hasNext()) {
+                next = iterator.next();
+                total = 1;
+                if (iterator.hasNext()) {
                     throw runtimeContext.getAssertExceptionFactory().createSingleMoreElementException(this);
                 }
-
-                next = iterator.next();
-                i++;
             }
+
             if (printSQL) {
-                log.info("<== Total: " + i);
+                log.info("<== Total: " + total);
             }
 
         } catch (SQLException e) {
@@ -572,12 +572,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             }
         }
         String[] selfProperties = resultTreeNavigateMetadata.getSelfProperties();
-        if(EasyArrayUtil.isEmpty(selfProperties)){
-            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(this.entityMetadata.getEntityClass())+" is unable to access selfProperty during tree structure retrieval.");
+        if (EasyArrayUtil.isEmpty(selfProperties)) {
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(this.entityMetadata.getEntityClass()) + " is unable to access selfProperty during tree structure retrieval.");
         }
         String[] targetProperties = resultTreeNavigateMetadata.getTargetProperties();
-        if(EasyArrayUtil.isEmpty(targetProperties)){
-            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(this.entityMetadata.getEntityClass())+" is unable to access targetProperty during tree structure retrieval.");
+        if (EasyArrayUtil.isEmpty(targetProperties)) {
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(this.entityMetadata.getEntityClass()) + " is unable to access targetProperty during tree structure retrieval.");
         }
         return new TreeSelfTargetItem(selfProperties, targetProperties);
     }

@@ -1728,4 +1728,35 @@ public class UpdateTest extends BaseTest {
                 )).toList();
     }
 
+    @Test
+    public void mapUpdateTest511() {
+
+
+        Supplier<Exception> f = () -> {
+            try {
+                List<Map<String, Object>> updates = new ArrayList<>();
+                HashMap<String, Object> updateMap = new HashMap<>();
+                updateMap.put("ID", "2");
+                updateMap.put("stars", null);
+                updates.add(updateMap);
+                easyEntityQuery.mapUpdatable(updates)
+                        .asTable("t_topic")
+                        .whereColumns("id")
+                        .batch()
+                        .executeRows();
+            } catch (Exception ex) {
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQuerySQLCommandException);
+        EasyQuerySQLCommandException easyQuerySQLCommandException = (EasyQuerySQLCommandException) exception;
+        Assert.assertTrue(easyQuerySQLCommandException.getCause() instanceof EasyQuerySQLStatementException);
+        EasyQuerySQLStatementException easyQuerySQLStatementException = (EasyQuerySQLStatementException) easyQuerySQLCommandException.getCause();
+        Assert.assertEquals("UPDATE `t_topic` SET `stars` = ? WHERE `ID` = ?", easyQuerySQLStatementException.getSQL());
+
+    }
+
 }
