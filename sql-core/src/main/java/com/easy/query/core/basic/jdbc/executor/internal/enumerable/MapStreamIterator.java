@@ -8,6 +8,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResul
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypes;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
+import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.column2mapkey.Column2MapKeyConversion;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -43,6 +44,7 @@ public class MapStreamIterator<T> extends AbstractMapToStreamIterator<T> {
 
         mapCount++;
         Class<T> clazz = resultMetadata.getResultClass();
+        EasyQueryOption easyQueryOption1 = context.getRuntimeContext().getQueryConfiguration().getEasyQueryOption();
         Map<String, Object> map = EasyClassUtil.newMapInstanceOrNull(clazz);
         if (map == null) {
             throw new SQLException("cant create map:" + EasyClassUtil.getSimpleName(clazz));

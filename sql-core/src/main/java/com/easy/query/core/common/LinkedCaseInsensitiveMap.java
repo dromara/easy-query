@@ -10,20 +10,21 @@ import java.util.Set;
 /**
  * key为字符串且忽略大小写的有序集合
  *
+ * @author xuejiaming
  * @FileName: CaseInsensitiveLinkedHashMap.java
  * @Description: 文件说明
  * create time 2023/2/11 10:20
- * @author xuejiaming
  */
 public class LinkedCaseInsensitiveMap<V> extends LinkedHashMap<String, V> {
 
     private static final long serialVersionUID = 7171102532087849030L;
-    private final HashMap<String, String> caseInsensitiveKeys;
+    private final Map<String, String> caseInsensitiveKeys;
     private final Locale locale;
 
     public LinkedCaseInsensitiveMap() {
         this(12, Locale.ENGLISH);
     }
+
     public LinkedCaseInsensitiveMap(Locale locale) {
         this(12, locale);
     }
@@ -37,26 +38,21 @@ public class LinkedCaseInsensitiveMap<V> extends LinkedHashMap<String, V> {
     @Override
     public boolean containsKey(Object key) {
 
-        if(key instanceof String){
+        if (key instanceof String) {
             String lowerCase = key.toString().toLowerCase(this.locale);
             String realKey = caseInsensitiveKeys.get(lowerCase);
-            return realKey!=null;
+            return realKey != null;
         }
         return false;
     }
 
     @Override
     public V get(Object key) {
-        if(key instanceof String){
+        if (key instanceof String) {
             String realKey = caseInsensitiveKeys.get(key.toString().toLowerCase(this.locale));
             return super.get(realKey);
         }
         return null;
-    }
-
-    @Override
-    public Set<String> keySet() {
-        return caseInsensitiveKeys.keySet();
     }
 
     @Override
@@ -73,8 +69,8 @@ public class LinkedCaseInsensitiveMap<V> extends LinkedHashMap<String, V> {
     }
 
     @Override
-    public void putAll(Map<? extends String,? extends V> m) {
-        for (Map.Entry<? extends String,? extends V> entry : m.entrySet()) {
+    public void putAll(Map<? extends String, ? extends V> m) {
+        for (Map.Entry<? extends String, ? extends V> entry : m.entrySet()) {
             String key = entry.getKey();
             V value = entry.getValue();
             this.put(key, value);
