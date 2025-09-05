@@ -11,9 +11,10 @@ import com.easy.query.core.expression.sql.builder.ExpressionContext;
  *
  * @author xuejiaming
  */
-public interface Savable<T, TChain> extends SQLExecuteExpectRows,
-        TableReNameable<TChain> {
-    ExpressionContext getExpressionContext();
-
-    EntityDeleteExpressionBuilder getDeleteExpressionBuilder();
+public interface Savable {
+    /**
+     * 执行命令
+     * @return
+     */
+    void executeCommand();
 }

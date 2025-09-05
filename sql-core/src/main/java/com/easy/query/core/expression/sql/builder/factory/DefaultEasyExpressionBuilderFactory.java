@@ -87,13 +87,13 @@ public class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFac
     }
 
     @Override
-    public EntityInsertExpressionBuilder createEntityInsertExpressionBuilder(ExpressionContext sqlExpressionContext, Class<?> queryClass) {
-        return new InsertExpressionBuilder(sqlExpressionContext, queryClass);
+    public EntityInsertExpressionBuilder createEntityInsertExpressionBuilder(ExpressionContext sqlExpressionContext, Class<?> entityClass) {
+        return new InsertExpressionBuilder(sqlExpressionContext, entityClass);
     }
 
     @Override
-    public EntityUpdateExpressionBuilder createEntityUpdateExpressionBuilder(ExpressionContext sqlExpressionContext, Class<?> queryClass, boolean expression) {
-        return new UpdateExpressionBuilder(sqlExpressionContext, queryClass, expression);
+    public EntityUpdateExpressionBuilder createEntityUpdateExpressionBuilder(ExpressionContext sqlExpressionContext, Class<?> entityClass, boolean expression) {
+        return new UpdateExpressionBuilder(sqlExpressionContext, entityClass, expression);
     }
 
     @Override
@@ -102,8 +102,8 @@ public class DefaultEasyExpressionBuilderFactory implements ExpressionBuilderFac
     }
 
     @Override
-    public EntityDeleteExpressionBuilder createEntityDeleteExpressionBuilder(ExpressionContext sqlExpressionContext, Class<?> queryClass, boolean expression) {
-        return new DeleteExpressionBuilder(sqlExpressionContext, queryClass, expression);
+    public EntityDeleteExpressionBuilder createEntityDeleteExpressionBuilder(ExpressionContext sqlExpressionContext, Class<?> entityClass, boolean expression) {
+        return new DeleteExpressionBuilder(sqlExpressionContext, entityClass, expression);
     }
 
     @Override

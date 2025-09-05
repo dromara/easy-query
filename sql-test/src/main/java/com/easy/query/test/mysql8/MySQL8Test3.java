@@ -9,8 +9,11 @@ import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.EntityValueState;
 import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.basic.extension.track.TrackManager;
+import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -19,7 +22,9 @@ import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.core.util.EasyTrackUtil;
 import com.easy.query.test.dto.UserBankDTO;
 import com.easy.query.test.dto.proxy.UserBankDTOProxy;
 import com.easy.query.test.listener.ListenerContext;
@@ -30,6 +35,7 @@ import com.easy.query.test.mysql8.dto.MyComment4;
 import com.easy.query.test.mysql8.entity.BatchInsert;
 import com.easy.query.test.mysql8.entity.Comment;
 import com.easy.query.test.mysql8.entity.M8Parent;
+import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.many.M8Province;
@@ -38,6 +44,8 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -549,6 +557,7 @@ public class MySQL8Test3 extends BaseTest {
     @Test
     public void testSave() {
 
+
         TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
         try {
             trackManager.begin();
@@ -558,22 +567,33 @@ public class MySQL8Test3 extends BaseTest {
                     .toList();
 
             SysUser sysUser = list.get(0);
+            sysUser.getBankCards().remove(0);
             int i = 0;
             for (SysBankCard bankCard : sysUser.getBankCards()) {
-                if(i%2==1){
-                    System.out.println("bankCard:"+bankCard.getId()+"不变更type");
-                }else{
+                if (i % 2 == 1) {
+                    System.out.println("bankCard:" + bankCard.getId() + "不变更type");
+                } else {
                     String uuid = UUID.randomUUID().toString();
-                    System.out.println("bankCard:"+bankCard.getId()+"变更type:"+uuid);
+                    System.out.println("bankCard:" + bankCard.getId() + "变更type:" + uuid);
                     bankCard.setType(uuid);
                 }
+                SysBank bank = bankCard.getBank();
+                if(bank!=null){
+                    bank.setName("xxxxx123123");
+                }
                 i++;
+
             }
+            SysBankCard sysBankCard = new SysBankCard();
+            sysBankCard.setId("123123123");
+            sysBankCard.setType("456456");
+            sysUser.getBankCards().add(sysBankCard);
 
             System.out.println("分割线---------------------");
-
-            save(sysUser);
-            System.out.println("123");
+            try(Transaction transaction = easyEntityQuery.beginTransaction()){
+                easyEntityQuery.savable(sysUser).executeCommand();
+                transaction.commit();
+            }
 
         } finally {
             trackManager.release();
@@ -581,35 +601,5 @@ public class MySQL8Test3 extends BaseTest {
 
     }
 
-    private void save(Object entity){
 
-        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
-        TrackContext currentTrackContext = trackManager.getCurrentTrackContext();
-        EntityState entityState = currentTrackContext.getTrackEntityStateNotNull(entity);
-        List<NavigateMetadata> includes = entityState.getIncludes();
-        if (includes != null) {
-            for (NavigateMetadata include : includes) {
-                EntityMetadataManager entityMetadataManager = easyEntityQuery.getRuntimeContext().getEntityMetadataManager();
-                EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(include.getNavigatePropertyType());
-                Set<String> trackKeys = entityState.getTrackKeys(include);
-                if (trackKeys != null) {
-                    for (String trackKey : trackKeys) {
-                        EntityState trackEntityState = currentTrackContext.getTrackEntityState(include.getNavigatePropertyType(), trackKey);
-                        if(trackEntityState != null){
-                            for (Map.Entry<String, ColumnMetadata> propColumn : entityMetadata.getProperty2ColumnMap().entrySet()) {
-                                EntityValueState entityValueState = trackEntityState.getEntityValueState(propColumn.getValue());
-                                if(entityValueState.isChanged()){
-                                    System.out.println(entityMetadata.getEntityClass().getSimpleName()+":id:"+trackKey+",字段"+propColumn.getKey()+"-->"+entityValueState.getOriginal()+"-->"+entityValueState.getCurrent());
-                                }else{
-                                    if(Objects.equals("type",propColumn.getKey())){
-                                        System.out.println(entityMetadata.getEntityClass().getSimpleName()+":id:"+trackKey+",字段"+propColumn.getKey()+"没有变更");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 }

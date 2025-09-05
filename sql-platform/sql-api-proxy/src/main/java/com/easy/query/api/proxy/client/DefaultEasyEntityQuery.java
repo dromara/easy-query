@@ -8,6 +8,9 @@ import com.easy.query.api.proxy.entity.delete.impl.EasyExpressionDeletable;
 import com.easy.query.api.proxy.entity.insert.EasyEmptyEntityInsertable;
 import com.easy.query.api.proxy.entity.insert.EasyEntityInsertable;
 import com.easy.query.api.proxy.entity.insert.EntityInsertable;
+import com.easy.query.api.proxy.entity.save.EasyEmptySavable;
+import com.easy.query.api.proxy.entity.save.EntitySavable;
+import com.easy.query.api.proxy.entity.save.impl.EasyEntitySavable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.api.proxy.entity.update.EntityUpdatable;
@@ -22,6 +25,7 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 
 /**
@@ -125,4 +129,23 @@ public class DefaultEasyEntityQuery implements EasyEntityQuery {
         return new EasyExpressionDeletable<>(tProxy, easyQueryClient.deletable(entityClass));
     }
 
+    @Override
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntitySavable<TProxy, T> savable(T entity) {
+        Objects.requireNonNull(entity, "entity is null");
+        Class<T> aClass = EasyObjectUtil.typeCast(entity.getClass());
+        return new EasyEntitySavable<>(aClass, Collections.singletonList(entity), easyQueryClient);
+    }
+
+    @Override
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntitySavable<TProxy, T> savable(Collection<T> entities) {
+
+        Objects.requireNonNull(entities, "entities is null");
+        if(EasyCollectionUtil.isEmpty( entities)){
+            return new EasyEmptySavable<>();
+        }
+
+        T first = EasyCollectionUtil.first(entities);
+        Class<T> aClass = EasyObjectUtil.typeCast(first.getClass());
+        return new EasyEntitySavable<>(aClass, entities, easyQueryClient);
+    }
 }

@@ -4,6 +4,7 @@ import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.api.proxy.entity.delete.EntityDeletable;
 import com.easy.query.api.proxy.entity.delete.ExpressionDeletable;
 import com.easy.query.api.proxy.entity.insert.EntityInsertable;
+import com.easy.query.api.proxy.entity.save.EntitySavable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.update.EntityUpdatable;
 import com.easy.query.api.proxy.entity.update.ExpressionUpdatable;
@@ -103,7 +104,8 @@ public interface BaseEntityClient extends EasyBaseQuery {
      */
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> ExpressionDeletable<TProxy, T> deletable(Class<T> entityClass);
 
-//    <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> ExpressionDeletable<TProxy, T> savable(T entity);
+    <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntitySavable<TProxy, T> savable(T entity);
+    <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntitySavable<TProxy, T> savable(Collection<T> entities);
 
 
 

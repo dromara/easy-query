@@ -21,7 +21,9 @@ import java.util.List;
 
 /**
  * create time 2025/8/24 20:58
- * 文件说明
+ * 默认的子查询的额外条件合并逻辑
+ * select ... from table1 a join (select ... form table where [relationId=?] group by relationId) where a.relationId= ?
+ * 让外部关联关系逻辑进行合并到子查询转groupJoin处 使groupJoin性能更加高效
  *
  * @author xuejiaming
  */

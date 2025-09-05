@@ -1,0 +1,40 @@
+package com.easy.query.api.proxy.entity.save;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * create time 2025/9/5 20:31
+ * 文件说明
+ *
+ * @author xuejiaming
+ */
+public class SaveNode {
+    private final List<Object> inserts;
+    private final List<Object> updates;
+    private final List<Object> deletes;
+    private final int index;
+
+    public SaveNode(int index){
+        this.index = index;
+        this.inserts = new ArrayList<>();
+        this.updates = new ArrayList<>();
+        this.deletes = new ArrayList<>();
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public List<Object> getInserts() {
+        return inserts;
+    }
+
+    public List<Object> getUpdates() {
+        return updates;
+    }
+
+    public List<Object> getDeletes() {
+        return deletes;
+    }
+}

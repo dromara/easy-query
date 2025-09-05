@@ -119,12 +119,12 @@ public class TrackSaver<TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEn
 
                 Objects.requireNonNull(updateObject, "updateObject cant be null,primary key:" + newNavigateEntityKey);
                 dbEnttiyMap.remove(newNavigateEntityKey);
-                updates.add(updateObject);
-                for (Map.Entry<String, ColumnMetadata> propertyCopies : navigateEntityMetadata.getProperty2ColumnMap().entrySet()) {
-                    ColumnMetadata columnMetadata = propertyCopies.getValue();
-                    Object value = columnMetadata.getGetterCaller().apply(newEntity);
-                    columnMetadata.getSetterCaller().call(updateObject, value);
-                }
+                updates.add(newEntity);
+//                for (Map.Entry<String, ColumnMetadata> propertyCopies : navigateEntityMetadata.getProperty2ColumnMap().entrySet()) {
+//                    ColumnMetadata columnMetadata = propertyCopies.getValue();
+//                    Object value = columnMetadata.getGetterCaller().apply(newEntity);
+//                    columnMetadata.getSetterCaller().call(newEntity, value);
+//                }
             }
             List<Object> deletes = new ArrayList<>(dbEnttiyMap.values());
             TrackCrud trackCrud = new TrackCrud();

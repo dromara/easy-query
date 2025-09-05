@@ -2,6 +2,7 @@ package com.easy.query.core.annotation;
 
 import com.easy.query.core.basic.extension.navigate.DefaultNavigateExtraFilterStrategy;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
+import com.easy.query.core.enums.MappingClassSaveModeEnum;
 import com.easy.query.core.enums.PartitionOrderEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 
@@ -47,6 +48,11 @@ public @interface Navigate {
      */
     Class<?> mappingClass() default Object.class;
 
+    /**
+     * 中间表保存模式 默认报错需要用户指定，自动模式则认为中间表是简单表 手动模式则认为中间表是人为会去处理的
+     * @return
+     */
+    MappingClassSaveModeEnum mappingClassSaveMode() default MappingClassSaveModeEnum.ERROR;
     /**
      * 多对多填写
      * 当前对象的{@param selfProperty}属性对应中间表的哪个属性,多对多不能为空
@@ -163,5 +169,7 @@ public @interface Navigate {
      * @return
      */
     boolean ignoreAutoInclude() default false;
+
+
 
 }
