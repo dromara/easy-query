@@ -1,5 +1,6 @@
 package com.easy.query.core.metadata;
 
+import com.easy.query.core.enums.MappingClassSaveModeEnum;
 import com.easy.query.core.enums.PartitionOrderEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
@@ -38,6 +39,7 @@ public class NavigateOption {
     private boolean subQueryToGroupJoin = false;
     private boolean ignoreAutoInclude = false;
     private PartitionOrderEnum partitionOrder;
+    private MappingClassSaveModeEnum mappingClassSaveMode;
 
     public NavigateOption(EntityMetadata entityMetadata,
                           String propertyName,
@@ -60,6 +62,7 @@ public class NavigateOption {
         this.limit = limit;
         this.directMapping = directMapping;
         this.partitionOrder = PartitionOrderEnum.THROW;
+        this.mappingClassSaveMode = MappingClassSaveModeEnum.THROW;
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -188,5 +191,13 @@ public class NavigateOption {
 
     public void setIgnoreAutoInclude(boolean ignoreAutoInclude) {
         this.ignoreAutoInclude = ignoreAutoInclude;
+    }
+
+    public MappingClassSaveModeEnum getMappingClassSaveMode() {
+        return mappingClassSaveMode;
+    }
+
+    public void setMappingClassSaveMode(MappingClassSaveModeEnum mappingClassSaveMode) {
+        this.mappingClassSaveMode = mappingClassSaveMode;
     }
 }

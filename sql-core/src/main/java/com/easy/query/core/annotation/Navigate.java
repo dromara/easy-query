@@ -49,10 +49,11 @@ public @interface Navigate {
     Class<?> mappingClass() default Object.class;
 
     /**
+     * 仅多对多生效
      * 中间表保存模式 默认报错需要用户指定，自动模式则认为中间表是简单表 手动模式则认为中间表是人为会去处理的
      * @return
      */
-    MappingClassSaveModeEnum mappingClassSaveMode() default MappingClassSaveModeEnum.ERROR;
+    MappingClassSaveModeEnum mappingClassSaveMode() default MappingClassSaveModeEnum.THROW;
     /**
      * 多对多填写
      * 当前对象的{@param selfProperty}属性对应中间表的哪个属性,多对多不能为空

@@ -18,5 +18,5 @@ public enum MappingClassSaveModeEnum {
     /**
      * 报错
      */
-    ERROR
+    THROW
 }

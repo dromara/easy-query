@@ -4,6 +4,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * create time 2025/9/5 20:27
@@ -13,9 +14,15 @@ import java.util.List;
  */
 public class SaveCommandContext {
     private final List<SavableContext> savableContexts;
+    private final Class<?> entityClass;
 
-    public SaveCommandContext() {
+    public SaveCommandContext(Class<?> entityClass) {
         this.savableContexts = new ArrayList<>();
+        this.entityClass = entityClass;
+    }
+
+    public boolean circulateCheck(Class<?> targetEntityClass) {
+        return Objects.equals(entityClass, targetEntityClass);
     }
 
     public List<SavableContext> getSavableContexts() {

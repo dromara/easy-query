@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.entity.save;
 
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 
 import java.util.LinkedHashMap;
@@ -12,10 +13,10 @@ import java.util.Map;
  * @author xuejiaming
  */
 public class SavableContext {
-    private final Map<NavigateMetadata,SaveNode> saveNodeMap;
+    private final Map<NavigateMetadata, SaveNode> saveNodeMap;
     private final int index;
 
-    public SavableContext(int index){
+    public SavableContext(int index) {
         this.index = index;
         this.saveNodeMap = new LinkedHashMap<>();
     }
@@ -23,7 +24,8 @@ public class SavableContext {
     public Map<NavigateMetadata, SaveNode> getSaveNodeMap() {
         return saveNodeMap;
     }
-    public SaveNode createSaveNodeMap(NavigateMetadata navigateMetadata) {
-        return saveNodeMap.computeIfAbsent(navigateMetadata, k -> new SaveNode(this.index));
+
+    public SaveNode createSaveNodeMap(NavigateMetadata navigateMetadata, EntityMetadata entityMetadata) {
+        return saveNodeMap.computeIfAbsent(navigateMetadata, k -> new SaveNode(this.index, entityMetadata));
     }
 }

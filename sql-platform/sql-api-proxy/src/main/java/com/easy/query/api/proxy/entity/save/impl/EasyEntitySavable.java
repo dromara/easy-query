@@ -2,7 +2,6 @@ package com.easy.query.api.proxy.entity.save.impl;
 
 import com.easy.query.api.proxy.entity.save.abstraction.AbstractEntitySavable;
 import com.easy.query.core.api.client.EasyQueryClient;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.Collection;
