@@ -4,36 +4,23 @@ import com.easy.query.api.proxy.entity.save.SavableContext;
 import com.easy.query.api.proxy.entity.save.SaveCommandContext;
 import com.easy.query.api.proxy.entity.save.SaveNode;
 import com.easy.query.api.proxy.entity.save.TargetValueTypeEnum;
-import com.easy.query.api.proxy.entity.save.abstraction.AbstractEntitySavable;
 import com.easy.query.api.proxy.entity.save.command.EmptySaveCommand;
 import com.easy.query.api.proxy.entity.save.command.InsertSaveCommand;
 import com.easy.query.api.proxy.entity.save.command.SaveCommand;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.EntityState;
-import com.easy.query.core.basic.extension.track.EntityValueState;
-import com.easy.query.core.basic.extension.track.TrackContext;
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.MappingClassSaveModeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.EasyTrackUtil;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Supplier;
 
 /**
  * create time 2025/9/6 21:05
@@ -55,7 +42,8 @@ public class InsertSaveProvider extends AbstractSaveProvider {
         if (EasyCollectionUtil.isNotEmpty(entities)) {
             EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entityClass);
             for (Object entity : entities) {
-                //insert 拦截器
+                //添加重复引用去重
+                this.saveCommandContext.addProcessEntity(entity);
                 saveEntity(entity, entityMetadata, 0);
             }
             return new InsertSaveCommand(entityMetadata, entities, easyQueryClient, saveCommandContext);
@@ -74,7 +62,7 @@ public class InsertSaveProvider extends AbstractSaveProvider {
         for (NavigateMetadata navigateMetadata : entityMetadata.getNavigateMetadatas()) {
 
             //如果导航属性是值类型并且没有循环引用且没有被追踪才继续下去
-            if (!this.saveCommandContext.circulateCheck(navigateMetadata.getNavigatePropertyType(),deep)) {
+            if (!this.saveCommandContext.circulateCheck(navigateMetadata.getNavigatePropertyType(), deep)) {
                 TargetValueTypeEnum targetValueType = getTargetValueType(entityMetadata, navigateMetadata);
                 //我的id就是我们的关联关系键 多对多除外 还需要赋值一遍吧我的id给他 多对多下 需要处理的值对象是关联表 如果无关联中间表则目标对象是一个独立对象
                 if (targetValueType == TargetValueTypeEnum.VALUE_OBJECT || targetValueType == TargetValueTypeEnum.AGGREGATE_ROOT) {
@@ -102,7 +90,7 @@ public class InsertSaveProvider extends AbstractSaveProvider {
             throw new EasyQueryInvalidOperationException("save not support direct mapping");
         }
         EntityMetadata targetEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
-        SaveNode saveNode = savableContext.createSaveNodeMap(navigateMetadata, targetEntityMetadata);
+        SaveNode saveNode = savableContext.putSaveNodeMap(navigateMetadata, targetEntityMetadata);
 
 
         Property<Object, ?> getter = navigateMetadata.getGetter();
@@ -120,7 +108,13 @@ public class InsertSaveProvider extends AbstractSaveProvider {
             }
         }
     }
+
     private void processEntity(TargetValueTypeEnum targetValueType, Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata, EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode) {
+
+        if (this.saveCommandContext.isProcessEntity(targetEntity)) {
+            return;
+        }
+        this.saveCommandContext.addProcessEntity(targetEntity);
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
             //检查中间表并且创建新增操作
             if (navigateMetadata.getMappingClass() == null) {
@@ -145,10 +139,10 @@ public class InsertSaveProvider extends AbstractSaveProvider {
                 setTargetValue(targetValueType, selfEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
             }));
             if (targetValueType == TargetValueTypeEnum.VALUE_OBJECT) {
-                    EntityState trackEntityState = currentTrackContext.getTrackEntityState(targetEntity);
-                    if (trackEntityState == null) {
-                        saveEntity(targetEntity, targetEntityMetadata, saveNode.getIndex() + 1);
-                    }
+                EntityState trackEntityState = currentTrackContext.getTrackEntityState(targetEntity);
+                if (trackEntityState == null) {
+                    saveEntity(targetEntity, targetEntityMetadata, saveNode.getIndex() + 1);
+                }
             }
         }
     }

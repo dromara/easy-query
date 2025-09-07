@@ -25,7 +25,10 @@ public class SavableContext {
         return saveNodeMap;
     }
 
-    public SaveNode createSaveNodeMap(NavigateMetadata navigateMetadata, EntityMetadata entityMetadata) {
+    public SaveNode putSaveNodeMap(NavigateMetadata navigateMetadata, EntityMetadata entityMetadata) {
         return saveNodeMap.computeIfAbsent(navigateMetadata, k -> new SaveNode(this.index, entityMetadata));
+    }
+    public SaveNode getSaveNode(NavigateMetadata navigateMetadata) {
+        return saveNodeMap.get(navigateMetadata);
     }
 }
