@@ -21,8 +21,8 @@ public class SaveCommandContext {
         this.entityClass = entityClass;
     }
 
-    public boolean circulateCheck(Class<?> targetEntityClass) {
-        return Objects.equals(entityClass, targetEntityClass);
+    public boolean circulateCheck(Class<?> targetEntityClass, int deep) {
+        return Objects.equals(entityClass, targetEntityClass) && deep > 0;
     }
 
     public List<SavableContext> getSavableContexts() {

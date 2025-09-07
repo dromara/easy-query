@@ -41,26 +41,11 @@ import java.util.function.Supplier;
  *
  * @author xuejiaming
  */
-public class InsertSaveProvider implements SaveProvider {
-    private final Class<?> entityClass;
-    private final List<Object> entities;
-    private final EasyQueryClient easyQueryClient;
-    private final QueryRuntimeContext runtimeContext;
-    private final EntityMetadataManager entityMetadataManager;
-    private final TrackContext currentTrackContext;
+public class InsertSaveProvider extends AbstractSaveProvider {
     private final SaveCommandContext saveCommandContext;
 
     public InsertSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient) {
-        this.entityClass = entityClass;
-        this.entities = entities;
-        this.easyQueryClient = easyQueryClient;
-        this.runtimeContext = easyQueryClient.getRuntimeContext();
-        TrackContext currentTrackContext = runtimeContext.getTrackManager().getCurrentTrackContext();
-        if (currentTrackContext == null) {
-            throw new EasyQueryInvalidOperationException("currentTrackContext can not be null");
-        }
-        this.currentTrackContext = currentTrackContext;
-        this.entityMetadataManager = runtimeContext.getEntityMetadataManager();
+        super(entityClass, entities, easyQueryClient);
         this.saveCommandContext = new SaveCommandContext(entityClass);
     }
 
@@ -79,7 +64,6 @@ public class InsertSaveProvider implements SaveProvider {
         return EmptySaveCommand.INSTANCE;
     }
 
-    //未追踪的数据建议采用insert or update的做法
     private void saveEntity(Object entity, EntityMetadata entityMetadata, int deep) {
 
         EntityState entityState = currentTrackContext.getTrackEntityState(entity);
@@ -88,10 +72,14 @@ public class InsertSaveProvider implements SaveProvider {
         }
         SavableContext savableContext = this.saveCommandContext.getSavableContext(deep);
         for (NavigateMetadata navigateMetadata : entityMetadata.getNavigateMetadatas()) {
-            TargetValueTypeEnum targetValueType = getTargetValueType(entityMetadata, navigateMetadata);
-            //我的id就是我们的关联关系键 多对多除外 还需要赋值一遍吧我的id给他 多对多下 需要处理的值对象是关联表 如果无关联中间表则目标对象是一个独立对象
-            if (targetValueType == TargetValueTypeEnum.VALUE_OBJECT || targetValueType == TargetValueTypeEnum.AGGREGATE_ROOT) {
-                processNavigate(targetValueType, entity, entityMetadata, navigateMetadata, savableContext);
+
+            //如果导航属性是值类型并且没有循环引用且没有被追踪才继续下去
+            if (!this.saveCommandContext.circulateCheck(navigateMetadata.getNavigatePropertyType(),deep)) {
+                TargetValueTypeEnum targetValueType = getTargetValueType(entityMetadata, navigateMetadata);
+                //我的id就是我们的关联关系键 多对多除外 还需要赋值一遍吧我的id给他 多对多下 需要处理的值对象是关联表 如果无关联中间表则目标对象是一个独立对象
+                if (targetValueType == TargetValueTypeEnum.VALUE_OBJECT || targetValueType == TargetValueTypeEnum.AGGREGATE_ROOT) {
+                    processNavigate(targetValueType, entity, entityMetadata, navigateMetadata, savableContext);
+                }
             }
         }
 //        List<NavigateMetadata> includes = entityState.getIncludes();
@@ -132,7 +120,6 @@ public class InsertSaveProvider implements SaveProvider {
             }
         }
     }
-
     private void processEntity(TargetValueTypeEnum targetValueType, Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata, EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode) {
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
             //检查中间表并且创建新增操作
@@ -158,112 +145,13 @@ public class InsertSaveProvider implements SaveProvider {
                 setTargetValue(targetValueType, selfEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
             }));
             if (targetValueType == TargetValueTypeEnum.VALUE_OBJECT) {
-                //如果导航属性是值类型并且没有循环引用且没有被追踪才继续下去
-                if (!this.saveCommandContext.circulateCheck(navigateMetadata.getNavigatePropertyType())) {
-                    EntityState trackEntityState = currentTrackContext.getTrackEntityState(navigateMetadata.getNavigatePropertyType());
+                    EntityState trackEntityState = currentTrackContext.getTrackEntityState(targetEntity);
                     if (trackEntityState == null) {
                         saveEntity(targetEntity, targetEntityMetadata, saveNode.getIndex() + 1);
                     }
-                }
             }
         }
     }
 
-    private void setMappingEntity(Object selfEntity, Object targetEntity, Object mappingEntity, EntityMetadata selfEntityMetadata, NavigateMetadata navigateMetadata, EntityMetadata targetEntityMetadata, EntityMetadata mappingEntityMetadata) {
-        String[] selfMappingProperties = navigateMetadata.getSelfMappingProperties();
-        String[] selfPropertiesOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
-        for (int i = 0; i < selfMappingProperties.length; i++) {
-            String selfMappingProperty = selfMappingProperties[i];
-            String self = selfPropertiesOrPrimary[i];
-            ColumnMetadata selfColumn = selfEntityMetadata.getColumnNotNull(self);
-            Object selfValue = selfColumn.getGetterCaller().apply(selfEntity);
-            if (selfValue == null) {
-                throw new EasyQueryInvalidOperationException("entity:" + EasyClassUtil.getInstanceSimpleName(selfEntity) + " property:[" + self + "] value can not be null");
-            }
-            ColumnMetadata columnMetadata = mappingEntityMetadata.getColumnNotNull(selfMappingProperty);
-            columnMetadata.getSetterCaller().call(mappingEntity, selfValue);
-        }
-        String[] targetMappingProperties = navigateMetadata.getTargetMappingProperties();
-        String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
-        for (int i = 0; i < targetMappingProperties.length; i++) {
-            String targetMappingProperty = targetMappingProperties[i];
-            String target = targetPropertiesOrPrimary[i];
-            ColumnMetadata targetColumn = targetEntityMetadata.getColumnNotNull(target);
-            Object targetValue = targetColumn.getGetterCaller().apply(targetEntity);
-            if (targetValue == null) {
-                throw new EasyQueryInvalidOperationException("entity:" + EasyClassUtil.getInstanceSimpleName(targetEntity) + " property:[" + target + "] value can not be null");
-            }
-            ColumnMetadata columnMetadata = mappingEntityMetadata.getColumnNotNull(targetMappingProperty);
-            columnMetadata.getSetterCaller().call(mappingEntity, targetValue);
-        }
-    }
 
-    private void setTargetValue(TargetValueTypeEnum targetValueType, Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata, NavigateMetadata navigateMetadata, EntityMetadata targetEntityMetadata) {
-        if (targetValueType == TargetValueTypeEnum.VALUE_OBJECT) {
-            String[] selfPropertiesOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
-            String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
-            for (int i = 0; i < selfPropertiesOrPrimary.length; i++) {
-                String self = selfPropertiesOrPrimary[i];
-                String target = targetPropertiesOrPrimary[i];
-                ColumnMetadata selfColumn = selfEntityMetadata.getColumnNotNull(self);
-                Object selfValue = selfColumn.getGetterCaller().apply(selfEntity);
-                if (selfValue == null) {
-                    throw new EasyQueryInvalidOperationException("entity:" + EasyClassUtil.getInstanceSimpleName(selfEntity) + " property:[" + self + "] value can not be null");
-                }
-                ColumnMetadata targetColumn = selfEntityMetadata.getColumnNotNull(target);
-                targetColumn.getSetterCaller().call(targetEntity, selfValue);
-            }
-        } else if (targetValueType == TargetValueTypeEnum.AGGREGATE_ROOT) {
-            String[] selfPropertiesOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
-            String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
-            for (int i = 0; i < selfPropertiesOrPrimary.length; i++) {
-                String self = selfPropertiesOrPrimary[i];
-                String target = targetPropertiesOrPrimary[i];
-                ColumnMetadata targetColumn = targetEntityMetadata.getColumnNotNull(target);
-                Object targetValue = targetColumn.getGetterCaller().apply(targetEntity);
-                if (targetValue == null) {
-                    throw new EasyQueryInvalidOperationException("entity:" + EasyClassUtil.getInstanceSimpleName(targetEntity) + " property:[" + target + "] value can not be null");
-                }
-                ColumnMetadata selfColumn = selfEntityMetadata.getColumnNotNull(self);
-                selfColumn.getSetterCaller().call(selfEntity, targetValue);
-            }
-        } else {
-            throw new EasyQueryInvalidOperationException("save not support target value type:" + targetValueType);
-        }
-    }
-
-    private TargetValueTypeEnum getTargetValueType(EntityMetadata selfMetadata, NavigateMetadata navigateMetadata) {
-        if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
-            if (navigateMetadata.getMappingClass() != null) {
-                boolean any = selfPropsIsKeys(selfMetadata, navigateMetadata);
-                if (any) {
-                    return TargetValueTypeEnum.VALUE_OBJECT;
-                }
-            }
-            return TargetValueTypeEnum.RELATION_OTHER;
-        }
-        boolean selfIsKey = selfPropsIsKeys(selfMetadata, navigateMetadata);
-        if (selfIsKey) {
-            return TargetValueTypeEnum.VALUE_OBJECT;
-        }
-        boolean targetIsKey = targetPropsIsKeys(selfMetadata, navigateMetadata);
-        if (targetIsKey) {
-            return TargetValueTypeEnum.AGGREGATE_ROOT;
-        }
-        return TargetValueTypeEnum.RELATION_OTHER;
-    }
-
-    private boolean selfPropsIsKeys(EntityMetadata selfMetadata, NavigateMetadata navigateMetadata) {
-
-        String[] selfPropertiesOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
-        Collection<String> keyProperties = selfMetadata.getKeyProperties();
-        return EasyArrayUtil.any(selfPropertiesOrPrimary, prop -> keyProperties.contains(prop));
-    }
-
-    private boolean targetPropsIsKeys(EntityMetadata selfMetadata, NavigateMetadata navigateMetadata) {
-
-        String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
-        Collection<String> keyProperties = selfMetadata.getKeyProperties();
-        return EasyArrayUtil.any(targetPropertiesOrPrimary, prop -> keyProperties.contains(prop));
-    }
 }

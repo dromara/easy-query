@@ -586,7 +586,7 @@ public class MySQL8Test3 extends BaseTest {
                 if (i % 2 == 1) {
                     System.out.println("bankCard:" + bankCard.getId() + "不变更type");
                 } else {
-                    String uuid = UUID.randomUUID().toString();
+                    String uuid = "f5332aa5-4fc4-4da7-8b65-20a86194431e";
                     System.out.println("bankCard:" + bankCard.getId() + "变更type:" + uuid);
                     bankCard.setType(uuid);
                 }
@@ -625,13 +625,13 @@ public class MySQL8Test3 extends BaseTest {
                 }
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("INSERT INTO `t_bank_card` (`id`,`type`) VALUES (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("123123123(String),456456(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                    Assert.assertEquals("INSERT INTO `t_bank_card` (`id`,`uid`,`type`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("123123123(String),u1(String),456456(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
                 }
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
                     Assert.assertEquals("UPDATE `t_bank_card` SET `type` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("4f84081e-0286-44c6-a852-eefe5e763a84(String),bc2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                    Assert.assertEquals("f5332aa5-4fc4-4da7-8b65-20a86194431e(String),bc2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
                 }
                 {
                     JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
