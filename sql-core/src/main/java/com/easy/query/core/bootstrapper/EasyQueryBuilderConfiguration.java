@@ -78,6 +78,8 @@ import com.easy.query.core.expression.many2group.DefaultSubQueryExtraPredicatePr
 import com.easy.query.core.expression.many2group.SubQueryExtraPredicateProvider;
 import com.easy.query.core.expression.parser.factory.DefaultSQLExpressionInvokeFactory;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
+import com.easy.query.core.expression.predicate.DefaultSmartPredicateAnonymousExpressionBuilderProvider;
+import com.easy.query.core.expression.predicate.SmartPredicateAnonymousExpressionBuilderProvider;
 import com.easy.query.core.expression.segment.factory.DefaultSQLSegmentFactory;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.DefaultEasyExpressionBuilderFactory;
@@ -195,6 +197,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(EasyInitConfiguration.class, DefaultEasyInitConfiguration.class)
 //                .replaceService(EntityExpressionExecutor.class, ShardingEntityExpressionExecutor.class)
                 .replaceService(ShardingExecutorService.class, DefaultEasyShardingExecutorService.class)
+                .replaceService(SmartPredicateAnonymousExpressionBuilderProvider.class, DefaultSmartPredicateAnonymousExpressionBuilderProvider.class)
                 .replaceService(ExpressionFactory.class, DefaultEasyExpressionFactory.class)
                 .replaceService(ShardingComparer.class, JavaLanguageShardingComparer.class)
                 .replaceService(JdbcTypeHandlerManager.class, EasyJdbcTypeHandlerManager.class)

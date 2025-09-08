@@ -31,6 +31,7 @@ import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.core.draft.Draft1;
+import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.sql.Include;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyArrayUtil;
@@ -51,6 +52,7 @@ import com.easy.query.test.mysql8.entity.M8Parent;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
+import com.easy.query.test.mysql8.entity.bank.proxy.SysBankProxy;
 import com.easy.query.test.mysql8.entity.many.M8Province;
 import org.junit.Assert;
 import org.junit.Test;
@@ -649,55 +651,69 @@ public class MySQL8Test3 extends BaseTest {
 //    }
 //
 //
-//    @Test
-//    public void testDTOWhereToTableWhere() {
-//        String compareProp = "code2";
-//        String compareValue = "123";
-//        easyEntityQuery.queryable(SysUser.class)
-//                .innerJoin(SysBankCard.class, (user, bank_card) -> user.id().eq(bank_card.uid()))
-//                .select((user, bank_card) -> new UserBankDTO2Proxy()
-//                        .name().set(user.name())
-//                        .phone().set(user.phone())
-//                        .code2().set(bank_card.code())
-//                ).where(u -> {
-//
-//
-//                    //这个就是 select * from (select * from a join b .....) t ....
-//                    EntityExpressionBuilder entityExpressionBuilder = u.getEntitySQLContext().getEntityExpressionBuilder();
-//                    //说明code2能找到table
-//
-//                        //这个就是上面的(select * from a join b .....) t
-//                        EntityTableExpressionBuilder tableExpressionBuilder = entityExpressionBuilder.getTable(0);
-//                        if (tableExpressionBuilder instanceof AnonymousDefaultTableExpressionBuilder) {
-//                            AnonymousDefaultTableExpressionBuilder anonymousDefaultTableExpressionBuilder = (AnonymousDefaultTableExpressionBuilder) tableExpressionBuilder;
-//                            //这个就是上面的去掉括号 select * from a join b .....
-//                            EntityQueryExpressionBuilder innerEntityQueryExpressionBuilder = anonymousDefaultTableExpressionBuilder.getEntityQueryExpressionBuilder();
-//
-//
-//                            TableAvailable table = null;
-//                            String property = null;
-//                            for (SQLSegment sqlSegment : innerEntityQueryExpressionBuilder.getProjects().getSQLSegments()) {
-//                                if (sqlSegment instanceof SQLEntityAliasSegment) {
-//                                    SQLEntityAliasSegment aliasSegment = (SQLEntityAliasSegment) sqlSegment;
-//                                    //别名叫做code2那么就是 t1.code as code2下面的方法就是获取t1
-//                                    if (Objects.equals(aliasSegment.getAlias(), compareProp)) {
-//                                        //这个就是code对应的表也就是bank_card
-//                                        table = aliasSegment.getTable();
-//                                        property = aliasSegment.getPropertyName();
-//                                    }
-//                                }
-//                            }
-//
-//                            if(table!=null){
-//
-//                                FilterImpl filter = new FilterImpl(innerEntityQueryExpressionBuilder.getRuntimeContext(), innerEntityQueryExpressionBuilder.getExpressionContext(), innerEntityQueryExpressionBuilder.getWhere(), false, innerEntityQueryExpressionBuilder.getExpressionContext().getValueFilter());
-//                                WherePredicateImpl<Object> objectWherePredicate = new WherePredicateImpl<>(table, new FilterContext(filter, innerEntityQueryExpressionBuilder));
-//                                //让条件生效
-//                                objectWherePredicate.eq(property, compareValue);
-//                            }
-//                        }
-//                })
-//                .toList();
-//    }
+    @Test
+    public void testDTOWhereToTableWhere() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        easyEntityQuery.queryable(SysUser.class)
+                .configure(s->s.getBehavior().add(EasyBehaviorEnum.SMART_PREDICATE))
+                .innerJoin(SysBankCard.class, (user, bank_card) -> user.id().eq(bank_card.uid()))
+                .select((user, bank_card) -> new UserBankDTO2Proxy()
+                        .name().set(user.name())
+                        .phone().set(user.phone())
+                        .code2().set(bank_card.code())
+                ).where(u -> {
+                    u.code2().eq("123");
+
+                    u.or(()->{
+                        u.name().eq("name");
+                        u.phone().eq("phone");
+                    });
+                })
+                .toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t2.`name` AS `name`,t2.`phone` AS `phone`,t2.`code2` AS `code2` FROM (SELECT t.`name` AS `name`,t.`phone` AS `phone`,t1.`code` AS `code2` FROM `t_sys_user` t INNER JOIN `t_bank_card` t1 ON t.`id` = t1.`uid` WHERE t1.`code` = ? AND (t.`name` = ? OR t.`phone` = ?)) t2 WHERE t2.`code2` = ? AND (t2.`name` = ? OR t2.`phone` = ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),name(String),phone(String),123(String),name(String),phone(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testDTOWhereToTableWhere1() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        easyEntityQuery.queryable(SysUser.class)
+                .configure(s->s.getBehavior().add(EasyBehaviorEnum.SMART_PREDICATE))
+                .innerJoin(SysBankCard.class, (user, bank_card) -> user.id().eq(bank_card.uid()))
+                .where((user, bank_card) -> {
+                    bank_card.code().eq("456");
+                })
+                .select((user, bank_card) -> new UserBankDTO2Proxy()
+                        .name().set(user.name())
+                        .phone().set(user.phone())
+                        .code2().set(bank_card.code())
+                ).where(u -> {
+                    u.code2().eq("123");
+
+                    u.or(()->{
+                        u.name().eq("name");
+                        u.code2().eq("phone");
+                    });
+                })
+                .toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t2.`name` AS `name`,t2.`phone` AS `phone`,t2.`code2` AS `code2` FROM (SELECT t.`name` AS `name`,t.`phone` AS `phone`,t1.`code` AS `code2` FROM `t_sys_user` t INNER JOIN `t_bank_card` t1 ON t.`id` = t1.`uid` WHERE t1.`code` = ?) t2 WHERE t2.`code2` = ? AND (t2.`name` = ? OR t2.`code2` = ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("456(String),123(String),name(String),phone(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
 
 }

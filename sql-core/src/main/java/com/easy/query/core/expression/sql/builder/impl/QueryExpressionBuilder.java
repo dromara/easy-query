@@ -5,12 +5,18 @@ import com.easy.query.core.common.reverse.DefaultReverseEach;
 import com.easy.query.core.common.reverse.EmptyReverseEach;
 import com.easy.query.core.common.reverse.ReverseEach;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.predicate.SmartPredicateAnonymousExpressionBuilderProvider;
+import com.easy.query.core.expression.segment.Column2Segment;
+import com.easy.query.core.expression.segment.ColumnSegment;
+import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
+import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.builder.GroupBySQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
@@ -42,7 +48,9 @@ import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author xuejiaming
@@ -182,8 +190,23 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
             throw new EasyQueryException("未找到查询表信息");
         }
         boolean emptySelect = getProjects().isEmpty();
+
         Iterator<EntityTableExpressionBuilder> iterator = getTables().iterator();
         EntityTableExpressionBuilder firstTable = iterator.next();
+
+        //优化子查询穿透
+        if (!emptySelect && hasWhere() && tableCount == 1) {
+            //(select * from a join b .....) t
+            if (firstTable instanceof AnonymousEntityTableExpressionBuilder) {
+                //PredicateSegment
+                AnonymousEntityTableExpressionBuilder anonymousDefaultTableExpressionBuilder = (AnonymousEntityTableExpressionBuilder) firstTable;
+                if (expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.SMART_PREDICATE)) {
+                    SmartPredicateAnonymousExpressionBuilderProvider smartPredicateAnonymousExpressionBuilderProvider = expressionContext.getRuntimeContext().getSmartPredicateAnonymousExpressionBuilderProvider();
+                    smartPredicateAnonymousExpressionBuilderProvider.process(anonymousDefaultTableExpressionBuilder, getWhere());
+                }
+            }
+        }
+
         //如果有order需要将order移到内部表达式
         if (emptySelect && tableCount == 1 && (firstTable instanceof AnonymousEntityTableExpressionBuilder && !(((AnonymousEntityTableExpressionBuilder) firstTable).getEntityQueryExpressionBuilder() instanceof SQLEntityQueryExpressionBuilder))) {
             return (EntityQuerySQLExpression) toTableExpressionSQL(firstTable, true);
