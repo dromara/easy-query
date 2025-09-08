@@ -1166,7 +1166,7 @@ public class QueryTest17 extends BaseTest {
             } catch (Exception ex) {
                 ex1 = true;
                 Assert.assertTrue(ex instanceof EasyQueryInvalidFieldCheckException);
-                Assert.assertEquals("column name has unsafe char: [=].", ex.getMessage());
+                Assert.assertEquals("column name only allows letters (A-Z, a-z), digits (0-9), and underscore (_), invalid:[1=1 or name]", ex.getMessage());
             }
             Assert.assertTrue(ex1);
         }
@@ -1178,7 +1178,7 @@ public class QueryTest17 extends BaseTest {
             } catch (Exception ex) {
                 ex1 = true;
                 Assert.assertTrue(ex instanceof EasyQueryInvalidFieldCheckException);
-                Assert.assertEquals("column name must not has space char.", ex.getMessage());
+                Assert.assertEquals("column name only allows letters (A-Z, a-z), digits (0-9), and underscore (_), invalid:[ name]", ex.getMessage());
             }
             Assert.assertTrue(ex1);
         }

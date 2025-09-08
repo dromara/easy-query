@@ -192,7 +192,7 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
             dbEntityMap.remove(newNavigateEntityKey);
             EntityState trackEntityState = currentTrackContext.getTrackEntityState(navigateMetadata.getNavigatePropertyType(), newNavigateEntityKey);
             Objects.requireNonNull(trackEntityState, "trackEntityState cant be null,trackKey:" + newNavigateEntityKey);
-            if (targetEntity != trackEntityState.getCurrentValue()) {
+            if (targetEntity != trackEntityState.getCurrentValue()) {//必须是被追踪对象不然初始化空集合的navigate会有问题视为被删除
                 throw new EasyQueryInvalidOperationException("entity:" + targetEntity + " is not same with:" + trackEntityState.getCurrentValue());
             }
             saveNodeUpdate(trackEntityState, targetEntity, targetEntityMetadata, navigateMetadata, saveNode);

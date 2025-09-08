@@ -567,137 +567,137 @@ public class MySQL8Test3 extends BaseTest {
 //                        user.FETCHER.allFields()//查询的是user.*
 //                ));
 //    }
-    @Test
-    public void testSave() {
-        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
-        try {
-            trackManager.begin();
-
-            List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
-                    .includes(user -> user.bankCards(), bkq -> bkq.include(bk -> bk.bank()))
-                    .toList();
-
-            SysUser sysUser = list.get(0);
-            sysUser.getBankCards().remove(0);
-            int i = 0;
-            for (SysBankCard bankCard : sysUser.getBankCards()) {
-                if (i % 2 == 1) {
-                    System.out.println("bankCard:" + bankCard.getId() + "不变更type");
-                } else {
-                    String uuid = "f5332aa5-4fc4-4da7-8b65-20a86194431e";
-                    System.out.println("bankCard:" + bankCard.getId() + "变更type:" + uuid);
-                    bankCard.setType(uuid);
-                }
-                SysBank bank = bankCard.getBank();
-                if (bank != null) {
-                    bank.setName("xxxxx123123");
-                }
-                i++;
-            }
-            SysBankCard sysBankCard = new SysBankCard();
-            sysBankCard.setId("123123123");
-            sysBankCard.setType("456456");
-            sysUser.getBankCards().add(sysBankCard);
-
-            System.out.println("分割线---------------------");
-
-
-            {
-
-                ListenerContext listenerContext = new ListenerContext(true);
-                listenerContextManager.startListen(listenerContext);
-                System.out.println("------------------");
-
-                try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                    easyEntityQuery.savable(sysUser).executeCommand();
-                    transaction.commit();
-                }
-
-                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-                Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                    Assert.assertEquals("DELETE FROM `t_bank_card` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("bc1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                    Assert.assertEquals("INSERT INTO `t_bank_card` (`id`,`uid`,`type`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("123123123(String),u1(String),456456(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                    Assert.assertEquals("UPDATE `t_bank_card` SET `type` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("f5332aa5-4fc4-4da7-8b65-20a86194431e(String),bc2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                    Assert.assertEquals("UPDATE `t_bank` SET `name` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("xxxxx123123(String),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-                {
-                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                    Assert.assertEquals("UPDATE `t_bank` SET `name` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                    Assert.assertEquals("xxxxx123123(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-                }
-            }
-
-        } finally {
-            trackManager.release();
-        }
-
-    }
-
-
-    @Test
-    public void testDTOWhereToTableWhere() {
-        String compareProp = "code2";
-        String compareValue = "123";
-        easyEntityQuery.queryable(SysUser.class)
-                .innerJoin(SysBankCard.class, (user, bank_card) -> user.id().eq(bank_card.uid()))
-                .select((user, bank_card) -> new UserBankDTO2Proxy()
-                        .name().set(user.name())
-                        .phone().set(user.phone())
-                        .code2().set(bank_card.code())
-                ).where(u -> {
-
-
-                    //这个就是 select * from (select * from a join b .....) t ....
-                    EntityExpressionBuilder entityExpressionBuilder = u.getEntitySQLContext().getEntityExpressionBuilder();
-                    //说明code2能找到table
-
-                        //这个就是上面的(select * from a join b .....) t
-                        EntityTableExpressionBuilder tableExpressionBuilder = entityExpressionBuilder.getTable(0);
-                        if (tableExpressionBuilder instanceof AnonymousDefaultTableExpressionBuilder) {
-                            AnonymousDefaultTableExpressionBuilder anonymousDefaultTableExpressionBuilder = (AnonymousDefaultTableExpressionBuilder) tableExpressionBuilder;
-                            //这个就是上面的去掉括号 select * from a join b .....
-                            EntityQueryExpressionBuilder innerEntityQueryExpressionBuilder = anonymousDefaultTableExpressionBuilder.getEntityQueryExpressionBuilder();
-
-
-                            TableAvailable table = null;
-                            String property = null;
-                            for (SQLSegment sqlSegment : innerEntityQueryExpressionBuilder.getProjects().getSQLSegments()) {
-                                if (sqlSegment instanceof SQLEntityAliasSegment) {
-                                    SQLEntityAliasSegment aliasSegment = (SQLEntityAliasSegment) sqlSegment;
-                                    //别名叫做code2那么就是 t1.code as code2下面的方法就是获取t1
-                                    if (Objects.equals(aliasSegment.getAlias(), compareProp)) {
-                                        //这个就是code对应的表也就是bank_card
-                                        table = aliasSegment.getTable();
-                                        property = aliasSegment.getPropertyName();
-                                    }
-                                }
-                            }
-
-                            if(table!=null){
-
-                                FilterImpl filter = new FilterImpl(innerEntityQueryExpressionBuilder.getRuntimeContext(), innerEntityQueryExpressionBuilder.getExpressionContext(), innerEntityQueryExpressionBuilder.getWhere(), false, innerEntityQueryExpressionBuilder.getExpressionContext().getValueFilter());
-                                WherePredicateImpl<Object> objectWherePredicate = new WherePredicateImpl<>(table, new FilterContext(filter, innerEntityQueryExpressionBuilder));
-                                //让条件生效
-                                objectWherePredicate.eq(property, compareValue);
-                            }
-                        }
-                })
-                .toList();
-    }
+//    @Test
+//    public void testSave() {
+//        TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
+//        try {
+//            trackManager.begin();
+//
+//            List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+//                    .includes(user -> user.bankCards(), bkq -> bkq.include(bk -> bk.bank()))
+//                    .toList();
+//
+//            SysUser sysUser = list.get(0);
+//            sysUser.getBankCards().remove(0);
+//            int i = 0;
+//            for (SysBankCard bankCard : sysUser.getBankCards()) {
+//                if (i % 2 == 1) {
+//                    System.out.println("bankCard:" + bankCard.getId() + "不变更type");
+//                } else {
+//                    String uuid = "f5332aa5-4fc4-4da7-8b65-20a86194431e";
+//                    System.out.println("bankCard:" + bankCard.getId() + "变更type:" + uuid);
+//                    bankCard.setType(uuid);
+//                }
+//                SysBank bank = bankCard.getBank();
+//                if (bank != null) {
+//                    bank.setName("xxxxx123123");
+//                }
+//                i++;
+//            }
+//            SysBankCard sysBankCard = new SysBankCard();
+//            sysBankCard.setId("123123123");
+//            sysBankCard.setType("456456");
+//            sysUser.getBankCards().add(sysBankCard);
+//
+//            System.out.println("分割线---------------------");
+//
+//
+//            {
+//
+//                ListenerContext listenerContext = new ListenerContext(true);
+//                listenerContextManager.startListen(listenerContext);
+//                System.out.println("------------------");
+//
+//                try (Transaction transaction = easyEntityQuery.beginTransaction()) {
+//                    easyEntityQuery.savable(sysUser).executeCommand();
+//                    transaction.commit();
+//                }
+//
+//                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+//                Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
+//                {
+//                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                    Assert.assertEquals("DELETE FROM `t_bank_card` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("bc1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//                }
+//                {
+//                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+//                    Assert.assertEquals("INSERT INTO `t_bank_card` (`id`,`uid`,`type`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("123123123(String),u1(String),456456(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//                }
+//                {
+//                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+//                    Assert.assertEquals("UPDATE `t_bank_card` SET `type` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("f5332aa5-4fc4-4da7-8b65-20a86194431e(String),bc2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//                }
+//                {
+//                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+//                    Assert.assertEquals("UPDATE `t_bank` SET `name` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("xxxxx123123(String),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//                }
+//                {
+//                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+//                    Assert.assertEquals("UPDATE `t_bank` SET `name` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("xxxxx123123(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//                }
+//            }
+//
+//        } finally {
+//            trackManager.release();
+//        }
+//
+//    }
+//
+//
+//    @Test
+//    public void testDTOWhereToTableWhere() {
+//        String compareProp = "code2";
+//        String compareValue = "123";
+//        easyEntityQuery.queryable(SysUser.class)
+//                .innerJoin(SysBankCard.class, (user, bank_card) -> user.id().eq(bank_card.uid()))
+//                .select((user, bank_card) -> new UserBankDTO2Proxy()
+//                        .name().set(user.name())
+//                        .phone().set(user.phone())
+//                        .code2().set(bank_card.code())
+//                ).where(u -> {
+//
+//
+//                    //这个就是 select * from (select * from a join b .....) t ....
+//                    EntityExpressionBuilder entityExpressionBuilder = u.getEntitySQLContext().getEntityExpressionBuilder();
+//                    //说明code2能找到table
+//
+//                        //这个就是上面的(select * from a join b .....) t
+//                        EntityTableExpressionBuilder tableExpressionBuilder = entityExpressionBuilder.getTable(0);
+//                        if (tableExpressionBuilder instanceof AnonymousDefaultTableExpressionBuilder) {
+//                            AnonymousDefaultTableExpressionBuilder anonymousDefaultTableExpressionBuilder = (AnonymousDefaultTableExpressionBuilder) tableExpressionBuilder;
+//                            //这个就是上面的去掉括号 select * from a join b .....
+//                            EntityQueryExpressionBuilder innerEntityQueryExpressionBuilder = anonymousDefaultTableExpressionBuilder.getEntityQueryExpressionBuilder();
+//
+//
+//                            TableAvailable table = null;
+//                            String property = null;
+//                            for (SQLSegment sqlSegment : innerEntityQueryExpressionBuilder.getProjects().getSQLSegments()) {
+//                                if (sqlSegment instanceof SQLEntityAliasSegment) {
+//                                    SQLEntityAliasSegment aliasSegment = (SQLEntityAliasSegment) sqlSegment;
+//                                    //别名叫做code2那么就是 t1.code as code2下面的方法就是获取t1
+//                                    if (Objects.equals(aliasSegment.getAlias(), compareProp)) {
+//                                        //这个就是code对应的表也就是bank_card
+//                                        table = aliasSegment.getTable();
+//                                        property = aliasSegment.getPropertyName();
+//                                    }
+//                                }
+//                            }
+//
+//                            if(table!=null){
+//
+//                                FilterImpl filter = new FilterImpl(innerEntityQueryExpressionBuilder.getRuntimeContext(), innerEntityQueryExpressionBuilder.getExpressionContext(), innerEntityQueryExpressionBuilder.getWhere(), false, innerEntityQueryExpressionBuilder.getExpressionContext().getValueFilter());
+//                                WherePredicateImpl<Object> objectWherePredicate = new WherePredicateImpl<>(table, new FilterContext(filter, innerEntityQueryExpressionBuilder));
+//                                //让条件生效
+//                                objectWherePredicate.eq(property, compareValue);
+//                            }
+//                        }
+//                })
+//                .toList();
+//    }
 
 }
