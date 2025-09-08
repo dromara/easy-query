@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.entity.save;
 
+import com.easy.query.core.basic.api.internal.SQLBatchExecute;
 import com.easy.query.core.basic.api.save.Savable;
 import com.easy.query.core.proxy.ProxyEntity;
 
@@ -11,6 +12,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface EntitySavable<TProxy extends ProxyEntity<TProxy, T>, T> extends Savable {
+public interface EntitySavable<TProxy extends ProxyEntity<TProxy, T>, T> extends Savable, SQLBatchExecute<EntitySavable<TProxy,T>> {
     List<T> getEntities();
+
 }

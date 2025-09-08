@@ -21,4 +21,9 @@ public class EasyEmptySavable<TProxy extends ProxyEntity<TProxy, T>, T> implemen
     public void executeCommand() {
 
     }
+
+    @Override
+    public EntitySavable<TProxy, T> batch(boolean use) {
+        return this;
+    }
 }

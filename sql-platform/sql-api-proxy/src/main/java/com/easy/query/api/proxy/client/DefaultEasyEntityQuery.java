@@ -3,6 +3,7 @@ package com.easy.query.api.proxy.client;
 import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.api.proxy.entity.delete.EntityDeletable;
 import com.easy.query.api.proxy.entity.delete.ExpressionDeletable;
+import com.easy.query.api.proxy.entity.delete.impl.EasyEmptyEntityDeletable;
 import com.easy.query.api.proxy.entity.delete.impl.EasyEntityDeletable;
 import com.easy.query.api.proxy.entity.delete.impl.EasyExpressionDeletable;
 import com.easy.query.api.proxy.entity.insert.EasyEmptyEntityInsertable;
@@ -115,12 +116,21 @@ public class DefaultEasyEntityQuery implements EasyEntityQuery {
     @Override
     public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityDeletable<TProxy, T> deletable(T entity) {
         Objects.requireNonNull(entity, "entities is null");
-        return new EasyEntityDeletable<>(easyQueryClient.deletable(entity));
+        Class<T> aClass = EasyObjectUtil.typeCast(entity.getClass());
+        TProxy tProxy = EntityQueryProxyManager.create(aClass);
+        return new EasyEntityDeletable<>(tProxy, easyQueryClient.deletable(entity));
     }
 
     @Override
     public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityDeletable<TProxy, T> deletable(Collection<T> entities) {
-        return new EasyEntityDeletable<>(easyQueryClient.deletable(entities));
+        Objects.requireNonNull(entities, "entities is null");
+        if (EasyCollectionUtil.isEmpty(entities)) {
+            return new EasyEmptyEntityDeletable<>();
+        }
+        T first = EasyCollectionUtil.first(entities);
+        Class<T> aClass = EasyObjectUtil.typeCast(first.getClass());
+        TProxy tProxy = EntityQueryProxyManager.create(aClass);
+        return new EasyEntityDeletable<>(tProxy, easyQueryClient.deletable(entities));
     }
 
     @Override
@@ -140,7 +150,7 @@ public class DefaultEasyEntityQuery implements EasyEntityQuery {
     public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntitySavable<TProxy, T> savable(Collection<T> entities) {
 
         Objects.requireNonNull(entities, "entities is null");
-        if(EasyCollectionUtil.isEmpty( entities)){
+        if (EasyCollectionUtil.isEmpty(entities)) {
             return new EasyEmptySavable<>();
         }
 

@@ -50,6 +50,7 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     private final EasyQueryClient easyQueryClient;
     private final QueryRuntimeContext runtimeContext;
     private final TrackContext currentTrackContext;
+    private boolean batch;
 
     public AbstractEntitySavable(Class<T> entityClass, Collection<T> entities, EasyQueryClient easyQueryClient) {
         this.entityClass = entityClass;
@@ -64,11 +65,18 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
             throw new EasyQueryInvalidOperationException("current thread not in transaction");
         }
         this.currentTrackContext = Objects.requireNonNull(runtimeContext.getTrackManager().getCurrentTrackContext(), "currentTrackContext can not be null");
+        this.batch = false;
     }
 
     @Override
     public List<T> getEntities() {
         return entities;
+    }
+
+    @Override
+    public EntitySavable<TProxy, T> batch(boolean use) {
+        this.batch = use;
+        return this;
     }
 
     @Override
@@ -79,16 +87,16 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
             List<Object> updateEntities = new ArrayList<>();
             for (T entity : entities) {
                 EntityState entityState = currentTrackContext.getTrackEntityState(entity);
-                if(entityState==null){
+                if (entityState == null) {
                     insertEntities.add(entity);
-                }else{
+                } else {
                     updateEntities.add(entity);
                 }
             }
-            if(EasyCollectionUtil.isNotEmpty(insertEntities)){
+            if (EasyCollectionUtil.isNotEmpty(insertEntities)) {
                 saveCommands.add(new InsertSaveProvider(entityClass, insertEntities, easyQueryClient).createCommand());
             }
-            if(EasyCollectionUtil.isNotEmpty(updateEntities)){
+            if (EasyCollectionUtil.isNotEmpty(updateEntities)) {
                 saveCommands.add(new UpdateSaveProvider(entityClass, updateEntities, easyQueryClient).createCommand());
             }
             for (SaveCommand saveCommand : saveCommands) {

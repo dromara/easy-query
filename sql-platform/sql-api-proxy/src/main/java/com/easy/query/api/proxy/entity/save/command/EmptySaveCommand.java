@@ -9,7 +9,7 @@ package com.easy.query.api.proxy.entity.save.command;
 public class EmptySaveCommand implements SaveCommand{
     public static final SaveCommand INSTANCE=new EmptySaveCommand();
     @Override
-    public void execute() {
+    public void execute(boolean batch) {
 
     }
 }

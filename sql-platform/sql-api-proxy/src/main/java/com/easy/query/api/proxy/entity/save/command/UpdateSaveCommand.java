@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  *
  * @author xuejiaming
  */
-public class UpdateSaveCommand implements SaveCommand{
+public class UpdateSaveCommand implements SaveCommand {
     private final EntityMetadata entityMetadata;
     private final List<Object> entities;
     private final EasyQueryClient easyQueryClient;
@@ -32,26 +32,40 @@ public class UpdateSaveCommand implements SaveCommand{
     }
 
     @Override
-    public void execute() {
+    public void execute(boolean batch) {
         List<SavableContext> savableContexts = this.saveCommandContext.getSavableContexts();
 
         for (int i = savableContexts.size() - 1; i >= 0; i--) {
             SavableContext savableContext = savableContexts.get(i);
             for (Map.Entry<NavigateMetadata, SaveNode> saveNodeEntry : savableContext.getSaveNodeMap().entrySet()) {
-                easyQueryClient.deletable(saveNodeEntry.getValue().getDeletes()).executeRows();
+                SaveNode saveNode = saveNodeEntry.getValue();
+                easyQueryClient.deletable(saveNode.getDeletes()).batch(batch).executeRows();
+                if (EasyCollectionUtil.isNotEmpty(saveNode.getDeleteBys())) {
+                    NavigateMetadata navigateMetadata = saveNodeEntry.getKey();
+                    String[] selfMappingProperties = navigateMetadata.getSelfMappingProperties();
+                    String[] targetMappingProperties = navigateMetadata.getTargetMappingProperties();
+                    easyQueryClient.deletable(saveNode.getDeleteBys()).batch(batch).whereColumns(col -> {
+                        for (String selfMappingProperty : selfMappingProperties) {
+                            col.column(selfMappingProperty);
+                        }
+                        for (String targetMappingProperty : targetMappingProperties) {
+                            col.column(targetMappingProperty);
+                        }
+                    }).executeRows();
+                }
             }
         }
-        easyQueryClient.updatable(entities).executeRows();
+        easyQueryClient.updatable(entities).batch(batch).executeRows();
         for (int i = 0; i < savableContexts.size(); i++) {
             SavableContext savableContext = savableContexts.get(i);
             for (Map.Entry<NavigateMetadata, SaveNode> nodeKv : savableContext.getSaveNodeMap().entrySet()) {
                 SaveNode saveNode = nodeKv.getValue();
-                List<Object> inserts = saveNode.getInserts().stream().map(o->{
+                List<Object> inserts = saveNode.getInserts().stream().map(o -> {
                     o.insertBefore();
                     return o.getEntity();
                 }).collect(Collectors.toList());
-                easyQueryClient.insertable(inserts).executeRows(insertFillAutoIncrement(saveNode.getEntityMetadata()));
-                easyQueryClient.updatable(saveNode.getUpdates()).executeRows();
+                easyQueryClient.insertable(inserts).batch(batch).executeRows(insertFillAutoIncrement(saveNode.getEntityMetadata()));
+                easyQueryClient.updatable(saveNode.getUpdates()).batch(batch).executeRows();
             }
         }
     }

@@ -16,6 +16,7 @@ import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * create time 2025/9/7 11:07
@@ -23,7 +24,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public abstract class AbstractSaveProvider implements SaveProvider{
+public abstract class AbstractSaveProvider implements SaveProvider {
     protected final Class<?> entityClass;
     protected final List<Object> entities;
     protected final EasyQueryClient easyQueryClient;
@@ -92,7 +93,14 @@ public abstract class AbstractSaveProvider implements SaveProvider{
                     throw new EasyQueryInvalidOperationException("entity:" + EasyClassUtil.getInstanceSimpleName(selfEntity) + " property:[" + self + "] value can not be null");
                 }
                 ColumnMetadata targetColumn = targetEntityMetadata.getColumnNotNull(target);
-                targetColumn.getSetterCaller().call(targetEntity, selfValue);
+                Object currentValue = targetColumn.getGetterCaller().apply(targetEntity);
+                if (currentValue == null) {
+                    targetColumn.getSetterCaller().call(targetEntity, selfValue);
+                } else {
+                    if (!Objects.equals(currentValue, selfValue)) {
+                        throw new EasyQueryInvalidOperationException("relation value not equals,entity:[" + EasyClassUtil.getInstanceSimpleName(targetEntity) + "],property:[" + target + "],value:[" + currentValue + "],should:[" + selfValue + "]");
+                    }
+                }
             }
         } else if (targetValueType == TargetValueTypeEnum.AGGREGATE_ROOT) {
             String[] selfPropertiesOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
@@ -107,11 +115,21 @@ public abstract class AbstractSaveProvider implements SaveProvider{
                 }
                 ColumnMetadata selfColumn = selfEntityMetadata.getColumnNotNull(self);
                 selfColumn.getSetterCaller().call(selfEntity, targetValue);
+
+                Object currentValue = selfColumn.getGetterCaller().apply(selfEntity);
+                if (currentValue == null) {
+                    selfColumn.getSetterCaller().call(selfEntity, targetValue);
+                } else {
+                    if (!Objects.equals(currentValue, targetValue)) {
+                        throw new EasyQueryInvalidOperationException("relation value not equals,entity:[" + EasyClassUtil.getInstanceSimpleName(selfEntity) + "],property:[" + self + "],value:[" + currentValue + "],should:[" + targetValue + "]");
+                    }
+                }
             }
         } else {
             throw new EasyQueryInvalidOperationException("save not support target value type:" + targetValueType);
         }
     }
+
     protected void setMappingEntity(Object selfEntity, Object targetEntity, Object mappingEntity, EntityMetadata selfEntityMetadata, NavigateMetadata navigateMetadata, EntityMetadata targetEntityMetadata, EntityMetadata mappingEntityMetadata) {
         String[] selfMappingProperties = navigateMetadata.getSelfMappingProperties();
         String[] selfPropertiesOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
@@ -121,7 +139,7 @@ public abstract class AbstractSaveProvider implements SaveProvider{
             ColumnMetadata selfColumn = selfEntityMetadata.getColumnNotNull(self);
             Object selfValue = selfColumn.getGetterCaller().apply(selfEntity);
             if (selfValue == null) {
-                throw new EasyQueryInvalidOperationException("entity:" + EasyClassUtil.getInstanceSimpleName(selfEntity) + " property:[" + self + "] value can not be null");
+                throw new EasyQueryInvalidOperationException("entityClass:[" + EasyClassUtil.getInstanceSimpleName(selfEntity) + "] property:[" + self + "] value can not be null,Please make sure the ["+EasyClassUtil.getInstanceSimpleName(selfEntity)+"] instance has been persisted to the database before use.");
             }
             ColumnMetadata columnMetadata = mappingEntityMetadata.getColumnNotNull(selfMappingProperty);
             columnMetadata.getSetterCaller().call(mappingEntity, selfValue);
@@ -134,7 +152,7 @@ public abstract class AbstractSaveProvider implements SaveProvider{
             ColumnMetadata targetColumn = targetEntityMetadata.getColumnNotNull(target);
             Object targetValue = targetColumn.getGetterCaller().apply(targetEntity);
             if (targetValue == null) {
-                throw new EasyQueryInvalidOperationException("entity:" + EasyClassUtil.getInstanceSimpleName(targetEntity) + " property:[" + target + "] value can not be null");
+                throw new EasyQueryInvalidOperationException("entityClass:[" + EasyClassUtil.getInstanceSimpleName(targetEntity) + "] property:[" + target + "] value can not be null,Please make sure the ["+EasyClassUtil.getInstanceSimpleName(targetEntity)+"] instance has been persisted to the database before use.");
             }
             ColumnMetadata columnMetadata = mappingEntityMetadata.getColumnNotNull(targetMappingProperty);
             columnMetadata.getSetterCaller().call(mappingEntity, targetValue);

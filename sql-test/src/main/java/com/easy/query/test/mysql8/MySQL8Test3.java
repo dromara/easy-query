@@ -569,8 +569,6 @@ public class MySQL8Test3 extends BaseTest {
 //    }
     @Test
     public void testSave() {
-
-
         TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
         try {
             trackManager.begin();
@@ -595,7 +593,6 @@ public class MySQL8Test3 extends BaseTest {
                     bank.setName("xxxxx123123");
                 }
                 i++;
-
             }
             SysBankCard sysBankCard = new SysBankCard();
             sysBankCard.setId("123123123");

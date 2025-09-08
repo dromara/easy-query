@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.entity.save;
 
+import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
 import com.easy.query.core.metadata.EntityMetadata;
 
 import java.util.ArrayList;
@@ -16,15 +17,17 @@ public class SaveNode {
     private final List<InsertItem> inserts;
     private final List<Object> updates;
     private final List<Object> deletes;
+    private final List<Object> deleteBys;
     private final int index;
     private final EntityMetadata entityMetadata;
 
-    public SaveNode(int index, EntityMetadata entityMetadata){
+    public SaveNode(int index, EntityMetadata entityMetadata) {
         this.index = index;
         this.entityMetadata = entityMetadata;
         this.inserts = new ArrayList<>();
         this.updates = new ArrayList<>();
         this.deletes = new ArrayList<>();
+        this.deleteBys = new ArrayList<>();
     }
 
     public int getIndex() {
@@ -46,11 +49,16 @@ public class SaveNode {
     public List<Object> getDeletes() {
         return deletes;
     }
-    public static class InsertItem{
+
+    public List<Object> getDeleteBys() {
+        return deleteBys;
+    }
+
+    public static class InsertItem {
         private final Object entity;
         private final Consumer<Object> consumer;
 
-        public InsertItem(Object entity, Consumer<Object> consumer){
+        public InsertItem(Object entity, Consumer<Object> consumer) {
             this.entity = entity;
             this.consumer = consumer;
         }
@@ -58,7 +66,8 @@ public class SaveNode {
         public Object getEntity() {
             return entity;
         }
-        public void insertBefore(){
+
+        public void insertBefore() {
             consumer.accept(entity);
         }
     }

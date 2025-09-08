@@ -7,5 +7,8 @@ package com.easy.query.api.proxy.entity.save.command;
  * @author xuejiaming
  */
 public interface SaveCommand {
-    void execute();
+    default void execute(){
+        execute(false);
+    }
+    void execute(boolean batch);
 }

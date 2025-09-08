@@ -11,7 +11,7 @@ import com.easy.query.core.proxy.ProxyEntity;
  * create time 2023/3/6 13:20
  */
 public class EasyEntityDeletable<TProxy extends ProxyEntity<TProxy, T>, T> extends AbstractEntityDeletable<TProxy, T> {
-    public EasyEntityDeletable(ClientEntityDeletable<T> entityObjectDeletable) {
-        super(entityObjectDeletable);
+    public EasyEntityDeletable(TProxy tProxy,ClientEntityDeletable<T> entityObjectDeletable) {
+        super(tProxy,entityObjectDeletable);
     }
 }

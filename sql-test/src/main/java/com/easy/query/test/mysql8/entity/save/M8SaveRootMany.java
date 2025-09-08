@@ -1,5 +1,6 @@
 package com.easy.query.test.mysql8.entity.save;
 
+import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
@@ -16,8 +17,8 @@ import lombok.Data;
 @EntityProxy
 @Table("m8_save_root_many")
 public class M8SaveRootMany implements ProxyEntityAvailable<M8SaveRootMany , M8SaveRootManyProxy> {
+    @Column(primaryKey = true)
     private String id;
     private String rootId;
     private String name;
-    private String tenantId;
 }

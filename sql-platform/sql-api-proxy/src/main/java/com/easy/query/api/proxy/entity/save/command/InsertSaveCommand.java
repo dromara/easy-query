@@ -33,8 +33,8 @@ public class InsertSaveCommand implements SaveCommand {
     }
 
     @Override
-    public void execute() {
-        easyQueryClient.insertable(entities).executeRows(insertFillAutoIncrement(entityMetadata));
+    public void execute(boolean batch) {
+        easyQueryClient.insertable(entities).batch(batch).executeRows(insertFillAutoIncrement(entityMetadata));
         List<SavableContext> savableContexts = this.saveCommandContext.getSavableContexts();
         for (int i = 0; i < savableContexts.size(); i++) {
             SavableContext savableContext = savableContexts.get(i);
@@ -44,7 +44,7 @@ public class InsertSaveCommand implements SaveCommand {
                     o.insertBefore();
                     return o.getEntity();
                 }).collect(Collectors.toList());
-                easyQueryClient.insertable(inserts).executeRows(insertFillAutoIncrement(saveNode.getEntityMetadata()));
+                easyQueryClient.insertable(inserts).batch(batch).executeRows(insertFillAutoIncrement(saveNode.getEntityMetadata()));
             }
         }
     }

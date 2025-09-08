@@ -172,7 +172,9 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
                     processEntity(targetValueType, dbEntityMap, entity, navigates, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
                 }
             }
-            saveNode.getDeletes().addAll(dbEntityMap.values());
+            for (Object value : dbEntityMap.values()) {
+                saveNodeDelete(entity, value, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
+            }
         }
     }
 
@@ -204,6 +206,27 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
             }
         }
 
+    }
+
+    private void saveNodeDelete(Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata, EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode) {
+        if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
+            //检查中间表并且创建新增操作
+            if (navigateMetadata.getMappingClass() == null) {
+                throw new EasyQueryInvalidOperationException("many to many relation must have mapping class");
+            }
+            if (navigateMetadata.getMappingClassSaveMode() == MappingClassSaveModeEnum.THROW) {
+                throw new EasyQueryInvalidOperationException("many to many relation mapping class save mode is throw");
+            }
+            //自动处理中间表
+            if (navigateMetadata.getMappingClassSaveMode() == MappingClassSaveModeEnum.AUTO) {
+                EntityMetadata mappingClassEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getMappingClass());
+                Object mappingEntity = mappingClassEntityMetadata.getBeanConstructorCreator().get();
+                setMappingEntity(selfEntity, targetEntity, mappingEntity, selfEntityMetadata, navigateMetadata, targetEntityMetadata, mappingClassEntityMetadata);
+                saveNode.getDeleteBys().add(mappingEntity);
+            }
+        } else {
+            saveNode.getDeletes().add(targetEntity);
+        }
     }
 
     private void saveNodeUpdate(EntityState trackEntityState, Object targetEntity, EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode) {
