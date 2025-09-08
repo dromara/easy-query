@@ -11,7 +11,10 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.builder.impl.OnlySelectorImpl;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
+import com.easy.query.core.expression.parser.core.base.impl.ColumnOnlySelectorImpl;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -59,6 +62,15 @@ public abstract class AbstractClientEntityDeletable<T> extends AbstractSQLExecut
     @Override
     public EntityDeleteExpressionBuilder getDeleteExpressionBuilder() {
         return entityDeleteExpressionBuilder;
+    }
+
+    @Override
+    public ClientEntityDeletable<T> whereColumns(boolean condition, SQLActionExpression1<ColumnOnlySelector<T>> columnSelectorExpression) {
+        if (condition) {
+            ColumnOnlySelectorImpl<T> columnSelector = new ColumnOnlySelectorImpl<>(table.getEntityTable(), new OnlySelectorImpl(entityDeleteExpressionBuilder.getRuntimeContext(), entityDeleteExpressionBuilder.getExpressionContext(), entityDeleteExpressionBuilder.getWhereColumns()));
+            columnSelectorExpression.apply(columnSelector);
+        }
+        return this;
     }
 
     @Override

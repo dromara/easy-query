@@ -10,6 +10,7 @@ import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.MapValue;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryConcurrentException;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.proxy.core.Expression;
@@ -217,7 +218,7 @@ public class UpdateTest extends BaseTest {
             String sql = (easyEntityQuery.updatable(topic))
                     .toSQL(topic);
             //默认没开启track所以应该是更新所有
-            Assert.assertEquals("UPDATE `t_topic` SET `stars` = ?,`title` = ?,`create_time` = ? WHERE `id` = ?", sql);
+            Assert.assertEquals("UPDATE `t_topic` SET `title` = ? WHERE `id` = ?", sql);
             long l = easyEntityQuery.updatable(topic).executeRows();
             Assert.assertEquals(1, l);
         } finally {
@@ -1726,6 +1727,37 @@ public class UpdateTest extends BaseTest {
                             s.value("1").expression(d.title()).value("1");
                         }).as(SysMenuDto::getSourceName)
                 )).toList();
+    }
+
+    @Test
+    public void mapUpdateTest511() {
+
+
+        Supplier<Exception> f = () -> {
+            try {
+                List<Map<String, Object>> updates = new ArrayList<>();
+                HashMap<String, Object> updateMap = new HashMap<>();
+                updateMap.put("ID", "2");
+                updateMap.put("stars", null);
+                updates.add(updateMap);
+                easyEntityQuery.mapUpdatable(updates)
+                        .asTable("t_topic")
+                        .whereColumns("id")
+                        .batch()
+                        .executeRows();
+            } catch (Exception ex) {
+                return ex;
+            }
+            return null;
+        };
+        Exception exception = f.get();
+        Assert.assertNotNull(exception);
+        Assert.assertTrue(exception instanceof EasyQueryInvalidOperationException);
+        EasyQueryInvalidOperationException exception1 = (EasyQueryInvalidOperationException) exception;
+        String message = exception1.getMessage();
+        System.out.println(message);
+        Assert.assertEquals("where column:id not found in map",message);
+
     }
 
 }

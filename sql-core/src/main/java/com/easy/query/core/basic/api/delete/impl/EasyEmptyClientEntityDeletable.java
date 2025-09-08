@@ -1,9 +1,11 @@
 package com.easy.query.core.basic.api.delete.impl;
 
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
+import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
 import com.easy.query.core.expression.sql.builder.EntityDeleteExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
@@ -30,6 +32,11 @@ public class EasyEmptyClientEntityDeletable<T> implements ClientEntityDeletable<
     @Override
     public List<T> getEntities() {
         return EasyCollectionUtil.emptyList();
+    }
+
+    @Override
+    public ClientEntityDeletable<T> whereColumns(boolean condition, SQLActionExpression1<ColumnOnlySelector<T>> columnSelectorExpression) {
+        return this;
     }
 
     @Override

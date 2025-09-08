@@ -21,6 +21,7 @@ import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.h2.vo.QueryVO;
 import com.easy.query.test.h2.vo.proxy.QueryVOProxy;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.vo.MYVO123;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -121,6 +122,7 @@ public class QueryTest10 extends BaseTest{
                         t1.title().like("456");
                         t2.createTime().eq(LocalDateTime.of(2021, 1, 1, 1, 1));
                     })
+//                    .select((t, t1, t2) -> new QueryVOProxy(t.id(),t1.title(),t2.id()))
                     .select((t, t1, t2) -> new QueryVOProxy().adapter(r->{
                         r.selectAll(t);
                         r.selectIgnores(t.title());
@@ -128,12 +130,14 @@ public class QueryTest10 extends BaseTest{
                                 t1.title().as(r.field1()),
                                 t2.id().as(r.field2())
                         );
-                    })).toList();
+                    }))
+                    .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
             Assert.assertEquals("SELECT t.`id`,t1.`title` AS `field1`,t2.`id` AS `field2` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `easy-query-test`.`t_sys_user` t2 ON t.`id` = t2.`id` WHERE t.`id` = ? AND t.`id` = ? AND t1.`title` LIKE ? AND t2.`create_time` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("false(Boolean),123(String),123(String),%456%(String),2021-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
+            MYVO123 myvo123 = new MYVO123("123");
         }
         {
 

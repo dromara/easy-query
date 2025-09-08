@@ -56,10 +56,6 @@ public class EasyQueryOptionBuilder {
      */
     private boolean startTimeJob;
     /**
-     * 默认是否使用追踪模式
-     */
-    private boolean defaultTrack;
-    /**
      * 关联查询每次分组数量
      */
     private int relationGroupSize;
@@ -123,7 +119,6 @@ public class EasyQueryOptionBuilder {
         this.printSql = true;
         this.printNavSql = true;
         this.startTimeJob = false;
-        this.defaultTrack = false;
         this.relationGroupSize = 512;
         this.reverseOffsetThreshold = 0;
         this.warningColumnMiss = true;
@@ -239,10 +234,6 @@ public class EasyQueryOptionBuilder {
         this.startTimeJob = startTimeJob;
     }
 
-    public void setDefaultTrack(boolean defaultTrack) {
-        this.defaultTrack = defaultTrack;
-    }
-
     public void setRelationGroupSize(int relationGroupSize) {
         this.relationGroupSize = relationGroupSize;
     }
@@ -329,7 +320,6 @@ public class EasyQueryOptionBuilder {
                 this.updateBatchThreshold,
                 this.printSql,
                 this.startTimeJob,
-                this.defaultTrack,
                 this.relationGroupSize,
                 this.reverseOffsetThreshold,
                 this.warningColumnMiss,

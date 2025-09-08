@@ -21,14 +21,26 @@ import java.util.function.Function;
  */
 public abstract class AbstractEntityDeletable<TProxy extends ProxyEntity<TProxy, T>, T> implements EntityDeletable<TProxy,T> {
     private final ClientEntityDeletable<T> entityObjectDeletable;
+    private final TProxy tProxy;
 
-    public AbstractEntityDeletable(ClientEntityDeletable<T> entityObjectDeletable) {
+    public AbstractEntityDeletable(TProxy tProxy, ClientEntityDeletable<T> entityObjectDeletable) {
         this.entityObjectDeletable = entityObjectDeletable;
+        this.tProxy = tProxy.create(entityObjectDeletable.getDeleteExpressionBuilder().getTable(0).getEntityTable(),entityObjectDeletable.getDeleteExpressionBuilder(), entityObjectDeletable.getDeleteExpressionBuilder().getRuntimeContext());
     }
 
     @Override
     public List<T> getEntities() {
         return entityObjectDeletable.getEntities();
+    }
+
+    @Override
+    public TProxy getTProxy() {
+        return tProxy;
+    }
+
+    @Override
+    public ClientEntityDeletable<T> getClientDelete() {
+        return entityObjectDeletable;
     }
 
     @Override

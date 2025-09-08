@@ -33,7 +33,6 @@ public class DamengMyTopicProxy extends AbstractProxyEntity<DamengMyTopicProxy, 
 
     public DamengMyTopicProxy() {
     }
-
     /**
      * {@link DamengMyTopic#getId}
      */

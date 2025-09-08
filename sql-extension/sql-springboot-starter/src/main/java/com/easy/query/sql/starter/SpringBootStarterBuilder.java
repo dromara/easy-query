@@ -162,7 +162,6 @@ public class SpringBootStarterBuilder {
                     builder.setPrintSql(easyQueryProperties.isPrintSql());
                     builder.setPrintNavSql(easyQueryProperties.isPrintNavSql());
                     builder.setStartTimeJob(easyQueryProperties.isStartTimeJob());
-                    builder.setDefaultTrack(easyQueryProperties.isDefaultTrack());
                     builder.setRelationGroupSize(easyQueryProperties.getRelationGroupSize());
                     builder.setWarningColumnMiss(easyQueryProperties.isWarningColumnMiss());
                     builder.setShardingFetchSize(easyQueryProperties.getShardingFetchSize());

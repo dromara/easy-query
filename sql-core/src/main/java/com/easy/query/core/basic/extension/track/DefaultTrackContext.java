@@ -59,6 +59,19 @@ public class DefaultTrackContext implements TrackContext {
     }
 
     @Override
+    public EntityState getTrackEntityState(Class<?> entityClass, String trackKey) {
+
+        if (trackKey == null) {
+            return null;
+        }
+        ConcurrentHashMap<String, EntityState> entityStateTrackMap = trackEntityMap.get(entityClass);
+        if (entityStateTrackMap == null || entityStateTrackMap.isEmpty()) {
+            return null;
+        }
+        return entityStateTrackMap.get(trackKey);
+    }
+
+    @Override
     public boolean addTracking(@NotNull Object entity) {
         EntityState entityState = addInternalTracking(entity, false);
         return entityState.getCurrentValue() == entity;
@@ -149,7 +162,8 @@ public class DefaultTrackContext implements TrackContext {
      * @param entityMetadata
      * @return
      */
-    private Object createAndCopyValue(Object entity, EntityMetadata entityMetadata) {
+    @Override
+    public Object createAndCopyValue(Object entity, EntityMetadata entityMetadata) {
 
 //        Class<?> entityClass = entity.getClass();
         Object original = entityMetadata.getBeanConstructorCreator().get();

@@ -1,6 +1,9 @@
 package com.easy.query.core.expression.include;
 
+import com.easy.query.core.basic.extension.track.EntityState;
+import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.include.getter.RelationIncludeGetter;
@@ -9,6 +12,7 @@ import com.easy.query.core.expression.sql.include.RelationExtraEntity;
 import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyTrackUtil;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,9 +29,41 @@ import java.util.Objects;
  */
 public class EasyIncludeProcess extends AbstractIncludeProcessor {
 
+    private final TrackContext currentTrackContext;
+
     public EasyIncludeProcess(IncludeParserResult includeParserResult, QueryRuntimeContext runtimeContext) {
         super(includeParserResult, runtimeContext);
+        this.currentTrackContext = runtimeContext.getTrackManager().getCurrentTrackContext();
+    }
 
+    private void addEntityStateIncludes(Object entity, Object target) {
+        if (currentTrackContext != null) {
+            EntityState trackEntityState = currentTrackContext.getTrackEntityState(entity);
+            if (trackEntityState != null) {
+                if (target != null) {
+                    if(target instanceof Collection<?>){
+                        for (Object targetEntity : (Collection<?>) target) {
+                            addEntityStateIncludes(trackEntityState, getTrackKey(targetEntity));
+                        }
+                    }else{
+                        addEntityStateIncludes(trackEntityState, getTrackKey(target));
+                    }
+                } else {
+                    addEntityStateIncludes(trackEntityState, null);
+                }
+            }
+        }
+    }
+    private String getTrackKey(Object targetEntity){
+        String trackKey = EasyTrackUtil.getTrackKey(targetEntityMetadata, targetEntity);
+        if (trackKey == null) {
+            throw new EasyQueryException(EasyClassUtil.getSimpleName(targetEntityMetadata.getEntityClass()) + ": current entity cant get track key,primary maybe null");
+        }
+        return trackKey;
+    }
+
+    private void addEntityStateIncludes(EntityState trackEntityState , String trackKey) {
+        trackEntityState.addTrackKey(selfNavigateMetadata, trackKey);
     }
 
     @Override
@@ -65,6 +101,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
                     flatClassMap.put(flatPaddingValue, includeEntity.getEntity());
                     setEntityValue(entity, flatPaddingValue);
                 } else {
+                    addEntityStateIncludes(entity, includeEntity.getEntity());
                     setEntityValue(entity, includeEntity.getEntity());
                 }
             }
@@ -101,6 +138,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
                     flatClassMap.put(flatPaddingValue, targetEntity);
                     setEntityValue(entity.getEntity(), flatPaddingValue);
                 } else {
+                    addEntityStateIncludes(entity.getEntity(), targetEntity);
                     setEntityValue(entity.getEntity(), targetEntity);
                 }
             }
@@ -136,6 +174,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
                     flatClassMap.put(flatPaddingValue, entityInclude);
                     setEntityValue(entity.getEntity(), flatPaddingValue);
                 } else {
+                    addEntityStateIncludes(entity.getEntity(), entityInclude);
                     setEntityValue(entity.getEntity(), entityInclude);
                 }
             }
@@ -160,6 +199,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
         for (RelationExtraEntity entity : entities) {
             RelationValue selfRelationId = entity.getRelationExtraColumns(selfRelationColumn);
             Object targetEntities = oneToManyGetter.getIncludeValue(selfRelationId);
+            addEntityStateIncludes(entity.getEntity(), targetEntities);
             setEntityValue(entity.getEntity(), targetEntities);
         }
     }
@@ -171,6 +211,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
             for (RelationExtraEntity include : includes) {
                 manyCollection.add(include.getEntity());
             }
+            addEntityStateIncludes(first.getEntity(), manyCollection);
             setEntityValue(first.getEntity(), manyCollection);
             return true;
         }
@@ -197,6 +238,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
             for (RelationExtraEntity entity : entities) {
                 RelationValue selfRelationId = entity.getRelationExtraColumns(selfRelationColumn);
                 Object targetEntities = manyToManyGetter.getIncludeValue(selfRelationId);
+                addEntityStateIncludes(entity.getEntity(), targetEntities);
                 setEntityValue(entity.getEntity(), targetEntities);
             }
         } else {
@@ -204,6 +246,7 @@ public class EasyIncludeProcess extends AbstractIncludeProcessor {
             for (RelationExtraEntity entity : entities) {
                 RelationValue selfRelationId = entity.getRelationExtraColumns(selfRelationColumn);
                 Object targetEntities = manyToManyGetter.getIncludeValue(selfRelationId);
+                addEntityStateIncludes(entity.getEntity(), targetEntities);
                 setEntityValue(entity.getEntity(), targetEntities);
             }
         }

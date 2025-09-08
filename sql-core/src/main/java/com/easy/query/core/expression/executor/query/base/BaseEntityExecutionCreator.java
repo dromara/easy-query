@@ -35,25 +35,8 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator {
     }
     @Override
     protected List<ExecutionUnit> createExecutionUnits() {
-        if (!Objects.equals(ExecuteMethodEnum.DELETE, executorContext.getExecuteMethod())) {
-//            //是否单个对象运行sql
-//            boolean allColumns = EasySQLExpressionUtil.sqlExecuteStrategyIsAllColumns(entityExpressionBuilder.getExpressionContext(), executorContext);
-//            if (!allColumns || updateSingleEntityRun()) {
-//                return createSingleExecutionUnits();
-//            }
-            return createSingleExecutionUnits();
-        }
-
-        return createMultiExecutionUnits();
+        return createSingleExecutionUnits();
     }
-//    private boolean updateSingleEntityRun(){
-//        if(entityExpressionBuilder instanceof EntityUpdateExpressionBuilder){
-//            EntityUpdateExpressionBuilder entityUpdateExpressionBuilder = (EntityUpdateExpressionBuilder) entityExpressionBuilder;
-//            TrackManager trackManager = entityUpdateExpressionBuilder.getRuntimeContext().getTrackManager();
-//            return trackManager.currentThreadTracking();
-//        }
-//        return false;
-//    }
 
     protected List<ExecutionUnit> createSingleExecutionUnits() {
         List<ExecutionUnit> routeExecutionUnits = new ArrayList<>(entities.size());
@@ -79,12 +62,6 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator {
         return entityExpressionBuilder.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.EXECUTE_BATCH)
                 ||
                 EasySQLExpressionUtil.entityExecuteBatch(entitySize, executorContext);
-    }
-
-    private List<ExecutionUnit> createMultiExecutionUnits() {
-        EntitySQLExpression expression = entityExpressionBuilder.toExpression();
-        ExecutionUnit executionUnit = createExecutionUnit(dataSource, expression, entities, getFillAutoIncrement(), null);
-        return Collections.singletonList(executionUnit);
     }
 
     protected abstract EntitySQLExpression createEasySQLExpression(Object entity);

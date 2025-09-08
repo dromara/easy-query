@@ -172,7 +172,6 @@ public class DbManager {
                     builder.setPrintSql(solonEasyQueryProperties.isPrintSql());
                     builder.setPrintNavSql(solonEasyQueryProperties.isPrintNavSql());
                     builder.setStartTimeJob(solonEasyQueryProperties.isStartTimeJob());
-                    builder.setDefaultTrack(solonEasyQueryProperties.isDefaultTrack());
                     builder.setRelationGroupSize(solonEasyQueryProperties.getRelationGroupSize());
                     builder.setWarningColumnMiss(solonEasyQueryProperties.isWarningColumnMiss());
                     builder.setShardingFetchSize(solonEasyQueryProperties.getShardingFetchSize());

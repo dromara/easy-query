@@ -78,10 +78,16 @@ public class EasyTrackUtil {
                 Iterator<Map.Entry<String, Property<Object, ?>>> iterator = propertiesMap.entrySet().iterator();
                 Map.Entry<String, Property<Object, ?>> firstProperty = iterator.next();
                 String firstTrackValue = getAndCheckTrackValue(o, firstProperty);
+                if(firstTrackValue==null){
+                    return null;
+                }
                 trackKey.append(firstTrackValue);
                 while (iterator.hasNext()) {
                     Map.Entry<String, Property<Object, ?>> property = iterator.next();
                     String trackValue = getAndCheckTrackValue(o, property);
+                    if(trackValue==null){
+                        return null;
+                    }
                     trackKey.append(",").append(trackValue);
                 }
                 return trackKey.toString();
@@ -95,7 +101,7 @@ public class EasyTrackUtil {
         String propertyName = property.getKey();
         Object propertyValue = property.getValue().apply(entity);
         if (Objects.isNull(propertyValue)) {
-            throw new EasyQueryTrackInvalidOperationException(EasyClassUtil.getInstanceSimpleName(entity)+": track key cant null :" + propertyName);
+            return null;
         }
         return propertyName + ":" + propertyValue;
     }

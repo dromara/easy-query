@@ -3,11 +3,15 @@ package com.easy.query.api.proxy.client;
 import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.api.proxy.entity.delete.EntityDeletable;
 import com.easy.query.api.proxy.entity.delete.ExpressionDeletable;
+import com.easy.query.api.proxy.entity.delete.impl.EasyEmptyEntityDeletable;
 import com.easy.query.api.proxy.entity.delete.impl.EasyEntityDeletable;
 import com.easy.query.api.proxy.entity.delete.impl.EasyExpressionDeletable;
 import com.easy.query.api.proxy.entity.insert.EasyEmptyEntityInsertable;
 import com.easy.query.api.proxy.entity.insert.EasyEntityInsertable;
 import com.easy.query.api.proxy.entity.insert.EntityInsertable;
+import com.easy.query.api.proxy.entity.save.EasyEmptySavable;
+import com.easy.query.api.proxy.entity.save.EntitySavable;
+import com.easy.query.api.proxy.entity.save.impl.EasyEntitySavable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.api.proxy.entity.update.EntityUpdatable;
@@ -22,6 +26,7 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 
 /**
@@ -111,12 +116,21 @@ public class DefaultEasyEntityQuery implements EasyEntityQuery {
     @Override
     public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityDeletable<TProxy, T> deletable(T entity) {
         Objects.requireNonNull(entity, "entities is null");
-        return new EasyEntityDeletable<>(easyQueryClient.deletable(entity));
+        Class<T> aClass = EasyObjectUtil.typeCast(entity.getClass());
+        TProxy tProxy = EntityQueryProxyManager.create(aClass);
+        return new EasyEntityDeletable<>(tProxy, easyQueryClient.deletable(entity));
     }
 
     @Override
     public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityDeletable<TProxy, T> deletable(Collection<T> entities) {
-        return new EasyEntityDeletable<>(easyQueryClient.deletable(entities));
+        Objects.requireNonNull(entities, "entities is null");
+        if (EasyCollectionUtil.isEmpty(entities)) {
+            return new EasyEmptyEntityDeletable<>();
+        }
+        T first = EasyCollectionUtil.first(entities);
+        Class<T> aClass = EasyObjectUtil.typeCast(first.getClass());
+        TProxy tProxy = EntityQueryProxyManager.create(aClass);
+        return new EasyEntityDeletable<>(tProxy, easyQueryClient.deletable(entities));
     }
 
     @Override
@@ -125,4 +139,25 @@ public class DefaultEasyEntityQuery implements EasyEntityQuery {
         return new EasyExpressionDeletable<>(tProxy, easyQueryClient.deletable(entityClass));
     }
 
+    @Override
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntitySavable<TProxy, T> savable(T entity) {
+        Objects.requireNonNull(entity, "entity is null");
+        Class<T> entityClass = EasyObjectUtil.typeCast(entity.getClass());
+        TProxy tProxy = EntityQueryProxyManager.create(entityClass);
+        return new EasyEntitySavable<>(tProxy, entityClass, Collections.singletonList(entity), easyQueryClient);
+    }
+
+    @Override
+    public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntitySavable<TProxy, T> savable(Collection<T> entities) {
+
+        Objects.requireNonNull(entities, "entities is null");
+        if (EasyCollectionUtil.isEmpty(entities)) {
+            return new EasyEmptySavable<>();
+        }
+
+        T first = EasyCollectionUtil.first(entities);
+        Class<T> entityClass = EasyObjectUtil.typeCast(first.getClass());
+        TProxy tProxy = EntityQueryProxyManager.create(entityClass);
+        return new EasyEntitySavable<>(tProxy, entityClass, entities, easyQueryClient);
+    }
 }

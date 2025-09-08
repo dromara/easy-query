@@ -2,6 +2,7 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.common.DirectMappingIterator;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.MappingClassSaveModeEnum;
 import com.easy.query.core.enums.PartitionOrderEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
@@ -69,6 +70,7 @@ public class NavigateMetadata {
     private final boolean subQueryToGroupJoin;
     private final PartitionOrderEnum partitionOrder;
     private final boolean ignoreAutoInclude;
+    private final MappingClassSaveModeEnum mappingClassSaveMode;
 
     public NavigateMetadata(NavigateOption navigateOption,
                             Property<Object, ?> getter,
@@ -97,6 +99,7 @@ public class NavigateMetadata {
         this.subQueryToGroupJoin = navigateOption.isSubQueryToGroupJoin();
         this.partitionOrder = navigateOption.getPartitionOrder();
         this.ignoreAutoInclude = navigateOption.isIgnoreAutoInclude();
+        this.mappingClassSaveMode = navigateOption.getMappingClassSaveMode();
         if (EasyArrayUtil.isNotEmpty(directMapping)) {
             this.directMappingMetadataMap = new ConcurrentHashMap<>(2);
         } else {
@@ -332,5 +335,9 @@ public class NavigateMetadata {
 
     public boolean isIgnoreAutoInclude() {
         return ignoreAutoInclude;
+    }
+
+    public MappingClassSaveModeEnum getMappingClassSaveMode() {
+        return mappingClassSaveMode;
     }
 }

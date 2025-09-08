@@ -1,47 +1,31 @@
 package com.easy.query.core.util;
 
-/**
- * create time 2024/6/1 22:20
- * 文件说明
- *
- * @author xuejiaming
- */
-
+import com.easy.query.core.common.DefaultMapColumnNameChecker;
+import com.easy.query.core.common.MapColumnNameChecker;
 import com.easy.query.core.exception.EasyQueryInvalidFieldCheckException;
 
-import java.util.function.Function;
+import java.util.regex.Pattern;
 
 /**
- * 参考了mybatis-flex的的检查代码
- * <a href="https://gitee.com/mybatis-flex/mybatis-flex">mybatis-flex</a>
+ * 只允许数字字母下划线
  */
 public class EasyFieldCheckUtil {
 
-    private static final char[] UN_SAFE_CHARS = "'`\"<>&+=#-;".toCharArray();
+    private static final Pattern SAFE_PATTERN = Pattern.compile("^[A-Za-z0-9_\\u4e00-\\u9fa5]+$");
 
-    private static boolean isUnSafeChar(char ch) {
-        for (char c : UN_SAFE_CHARS) {
-            if (c == ch) {
-                return true;
-            }
-        }
-        return false;
-    }
 
+    /**
+     * 替换框架map name接口检查
+     * {@link MapColumnNameChecker} -> {@link DefaultMapColumnNameChecker}
+     * @param column
+     * @return
+     */
     public static String toCheckField(String column) {
         if (EasyStringUtil.isBlank(column)) {
             throw new EasyQueryInvalidFieldCheckException("column name must not be empty");
         }
-
-        int strLen = column.length();
-        for (int i = 0; i < strLen; ++i) {
-            char ch = column.charAt(i);
-            if (Character.isWhitespace(ch)) {
-                throw new EasyQueryInvalidFieldCheckException("column name must not has space char.");
-            }
-            if (isUnSafeChar(ch)) {
-                throw new EasyQueryInvalidFieldCheckException("column name has unsafe char: [" + ch + "].");
-            }
+        if (!SAFE_PATTERN.matcher(column).matches()) {
+            throw new EasyQueryInvalidFieldCheckException("column name only allows letters (A-Z, a-z), digits (0-9), and underscore (_), invalid:[" + column+"]");
         }
         return column;
     }

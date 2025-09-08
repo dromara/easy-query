@@ -135,10 +135,6 @@ public class EasyQueryProperties {
      */
     private boolean startTimeJob = false;
     /**
-     * 默认是否启用追踪
-     */
-    private boolean defaultTrack = false;
-    /**
      * 关联查询每组多少关联id
      */
     private int relationGroupSize = 512;
@@ -370,14 +366,6 @@ public class EasyQueryProperties {
 
     public void setStartTimeJob(boolean startTimeJob) {
         this.startTimeJob = startTimeJob;
-    }
-
-    public boolean isDefaultTrack() {
-        return defaultTrack;
-    }
-
-    public void setDefaultTrack(boolean defaultTrack) {
-        this.defaultTrack = defaultTrack;
     }
 
     public int getRelationGroupSize() {

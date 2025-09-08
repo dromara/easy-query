@@ -74,6 +74,17 @@ public class EasyArrayUtil {
         }
         return false;
     }
+    public static <TSource> boolean all(TSource[] sources, Predicate<TSource> predicate) {
+        if (isEmpty(sources)) {
+            return true;
+        }
+        for (TSource source : sources) {
+            if (!predicate.test(source)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 //    public static <TSource, TElement> Iterable<TElement> select(TSource[] sources, Selector<TSource, TElement> selector) {
 //        int size = sources.length;

@@ -74,10 +74,12 @@ import com.easy.query.core.expression.executor.query.DefaultExecutionContextFact
 import com.easy.query.core.expression.executor.query.ExecutionContextFactory;
 import com.easy.query.core.expression.include.EasyIncludeProcessorFactory;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
-import com.easy.query.core.expression.many2group.NoneSubQueryExtraPredicateProvider;
+import com.easy.query.core.expression.many2group.DefaultSubQueryExtraPredicateProvider;
 import com.easy.query.core.expression.many2group.SubQueryExtraPredicateProvider;
 import com.easy.query.core.expression.parser.factory.DefaultSQLExpressionInvokeFactory;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
+import com.easy.query.core.expression.predicate.DefaultSmartPredicateAnonymousExpressionBuilderProvider;
+import com.easy.query.core.expression.predicate.SmartPredicateAnonymousExpressionBuilderProvider;
 import com.easy.query.core.expression.segment.factory.DefaultSQLSegmentFactory;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.DefaultEasyExpressionBuilderFactory;
@@ -195,6 +197,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(EasyInitConfiguration.class, DefaultEasyInitConfiguration.class)
 //                .replaceService(EntityExpressionExecutor.class, ShardingEntityExpressionExecutor.class)
                 .replaceService(ShardingExecutorService.class, DefaultEasyShardingExecutorService.class)
+                .replaceService(SmartPredicateAnonymousExpressionBuilderProvider.class, DefaultSmartPredicateAnonymousExpressionBuilderProvider.class)
                 .replaceService(ExpressionFactory.class, DefaultEasyExpressionFactory.class)
                 .replaceService(ShardingComparer.class, JavaLanguageShardingComparer.class)
                 .replaceService(JdbcTypeHandlerManager.class, EasyJdbcTypeHandlerManager.class)
@@ -204,7 +207,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(DataSourceManager.class, DefaultDataSourceManager.class)
                 .replaceService(ShardingQueryCountManager.class, DefaultShardingQueryCountManager.class)
                 .replaceService(RouteDescriptorFactory.class, DefaultRouteDescriptorFactor.class)
-                .replaceService(SubQueryExtraPredicateProvider.class, NoneSubQueryExtraPredicateProvider.class)
+                .replaceService(SubQueryExtraPredicateProvider.class, DefaultSubQueryExtraPredicateProvider.class)
                 .replaceService(DataSourceUnitFactory.class, DefaultDataSourceUnitFactory.class)
                 .replaceService(SQLSegmentFactory.class, DefaultSQLSegmentFactory.class)
                 .replaceService(EasyTimeJobManager.class, DefaultEasyTimeJobManager.class)

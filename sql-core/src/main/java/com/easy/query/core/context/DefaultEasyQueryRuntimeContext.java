@@ -29,6 +29,7 @@ import com.easy.query.core.expression.builder.core.ValueFilterFactory;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
 import com.easy.query.core.expression.many2group.SubQueryExtraPredicateProvider;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
+import com.easy.query.core.expression.predicate.SmartPredicateAnonymousExpressionBuilderProvider;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
@@ -106,6 +107,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final SQLCaseWhenBuilderFactory sqlCaseWhenBuilderFactory;
     private final JdbcSQLExecutor jdbcSQLExecutor;
     private final SubQueryExtraPredicateProvider subQueryExtraPredicateProvider;
+    private final SmartPredicateAnonymousExpressionBuilderProvider smartPredicateAnonymousExpressionBuilderProvider;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -154,7 +156,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           RelationNullValueValidator relationNullValueValidator,
                                           SQLCaseWhenBuilderFactory sqlCaseWhenBuilderFactory,
                                           JdbcSQLExecutor jdbcSQLExecutor,
-                                          SubQueryExtraPredicateProvider subQueryExtraPredicateProvider) {
+                                          SubQueryExtraPredicateProvider subQueryExtraPredicateProvider,
+                                          SmartPredicateAnonymousExpressionBuilderProvider smartPredicateAnonymousExpressionBuilderProvider) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -203,6 +206,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.sqlCaseWhenBuilderFactory = sqlCaseWhenBuilderFactory;
         this.jdbcSQLExecutor = jdbcSQLExecutor;
         this.subQueryExtraPredicateProvider = subQueryExtraPredicateProvider;
+        this.smartPredicateAnonymousExpressionBuilderProvider = smartPredicateAnonymousExpressionBuilderProvider;
     }
 
     @Override
@@ -443,5 +447,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public SubQueryExtraPredicateProvider getSubQueryExtraPredicateProvider() {
         return subQueryExtraPredicateProvider;
+    }
+
+    @Override
+    public SmartPredicateAnonymousExpressionBuilderProvider getSmartPredicateAnonymousExpressionBuilderProvider() {
+        return smartPredicateAnonymousExpressionBuilderProvider;
     }
 }

@@ -27,6 +27,7 @@ import com.easy.query.core.expression.builder.core.ValueFilterFactory;
 import com.easy.query.core.expression.include.IncludeProcessorFactory;
 import com.easy.query.core.expression.many2group.SubQueryExtraPredicateProvider;
 import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
+import com.easy.query.core.expression.predicate.SmartPredicateAnonymousExpressionBuilderProvider;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
@@ -114,4 +115,5 @@ public interface QueryRuntimeContext {
     SQLCaseWhenBuilderFactory getSQLCaseWhenBuilderFactory();
     JdbcSQLExecutor getJdbcSQLExecutor();
     SubQueryExtraPredicateProvider getSubQueryExtraPredicateProvider();
+    SmartPredicateAnonymousExpressionBuilderProvider getSmartPredicateAnonymousExpressionBuilderProvider();
 }
