@@ -18,6 +18,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyArrayUtil;
+import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyTrackUtil;
 
@@ -110,6 +111,7 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
             for (NavigateMetadata navigateMetadata : entityMetadata.getNavigateMetadatas()) {
                 SaveNode saveNode = pathSavableContext.getSaveNode(navigateMetadata);
                 if (saveNode == null) {
+                    checkNavigatePathTrackedCheck(navigateMetadata, entity, entityMetadata);
                     continue;
                 }
                 savableContext.putSaveNodeMap(navigateMetadata, saveNode.getEntityMetadata());
@@ -126,25 +128,52 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
         }
         List<NavigateMetadata> includes = entityState.getIncludes();
         if (includes != null) {
-            for (NavigateMetadata include : includes) {
-                SaveNode saveNode = pathSavableContext.getSaveNode(include);
+            HashSet<NavigateMetadata> navigateMetadataSet = new HashSet<>(entityMetadata.getNavigateMetadatas());
+            for (NavigateMetadata navigateMetadata : includes) {
+                navigateMetadataSet.remove(navigateMetadata);
+                SaveNode saveNode = pathSavableContext.getSaveNode(navigateMetadata);
                 if (saveNode == null) {
+                    checkNavigatePathTrackedCheck(navigateMetadata, entity, entityMetadata);
                     continue;
                 }
-                savableContext.putSaveNodeMap(include, saveNode.getEntityMetadata());
+                savableContext.putSaveNodeMap(navigateMetadata, saveNode.getEntityMetadata());
                 //如果导航属性是值类型并且没有循环引用且没有被追踪才继续下去
-                if (!this.saveCommandContext.circulateCheck(include.getNavigatePropertyType(), deep)) {
+                if (!this.saveCommandContext.circulateCheck(navigateMetadata.getNavigatePropertyType(), deep)) {
 
-                    TargetValueTypeEnum targetValueType = getTargetValueType(entityMetadata, include);
+                    TargetValueTypeEnum targetValueType = getTargetValueType(entityMetadata, navigateMetadata);
 
                     //我的id就是我们的关联关系键 多对多除外 还需要赋值一遍吧我的id给他 多对多下 需要处理的值对象是关联表 如果无关联中间表则目标对象是一个独立对象
                     if (targetValueType == TargetValueTypeEnum.VALUE_OBJECT || targetValueType == TargetValueTypeEnum.AGGREGATE_ROOT) {
-                        Set<String> trackKeys = entityState.getTrackKeys(include);
-                        processNavigate(targetValueType, entity, entityMetadata, include, savableContext, trackKeys == null ? new HashSet<>() : trackKeys);
+                        Set<String> trackKeys = entityState.getTrackKeys(navigateMetadata);
+                        processNavigate(targetValueType, entity, entityMetadata, navigateMetadata, savableContext, trackKeys == null ? new HashSet<>() : trackKeys);
                     }
                 }
             }
+            //检查额外导航属性
+            for (NavigateMetadata navigateMetadata : navigateMetadataSet) {
+                checkNavigatePathTrackedCheck(navigateMetadata, entity, entityMetadata);
+            }
         }
+    }
+
+    private void checkNavigatePathTrackedCheck(NavigateMetadata navigate, Object entity, EntityMetadata selfEntityMetadata) {
+        Property<Object, ?> getter = navigate.getGetter();
+        Object navigateValue = getter.apply(entity);
+        if (navigateValue == null) {//未查询
+            return;
+        }
+        if (navigateValue instanceof Collection<?>) {
+            Collection<?> navigateValues = (Collection<?>) navigateValue;
+            if (EasyCollectionUtil.isEmpty(navigateValues)) {
+                //如果是集合那么判断对象初始化的时候
+                Object newEntity = selfEntityMetadata.getBeanConstructorCreator().get();
+                Object newNavigateValue = getter.apply(newEntity);
+                if (newNavigateValue != null) {
+                    return;
+                }
+            }
+        }
+        throw new EasyQueryInvalidOperationException("The current navigation property [" + EasyClassUtil.getInstanceSimpleName(entity) + "." + navigate.getPropertyName() + "] is not being tracked.");
     }
 
     private void processNavigate(TargetValueTypeEnum targetValueType, Object entity, EntityMetadata selfEntityMetadata, NavigateMetadata navigateMetadata, SavableContext savableContext, Set<String> trackKeys) {
