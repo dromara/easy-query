@@ -273,6 +273,16 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
             IncludeProcessor includeProcess = includeProcessorFactory.createIncludeProcess(includeParserResult, runtimeContext);
             includeProcess.process();
         }
+        TrackManager trackManager = runtimeContext.getTrackManager();
+        TrackContext currentTrackContext = trackManager.getCurrentTrackContext();
+        if(currentTrackContext!=null){
+            for (T entity : entities) {
+                EntityState trackEntityState = currentTrackContext.getTrackEntityState(entity);
+                if(trackEntityState!=null){
+                    trackEntityState.addInclude(navigateMetadata);
+                }
+            }
+        }
     }
 
     @Override

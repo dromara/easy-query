@@ -2,14 +2,11 @@ package com.easy.query.core.basic.extension.track;
 
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyBeanUtil;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +61,7 @@ public class EntityState {
         return includes;
     }
 
-    public void setIncludes(List<NavigateMetadata> includes) {
+    public void setAppendIncludes(List<NavigateMetadata> includes) {
         if (this.includes != null) {
             if (includes != null) {
                 for (NavigateMetadata include : includes) {

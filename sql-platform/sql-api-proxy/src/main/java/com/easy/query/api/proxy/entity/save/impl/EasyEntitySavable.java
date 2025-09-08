@@ -13,7 +13,7 @@ import java.util.Collection;
  * @author xuejiaming
  */
 public class EasyEntitySavable<TProxy extends ProxyEntity<TProxy, T>, T> extends AbstractEntitySavable<TProxy,T> {
-    public EasyEntitySavable(Class<T> clazz, Collection<T> entities, EasyQueryClient easyQueryClient) {
-        super(clazz, entities, easyQueryClient);
+    public EasyEntitySavable(TProxy tProxy,Class<T> clazz, Collection<T> entities, EasyQueryClient easyQueryClient) {
+        super(tProxy,clazz, entities, easyQueryClient);
     }
 }

@@ -142,8 +142,9 @@ public class DefaultEasyEntityQuery implements EasyEntityQuery {
     @Override
     public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntitySavable<TProxy, T> savable(T entity) {
         Objects.requireNonNull(entity, "entity is null");
-        Class<T> aClass = EasyObjectUtil.typeCast(entity.getClass());
-        return new EasyEntitySavable<>(aClass, Collections.singletonList(entity), easyQueryClient);
+        Class<T> entityClass = EasyObjectUtil.typeCast(entity.getClass());
+        TProxy tProxy = EntityQueryProxyManager.create(entityClass);
+        return new EasyEntitySavable<>(tProxy, entityClass, Collections.singletonList(entity), easyQueryClient);
     }
 
     @Override
@@ -155,7 +156,8 @@ public class DefaultEasyEntityQuery implements EasyEntityQuery {
         }
 
         T first = EasyCollectionUtil.first(entities);
-        Class<T> aClass = EasyObjectUtil.typeCast(first.getClass());
-        return new EasyEntitySavable<>(aClass, entities, easyQueryClient);
+        Class<T> entityClass = EasyObjectUtil.typeCast(first.getClass());
+        TProxy tProxy = EntityQueryProxyManager.create(entityClass);
+        return new EasyEntitySavable<>(tProxy, entityClass, entities, easyQueryClient);
     }
 }

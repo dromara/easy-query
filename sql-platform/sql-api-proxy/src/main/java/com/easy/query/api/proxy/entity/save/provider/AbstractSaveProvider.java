@@ -17,6 +17,7 @@ import com.easy.query.core.util.EasyClassUtil;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * create time 2025/9/7 11:07
@@ -31,8 +32,9 @@ public abstract class AbstractSaveProvider implements SaveProvider {
     protected final QueryRuntimeContext runtimeContext;
     protected final EntityMetadataManager entityMetadataManager;
     protected final TrackContext currentTrackContext;
+    protected final List<Set<String>> savePathLimit;
 
-    public AbstractSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient) {
+    public AbstractSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit) {
         this.entityClass = entityClass;
         this.entities = entities;
         this.easyQueryClient = easyQueryClient;
@@ -43,8 +45,18 @@ public abstract class AbstractSaveProvider implements SaveProvider {
         }
         this.currentTrackContext = currentTrackContext;
         this.entityMetadataManager = runtimeContext.getEntityMetadataManager();
+        this.savePathLimit = savePathLimit;
     }
 
+    protected boolean isSavePathLimitContains(NavigateMetadata navigateMetadata,int deep){
+        if(savePathLimit.isEmpty()){
+            return true;
+        }
+        if(savePathLimit.size()>deep){
+            return savePathLimit.get(deep).contains(navigateMetadata.getPropertyName());
+        }
+        return false;
+    }
     protected TargetValueTypeEnum getTargetValueType(EntityMetadata selfMetadata, NavigateMetadata navigateMetadata) {
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
             if (navigateMetadata.getMappingClass() != null) {

@@ -34,6 +34,18 @@ public class DefaultSmartPredicateAnonymousExpressionBuilderProvider implements 
         TableAvailable entityTable = anonymousEntityTableExpressionBuilder.getEntityTable();
 
         //获取原先的from子查询有哪些可以被发现的条件
+        Set<SmartPredicateItem> alreadyPredicateSet = getAlreadyPredicateSet(innerEntityQueryExpressionBuilder);
+        Map<String, SmartPredicateItem> aliasMap = getAliasMap(innerEntityQueryExpressionBuilder, alreadyPredicateSet);
+
+        List<PredicateSegment> flatAndPredicateSegments = predicateSegment.getFlatAndPredicateSegments();
+        FilterImpl filter = new FilterImpl(innerEntityQueryExpressionBuilder.getRuntimeContext(), innerEntityQueryExpressionBuilder.getExpressionContext(), innerEntityQueryExpressionBuilder.getWhere(), false, innerEntityQueryExpressionBuilder.getExpressionContext().getValueFilter());
+        getWhereExtraPredicateSegment(flatAndPredicateSegments, entityTable, aliasMap, filter);
+
+    }
+
+    private Set<SmartPredicateItem> getAlreadyPredicateSet(EntityQueryExpressionBuilder innerEntityQueryExpressionBuilder) {
+
+        //获取原先的from子查询有哪些可以被发现的条件
         Set<SmartPredicateItem> alreadyPredicateSet = new HashSet<>();
         List<PredicateSegment> innerWherePredicateSegments = innerEntityQueryExpressionBuilder.getWhere().getFlatAndPredicateSegments();
         for (PredicateSegment innerWherePredicateSegment : innerWherePredicateSegments) {
@@ -51,6 +63,10 @@ public class DefaultSmartPredicateAnonymousExpressionBuilderProvider implements 
                 }
             }
         }
+        return alreadyPredicateSet;
+    }
+
+    private Map<String, SmartPredicateItem> getAliasMap(EntityQueryExpressionBuilder innerEntityQueryExpressionBuilder, Set<SmartPredicateItem> alreadyPredicateSet) {
 
         //获取select as的别名和实际表名和实际属性
         Map<String, SmartPredicateItem> aliasMap = new HashMap<>();
@@ -59,19 +75,13 @@ public class DefaultSmartPredicateAnonymousExpressionBuilderProvider implements 
                 ColumnSegment columnSegment = (ColumnSegment) sqlSegment;
                 if (columnSegment.getAlias() != null) {
                     SmartPredicateItem smartPredicateItem = new SmartPredicateItem(columnSegment.getTable(), columnSegment.getPropertyName());
-                    if(!alreadyPredicateSet.contains(smartPredicateItem)){
+                    if (!alreadyPredicateSet.contains(smartPredicateItem)) {
                         aliasMap.put(columnSegment.getAlias(), smartPredicateItem);
                     }
                 }
             }
         }
-
-
-
-        List<PredicateSegment> flatAndPredicateSegments = predicateSegment.getFlatAndPredicateSegments();
-        FilterImpl filter = new FilterImpl(innerEntityQueryExpressionBuilder.getRuntimeContext(), innerEntityQueryExpressionBuilder.getExpressionContext(), innerEntityQueryExpressionBuilder.getWhere(), false, innerEntityQueryExpressionBuilder.getExpressionContext().getValueFilter());
-        getWhereExtraPredicateSegment(flatAndPredicateSegments, entityTable, aliasMap, filter);
-
+        return aliasMap;
     }
 
     private void getWhereExtraPredicateSegment(List<PredicateSegment> flatAndPredicateSegments, TableAvailable fromTable, Map<String, SmartPredicateItem> aliasMap, Filter filter) {

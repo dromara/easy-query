@@ -42,8 +42,8 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
     private final SaveCheckModeEnum saveCheckMode;
     private SaveCommandContext savePathCommandContext;
 
-    public UpdateSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, SaveCheckModeEnum saveCheckMode) {
-        super(entityClass, entities, easyQueryClient);
+    public UpdateSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, SaveCheckModeEnum saveCheckMode, List<Set<String>> savePathLimit) {
+        super(entityClass, entities, easyQueryClient,savePathLimit);
         this.saveCommandContext = new SaveCommandContext(entityClass);
         this.saveCheckMode = saveCheckMode;
     }
@@ -111,6 +111,9 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
         SavableContext pathSavableContext = this.savePathCommandContext.getSavableContext(deep);
         if (entityState == null) {
             for (NavigateMetadata navigateMetadata : entityMetadata.getNavigateMetadatas()) {
+                if(!isSavePathLimitContains(navigateMetadata,deep)){
+                    continue;
+                }
                 SaveNode saveNode = pathSavableContext.getSaveNode(navigateMetadata);
                 if (saveNode == null) {
                     checkNavigatePathTrackedCheck(navigateMetadata, entity, entityMetadata);
@@ -133,6 +136,9 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
             HashSet<NavigateMetadata> navigateMetadataSet = new HashSet<>(entityMetadata.getNavigateMetadatas());
             for (NavigateMetadata navigateMetadata : includes) {
                 navigateMetadataSet.remove(navigateMetadata);
+                if(!isSavePathLimitContains(navigateMetadata,deep)){
+                    continue;
+                }
                 SaveNode saveNode = pathSavableContext.getSaveNode(navigateMetadata);
                 if (saveNode == null) {
                     checkNavigatePathTrackedCheck(navigateMetadata, entity, entityMetadata);
@@ -152,10 +158,12 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
                 }
             }
             //检查额外导航属性
-
-            if (saveCheckMode == SaveCheckModeEnum.STRICT) {
-                for (NavigateMetadata navigateMetadata : navigateMetadataSet) {
-                    checkNavigatePathTrackedCheck(navigateMetadata, entity, entityMetadata);
+            //如果存在手动指定导航保存路径则不检查导航属性
+            if(savePathLimit.isEmpty()){
+                if (saveCheckMode == SaveCheckModeEnum.STRICT) {
+                    for (NavigateMetadata navigateMetadata : navigateMetadataSet) {
+                        checkNavigatePathTrackedCheck(navigateMetadata, entity, entityMetadata);
+                    }
                 }
             }
         }

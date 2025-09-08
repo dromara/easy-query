@@ -195,7 +195,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         EntityTableExpressionBuilder firstTable = iterator.next();
 
         //优化子查询穿透
-        if (!emptySelect && hasWhere() && tableCount == 1) {
+        if (!emptySelect && hasWhere()) {
             //(select * from a join b .....) t
             if (firstTable instanceof AnonymousEntityTableExpressionBuilder) {
                 //PredicateSegment

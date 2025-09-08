@@ -14,6 +14,7 @@ import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.IncludePathTreeNode;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
@@ -21,6 +22,7 @@ import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * create time 2025/9/6 21:05
@@ -31,8 +33,8 @@ import java.util.List;
 public class InsertSaveProvider extends AbstractSaveProvider {
     private final SaveCommandContext saveCommandContext;
 
-    public InsertSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient) {
-        super(entityClass, entities, easyQueryClient);
+    public InsertSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit) {
+        super(entityClass, entities, easyQueryClient, savePathLimit);
         this.saveCommandContext = new SaveCommandContext(entityClass);
     }
 
@@ -60,7 +62,9 @@ public class InsertSaveProvider extends AbstractSaveProvider {
         }
         SavableContext savableContext = this.saveCommandContext.getSavableContext(deep);
         for (NavigateMetadata navigateMetadata : entityMetadata.getNavigateMetadatas()) {
-
+            if(!isSavePathLimitContains(navigateMetadata,deep)){
+                continue;
+            }
             //如果导航属性是值类型并且没有循环引用且没有被追踪才继续下去
             if (!this.saveCommandContext.circulateCheck(navigateMetadata.getNavigatePropertyType(), deep)) {
                 TargetValueTypeEnum targetValueType = getTargetValueType(entityMetadata, navigateMetadata);
