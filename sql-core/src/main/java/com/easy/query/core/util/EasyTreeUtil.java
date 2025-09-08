@@ -5,6 +5,7 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEOption;
 import com.easy.query.core.expression.sql.include.EasyTreeNodeDown;
 import com.easy.query.core.expression.sql.include.EasyTreeNodeUp;
+import com.easy.query.core.expression.sql.include.EasyTreeNodeWithoutDeep;
 import com.easy.query.core.expression.sql.include.MultiRelationValue;
 import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.expression.sql.include.EasyTreeNode;
@@ -38,13 +39,55 @@ import java.util.stream.Collectors;
 public class EasyTreeUtil {
 
     /**
+     * 非cte关联
+     * @param nodes
+     * @param entityMetadata
+     * @param navigateMetadata
+     * @param runtimeContext
+     * @return
+     * @param <T>
+     */
+    public static <T> List<T> generateTrees(List<T> nodes, EntityMetadata entityMetadata, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext) {
+
+        RelationValueColumnMetadataFactory relationValueColumnMetadataFactory = runtimeContext.getRelationValueColumnMetadataFactory();
+        RelationValueColumnMetadata selfRelationValueColumnMetadata = relationValueColumnMetadataFactory.create(entityMetadata, navigateMetadata.getSelfPropertiesOrPrimary());
+        RelationValueColumnMetadata targetRelationValueColumnMetadata = relationValueColumnMetadataFactory.create(entityMetadata, navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext));
+//        relationValueColumnMetadata.getRelationValue()
+        Map<RelationValue, T> targetMap = new HashMap<>();
+        ArrayList<EasyTreeNode<T>> easyTreeNodes = new ArrayList<>();
+        for (T node : nodes) {
+            RelationValue selfValue = selfRelationValueColumnMetadata.getRelationValue(node);
+            RelationValue targetValue = targetRelationValueColumnMetadata.getRelationValue(node);
+            targetMap.put(selfValue, node);
+            //只根据id和pid处理而不根据deep
+            easyTreeNodes.add(new EasyTreeNodeWithoutDeep<>(node, selfValue, targetValue, navigateMetadata));
+        }
+//        Map<RelationValue, T> treeMap = new TreeMap<>();
+        List<EasyTreeNode<T>> roots = new ArrayList<>();
+        for (Iterator<EasyTreeNode<T>> ite = easyTreeNodes.iterator(); ite.hasNext(); ) {
+            EasyTreeNode<T> node = ite.next();
+            boolean root = !targetMap.containsKey(node.getTarget());
+            if (root) {
+                roots.add(node);
+                // 从所有节点列表中删除该节点，以免后续重复遍历该节点
+                ite.remove();
+            }
+        }
+
+        roots.forEach(r -> {
+            setChildren(r, easyTreeNodes);
+        });
+        return roots.stream().map(EasyTreeNode::getEntity).collect(Collectors.toList());
+    }
+
+    /**
      * 根据所有树节点列表，生成含有所有树形结构的列表
      *
      * @param nodes 树形节点列表
      * @param <T>   节点类型
      * @return 树形结构列表
      */
-    public static <T> List<T> generateTrees(List<T> nodes, EntityMetadata entityMetadata, NavigateMetadata navigateMetadata, TreeSelfTargetItem treeSelfTargetItem , QueryRuntimeContext runtimeContext, TreeCTEOption treeCTEOption, List<TreeDeepItem> deepItems) {
+    public static <T> List<T> generateTrees(List<T> nodes, EntityMetadata entityMetadata, NavigateMetadata navigateMetadata, TreeSelfTargetItem treeSelfTargetItem, QueryRuntimeContext runtimeContext, TreeCTEOption treeCTEOption, List<TreeDeepItem> deepItems) {
 
         RelationValueColumnMetadataFactory relationValueColumnMetadataFactory = runtimeContext.getRelationValueColumnMetadataFactory();
         RelationValueColumnMetadata selfRelationValueColumnMetadata = relationValueColumnMetadataFactory.create(entityMetadata, treeSelfTargetItem.selfProperties);
@@ -85,7 +128,7 @@ public class EasyTreeUtil {
             i++;
         }
         Iterator<EasyTreeNode<T>> nodeIterator = easyTreeNodes.iterator();
-        while (nodeIterator.hasNext()){
+        while (nodeIterator.hasNext()) {
             EasyTreeNode<T> node = nodeIterator.next();
             boolean root = !targetMap.containsKey(node.getTarget());
             if (root) {

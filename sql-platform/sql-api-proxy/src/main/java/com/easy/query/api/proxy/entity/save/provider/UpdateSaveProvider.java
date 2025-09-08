@@ -24,6 +24,7 @@ import com.easy.query.core.util.EasyTrackUtil;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -90,9 +91,11 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
 
         EntityMetadata targetEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
         SaveNode saveNode = savableContext.putSaveNodeMap(navigateMetadata, targetEntityMetadata);
-        for (String trackKey : trackKeys) {
-            if (trackKey != null) {
-                createIncludePath(targetEntityMetadata.getEntityClass(), targetEntityMetadata, trackKey, saveNode.getIndex() + 1);
+        if (trackKeys != null) {
+            for (String trackKey : trackKeys) {
+                if (trackKey != null) {
+                    createIncludePath(targetEntityMetadata.getEntityClass(), targetEntityMetadata, trackKey, saveNode.getIndex() + 1);
+                }
             }
         }
     }
@@ -136,7 +139,8 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
 
                     //我的id就是我们的关联关系键 多对多除外 还需要赋值一遍吧我的id给他 多对多下 需要处理的值对象是关联表 如果无关联中间表则目标对象是一个独立对象
                     if (targetValueType == TargetValueTypeEnum.VALUE_OBJECT || targetValueType == TargetValueTypeEnum.AGGREGATE_ROOT) {
-                        processNavigate(targetValueType, entity, entityMetadata, include, savableContext, entityState.getTrackKeys(include));
+                        Set<String> trackKeys = entityState.getTrackKeys(include);
+                        processNavigate(targetValueType, entity, entityMetadata, include, savableContext, trackKeys == null ? new HashSet<>() : trackKeys);
                     }
                 }
             }
@@ -151,7 +155,7 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
             }
             EntityMetadata targetEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
             SaveNode saveNode = savableContext.getSaveNode(navigateMetadata);
-            Map<String, Object> dbEntityMap = new HashMap<>();
+            Map<String, Object> dbEntityMap = new LinkedHashMap<>();
             for (String trackKey : trackKeys) {
                 EntityState trackEntityState = currentTrackContext.getTrackEntityState(navigateMetadata.getNavigatePropertyType(), trackKey);
                 Objects.requireNonNull(trackEntityState, "trackEntityState cant be null,trackKey:" + trackKey);

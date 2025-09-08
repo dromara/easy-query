@@ -18,8 +18,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * create time 2025/9/8 09:52
@@ -245,7 +249,7 @@ public class M8SaveTest extends BaseTest {
                     .singleNotNull();
 
             List<M8SaveRootMany> m8SaveRootManyList = m8SaveRoot.getM8SaveRootManyList();
-            m8SaveRootManyList.remove(1);//移除index=1的元素因为原先有两个
+            M8SaveRootMany remove = m8SaveRootManyList.remove(1);//移除index=1的元素因为原先有两个
             M8SaveRootMany m8SaveRootMany2 = new M8SaveRootMany();
             m8SaveRootMany2.setName("newOneToMany2");
             m8SaveRootManyList.add(m8SaveRootMany2);//新加一个
@@ -256,50 +260,121 @@ public class M8SaveTest extends BaseTest {
                 transaction.commit();
             }
 
-//            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-//            Assert.assertEquals(8, listenerContext.getJdbcExecuteAfterArgs().size());
-//            {
-//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-//                Assert.assertEquals("INSERT INTO `m8_save_root_2many` (`id`,`name`) VALUES (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//                Assert.assertEquals(many2many.get(0).getId() + "(String),root2Many1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-//            }
-//            {
-//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-//                Assert.assertEquals("INSERT INTO `m8_save_root_2many` (`id`,`name`) VALUES (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//                Assert.assertEquals(many2many.get(1).getId() + "(String),root2Many2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-//            }
-//            {
-//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-//                Assert.assertEquals("INSERT INTO `m8_save_root` (`id`,`name`,`code`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//                Assert.assertEquals(root.getId() + "(String),rootname(String),rootcode(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-//            }
-//            {
-//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-//                Assert.assertEquals("INSERT INTO `m8_save_root_one` (`id`,`root_id`) VALUES (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//                Assert.assertEquals(rootOne.getId() + "(String)," + root.getId() + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-//            }
-//            {
-//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-//                Assert.assertEquals("INSERT INTO `m8_save_root_many` (`id`,`root_id`,`name`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//                Assert.assertEquals(many.get(0).getId() + "(String)," + root.getId() + "(String),rootMany1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-//            }
-//            {
-//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
-//                Assert.assertEquals("INSERT INTO `m8_save_root_many` (`id`,`root_id`,`name`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//                Assert.assertEquals(many.get(1).getId() + "(String)," + root.getId() + "(String),rootMany2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-//            }
-//            {
-//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(6);
-//                Assert.assertEquals("INSERT INTO `m8_save_root_middle_many` (`id`,`root_id`,`many_id`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//                String s = EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0));
-//                Assert.assertTrue(s.endsWith("(String)," + root.getId() + "(String)," + many2many.get(0).getId() + "(String)"));
-//            }
-//            {
-//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(7);
-//                Assert.assertEquals("INSERT INTO `m8_save_root_middle_many` (`id`,`root_id`,`many_id`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//                String s = EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0));
-//                Assert.assertTrue(s.endsWith("(String)," + root.getId() + "(String)," + many2many.get(1).getId() + "(String)"));
-//            }
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+            Assert.assertEquals(4, listenerContext.getJdbcExecuteAfterArgs().size());
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                Assert.assertEquals("SELECT `id`,`name`,`code` FROM `m8_save_root` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(rootId + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                Assert.assertEquals("SELECT t.`id`,t.`root_id`,t.`name` FROM `m8_save_root_many` t WHERE t.`root_id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(rootId+ "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+                Assert.assertEquals("DELETE FROM `m8_save_root_many` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(remove.getId() + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+                Assert.assertEquals("INSERT INTO `m8_save_root_many` (`id`,`root_id`,`name`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(m8SaveRootMany2.getId() + "(String),"+rootId+"(String),"+m8SaveRootMany2.getName()+"(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+        });
+    }
+    @Test
+    public void testMany2Many1() {
+        String rootId = before();
+        ArrayList<M8SaveRoot2Many> m8SaveRoot2Manies = new ArrayList<>();
+        invoke(listenerContext->{
+            M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
+                    .includes(m -> m.m8SaveRoot2ManyList())
+                    .singleNotNull();
+            List<M8SaveRoot2Many> m8SaveRoot2ManyList = m8SaveRoot.getM8SaveRoot2ManyList();
+            List<String> m8SaveRoot2Manies0 = new ArrayList<>();
+            for (M8SaveRoot2Many m8SaveRoot2Many : m8SaveRoot2ManyList) {
+                m8SaveRoot2Manies0.add(m8SaveRoot2Many.getId() + "(String)");
+            }
+            m8SaveRoot2Manies.addAll(m8SaveRoot2ManyList);
+            m8SaveRoot.getM8SaveRoot2ManyList().clear();
+
+
+
+            try (Transaction transaction = easyEntityQuery.beginTransaction()) {
+                easyEntityQuery.savable(m8SaveRoot).executeCommand();
+                transaction.commit();
+            }
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+            Assert.assertEquals(5, listenerContext.getJdbcExecuteAfterArgs().size());
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                Assert.assertEquals("SELECT `id`,`name`,`code` FROM `m8_save_root` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(rootId + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                Assert.assertEquals("SELECT `root_id`,`many_id` FROM `m8_save_root_middle_many` WHERE `root_id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(rootId+ "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+                Assert.assertEquals("SELECT t.`id`,t.`name` FROM `m8_save_root_2many` t WHERE t.`id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                String sqlParameterToString = EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0));
+                String join1 = String.join(",", m8SaveRoot2Manies0);
+                Collections.reverse(m8SaveRoot2Manies0);
+                String join2 = String.join(",", m8SaveRoot2Manies0);
+
+                Assert.assertTrue(Objects.equals(join1, sqlParameterToString)||Objects.equals(join2, sqlParameterToString));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+                Assert.assertEquals("DELETE FROM `m8_save_root_middle_many` WHERE `root_id` = ? AND `many_id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(rootId+"(String),"+m8SaveRoot2Manies.get(0).getId()+"(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
+                Assert.assertEquals("DELETE FROM `m8_save_root_middle_many` WHERE `root_id` = ? AND `many_id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(rootId+"(String),"+m8SaveRoot2Manies.get(1).getId()+"(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+        });
+        invoke(listenerContext->{
+            M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
+                    .includes(m -> m.m8SaveRoot2ManyList())
+                    .singleNotNull();
+            m8SaveRoot.getM8SaveRoot2ManyList().addAll(m8SaveRoot2Manies);
+            List<M8SaveRoot2Many> m8SaveRoot2ManyList = m8SaveRoot.getM8SaveRoot2ManyList();
+
+
+            try (Transaction transaction = easyEntityQuery.beginTransaction()) {
+                easyEntityQuery.savable(m8SaveRoot).executeCommand();
+                transaction.commit();
+            }
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+            Assert.assertEquals(4, listenerContext.getJdbcExecuteAfterArgs().size());
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                Assert.assertEquals("SELECT `id`,`name`,`code` FROM `m8_save_root` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(rootId + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                Assert.assertEquals("SELECT `root_id`,`many_id` FROM `m8_save_root_middle_many` WHERE `root_id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(rootId+ "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+                Assert.assertEquals("INSERT INTO `m8_save_root_middle_many` (`id`,`root_id`,`many_id`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertTrue(EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)).endsWith("(String),"+rootId+"(String),"+m8SaveRoot2ManyList.get(0).getId()+"(String)"));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+                Assert.assertEquals("INSERT INTO `m8_save_root_middle_many` (`id`,`root_id`,`many_id`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertTrue(EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)).endsWith("(String),"+rootId+"(String),"+m8SaveRoot2ManyList.get(1).getId()+"(String)"));
+            }
         });
     }
 }

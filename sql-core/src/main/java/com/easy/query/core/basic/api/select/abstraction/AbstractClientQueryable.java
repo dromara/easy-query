@@ -537,10 +537,14 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             }
             return list;
         }
-        List<TreeDeepItem> deepItems = this.expressionContext.getDeepItems();
         TreeCTEOption treeCTEOption = this.expressionContext.getTreeCTEOption();
-        TreeSelfTargetItem treeSelfTargetItem = getTreeSelfTargetItem(treeNavigateMetadata);
-        return EasyTreeUtil.generateTrees(list, entityMetadata, treeNavigateMetadata, treeSelfTargetItem, runtimeContext, treeCTEOption, deepItems);
+        if (treeCTEOption == null) {//非cte递归的情况下走原本的树组合
+            return EasyTreeUtil.generateTrees(list, entityMetadata, treeNavigateMetadata, runtimeContext);
+        } else {
+            List<TreeDeepItem> deepItems = this.expressionContext.getDeepItems();
+            TreeSelfTargetItem treeSelfTargetItem = getTreeSelfTargetItem(treeNavigateMetadata);
+            return EasyTreeUtil.generateTrees(list, entityMetadata, treeNavigateMetadata, treeSelfTargetItem, runtimeContext, treeCTEOption, deepItems);
+        }
     }
 
     private TreeSelfTargetItem getTreeSelfTargetItem(NavigateMetadata resultTreeNavigateMetadata) {
