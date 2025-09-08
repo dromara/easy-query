@@ -1,6 +1,7 @@
 package com.easy.query.api.proxy.entity.save.provider;
 
 import com.easy.query.api.proxy.entity.save.SavableContext;
+import com.easy.query.api.proxy.entity.save.SaveCheckModeEnum;
 import com.easy.query.api.proxy.entity.save.SaveCommandContext;
 import com.easy.query.api.proxy.entity.save.SaveNode;
 import com.easy.query.api.proxy.entity.save.TargetValueTypeEnum;
@@ -23,7 +24,6 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyTrackUtil;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,11 +39,13 @@ import java.util.Set;
  */
 public class UpdateSaveProvider extends AbstractSaveProvider {
     private final SaveCommandContext saveCommandContext;
+    private final SaveCheckModeEnum saveCheckMode;
     private SaveCommandContext savePathCommandContext;
 
-    public UpdateSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient) {
+    public UpdateSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, SaveCheckModeEnum saveCheckMode) {
         super(entityClass, entities, easyQueryClient);
         this.saveCommandContext = new SaveCommandContext(entityClass);
+        this.saveCheckMode = saveCheckMode;
     }
 
     @Override
@@ -150,30 +152,35 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
                 }
             }
             //检查额外导航属性
-            for (NavigateMetadata navigateMetadata : navigateMetadataSet) {
-                checkNavigatePathTrackedCheck(navigateMetadata, entity, entityMetadata);
+
+            if (saveCheckMode == SaveCheckModeEnum.STRICT) {
+                for (NavigateMetadata navigateMetadata : navigateMetadataSet) {
+                    checkNavigatePathTrackedCheck(navigateMetadata, entity, entityMetadata);
+                }
             }
         }
     }
 
     private void checkNavigatePathTrackedCheck(NavigateMetadata navigate, Object entity, EntityMetadata selfEntityMetadata) {
-        Property<Object, ?> getter = navigate.getGetter();
-        Object navigateValue = getter.apply(entity);
-        if (navigateValue == null) {//未查询
-            return;
-        }
-        if (navigateValue instanceof Collection<?>) {
-            Collection<?> navigateValues = (Collection<?>) navigateValue;
-            if (EasyCollectionUtil.isEmpty(navigateValues)) {
-                //如果是集合那么判断对象初始化的时候
-                Object newEntity = selfEntityMetadata.getBeanConstructorCreator().get();
-                Object newNavigateValue = getter.apply(newEntity);
-                if (newNavigateValue != null) {
-                    return;
+        if (saveCheckMode == SaveCheckModeEnum.STRICT) {
+            Property<Object, ?> getter = navigate.getGetter();
+            Object navigateValue = getter.apply(entity);
+            if (navigateValue == null) {//未查询
+                return;
+            }
+            if (navigateValue instanceof Collection<?>) {
+                Collection<?> navigateValues = (Collection<?>) navigateValue;
+                if (EasyCollectionUtil.isEmpty(navigateValues)) {
+                    //如果是集合那么判断对象初始化的时候
+                    Object newEntity = selfEntityMetadata.getBeanConstructorCreator().get();
+                    Object newNavigateValue = getter.apply(newEntity);
+                    if (newNavigateValue != null) {
+                        return;
+                    }
                 }
             }
+            throw new EasyQueryInvalidOperationException("The current navigation property [" + EasyClassUtil.getInstanceSimpleName(entity) + "." + navigate.getPropertyName() + "] is not being tracked.");
         }
-        throw new EasyQueryInvalidOperationException("The current navigation property [" + EasyClassUtil.getInstanceSimpleName(entity) + "." + navigate.getPropertyName() + "] is not being tracked.");
     }
 
     private void processNavigate(TargetValueTypeEnum targetValueType, Object entity, EntityMetadata selfEntityMetadata, NavigateMetadata navigateMetadata, SavableContext savableContext, Set<String> trackKeys) {

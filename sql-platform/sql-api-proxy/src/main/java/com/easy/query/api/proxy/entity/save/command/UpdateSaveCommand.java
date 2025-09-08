@@ -39,12 +39,12 @@ public class UpdateSaveCommand implements SaveCommand {
             SavableContext savableContext = savableContexts.get(i);
             for (Map.Entry<NavigateMetadata, SaveNode> saveNodeEntry : savableContext.getSaveNodeMap().entrySet()) {
                 SaveNode saveNode = saveNodeEntry.getValue();
-                easyQueryClient.deletable(saveNode.getDeletes()).batch(batch).executeRows();
+                easyQueryClient.deletable(saveNode.getDeletes()).batch(batch).allowDeleteStatement(true).executeRows();
                 if (EasyCollectionUtil.isNotEmpty(saveNode.getDeleteBys())) {
                     NavigateMetadata navigateMetadata = saveNodeEntry.getKey();
                     String[] selfMappingProperties = navigateMetadata.getSelfMappingProperties();
                     String[] targetMappingProperties = navigateMetadata.getTargetMappingProperties();
-                    easyQueryClient.deletable(saveNode.getDeleteBys()).batch(batch).whereColumns(col -> {
+                    easyQueryClient.deletable(saveNode.getDeleteBys()).batch(batch).allowDeleteStatement(true).whereColumns(col -> {
                         for (String selfMappingProperty : selfMappingProperties) {
                             col.column(selfMappingProperty);
                         }

@@ -18,6 +18,11 @@ public class EasyEmptySavable<TProxy extends ProxyEntity<TProxy, T>, T> implemen
     }
 
     @Override
+    public EntitySavable<TProxy, T> checkMode(SaveCheckModeEnum saveCheckMode) {
+        return this;
+    }
+
+    @Override
     public void executeCommand() {
 
     }

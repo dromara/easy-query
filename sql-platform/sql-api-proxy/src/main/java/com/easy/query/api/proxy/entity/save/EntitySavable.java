@@ -15,4 +15,5 @@ import java.util.List;
 public interface EntitySavable<TProxy extends ProxyEntity<TProxy, T>, T> extends Savable, SQLBatchExecute<EntitySavable<TProxy,T>> {
     List<T> getEntities();
 
+    EntitySavable<TProxy, T> checkMode(SaveCheckModeEnum saveCheckMode);
 }
