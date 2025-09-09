@@ -113,20 +113,12 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
 
         EntityState entityState = currentTrackContext.getTrackEntityState(entity);
         SavableContext savableContext = this.saveCommandContext.getSavableContext(deep);
-        if (entityState == null) {
-            List<NavigateMetadata> valueObjects = getNavigateSavableValueObjects(savableContext, entity, entityMetadata, entityMetadata.getNavigateMetadatas(), deep);
-            for (NavigateMetadata navigateMetadata : valueObjects) {
-                processNavigate(entity, entityMetadata, navigateMetadata, savableContext, new HashSet<>());
-            }
-            return;
-        }
-        List<NavigateMetadata> includes = entityState.getIncludes();
-        if (includes != null) {
-            List<NavigateMetadata> valueObjects = getNavigateSavableValueObjects(savableContext, entity, entityMetadata, includes, deep);
-            for (NavigateMetadata navigateMetadata : valueObjects) {
-                Set<String> trackKeys = entityState.getTrackKeys(navigateMetadata);
-                processNavigate(entity, entityMetadata, navigateMetadata, savableContext, trackKeys == null ? new HashSet<>() : trackKeys);
-            }
+        SavableContext savablePathContext = this.savePathCommandContext.getSavableContext(deep);
+        Set<NavigateMetadata> navigateMetadataSet = savablePathContext.getSaveNodeMap().keySet();
+        List<NavigateMetadata> valueObjects = getNavigateSavableValueObjects(savableContext, entity, entityMetadata, navigateMetadataSet, deep);
+        for (NavigateMetadata navigateMetadata : valueObjects) {
+            Set<String> trackKeys = entityState == null ? null : entityState.getTrackKeys(navigateMetadata);
+            processNavigate(entity, entityMetadata, navigateMetadata, savableContext, trackKeys == null ? new HashSet<>() : trackKeys);
         }
     }
 
