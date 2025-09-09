@@ -30,7 +30,8 @@ import java.util.function.Consumer;
  */
 public class M8SaveTest extends BaseTest {
 
-    public String before() {
+
+    public void deleteAll(){
 
         easyEntityQuery.deletable(M8SaveRoot.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(M8SaveRoot2Many.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
@@ -38,6 +39,9 @@ public class M8SaveTest extends BaseTest {
         easyEntityQuery.deletable(M8SaveRootMiddleMany.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(M8SaveRootOne.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
 
+
+    }
+    public String insertOne(){
 
         TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
         try {
@@ -139,6 +143,11 @@ public class M8SaveTest extends BaseTest {
         } finally {
             trackManager.release();
         }
+
+    }
+    public String before() {
+        deleteAll();
+        return insertOne();
     }
 
     public void invoke(Consumer<ListenerContext> action) {
@@ -577,6 +586,51 @@ public class M8SaveTest extends BaseTest {
         });
     }
 
+    @Test
+    public void test2One4() {
+        deleteAll();
+        String rootId = insertOne();
+        String rootId2 = insertOne();
+        ValueHolder<M8SaveRootOne> valueHolder = new ValueHolder<>();
+        invoke(listenerContext -> {
+            M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
+                    .include(m -> m.m8SaveRootOne())
+                    .singleNotNull();
+            M8SaveRootOne m8SaveRootOne = m8SaveRoot.getM8SaveRootOne();
+            valueHolder.setValue(m8SaveRootOne);
+            m8SaveRoot.setM8SaveRootOne(null);
+            M8SaveRoot m8SaveRoot1 = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId2)
+                    .singleNotNull();
+
+            try (Transaction transaction = easyEntityQuery.beginTransaction()) {
+                easyEntityQuery.savable(m8SaveRoot).executeCommand();
+                transaction.commit();
+            }
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+            Assert.assertEquals(4, listenerContext.getJdbcExecuteAfterArgs().size());
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                Assert.assertEquals("SELECT `id`,`name`,`code` FROM `m8_save_root` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(rootId + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                Assert.assertEquals("SELECT t.`id`,t.`root_id`,t.`name` FROM `m8_save_root_one` t WHERE t.`root_id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(rootId + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+                Assert.assertEquals("SELECT `id`,`name`,`code` FROM `m8_save_root` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(rootId2 + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+                Assert.assertEquals("DELETE FROM `m8_save_root_one` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(valueHolder.getValue().getId() + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+        });
+    }
     @Test
     public void testMany2Many3() {
         String rootId = before();

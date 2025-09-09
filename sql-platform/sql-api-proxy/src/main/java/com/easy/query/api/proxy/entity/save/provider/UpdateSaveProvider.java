@@ -197,10 +197,10 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
             //检查中间表并且创建新增操作
             if (navigateMetadata.getMappingClass() == null) {
-                throw new EasyQueryInvalidOperationException("many to many relation must have mapping class");
+                throw new EasyQueryInvalidOperationException("entity:["+EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass())+"]-["+EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType())+"] many to many relation must have mapping class");
             }
             if (navigateMetadata.getMappingClassSaveMode() == MappingClassSaveModeEnum.THROW) {
-                throw new EasyQueryInvalidOperationException("many to many relation mapping class save mode is throw");
+                throw new EasyQueryInvalidOperationException("entity:["+EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass())+"]-["+EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType())+"] many to many relation mapping class save mode is throw");
             }
             //自动处理中间表
             if (navigateMetadata.getMappingClassSaveMode() == MappingClassSaveModeEnum.AUTO) {
@@ -218,11 +218,12 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
             //检查中间表并且创建新增操作
             if (navigateMetadata.getMappingClass() == null) {
-                throw new EasyQueryInvalidOperationException("many to many relation must have mapping class");
+                throw new EasyQueryInvalidOperationException("entity:["+EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass())+"]-["+EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType())+"] many to many relation must have mapping class");
             }
             if (navigateMetadata.getMappingClassSaveMode() == MappingClassSaveModeEnum.THROW) {
-                throw new EasyQueryInvalidOperationException("many to many relation mapping class save mode is throw");
+                throw new EasyQueryInvalidOperationException("entity:["+EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass())+"]-["+EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType())+"] many to many relation mapping class save mode is throw");
             }
+            //自动的简单中间表不需要更新
             return;
         }
 
@@ -239,10 +240,10 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
             //检查中间表并且创建新增操作
             if (navigateMetadata.getMappingClass() == null) {
-                throw new EasyQueryInvalidOperationException("many to many relation must have mapping class");
+                throw new EasyQueryInvalidOperationException("entity:["+EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass())+"]-["+EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType())+"] many to many relation must have mapping class");
             }
             if (navigateMetadata.getMappingClassSaveMode() == MappingClassSaveModeEnum.THROW) {
-                throw new EasyQueryInvalidOperationException("many to many relation mapping class save mode is throw");
+                throw new EasyQueryInvalidOperationException("entity:["+EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass())+"]-["+EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType())+"] many to many relation mapping class save mode is throw");
             }
             //自动处理中间表
             if (navigateMetadata.getMappingClassSaveMode() == MappingClassSaveModeEnum.AUTO) {
