@@ -2,6 +2,7 @@ package com.easy.query.api.proxy.entity.save;
 
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.IncludeAvailable;
+import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.Collections;
@@ -25,7 +26,7 @@ public class EasyEmptySavable<TProxy extends ProxyEntity<TProxy, T>, T> implemen
     }
 
     @Override
-    public EntitySavable<TProxy, T> savePath(SQLFuncExpression1<TProxy, List<IncludeAvailable>> navigateIncludeSQLExpression) {
+    public EntitySavable<TProxy, T> savePath(SQLFuncExpression1<TProxy, List<MappingPath>> navigateIncludeSQLExpression) {
         return this;
     }
 

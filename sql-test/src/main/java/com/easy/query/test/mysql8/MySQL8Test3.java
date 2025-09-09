@@ -2,6 +2,7 @@ package com.easy.query.test.mysql8;
 
 import com.bestvike.linq.Linq;
 import com.easy.query.api.proxy.base.ClassProxy;
+import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -30,7 +31,10 @@ import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
+import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
 import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.sql.Include;
 import com.easy.query.core.proxy.sql.Select;
@@ -714,6 +718,15 @@ public class MySQL8Test3 extends BaseTest {
         Assert.assertEquals("SELECT t2.`name` AS `name`,t2.`phone` AS `phone`,t2.`code2` AS `code2` FROM (SELECT t.`name` AS `name`,t.`phone` AS `phone`,t1.`code` AS `code2` FROM `t_sys_user` t INNER JOIN `t_bank_card` t1 ON t.`id` = t1.`uid` WHERE t1.`code` = ?) t2 WHERE t2.`code2` = ? AND (t2.`name` = ? OR t2.`code2` = ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("456(String),123(String),name(String),phone(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
+    }
+
+    @Test
+    public void testOneIsNull(){
+        List<String> userIds = easyEntityQuery.queryable(SysBankCard.class)
+                .select(bank_card -> new StringProxy(bank_card.code()))
+                .unionAll(easyEntityQuery.queryable(SysUser.class)
+                        .select(user -> new StringProxy(user.phone())))
+                .toList();
     }
 
 }

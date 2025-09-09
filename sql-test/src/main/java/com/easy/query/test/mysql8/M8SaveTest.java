@@ -685,8 +685,8 @@ public class M8SaveTest extends BaseTest {
 
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {
                 easyEntityQuery.savable(m8SaveRoot)
-                        .savePath(o -> Include.of(
-                                o.m8SaveRoot2ManyList().asIncludeQueryable()
+                        .savePath(o -> Include.path(
+                                o.m8SaveRoot2ManyList()
                         )).executeCommand();
                 transaction.commit();
             }

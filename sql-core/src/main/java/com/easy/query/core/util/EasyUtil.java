@@ -7,6 +7,7 @@ import com.easy.query.core.basic.extension.conversion.ExpArgTypeEnum;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.IncludeAvailable;
+import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -245,6 +247,15 @@ public class EasyUtil {
         for (IncludeAvailable include : includes) {
             String[] paths = include.getNavValue().split("\\.");
             PathTreeBuilder.insertPath(root, paths, new IncludePathTreeNode.IncludeFunction(include.getFunctions()));
+        }
+        return root;
+    }
+    public static IncludePathTreeNode getIncludePathTreeRoot0(List<MappingPath> includes) {
+
+        IncludePathTreeNode root = new IncludePathTreeNode("EASY-QUERY-INCLUDE-ROOT");
+        for (MappingPath include : includes) {
+            String[] paths = include.__getMappingPath().split("\\.");
+            PathTreeBuilder.insertPath(root, paths, new IncludePathTreeNode.IncludeFunction(Collections.emptyList()));
         }
         return root;
     }

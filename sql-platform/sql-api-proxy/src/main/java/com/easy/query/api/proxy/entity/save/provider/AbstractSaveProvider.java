@@ -1,20 +1,27 @@
 package com.easy.query.api.proxy.entity.save.provider;
 
+import com.easy.query.api.proxy.entity.save.SavableContext;
+import com.easy.query.api.proxy.entity.save.SaveCheckModeEnum;
 import com.easy.query.api.proxy.entity.save.SaveCommandContext;
+import com.easy.query.api.proxy.entity.save.SaveNode;
 import com.easy.query.api.proxy.entity.save.TargetValueTypeEnum;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyCollectionUtil;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -30,15 +37,18 @@ public abstract class AbstractSaveProvider implements SaveProvider {
     protected final List<Object> entities;
     protected final EasyQueryClient easyQueryClient;
     protected final QueryRuntimeContext runtimeContext;
+    protected final SaveCheckModeEnum saveCheckMode;
     protected final EntityMetadataManager entityMetadataManager;
     protected final TrackContext currentTrackContext;
     protected final List<Set<String>> savePathLimit;
+    protected final SaveCommandContext saveCommandContext;
 
-    public AbstractSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit) {
+    public AbstractSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient,SaveCheckModeEnum saveCheckMode, List<Set<String>> savePathLimit) {
         this.entityClass = entityClass;
         this.entities = entities;
         this.easyQueryClient = easyQueryClient;
         this.runtimeContext = easyQueryClient.getRuntimeContext();
+        this.saveCheckMode = saveCheckMode;
         TrackContext currentTrackContext = runtimeContext.getTrackManager().getCurrentTrackContext();
         if (currentTrackContext == null) {
             throw new EasyQueryInvalidOperationException("currentTrackContext can not be null");
@@ -46,6 +56,7 @@ public abstract class AbstractSaveProvider implements SaveProvider {
         this.currentTrackContext = currentTrackContext;
         this.entityMetadataManager = runtimeContext.getEntityMetadataManager();
         this.savePathLimit = savePathLimit;
+        this.saveCommandContext = new SaveCommandContext(entityClass);
     }
 
     protected boolean isSavePathLimitContains(NavigateMetadata navigateMetadata,int deep){
@@ -102,7 +113,7 @@ public abstract class AbstractSaveProvider implements SaveProvider {
                 ColumnMetadata selfColumn = selfEntityMetadata.getColumnNotNull(self);
                 Object selfValue = selfColumn.getGetterCaller().apply(selfEntity);
                 if (selfValue == null) {
-                    throw new EasyQueryInvalidOperationException("entity:" + EasyClassUtil.getInstanceSimpleName(selfEntity) + " property:[" + self + "] value can not be null");
+                    throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getInstanceSimpleName(selfEntity) + "] property:[" + self + "] value can not be null, cant set relation value for entity:["+EasyClassUtil.getInstanceSimpleName(targetEntity)+"]");
                 }
                 ColumnMetadata targetColumn = targetEntityMetadata.getColumnNotNull(target);
                 Object currentValue = targetColumn.getGetterCaller().apply(targetEntity);
@@ -123,7 +134,7 @@ public abstract class AbstractSaveProvider implements SaveProvider {
                 ColumnMetadata targetColumn = targetEntityMetadata.getColumnNotNull(target);
                 Object targetValue = targetColumn.getGetterCaller().apply(targetEntity);
                 if (targetValue == null) {
-                    throw new EasyQueryInvalidOperationException("entity:" + EasyClassUtil.getInstanceSimpleName(targetEntity) + " property:[" + target + "] value can not be null");
+                    throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getInstanceSimpleName(targetEntity) + "] property:[" + target + "] value can not be null, cant set relation value for entity:["+EasyClassUtil.getInstanceSimpleName(selfEntity)+"]");
                 }
                 ColumnMetadata selfColumn = selfEntityMetadata.getColumnNotNull(self);
                 selfColumn.getSetterCaller().call(selfEntity, targetValue);
@@ -168,6 +179,80 @@ public abstract class AbstractSaveProvider implements SaveProvider {
             }
             ColumnMetadata columnMetadata = mappingEntityMetadata.getColumnNotNull(targetMappingProperty);
             columnMetadata.getSetterCaller().call(mappingEntity, targetValue);
+        }
+    }
+
+protected abstract EntityMetadata checkNavigateContinueAndGetTargetEntityMetadata(NavigateMetadata navigateMetadata,Object entity,EntityMetadata entityMetadata,int deep);
+
+
+    protected List<NavigateMetadata> getNavigateSavableValueObjects(SavableContext savableContext, Object entity, EntityMetadata entityMetadata, Collection<NavigateMetadata> navigateMetadataList, int deep) {
+
+        List<NavigateMetadata> valueObjects = new ArrayList<>();
+        List<NavigateMetadata> aggregateRoots = new ArrayList<>();
+        HashSet<NavigateMetadata> navigateMetadataSet = new HashSet<>(entityMetadata.getNavigateMetadatas());
+        for (NavigateMetadata navigateMetadata : navigateMetadataList) {
+
+            navigateMetadataSet.remove(navigateMetadata);
+
+            EntityMetadata targetEntityMetadata = checkNavigateContinueAndGetTargetEntityMetadata(navigateMetadata, entity, entityMetadata, deep);
+            if(targetEntityMetadata==null){
+                continue;
+            }
+            //如果导航属性是值类型并且没有循环引用且没有被追踪才继续下去
+            if (!this.saveCommandContext.circulateCheck(navigateMetadata.getNavigatePropertyType(), deep)) {
+
+                savableContext.putSaveNodeMap(navigateMetadata, targetEntityMetadata);
+                TargetValueTypeEnum targetValueType = getTargetValueType(entityMetadata, navigateMetadata);
+                //我的id就是我们的关联关系键 多对多除外 还需要赋值一遍吧我的id给他 多对多下 需要处理的值对象是关联表 如果无关联中间表则目标对象是一个独立对象
+                if (targetValueType == TargetValueTypeEnum.VALUE_OBJECT) {
+                    valueObjects.add(navigateMetadata);
+                }
+                if (targetValueType == TargetValueTypeEnum.AGGREGATE_ROOT) {
+                    aggregateRoots.add(navigateMetadata);
+                }
+            }
+        }
+
+        //如果目标对象是聚合根则对聚合根的关联属性进行复制到当前对象上
+        for (NavigateMetadata navigateMetadata : aggregateRoots) {
+            Property<Object, ?> getter = navigateMetadata.getGetter();
+            Object aggregateRoot = getter.apply(entity);
+            if (aggregateRoot != null) {
+                EntityMetadata aggregateRootMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
+                setTargetValue(TargetValueTypeEnum.AGGREGATE_ROOT, entity, aggregateRoot, entityMetadata, navigateMetadata, aggregateRootMetadata);
+            }
+        }
+        //检查额外导航属性
+        //如果存在手动指定导航保存路径则不检查导航属性
+        if (savePathLimit.isEmpty()) {
+            if (saveCheckMode == SaveCheckModeEnum.STRICT) {
+                for (NavigateMetadata navigateMetadata : navigateMetadataSet) {
+                    checkNavigatePathTrackedCheck(navigateMetadata, entity, entityMetadata);
+                }
+            }
+        }
+        return valueObjects;
+    }
+
+    protected void checkNavigatePathTrackedCheck(NavigateMetadata navigate, Object entity, EntityMetadata selfEntityMetadata) {
+        if (saveCheckMode == SaveCheckModeEnum.STRICT) {
+            Property<Object, ?> getter = navigate.getGetter();
+            Object navigateValue = getter.apply(entity);
+            if (navigateValue == null) {//未查询
+                return;
+            }
+            if (navigateValue instanceof Collection<?>) {
+                Collection<?> navigateValues = (Collection<?>) navigateValue;
+                if (EasyCollectionUtil.isEmpty(navigateValues)) {
+                    //如果是集合那么判断对象初始化的时候
+                    Object newEntity = selfEntityMetadata.getBeanConstructorCreator().get();
+                    Object newNavigateValue = getter.apply(newEntity);
+                    if (newNavigateValue != null) {
+                        return;
+                    }
+                }
+            }
+            throw new EasyQueryInvalidOperationException("The current navigation property [" + EasyClassUtil.getInstanceSimpleName(entity) + "." + navigate.getPropertyName() + "] is not being tracked.");
         }
     }
 }

@@ -93,7 +93,6 @@ public class EntityState {
             trackKeys.add(trackKey);
         }
     }
-
     public Set<String> getTrackKeys(NavigateMetadata navigateMetadata) {
         if (includeWithTrackKeyMap == null) {
             return null;

@@ -115,7 +115,7 @@ public class GaussDBInsertSQLExpression extends InsertSQLExpressionImpl {
     private Collection<String> getConstraintPropertyName0(EntityMetadata entityMetadata, Collection<String> columns) {
         Set<String> constraintKeys = columns.stream().filter(o -> !entityMetadata.getColumnNotNull(o).isGeneratedKey()).collect(Collectors.toSet());
         if (EasyCollectionUtil.isEmpty(constraintKeys)) {
-            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " no constraint property");
+            throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()) + " no constraint property,Please ensure that the constrained property is not generate key column.");
         }
         return constraintKeys;
     }

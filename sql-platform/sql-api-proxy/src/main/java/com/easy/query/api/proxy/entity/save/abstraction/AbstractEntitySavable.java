@@ -16,6 +16,7 @@ import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.IncludeAvailable;
+import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.IncludePathTreeNode;
 import com.easy.query.core.metadata.NavigateMetadata;
@@ -83,17 +84,17 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     }
 
     @Override
-    public EntitySavable<TProxy, T> savePath(SQLFuncExpression1<TProxy, List<IncludeAvailable>> navigateIncludeSQLExpression) {
-        ValueHolder<List<IncludeAvailable>> includeAvailableValueHolder = new ValueHolder<>();
+    public EntitySavable<TProxy, T> savePath(SQLFuncExpression1<TProxy, List<MappingPath>> navigateIncludeSQLExpression) {
+        ValueHolder<List<MappingPath>> includeAvailableValueHolder = new ValueHolder<>();
         tProxy.getEntitySQLContext()._include(() -> {
-            List<IncludeAvailable> values = navigateIncludeSQLExpression.apply(tProxy);
+            List<MappingPath> values = navigateIncludeSQLExpression.apply(tProxy);
             if (values != null) {
                 includeAvailableValueHolder.setValue(values);
             }
         });
-        List<IncludeAvailable> values = includeAvailableValueHolder.getValue();
+        List<MappingPath> values = includeAvailableValueHolder.getValue();
         if (values != null) {
-            this.includePathTreeRoot = EasyUtil.getIncludePathTreeRoot(values);
+            this.includePathTreeRoot = EasyUtil.getIncludePathTreeRoot0(values);
         }
         return this;
     }
@@ -114,7 +115,7 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
             }
             List<Set<String>> savePathLimit = getSavePathLimit();
             if (EasyCollectionUtil.isNotEmpty(insertEntities)) {
-                saveCommands.add(new InsertSaveProvider(entityClass, insertEntities, easyQueryClient, savePathLimit).createCommand());
+                saveCommands.add(new InsertSaveProvider(entityClass, insertEntities, easyQueryClient,saveCheckMode, savePathLimit).createCommand());
             }
             if (EasyCollectionUtil.isNotEmpty(updateEntities)) {
                 saveCommands.add(new UpdateSaveProvider(entityClass, updateEntities, easyQueryClient, saveCheckMode, savePathLimit).createCommand());

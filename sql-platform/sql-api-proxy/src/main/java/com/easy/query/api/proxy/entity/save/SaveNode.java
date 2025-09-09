@@ -19,6 +19,9 @@ public class SaveNode {
     private final List<Object> deletes;
     private final List<Object> deleteBys;
     private final int index;
+    /**
+     * 和object实体一样的entity metadata
+     */
     private final EntityMetadata entityMetadata;
 
     public SaveNode(int index, EntityMetadata entityMetadata) {

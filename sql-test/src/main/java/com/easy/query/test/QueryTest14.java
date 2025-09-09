@@ -861,7 +861,7 @@ public class QueryTest14 extends BaseTest {
                         .executeRows();
             } catch (Exception ignore) {
                 Assert.assertTrue(ignore instanceof EasyQueryInvalidOperationException);
-                Assert.assertEquals("TopicAuto no constraint property", ignore.getMessage());
+                Assert.assertEquals("TopicAuto no constraint property,Please ensure that the constrained property is not generate key column.", ignore.getMessage());
             }
             Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
 //            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -886,7 +886,7 @@ public class QueryTest14 extends BaseTest {
                         .executeRows();
             } catch (Exception ignore) {
                 Assert.assertTrue(ignore instanceof EasyQueryInvalidOperationException);
-                Assert.assertEquals("TopicAuto no constraint property", ignore.getMessage());
+                Assert.assertEquals("TopicAuto no constraint property,Please ensure that the constrained property is not generate key column.", ignore.getMessage());
             }
             Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
 //            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -934,7 +934,7 @@ public class QueryTest14 extends BaseTest {
                         .executeRows();
             } catch (Exception ignore) {
                 Assert.assertTrue(ignore instanceof EasyQueryInvalidOperationException);
-                Assert.assertEquals("TopicAuto no constraint property", ignore.getMessage());
+                Assert.assertEquals("TopicAuto no constraint property,Please ensure that the constrained property is not generate key column.", ignore.getMessage());
             }
             Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
             listenerContextManager.clear();
@@ -1292,7 +1292,7 @@ public class QueryTest14 extends BaseTest {
                         .executeRows();
             } catch (Exception ignore) {
                 Assert.assertTrue(ignore instanceof EasyQueryInvalidOperationException);
-                Assert.assertEquals("TopicAuto no constraint property", ignore.getMessage());
+                Assert.assertEquals("TopicAuto no constraint property,Please ensure that the constrained property is not generate key column.", ignore.getMessage());
             }
             Assert.assertNull(listenerContext.getJdbcExecuteAfterArg());
             listenerContextManager.clear();
