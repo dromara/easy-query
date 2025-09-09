@@ -43,7 +43,7 @@ public abstract class AbstractSaveProvider implements SaveProvider {
     protected final List<Set<String>> savePathLimit;
     protected final SaveCommandContext saveCommandContext;
 
-    public AbstractSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient,SaveCheckModeEnum saveCheckMode, List<Set<String>> savePathLimit) {
+    public AbstractSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, SaveCheckModeEnum saveCheckMode, List<Set<String>> savePathLimit) {
         this.entityClass = entityClass;
         this.entities = entities;
         this.easyQueryClient = easyQueryClient;
@@ -59,15 +59,16 @@ public abstract class AbstractSaveProvider implements SaveProvider {
         this.saveCommandContext = new SaveCommandContext(entityClass);
     }
 
-    protected boolean isSavePathLimitContains(NavigateMetadata navigateMetadata,int deep){
-        if(savePathLimit.isEmpty()){
+    protected boolean isSavePathLimitContains(NavigateMetadata navigateMetadata, int deep) {
+        if (savePathLimit.isEmpty()) {
             return true;
         }
-        if(savePathLimit.size()>deep){
+        if (savePathLimit.size() > deep) {
             return savePathLimit.get(deep).contains(navigateMetadata.getPropertyName());
         }
         return false;
     }
+
     protected TargetValueTypeEnum getTargetValueType(EntityMetadata selfMetadata, NavigateMetadata navigateMetadata) {
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
             if (navigateMetadata.getMappingClass() != null) {
@@ -93,14 +94,20 @@ public abstract class AbstractSaveProvider implements SaveProvider {
 
         String[] selfPropertiesOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
         Collection<String> keyProperties = selfMetadata.getKeyProperties();
-        return EasyArrayUtil.any(selfPropertiesOrPrimary, prop -> keyProperties.contains(prop));
+        if (selfPropertiesOrPrimary.length != keyProperties.size()) {
+            return false;
+        }
+        return EasyArrayUtil.all(selfPropertiesOrPrimary, prop -> keyProperties.contains(prop));
     }
 
     protected boolean targetPropsIsKeys(EntityMetadata selfMetadata, NavigateMetadata navigateMetadata) {
 
         String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
         Collection<String> keyProperties = selfMetadata.getKeyProperties();
-        return EasyArrayUtil.any(targetPropertiesOrPrimary, prop -> keyProperties.contains(prop));
+        if (targetPropertiesOrPrimary.length != keyProperties.size()) {
+            return false;
+        }
+        return EasyArrayUtil.all(targetPropertiesOrPrimary, prop -> keyProperties.contains(prop));
     }
 
     protected void setTargetValue(TargetValueTypeEnum targetValueType, Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata, NavigateMetadata navigateMetadata, EntityMetadata targetEntityMetadata) {
@@ -113,7 +120,7 @@ public abstract class AbstractSaveProvider implements SaveProvider {
                 ColumnMetadata selfColumn = selfEntityMetadata.getColumnNotNull(self);
                 Object selfValue = selfColumn.getGetterCaller().apply(selfEntity);
                 if (selfValue == null) {
-                    throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getInstanceSimpleName(selfEntity) + "] property:[" + self + "] value can not be null, cant set relation value for entity:["+EasyClassUtil.getInstanceSimpleName(targetEntity)+"]");
+                    throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getInstanceSimpleName(selfEntity) + "] property:[" + self + "] value can not be null, cant set relation value for entity:[" + EasyClassUtil.getInstanceSimpleName(targetEntity) + "]");
                 }
                 ColumnMetadata targetColumn = targetEntityMetadata.getColumnNotNull(target);
                 Object currentValue = targetColumn.getGetterCaller().apply(targetEntity);
@@ -134,7 +141,7 @@ public abstract class AbstractSaveProvider implements SaveProvider {
                 ColumnMetadata targetColumn = targetEntityMetadata.getColumnNotNull(target);
                 Object targetValue = targetColumn.getGetterCaller().apply(targetEntity);
                 if (targetValue == null) {
-                    throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getInstanceSimpleName(targetEntity) + "] property:[" + target + "] value can not be null, cant set relation value for entity:["+EasyClassUtil.getInstanceSimpleName(selfEntity)+"]");
+                    throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getInstanceSimpleName(targetEntity) + "] property:[" + target + "] value can not be null, cant set relation value for entity:[" + EasyClassUtil.getInstanceSimpleName(selfEntity) + "]");
                 }
                 ColumnMetadata selfColumn = selfEntityMetadata.getColumnNotNull(self);
                 selfColumn.getSetterCaller().call(selfEntity, targetValue);
@@ -162,7 +169,7 @@ public abstract class AbstractSaveProvider implements SaveProvider {
             ColumnMetadata selfColumn = selfEntityMetadata.getColumnNotNull(self);
             Object selfValue = selfColumn.getGetterCaller().apply(selfEntity);
             if (selfValue == null) {
-                throw new EasyQueryInvalidOperationException("entityClass:[" + EasyClassUtil.getInstanceSimpleName(selfEntity) + "] property:[" + self + "] value can not be null,Please make sure the ["+EasyClassUtil.getInstanceSimpleName(selfEntity)+"] instance has been persisted to the database before use.");
+                throw new EasyQueryInvalidOperationException("entityClass:[" + EasyClassUtil.getInstanceSimpleName(selfEntity) + "] property:[" + self + "] value can not be null,Please make sure the [" + EasyClassUtil.getInstanceSimpleName(selfEntity) + "] instance has been persisted to the database before use.");
             }
             ColumnMetadata columnMetadata = mappingEntityMetadata.getColumnNotNull(selfMappingProperty);
             columnMetadata.getSetterCaller().call(mappingEntity, selfValue);
@@ -175,14 +182,14 @@ public abstract class AbstractSaveProvider implements SaveProvider {
             ColumnMetadata targetColumn = targetEntityMetadata.getColumnNotNull(target);
             Object targetValue = targetColumn.getGetterCaller().apply(targetEntity);
             if (targetValue == null) {
-                throw new EasyQueryInvalidOperationException("entityClass:[" + EasyClassUtil.getInstanceSimpleName(targetEntity) + "] property:[" + target + "] value can not be null,Please make sure the ["+EasyClassUtil.getInstanceSimpleName(targetEntity)+"] instance has been persisted to the database before use.");
+                throw new EasyQueryInvalidOperationException("entityClass:[" + EasyClassUtil.getInstanceSimpleName(targetEntity) + "] property:[" + target + "] value can not be null,Please make sure the [" + EasyClassUtil.getInstanceSimpleName(targetEntity) + "] instance has been persisted to the database before use.");
             }
             ColumnMetadata columnMetadata = mappingEntityMetadata.getColumnNotNull(targetMappingProperty);
             columnMetadata.getSetterCaller().call(mappingEntity, targetValue);
         }
     }
 
-protected abstract EntityMetadata checkNavigateContinueAndGetTargetEntityMetadata(NavigateMetadata navigateMetadata,Object entity,EntityMetadata entityMetadata,int deep);
+    protected abstract EntityMetadata checkNavigateContinueAndGetTargetEntityMetadata(NavigateMetadata navigateMetadata, Object entity, EntityMetadata entityMetadata, int deep);
 
 
     protected List<NavigateMetadata> getNavigateSavableValueObjects(SavableContext savableContext, Object entity, EntityMetadata entityMetadata, Collection<NavigateMetadata> navigateMetadataList, int deep) {
@@ -195,7 +202,7 @@ protected abstract EntityMetadata checkNavigateContinueAndGetTargetEntityMetadat
             navigateMetadataSet.remove(navigateMetadata);
 
             EntityMetadata targetEntityMetadata = checkNavigateContinueAndGetTargetEntityMetadata(navigateMetadata, entity, entityMetadata, deep);
-            if(targetEntityMetadata==null){
+            if (targetEntityMetadata == null) {
                 continue;
             }
             //如果导航属性是值类型并且没有循环引用且没有被追踪才继续下去
