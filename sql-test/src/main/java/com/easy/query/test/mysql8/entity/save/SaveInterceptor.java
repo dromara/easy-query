@@ -52,6 +52,7 @@ public class SaveInterceptor implements EntityInterceptor{
                 || M8SaveRoot2Many.class.equals(entityClass)
                 || M8SaveRootMany.class.equals(entityClass)
                 || M8SaveRootMiddleMany.class.equals(entityClass)
-                || M8SaveRootOne.class.equals(entityClass);
+                || M8SaveRootOne.class.equals(entityClass)
+                || M8SaveRootManyOne.class.equals(entityClass);
     }
 }
