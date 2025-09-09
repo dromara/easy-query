@@ -69,7 +69,7 @@ public class InsertSaveProvider extends AbstractSaveProvider {
             if (!this.saveCommandContext.circulateCheck(navigateMetadata.getNavigatePropertyType(), deep)) {
                 TargetValueTypeEnum targetValueType = getTargetValueType(entityMetadata, navigateMetadata);
                 //我的id就是我们的关联关系键 多对多除外 还需要赋值一遍吧我的id给他 多对多下 需要处理的值对象是关联表 如果无关联中间表则目标对象是一个独立对象
-                if (targetValueType == TargetValueTypeEnum.VALUE_OBJECT || targetValueType == TargetValueTypeEnum.AGGREGATE_ROOT) {
+                if (targetValueType == TargetValueTypeEnum.VALUE_OBJECT) {
                     processNavigate(targetValueType, entity, entityMetadata, navigateMetadata, savableContext);
                 }
             }
@@ -139,10 +139,10 @@ public class InsertSaveProvider extends AbstractSaveProvider {
 
 
         } else {
-            saveNode.getInserts().add(new SaveNode.InsertItem(targetEntity, t -> {
-                setTargetValue(targetValueType, selfEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
-            }));
             if (targetValueType == TargetValueTypeEnum.VALUE_OBJECT) {
+                saveNode.getInserts().add(new SaveNode.InsertItem(targetEntity, t -> {
+                    setTargetValue(targetValueType, selfEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
+                }));
                 EntityState trackEntityState = currentTrackContext.getTrackEntityState(targetEntity);
                 if (trackEntityState == null) {
                     saveEntity(targetEntity, targetEntityMetadata, saveNode.getIndex() + 1);
