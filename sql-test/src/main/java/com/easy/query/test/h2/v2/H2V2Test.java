@@ -82,4 +82,40 @@ public class H2V2Test extends H2V2BaseTest{
         Assert.assertEquals(alltype1.getNumberByteBasic(), alltype.getNumberByteBasic());
         Assert.assertEquals(alltype1.isEnableBasic(), alltype.isEnableBasic());
     }
+
+
+    @Test
+    public void testAllType1(){
+
+        ALLTYPE alltype = new ALLTYPE();
+        alltype.setId("123456123123");
+
+        alltype.setNumberDecimal(new BigDecimal("12.33"));
+        alltype.setNumberFloat(12.3f);
+        alltype.setNumberDouble(22.1d);
+        alltype.setNumberShort(new Short("12"));
+        alltype.setNumberInteger(33);
+        alltype.setNumberLong(12345678911L);
+        alltype.setNumberByte(new Byte("-1"));
+        alltype.setEnable(true);
+        alltype.setTimeLocalDateTime(LocalDateTime.of(2021, 1, 1, 0, 0));
+        alltype.setTimeLocalDate(LocalDate.of(2121, 1, 2));
+        alltype.setTimeLocalTime(LocalTime.of(21, 1, 9));
+        alltype.setOnlyDate(new Date());
+        long epochMilli = LocalDateTime.now().toLocalDate().atStartOfDay()
+                .toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
+        java.sql.Date date = new java.sql.Date(epochMilli);
+        alltype.setSqlDate(date);
+        alltype.setOnlyTime(Time.valueOf("12:09:10"));
+        alltype.setValue("3322");
+        alltype.setUid(UUID.randomUUID());
+        alltype.setNumberFloatBasic(12.3f);
+        alltype.setNumberDoubleBasic(22.1d);
+        alltype.setNumberShortBasic(new Short("12"));
+        alltype.setNumberIntegerBasic(33);
+        alltype.setNumberLongBasic(12345678911L);
+        alltype.setNumberByteBasic(new Byte("-1"));
+        alltype.setEnableBasic(true);
+        long l = easyEntityQuery.insertable(alltype).onConflictThen(s-> s.FETCHER.allFields()).executeRows();
+    }
 }

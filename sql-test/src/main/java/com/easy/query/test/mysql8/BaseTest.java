@@ -48,6 +48,8 @@ import com.easy.query.test.mysql8.entity.save.SaveInterceptor;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,9 +77,31 @@ public class BaseTest {
 
 
     public static void init() {
+//        initDatasource111();
+
         initDatasource();
         initEasyQuery();
     }
+
+//    public static void initDatasource111() {
+//
+//        HikariDataSource dataSource1 = new HikariDataSource();
+//        dataSource1.setJdbcUrl("jdbc:mysql://127.0.0.1:3316/easy-query-testxyzasd?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true");
+//        dataSource1.setUsername("root");
+//        dataSource1.setPassword("root");
+//        dataSource1.setDriverClassName("com.mysql.cj.jdbc.Driver");
+//        dataSource1.setMaximumPoolSize(20);
+//
+//        Connection connection = null;
+//        try {
+//            connection = dataSource1.getConnection();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        System.out.println(connection);
+//
+////        postgres://postgres:postgrespw@localhost:55000
+//    }
 
     public static void initDatasource() {
 

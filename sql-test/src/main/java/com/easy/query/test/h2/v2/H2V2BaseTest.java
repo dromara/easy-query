@@ -76,10 +76,10 @@ public class H2V2BaseTest {
     }
 
     public static void initDatasource() {
-
         dataSource = new EmbeddedDatabaseBuilder()
-                .setName("mytest")
+                .setName("mytest;MODE=MySQL")//建议强制mysql模式譬如insertOrUpdate或者InsertOrIgnore并没有很好的原生支持所以默认H2的方言采用mysql的语法
                 .setType(EmbeddedDatabaseType.H2)
+
                 .build();
 
 //        postgres://postgres:postgrespw@localhost:55000
