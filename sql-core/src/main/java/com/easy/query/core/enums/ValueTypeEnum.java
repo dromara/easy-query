@@ -6,7 +6,7 @@ package com.easy.query.core.enums;
  *
  * @author xuejiaming
  */
-public enum SaveModeEnum {
+public enum ValueTypeEnum {
     //自动检测当前导航属性(多对多有中间表需要用户指定)
     AUTO_CHECK,
     //当前导航属性忽略不保存

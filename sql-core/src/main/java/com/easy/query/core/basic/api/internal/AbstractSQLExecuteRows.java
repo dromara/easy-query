@@ -1,10 +1,16 @@
 package com.easy.query.core.basic.api.internal;
 
+import com.easy.query.core.basic.extension.track.EntityState;
+import com.easy.query.core.basic.extension.track.TrackContext;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+
+import java.util.List;
 
 /**
  * @author xuejiaming
@@ -91,5 +97,37 @@ public abstract class AbstractSQLExecuteRows<TChain> implements SQLExecuteExpect
             entityExpressionBuilder.getExpressionContext().getBehavior().addBehavior(EasyBehaviorEnum.EXECUTE_NO_BATCH);
         }
         return (TChain) this;
+    }
+
+
+
+    protected <T> void refreshTrackEntities(List<T> entities) {
+        TrackContext trackContext = getTrackContextOrNull();
+        if (trackContext != null) {
+            for (Object trackEntity : entities) {
+                EntityState trackEntityState = trackContext.getTrackEntityState(trackEntity);
+                if(trackEntityState!=null){
+                    trackEntityState.refresh();
+                }
+            }
+        }
+    }
+    protected <T> void removeTrackEntities(List<T> entities) {
+        TrackContext trackContext = getTrackContextOrNull();
+        if (trackContext != null) {
+            for (Object trackEntity : entities) {
+                EntityState trackEntityState = trackContext.getTrackEntityState(trackEntity);
+                if(trackEntityState!=null){
+                    trackContext.removeTracking(trackEntity);
+                }
+            }
+        }
+    }
+
+    protected TrackContext getTrackContextOrNull() {
+
+        QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
+        TrackManager trackManager = runtimeContext.getTrackManager();
+        return trackManager.currentThreadTracking() ? trackManager.getCurrentTrackContext() : null;
     }
 }

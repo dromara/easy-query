@@ -2,12 +2,13 @@ package com.easy.query.api.proxy.entity.save.provider;
 
 import com.easy.query.api.proxy.entity.save.SavableContext;
 import com.easy.query.api.proxy.entity.save.SaveCommandContext;
+import com.easy.query.api.proxy.entity.save.SaveModeEnum;
 import com.easy.query.api.proxy.entity.save.TargetValueTypeEnum;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
-import com.easy.query.core.enums.SaveModeEnum;
+import com.easy.query.core.enums.ValueTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -38,15 +39,17 @@ public abstract class AbstractSaveProvider implements SaveProvider {
     protected final QueryRuntimeContext runtimeContext;
     protected final EntityMetadataManager entityMetadataManager;
     protected final TrackContext currentTrackContext;
+    protected final SaveModeEnum saveMode;
     protected final List<Set<String>> savePathLimit;
     protected final SaveCommandContext saveCommandContext;
 
-    public AbstractSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit) {
+    public AbstractSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveModeEnum saveMode) {
         this.entityClass = entityClass;
         this.entities = entities;
         this.easyQueryClient = easyQueryClient;
         this.runtimeContext = easyQueryClient.getRuntimeContext();
         this.currentTrackContext = currentTrackContext;
+        this.saveMode = saveMode;
         this.entityMetadataManager = runtimeContext.getEntityMetadataManager();
         this.savePathLimit = savePathLimit;
         this.saveCommandContext = new SaveCommandContext(entityClass);
@@ -63,14 +66,14 @@ public abstract class AbstractSaveProvider implements SaveProvider {
     }
 
     protected TargetValueTypeEnum getTargetValueType(EntityMetadata selfMetadata, NavigateMetadata navigateMetadata) {
-        if (navigateMetadata.getSaveMode() != SaveModeEnum.IGNORE) {
-            if (navigateMetadata.getSaveMode() == SaveModeEnum.AUTO_CHECK) {
+        if (navigateMetadata.getValueType() != ValueTypeEnum.IGNORE) {
+            if (navigateMetadata.getValueType() == ValueTypeEnum.AUTO_CHECK) {
                 return autoGetTargetValueType(selfMetadata, navigateMetadata);
             }
-            if (navigateMetadata.getSaveMode() == SaveModeEnum.AGGREGATE_ROOT) {
+            if (navigateMetadata.getValueType() == ValueTypeEnum.AGGREGATE_ROOT) {
                 return TargetValueTypeEnum.AGGREGATE_ROOT;
             }
-            if (navigateMetadata.getSaveMode() == SaveModeEnum.VALUE_OBJECT) {
+            if (navigateMetadata.getValueType() == ValueTypeEnum.VALUE_OBJECT) {
                 return TargetValueTypeEnum.VALUE_OBJECT;
             }
         }

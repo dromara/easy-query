@@ -2,6 +2,7 @@ package com.easy.query.api.proxy.entity.save.command;
 
 import com.easy.query.api.proxy.entity.save.SavableContext;
 import com.easy.query.api.proxy.entity.save.SaveCommandContext;
+import com.easy.query.api.proxy.entity.save.SaveModeEnum;
 import com.easy.query.api.proxy.entity.save.SaveNode;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -24,13 +25,15 @@ public class BasicSaveCommand implements SaveCommand {
     private final List<Object> updates;
     private final EasyQueryClient easyQueryClient;
     private final SaveCommandContext saveCommandContext;
+    private final SaveModeEnum saveMode;
 
-    public BasicSaveCommand(EntityMetadata entityMetadata, List<Object> inserts,List<Object> updates, EasyQueryClient easyQueryClient, SaveCommandContext saveCommandContext) {
+    public BasicSaveCommand(EntityMetadata entityMetadata, List<Object> inserts, List<Object> updates, EasyQueryClient easyQueryClient, SaveCommandContext saveCommandContext, SaveModeEnum saveMode) {
         this.entityMetadata = entityMetadata;
         this.inserts = inserts;
         this.updates = updates;
         this.easyQueryClient = easyQueryClient;
         this.saveCommandContext = saveCommandContext;
+        this.saveMode = saveMode;
     }
 
     @Override
@@ -58,7 +61,9 @@ public class BasicSaveCommand implements SaveCommand {
             }
         }
         easyQueryClient.insertable(inserts).batch(batch).executeRows(insertFillAutoIncrement(entityMetadata));
-        easyQueryClient.updatable(updates).batch(batch).executeRows();
+        if (saveMode == SaveModeEnum.DEFAULT) {
+            easyQueryClient.updatable(updates).batch(batch).executeRows();
+        }
         for (int i = 0; i < savableContexts.size(); i++) {
             SavableContext savableContext = savableContexts.get(i);
             for (Map.Entry<NavigateMetadata, SaveNode> nodeKv : savableContext.getSaveNodeMap().entrySet()) {

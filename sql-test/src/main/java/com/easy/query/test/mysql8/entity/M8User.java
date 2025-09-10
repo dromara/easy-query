@@ -23,7 +23,7 @@ import java.util.List;
 @EntityProxy
 @Table("m8_user")
 @FieldNameConstants
-public class M8User implements ProxyEntityAvailable<M8User , M8UserProxy> {
+public class M8User implements ProxyEntityAvailable<M8User, M8UserProxy> {
     @Column(primaryKey = true)
     private String id;
     private String name;
@@ -37,4 +37,5 @@ public class M8User implements ProxyEntityAvailable<M8User , M8UserProxy> {
             targetProperty = {M8Role.Fields.id},
             targetMappingProperty = {M8UserRole.Fields.roleId})
     private List<M8Role> roles;
+
 }

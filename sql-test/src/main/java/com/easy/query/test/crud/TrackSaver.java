@@ -65,7 +65,7 @@ public class TrackSaver<TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEn
             if (trackKey == null) {
                 throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityClass) + ": current entity cant get track key,primary maybe null");
             }
-            T t = EasyObjectUtil.<Object, T>typeCastNotNull(currentTrackContext.createAndCopyValue(entity, entityMetadata));
+            T t = EasyObjectUtil.<Object, T>typeCastNotNull(EasyTrackUtil.createAndCopyValue(entity, entityMetadata));
             originals.add(t);
             T old = entityMap.put(trackKey, entity);
             if (old != null) {

@@ -1,5 +1,6 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.EntityTrackProperty;
 import com.easy.query.core.basic.extension.track.EntityValueState;
@@ -155,6 +156,32 @@ public class EasyTrackUtil {
         return false;
     }
 
+    public static Object createAndCopyValue(Object entity, EntityMetadata entityMetadata) {
+
+//        Class<?> entityClass = entity.getClass();
+        Object original = entityMetadata.getBeanConstructorCreator().get();
+        for (Map.Entry<String, ColumnMetadata> columnMetadataEntry : entityMetadata.getProperty2ColumnMap().entrySet()) {
+            ColumnMetadata columnMetadata = columnMetadataEntry.getValue();
+            Class<?> propertyType = columnMetadata.getPropertyType();
+//            Property<Object, ?> beanGetter = columnMetadata.getGetterCaller();
+//            Object value = beanGetter.apply(entity);
+            if (EasyClassUtil.isBasicType(propertyType) || EasyClassUtil.isEnumType(propertyType)) {
+                Object value = EasyBeanUtil.getPropertyValue(entity, entityMetadata, columnMetadata);
+                EasyBeanUtil.setPropertyValue(original, entityMetadata, columnMetadata, value, false);
+//                beanSetter.call(original, value);
+            } else {
+                Object value = columnMetadata.isValueObject() ? columnMetadata.getBeanConstructorCreatorOrNull().get() : EasyBeanUtil.getPropertyValue(entity, entityMetadata, columnMetadata);
+                ValueConverter<?, ?> valueConverter = columnMetadata.getValueConverter();
+                Object serializeValue = valueConverter.serialize(EasyObjectUtil.typeCastNullable(value), columnMetadata);
+                Object deserialize = valueConverter.deserialize(EasyObjectUtil.typeCastNullable(serializeValue), columnMetadata);
+
+                EasyBeanUtil.setPropertyValue(original, entityMetadata, columnMetadata, deserialize, false);
+//                PropertySetterCaller<Object> beanSetter = columnMetadata.getSetterCaller();
+//                beanSetter.call(original, deserialize);
+            }
+        }
+        return original;
+    }
 //    public static Set<String> getTrackIgnoreProperties(EntityMetadataManager entityMetadataManager, EntityState entityState) {
 //        Class<?> entityClass = entityState.getEntityClass();
 //        EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entityClass);

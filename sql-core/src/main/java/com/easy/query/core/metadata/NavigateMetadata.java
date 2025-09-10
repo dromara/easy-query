@@ -4,7 +4,7 @@ import com.easy.query.core.common.DirectMappingIterator;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.PartitionOrderEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
-import com.easy.query.core.enums.SaveModeEnum;
+import com.easy.query.core.enums.ValueTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
@@ -70,7 +70,7 @@ public class NavigateMetadata {
     private final boolean subQueryToGroupJoin;
     private final PartitionOrderEnum partitionOrder;
     private final boolean ignoreAutoInclude;
-    private final SaveModeEnum saveMode;
+    private final ValueTypeEnum valueType;
 
     public NavigateMetadata(NavigateOption navigateOption,
                             Property<Object, ?> getter,
@@ -99,7 +99,7 @@ public class NavigateMetadata {
         this.subQueryToGroupJoin = navigateOption.isSubQueryToGroupJoin();
         this.partitionOrder = navigateOption.getPartitionOrder();
         this.ignoreAutoInclude = navigateOption.isIgnoreAutoInclude();
-        this.saveMode = navigateOption.getSaveMode();
+        this.valueType = navigateOption.getValueType();
         if (EasyArrayUtil.isNotEmpty(directMapping)) {
             this.directMappingMetadataMap = new ConcurrentHashMap<>(2);
         } else {
@@ -337,7 +337,7 @@ public class NavigateMetadata {
         return ignoreAutoInclude;
     }
 
-    public SaveModeEnum getSaveMode() {
-        return saveMode;
+    public ValueTypeEnum getValueType() {
+        return valueType;
     }
 }

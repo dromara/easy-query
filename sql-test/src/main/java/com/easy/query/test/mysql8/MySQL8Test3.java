@@ -53,6 +53,8 @@ import com.easy.query.test.mysql8.dto.MyComment4;
 import com.easy.query.test.mysql8.entity.BatchInsert;
 import com.easy.query.test.mysql8.entity.Comment;
 import com.easy.query.test.mysql8.entity.M8Parent;
+import com.easy.query.test.mysql8.entity.M8Role;
+import com.easy.query.test.mysql8.entity.M8User;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
@@ -728,5 +730,30 @@ public class MySQL8Test3 extends BaseTest {
                         .select(user -> new StringProxy(user.phone())))
                 .toList();
     }
+//
+//    @Test
+//    public  void testMany2One(){
+//        SysUser sysUser = new SysUser();
+//        sysUser.setPhone("....");
+//        SysBankCard sysBankCard = new SysBankCard();
+//        sysBankCard.setCode("....");
+//
+//        SysBank sysBank = new SysBank();
+//        sysBank.setName("....");
+//        sysBankCard.setBank(sysBank);
+//
+//        sysUser.setBankCards(Arrays.asList(sysBankCard));
+//
+//        //这么写会报错因为SysBankCard存在一个聚合根,那么会将这个聚合根的关联属性bankId赋值但是因为初始化所以sysBank还没有id会报错
+////        easyEntityQuery.savable(sysUser).executeCommand();
+//
+//        try(Transaction transaction = easyEntityQuery.beginTransaction()){
+//            easyEntityQuery.savable(sysBank).executeCommand();
+//            easyEntityQuery.savable(sysUser).executeCommand();
+//            transaction.commit();
+//        }
+//
+//    }
+
 
 }

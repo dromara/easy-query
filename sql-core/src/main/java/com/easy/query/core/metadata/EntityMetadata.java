@@ -423,7 +423,7 @@ public class EntityMetadata {
 
 
             if (RelationTypeEnum.ManyToMany == relationType) {
-                navigateOption.setSaveMode(navigate.onSave());
+                navigateOption.setValueType(navigate.onSave());
                 //有中间表多对多
                 if (!Objects.equals(Object.class, navigate.mappingClass())) {
                     if (EasyArrayUtil.isEmpty(navigate.selfMappingProperty())) {

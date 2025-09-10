@@ -27,8 +27,6 @@ public interface TrackContext {
     EntityState getTrackEntityState(@Nullable Object entity);
     EntityState getTrackEntityState(Class<?> entityClass,String trackKey);
 
-    Object createAndCopyValue(Object entity, EntityMetadata entityMetadata);
-
     default @NotNull EntityState getTrackEntityStateNotNull(@Nullable Object entity) {
         EntityState trackEntityState = getTrackEntityState(entity);
         Objects.requireNonNull(trackEntityState, "cant get track entity state");

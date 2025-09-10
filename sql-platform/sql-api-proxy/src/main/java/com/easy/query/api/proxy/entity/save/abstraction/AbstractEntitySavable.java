@@ -1,6 +1,7 @@
 package com.easy.query.api.proxy.entity.save.abstraction;
 
 import com.easy.query.api.proxy.entity.save.EntitySavable;
+import com.easy.query.api.proxy.entity.save.SaveModeEnum;
 import com.easy.query.api.proxy.entity.save.command.SaveCommand;
 import com.easy.query.api.proxy.entity.save.provider.AutoTrackSaveProvider;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -38,6 +39,7 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     private final QueryRuntimeContext runtimeContext;
     private final TrackContext currentTrackContext;
     private boolean batch;
+    private SaveModeEnum saveMode;
     private IncludePathTreeNode includePathTreeRoot;
 
     public AbstractEntitySavable(TProxy tProxy, Class<T> entityClass, Collection<T> entities, EasyQueryClient easyQueryClient) {
@@ -55,6 +57,7 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
         }
         this.currentTrackContext = Objects.requireNonNull(runtimeContext.getTrackManager().getCurrentTrackContext(), "currentTrackContext can not be null");
         this.batch = false;
+        this.saveMode = SaveModeEnum.DEFAULT;
     }
 
     @Override
@@ -65,6 +68,12 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     @Override
     public EntitySavable<TProxy, T> batch(boolean use) {
         this.batch = use;
+        return this;
+    }
+
+    @Override
+    public EntitySavable<TProxy, T> saveMode(SaveModeEnum saveType) {
+        this.saveMode =saveType;
         return this;
     }
 
@@ -88,7 +97,7 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     public void executeCommand() {
         if (!entities.isEmpty()) {
             List<Set<String>> savePathLimit = getSavePathLimit();
-            SaveCommand command = new AutoTrackSaveProvider(currentTrackContext, entityClass, EasyObjectUtil.typeCastNotNull(entities), easyQueryClient, savePathLimit).createCommand();
+            SaveCommand command = new AutoTrackSaveProvider(currentTrackContext, entityClass, EasyObjectUtil.typeCastNotNull(entities), easyQueryClient, savePathLimit, saveMode).createCommand();
             command.execute(batch);
         }
     }

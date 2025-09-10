@@ -107,7 +107,7 @@ public class DefaultTrackContext implements TrackContext {
             }
             return originalEntityState;
         } else {
-            Object original = createAndCopyValue(entity, entityMetadata);
+            Object original = EasyTrackUtil.createAndCopyValue(entity, entityMetadata);
             EntityState entityState = new EntityState(entityMetadata, trackKey, original, entity);
             entityStateMap.putIfAbsent(trackKey, entityState);
             return entityState;
@@ -142,7 +142,6 @@ public class DefaultTrackContext implements TrackContext {
         return true;
     }
 
-
     @Override
     public boolean hasTracked(Class<?> entityClass) {
         if (entityClass == null) {
@@ -155,40 +154,6 @@ public class DefaultTrackContext implements TrackContext {
         return !entityStateMap.isEmpty();
     }
 
-    /**
-     * 实体对象零拷贝
-     *
-     * @param entity
-     * @param entityMetadata
-     * @return
-     */
-    @Override
-    public Object createAndCopyValue(Object entity, EntityMetadata entityMetadata) {
-
-//        Class<?> entityClass = entity.getClass();
-        Object original = entityMetadata.getBeanConstructorCreator().get();
-        for (Map.Entry<String, ColumnMetadata> columnMetadataEntry : entityMetadata.getProperty2ColumnMap().entrySet()) {
-            ColumnMetadata columnMetadata = columnMetadataEntry.getValue();
-            Class<?> propertyType = columnMetadata.getPropertyType();
-//            Property<Object, ?> beanGetter = columnMetadata.getGetterCaller();
-//            Object value = beanGetter.apply(entity);
-            if (EasyClassUtil.isBasicType(propertyType) || EasyClassUtil.isEnumType(propertyType)) {
-                Object value = EasyBeanUtil.getPropertyValue(entity, entityMetadata, columnMetadata);
-                EasyBeanUtil.setPropertyValue(original, entityMetadata, columnMetadata, value, false);
-//                beanSetter.call(original, value);
-            } else {
-                Object value = columnMetadata.isValueObject() ? columnMetadata.getBeanConstructorCreatorOrNull().get() : EasyBeanUtil.getPropertyValue(entity, entityMetadata, columnMetadata);
-                ValueConverter<?, ?> valueConverter = columnMetadata.getValueConverter();
-                Object serializeValue = valueConverter.serialize(EasyObjectUtil.typeCastNullable(value), columnMetadata);
-                Object deserialize = valueConverter.deserialize(EasyObjectUtil.typeCastNullable(serializeValue), columnMetadata);
-
-                EasyBeanUtil.setPropertyValue(original, entityMetadata, columnMetadata, deserialize, false);
-//                PropertySetterCaller<Object> beanSetter = columnMetadata.getSetterCaller();
-//                beanSetter.call(original, deserialize);
-            }
-        }
-        return original;
-    }
 
     @Override
     public boolean release() {

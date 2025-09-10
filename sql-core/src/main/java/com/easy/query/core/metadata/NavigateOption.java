@@ -2,7 +2,7 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.enums.PartitionOrderEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
-import com.easy.query.core.enums.SaveModeEnum;
+import com.easy.query.core.enums.ValueTypeEnum;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -39,7 +39,7 @@ public class NavigateOption {
     private boolean subQueryToGroupJoin = false;
     private boolean ignoreAutoInclude = false;
     private PartitionOrderEnum partitionOrder;
-    private SaveModeEnum saveMode;
+    private ValueTypeEnum valueType;
 
     public NavigateOption(EntityMetadata entityMetadata,
                           String propertyName,
@@ -62,7 +62,7 @@ public class NavigateOption {
         this.limit = limit;
         this.directMapping = directMapping;
         this.partitionOrder = PartitionOrderEnum.THROW;
-        this.saveMode = SaveModeEnum.AUTO_CHECK;
+        this.valueType = ValueTypeEnum.AUTO_CHECK;
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -193,11 +193,11 @@ public class NavigateOption {
         this.ignoreAutoInclude = ignoreAutoInclude;
     }
 
-    public SaveModeEnum getSaveMode() {
-        return saveMode;
+    public ValueTypeEnum getValueType() {
+        return valueType;
     }
 
-    public void setSaveMode(SaveModeEnum saveMode) {
-        this.saveMode = saveMode;
+    public void setValueType(ValueTypeEnum valueType) {
+        this.valueType = valueType;
     }
 }

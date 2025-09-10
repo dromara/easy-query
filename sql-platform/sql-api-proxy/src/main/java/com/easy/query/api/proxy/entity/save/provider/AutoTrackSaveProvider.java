@@ -1,6 +1,7 @@
 package com.easy.query.api.proxy.entity.save.provider;
 
 import com.easy.query.api.proxy.entity.save.SavableContext;
+import com.easy.query.api.proxy.entity.save.SaveModeEnum;
 import com.easy.query.api.proxy.entity.save.SaveNode;
 import com.easy.query.api.proxy.entity.save.TargetValueTypeEnum;
 import com.easy.query.api.proxy.entity.save.command.EmptySaveCommand;
@@ -11,7 +12,7 @@ import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.EntityValueState;
 import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.enums.RelationTypeEnum;
-import com.easy.query.core.enums.SaveModeEnum;
+import com.easy.query.core.enums.ValueTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -39,8 +40,8 @@ import java.util.Set;
  */
 public class AutoTrackSaveProvider extends AbstractSaveProvider {
 
-    public AutoTrackSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit) {
-        super(currentTrackContext,entityClass, entities, easyQueryClient, savePathLimit);
+    public AutoTrackSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveModeEnum saveMode) {
+        super(currentTrackContext, entityClass, entities, easyQueryClient, savePathLimit, saveMode);
     }
 
 
@@ -63,7 +64,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                 }
                 saveEntity(entity, entityMetadata, 0);
             }
-            return new BasicSaveCommand(entityMetadata, inserts, updates, easyQueryClient, saveCommandContext);
+            return new BasicSaveCommand(entityMetadata, inserts, updates, easyQueryClient, saveCommandContext,saveMode);
         }
 
         return EmptySaveCommand.INSTANCE;
@@ -202,11 +203,11 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             if (navigateMetadata.getMappingClass() == null) {
                 throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "]-[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] many to many relation must have mapping class");
             }
-            if (navigateMetadata.getSaveMode() == SaveModeEnum.AUTO_CHECK) {
+            if (navigateMetadata.getValueType() == ValueTypeEnum.AUTO_CHECK) {
                 throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "]-[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] many to many relation mapping class save mode is not set");
             }
             //自动处理中间表
-            if (navigateMetadata.getSaveMode() == SaveModeEnum.VALUE_OBJECT) {
+            if (navigateMetadata.getValueType() == ValueTypeEnum.VALUE_OBJECT) {
                 EntityMetadata mappingClassEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getMappingClass());
                 Object mappingEntity = mappingClassEntityMetadata.getBeanConstructorCreator().get();
                 setMappingEntity(selfEntity, targetEntity, mappingEntity, selfEntityMetadata, navigateMetadata, targetEntityMetadata, mappingClassEntityMetadata);
@@ -223,7 +224,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             if (navigateMetadata.getMappingClass() == null) {
                 throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "]-[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] many to many relation must have mapping class");
             }
-            if (navigateMetadata.getSaveMode() == SaveModeEnum.AUTO_CHECK) {
+            if (navigateMetadata.getValueType() == ValueTypeEnum.AUTO_CHECK) {
                 throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "]-[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] many to many relation mapping class save mode is not set");
             }
             //自动的简单中间表不需要更新
@@ -245,11 +246,11 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             if (navigateMetadata.getMappingClass() == null) {
                 throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "]-[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] many to many relation must have mapping class");
             }
-            if (navigateMetadata.getSaveMode() == SaveModeEnum.AUTO_CHECK) {
+            if (navigateMetadata.getValueType() == ValueTypeEnum.AUTO_CHECK) {
                 throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "]-[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] many to many relation mapping class save mode not set");
             }
             //自动处理中间表
-            if (navigateMetadata.getSaveMode() == SaveModeEnum.VALUE_OBJECT) {
+            if (navigateMetadata.getValueType() == ValueTypeEnum.VALUE_OBJECT) {
                 EntityMetadata mappingClassEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getMappingClass());
                 Object mappingEntity = mappingClassEntityMetadata.getBeanConstructorCreator().get();
                 saveNode.getInserts().add(new SaveNode.InsertItem(mappingEntity, t -> {

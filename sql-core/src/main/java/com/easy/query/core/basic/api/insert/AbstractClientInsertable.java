@@ -3,6 +3,9 @@ package com.easy.query.core.basic.api.insert;
 import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
 import com.easy.query.core.basic.extension.interceptor.EntityInterceptor;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
+import com.easy.query.core.basic.extension.track.EntityState;
+import com.easy.query.core.basic.extension.track.TrackContext;
+import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
@@ -28,6 +31,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
+import com.easy.query.core.util.EasyTrackUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -150,12 +154,32 @@ public abstract class AbstractClientInsertable<T> implements ClientInsertable<T>
             ExecutorContext executorContext = ExecutorContext.create(entityInsertExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.INSERT);
             insertBefore();
             EntityExpressionPrepareExecutor entityExpressionPrepareExecutor = entityInsertExpressionBuilder.getRuntimeContext().getEntityExpressionPrepareExecutor();
-            return entityExpressionPrepareExecutor.insert(executorContext, entities, entityInsertExpressionBuilder, fillAutoIncrement);
+            long insert = entityExpressionPrepareExecutor.insert(executorContext, entities, entityInsertExpressionBuilder, fillAutoIncrement);
+            addTrackEntities(entities);
+            return insert;
         }
 
         return 0;
     }
 
+    protected <TEntity> void addTrackEntities(List<TEntity> entities) {
+        TrackContext trackContext = getTrackContextOrNull();
+        if (trackContext != null) {
+            for (TEntity trackEntity : entities) {
+                String trackKey = EasyTrackUtil.getTrackKey(entityMetadata, trackEntity);
+                if(trackKey!=null){
+                    trackContext.addQueryTracking(trackEntity);
+                }
+            }
+        }
+    }
+
+    protected TrackContext getTrackContextOrNull() {
+
+        QueryRuntimeContext runtimeContext = entityInsertExpressionBuilder.getRuntimeContext();
+        TrackManager trackManager = runtimeContext.getTrackManager();
+        return trackManager.currentThreadTracking() ? trackManager.getCurrentTrackContext() : null;
+    }
     @Override
     public ClientInsertable<T> asTable(Function<String, String> tableNameAs) {
         entityInsertExpressionBuilder.getRecentlyTable().setTableNameAs(tableNameAs);

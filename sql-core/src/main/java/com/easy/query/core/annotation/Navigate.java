@@ -4,7 +4,7 @@ import com.easy.query.core.basic.extension.navigate.DefaultNavigateExtraFilterSt
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
 import com.easy.query.core.enums.PartitionOrderEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
-import com.easy.query.core.enums.SaveModeEnum;
+import com.easy.query.core.enums.ValueTypeEnum;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -52,7 +52,7 @@ public @interface Navigate {
      * 保存模式，默认为自动检测
      * @return
      */
-    SaveModeEnum onSave() default SaveModeEnum.AUTO_CHECK;
+    ValueTypeEnum onSave() default ValueTypeEnum.AUTO_CHECK;
     /**
      * 多对多填写
      * 当前对象的{@param selfProperty}属性对应中间表的哪个属性,多对多不能为空

@@ -4,9 +4,6 @@ import com.easy.query.core.basic.api.internal.AbstractSQLExecuteRows;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.extension.interceptor.EntityInterceptor;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
-import com.easy.query.core.basic.extension.track.TrackContext;
-import com.easy.query.core.basic.extension.track.TrackManager;
-import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
@@ -34,7 +31,6 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -81,53 +77,25 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
     public long executeRows() {
         if (EasyCollectionUtil.isNotEmpty(entities)) {
             ExecutorContext executorContext = ExecutorContext.create(entityUpdateExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.UPDATE);
-            List<Object> trackEntities = configureUpdateAndGetTrackEntities();
+            configureUpdate();
             EntityExpressionPrepareExecutor entityExpressionPrepareExecutor = entityUpdateExpressionBuilder.getRuntimeContext().getEntityExpressionPrepareExecutor();
             long executeRows = entityExpressionPrepareExecutor.executeRows(executorContext, entityUpdateExpressionBuilder, entities);
-            removeTrackEntities(trackEntities);
+            refreshTrackEntities(entities);
             return executeRows;
         }
         return 0;
     }
 
-    protected void removeTrackEntities(List<Object> trackEntities) {
-        if (EasyCollectionUtil.isNotEmpty(trackEntities)) {
-            TrackContext trackContext = getTrackContextOrNull();
-            if (trackContext != null) {
-                for (Object trackEntity : trackEntities) {
-                    trackContext.removeTracking(trackEntity);
-                }
-            }
-        }
-    }
-
-    protected TrackContext getTrackContextOrNull() {
-
-        QueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
-        TrackManager trackManager = runtimeContext.getTrackManager();
-        return trackManager.currentThreadTracking() ? trackManager.getCurrentTrackContext() : null;
-    }
-
-    protected List<Object> configureUpdateAndGetTrackEntities() {
+    protected void configureUpdate() {
         List<EntityInterceptor> entityInterceptors = getEntityInterceptors();
         Class<?> entityClass = entityMetadata.getEntityClass();
-        TrackContext trackContext = getTrackContextOrNull();
-        boolean hasTrackContent = trackContext != null;
-        if (EasyCollectionUtil.isNotEmpty(entityInterceptors) || hasTrackContent) {
-            List<Object> trackEntities = new ArrayList<>(hasTrackContent ? entities.size() : 0);
+        if (EasyCollectionUtil.isNotEmpty(entityInterceptors)) {
             for (T entity : entities) {
                 for (EntityInterceptor entityInterceptor : entityInterceptors) {
                     entityInterceptor.configureUpdate(entityClass, entityUpdateExpressionBuilder, entity);
                 }
-                if (trackContext != null) {
-                    if (trackContext.isTrack(entity)) {
-                        trackEntities.add(entity);
-                    }
-                }
             }
-            return trackEntities;
         }
-        return EasyCollectionUtil.emptyList();
     }
 
     protected List<EntityInterceptor> getEntityInterceptors() {

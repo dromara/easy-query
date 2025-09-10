@@ -4,6 +4,7 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyBeanUtil;
+import com.easy.query.core.util.EasyTrackUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +21,7 @@ import java.util.Set;
  */
 public class EntityState {
     private final EntityMetadata entityMetadata;
-    private final Object originalValue;
+    private Object originalValue;
     private final Object currentValue;
     private final String trackKey;
 
@@ -93,6 +94,7 @@ public class EntityState {
             trackKeys.add(trackKey);
         }
     }
+
     public Set<String> getTrackKeys(NavigateMetadata navigateMetadata) {
         if (includeWithTrackKeyMap == null) {
             return null;
@@ -109,6 +111,10 @@ public class EntityState {
         Object originalPropertyValue = EasyBeanUtil.getPropertyValue(originalValue, entityMetadata, columnMetadata);
         Object currentPropertyValue = EasyBeanUtil.getPropertyValue(currentValue, entityMetadata, columnMetadata);
         return new EntityValueState(columnMetadata, originalPropertyValue, currentPropertyValue);
+    }
+
+    public void refresh() {
+        this.originalValue= EasyTrackUtil.createAndCopyValue(currentValue, entityMetadata);
     }
 
 }
