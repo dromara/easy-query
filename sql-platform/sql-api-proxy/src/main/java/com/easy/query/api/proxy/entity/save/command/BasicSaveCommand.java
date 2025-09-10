@@ -18,15 +18,17 @@ import java.util.stream.Collectors;
  *
  * @author xuejiaming
  */
-public class UpdateSaveCommand implements SaveCommand {
+public class BasicSaveCommand implements SaveCommand {
     private final EntityMetadata entityMetadata;
-    private final List<Object> entities;
+    private final List<Object> inserts;
+    private final List<Object> updates;
     private final EasyQueryClient easyQueryClient;
     private final SaveCommandContext saveCommandContext;
 
-    public UpdateSaveCommand(EntityMetadata entityMetadata, List<Object> entities, EasyQueryClient easyQueryClient, SaveCommandContext saveCommandContext) {
+    public BasicSaveCommand(EntityMetadata entityMetadata, List<Object> inserts,List<Object> updates, EasyQueryClient easyQueryClient, SaveCommandContext saveCommandContext) {
         this.entityMetadata = entityMetadata;
-        this.entities = entities;
+        this.inserts = inserts;
+        this.updates = updates;
         this.easyQueryClient = easyQueryClient;
         this.saveCommandContext = saveCommandContext;
     }
@@ -55,7 +57,8 @@ public class UpdateSaveCommand implements SaveCommand {
                 }
             }
         }
-        easyQueryClient.updatable(entities).batch(batch).executeRows();
+        easyQueryClient.insertable(inserts).batch(batch).executeRows(insertFillAutoIncrement(entityMetadata));
+        easyQueryClient.updatable(updates).batch(batch).executeRows();
         for (int i = 0; i < savableContexts.size(); i++) {
             SavableContext savableContext = savableContexts.get(i);
             for (Map.Entry<NavigateMetadata, SaveNode> nodeKv : savableContext.getSaveNodeMap().entrySet()) {

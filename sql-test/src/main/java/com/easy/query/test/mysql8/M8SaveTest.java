@@ -1,6 +1,5 @@
 package com.easy.query.test.mysql8;
 
-import com.easy.query.api.proxy.entity.save.SaveCheckModeEnum;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
@@ -40,8 +39,6 @@ public class M8SaveTest extends BaseTest {
         easyEntityQuery.deletable(M8SaveRootMiddleMany.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(M8SaveRootOne.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(M8SaveRootManyOne.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
-
-
     }
     public String insertOne(){
 
@@ -361,6 +358,103 @@ public class M8SaveTest extends BaseTest {
                 Assert.assertEquals("INSERT INTO `m8_save_root_many_one` (`id`,`root_many_id`,`name`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
                 Assert.assertEquals(m8SaveRootManyList.get(1).getM8SaveRootManyOne().getId() + "(String)," + m8SaveRootManyList.get(1).getId() + "(String)," + m8SaveRootManyList.get(1).getM8SaveRootManyOne().getName() + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             }
+        });
+    }
+    @Test
+    public void testOne2Many4() {
+        String rootId = before();
+
+        invoke(listenerContext -> {
+            M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
+                    .includes(m -> m.m8SaveRootManyList())
+                    .singleNotNull();
+            List<M8SaveRootMany> m8SaveRootManyList = m8SaveRoot.getM8SaveRootManyList();
+            M8SaveRootMany m8SaveRootMany2 = new M8SaveRootMany();
+            m8SaveRootMany2.setName("newOneToMany2");
+            M8SaveRootManyOne m8SaveRootManyOne = new M8SaveRootManyOne();
+            m8SaveRootManyOne.setName("m8SaveRootManyOne2");
+            m8SaveRootMany2.setM8SaveRootManyOne(m8SaveRootManyOne);
+            m8SaveRootManyList.add(m8SaveRootMany2);//新加一个
+
+
+            try (Transaction transaction = easyEntityQuery.beginTransaction()) {
+                easyEntityQuery.savable(m8SaveRoot).executeCommand();
+                transaction.commit();
+            }
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+            Assert.assertEquals(4, listenerContext.getJdbcExecuteAfterArgs().size());
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                Assert.assertEquals("SELECT `id`,`name`,`code` FROM `m8_save_root` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(rootId + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                Assert.assertEquals("SELECT t.`id`,t.`root_id`,t.`name` FROM `m8_save_root_many` t WHERE t.`root_id` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(rootId + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+                Assert.assertEquals("INSERT INTO `m8_save_root_many` (`id`,`root_id`,`name`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(m8SaveRootManyList.get(2).getId()+"(String),"+rootId+"(String),newOneToMany2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+                Assert.assertEquals("INSERT INTO `m8_save_root_many_one` (`id`,`root_many_id`,`name`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(m8SaveRootManyList.get(2).getM8SaveRootManyOne().getId() + "(String)," + m8SaveRootManyList.get(2).getId() + "(String)," + m8SaveRootManyList.get(2).getM8SaveRootManyOne().getName() + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+        });
+    }
+    @Test
+    public void testOne2Many5() {
+        String rootId = before();
+
+        invoke(listenerContext -> {
+            M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
+                    .includes(m -> m.m8SaveRootManyList())
+                    .singleNotNull();
+            List<M8SaveRootMany> m8SaveRootManyList = m8SaveRoot.getM8SaveRootManyList();
+            M8SaveRootManyOne m8SaveRootManyOne = new M8SaveRootManyOne();
+            m8SaveRootManyOne.setName("m8SaveRootManyOne2");
+            m8SaveRootManyList.get(1).setM8SaveRootManyOne(m8SaveRootManyOne);
+
+            Exception exception=null;
+
+                try (Transaction transaction = easyEntityQuery.beginTransaction()) {
+                    easyEntityQuery.savable(m8SaveRoot).executeCommand();
+                    transaction.commit();
+                }catch (Exception ex){
+                    exception=ex;
+                }
+
+            Assert.assertNotNull(exception);
+            Assert.assertEquals("The current navigation property [M8SaveRootMany.m8SaveRootManyOne] is not being tracked.",exception.getMessage());
+
+        });
+    }
+    @Test
+    public void testOne2Many6() {
+        String rootId = before();
+
+        invoke(listenerContext -> {
+            M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
+                    .includes(m -> m.m8SaveRootManyList())
+                    .singleNotNull();
+            List<M8SaveRootMany> m8SaveRootManyList = m8SaveRoot.getM8SaveRootManyList();
+            M8SaveRootManyOne m8SaveRootManyOne = new M8SaveRootManyOne();
+            m8SaveRootManyOne.setName("m8SaveRootManyOne2");
+            m8SaveRootManyList.get(1).setM8SaveRootManyOne(m8SaveRootManyOne);
+
+
+                try (Transaction transaction = easyEntityQuery.beginTransaction()) {
+                    easyEntityQuery.savable(m8SaveRoot).savePath(o->Include.path(
+                            o.m8SaveRootManyList().flatElement().m8SaveRootManyOne()
+                    )).executeCommand();
+                    transaction.commit();
+                }
+
+
         });
     }
 
@@ -869,18 +963,15 @@ public class M8SaveTest extends BaseTest {
             many2many.add(m8SaveRoot2Many);
             m8SaveRoot.setM8SaveRoot2ManyList(many2many);
 
-
+            Exception exception=null;
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                easyEntityQuery.savable(m8SaveRoot).checkMode(SaveCheckModeEnum.LENIENT).executeCommand();
+                easyEntityQuery.savable(m8SaveRoot).executeCommand();
                 transaction.commit();
+            }catch (Exception ex) {
+                exception=ex;
             }
-            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-            Assert.assertEquals(1, listenerContext.getJdbcExecuteAfterArgs().size());
-            {
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                Assert.assertEquals("SELECT `id`,`name`,`code` FROM `m8_save_root` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                Assert.assertEquals(rootId + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-            }
+            Assert.assertNotNull(exception);
+            Assert.assertEquals("The current navigation property [M8SaveRoot.m8SaveRoot2ManyList] is not being tracked.",exception.getMessage());
 
         });
     }

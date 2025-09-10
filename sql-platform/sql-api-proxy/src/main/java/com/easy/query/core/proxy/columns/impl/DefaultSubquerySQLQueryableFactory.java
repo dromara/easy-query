@@ -58,9 +58,6 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
 
     public <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> SQLQueryable<T1Proxy, T1> create(SubQueryContext<T1Proxy, T1> subQueryContext) {
 
-        EntityExpressionBuilder entityExpressionBuilder = subQueryContext.getEntityExpressionBuilder();
-        ExpressionContext expressionContext = entityExpressionBuilder.getExpressionContext();
-        QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
         TableAvailable leftTable = subQueryContext.getLeftTable();
         String property = subQueryContext.getProperty();
         T1Proxy propertyProxy = subQueryContext.getPropertyProxy();
@@ -69,6 +66,9 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
             propertyProxy.setNavValue(fullName);
             return new EmptySQLQueryable<>(subQueryContext.getEntitySQLContext(), propertyProxy);
         }
+        EntityExpressionBuilder entityExpressionBuilder = subQueryContext.getEntityExpressionBuilder();
+        ExpressionContext expressionContext = entityExpressionBuilder.getExpressionContext();
+        QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
         NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
         RelationTableKey defaultRelationTableKey = new DefaultRelationTableKey(leftTable, property);
 

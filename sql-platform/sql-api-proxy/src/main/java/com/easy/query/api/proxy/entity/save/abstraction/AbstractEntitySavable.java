@@ -1,27 +1,20 @@
 package com.easy.query.api.proxy.entity.save.abstraction;
 
 import com.easy.query.api.proxy.entity.save.EntitySavable;
-import com.easy.query.api.proxy.entity.save.SavableContext;
-import com.easy.query.api.proxy.entity.save.SaveCheckModeEnum;
 import com.easy.query.api.proxy.entity.save.command.SaveCommand;
-import com.easy.query.api.proxy.entity.save.provider.InsertSaveProvider;
-import com.easy.query.api.proxy.entity.save.provider.UpdateSaveProvider;
-import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.api.proxy.entity.save.provider.BasicSaveProvider;
 import com.easy.query.core.api.client.EasyQueryClient;
-import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.common.ValueHolder;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
-import com.easy.query.core.expression.parser.core.available.IncludeAvailable;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
-import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.IncludePathTreeNode;
-import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyUtil;
 
 import java.util.ArrayList;
@@ -45,7 +38,6 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     private final QueryRuntimeContext runtimeContext;
     private final TrackContext currentTrackContext;
     private boolean batch;
-    private SaveCheckModeEnum saveCheckMode;
     private IncludePathTreeNode includePathTreeRoot;
 
     public AbstractEntitySavable(TProxy tProxy, Class<T> entityClass, Collection<T> entities, EasyQueryClient easyQueryClient) {
@@ -63,7 +55,6 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
         }
         this.currentTrackContext = Objects.requireNonNull(runtimeContext.getTrackManager().getCurrentTrackContext(), "currentTrackContext can not be null");
         this.batch = false;
-        this.saveCheckMode = SaveCheckModeEnum.STRICT;
     }
 
     @Override
@@ -74,12 +65,6 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     @Override
     public EntitySavable<TProxy, T> batch(boolean use) {
         this.batch = use;
-        return this;
-    }
-
-    @Override
-    public EntitySavable<TProxy, T> checkMode(SaveCheckModeEnum saveCheckMode) {
-        this.saveCheckMode = saveCheckMode;
         return this;
     }
 
@@ -102,27 +87,9 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     @Override
     public void executeCommand() {
         if (!entities.isEmpty()) {
-            List<SaveCommand> saveCommands = new ArrayList<>();
-            List<Object> insertEntities = new ArrayList<>();
-            List<Object> updateEntities = new ArrayList<>();
-            for (T entity : entities) {
-                EntityState entityState = currentTrackContext.getTrackEntityState(entity);
-                if (entityState == null) {
-                    insertEntities.add(entity);
-                } else {
-                    updateEntities.add(entity);
-                }
-            }
             List<Set<String>> savePathLimit = getSavePathLimit();
-            if (EasyCollectionUtil.isNotEmpty(insertEntities)) {
-                saveCommands.add(new InsertSaveProvider(entityClass, insertEntities, easyQueryClient,saveCheckMode, savePathLimit).createCommand());
-            }
-            if (EasyCollectionUtil.isNotEmpty(updateEntities)) {
-                saveCommands.add(new UpdateSaveProvider(entityClass, updateEntities, easyQueryClient, saveCheckMode, savePathLimit).createCommand());
-            }
-            for (SaveCommand saveCommand : saveCommands) {
-                saveCommand.execute(batch);
-            }
+            SaveCommand command = new BasicSaveProvider(entityClass, EasyObjectUtil.typeCastNotNull(entities), easyQueryClient, savePathLimit).createCommand();
+            command.execute(batch);
         }
     }
 

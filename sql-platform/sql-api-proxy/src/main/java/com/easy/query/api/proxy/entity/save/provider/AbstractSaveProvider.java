@@ -1,7 +1,6 @@
 package com.easy.query.api.proxy.entity.save.provider;
 
 import com.easy.query.api.proxy.entity.save.SavableContext;
-import com.easy.query.api.proxy.entity.save.SaveCheckModeEnum;
 import com.easy.query.api.proxy.entity.save.SaveCommandContext;
 import com.easy.query.api.proxy.entity.save.SaveNode;
 import com.easy.query.api.proxy.entity.save.TargetValueTypeEnum;
@@ -37,18 +36,16 @@ public abstract class AbstractSaveProvider implements SaveProvider {
     protected final List<Object> entities;
     protected final EasyQueryClient easyQueryClient;
     protected final QueryRuntimeContext runtimeContext;
-    protected final SaveCheckModeEnum saveCheckMode;
     protected final EntityMetadataManager entityMetadataManager;
     protected final TrackContext currentTrackContext;
     protected final List<Set<String>> savePathLimit;
     protected final SaveCommandContext saveCommandContext;
 
-    public AbstractSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, SaveCheckModeEnum saveCheckMode, List<Set<String>> savePathLimit) {
+    public AbstractSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit) {
         this.entityClass = entityClass;
         this.entities = entities;
         this.easyQueryClient = easyQueryClient;
         this.runtimeContext = easyQueryClient.getRuntimeContext();
-        this.saveCheckMode = saveCheckMode;
         TrackContext currentTrackContext = runtimeContext.getTrackManager().getCurrentTrackContext();
         if (currentTrackContext == null) {
             throw new EasyQueryInvalidOperationException("currentTrackContext can not be null");
@@ -189,8 +186,17 @@ public abstract class AbstractSaveProvider implements SaveProvider {
         }
     }
 
-    protected abstract EntityMetadata checkNavigateContinueAndGetTargetEntityMetadata(NavigateMetadata navigateMetadata, Object entity, EntityMetadata entityMetadata, int deep);
+    protected EntityMetadata checkNavigateContinueAndGetTargetEntityMetadata(NavigateMetadata navigateMetadata, Object entity, EntityMetadata entityMetadata, int deep) {
 
+        if (!isSavePathLimitContains(navigateMetadata, deep)) {
+            return null;
+        }
+        if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
+            return entityMetadataManager.getEntityMetadata(navigateMetadata.getMappingClass());
+        } else {
+            return entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
+        }
+    }
 
     protected List<NavigateMetadata> getNavigateSavableValueObjects(SavableContext savableContext, Object entity, EntityMetadata entityMetadata, Collection<NavigateMetadata> navigateMetadataList, int deep) {
 
@@ -208,10 +214,10 @@ public abstract class AbstractSaveProvider implements SaveProvider {
             //如果导航属性是值类型并且没有循环引用且没有被追踪才继续下去
             if (!this.saveCommandContext.circulateCheck(navigateMetadata.getNavigatePropertyType(), deep)) {
 
-                savableContext.putSaveNodeMap(navigateMetadata, targetEntityMetadata);
                 TargetValueTypeEnum targetValueType = getTargetValueType(entityMetadata, navigateMetadata);
                 //我的id就是我们的关联关系键 多对多除外 还需要赋值一遍吧我的id给他 多对多下 需要处理的值对象是关联表 如果无关联中间表则目标对象是一个独立对象
                 if (targetValueType == TargetValueTypeEnum.VALUE_OBJECT) {
+                    savableContext.putSaveNodeMap(navigateMetadata, targetEntityMetadata);
                     valueObjects.add(navigateMetadata);
                 }
                 if (targetValueType == TargetValueTypeEnum.AGGREGATE_ROOT) {
@@ -232,34 +238,30 @@ public abstract class AbstractSaveProvider implements SaveProvider {
         //检查额外导航属性
         //如果存在手动指定导航保存路径则不检查导航属性
         if (savePathLimit.isEmpty()) {
-            if (saveCheckMode == SaveCheckModeEnum.STRICT) {
-                for (NavigateMetadata navigateMetadata : navigateMetadataSet) {
-                    checkNavigatePathTrackedCheck(navigateMetadata, entity, entityMetadata);
-                }
+            for (NavigateMetadata navigateMetadata : navigateMetadataSet) {
+                checkNavigatePathTrackedCheck(navigateMetadata, entity, entityMetadata);
             }
         }
         return valueObjects;
     }
 
     protected void checkNavigatePathTrackedCheck(NavigateMetadata navigate, Object entity, EntityMetadata selfEntityMetadata) {
-        if (saveCheckMode == SaveCheckModeEnum.STRICT) {
-            Property<Object, ?> getter = navigate.getGetter();
-            Object navigateValue = getter.apply(entity);
-            if (navigateValue == null) {//未查询
-                return;
-            }
-            if (navigateValue instanceof Collection<?>) {
-                Collection<?> navigateValues = (Collection<?>) navigateValue;
-                if (EasyCollectionUtil.isEmpty(navigateValues)) {
-                    //如果是集合那么判断对象初始化的时候
-                    Object newEntity = selfEntityMetadata.getBeanConstructorCreator().get();
-                    Object newNavigateValue = getter.apply(newEntity);
-                    if (newNavigateValue != null) {
-                        return;
-                    }
+        Property<Object, ?> getter = navigate.getGetter();
+        Object navigateValue = getter.apply(entity);
+        if (navigateValue == null) {//未查询
+            return;
+        }
+        if (navigateValue instanceof Collection<?>) {
+            Collection<?> navigateValues = (Collection<?>) navigateValue;
+            if (EasyCollectionUtil.isEmpty(navigateValues)) {
+                //如果是集合那么判断对象初始化的时候
+                Object newEntity = selfEntityMetadata.getBeanConstructorCreator().get();
+                Object newNavigateValue = getter.apply(newEntity);
+                if (newNavigateValue != null) {
+                    return;
                 }
             }
-            throw new EasyQueryInvalidOperationException("The current navigation property [" + EasyClassUtil.getInstanceSimpleName(entity) + "." + navigate.getPropertyName() + "] is not being tracked.");
         }
+        throw new EasyQueryInvalidOperationException("The current navigation property [" + EasyClassUtil.getInstanceSimpleName(entity) + "." + navigate.getPropertyName() + "] is not being tracked.");
     }
 }

@@ -1,13 +1,11 @@
 package com.easy.query.api.proxy.entity.save.provider;
 
 import com.easy.query.api.proxy.entity.save.SavableContext;
-import com.easy.query.api.proxy.entity.save.SaveCheckModeEnum;
-import com.easy.query.api.proxy.entity.save.SaveCommandContext;
 import com.easy.query.api.proxy.entity.save.SaveNode;
 import com.easy.query.api.proxy.entity.save.TargetValueTypeEnum;
 import com.easy.query.api.proxy.entity.save.command.EmptySaveCommand;
 import com.easy.query.api.proxy.entity.save.command.SaveCommand;
-import com.easy.query.api.proxy.entity.save.command.UpdateSaveCommand;
+import com.easy.query.api.proxy.entity.save.command.BasicSaveCommand;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.EntityValueState;
@@ -38,13 +36,10 @@ import java.util.Set;
  *
  * @author xuejiaming
  */
-public class UpdateSaveProvider extends AbstractSaveProvider {
-    private final SaveCommandContext saveCommandContext;
-    private SaveCommandContext savePathCommandContext;
+public class BasicSaveProvider extends AbstractSaveProvider {
 
-    public UpdateSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, SaveCheckModeEnum saveCheckMode, List<Set<String>> savePathLimit) {
-        super(entityClass, entities, easyQueryClient, saveCheckMode, savePathLimit);
-        this.saveCommandContext = new SaveCommandContext(entityClass);
+    public BasicSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient,  List<Set<String>> savePathLimit) {
+        super(entityClass, entities, easyQueryClient, savePathLimit);
     }
 
 
@@ -52,85 +47,103 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
     public SaveCommand createCommand() {
         if (EasyCollectionUtil.isNotEmpty(entities)) {
             EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entityClass);
+            List<Object> inserts = new ArrayList<>();
+            List<Object> updates = new ArrayList<>();
             for (Object entity : entities) {
-                //添加重复引用去重
-                String trackKey = EasyTrackUtil.getTrackKey(entityMetadata, entity);
-                this.savePathCommandContext = new SaveCommandContext(entityClass);
-                createIncludePath(entityClass, entityMetadata, trackKey, 0);
-
+                if (this.saveCommandContext.isProcessEntity(entity)) {
+                    throw new EasyQueryInvalidOperationException("entity:" + entity + " has been added to the save command");
+                }
                 this.saveCommandContext.addProcessEntity(entity);
+                EntityState trackEntityState = currentTrackContext.getTrackEntityState(entity);
+                if (trackEntityState == null) {
+                    inserts.add(entity);
+                } else {
+                    updates.add(entity);
+                }
                 saveEntity(entity, entityMetadata, 0);
             }
-            return new UpdateSaveCommand(entityMetadata, entities, easyQueryClient, saveCommandContext);
+            return new BasicSaveCommand(entityMetadata, inserts, updates, easyQueryClient, saveCommandContext);
         }
 
         return EmptySaveCommand.INSTANCE;
-    }
-
-    private void createIncludePath(Class<?> entityClass, EntityMetadata entityMetadata, String trackKey, int deep) {
-        EntityState entityState = currentTrackContext.getTrackEntityState(entityClass, trackKey);
-        if (entityState != null) {
-            SavableContext savableContext = this.savePathCommandContext.getSavableContext(deep);
-            List<NavigateMetadata> includes = entityState.getIncludes();
-            if (includes != null) {
-                for (NavigateMetadata include : includes) {//navigate必须是被追踪查询了的否则忽略
-                    if (EasyArrayUtil.isNotEmpty(include.getDirectMapping())) {
-                        return;
-                    }
-                    //如果导航属性是值类型并且没有循环引用且没有被追踪才继续下去
-                    if (!this.savePathCommandContext.circulateCheck(include.getNavigatePropertyType(), deep)) {
-                        TargetValueTypeEnum targetValueType = getTargetValueType(entityMetadata, include);
-                        //我的id就是我们的关联关系键 多对多除外 还需要赋值一遍吧我的id给他 多对多下 需要处理的值对象是关联表 如果无关联中间表则目标对象是一个独立对象
-                        if (targetValueType == TargetValueTypeEnum.VALUE_OBJECT || targetValueType == TargetValueTypeEnum.AGGREGATE_ROOT) {
-                            createNavigatePath(include, savableContext, entityState.getTrackKeys(include));
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private void createNavigatePath(NavigateMetadata navigateMetadata, SavableContext savableContext, Set<String> trackKeys) {
-
-        EntityMetadata targetEntityMetadata = null;
-        if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
-            targetEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getMappingClass());
-        } else {
-            targetEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
-        }
-        SaveNode saveNode = savableContext.putSaveNodeMap(navigateMetadata, targetEntityMetadata);
-        if (trackKeys != null) {
-            for (String trackKey : trackKeys) {
-                if (trackKey != null) {
-                    createIncludePath(targetEntityMetadata.getEntityClass(), targetEntityMetadata, trackKey, saveNode.getIndex() + 1);
-                }
-            }
-        }
     }
 
 
     private void saveEntity(Object entity, EntityMetadata entityMetadata, int deep) {
 
         EntityState entityState = currentTrackContext.getTrackEntityState(entity);
-        SavableContext savableContext = this.saveCommandContext.getSavableContext(deep);
-        SavableContext savablePathContext = this.savePathCommandContext.getSavableContext(deep);
-        Set<NavigateMetadata> navigateMetadataSet = savablePathContext.getSaveNodeMap().keySet();
-        List<NavigateMetadata> valueObjects = getNavigateSavableValueObjects(savableContext, entity, entityMetadata, navigateMetadataSet, deep);
+        SavableContext savableContext = this.saveCommandContext.getCreateSavableContext(deep);
+//        SavableContext savablePathContext = this.savePathCommandContext.getSavableContext(deep);
+        //当前追踪的对象是否被追踪 如果被追踪那么应该以追踪上下文的导航值对象解析 如果未被追踪 应该以实体导航属性来获取值对象
+        Collection<NavigateMetadata> navigateMetadataList = entityState == null ? entityMetadata.getNavigateMetadatas() : entityState.getIncludes();
+        List<NavigateMetadata> valueObjects = getNavigateSavableValueObjects(savableContext, entity, entityMetadata, navigateMetadataList, deep);
         for (NavigateMetadata navigateMetadata : valueObjects) {
-            Set<String> trackKeys = entityState == null ? null : entityState.getTrackKeys(navigateMetadata);
-            processNavigate(entity, entityMetadata, navigateMetadata, savableContext, trackKeys == null ? new HashSet<>() : trackKeys);
+            if (entityState == null) {
+                valueObjectInsert(entity, entityMetadata, navigateMetadata, savableContext);
+            } else {
+                Set<String> trackKeys = entityState.getTrackKeys(navigateMetadata);
+                valueObjectUpdate(entity, entityMetadata, navigateMetadata, savableContext, trackKeys == null ? new HashSet<>() : trackKeys);
+            }
         }
     }
 
 
-    private void processNavigate(Object entity, EntityMetadata selfEntityMetadata, NavigateMetadata navigateMetadata, SavableContext savableContext, Set<String> trackKeys) {
-        //navigate必须是被追踪查询了的否则忽略
+    private void valueObjectInsert(Object entity, EntityMetadata selfEntityMetadata, NavigateMetadata navigateMetadata, SavableContext savableContext) {
+
+        if (EasyArrayUtil.isNotEmpty(navigateMetadata.getDirectMapping())) {
+            throw new EasyQueryInvalidOperationException("save not support direct mapping");
+        }
+        EntityMetadata targetEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
+        SaveNode saveNode = savableContext.getSaveNode(navigateMetadata);
+
+
+        Property<Object, ?> getter = navigateMetadata.getGetter();
+        Object navigates = getter.apply(entity);
+        if (navigates instanceof Collection<?>) {
+            for (Object targetEntity : (Collection<?>) navigates) {
+                valueObjectEntityInsert(entity, targetEntity, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
+            }
+        } else {
+            if (navigates != null) {
+                valueObjectEntityInsert(entity, navigates, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
+            }
+        }
+    }
+
+    private void valueObjectEntityInsert(Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata, EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode) {
+
+        if (this.saveCommandContext.isProcessEntity(targetEntity)) {
+            return;
+        }
+        this.saveCommandContext.addProcessEntity(targetEntity);
+        saveNodeInsert(selfEntity, targetEntity, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
+
+        if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
+            saveEntity(targetEntity, targetEntityMetadata, saveNode.getIndex() + 1);
+        }
+
+    }
+
+    /**
+     * 处理值对象
+     *
+     * @param entity
+     * @param selfEntityMetadata
+     * @param navigateMetadata
+     * @param savableContext
+     * @param trackKeys
+     */
+    private void valueObjectUpdate(Object entity, EntityMetadata selfEntityMetadata, NavigateMetadata navigateMetadata, SavableContext savableContext, Set<String> trackKeys) {
+
         if (trackKeys != null) {
             if (EasyArrayUtil.isNotEmpty(navigateMetadata.getDirectMapping())) {
                 throw new EasyQueryInvalidOperationException("save not support direct mapping");
             }
             EntityMetadata targetEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
             SaveNode saveNode = savableContext.getSaveNode(navigateMetadata);
+            if (saveNode == null) {
+                throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "." + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] save node is null");
+            }
             Map<String, Object> dbEntityMap = new LinkedHashMap<>();
             for (String trackKey : trackKeys) {
                 EntityState trackEntityState = currentTrackContext.getTrackEntityState(navigateMetadata.getNavigatePropertyType(), trackKey);
@@ -142,11 +155,11 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
             Object navigates = getter.apply(entity);
             if (navigates instanceof Collection<?>) {
                 for (Object targetEntity : (Collection<?>) navigates) {
-                    processEntity(dbEntityMap, entity, targetEntity, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
+                    valueObjectEntityInsert(dbEntityMap, entity, targetEntity, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
                 }
             } else {
                 if (navigates != null) {
-                    processEntity(dbEntityMap, entity, navigates, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
+                    valueObjectEntityInsert(dbEntityMap, entity, navigates, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
                 }
             }
             for (Object value : dbEntityMap.values()) {
@@ -156,7 +169,7 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
     }
 
 
-    private void processEntity(Map<String, Object> dbEntityMap, Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata, EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode) {
+    private void valueObjectEntityInsert(Map<String, Object> dbEntityMap, Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata, EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode) {
 
         if (this.saveCommandContext.isProcessEntity(targetEntity)) {
             return;
@@ -247,20 +260,5 @@ public class UpdateSaveProvider extends AbstractSaveProvider {
                 setTargetValue(TargetValueTypeEnum.VALUE_OBJECT, selfEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
             }));
         }
-    }
-
-    @Override
-    protected EntityMetadata checkNavigateContinueAndGetTargetEntityMetadata(NavigateMetadata navigateMetadata, Object entity, EntityMetadata entityMetadata, int deep) {
-        SavableContext pathSavableContext = this.savePathCommandContext.getSavableContext(deep);
-
-        if (!isSavePathLimitContains(navigateMetadata, deep)) {
-            return null;
-        }
-        SaveNode saveNode = pathSavableContext.getSaveNode(navigateMetadata);
-        if (saveNode == null) {
-            checkNavigatePathTrackedCheck(navigateMetadata, entity, entityMetadata);
-            return null;
-        }
-        return saveNode.getEntityMetadata();
     }
 }

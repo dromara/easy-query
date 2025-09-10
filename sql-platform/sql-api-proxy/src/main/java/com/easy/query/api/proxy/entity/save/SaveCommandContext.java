@@ -1,6 +1,7 @@
 package com.easy.query.api.proxy.entity.save;
 
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,17 +24,19 @@ public class SaveCommandContext {
 
     public SaveCommandContext(Class<?> entityClass) {
         this.savableContexts = new ArrayList<>();
-        this.processEntitySet=new HashSet<>();
+        this.processEntitySet = new HashSet<>();
         this.entityClass = entityClass;
     }
 
     public boolean circulateCheck(Class<?> targetEntityClass, int deep) {
         return Objects.equals(entityClass, targetEntityClass) && deep > 0;
     }
-    public void addProcessEntity(Object entity){
+
+    public void addProcessEntity(Object entity) {
         processEntitySet.add(entity);
     }
-    public boolean isProcessEntity(Object entity){
+
+    public boolean isProcessEntity(Object entity) {
         return processEntitySet.contains(entity);
     }
 
@@ -41,7 +44,7 @@ public class SaveCommandContext {
         return savableContexts;
     }
 
-    public SavableContext getSavableContext(int index) {
+    public SavableContext getCreateSavableContext(int index) {
         if (index == savableContexts.size()) {
             savableContexts.add(new SavableContext(index));
         } else {
