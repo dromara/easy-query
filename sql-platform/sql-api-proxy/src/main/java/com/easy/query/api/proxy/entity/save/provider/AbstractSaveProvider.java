@@ -41,15 +41,11 @@ public abstract class AbstractSaveProvider implements SaveProvider {
     protected final List<Set<String>> savePathLimit;
     protected final SaveCommandContext saveCommandContext;
 
-    public AbstractSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit) {
+    public AbstractSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit) {
         this.entityClass = entityClass;
         this.entities = entities;
         this.easyQueryClient = easyQueryClient;
         this.runtimeContext = easyQueryClient.getRuntimeContext();
-        TrackContext currentTrackContext = runtimeContext.getTrackManager().getCurrentTrackContext();
-        if (currentTrackContext == null) {
-            throw new EasyQueryInvalidOperationException("currentTrackContext can not be null");
-        }
         this.currentTrackContext = currentTrackContext;
         this.entityMetadataManager = runtimeContext.getEntityMetadataManager();
         this.savePathLimit = savePathLimit;
@@ -186,10 +182,16 @@ public abstract class AbstractSaveProvider implements SaveProvider {
         }
     }
 
-    protected EntityMetadata checkNavigateContinueAndGetTargetEntityMetadata(NavigateMetadata navigateMetadata, Object entity, EntityMetadata entityMetadata, int deep) {
+    protected EntityMetadata checkNavigateContinueAndGetTargetEntityMetadata(TargetValueTypeEnum targetValueType, NavigateMetadata navigateMetadata, int deep) {
 
-        if (!isSavePathLimitContains(navigateMetadata, deep)) {
-            return null;
+        //存在路径的情况下要判断路径保存只能是值对象
+        if (EasyCollectionUtil.isNotEmpty(savePathLimit)) {
+            if (!isSavePathLimitContains(navigateMetadata, deep)) {
+                return null;
+            }
+            if (targetValueType != TargetValueTypeEnum.VALUE_OBJECT) {
+                throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "." + navigateMetadata.getPropertyName() + "] value type is:[" + targetValueType + "] save path limit only support value object");
+            }
         }
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany && navigateMetadata.getMappingClass() != null) {
             return entityMetadataManager.getEntityMetadata(navigateMetadata.getMappingClass());
@@ -207,14 +209,14 @@ public abstract class AbstractSaveProvider implements SaveProvider {
 
             navigateMetadataSet.remove(navigateMetadata);
 
-            EntityMetadata targetEntityMetadata = checkNavigateContinueAndGetTargetEntityMetadata(navigateMetadata, entity, entityMetadata, deep);
+            TargetValueTypeEnum targetValueType = getTargetValueType(entityMetadata, navigateMetadata);
+            EntityMetadata targetEntityMetadata = checkNavigateContinueAndGetTargetEntityMetadata(targetValueType, navigateMetadata, deep);
             if (targetEntityMetadata == null) {
                 continue;
             }
             //如果导航属性是值类型并且没有循环引用且没有被追踪才继续下去
             if (!this.saveCommandContext.circulateCheck(navigateMetadata.getNavigatePropertyType(), deep)) {
 
-                TargetValueTypeEnum targetValueType = getTargetValueType(entityMetadata, navigateMetadata);
                 //我的id就是我们的关联关系键 多对多除外 还需要赋值一遍吧我的id给他 多对多下 需要处理的值对象是关联表 如果无关联中间表则目标对象是一个独立对象
                 if (targetValueType == TargetValueTypeEnum.VALUE_OBJECT) {
                     savableContext.putSaveNodeMap(navigateMetadata, targetEntityMetadata);

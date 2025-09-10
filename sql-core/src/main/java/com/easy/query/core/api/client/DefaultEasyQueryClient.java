@@ -258,11 +258,24 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         IncludeProvider includeProvider = runtimeContext.getIncludeProvider();
         ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();
         ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, ContextTypeEnum.QUERY);
+        LoadIncludeConfiguration loadIncludeConfiguration = new LoadIncludeConfiguration();
+        if(configure!=null){
+            configure.apply(loadIncludeConfiguration);
+        }
 //        for (String selfProperty : navigateMetadata.getSelfPropertiesOrPrimary()) {
 //            ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(selfProperty);
 //            EasySQLExpressionUtil.addRelationExtraColumn(columnMetadata,selfProperty,expressionContext.getRelationExtraMetadata(),false);
 //        }
-        includeProvider.include(null, entityMetadata, expressionContext, ic -> ic.with(navigateProperty));
+
+        Boolean tracking = loadIncludeConfiguration.getTracking();
+        boolean isNoTracking = tracking != null && !tracking;
+        includeProvider.include(null, entityMetadata, expressionContext, ic -> {
+            ClientQueryable<Object> with = ic.with(navigateProperty, loadIncludeConfiguration.getGroupSize());
+            if (isNoTracking) {
+                return with.asNoTracking();
+            }
+            return with;
+        });
 
         IncludeProcessorFactory includeProcessorFactory = runtimeContext.getIncludeProcessorFactory();
         IncludeParserEngine includeParserEngine = runtimeContext.getIncludeParserEngine();
@@ -275,10 +288,10 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         }
         TrackManager trackManager = runtimeContext.getTrackManager();
         TrackContext currentTrackContext = trackManager.getCurrentTrackContext();
-        if(currentTrackContext!=null){
+        if (currentTrackContext != null) {
             for (T entity : entities) {
                 EntityState trackEntityState = currentTrackContext.getTrackEntityState(entity);
-                if(trackEntityState!=null){
+                if (trackEntityState != null) {
                     trackEntityState.addInclude(navigateMetadata);
                 }
             }
@@ -331,7 +344,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
     }
 
     @Override
-    public void syncTableByPackage(int groupSize,String... packageNames) {
+    public void syncTableByPackage(int groupSize, String... packageNames) {
         loadTableEntityByPackage(packageNames);
         EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
         DatabaseCodeFirst databaseCodeFirst = getDatabaseCodeFirst();

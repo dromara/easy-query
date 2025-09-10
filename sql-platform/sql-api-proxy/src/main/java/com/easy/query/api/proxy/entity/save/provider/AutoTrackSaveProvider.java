@@ -9,6 +9,7 @@ import com.easy.query.api.proxy.entity.save.command.BasicSaveCommand;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.EntityValueState;
+import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.enums.MappingClassSaveModeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
@@ -36,10 +37,10 @@ import java.util.Set;
  *
  * @author xuejiaming
  */
-public class BasicSaveProvider extends AbstractSaveProvider {
+public class AutoTrackSaveProvider extends AbstractSaveProvider {
 
-    public BasicSaveProvider(Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient,  List<Set<String>> savePathLimit) {
-        super(entityClass, entities, easyQueryClient, savePathLimit);
+    public AutoTrackSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit) {
+        super(currentTrackContext,entityClass, entities, easyQueryClient, savePathLimit);
     }
 
 

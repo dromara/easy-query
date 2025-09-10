@@ -2,7 +2,7 @@ package com.easy.query.api.proxy.entity.save.abstraction;
 
 import com.easy.query.api.proxy.entity.save.EntitySavable;
 import com.easy.query.api.proxy.entity.save.command.SaveCommand;
-import com.easy.query.api.proxy.entity.save.provider.BasicSaveProvider;
+import com.easy.query.api.proxy.entity.save.provider.AutoTrackSaveProvider;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.common.ValueHolder;
@@ -88,14 +88,14 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     public void executeCommand() {
         if (!entities.isEmpty()) {
             List<Set<String>> savePathLimit = getSavePathLimit();
-            SaveCommand command = new BasicSaveProvider(entityClass, EasyObjectUtil.typeCastNotNull(entities), easyQueryClient, savePathLimit).createCommand();
+            SaveCommand command = new AutoTrackSaveProvider(currentTrackContext, entityClass, EasyObjectUtil.typeCastNotNull(entities), easyQueryClient, savePathLimit).createCommand();
             command.execute(batch);
         }
     }
 
     private List<Set<String>> getSavePathLimit() {
         List<Set<String>> savePathLimit = new ArrayList<>();
-        if(includePathTreeRoot!=null){
+        if (includePathTreeRoot != null) {
             parseSavePath(includePathTreeRoot, savePathLimit, 0);
         }
         return savePathLimit;
