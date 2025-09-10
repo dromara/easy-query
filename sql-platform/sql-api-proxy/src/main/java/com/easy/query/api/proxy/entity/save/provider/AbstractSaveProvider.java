@@ -2,12 +2,12 @@ package com.easy.query.api.proxy.entity.save.provider;
 
 import com.easy.query.api.proxy.entity.save.SavableContext;
 import com.easy.query.api.proxy.entity.save.SaveCommandContext;
-import com.easy.query.api.proxy.entity.save.SaveNode;
 import com.easy.query.api.proxy.entity.save.TargetValueTypeEnum;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.enums.SaveModeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -63,6 +63,21 @@ public abstract class AbstractSaveProvider implements SaveProvider {
     }
 
     protected TargetValueTypeEnum getTargetValueType(EntityMetadata selfMetadata, NavigateMetadata navigateMetadata) {
+        if (navigateMetadata.getSaveMode() != SaveModeEnum.IGNORE) {
+            if (navigateMetadata.getSaveMode() == SaveModeEnum.AUTO_CHECK) {
+                return autoGetTargetValueType(selfMetadata, navigateMetadata);
+            }
+            if (navigateMetadata.getSaveMode() == SaveModeEnum.AGGREGATE_ROOT) {
+                return TargetValueTypeEnum.AGGREGATE_ROOT;
+            }
+            if (navigateMetadata.getSaveMode() == SaveModeEnum.VALUE_OBJECT) {
+                return TargetValueTypeEnum.VALUE_OBJECT;
+            }
+        }
+        return TargetValueTypeEnum.RELATION_OTHER;
+    }
+
+    protected TargetValueTypeEnum autoGetTargetValueType(EntityMetadata selfMetadata, NavigateMetadata navigateMetadata) {
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
             if (navigateMetadata.getMappingClass() != null) {
                 boolean any = selfPropsIsKeys(selfMetadata, navigateMetadata);

@@ -120,7 +120,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -424,7 +423,7 @@ public class EntityMetadata {
 
 
             if (RelationTypeEnum.ManyToMany == relationType) {
-                navigateOption.setMappingClassSaveMode(navigate.mappingClassSaveMode());
+                navigateOption.setSaveMode(navigate.onSave());
                 //有中间表多对多
                 if (!Objects.equals(Object.class, navigate.mappingClass())) {
                     if (EasyArrayUtil.isEmpty(navigate.selfMappingProperty())) {

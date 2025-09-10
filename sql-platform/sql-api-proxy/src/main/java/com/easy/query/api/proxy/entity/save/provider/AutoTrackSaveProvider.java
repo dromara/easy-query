@@ -10,8 +10,8 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.EntityValueState;
 import com.easy.query.core.basic.extension.track.TrackContext;
-import com.easy.query.core.enums.MappingClassSaveModeEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.enums.SaveModeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -202,11 +202,11 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             if (navigateMetadata.getMappingClass() == null) {
                 throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "]-[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] many to many relation must have mapping class");
             }
-            if (navigateMetadata.getMappingClassSaveMode() == MappingClassSaveModeEnum.THROW) {
-                throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "]-[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] many to many relation mapping class save mode is throw");
+            if (navigateMetadata.getSaveMode() == SaveModeEnum.AUTO_CHECK) {
+                throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "]-[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] many to many relation mapping class save mode is not set");
             }
             //自动处理中间表
-            if (navigateMetadata.getMappingClassSaveMode() == MappingClassSaveModeEnum.AUTO) {
+            if (navigateMetadata.getSaveMode() == SaveModeEnum.VALUE_OBJECT) {
                 EntityMetadata mappingClassEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getMappingClass());
                 Object mappingEntity = mappingClassEntityMetadata.getBeanConstructorCreator().get();
                 setMappingEntity(selfEntity, targetEntity, mappingEntity, selfEntityMetadata, navigateMetadata, targetEntityMetadata, mappingClassEntityMetadata);
@@ -223,8 +223,8 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             if (navigateMetadata.getMappingClass() == null) {
                 throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "]-[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] many to many relation must have mapping class");
             }
-            if (navigateMetadata.getMappingClassSaveMode() == MappingClassSaveModeEnum.THROW) {
-                throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "]-[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] many to many relation mapping class save mode is throw");
+            if (navigateMetadata.getSaveMode() == SaveModeEnum.AUTO_CHECK) {
+                throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "]-[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] many to many relation mapping class save mode is not set");
             }
             //自动的简单中间表不需要更新
             return;
@@ -245,11 +245,11 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             if (navigateMetadata.getMappingClass() == null) {
                 throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "]-[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] many to many relation must have mapping class");
             }
-            if (navigateMetadata.getMappingClassSaveMode() == MappingClassSaveModeEnum.THROW) {
-                throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "]-[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] many to many relation mapping class save mode is throw");
+            if (navigateMetadata.getSaveMode() == SaveModeEnum.AUTO_CHECK) {
+                throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "]-[" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] many to many relation mapping class save mode not set");
             }
             //自动处理中间表
-            if (navigateMetadata.getMappingClassSaveMode() == MappingClassSaveModeEnum.AUTO) {
+            if (navigateMetadata.getSaveMode() == SaveModeEnum.VALUE_OBJECT) {
                 EntityMetadata mappingClassEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getMappingClass());
                 Object mappingEntity = mappingClassEntityMetadata.getBeanConstructorCreator().get();
                 saveNode.getInserts().add(new SaveNode.InsertItem(mappingEntity, t -> {
