@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.entity.save.provider;
 
+import com.easy.query.api.proxy.entity.save.OwnershipPolicyEnum;
 import com.easy.query.api.proxy.entity.save.SavableContext;
 import com.easy.query.api.proxy.entity.save.SaveCommandContext;
 import com.easy.query.api.proxy.entity.save.SaveModeEnum;
@@ -40,16 +41,18 @@ public abstract class AbstractSaveProvider implements SaveProvider {
     protected final EntityMetadataManager entityMetadataManager;
     protected final TrackContext currentTrackContext;
     protected final SaveModeEnum saveMode;
+    protected final OwnershipPolicyEnum ownershipPolicy;
     protected final List<Set<String>> savePathLimit;
     protected final SaveCommandContext saveCommandContext;
 
-    public AbstractSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveModeEnum saveMode) {
+    public AbstractSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveModeEnum saveMode, OwnershipPolicyEnum ownershipPolicy) {
         this.entityClass = entityClass;
         this.entities = entities;
         this.easyQueryClient = easyQueryClient;
         this.runtimeContext = easyQueryClient.getRuntimeContext();
         this.currentTrackContext = currentTrackContext;
         this.saveMode = saveMode;
+        this.ownershipPolicy = ownershipPolicy;
         this.entityMetadataManager = runtimeContext.getEntityMetadataManager();
         this.savePathLimit = savePathLimit;
         this.saveCommandContext = new SaveCommandContext(entityClass);
@@ -134,12 +137,13 @@ public abstract class AbstractSaveProvider implements SaveProvider {
                     throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getInstanceSimpleName(selfEntity) + "] property:[" + self + "] value can not be null, cant set relation value for entity:[" + EasyClassUtil.getInstanceSimpleName(targetEntity) + "]");
                 }
                 ColumnMetadata targetColumn = targetEntityMetadata.getColumnNotNull(target);
+//                targetColumn.getSetterCaller().call(targetEntity, selfValue);
                 Object currentValue = targetColumn.getGetterCaller().apply(targetEntity);
-                if (currentValue == null) {
+                if (currentValue == null || ownershipPolicy == OwnershipPolicyEnum.AllowOwnershipChange) {//允许分配的情况下就无脑赋值
                     targetColumn.getSetterCaller().call(targetEntity, selfValue);
-                } else {
+                } else if(ownershipPolicy == OwnershipPolicyEnum.EnforceSingleOwner) {//严格模式下不允许发生抢夺
                     if (!Objects.equals(currentValue, selfValue)) {
-                        throw new EasyQueryInvalidOperationException("relation value not equals,entity:[" + EasyClassUtil.getInstanceSimpleName(targetEntity) + "],property:[" + target + "],value:[" + currentValue + "],should:[" + selfValue + "]");
+                        throw new EasyQueryInvalidOperationException("relation value not equals,entity:[" + EasyClassUtil.getInstanceSimpleName(targetEntity) + "],property:[" + target + "],value:[" + currentValue + "],should:[" + selfValue + "]. Current OwnershipPolicy does not allow reassignment.");
                     }
                 }
             }
@@ -155,14 +159,14 @@ public abstract class AbstractSaveProvider implements SaveProvider {
                     throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getInstanceSimpleName(targetEntity) + "] property:[" + target + "] value can not be null, cant set relation value for entity:[" + EasyClassUtil.getInstanceSimpleName(selfEntity) + "]");
                 }
                 ColumnMetadata selfColumn = selfEntityMetadata.getColumnNotNull(self);
-                selfColumn.getSetterCaller().call(selfEntity, targetValue);
+//                selfColumn.getSetterCaller().call(selfEntity, targetValue);
 
                 Object currentValue = selfColumn.getGetterCaller().apply(selfEntity);
-                if (currentValue == null) {
+                if (currentValue == null || ownershipPolicy == OwnershipPolicyEnum.AllowOwnershipChange) {//允许分配的情况下就无脑赋值
                     selfColumn.getSetterCaller().call(selfEntity, targetValue);
-                } else {
+                } else if(ownershipPolicy == OwnershipPolicyEnum.EnforceSingleOwner) {//严格模式下不允许发生抢夺
                     if (!Objects.equals(currentValue, targetValue)) {
-                        throw new EasyQueryInvalidOperationException("relation value not equals,entity:[" + EasyClassUtil.getInstanceSimpleName(selfEntity) + "],property:[" + self + "],value:[" + currentValue + "],should:[" + targetValue + "]");
+                        throw new EasyQueryInvalidOperationException("relation value not equals,entity:[" + EasyClassUtil.getInstanceSimpleName(selfEntity) + "],property:[" + self + "],value:[" + currentValue + "],should:[" + targetValue + "]. Current OwnershipPolicy does not allow reassignment.");
                     }
                 }
             }

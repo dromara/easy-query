@@ -25,6 +25,11 @@ public class EasyEmptySavable<TProxy extends ProxyEntity<TProxy, T>, T> implemen
     }
 
     @Override
+    public EntitySavable<TProxy, T> ownershipPolicy(OwnershipPolicyEnum ownershipTransfer) {
+        return this;
+    }
+
+    @Override
     public EntitySavable<TProxy, T> savePath(SQLFuncExpression1<TProxy, List<MappingPath>> navigateIncludeSQLExpression) {
         return this;
     }

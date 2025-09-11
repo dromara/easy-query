@@ -19,6 +19,13 @@ public interface EntitySavable<TProxy extends ProxyEntity<TProxy, T>, T> extends
 
 
     EntitySavable<TProxy, T> saveMode(SaveModeEnum saveType);
+
+    /**
+     * 设置对象所有权变更
+     * @param ownershipPolicy
+     * @return
+     */
+    EntitySavable<TProxy, T> ownershipPolicy(OwnershipPolicyEnum ownershipPolicy);
     EntitySavable<TProxy, T> savePath(SQLFuncExpression1<TProxy, List<MappingPath>> navigateIncludeSQLExpression);
 
 }

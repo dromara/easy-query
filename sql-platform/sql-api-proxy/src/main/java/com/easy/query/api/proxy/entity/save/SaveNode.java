@@ -1,10 +1,13 @@
 package com.easy.query.api.proxy.entity.save;
 
-import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -14,9 +17,7 @@ import java.util.function.Consumer;
  * @author xuejiaming
  */
 public class SaveNode {
-    private final List<InsertItem> inserts;
-    private final List<Object> updates;
-    private final List<Object> deletes;
+    private final Map<MemoryAddressCompareValue, EntitySaveSate> entityItems;
     private final List<Object> deleteBys;
     private final int index;
     /**
@@ -27,10 +28,8 @@ public class SaveNode {
     public SaveNode(int index, EntityMetadata entityMetadata) {
         this.index = index;
         this.entityMetadata = entityMetadata;
-        this.inserts = new ArrayList<>();
-        this.updates = new ArrayList<>();
-        this.deletes = new ArrayList<>();
         this.deleteBys = new ArrayList<>();
+        this.entityItems = new LinkedHashMap<>();
     }
 
     public int getIndex() {
@@ -41,37 +40,112 @@ public class SaveNode {
         return entityMetadata;
     }
 
-    public List<InsertItem> getInserts() {
-        return inserts;
+    public Map<MemoryAddressCompareValue, EntitySaveSate> getEntityItems() {
+        return entityItems;
     }
 
-    public List<Object> getUpdates() {
-        return updates;
+    public void putDeleteItem(MemoryAddressCompareValue valueObject) {
+        EntitySaveSate entitySaveSate = entityItems.computeIfAbsent(valueObject, key -> new EntitySaveSate());
+        if (entitySaveSate.getType() == SaveNodeTypeEnum.INIT) {
+            entitySaveSate.setAggregateRoot(null);
+            entitySaveSate.setConsumer(null);
+            entitySaveSate.setType(SaveNodeTypeEnum.DELETE);
+        } else {
+            if (entitySaveSate.getType() == SaveNodeTypeEnum.INSERT) {
+                //存在变更聚合根的操作
+                entitySaveSate.setType(SaveNodeTypeEnum.CHANGE);
+            } else {
+                throw new EasyQueryInvalidOperationException("The current object:[" + EasyClassUtil.getInstanceSimpleName(valueObject.getEntity()) + "] has a conflicting save state and cannot be changed from ["+getEntitySaveStateAggregateRootDisplayName(entitySaveSate)+"." + entitySaveSate.getType() + "] to [" + SaveNodeTypeEnum.DELETE + "].");
+            }
+        }
     }
 
-    public List<Object> getDeletes() {
-        return deletes;
+    public void putInsertItem(MemoryAddressCompareValue valueObject, Object aggregateRoot, Consumer<Object> consumer) {
+        EntitySaveSate entitySaveSate = entityItems.computeIfAbsent(valueObject, key -> new EntitySaveSate());
+        if (entitySaveSate.getType() == SaveNodeTypeEnum.INIT) {
+            entitySaveSate.setAggregateRoot(aggregateRoot);
+            entitySaveSate.setConsumer(consumer);
+            entitySaveSate.setType(SaveNodeTypeEnum.INSERT);
+        } else {
+            if (entitySaveSate.getType() == SaveNodeTypeEnum.DELETE) {
+                //存在变更聚合根的操作
+                entitySaveSate.setAggregateRoot(aggregateRoot);
+                entitySaveSate.setConsumer(consumer);
+                entitySaveSate.setType(SaveNodeTypeEnum.CHANGE);
+            } else {
+                throw new EasyQueryInvalidOperationException("The current object:[" + EasyClassUtil.getInstanceSimpleName(valueObject.getEntity()) + "] has a conflicting save state and cannot be changed from [" + getEntitySaveStateAggregateRootDisplayName(entitySaveSate) + "." + entitySaveSate.getType() + "] to [" + EasyClassUtil.getInstanceSimpleName(aggregateRoot) + "." + SaveNodeTypeEnum.INSERT + "].");
+            }
+        }
     }
+
+    public void putUpdateItem(MemoryAddressCompareValue valueObject, Object aggregateRoot, Consumer<Object> consumer) {
+        EntitySaveSate entitySaveSate = entityItems.computeIfAbsent(valueObject, key -> new EntitySaveSate());
+        if (entitySaveSate.getType() == SaveNodeTypeEnum.INIT) {
+            entitySaveSate.setAggregateRoot(aggregateRoot);
+            entitySaveSate.setConsumer(consumer);
+            entitySaveSate.setType(SaveNodeTypeEnum.UPDATE);
+        } else {
+            throw new EasyQueryInvalidOperationException("The current object:[" + EasyClassUtil.getInstanceSimpleName(valueObject.getEntity()) + "] has a conflicting save state and cannot be changed from [" + getEntitySaveStateAggregateRootDisplayName(entitySaveSate) + "." + entitySaveSate.getType() + "] to [" + EasyClassUtil.getInstanceSimpleName(aggregateRoot) + "." + SaveNodeTypeEnum.UPDATE + "].");
+        }
+    }
+
+    private String getEntitySaveStateAggregateRootDisplayName(EntitySaveSate entitySaveSate) {
+        if (entitySaveSate.getAggregateRoot() == null) {
+            return "-";
+        }
+        return EasyClassUtil.getInstanceSimpleName(entitySaveSate.getAggregateRoot());
+    }
+
+    public void putIgnoreUpdateItem(MemoryAddressCompareValue valueObject, Object aggregateRoot, Consumer<Object> consumer) {
+        EntitySaveSate entitySaveSate = entityItems.computeIfAbsent(valueObject, key -> new EntitySaveSate());
+        if (entitySaveSate.getType() == SaveNodeTypeEnum.INIT) {
+            entitySaveSate.setAggregateRoot(aggregateRoot);
+            entitySaveSate.setConsumer(consumer);
+            entitySaveSate.setType(SaveNodeTypeEnum.UPDATE_IGNORE);
+        } else {
+            throw new EasyQueryInvalidOperationException("The current object:[" + EasyClassUtil.getInstanceSimpleName(valueObject.getEntity()) + "] has a conflicting save state and cannot be changed from [" + getEntitySaveStateAggregateRootDisplayName(entitySaveSate) + "." + entitySaveSate.getType() + "] to [" + EasyClassUtil.getInstanceSimpleName(aggregateRoot) + "." + SaveNodeTypeEnum.UPDATE_IGNORE + "].");
+        }
+    }
+
 
     public List<Object> getDeleteBys() {
         return deleteBys;
     }
 
-    public static class InsertItem {
-        private final Object entity;
-        private final Consumer<Object> consumer;
+    public static class EntitySaveSate {
+        private Object aggregateRoot;
+        private Consumer<Object> consumer;
+        private SaveNodeTypeEnum type = SaveNodeTypeEnum.INIT;
 
-        public InsertItem(Object entity, Consumer<Object> consumer) {
-            this.entity = entity;
+
+        public Object getAggregateRoot() {
+            return aggregateRoot;
+        }
+
+        public void setAggregateRoot(Object aggregateRoot) {
+            this.aggregateRoot = aggregateRoot;
+        }
+
+        public Consumer<Object> getConsumer() {
+            return consumer;
+        }
+
+        public void executeBefore(Object entity) {
+            if (consumer != null) {
+                consumer.accept(entity);
+            }
+        }
+
+        public void setConsumer(Consumer<Object> consumer) {
             this.consumer = consumer;
         }
 
-        public Object getEntity() {
-            return entity;
+        public SaveNodeTypeEnum getType() {
+            return type;
         }
 
-        public void insertBefore() {
-            consumer.accept(entity);
+        public void setType(SaveNodeTypeEnum type) {
+            this.type = type;
         }
     }
 }

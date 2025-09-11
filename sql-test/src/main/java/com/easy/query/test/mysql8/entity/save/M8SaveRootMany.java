@@ -8,7 +8,10 @@ import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.mysql8.entity.save.proxy.M8SaveRootManyOneProxy;
 import com.easy.query.test.mysql8.entity.save.proxy.M8SaveRootManyProxy;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * create time 2025/9/7 17:00
@@ -19,6 +22,9 @@ import lombok.Data;
 @Data
 @EntityProxy
 @Table("m8_save_root_many")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class M8SaveRootMany implements ProxyEntityAvailable<M8SaveRootMany, M8SaveRootManyProxy> {
     @Column(primaryKey = true)
     private String id;

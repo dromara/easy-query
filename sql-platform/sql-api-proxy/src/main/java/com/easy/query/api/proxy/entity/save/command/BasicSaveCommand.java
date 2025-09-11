@@ -4,6 +4,7 @@ import com.easy.query.api.proxy.entity.save.SavableContext;
 import com.easy.query.api.proxy.entity.save.SaveCommandContext;
 import com.easy.query.api.proxy.entity.save.SaveModeEnum;
 import com.easy.query.api.proxy.entity.save.SaveNode;
+import com.easy.query.api.proxy.entity.save.SaveNodeTypeEnum;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
@@ -44,7 +45,11 @@ public class BasicSaveCommand implements SaveCommand {
             SavableContext savableContext = savableContexts.get(i);
             for (Map.Entry<NavigateMetadata, SaveNode> saveNodeEntry : savableContext.getSaveNodeMap().entrySet()) {
                 SaveNode saveNode = saveNodeEntry.getValue();
-                easyQueryClient.deletable(saveNode.getDeletes()).batch(batch).allowDeleteStatement(true).executeRows();
+                List<Object> deleteItems = EasyCollectionUtil.mapFilterSelect(saveNode.getEntityItems(), kv -> kv.getValue().getType() == SaveNodeTypeEnum.DELETE, kv -> {
+                    kv.getValue().executeBefore(kv.getKey().getEntity());
+                    return kv.getKey().getEntity();
+                });
+                easyQueryClient.deletable(deleteItems).batch(batch).allowDeleteStatement(true).executeRows();
                 if (EasyCollectionUtil.isNotEmpty(saveNode.getDeleteBys())) {
                     NavigateMetadata navigateMetadata = saveNodeEntry.getKey();
                     String[] selfMappingProperties = navigateMetadata.getSelfMappingProperties();
@@ -68,12 +73,18 @@ public class BasicSaveCommand implements SaveCommand {
             SavableContext savableContext = savableContexts.get(i);
             for (Map.Entry<NavigateMetadata, SaveNode> nodeKv : savableContext.getSaveNodeMap().entrySet()) {
                 SaveNode saveNode = nodeKv.getValue();
-                List<Object> inserts = saveNode.getInserts().stream().map(o -> {
-                    o.insertBefore();
-                    return o.getEntity();
-                }).collect(Collectors.toList());
-                easyQueryClient.insertable(inserts).batch(batch).executeRows(insertFillAutoIncrement(saveNode.getEntityMetadata()));
-                easyQueryClient.updatable(saveNode.getUpdates()).batch(batch).executeRows();
+
+                List<Object> insertItems = EasyCollectionUtil.mapFilterSelect(saveNode.getEntityItems(), kv -> kv.getValue().getType() == SaveNodeTypeEnum.INSERT, kv -> {
+                    kv.getValue().executeBefore(kv.getKey().getEntity());
+                    return kv.getKey().getEntity();
+                });
+                easyQueryClient.insertable(insertItems).batch(batch).executeRows(insertFillAutoIncrement(saveNode.getEntityMetadata()));
+
+                List<Object> updateItems = EasyCollectionUtil.mapFilterSelect(saveNode.getEntityItems(), kv -> kv.getValue().getType() == SaveNodeTypeEnum.UPDATE || kv.getValue().getType() == SaveNodeTypeEnum.CHANGE, kv -> {
+                    kv.getValue().executeBefore(kv.getKey().getEntity());
+                    return kv.getKey().getEntity();
+                });
+                easyQueryClient.updatable(updateItems).batch(batch).executeRows();
             }
         }
     }

@@ -313,6 +313,22 @@ public class EasyCollectionUtil {
         return result;
     }
 
+    public static <TKey,TSource,TResult> List<TResult> mapFilterSelect(Map<TKey,TSource> source, java.util.function.Predicate<Map.Entry<TKey, TSource>> predicate, java.util.function.Function<Map.Entry<TKey, TSource>,TResult> selector) {
+        if (source==null||source.isEmpty()) {
+            return EasyCollectionUtil.emptyList();
+        }
+        Set<Map.Entry<TKey, TSource>> entries = source.entrySet();
+        ArrayList<TResult> result = new ArrayList<>(source.size());
+        for (Map.Entry<TKey, TSource> kv : source.entrySet()) {
+
+            if (predicate.test(kv)) {
+                TResult r = selector.apply(kv);
+                result.add(r);
+            }
+        }
+        return result;
+    }
+
     public static <TSource> TSource firstOrDefault(Collection<TSource> source, java.util.function.Predicate<TSource> predicate, TSource def) {
         if (source == null) {
             return def;

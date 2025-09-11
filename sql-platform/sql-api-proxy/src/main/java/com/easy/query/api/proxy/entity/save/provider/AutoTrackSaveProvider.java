@@ -1,5 +1,7 @@
 package com.easy.query.api.proxy.entity.save.provider;
 
+import com.easy.query.api.proxy.entity.save.MemoryAddressCompareValue;
+import com.easy.query.api.proxy.entity.save.OwnershipPolicyEnum;
 import com.easy.query.api.proxy.entity.save.SavableContext;
 import com.easy.query.api.proxy.entity.save.SaveModeEnum;
 import com.easy.query.api.proxy.entity.save.SaveNode;
@@ -40,8 +42,8 @@ import java.util.Set;
  */
 public class AutoTrackSaveProvider extends AbstractSaveProvider {
 
-    public AutoTrackSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveModeEnum saveMode) {
-        super(currentTrackContext, entityClass, entities, easyQueryClient, savePathLimit, saveMode);
+    public AutoTrackSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveModeEnum saveMode, OwnershipPolicyEnum ownershipPolicy) {
+        super(currentTrackContext, entityClass, entities, easyQueryClient, savePathLimit, saveMode, ownershipPolicy);
     }
 
 
@@ -64,7 +66,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                 }
                 saveEntity(entity, entityMetadata, 0);
             }
-            return new BasicSaveCommand(entityMetadata, inserts, updates, easyQueryClient, saveCommandContext,saveMode);
+            return new BasicSaveCommand(entityMetadata, inserts, updates, easyQueryClient, saveCommandContext, saveMode);
         }
 
         return EmptySaveCommand.INSTANCE;
@@ -114,10 +116,6 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
 
     private void valueObjectEntityInsert(Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata, EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode) {
 
-        if (this.saveCommandContext.isProcessEntity(targetEntity)) {
-            return;
-        }
-        this.saveCommandContext.addProcessEntity(targetEntity);
         saveNodeInsert(selfEntity, targetEntity, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
 
         if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
@@ -150,7 +148,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             for (String trackKey : trackKeys) {
                 EntityState trackEntityState = currentTrackContext.getTrackEntityState(navigateMetadata.getNavigatePropertyType(), trackKey);
                 Objects.requireNonNull(trackEntityState, "trackEntityState cant be null,trackKey:" + trackKey);
-                dbEntityMap.put(trackKey, trackEntityState.getOriginalValue());
+                dbEntityMap.put(trackKey, trackEntityState.getCurrentValue());
             }
 
             Property<Object, ?> getter = navigateMetadata.getGetter();
@@ -173,10 +171,6 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
 
     private void valueObjectEntityInsert(Map<String, Object> dbEntityMap, Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata, EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode) {
 
-        if (this.saveCommandContext.isProcessEntity(targetEntity)) {
-            return;
-        }
-        this.saveCommandContext.addProcessEntity(targetEntity);
         String newNavigateEntityKey = EasyTrackUtil.getTrackKey(targetEntityMetadata, targetEntity);
         if (newNavigateEntityKey == null || !dbEntityMap.containsKey(newNavigateEntityKey)) {
             saveNodeInsert(selfEntity, targetEntity, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
@@ -187,7 +181,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             if (targetEntity != trackEntityState.getCurrentValue()) {//必须是被追踪对象不然初始化空集合的navigate会有问题视为被删除
                 throw new EasyQueryInvalidOperationException("entity:" + targetEntity + " is not same with:" + trackEntityState.getCurrentValue());
             }
-            saveNodeUpdate(trackEntityState, targetEntity, targetEntityMetadata, navigateMetadata, saveNode);
+            saveNodeUpdate(trackEntityState, selfEntity, targetEntity, targetEntityMetadata, navigateMetadata, saveNode);
         }
 
 
@@ -214,11 +208,11 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                 saveNode.getDeleteBys().add(mappingEntity);
             }
         } else {
-            saveNode.getDeletes().add(targetEntity);
+            saveNode.putDeleteItem(new MemoryAddressCompareValue(targetEntity));
         }
     }
 
-    private void saveNodeUpdate(EntityState trackEntityState, Object targetEntity, EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode) {
+    private void saveNodeUpdate(EntityState trackEntityState, Object selfEntity, Object targetEntity, EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode) {
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
             //检查中间表并且创建新增操作
             if (navigateMetadata.getMappingClass() == null) {
@@ -231,12 +225,18 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             return;
         }
 
+        boolean hasChanged = false;
         for (Map.Entry<String, ColumnMetadata> propColumn : targetEntityMetadata.getProperty2ColumnMap().entrySet()) {
             EntityValueState entityValueState = trackEntityState.getEntityValueState(propColumn.getValue());
             if (entityValueState.isChanged()) {
-                saveNode.getUpdates().add(targetEntity);
+                hasChanged = true;
                 break;
             }
+        }
+        if(hasChanged){
+            saveNode.putUpdateItem(new MemoryAddressCompareValue(targetEntity), selfEntity, null);
+        }else{
+            saveNode.putIgnoreUpdateItem(new MemoryAddressCompareValue(targetEntity), selfEntity, null);
         }
     }
 
@@ -253,14 +253,14 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             if (navigateMetadata.getValueType() == ValueTypeEnum.VALUE_OBJECT) {
                 EntityMetadata mappingClassEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getMappingClass());
                 Object mappingEntity = mappingClassEntityMetadata.getBeanConstructorCreator().get();
-                saveNode.getInserts().add(new SaveNode.InsertItem(mappingEntity, t -> {
+                saveNode.putInsertItem(new MemoryAddressCompareValue(mappingEntity), selfEntity, t -> {
                     setMappingEntity(selfEntity, targetEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata, mappingClassEntityMetadata);
-                }));
+                });
             }
         } else {
-            saveNode.getInserts().add(new SaveNode.InsertItem(targetEntity, t -> {
+            saveNode.putInsertItem(new MemoryAddressCompareValue(targetEntity), selfEntity, t -> {
                 setTargetValue(TargetValueTypeEnum.VALUE_OBJECT, selfEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
-            }));
+            });
         }
     }
 }
