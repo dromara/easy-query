@@ -1706,7 +1706,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         innerJoinExpressionContext.extract(this.entityQueryExpressionBuilder.getExpressionContext());
         this.entityQueryExpressionBuilder.getExpressionContext().extendFrom(innerJoinExpressionContext);
         ClientQueryable<T1> cteQueryable = getCTEJoinQueryable(queryable, cteTableName, codeProperties, parentCodeProperties, up)
-                .where(childFilter != null, (child, parent) -> {
+                .where(childFilter != null, (parent, child) -> {
                     assert childFilter != null;
                     childFilter.apply(child);
                 })

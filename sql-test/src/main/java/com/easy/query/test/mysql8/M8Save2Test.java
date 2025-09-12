@@ -8,6 +8,9 @@ import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.common.ValueHolder;
 import com.easy.query.core.proxy.sql.Include;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.entity.blogtest.SysRole;
+import com.easy.query.test.entity.blogtest.SysUser;
+import com.easy.query.test.entity.blogtest.UserRole;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.save.M8SaveRoot;
@@ -364,5 +367,13 @@ public class M8Save2Test extends BaseTest {
             Assert.assertEquals("The current object:[M8SaveRootMany] has a conflicting save state and cannot be changed from [M8SaveRoot.INSERT] to [M8SaveRoot.UPDATE_IGNORE].", exception.getMessage());
         });
 
+    }
+
+
+    @Test
+     public void USerRoleTest(){
+        SysRole sysRole = new SysRole();
+        SysUser sysUser = new SysUser();
+        UserRole userRole = new UserRole();
     }
 }

@@ -58,6 +58,7 @@ import com.easy.query.test.mysql8.entity.M8User;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
+import com.easy.query.test.mysql8.entity.bank.proxy.SysBankCardProxy;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysBankProxy;
 import com.easy.query.test.mysql8.entity.many.M8Province;
 import org.junit.Assert;
@@ -664,7 +665,7 @@ public class MySQL8Test3 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         easyEntityQuery.queryable(SysUser.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.SMART_PREDICATE))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.SMART_PREDICATE))
                 .innerJoin(SysBankCard.class, (user, bank_card) -> user.id().eq(bank_card.uid()))
                 .select((user, bank_card) -> new UserBankDTO2Proxy()
                         .name().set(user.name())
@@ -673,7 +674,7 @@ public class MySQL8Test3 extends BaseTest {
                 ).where(u -> {
                     u.code2().eq("123");
 
-                    u.or(()->{
+                    u.or(() -> {
                         u.name().eq("name");
                         u.phone().eq("phone");
                     });
@@ -687,6 +688,7 @@ public class MySQL8Test3 extends BaseTest {
         Assert.assertEquals("123(String),name(String),phone(String),123(String),name(String),phone(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void testDTOWhereToTableWhere1() {
 
@@ -695,7 +697,7 @@ public class MySQL8Test3 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         easyEntityQuery.queryable(SysUser.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.SMART_PREDICATE))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.SMART_PREDICATE))
                 .innerJoin(SysBankCard.class, (user, bank_card) -> user.id().eq(bank_card.uid()))
                 .where((user, bank_card) -> {
                     bank_card.code().eq("456");
@@ -707,7 +709,7 @@ public class MySQL8Test3 extends BaseTest {
                 ).where(u -> {
                     u.code2().eq("123");
 
-                    u.or(()->{
+                    u.or(() -> {
                         u.name().eq("name");
                         u.code2().eq("phone");
                     });
@@ -723,13 +725,27 @@ public class MySQL8Test3 extends BaseTest {
     }
 
     @Test
-    public void testOneIsNull(){
+    public void testOneIsNull() {
         List<String> userIds = easyEntityQuery.queryable(SysBankCard.class)
                 .select(bank_card -> new StringProxy(bank_card.code()))
                 .unionAll(easyEntityQuery.queryable(SysUser.class)
                         .select(user -> new StringProxy(user.phone())))
                 .toList();
     }
+
+//    public void test() {
+//        List<UserBankDTO> list = easyEntityQuery.queryable(SysUser.class)
+//                .select(UserBankDTO.class, user -> {
+//                    SysBankCardProxy firstCard = user.bankCards().where(bc -> bc.type().eq("储蓄卡")).orderBy(bc -> bc.openTime().asc()).first();
+//
+//                    return Select.of(
+//                            firstCard.code().as("mycode"),
+//                            firstCard.type().as("mytype"),
+//                            firstCard.bank().name().as("mybankname")
+//                    );
+//
+//                }).toList();
+//    }
 //
 //    @Test
 //    public  void testMany2One(){
