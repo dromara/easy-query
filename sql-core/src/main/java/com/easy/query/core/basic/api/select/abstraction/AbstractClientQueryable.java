@@ -1558,7 +1558,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         t1.multiEq(true, t, parentCodeProperties, codeProperties);
                     }
                 })
-                .where(childFilter != null, (child, parent) -> {
+                .where(childFilter != null, (parent,child ) -> {
                     childFilter.apply(child);
                 })
                 .select(thisQueryClass, (t, t1) -> {

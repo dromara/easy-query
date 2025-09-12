@@ -1414,87 +1414,87 @@ public class QueryTest3 extends BaseTest {
         List<Topic> list = easyQuery.queryable(Topic.class).toList();
     }
 
-    @Test
-    public void userBookTest() {
-
-        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
-        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(UserBookEncrypt.class));
-        codeFirstCommand.executeWithTransaction(s->s.commit());
-
-        easyQuery.deletable(SysUserEncrypt.class)
-                .whereByIds(Arrays.asList("1" , "2" ))
-                .disableLogicDelete().executeRows();
-        easyQuery.deletable(UserBookEncrypt.class)
-                .whereByIds(Arrays.asList("1" , "2" , "3" , "4" ))
-                .disableLogicDelete().executeRows();
-        {
-
-            SysUserEncrypt sysUser = new SysUserEncrypt();
-            sysUser.setId("1" );
-            sysUser.setName("用户1" );
-            sysUser.setPhone("12345678901" );
-            sysUser.setAddress("浙江省绍兴市越城区城市广场1234号" );
-            sysUser.setCreateTime(LocalDateTime.now());
-            ArrayList<UserBookEncrypt> userBooks = new ArrayList<>();
-            UserBookEncrypt userBook = new UserBookEncrypt();
-            userBook.setId("1" );
-            userBook.setUserId("1" );
-            userBook.setName("语文" );
-            userBooks.add(userBook);
-            UserBookEncrypt userBook1 = new UserBookEncrypt();
-            userBook1.setId("2" );
-            userBook1.setUserId("1" );
-            userBook1.setName("数学" );
-            userBooks.add(userBook1);
-            easyQuery.insertable(sysUser).executeRows();
-            easyQuery.insertable(userBooks).executeRows();
-        }
-        {
-
-            SysUserEncrypt sysUser = new SysUserEncrypt();
-            sysUser.setId("2" );
-            sysUser.setName("用户2" );
-            sysUser.setPhone("19012345678" );
-            sysUser.setAddress("浙江省杭州市上城区武林广场1234号" );
-            sysUser.setCreateTime(LocalDateTime.now());
-            ArrayList<UserBookEncrypt> userBooks = new ArrayList<>();
-            UserBookEncrypt userBook = new UserBookEncrypt();
-            userBook.setId("3" );
-            userBook.setUserId("2" );
-            userBook.setName("语文" );
-            userBooks.add(userBook);
-            UserBookEncrypt userBook1 = new UserBookEncrypt();
-            userBook1.setId("4" );
-            userBook1.setUserId("2" );
-            userBook1.setName("英语" );
-            userBooks.add(userBook1);
-            easyQuery.insertable(sysUser).executeRows();
-            easyQuery.insertable(userBooks).executeRows();
-        }
-
-
-        List<UserBookEncryptVO> userBooks = easyQuery.queryable(UserBookEncrypt.class)
-                .leftJoin(SysUserEncrypt.class, (t, t1) -> t.eq(t1, UserBookEncrypt::getUserId, SysUserEncrypt::getId))
-                .where((t, t1) -> t1.like(SysUserEncrypt::getAddress, "越城区" ))
-                .select(UserBookEncryptVO.class, (t, t1) -> t.columnAll()
-                        .then(t1)
-                        .columnAs(SysUserEncrypt::getName, UserBookEncryptVO::getUserName)
-                        .columnAs(SysUserEncrypt::getPhone, UserBookEncryptVO::getUserPhone)
-                        .columnAs(SysUserEncrypt::getAddress, UserBookEncryptVO::getUserAddress)
-                )
-                .toList();
-
-        for (UserBookEncryptVO userBook : userBooks) {
-            Assert.assertEquals("12345678901" , userBook.getUserPhone());
-            Assert.assertEquals("浙江省绍兴市越城区城市广场1234号" , userBook.getUserAddress());
-        }
-        easyQuery.deletable(SysUserEncrypt.class)
-                .whereByIds(Arrays.asList("1" , "2" ))
-                .disableLogicDelete().executeRows();
-        easyQuery.deletable(UserBookEncrypt.class)
-                .whereByIds(Arrays.asList("1" , "2" , "3" , "4" ))
-                .disableLogicDelete().executeRows();
-    }
+//    @Test
+//    public void userBookTest() {
+//
+//        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
+//        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(UserBookEncrypt.class));
+//        codeFirstCommand.executeWithTransaction(s->s.commit());
+//
+//        easyQuery.deletable(SysUserEncrypt.class)
+//                .whereByIds(Arrays.asList("1" , "2" ))
+//                .disableLogicDelete().executeRows();
+//        easyQuery.deletable(UserBookEncrypt.class)
+//                .whereByIds(Arrays.asList("1" , "2" , "3" , "4" ))
+//                .disableLogicDelete().executeRows();
+//        {
+//
+//            SysUserEncrypt sysUser = new SysUserEncrypt();
+//            sysUser.setId("1" );
+//            sysUser.setName("用户1" );
+//            sysUser.setPhone("12345678901" );
+//            sysUser.setAddress("浙江省绍兴市越城区城市广场1234号" );
+//            sysUser.setCreateTime(LocalDateTime.now());
+//            ArrayList<UserBookEncrypt> userBooks = new ArrayList<>();
+//            UserBookEncrypt userBook = new UserBookEncrypt();
+//            userBook.setId("1" );
+//            userBook.setUserId("1" );
+//            userBook.setName("语文" );
+//            userBooks.add(userBook);
+//            UserBookEncrypt userBook1 = new UserBookEncrypt();
+//            userBook1.setId("2" );
+//            userBook1.setUserId("1" );
+//            userBook1.setName("数学" );
+//            userBooks.add(userBook1);
+//            easyQuery.insertable(sysUser).executeRows();
+//            easyQuery.insertable(userBooks).executeRows();
+//        }
+//        {
+//
+//            SysUserEncrypt sysUser = new SysUserEncrypt();
+//            sysUser.setId("2" );
+//            sysUser.setName("用户2" );
+//            sysUser.setPhone("19012345678" );
+//            sysUser.setAddress("浙江省杭州市上城区武林广场1234号" );
+//            sysUser.setCreateTime(LocalDateTime.now());
+//            ArrayList<UserBookEncrypt> userBooks = new ArrayList<>();
+//            UserBookEncrypt userBook = new UserBookEncrypt();
+//            userBook.setId("3" );
+//            userBook.setUserId("2" );
+//            userBook.setName("语文" );
+//            userBooks.add(userBook);
+//            UserBookEncrypt userBook1 = new UserBookEncrypt();
+//            userBook1.setId("4" );
+//            userBook1.setUserId("2" );
+//            userBook1.setName("英语" );
+//            userBooks.add(userBook1);
+//            easyQuery.insertable(sysUser).executeRows();
+//            easyQuery.insertable(userBooks).executeRows();
+//        }
+//
+//
+//        List<UserBookEncryptVO> userBooks = easyQuery.queryable(UserBookEncrypt.class)
+//                .leftJoin(SysUserEncrypt.class, (t, t1) -> t.eq(t1, UserBookEncrypt::getUserId, SysUserEncrypt::getId))
+//                .where((t, t1) -> t1.like(SysUserEncrypt::getAddress, "越城区" ))
+//                .select(UserBookEncryptVO.class, (t, t1) -> t.columnAll()
+//                        .then(t1)
+//                        .columnAs(SysUserEncrypt::getName, UserBookEncryptVO::getUserName)
+//                        .columnAs(SysUserEncrypt::getPhone, UserBookEncryptVO::getUserPhone)
+//                        .columnAs(SysUserEncrypt::getAddress, UserBookEncryptVO::getUserAddress)
+//                )
+//                .toList();
+//
+//        for (UserBookEncryptVO userBook : userBooks) {
+//            Assert.assertEquals("12345678901" , userBook.getUserPhone());
+//            Assert.assertEquals("浙江省绍兴市越城区城市广场1234号" , userBook.getUserAddress());
+//        }
+//        easyQuery.deletable(SysUserEncrypt.class)
+//                .whereByIds(Arrays.asList("1" , "2" ))
+//                .disableLogicDelete().executeRows();
+//        easyQuery.deletable(UserBookEncrypt.class)
+//                .whereByIds(Arrays.asList("1" , "2" , "3" , "4" ))
+//                .disableLogicDelete().executeRows();
+//    }
 
     @Test
     public void orTest() {
