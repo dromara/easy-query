@@ -1710,9 +1710,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                     assert childFilter != null;
                     childFilter.apply(child);
                 })
-                .select(thisQueryClass, (t, t1) -> {
-                    t.sqlNativeSegment("{0} + 1", c -> c.columnName(deepColumnName).setAlias(deepColumnName));
-                    t1.columnAll();
+                .select(thisQueryClass, (parent, child) -> {
+                    parent.sqlNativeSegment("{0} + 1", c -> c.columnName(deepColumnName).setAlias(deepColumnName));
+                    child.columnAll();
                 });
 
         this.select(o -> o.sqlNativeSegment("0", c -> c.setAlias(deepColumnName)).columnAll());
