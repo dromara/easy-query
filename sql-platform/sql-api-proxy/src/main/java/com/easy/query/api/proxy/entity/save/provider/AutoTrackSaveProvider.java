@@ -64,7 +64,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                 } else {
                     updates.add(entity);
                 }
-                saveEntity(entity, entityMetadata, 0);
+                saveSelf(entity, entityMetadata, 0);
             }
             return new BasicSaveCommand(entityMetadata, inserts, updates, easyQueryClient, saveCommandContext, saveMode);
         }
@@ -73,20 +73,34 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
     }
 
 
-    private void saveEntity(Object entity, EntityMetadata entityMetadata, int deep) {
+    private void saveSelf(Object entity, EntityMetadata entityMetadata, int deep) {
 
         EntityState entityState = currentTrackContext.getTrackEntityState(entity);
         SavableContext savableContext = this.saveCommandContext.getCreateSavableContext(deep);
 //        SavableContext savablePathContext = this.savePathCommandContext.getSavableContext(deep);
         //当前追踪的对象是否被追踪 如果被追踪那么应该以追踪上下文的导航值对象解析 如果未被追踪 应该以实体导航属性来获取值对象
         Collection<NavigateMetadata> navigateMetadataList = entityState == null ? entityMetadata.getNavigateMetadatas() : entityState.getIncludes();
-        List<NavigateMetadata> valueObjects = getNavigateSavableValueObjects(entityState,savableContext, entity, entityMetadata, navigateMetadataList, deep);
+        List<NavigateMetadata> valueObjects = getNavigateSavableValueObjects(entityState, savableContext, entity, entityMetadata, navigateMetadataList, deep);
         for (NavigateMetadata navigateMetadata : valueObjects) {
             if (entityState == null) {
                 valueObjectInsert(entity, entityMetadata, navigateMetadata, savableContext);
             } else {
                 Set<String> trackKeys = entityState.getTrackKeys(navigateMetadata);
                 valueObjectUpdate(entity, entityMetadata, navigateMetadata, savableContext, trackKeys == null ? new HashSet<>() : trackKeys);
+            }
+        }
+    }
+
+    private void deleteSelf(Object entity, EntityMetadata entityMetadata, int deep) {
+
+        EntityState entityState = currentTrackContext.getTrackEntityState(entity);
+        if (entityState != null) {
+
+            SavableContext savableContext = this.saveCommandContext.getCreateSavableContext(deep);
+            Collection<NavigateMetadata> navigateMetadataList = entityState.getIncludes();
+            List<NavigateMetadata> valueObjects = getNavigateSavableValueObjects(entityState, savableContext, entity, entityMetadata, navigateMetadataList, deep);
+            for (NavigateMetadata navigateMetadata : valueObjects) {
+                valueObjectUpdate(entity, entityMetadata, navigateMetadata, savableContext, new HashSet<>());
             }
         }
     }
@@ -119,7 +133,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
         saveNodeInsert(selfEntity, targetEntity, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
 
         if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
-            saveEntity(targetEntity, targetEntityMetadata, saveNode.getIndex() + 1);
+            saveSelf(targetEntity, targetEntityMetadata, saveNode.getIndex() + 1);
         }
 
     }
@@ -186,7 +200,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
 
 
         if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
-            saveEntity(targetEntity, targetEntityMetadata, saveNode.getIndex() + 1);
+            saveSelf(targetEntity, targetEntityMetadata, saveNode.getIndex() + 1);
         }
 
     }
@@ -215,15 +229,18 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                 //检查目标是否也是全主键
 
                 boolean prosHasKey = targetAnyPropsIsKey(selfEntityMetadata, navigateMetadata);
-                if(prosHasKey){
-                    throw new EasyQueryInvalidOperationException("entity:["+EasyClassUtil.getSimpleName(selfEntityMetadata.getEntityClass())+"."+navigateMetadata.getPropertyName()+"] targetProperty has key props,cascade cant use set null");
+                if (prosHasKey) {
+                    throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(selfEntityMetadata.getEntityClass()) + "." + navigateMetadata.getPropertyName() + "] targetProperty has key props,cascade cant use set null");
                 }
                 saveNode.putUpdateItem(new MemoryAddressCompareValue(targetEntity), selfEntity, t -> {
                     setTargetNullValue(TargetValueTypeEnum.VALUE_OBJECT, selfEntity, targetEntity, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
                 });
+
             }
             if (navigateMetadata.getCascade() == CascadeTypeEnum.DELETE) {
                 saveNode.putDeleteItem(new MemoryAddressCompareValue(targetEntity));
+                //只有删除的脱钩才需要处理
+                deleteSelf(targetEntity, targetEntityMetadata, saveNode.getIndex() + 1);
             }
         }
     }
