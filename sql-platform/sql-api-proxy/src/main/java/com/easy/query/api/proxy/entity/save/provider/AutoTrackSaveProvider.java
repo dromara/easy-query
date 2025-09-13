@@ -5,6 +5,7 @@ import com.easy.query.api.proxy.entity.save.OwnershipPolicyEnum;
 import com.easy.query.api.proxy.entity.save.SavableContext;
 import com.easy.query.api.proxy.entity.save.SaveModeEnum;
 import com.easy.query.api.proxy.entity.save.SaveNode;
+import com.easy.query.api.proxy.entity.save.SaveNodeTypeEnum;
 import com.easy.query.api.proxy.entity.save.TargetValueTypeEnum;
 import com.easy.query.api.proxy.entity.save.command.EmptySaveCommand;
 import com.easy.query.api.proxy.entity.save.command.SaveCommand;
@@ -66,6 +67,16 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                 }
                 saveSelf(entity, entityMetadata, 0);
             }
+            for (Map.Entry<MemoryAddressCompareValue, DeleteValueObject> deleteValueObjectKv : deleteValueObjectMap.entrySet()) {
+                MemoryAddressCompareValue key = deleteValueObjectKv.getKey();
+                DeleteValueObject value = deleteValueObjectKv.getValue();
+                SaveNode.EntitySaveSate entitySaveSate = value.saveNode.getEntityItems().get(key);
+                if (entitySaveSate.getType() != SaveNodeTypeEnum.DELETE) {
+                    continue;
+                }
+                //只有删除的脱钩才需要处理
+                deleteSelf(value.target, value.targetEntityMetadata, value.saveNode.getIndex() + 1);
+            }
             return new BasicSaveCommand(entityMetadata, inserts, updates, easyQueryClient, saveCommandContext, saveMode);
         }
 
@@ -100,7 +111,8 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             Collection<NavigateMetadata> navigateMetadataList = entityState.getIncludes();
             List<NavigateMetadata> valueObjects = getNavigateSavableValueObjects(entityState, savableContext, entity, entityMetadata, navigateMetadataList, deep);
             for (NavigateMetadata navigateMetadata : valueObjects) {
-                valueObjectUpdate(entity, entityMetadata, navigateMetadata, savableContext, new HashSet<>());
+                Set<String> trackKeys = entityState.getTrackKeys(navigateMetadata);
+                valueObjectUpdate(entity, entityMetadata, navigateMetadata, savableContext, trackKeys == null ? new HashSet<>() : trackKeys);
             }
         }
     }
@@ -238,12 +250,14 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
 
             }
             if (navigateMetadata.getCascade() == CascadeTypeEnum.DELETE) {
-                saveNode.putDeleteItem(new MemoryAddressCompareValue(targetEntity));
-                //只有删除的脱钩才需要处理
-                deleteSelf(targetEntity, targetEntityMetadata, saveNode.getIndex() + 1);
+                MemoryAddressCompareValue deleteEntity = new MemoryAddressCompareValue(targetEntity);
+                saveNode.putDeleteItem(deleteEntity);
+                DeleteValueObject deleteValueObject = new DeleteValueObject(targetEntity, targetEntityMetadata, saveNode);
+                deleteValueObjectMap.computeIfAbsent(deleteEntity, k -> deleteValueObject);
             }
         }
     }
+
 
     private void saveNodeUpdate(EntityState trackEntityState, Object selfEntity, Object targetEntity, EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode) {
 

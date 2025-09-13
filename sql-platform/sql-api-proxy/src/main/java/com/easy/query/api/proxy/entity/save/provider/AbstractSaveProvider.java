@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.entity.save.provider;
 
+import com.easy.query.api.proxy.entity.save.MemoryAddressCompareValue;
 import com.easy.query.api.proxy.entity.save.OwnershipPolicyEnum;
 import com.easy.query.api.proxy.entity.save.SavableContext;
 import com.easy.query.api.proxy.entity.save.SaveCommandContext;
@@ -24,7 +25,9 @@ import com.easy.query.core.util.EasyCollectionUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -44,6 +47,7 @@ public abstract class AbstractSaveProvider implements SaveProvider {
     protected final SaveModeEnum saveMode;
     protected final OwnershipPolicyEnum ownershipPolicy;
     protected final List<Set<String>> savePathLimit;
+    protected final Map<MemoryAddressCompareValue,DeleteValueObject> deleteValueObjectMap;
     protected final SaveCommandContext saveCommandContext;
 
     public AbstractSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveModeEnum saveMode, OwnershipPolicyEnum ownershipPolicy) {
@@ -57,6 +61,7 @@ public abstract class AbstractSaveProvider implements SaveProvider {
         this.entityMetadataManager = runtimeContext.getEntityMetadataManager();
         this.savePathLimit = savePathLimit;
         this.saveCommandContext = new SaveCommandContext(entityClass);
+        this.deleteValueObjectMap = new LinkedHashMap<>();
     }
 
     protected boolean isSavePathLimitContains(NavigateMetadata navigateMetadata, int deep) {
