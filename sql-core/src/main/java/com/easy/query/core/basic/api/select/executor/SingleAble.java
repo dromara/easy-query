@@ -39,6 +39,8 @@ public interface SingleAble<T> extends QueryAvailable<T> {
      * </pre></blockquote>
      *
      * @return
+     * @throws EasyQuerySingleMoreElementException 如果大于一条数据 可以通过
+     * @throws EasyQuerySingleNotNullException     如果查询不到数据 可以通过 {@link AssertExceptionFactory#createSingleNotNullException(Query, String, String)} 自定义
      */
 
     @NotNull

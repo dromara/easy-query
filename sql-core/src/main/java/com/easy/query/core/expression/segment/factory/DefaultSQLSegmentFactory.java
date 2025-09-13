@@ -107,6 +107,14 @@ public class DefaultSQLSegmentFactory implements SQLSegmentFactory {
     }
 
     @Override
+    public InsertUpdateSetColumnSQLSegment createUpdateColumnNullSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext) {
+
+        Column2Segment column2Segment = new Column2SegmentImpl(table, columnMetadata, expressionContext);
+        ColumnValue2Segment versionColumnValue2Segment = EasyColumnSegmentUtil.createColumnNullValue2Segment(table, columnMetadata, expressionContext);
+        return new UpdateColumnSegmentImpl(column2Segment, versionColumnValue2Segment);
+    }
+
+    @Override
     public InsertUpdateSetColumnSQLSegment createUpdateSetColumnSegment(TableAvailable table, String propertyName, ExpressionContext expressionContext, Object val) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(propertyName);
         Column2Segment column2Segment = new Column2SegmentImpl(table, columnMetadata, expressionContext);

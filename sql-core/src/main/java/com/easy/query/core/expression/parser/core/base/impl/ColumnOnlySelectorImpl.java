@@ -42,6 +42,12 @@ public class ColumnOnlySelectorImpl<T> implements ColumnOnlySelector<T> {
     }
 
     @Override
+    public ColumnOnlySelector<T> columnNull(String property) {
+        onlySelector.columnNull(table,property);
+        return this;
+    }
+
+    @Override
     public ColumnOnlySelector<T> columnIgnore(String property) {
         onlySelector.columnIgnore(table,property);
         return this;

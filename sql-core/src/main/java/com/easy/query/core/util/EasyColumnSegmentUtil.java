@@ -75,6 +75,12 @@ public class EasyColumnSegmentUtil {
         }
     }
 
+    public static ColumnValue2Segment createColumnNullValue2Segment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext) {
+
+        SQLParameter sqlParameter =new EasyConstSQLParameter(table, columnMetadata.getPropertyName(),null);
+        return new ColumnValue2SegmentImpl(table, columnMetadata, expressionContext, sqlParameter);
+    }
+
     public static ColumnValue2Segment createColumnTrackValue2Segment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext) {
         PropertyTrackSQLParameter sqlParameter = new PropertyTrackSQLParameter(table, columnMetadata.getPropertyName(), expressionContext.getRuntimeContext());
         ColumnValueSQLConverter columnValueSQLConverter = columnMetadata.getColumnValueSQLConverter();

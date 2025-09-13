@@ -67,6 +67,13 @@ public class OnlySelectorImpl implements OnlySelector {
         return this;
     }
 
+    @Override
+    public OnlySelector columnNull(TableAvailable table, String property) {
+        ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
+        appendColumnNullSet(table, columnMetadata);
+        return this;
+    }
+
     protected void appendColumnSet(TableAvailable table, ColumnMetadata columnMetadata, boolean ignoreValueObject) {
 
         if (columnMetadata.isValueObject()) {
@@ -78,6 +85,10 @@ public class OnlySelectorImpl implements OnlySelector {
             return;
         }
         InsertUpdateSetColumnSQLSegment updateColumnSegment = sqlSegmentFactory.createUpdateColumnSegment(table, columnMetadata, expressionContext, null);
+        sqlSegmentBuilder.append(updateColumnSegment);
+    }
+    protected void appendColumnNullSet(TableAvailable table, ColumnMetadata columnMetadata) {
+        InsertUpdateSetColumnSQLSegment updateColumnSegment = sqlSegmentFactory.createUpdateColumnNullSegment(table, columnMetadata, expressionContext);
         sqlSegmentBuilder.append(updateColumnSegment);
     }
 

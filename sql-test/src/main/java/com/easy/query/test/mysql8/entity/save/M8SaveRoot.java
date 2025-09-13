@@ -5,7 +5,7 @@ import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.enums.RelationTypeEnum;
-import com.easy.query.core.enums.ValueTypeEnum;
+import com.easy.query.core.enums.CascadeTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.mysql8.entity.save.proxy.M8SaveRoot2ManyProxy;
 import com.easy.query.test.mysql8.entity.save.proxy.M8SaveRootManyProxy;
@@ -33,13 +33,13 @@ public class M8SaveRoot implements ProxyEntityAvailable<M8SaveRoot, M8SaveRootPr
     /**
      * toOne 关系
      **/
-    @Navigate(value = RelationTypeEnum.OneToOne, selfProperty = {M8SaveRootProxy.Fields.id}, targetProperty = {M8SaveRootOneProxy.Fields.rootId})
+    @Navigate(value = RelationTypeEnum.OneToOne, selfProperty = {M8SaveRootProxy.Fields.id}, targetProperty = {M8SaveRootOneProxy.Fields.rootId},cascade = CascadeTypeEnum.DELETE)
     private M8SaveRootOne m8SaveRootOne;
 
     /**
      * toMany关系
      **/
-    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {M8SaveRootProxy.Fields.id}, targetProperty = {M8SaveRootManyProxy.Fields.rootId})
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {M8SaveRootProxy.Fields.id}, targetProperty = {M8SaveRootManyProxy.Fields.rootId},cascade = CascadeTypeEnum.DELETE)
     private List<M8SaveRootMany> m8SaveRootManyList;
 
     /**
@@ -50,6 +50,6 @@ public class M8SaveRoot implements ProxyEntityAvailable<M8SaveRoot, M8SaveRootPr
             selfMappingProperty = {M8SaveRootMiddleManyProxy.Fields.rootId},
             mappingClass = M8SaveRootMiddleMany.class,
             targetProperty = {M8SaveRoot2ManyProxy.Fields.id},
-            targetMappingProperty = {M8SaveRootMiddleManyProxy.Fields.manyId}, onSave = ValueTypeEnum.VALUE_OBJECT)
+            targetMappingProperty = {M8SaveRootMiddleManyProxy.Fields.manyId}, cascade = CascadeTypeEnum.DELETE)
     private List<M8SaveRoot2Many> m8SaveRoot2ManyList;
 }

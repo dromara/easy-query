@@ -6,13 +6,13 @@ import com.easy.query.api.proxy.entity.save.SaveModeEnum;
 import com.easy.query.api.proxy.entity.save.SaveNode;
 import com.easy.query.api.proxy.entity.save.SaveNodeTypeEnum;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.enums.CascadeTypeEnum;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * create time 2025/9/6 21:07
@@ -52,16 +52,39 @@ public class BasicSaveCommand implements SaveCommand {
                 easyQueryClient.deletable(deleteItems).batch(batch).allowDeleteStatement(true).executeRows();
                 if (EasyCollectionUtil.isNotEmpty(saveNode.getDeleteBys())) {
                     NavigateMetadata navigateMetadata = saveNodeEntry.getKey();
-                    String[] selfMappingProperties = navigateMetadata.getSelfMappingProperties();
-                    String[] targetMappingProperties = navigateMetadata.getTargetMappingProperties();
-                    easyQueryClient.deletable(saveNode.getDeleteBys()).batch(batch).allowDeleteStatement(true).whereColumns(col -> {
-                        for (String selfMappingProperty : selfMappingProperties) {
-                            col.column(selfMappingProperty);
-                        }
-                        for (String targetMappingProperty : targetMappingProperties) {
-                            col.column(targetMappingProperty);
-                        }
-                    }).executeRows();
+                    if (navigateMetadata.getCascade() == CascadeTypeEnum.DELETE) {
+                        String[] selfMappingProperties = navigateMetadata.getSelfMappingProperties();
+                        String[] targetMappingProperties = navigateMetadata.getTargetMappingProperties();
+                        easyQueryClient.deletable(saveNode.getDeleteBys()).batch(batch).allowDeleteStatement(true).whereColumns(col -> {
+                            for (String selfMappingProperty : selfMappingProperties) {
+                                col.column(selfMappingProperty);
+                            }
+                            for (String targetMappingProperty : targetMappingProperties) {
+                                col.column(targetMappingProperty);
+                            }
+                        }).executeRows();
+                    } else if (navigateMetadata.getCascade() == CascadeTypeEnum.SET_NULL) {
+                        String[] selfMappingProperties = navigateMetadata.getSelfMappingProperties();
+                        String[] targetMappingProperties = navigateMetadata.getTargetMappingProperties();
+                        easyQueryClient.updatable(saveNode.getDeleteBys()).batch(batch)
+                                .setColumns(col -> {
+                                    for (String selfMappingProperty : selfMappingProperties) {
+                                        //noinspection EasyQuerySetColumns
+                                        col.columnNull(selfMappingProperty);
+                                    }
+                                    for (String targetMappingProperty : targetMappingProperties) {
+                                        //noinspection EasyQuerySetColumns
+                                        col.columnNull(targetMappingProperty);
+                                    }
+                                }).whereColumns(col -> {
+                                    for (String selfMappingProperty : selfMappingProperties) {
+                                        col.column(selfMappingProperty);
+                                    }
+                                    for (String targetMappingProperty : targetMappingProperties) {
+                                        col.column(targetMappingProperty);
+                                    }
+                                }).executeRows();
+                    }
                 }
             }
         }

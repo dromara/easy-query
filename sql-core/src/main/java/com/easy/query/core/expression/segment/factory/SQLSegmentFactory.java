@@ -52,6 +52,7 @@ public interface SQLSegmentFactory {
         return createUpdateColumnSegment(table,columnMetadata,expressionContext,versionStrategy);
     }
     InsertUpdateSetColumnSQLSegment createUpdateColumnSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext, VersionStrategy versionStrategy);
+    InsertUpdateSetColumnSQLSegment createUpdateColumnNullSegment(TableAvailable table, ColumnMetadata columnMetadata, ExpressionContext expressionContext);
     InsertUpdateSetColumnSQLSegment createUpdateSetColumnSegment(TableAvailable table, String propertyName, ExpressionContext expressionContext, Object val);
     InsertUpdateSetColumnSQLSegment createUpdateSetSelfColumnSegment(TableAvailable leftTable, String leftPropertyName, TableAvailable rightTable, String rightPropertyName, ExpressionContext expressionContext);
     default GroupByColumnSegment createGroupByColumnSegment(TableAvailable table, String propertyName, ExpressionContext expressionContext){

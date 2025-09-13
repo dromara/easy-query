@@ -16,6 +16,7 @@ public interface OnlySelector extends SQLNative<OnlySelector> {
     OnlySelector columnKeys(TableAvailable table);
 
     OnlySelector column(TableAvailable table, String property);
+    OnlySelector columnNull(TableAvailable table, String property);
 
     OnlySelector columnAll(TableAvailable table);
 

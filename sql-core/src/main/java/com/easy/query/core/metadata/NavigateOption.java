@@ -2,7 +2,7 @@ package com.easy.query.core.metadata;
 
 import com.easy.query.core.enums.PartitionOrderEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
-import com.easy.query.core.enums.ValueTypeEnum;
+import com.easy.query.core.enums.CascadeTypeEnum;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
@@ -39,7 +39,7 @@ public class NavigateOption {
     private boolean subQueryToGroupJoin = false;
     private boolean ignoreAutoInclude = false;
     private PartitionOrderEnum partitionOrder;
-    private ValueTypeEnum valueType;
+    private CascadeTypeEnum cascade;
 
     public NavigateOption(EntityMetadata entityMetadata,
                           String propertyName,
@@ -62,7 +62,7 @@ public class NavigateOption {
         this.limit = limit;
         this.directMapping = directMapping;
         this.partitionOrder = PartitionOrderEnum.THROW;
-        this.valueType = ValueTypeEnum.AUTO_CHECK;
+        this.cascade = CascadeTypeEnum.AUTO;
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -193,11 +193,11 @@ public class NavigateOption {
         this.ignoreAutoInclude = ignoreAutoInclude;
     }
 
-    public ValueTypeEnum getValueType() {
-        return valueType;
+    public CascadeTypeEnum getCascade() {
+        return cascade;
     }
 
-    public void setValueType(ValueTypeEnum valueType) {
-        this.valueType = valueType;
+    public void setCascade(CascadeTypeEnum cascade) {
+        this.cascade = cascade;
     }
 }

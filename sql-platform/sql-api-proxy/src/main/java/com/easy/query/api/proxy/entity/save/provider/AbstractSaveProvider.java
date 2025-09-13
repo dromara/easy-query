@@ -6,10 +6,11 @@ import com.easy.query.api.proxy.entity.save.SaveCommandContext;
 import com.easy.query.api.proxy.entity.save.SaveModeEnum;
 import com.easy.query.api.proxy.entity.save.TargetValueTypeEnum;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
-import com.easy.query.core.enums.ValueTypeEnum;
+import com.easy.query.core.enums.CascadeTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -68,22 +69,8 @@ public abstract class AbstractSaveProvider implements SaveProvider {
         return false;
     }
 
-    protected TargetValueTypeEnum getTargetValueType(EntityMetadata selfMetadata, NavigateMetadata navigateMetadata) {
-        if (navigateMetadata.getValueType() != ValueTypeEnum.IGNORE) {
-            if (navigateMetadata.getValueType() == ValueTypeEnum.AUTO_CHECK) {
-                return autoGetTargetValueType(selfMetadata, navigateMetadata);
-            }
-            if (navigateMetadata.getValueType() == ValueTypeEnum.AGGREGATE_ROOT) {
-                return TargetValueTypeEnum.AGGREGATE_ROOT;
-            }
-            if (navigateMetadata.getValueType() == ValueTypeEnum.VALUE_OBJECT) {
-                return TargetValueTypeEnum.VALUE_OBJECT;
-            }
-        }
-        return TargetValueTypeEnum.RELATION_OTHER;
-    }
 
-    protected TargetValueTypeEnum autoGetTargetValueType(EntityMetadata selfMetadata, NavigateMetadata navigateMetadata) {
+    protected TargetValueTypeEnum getTargetValueType(EntityMetadata selfMetadata, NavigateMetadata navigateMetadata) {
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
             if (navigateMetadata.getMappingClass() != null) {
                 boolean any = selfPropsIsKeys(selfMetadata, navigateMetadata);
@@ -141,7 +128,7 @@ public abstract class AbstractSaveProvider implements SaveProvider {
                 Object currentValue = targetColumn.getGetterCaller().apply(targetEntity);
                 if (currentValue == null || ownershipPolicy == OwnershipPolicyEnum.AllowOwnershipChange) {//允许分配的情况下就无脑赋值
                     targetColumn.getSetterCaller().call(targetEntity, selfValue);
-                } else if(ownershipPolicy == OwnershipPolicyEnum.EnforceSingleOwner) {//严格模式下不允许发生抢夺
+                } else if (ownershipPolicy == OwnershipPolicyEnum.EnforceSingleOwner) {//严格模式下不允许发生抢夺
                     if (!Objects.equals(currentValue, selfValue)) {
                         throw new EasyQueryInvalidOperationException("relation value not equals,entity:[" + EasyClassUtil.getInstanceSimpleName(targetEntity) + "],property:[" + target + "],value:[" + currentValue + "],should:[" + selfValue + "]. Current OwnershipPolicy does not allow reassignment.");
                     }
@@ -164,11 +151,32 @@ public abstract class AbstractSaveProvider implements SaveProvider {
                 Object currentValue = selfColumn.getGetterCaller().apply(selfEntity);
                 if (currentValue == null || ownershipPolicy == OwnershipPolicyEnum.AllowOwnershipChange) {//允许分配的情况下就无脑赋值
                     selfColumn.getSetterCaller().call(selfEntity, targetValue);
-                } else if(ownershipPolicy == OwnershipPolicyEnum.EnforceSingleOwner) {//严格模式下不允许发生抢夺
+                } else if (ownershipPolicy == OwnershipPolicyEnum.EnforceSingleOwner) {//严格模式下不允许发生抢夺
                     if (!Objects.equals(currentValue, targetValue)) {
                         throw new EasyQueryInvalidOperationException("relation value not equals,entity:[" + EasyClassUtil.getInstanceSimpleName(selfEntity) + "],property:[" + self + "],value:[" + currentValue + "],should:[" + targetValue + "]. Current OwnershipPolicy does not allow reassignment.");
                     }
                 }
+            }
+        } else {
+            throw new EasyQueryInvalidOperationException("save not support target value type:" + targetValueType);
+        }
+    }
+
+    protected void setTargetNullValue(TargetValueTypeEnum targetValueType, Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata, NavigateMetadata navigateMetadata, EntityMetadata targetEntityMetadata) {
+        if (targetValueType == TargetValueTypeEnum.VALUE_OBJECT) {
+            String[] selfPropertiesOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
+            String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
+            for (int i = 0; i < selfPropertiesOrPrimary.length; i++) {
+                String target = targetPropertiesOrPrimary[i];
+                ColumnMetadata targetColumn = targetEntityMetadata.getColumnNotNull(target);
+                targetColumn.getSetterCaller().call(targetEntity, null);
+            }
+        } else if (targetValueType == TargetValueTypeEnum.AGGREGATE_ROOT) {
+            String[] selfPropertiesOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
+            for (int i = 0; i < selfPropertiesOrPrimary.length; i++) {
+                String self = selfPropertiesOrPrimary[i];
+                ColumnMetadata selfColumn = selfEntityMetadata.getColumnNotNull(self);
+                selfColumn.getSetterCaller().call(selfEntity, null);
             }
         } else {
             throw new EasyQueryInvalidOperationException("save not support target value type:" + targetValueType);
@@ -222,7 +230,7 @@ public abstract class AbstractSaveProvider implements SaveProvider {
         }
     }
 
-    protected List<NavigateMetadata> getNavigateSavableValueObjects(SavableContext savableContext, Object entity, EntityMetadata entityMetadata, Collection<NavigateMetadata> navigateMetadataList, int deep) {
+    protected List<NavigateMetadata> getNavigateSavableValueObjects(EntityState entityState, SavableContext savableContext, Object entity, EntityMetadata entityMetadata, Collection<NavigateMetadata> navigateMetadataList, int deep) {
 
         List<NavigateMetadata> valueObjects = new ArrayList<>();
         List<NavigateMetadata> aggregateRoots = new ArrayList<>();
@@ -254,9 +262,21 @@ public abstract class AbstractSaveProvider implements SaveProvider {
         for (NavigateMetadata navigateMetadata : aggregateRoots) {
             Property<Object, ?> getter = navigateMetadata.getGetter();
             Object aggregateRoot = getter.apply(entity);
+            EntityMetadata aggregateRootMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
             if (aggregateRoot != null) {
-                EntityMetadata aggregateRootMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
                 setTargetValue(TargetValueTypeEnum.AGGREGATE_ROOT, entity, aggregateRoot, entityMetadata, navigateMetadata, aggregateRootMetadata);
+            } else {
+                if (entityState != null) {
+                    if(navigateMetadata.getCascade()==CascadeTypeEnum.NO_ACTION){
+                        continue;
+                    }
+                    if(navigateMetadata.getCascade()==CascadeTypeEnum.DELETE){
+                        throw new EasyQueryInvalidOperationException("The cascade of object ["+EasyClassUtil.getSimpleName(entityMetadata.getEntityClass())+"."+navigateMetadata.getPropertyName()+"] is set to delete. Detaching from the current aggregate root is not allowed; this operation must be initiated by the aggregate root object ["+EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType())+"].");
+                    }
+                    if(navigateMetadata.getCascade()==CascadeTypeEnum.AUTO||navigateMetadata.getCascade()==CascadeTypeEnum.SET_NULL){
+                        setTargetNullValue(TargetValueTypeEnum.AGGREGATE_ROOT, entity, null, entityMetadata, navigateMetadata, aggregateRootMetadata);
+                    }
+                }
             }
         }
         //检查额外导航属性

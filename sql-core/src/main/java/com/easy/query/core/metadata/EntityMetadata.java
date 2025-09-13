@@ -422,8 +422,8 @@ public class EntityMetadata {
             navigateOption.setEntityRelationPropertyProvider(entityRelationPropertyProvider);
 
 
+            navigateOption.setCascade(navigate.cascade());
             if (RelationTypeEnum.ManyToMany == relationType) {
-                navigateOption.setValueType(navigate.onSave());
                 //有中间表多对多
                 if (!Objects.equals(Object.class, navigate.mappingClass())) {
                     if (EasyArrayUtil.isEmpty(navigate.selfMappingProperty())) {
