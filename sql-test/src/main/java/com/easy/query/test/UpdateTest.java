@@ -1760,4 +1760,26 @@ public class UpdateTest extends BaseTest {
 
     }
 
+    @Test
+     public void updateEntityWhere(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        BlogEntity blogEntity = new BlogEntity();
+        blogEntity.setId("123xoiuy");
+        blogEntity.setTitle("title");
+        blogEntity.setContent("content");
+        blogEntity.setStatus(1);
+        easyEntityQuery.updatable(blogEntity)
+                .where(t_blog -> {
+                    t_blog.status().eq(2);
+                }).executeRows();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("UPDATE `t_blog` SET `create_time` = ?,`update_time` = ?,`create_by` = ?,`update_by` = ?,`title` = ?,`content` = ?,`url` = ?,`star` = ?,`publish_time` = ?,`score` = ?,`order` = ?,`is_top` = ?,`top` = ? WHERE `deleted` = ? AND `status` = ? AND `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("null(null),null(null),null(null),null(null),title(String),content(String),null(null),null(null),null(null),null(null),null(null),null(null),null(null),false(Boolean),2(Integer),123xoiuy(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
 }

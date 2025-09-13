@@ -8,6 +8,7 @@ import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.Updatable;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.ToSQLResult;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -76,6 +77,19 @@ public interface EntityUpdatable<TProxy extends ProxyEntity<TProxy, T>, T> exten
         getClientUpdate().whereColumns(condition, selector -> {
             SQLSelectExpression sqlSelectExpression = columnSelectorExpression.apply(getTProxy());
             sqlSelectExpression.accept(selector.getOnlySelector());
+        });
+        return this;
+    }
+
+    default EntityUpdatable<TProxy, T> where(SQLActionExpression1<TProxy> wherePredicateExpression) {
+        return where(true, wherePredicateExpression);
+    }
+
+    default EntityUpdatable<TProxy, T> where(boolean condition, SQLActionExpression1<TProxy> wherePredicateExpression) {
+        getClientUpdate().where(condition, wherePredicate -> {
+            getTProxy().getEntitySQLContext()._where(wherePredicate.getFilter(), () -> {
+                wherePredicateExpression.apply(getTProxy());
+            });
         });
         return this;
     }

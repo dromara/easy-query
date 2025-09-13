@@ -7,6 +7,7 @@ import com.easy.query.core.exception.AssertExceptionFactory;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.inject.ServiceProvider;
@@ -114,6 +115,11 @@ public class EasyEmptyClientEntityUpdatable<T> implements ClientEntityUpdatable<
 
     @Override
     public ClientEntityUpdatable<T> whereColumns(boolean condition, SQLActionExpression1<ColumnOnlySelector<T>> columnSelectorExpression) {
+        return this;
+    }
+
+    @Override
+    public ClientEntityUpdatable<T> where(boolean condition, SQLActionExpression1<WherePredicate<T>> wherePredicate) {
         return this;
     }
 

@@ -14,13 +14,19 @@ import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.expression.builder.core.AnyValueFilter;
+import com.easy.query.core.expression.builder.core.ValueFilterFactory;
 import com.easy.query.core.expression.builder.impl.ConfigurerImpl;
+import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.builder.impl.OnlySelectorImpl;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnConfigurerImpl;
 import com.easy.query.core.expression.parser.core.base.impl.ColumnOnlySelectorImpl;
+import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityUpdateExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
@@ -133,6 +139,20 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
         if (condition) {
             ColumnOnlySelectorImpl<T> columnSelector = new ColumnOnlySelectorImpl<>(table.getEntityTable(), new OnlySelectorImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getExpressionContext(), entityUpdateExpressionBuilder.getWhereColumns()));
             columnSelectorExpression.apply(columnSelector);
+        }
+        return this;
+    }
+
+    @Override
+    public ClientEntityUpdatable<T> where(boolean condition, SQLActionExpression1<WherePredicate<T>> wherePredicate) {
+        if(condition){
+            QueryRuntimeContext runtimeContext = entityUpdateExpressionBuilder.getRuntimeContext();
+            ValueFilterFactory valueFilterFactory = runtimeContext.getValueFilterFactory();
+            FilterImpl filter = new FilterImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getExpressionContext(), entityUpdateExpressionBuilder.getWhere(), false, valueFilterFactory.getUpdateValueFilter());
+            FilterContext filterContext = new FilterContext(filter, entityUpdateExpressionBuilder);
+            EntityTableExpressionBuilder fromTableExpressionBuilder = entityUpdateExpressionBuilder.getFromTable();
+            WherePredicateImpl<T> objectWherePredicate = new WherePredicateImpl<>(fromTableExpressionBuilder.getEntityTable(), filterContext);
+            wherePredicate.apply(objectWherePredicate);
         }
         return this;
     }

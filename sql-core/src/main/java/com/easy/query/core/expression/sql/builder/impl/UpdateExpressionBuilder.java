@@ -418,7 +418,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
      * @return
      */
     protected PredicateSegment buildPropertyWhere(EntityTableExpressionBuilder tableExpressionBuilder, Object entity, TrackContext trackContext, EntityUpdateSetProcessor entityUpdateSetProcessor) {
-        AndPredicateSegment where = new AndPredicateSegment(true);
+        PredicateSegment where = this.where == null ? new AndPredicateSegment(true) : this.where;
 
         if (EasySQLSegmentUtil.isNotEmpty(whereColumns)) {
             for (SQLSegment sqlSegment : whereColumns.getSQLSegments()) {

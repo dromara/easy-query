@@ -8,6 +8,7 @@ import com.easy.query.core.common.ToSQLResult;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnConfigurer;
 import com.easy.query.core.expression.parser.core.base.ColumnOnlySelector;
+import com.easy.query.core.expression.parser.core.base.WherePredicate;
 
 import java.util.List;
 
@@ -74,6 +75,10 @@ public interface ClientEntityUpdatable<T> extends Updatable<T, ClientEntityUpdat
      * @return
      */
     ClientEntityUpdatable<T> whereColumns(boolean condition, SQLActionExpression1<ColumnOnlySelector<T>> columnSelectorExpression);
+    default ClientEntityUpdatable<T> where(SQLActionExpression1<WherePredicate<T>> wherePredicate){
+        return where(true,wherePredicate);
+    }
+    ClientEntityUpdatable<T> where(boolean condition, SQLActionExpression1<WherePredicate<T>> wherePredicate);
 
     ClientEntityUpdatable<T> columnConfigure(SQLActionExpression1<ColumnConfigurer<T>> columnConfigureExpression);
     String toSQL(Object entity);
