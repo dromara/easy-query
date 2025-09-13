@@ -111,6 +111,13 @@ public abstract class AbstractSaveProvider implements SaveProvider {
         return EasyArrayUtil.all(targetPropertiesOrPrimary, prop -> keyProperties.contains(prop));
     }
 
+    protected boolean targetAnyPropsIsKey(EntityMetadata selfMetadata, NavigateMetadata navigateMetadata) {
+
+        String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
+        Collection<String> keyProperties = selfMetadata.getKeyProperties();
+        return EasyArrayUtil.any(targetPropertiesOrPrimary, prop -> keyProperties.contains(prop));
+    }
+
     protected void setTargetValue(TargetValueTypeEnum targetValueType, Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata, NavigateMetadata navigateMetadata, EntityMetadata targetEntityMetadata) {
         if (targetValueType == TargetValueTypeEnum.VALUE_OBJECT) {
             String[] selfPropertiesOrPrimary = navigateMetadata.getSelfPropertiesOrPrimary();
@@ -267,13 +274,13 @@ public abstract class AbstractSaveProvider implements SaveProvider {
                 setTargetValue(TargetValueTypeEnum.AGGREGATE_ROOT, entity, aggregateRoot, entityMetadata, navigateMetadata, aggregateRootMetadata);
             } else {
                 if (entityState != null) {
-                    if(navigateMetadata.getCascade()==CascadeTypeEnum.NO_ACTION){
+                    if (navigateMetadata.getCascade() == CascadeTypeEnum.NO_ACTION) {
                         continue;
                     }
-                    if(navigateMetadata.getCascade()==CascadeTypeEnum.DELETE){
-                        throw new EasyQueryInvalidOperationException("The cascade of object ["+EasyClassUtil.getSimpleName(entityMetadata.getEntityClass())+"."+navigateMetadata.getPropertyName()+"] is set to delete. Detaching from the current aggregate root is not allowed; this operation must be initiated by the aggregate root object ["+EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType())+"].");
+                    if (navigateMetadata.getCascade() == CascadeTypeEnum.DELETE) {
+                        throw new EasyQueryInvalidOperationException("The cascade of object [" + EasyClassUtil.getSimpleName(entityMetadata.getEntityClass()) + "." + navigateMetadata.getPropertyName() + "] is set to delete. Detaching from the current aggregate root is not allowed; this operation must be initiated by the aggregate root object [" + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "].");
                     }
-                    if(navigateMetadata.getCascade()==CascadeTypeEnum.AUTO||navigateMetadata.getCascade()==CascadeTypeEnum.SET_NULL){
+                    if (navigateMetadata.getCascade() == CascadeTypeEnum.AUTO || navigateMetadata.getCascade() == CascadeTypeEnum.SET_NULL) {
                         setTargetNullValue(TargetValueTypeEnum.AGGREGATE_ROOT, entity, null, entityMetadata, navigateMetadata, aggregateRootMetadata);
                     }
                 }

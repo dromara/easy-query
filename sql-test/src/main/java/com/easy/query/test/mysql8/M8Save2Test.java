@@ -371,7 +371,7 @@ public class M8Save2Test extends BaseTest {
 
 
     @Test
-     public void USerRoleTest(){
+     public void UserRoleTest(){
         SysRole sysRole = new SysRole();
         SysUser sysUser = new SysUser();
         UserRole userRole = new UserRole();

@@ -212,6 +212,12 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             saveNode.getDeleteBys().add(mappingEntity);
         } else {
             if (navigateMetadata.getCascade() == CascadeTypeEnum.AUTO || navigateMetadata.getCascade() == CascadeTypeEnum.SET_NULL) {
+                //检查目标是否也是全主键
+
+                boolean prosHasKey = targetAnyPropsIsKey(selfEntityMetadata, navigateMetadata);
+                if(prosHasKey){
+                    throw new EasyQueryInvalidOperationException("entity:["+EasyClassUtil.getSimpleName(selfEntityMetadata.getEntityClass())+"."+navigateMetadata.getPropertyName()+"] targetProperty has key props,cascade cant use set null");
+                }
                 saveNode.putUpdateItem(new MemoryAddressCompareValue(targetEntity), selfEntity, t -> {
                     setTargetNullValue(TargetValueTypeEnum.VALUE_OBJECT, selfEntity, targetEntity, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
                 });
