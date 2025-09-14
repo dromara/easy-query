@@ -265,6 +265,9 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         //替换掉配置的片段
         SQLBuilderSegment updateSet = updateSetConfigurer(tableExpressionBuilder, getUpdateSetSegment(sqlWhere, entity, tableExpressionBuilder, entityUpdateSetProcessor), entity);
 
+        if (EasySQLSegmentUtil.isNotEmpty(this.where)) {
+            sqlWhere.addPredicateSegment(this.where);
+        }
         ExpressionFactory expressionFactory = runtimeContext.getExpressionFactory();
         EntitySQLExpressionMetadata entitySQLExpressionMetadata = new EntitySQLExpressionMetadata(expressionContext, runtimeContext);
         EntityUpdateSQLExpression easyUpdateSQLExpression = expressionFactory.createEasyUpdateSQLExpression(entitySQLExpressionMetadata, tableExpressionBuilder.toExpression());
@@ -418,7 +421,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
      * @return
      */
     protected PredicateSegment buildPropertyWhere(EntityTableExpressionBuilder tableExpressionBuilder, Object entity, TrackContext trackContext, EntityUpdateSetProcessor entityUpdateSetProcessor) {
-        PredicateSegment where = this.where == null ? new AndPredicateSegment(true) : this.where;
+        PredicateSegment where = new AndPredicateSegment(true);
 
         if (EasySQLSegmentUtil.isNotEmpty(whereColumns)) {
             for (SQLSegment sqlSegment : whereColumns.getSQLSegments()) {

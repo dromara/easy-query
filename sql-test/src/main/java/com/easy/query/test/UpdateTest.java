@@ -1777,8 +1777,8 @@ public class UpdateTest extends BaseTest {
                 }).executeRows();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("UPDATE `t_blog` SET `create_time` = ?,`update_time` = ?,`create_by` = ?,`update_by` = ?,`title` = ?,`content` = ?,`url` = ?,`star` = ?,`publish_time` = ?,`score` = ?,`order` = ?,`is_top` = ?,`top` = ? WHERE `deleted` = ? AND `status` = ? AND `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("null(null),null(null),null(null),null(null),title(String),content(String),null(null),null(null),null(null),null(null),null(null),null(null),null(null),false(Boolean),2(Integer),123xoiuy(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("UPDATE `t_blog` SET `create_time` = ?,`update_time` = ?,`create_by` = ?,`update_by` = ?,`title` = ?,`content` = ?,`url` = ?,`star` = ?,`publish_time` = ?,`score` = ?,`status` = ?,`order` = ?,`is_top` = ?,`top` = ? WHERE `deleted` = ? AND `id` = ? AND `status` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("null(null),null(null),null(null),null(null),title(String),content(String),null(null),null(null),null(null),null(null),1(Integer),null(null),null(null),null(null),false(Boolean),123xoiuy(String),2(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 
