@@ -44,6 +44,7 @@ import com.easy.query.test.mysql8.entity.save.M8SaveRootMany;
 import com.easy.query.test.mysql8.entity.save.M8SaveRootManyOne;
 import com.easy.query.test.mysql8.entity.save.M8SaveRootMiddleMany;
 import com.easy.query.test.mysql8.entity.save.M8SaveRootOne;
+import com.easy.query.test.mysql8.entity.save.M8SaveRootOne2;
 import com.easy.query.test.mysql8.entity.save.SaveInterceptor;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -152,11 +153,11 @@ public class BaseTest {
 //        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class,SysBank.class, SysBankCard.class,  SysUserBook.class, M8Comment.class));
 //        codeFirstCommand.executeWithTransaction(s -> s.commit());
         CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(SysUser.class, SysBankCard.class, SysBank.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class, M8ParentChild.class,
-                M8Province.class, M8City.class, M8Area.class, M8AreaBuild.class, TreeA.class, TreeB.class, BatchInsert.class, Comment.class, M8SaveRoot.class, M8SaveRoot2Many.class, M8SaveRootMany.class, M8SaveRootMiddleMany.class, M8SaveRootOne.class, M8SaveRootManyOne.class));
+                M8Province.class, M8City.class, M8Area.class, M8AreaBuild.class, TreeA.class, TreeB.class, BatchInsert.class, Comment.class, M8SaveRoot.class, M8SaveRoot2Many.class, M8SaveRootMany.class, M8SaveRootMiddleMany.class, M8SaveRootOne.class,M8SaveRootOne2.class, M8SaveRootManyOne.class));
         codeFirstCommand2.executeWithTransaction(s -> s.commit());
 
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class, SysBank.class, SysBankCard.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class, M8ParentChild.class,
-                M8Province.class, M8City.class, M8Area.class, M8AreaBuild.class,M8AreaBuildLicense.class, TreeA.class, TreeB.class, BatchInsert.class,Comment.class, M8SaveRoot.class, M8SaveRoot2Many.class, M8SaveRootMany.class, M8SaveRootMiddleMany.class, M8SaveRootOne.class,M8SaveRootManyOne.class));
+                M8Province.class, M8City.class, M8Area.class, M8AreaBuild.class,M8AreaBuildLicense.class, TreeA.class, TreeB.class, BatchInsert.class,Comment.class, M8SaveRoot.class, M8SaveRoot2Many.class, M8SaveRootMany.class, M8SaveRootMiddleMany.class, M8SaveRootOne.class,M8SaveRootOne2.class,M8SaveRootManyOne.class));
         codeFirstCommand1.executeWithTransaction(s -> {
             System.out.println(s.getSQL());
             s.commit();
@@ -179,6 +180,7 @@ public class BaseTest {
         easyEntityQuery.deletable(M8SaveRootMany.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(M8SaveRootMiddleMany.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(M8SaveRootOne.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
+        easyEntityQuery.deletable(M8SaveRootOne2.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         ArrayList<SysBank> banks = new ArrayList<>();
         ArrayList<SysBankCard> bankCards = new ArrayList<>();
         ArrayList<SysUser> users = new ArrayList<>();

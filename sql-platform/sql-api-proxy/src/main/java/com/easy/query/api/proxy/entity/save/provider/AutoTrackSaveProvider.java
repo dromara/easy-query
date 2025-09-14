@@ -5,6 +5,7 @@ import com.easy.query.api.proxy.entity.save.OwnershipPolicyEnum;
 import com.easy.query.api.proxy.entity.save.SavableContext;
 import com.easy.query.api.proxy.entity.save.SaveModeEnum;
 import com.easy.query.api.proxy.entity.save.SaveNode;
+import com.easy.query.api.proxy.entity.save.SaveNodeDbTypeEnum;
 import com.easy.query.api.proxy.entity.save.SaveNodeTypeEnum;
 import com.easy.query.api.proxy.entity.save.TargetValueTypeEnum;
 import com.easy.query.api.proxy.entity.save.command.EmptySaveCommand;
@@ -244,14 +245,14 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                 if (prosHasKey) {
                     throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(selfEntityMetadata.getEntityClass()) + "." + navigateMetadata.getPropertyName() + "] targetProperty has key props,cascade cant use set null");
                 }
-                saveNode.putUpdateItem(new MemoryAddressCompareValue(targetEntity), selfEntity, t -> {
+                saveNode.putDeleteItem(new MemoryAddressCompareValue(targetEntity), selfEntity, t -> {
                     setTargetNullValue(TargetValueTypeEnum.VALUE_OBJECT, selfEntity, targetEntity, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
-                });
+                },SaveNodeDbTypeEnum.UPDATE);
 
             }
             if (navigateMetadata.getCascade() == CascadeTypeEnum.DELETE) {
                 MemoryAddressCompareValue deleteEntity = new MemoryAddressCompareValue(targetEntity);
-                saveNode.putDeleteItem(deleteEntity);
+                saveNode.putDeleteItem(deleteEntity,null,null, SaveNodeDbTypeEnum.DELETE);
                 DeleteValueObject deleteValueObject = new DeleteValueObject(targetEntity, targetEntityMetadata, saveNode);
                 deleteValueObjectMap.computeIfAbsent(deleteEntity, k -> deleteValueObject);
             }

@@ -19,6 +19,7 @@ import com.easy.query.test.mysql8.entity.save.M8SaveRootMany;
 import com.easy.query.test.mysql8.entity.save.M8SaveRootManyOne;
 import com.easy.query.test.mysql8.entity.save.M8SaveRootMiddleMany;
 import com.easy.query.test.mysql8.entity.save.M8SaveRootOne;
+import com.easy.query.test.mysql8.entity.save.M8SaveRootOne2;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -45,6 +46,7 @@ public class M8Save2Test extends BaseTest {
         easyEntityQuery.deletable(M8SaveRootMany.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(M8SaveRootMiddleMany.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(M8SaveRootOne.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
+        easyEntityQuery.deletable(M8SaveRootOne2.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(M8SaveRootManyOne.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
     }
 
@@ -57,6 +59,10 @@ public class M8Save2Test extends BaseTest {
             M8SaveRoot root = new M8SaveRoot();
             root.setName("rootname");
             root.setCode("rootcode");
+            M8SaveRootOne rootOne = new M8SaveRootOne();
+            root.setM8SaveRootOne(rootOne);
+            M8SaveRootOne2 rootOne2 = new M8SaveRootOne2();
+            root.setM8SaveRootOne2(rootOne2);
             List<M8SaveRootMany> many = new ArrayList<>();
             root.setM8SaveRootManyList(many);
 
@@ -371,9 +377,130 @@ public class M8Save2Test extends BaseTest {
 
 
     @Test
-     public void UserRoleTest(){
-        SysRole sysRole = new SysRole();
-        SysUser sysUser = new SysUser();
-        UserRole userRole = new UserRole();
+    public void testOne2OneChange() {
+        deleteAll();
+        String rootId1 = insertOne();
+        String rootId2 = insertOne();
+        invoke(listenerContext -> {
+            List<M8SaveRoot> list = easyEntityQuery.queryable(M8SaveRoot.class)
+                    .include(m -> m.m8SaveRootOne())
+                    .toList();
+
+            M8SaveRoot first = list.get(0);
+            M8SaveRoot second = list.get(1);
+            M8SaveRootOne firstSub = first.getM8SaveRootOne();
+            M8SaveRootOne secondSub = second.getM8SaveRootOne();
+            first.setM8SaveRootOne(secondSub);
+            second.setM8SaveRootOne(firstSub);
+
+
+            try (Transaction transaction = easyEntityQuery.beginTransaction()) {
+                easyEntityQuery.savable(list).ownershipPolicy(OwnershipPolicyEnum.AllowOwnershipChange).executeCommand();
+                transaction.commit();
+            }
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+            Assert.assertEquals(4, listenerContext.getJdbcExecuteAfterArgs().size());
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                Assert.assertEquals("SELECT `id`,`name`,`code` FROM `m8_save_root`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                Assert.assertEquals(rootId + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                Assert.assertEquals("SELECT t.`id`,t.`root_id`,t.`name` FROM `m8_save_root_one` t WHERE t.`root_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                String sqlParameterToString = EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0));
+                Assert.assertTrue(sqlParameterToString.contains(rootId1));
+                Assert.assertTrue(sqlParameterToString.contains(rootId2));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+                Assert.assertEquals("UPDATE `m8_save_root_one` SET `root_id` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(first.getId()+"(String),"+secondSub.getId()+"(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+                Assert.assertEquals("UPDATE `m8_save_root_one` SET `root_id` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(second.getId()+"(String),"+firstSub.getId()+"(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+        });
+    }
+    @Test
+    public void testOne2OneChange2() {
+        deleteAll();
+        String rootId1 = insertOne();
+        String rootId2 = insertOne();
+        invoke(listenerContext -> {
+            List<M8SaveRoot> list = easyEntityQuery.queryable(M8SaveRoot.class)
+                    .include(m -> m.m8SaveRootOne2())
+                    .toList();
+
+            M8SaveRoot first = list.get(0);
+            M8SaveRoot second = list.get(1);
+            M8SaveRootOne2 firstSub = first.getM8SaveRootOne2();
+            M8SaveRootOne2 secondSub = second.getM8SaveRootOne2();
+            first.setM8SaveRootOne2(secondSub);
+            second.setM8SaveRootOne2(firstSub);
+
+
+            try (Transaction transaction = easyEntityQuery.beginTransaction()) {
+                easyEntityQuery.savable(list).ownershipPolicy(OwnershipPolicyEnum.AllowOwnershipChange).executeCommand();
+                transaction.commit();
+            }
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+            Assert.assertEquals(4, listenerContext.getJdbcExecuteAfterArgs().size());
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                Assert.assertEquals("SELECT `id`,`name`,`code` FROM `m8_save_root`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                Assert.assertEquals(rootId + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                Assert.assertEquals("SELECT t.`id`,t.`root_id`,t.`name` FROM `m8_save_root_one2` t WHERE t.`root_id` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                String sqlParameterToString = EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0));
+                Assert.assertTrue(sqlParameterToString.contains(rootId1));
+                Assert.assertTrue(sqlParameterToString.contains(rootId2));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+                Assert.assertEquals("UPDATE `m8_save_root_one2` SET `root_id` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(first.getId()+"(String),"+secondSub.getId()+"(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+                Assert.assertEquals("UPDATE `m8_save_root_one2` SET `root_id` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals(second.getId()+"(String),"+firstSub.getId()+"(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+        });
+    }
+    @Test
+    public void testOne2OneChange3() {
+        deleteAll();
+        String rootId1 = insertOne();
+        String rootId2 = insertOne();
+        invoke(listenerContext -> {
+            List<M8SaveRoot> list = easyEntityQuery.queryable(M8SaveRoot.class)
+                    .include(m -> m.m8SaveRootOne2())
+                    .toList();
+
+            M8SaveRoot first = list.get(0);
+            M8SaveRoot second = list.get(1);
+            M8SaveRootOne2 firstSub = first.getM8SaveRootOne2();
+            M8SaveRootOne2 secondSub = second.getM8SaveRootOne2();
+            first.setM8SaveRootOne2(secondSub);
+            second.setM8SaveRootOne2(firstSub);
+
+            Exception exception=null;
+            try (Transaction transaction = easyEntityQuery.beginTransaction()) {
+                easyEntityQuery.savable(list).executeCommand();
+                transaction.commit();
+            } catch (Exception e) {
+                exception=e;
+            }
+
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception.getMessage().endsWith("Current OwnershipPolicy does not allow reassignment."));
+        });
     }
 }

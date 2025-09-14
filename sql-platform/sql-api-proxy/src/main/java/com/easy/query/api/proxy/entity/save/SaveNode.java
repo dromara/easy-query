@@ -44,11 +44,12 @@ public class SaveNode {
         return entityItems;
     }
 
-    public void putDeleteItem(MemoryAddressCompareValue valueObject) {
+    public void putDeleteItem(MemoryAddressCompareValue valueObject, Object aggregateRoot, Consumer<Object> consumer,SaveNodeDbTypeEnum saveNodeDbType) {
         EntitySaveSate entitySaveSate = entityItems.computeIfAbsent(valueObject, key -> new EntitySaveSate());
+        entitySaveSate.setDbType(saveNodeDbType);
         if (entitySaveSate.getType() == SaveNodeTypeEnum.INIT) {
-            entitySaveSate.setAggregateRoot(null);
-            entitySaveSate.setConsumer(null);
+            entitySaveSate.setAggregateRoot(aggregateRoot);
+            entitySaveSate.setConsumer(consumer);
             entitySaveSate.setType(SaveNodeTypeEnum.DELETE);
         } else {
             if (entitySaveSate.getType() == SaveNodeTypeEnum.INSERT) {
@@ -62,6 +63,7 @@ public class SaveNode {
 
     public void putInsertItem(MemoryAddressCompareValue valueObject, Object aggregateRoot, Consumer<Object> consumer) {
         EntitySaveSate entitySaveSate = entityItems.computeIfAbsent(valueObject, key -> new EntitySaveSate());
+        entitySaveSate.setDbType(SaveNodeDbTypeEnum.INSERT);
         if (entitySaveSate.getType() == SaveNodeTypeEnum.INIT) {
             entitySaveSate.setAggregateRoot(aggregateRoot);
             entitySaveSate.setConsumer(consumer);
@@ -80,6 +82,7 @@ public class SaveNode {
 
     public void putUpdateItem(MemoryAddressCompareValue valueObject, Object aggregateRoot, Consumer<Object> consumer) {
         EntitySaveSate entitySaveSate = entityItems.computeIfAbsent(valueObject, key -> new EntitySaveSate());
+        entitySaveSate.setDbType(SaveNodeDbTypeEnum.UPDATE);
         if (entitySaveSate.getType() == SaveNodeTypeEnum.INIT) {
             entitySaveSate.setAggregateRoot(aggregateRoot);
             entitySaveSate.setConsumer(consumer);
@@ -116,6 +119,7 @@ public class SaveNode {
         private Object aggregateRoot;
         private Consumer<Object> consumer;
         private SaveNodeTypeEnum type = SaveNodeTypeEnum.INIT;
+        private SaveNodeDbTypeEnum dbType;
 
 
         public Object getAggregateRoot() {
@@ -146,6 +150,14 @@ public class SaveNode {
 
         public void setType(SaveNodeTypeEnum type) {
             this.type = type;
+        }
+
+        public SaveNodeDbTypeEnum getDbType() {
+            return dbType;
+        }
+
+        public void setDbType(SaveNodeDbTypeEnum dbType) {
+            this.dbType = dbType;
         }
     }
 }

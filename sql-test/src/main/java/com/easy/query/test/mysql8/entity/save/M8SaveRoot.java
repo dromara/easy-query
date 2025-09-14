@@ -10,6 +10,7 @@ import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.mysql8.entity.save.proxy.M8SaveRoot2ManyProxy;
 import com.easy.query.test.mysql8.entity.save.proxy.M8SaveRootManyProxy;
 import com.easy.query.test.mysql8.entity.save.proxy.M8SaveRootMiddleManyProxy;
+import com.easy.query.test.mysql8.entity.save.proxy.M8SaveRootOne2Proxy;
 import com.easy.query.test.mysql8.entity.save.proxy.M8SaveRootOneProxy;
 import com.easy.query.test.mysql8.entity.save.proxy.M8SaveRootProxy;
 import lombok.Data;
@@ -35,6 +36,13 @@ public class M8SaveRoot implements ProxyEntityAvailable<M8SaveRoot, M8SaveRootPr
      **/
     @Navigate(value = RelationTypeEnum.OneToOne, selfProperty = {M8SaveRootProxy.Fields.id}, targetProperty = {M8SaveRootOneProxy.Fields.rootId},cascade = CascadeTypeEnum.DELETE)
     private M8SaveRootOne m8SaveRootOne;
+    /**
+     * toOne2 关系
+     **/
+    @Navigate(value = RelationTypeEnum.OneToOne,
+            selfProperty = {M8SaveRootProxy.Fields.id},
+            targetProperty = {M8SaveRootOne2Proxy.Fields.rootId})
+    private M8SaveRootOne2 m8SaveRootOne2;
 
     /**
      * toMany关系

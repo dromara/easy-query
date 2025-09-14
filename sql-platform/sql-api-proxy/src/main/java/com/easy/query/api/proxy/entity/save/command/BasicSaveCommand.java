@@ -4,6 +4,7 @@ import com.easy.query.api.proxy.entity.save.SavableContext;
 import com.easy.query.api.proxy.entity.save.SaveCommandContext;
 import com.easy.query.api.proxy.entity.save.SaveModeEnum;
 import com.easy.query.api.proxy.entity.save.SaveNode;
+import com.easy.query.api.proxy.entity.save.SaveNodeDbTypeEnum;
 import com.easy.query.api.proxy.entity.save.SaveNodeTypeEnum;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.enums.CascadeTypeEnum;
@@ -45,7 +46,7 @@ public class BasicSaveCommand implements SaveCommand {
             SavableContext savableContext = savableContexts.get(i);
             for (Map.Entry<NavigateMetadata, SaveNode> saveNodeEntry : savableContext.getSaveNodeMap().entrySet()) {
                 SaveNode saveNode = saveNodeEntry.getValue();
-                List<Object> deleteItems = EasyCollectionUtil.mapFilterSelect(saveNode.getEntityItems(), kv -> kv.getValue().getType() == SaveNodeTypeEnum.DELETE, kv -> {
+                List<Object> deleteItems = EasyCollectionUtil.mapFilterSelect(saveNode.getEntityItems(), kv -> kv.getValue().getType() == SaveNodeTypeEnum.DELETE&&kv.getValue().getDbType() == SaveNodeDbTypeEnum.DELETE, kv -> {
                     kv.getValue().executeBefore(kv.getKey().getEntity());
                     return kv.getKey().getEntity();
                 });
@@ -103,6 +104,11 @@ public class BasicSaveCommand implements SaveCommand {
                 });
                 easyQueryClient.insertable(insertItems).batch(batch).executeRows(insertFillAutoIncrement(saveNode.getEntityMetadata()));
 
+                List<Object> setNullItems = EasyCollectionUtil.mapFilterSelect(saveNode.getEntityItems(), kv -> kv.getValue().getType() == SaveNodeTypeEnum.DELETE&&kv.getValue().getDbType() == SaveNodeDbTypeEnum.UPDATE, kv -> {
+                    kv.getValue().executeBefore(kv.getKey().getEntity());
+                    return kv.getKey().getEntity();
+                });
+                easyQueryClient.updatable(setNullItems).batch(batch).executeRows();
                 List<Object> updateItems = EasyCollectionUtil.mapFilterSelect(saveNode.getEntityItems(), kv -> kv.getValue().getType() == SaveNodeTypeEnum.UPDATE || kv.getValue().getType() == SaveNodeTypeEnum.CHANGE, kv -> {
                     kv.getValue().executeBefore(kv.getKey().getEntity());
                     return kv.getKey().getEntity();
