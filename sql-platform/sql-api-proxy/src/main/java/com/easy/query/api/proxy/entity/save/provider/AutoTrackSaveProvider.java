@@ -113,7 +113,28 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             List<NavigateMetadata> valueObjects = getNavigateSavableValueObjects(entityState, savableContext, entity, entityMetadata, navigateMetadataList, deep);
             for (NavigateMetadata navigateMetadata : valueObjects) {
                 Set<String> trackKeys = entityState.getTrackKeys(navigateMetadata);
-                valueObjectUpdate(entity, entityMetadata, navigateMetadata, savableContext, trackKeys == null ? new HashSet<>() : trackKeys);
+                //改成valueObjectDelete
+                valueObjectDelete(entity, entityMetadata, navigateMetadata, savableContext, trackKeys == null ? new HashSet<>() : trackKeys);
+            }
+        }
+    }
+
+    private void valueObjectDelete(Object entity, EntityMetadata selfEntityMetadata, NavigateMetadata navigateMetadata, SavableContext savableContext, Set<String> trackKeys) {
+
+        if (trackKeys != null) {
+            if (EasyArrayUtil.isNotEmpty(navigateMetadata.getDirectMapping())) {
+                return;
+            }
+            EntityMetadata targetEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
+            SaveNode saveNode = savableContext.getSaveNode(navigateMetadata);
+            if (saveNode == null) {
+                throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "." + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] save node is null");
+            }
+            for (String trackKey : trackKeys) {
+                EntityState trackEntityState = currentTrackContext.getTrackEntityState(navigateMetadata.getNavigatePropertyType(), trackKey);
+                Objects.requireNonNull(trackEntityState, "trackEntityState cant be null,trackKey:" + trackKey);
+                saveNodeDelete(entity, trackEntityState.getCurrentValue(), selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode, false);
+                deleteSelf(trackEntityState.getCurrentValue(), targetEntityMetadata, saveNode.getIndex() + 1);
             }
         }
     }
@@ -190,7 +211,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                 }
             }
             for (Object value : dbEntityMap.values()) {
-                saveNodeDelete(entity, value, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
+                saveNodeDelete(entity, value, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode, true);
             }
         }
     }
@@ -218,7 +239,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
 
     }
 
-    private void saveNodeDelete(Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata, EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode) {
+    private void saveNodeDelete(Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata, EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode, boolean first) {
 
         if (navigateMetadata.getCascade() == CascadeTypeEnum.NO_ACTION) {
             return;
@@ -247,14 +268,16 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                 }
                 saveNode.putDeleteItem(new MemoryAddressCompareValue(targetEntity), selfEntity, t -> {
                     setTargetNullValue(TargetValueTypeEnum.VALUE_OBJECT, selfEntity, targetEntity, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
-                },SaveNodeDbTypeEnum.UPDATE);
+                }, SaveNodeDbTypeEnum.UPDATE);
 
             }
             if (navigateMetadata.getCascade() == CascadeTypeEnum.DELETE) {
                 MemoryAddressCompareValue deleteEntity = new MemoryAddressCompareValue(targetEntity);
-                saveNode.putDeleteItem(deleteEntity,null,null, SaveNodeDbTypeEnum.DELETE);
-                DeleteValueObject deleteValueObject = new DeleteValueObject(targetEntity, targetEntityMetadata, saveNode);
-                deleteValueObjectMap.computeIfAbsent(deleteEntity, k -> deleteValueObject);
+                saveNode.putDeleteItem(deleteEntity, null, null, SaveNodeDbTypeEnum.DELETE);
+                if (first) {
+                    DeleteValueObject deleteValueObject = new DeleteValueObject(targetEntity, targetEntityMetadata, saveNode);
+                    deleteValueObjectMap.computeIfAbsent(deleteEntity, k -> deleteValueObject);
+                }
             }
         }
     }

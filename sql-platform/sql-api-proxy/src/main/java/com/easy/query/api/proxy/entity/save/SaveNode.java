@@ -52,11 +52,14 @@ public class SaveNode {
             entitySaveSate.setConsumer(consumer);
             entitySaveSate.setType(SaveNodeTypeEnum.DELETE);
         } else {
-            if (entitySaveSate.getType() == SaveNodeTypeEnum.INSERT) {
-                //存在变更聚合根的操作
-                entitySaveSate.setType(SaveNodeTypeEnum.CHANGE);
-            } else {
-                throw new EasyQueryInvalidOperationException("The current object:[" + EasyClassUtil.getInstanceSimpleName(valueObject.getEntity()) + "] has a conflicting save state and cannot be changed from ["+getEntitySaveStateAggregateRootDisplayName(entitySaveSate)+"." + entitySaveSate.getType() + "] to [" + SaveNodeTypeEnum.DELETE + "].");
+            if(entitySaveSate.getType() != SaveNodeTypeEnum.DELETE){
+                if (entitySaveSate.getType() == SaveNodeTypeEnum.INSERT) {
+                    //存在变更聚合根的操作
+                    entitySaveSate.setType(SaveNodeTypeEnum.CHANGE);
+                    entitySaveSate.setDbType(SaveNodeDbTypeEnum.UPDATE);
+                } else  {
+                    throw new EasyQueryInvalidOperationException("The current object:[" + EasyClassUtil.getInstanceSimpleName(valueObject.getEntity()) + "] has a conflicting save state and cannot be changed from ["+getEntitySaveStateAggregateRootDisplayName(entitySaveSate)+"." + entitySaveSate.getType() + "] to [" + SaveNodeTypeEnum.DELETE + "].");
+                }
             }
         }
     }
@@ -74,6 +77,7 @@ public class SaveNode {
                 entitySaveSate.setAggregateRoot(aggregateRoot);
                 entitySaveSate.setConsumer(consumer);
                 entitySaveSate.setType(SaveNodeTypeEnum.CHANGE);
+                entitySaveSate.setDbType(SaveNodeDbTypeEnum.UPDATE);
             } else {
                 throw new EasyQueryInvalidOperationException("The current object:[" + EasyClassUtil.getInstanceSimpleName(valueObject.getEntity()) + "] has a conflicting save state and cannot be changed from [" + getEntitySaveStateAggregateRootDisplayName(entitySaveSate) + "." + entitySaveSate.getType() + "] to [" + EasyClassUtil.getInstanceSimpleName(aggregateRoot) + "." + SaveNodeTypeEnum.INSERT + "].");
             }
