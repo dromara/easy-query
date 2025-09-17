@@ -178,7 +178,7 @@ public interface BaseEntityClient extends EasyBaseQuery {
         getEasyQueryClient().mergeCollection(dbCollection, targetCollection);
     }
 
-    default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> void mergeCollection(@NotNull Collection<T> dbCollection, @NotNull Collection<T> targetCollection, @NotNull Function<T, RelationValue> relationValueFunction) {
+    default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> void mergeCollection(@NotNull Collection<T> dbCollection, @NotNull Collection<T> targetCollection, @NotNull Function<T, List<Object>> relationValueFunction) {
         getEasyQueryClient().mergeCollection(dbCollection, targetCollection, relationValueFunction);
     }
 

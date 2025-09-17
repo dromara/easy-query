@@ -170,5 +170,5 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
 
 
      <T> void mergeCollection(@NotNull Collection<T> dbCollection, @NotNull Collection<T> targetCollection);
-     <T> void mergeCollection(@NotNull Collection<T> dbCollection, @NotNull Collection<T> targetCollection,@NotNull Function<T, RelationValue> relationValueFunction);
+     <T> void mergeCollection(@NotNull Collection<T> dbCollection, @NotNull Collection<T> targetCollection,@NotNull Function<T, List<Object>> relationValueFunction);
 }

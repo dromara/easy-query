@@ -35,6 +35,7 @@ import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.expression.sql.include.IncludeProvider;
 import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.expression.sql.include.SingleRelationValue;
+import com.easy.query.core.expression.sql.include.relation.RelationValueFactory;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -57,7 +58,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.print.Book;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -384,12 +387,12 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         Class<?> entityClass = firstEntity.getClass();
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(entityClass);
         mergeCollection0(entityMetadata, dbCollection, targetCollection, o -> {
-            return new SingleRelationValue(EasyTrackUtil.getTrackKey(entityMetadata, o));
+            return Collections.singletonList(EasyTrackUtil.getTrackKey(entityMetadata, o));
         });
     }
 
     @Override
-    public <T> void mergeCollection(@NotNull Collection<T> dbCollection, @NotNull Collection<T> targetCollection, @NotNull Function<T, RelationValue> relationValueFunction) {
+    public <T> void mergeCollection(@NotNull Collection<T> dbCollection, @NotNull Collection<T> targetCollection, @NotNull Function<T, List<Object>> relationValueFunction) {
 
         T firstEntity = getFirstEntity(dbCollection, targetCollection);
         if (firstEntity == null) {
@@ -400,16 +403,17 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         mergeCollection0(entityMetadata, dbCollection, targetCollection, relationValueFunction);
     }
 
-    private <T> void mergeCollection0(EntityMetadata entityMetadata, @NotNull Collection<T> dbCollection, @NotNull Collection<T> targetCollection, @NotNull Function<T, RelationValue> relationValueFunction) {
+    private <T> void mergeCollection0(EntityMetadata entityMetadata, @NotNull Collection<T> dbCollection, @NotNull Collection<T> targetCollection, @NotNull Function<T, List<Object>> relationValueFunction) {
 
         Map<RelationValue, T> targetMap = new LinkedHashMap<>();
         List<T> newEntities = new ArrayList<>();
+        RelationValueFactory relationValueFactory = runtimeContext.getRelationValueFactory();
         for (T entity : targetCollection) {
-            RelationValue entityKey = relationValueFunction.apply(entity);
-            if (entityKey != null) {
+            RelationValue entityKey = relationValueFactory.createCollectionRelationValue(relationValueFunction.apply(entity));
+            if (!entityKey.isNull()) {
                 T old = targetMap.put(entityKey, entity);
                 if (old != null) {
-                    throw new EasyQueryInvalidOperationException("Duplicate relation key detected: " + entityKey +".");
+                    throw new EasyQueryInvalidOperationException("Duplicate relation key detected: " + entityKey + ".");
                 }
             } else {
                 newEntities.add(entity); // 没有 id，当作新增
@@ -420,7 +424,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         Iterator<T> iterator = dbCollection.iterator();
         while (iterator.hasNext()) {
             T entity = iterator.next();
-            RelationValue entityKey = relationValueFunction.apply(entity);
+            RelationValue entityKey = relationValueFactory.createCollectionRelationValue(relationValueFunction.apply(entity));
             T targetEntity = targetMap.get(entityKey);
             if (targetEntity == null) {
                 // targetCollection 中没有这个 id → 删除
