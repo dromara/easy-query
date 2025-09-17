@@ -407,7 +407,10 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         for (T entity : targetCollection) {
             RelationValue entityKey = relationValueFunction.apply(entity);
             if (entityKey != null) {
-                targetMap.put(entityKey, entity);
+                T old = targetMap.put(entityKey, entity);
+                if (old != null) {
+                    throw new EasyQueryInvalidOperationException("Duplicate relation key detected: " + entityKey +".");
+                }
             } else {
                 newEntities.add(entity); // 没有 id，当作新增
             }
