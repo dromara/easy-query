@@ -15,6 +15,7 @@ import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
 import com.easy.query.core.basic.extension.track.EntityState;
+import com.easy.query.core.basic.extension.track.EntityValueState;
 import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
@@ -32,8 +33,11 @@ import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFacto
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.expression.sql.include.IncludeProvider;
+import com.easy.query.core.expression.sql.include.RelationValue;
+import com.easy.query.core.expression.sql.include.SingleRelationValue;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
@@ -42,17 +46,27 @@ import com.easy.query.core.migration.DatabaseMigrationProvider;
 import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.trigger.EntityExpressionTrigger;
 import com.easy.query.core.trigger.TriggerEvent;
+import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyPackageUtil;
+import com.easy.query.core.util.EasyTrackUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.awt.print.Book;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -259,7 +273,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         ExpressionBuilderFactory expressionBuilderFactory = runtimeContext.getExpressionBuilderFactory();
         ExpressionContext expressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, ContextTypeEnum.QUERY);
         LoadIncludeConfiguration loadIncludeConfiguration = new LoadIncludeConfiguration();
-        if(configure!=null){
+        if (configure != null) {
             configure.apply(loadIncludeConfiguration);
         }
 //        for (String selfProperty : navigateMetadata.getSelfPropertiesOrPrimary()) {
@@ -358,5 +372,93 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
                 s.commit();
             });
         }
+    }
+
+    @Override
+    public <T> void mergeCollection(@NotNull Collection<T> dbCollection, @NotNull Collection<T> targetCollection) {
+
+        T firstEntity = getFirstEntity(dbCollection, targetCollection);
+        if (firstEntity == null) {
+            return;
+        }
+        Class<?> entityClass = firstEntity.getClass();
+        EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(entityClass);
+        mergeCollection0(entityMetadata, dbCollection, targetCollection, o -> {
+            return new SingleRelationValue(EasyTrackUtil.getTrackKey(entityMetadata, o));
+        });
+    }
+
+    @Override
+    public <T> void mergeCollection(@NotNull Collection<T> dbCollection, @NotNull Collection<T> targetCollection, @NotNull Function<T, RelationValue> relationValueFunction) {
+
+        T firstEntity = getFirstEntity(dbCollection, targetCollection);
+        if (firstEntity == null) {
+            return;
+        }
+        Class<?> entityClass = firstEntity.getClass();
+        EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(entityClass);
+        mergeCollection0(entityMetadata, dbCollection, targetCollection, relationValueFunction);
+    }
+
+    private <T> void mergeCollection0(EntityMetadata entityMetadata, @NotNull Collection<T> dbCollection, @NotNull Collection<T> targetCollection, @NotNull Function<T, RelationValue> relationValueFunction) {
+
+        Map<RelationValue, T> targetMap = new LinkedHashMap<>();
+        List<T> newEntities = new ArrayList<>();
+        for (T entity : targetCollection) {
+            RelationValue entityKey = relationValueFunction.apply(entity);
+            if (entityKey != null) {
+                targetMap.put(entityKey, entity);
+            } else {
+                newEntities.add(entity); // 没有 id，当作新增
+            }
+        }
+
+        // 遍历 dbCollection，删除或更新
+        Iterator<T> iterator = dbCollection.iterator();
+        while (iterator.hasNext()) {
+            T entity = iterator.next();
+            RelationValue entityKey = relationValueFunction.apply(entity);
+            T targetEntity = targetMap.get(entityKey);
+            if (targetEntity == null) {
+                // targetCollection 中没有这个 id → 删除
+                iterator.remove();
+            } else {
+                // targetCollection 中有这个 id → 更新
+                copyProperties(entity, targetEntity, entityMetadata);
+                targetMap.remove(entityKey); // 已处理完
+            }
+        }
+
+        // 把 targetCollection 里没有 id 的新增对象加进去
+        dbCollection.addAll(newEntities);
+    }
+
+    private void copyProperties(Object entity, Object targetEntity, EntityMetadata entityMetadata) {
+
+        for (Map.Entry<String, ColumnMetadata> propColumn : entityMetadata.getProperty2ColumnMap().entrySet()) {
+            String key = propColumn.getKey();
+            boolean keyProperty = entityMetadata.isKeyProperty(key);
+            if (keyProperty) {
+                continue;
+            }
+            ColumnMetadata columnMetadata = propColumn.getValue();
+            Object value = columnMetadata.getGetterCaller().apply(targetEntity);
+            columnMetadata.getSetterCaller().call(entity, value);
+        }
+    }
+
+    private <T> @Nullable T getFirstEntity(@NotNull Collection<T> dbCollection, @NotNull Collection<T> targetCollection) {
+        boolean dbCollectionEmpty = dbCollection.isEmpty();
+        boolean targetCollectionEmpty = targetCollection.isEmpty();
+        if (dbCollectionEmpty && targetCollectionEmpty) {
+            return null;
+        }
+        if (dbCollectionEmpty) {
+            return EasyCollectionUtil.first(targetCollection);
+        }
+        if (targetCollectionEmpty) {
+            return EasyCollectionUtil.first(dbCollection);
+        }
+        return null;
     }
 }

@@ -44,24 +44,27 @@ public class SaveNode {
         return entityItems;
     }
 
-    public void putDeleteItem(MemoryAddressCompareValue valueObject, Object aggregateRoot, Consumer<Object> consumer,SaveNodeDbTypeEnum saveNodeDbType) {
+    public void putDeleteItem(MemoryAddressCompareValue valueObject, Object aggregateRoot, Consumer<Object> consumer, SaveNodeDbTypeEnum saveNodeDbType) {
         EntitySaveSate entitySaveSate = entityItems.computeIfAbsent(valueObject, key -> new EntitySaveSate());
-        entitySaveSate.setDbType(saveNodeDbType);
+
         if (entitySaveSate.getType() == SaveNodeTypeEnum.INIT) {
             entitySaveSate.setAggregateRoot(aggregateRoot);
             entitySaveSate.setConsumer(consumer);
             entitySaveSate.setType(SaveNodeTypeEnum.DELETE);
         } else {
-            if(entitySaveSate.getType() != SaveNodeTypeEnum.DELETE){
+            if (entitySaveSate.getType() != SaveNodeTypeEnum.DELETE) {
                 if (entitySaveSate.getType() == SaveNodeTypeEnum.INSERT) {
                     //存在变更聚合根的操作
                     entitySaveSate.setType(SaveNodeTypeEnum.CHANGE);
                     entitySaveSate.setDbType(SaveNodeDbTypeEnum.UPDATE);
-                } else  {
-                    throw new EasyQueryInvalidOperationException("The current object:[" + EasyClassUtil.getInstanceSimpleName(valueObject.getEntity()) + "] has a conflicting save state and cannot be changed from ["+getEntitySaveStateAggregateRootDisplayName(entitySaveSate)+"." + entitySaveSate.getType() + "] to [" + SaveNodeTypeEnum.DELETE + "].");
+                } else {
+                    throw new EasyQueryInvalidOperationException("The current object:[" + EasyClassUtil.getInstanceSimpleName(valueObject.getEntity()) + "] has a conflicting save state and cannot be changed from [" + getEntitySaveStateAggregateRootDisplayName(entitySaveSate) + "." + entitySaveSate.getType() + "] to [" + SaveNodeTypeEnum.DELETE + "].");
                 }
+            } else if (entitySaveSate.getDbType() != saveNodeDbType) {
+                throw new EasyQueryInvalidOperationException("The current object:[" + EasyClassUtil.getInstanceSimpleName(valueObject.getEntity()) + "] has a conflicting save state and cannot be changed from [" + getEntitySaveStateAggregateRootDisplayName(entitySaveSate) + "." + entitySaveSate.getDbType() + "] to [" + saveNodeDbType + "].");
             }
         }
+        entitySaveSate.setDbType(saveNodeDbType);
     }
 
     public void putInsertItem(MemoryAddressCompareValue valueObject, Object aggregateRoot, Consumer<Object> consumer) {

@@ -5,6 +5,7 @@ import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.common.ValueHolder;
 import com.easy.query.core.proxy.sql.Include;
+import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
@@ -42,6 +43,16 @@ public class M8SaveTest extends BaseTest {
         easyEntityQuery.deletable(M8SaveRootManyOne.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
     }
     public String insertOne(){
+//        ArrayList<String> ids = new ArrayList<>();
+//        List<List<String>> partition = EasyCollectionUtil.partition(ids, 1000);
+//        easyEntityQuery.deletable(M8SaveRoot.class)
+//                .where(m -> {
+//                        m.or(()->{
+//                            for (List<String> strings : partition) {
+//                                m.id().in(strings);
+//                            }
+//                        });
+//                }).executeRows();
 
         TrackManager trackManager = easyEntityQuery.getRuntimeContext().getTrackManager();
         try {

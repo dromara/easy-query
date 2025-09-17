@@ -16,6 +16,10 @@ public class MultiRelationValue implements RelationValue {
     protected final List<Object> values;
     protected final RelationNullValueValidator relationNullValueValidator;
 
+    public MultiRelationValue(List<Object> values) {
+        this(values, null);
+    }
+
     public MultiRelationValue(List<Object> values, RelationNullValueValidator relationNullValueValidator) {
         this.values = values;
         this.relationNullValueValidator = relationNullValueValidator;
@@ -26,6 +30,13 @@ public class MultiRelationValue implements RelationValue {
         return values;
     }
 
+    private boolean isNullValue(Object value) {
+        if (relationNullValueValidator == null) {
+            return Objects.isNull(value);
+        }
+        return relationNullValueValidator.isNullValue(value);
+    }
+
     /**
      * 当且仅当values中的有任意元素是null时返回true
      * 如果你认为例子中的id或者username有其他不符合就可以直接忽略可以使用重写该类来替换掉默认行为
@@ -34,7 +45,7 @@ public class MultiRelationValue implements RelationValue {
      */
     @Override
     public boolean isNull() {
-        return EasyCollectionUtil.any(values, o -> relationNullValueValidator.isNullValue(o));
+        return EasyCollectionUtil.any(values, o -> isNullValue(o));
     }
 
     @Override

@@ -1042,7 +1042,6 @@ public class EntityMetadata {
     public Collection<String> getKeyProperties() {
         return keyPropertiesMap.keySet();
     }
-
     public boolean isKeyProperty(String propertyName) {
         if (propertyName == null) {
             return false;

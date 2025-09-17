@@ -17,16 +17,19 @@ import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.configuration.LoadIncludeConfiguration;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.trigger.TriggerEvent;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * @author xuejiaming
@@ -164,4 +167,8 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
     }
 
     void syncTableByPackage(int groupSize, String... packageNames);
+
+
+     <T> void mergeCollection(@NotNull Collection<T> dbCollection, @NotNull Collection<T> targetCollection);
+     <T> void mergeCollection(@NotNull Collection<T> dbCollection, @NotNull Collection<T> targetCollection,@NotNull Function<T, RelationValue> relationValueFunction);
 }

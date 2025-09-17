@@ -193,6 +193,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                 throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "." + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] save node is null");
             }
             Map<String, Object> dbEntityMap = new LinkedHashMap<>();
+            //本次查询出来的结果有这么多
             for (String trackKey : trackKeys) {
                 EntityState trackEntityState = currentTrackContext.getTrackEntityState(navigateMetadata.getNavigatePropertyType(), trackKey);
                 Objects.requireNonNull(trackEntityState, "trackEntityState cant be null,trackKey:" + trackKey);
@@ -229,7 +230,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             if (targetEntity != trackEntityState.getCurrentValue()) {//必须是被追踪对象不然初始化空集合的navigate会有问题视为被删除
                 throw new EasyQueryInvalidOperationException("entity:" + targetEntity + " is not same with:" + trackEntityState.getCurrentValue());
             }
-            saveNodeUpdate(trackEntityState, selfEntity, targetEntity, targetEntityMetadata, navigateMetadata, saveNode);
+            saveNodeUpdate(trackEntityState, selfEntity, targetEntity,selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
         }
 
 
@@ -248,9 +249,6 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             //检查中间表并且创建新增操作
             if (navigateMetadata.getMappingClass() == null) {
                 throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "." + navigateMetadata.getPropertyName() + "] many to many relation must have mapping class");
-            }
-            if (navigateMetadata.getCascade() == CascadeTypeEnum.AUTO) {
-                throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "." + navigateMetadata.getPropertyName() + "] many to many relation mapping class cascade is not set");
             }
             //自动处理中间表
             EntityMetadata mappingClassEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getMappingClass());
@@ -283,7 +281,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
     }
 
 
-    private void saveNodeUpdate(EntityState trackEntityState, Object selfEntity, Object targetEntity, EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode) {
+    private void saveNodeUpdate(EntityState trackEntityState, Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata,EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode) {
 
         if (navigateMetadata.getCascade() == CascadeTypeEnum.NO_ACTION) {
             return;
@@ -292,9 +290,6 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             //检查中间表并且创建新增操作
             if (navigateMetadata.getMappingClass() == null) {
                 throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "." + navigateMetadata.getPropertyName() + "] many to many relation must have mapping class");
-            }
-            if (navigateMetadata.getCascade() == CascadeTypeEnum.AUTO) {
-                throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "." + navigateMetadata.getPropertyName() + "] many to many relation mapping class cascade is not set");
             }
             return;
         }
@@ -308,7 +303,9 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             }
         }
         if (hasChanged) {
-            saveNode.putUpdateItem(new MemoryAddressCompareValue(targetEntity), selfEntity, null);
+            saveNode.putUpdateItem(new MemoryAddressCompareValue(targetEntity), selfEntity, t->{
+                setTargetValue(TargetValueTypeEnum.VALUE_OBJECT, selfEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
+            });
         } else {
             saveNode.putIgnoreUpdateItem(new MemoryAddressCompareValue(targetEntity), selfEntity, null);
         }
@@ -323,9 +320,6 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             //检查中间表并且创建新增操作
             if (navigateMetadata.getMappingClass() == null) {
                 throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "." + navigateMetadata.getPropertyName() + "] many to many relation must have mapping class");
-            }
-            if (navigateMetadata.getCascade() == CascadeTypeEnum.AUTO) {
-                throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "." + navigateMetadata.getPropertyName() + "] many to many relation mapping class cascade is not set");
             }
             //自动处理中间表
             EntityMetadata mappingClassEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getMappingClass());

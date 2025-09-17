@@ -64,7 +64,7 @@ public class BasicSaveCommand implements SaveCommand {
                                 col.column(targetMappingProperty);
                             }
                         }).executeRows();
-                    } else if (navigateMetadata.getCascade() == CascadeTypeEnum.SET_NULL) {
+                    } else if (navigateMetadata.getCascade() == CascadeTypeEnum.AUTO || navigateMetadata.getCascade() == CascadeTypeEnum.SET_NULL) {
                         String[] selfMappingProperties = navigateMetadata.getSelfMappingProperties();
                         String[] targetMappingProperties = navigateMetadata.getTargetMappingProperties();
                         easyQueryClient.updatable(saveNode.getDeleteBys()).batch(batch)

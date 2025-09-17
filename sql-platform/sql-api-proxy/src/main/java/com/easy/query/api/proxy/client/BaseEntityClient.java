@@ -13,17 +13,20 @@ import com.easy.query.core.configuration.LoadIncludeConfiguration;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.PropColumn;
+import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.trigger.TriggerEvent;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * create time 2025/7/24 16:08
@@ -105,8 +108,8 @@ public interface BaseEntityClient extends EasyBaseQuery {
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> ExpressionDeletable<TProxy, T> deletable(Class<T> entityClass);
 
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntitySavable<TProxy, T> savable(T entity);
-    <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntitySavable<TProxy, T> savable(Collection<T> entities);
 
+    <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntitySavable<TProxy, T> savable(Collection<T> entities);
 
 
     default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> void loadInclude(T entity, SQLFuncExpression1<TProxy, PropColumn> navigateProperty) {
@@ -170,4 +173,13 @@ public interface BaseEntityClient extends EasyBaseQuery {
     default void syncTableByPackage(int groupSize, String... packageNames) {
         getEasyQueryClient().syncTableByPackage(groupSize, packageNames);
     }
+
+    default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> void mergeCollection(@NotNull Collection<T> dbCollection, @NotNull Collection<T> targetCollection) {
+        getEasyQueryClient().mergeCollection(dbCollection, targetCollection);
+    }
+
+    default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> void mergeCollection(@NotNull Collection<T> dbCollection, @NotNull Collection<T> targetCollection, @NotNull Function<T, RelationValue> relationValueFunction) {
+        getEasyQueryClient().mergeCollection(dbCollection, targetCollection, relationValueFunction);
+    }
+
 }

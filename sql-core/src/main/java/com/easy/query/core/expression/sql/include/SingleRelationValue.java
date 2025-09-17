@@ -17,6 +17,10 @@ public class SingleRelationValue implements RelationValue {
     protected final Object value;
     protected final RelationNullValueValidator relationNullValueValidator;
 
+    public SingleRelationValue(Object value) {
+        this(value, null);
+    }
+
     public SingleRelationValue(Object value, RelationNullValueValidator relationNullValueValidator) {
         this.value = value;
         this.relationNullValueValidator = relationNullValueValidator;
@@ -27,9 +31,16 @@ public class SingleRelationValue implements RelationValue {
         return Collections.singletonList(value);
     }
 
+    private boolean isNullValue(Object value) {
+        if (relationNullValueValidator == null) {
+            return Objects.isNull(value);
+        }
+        return relationNullValueValidator.isNullValue(value);
+    }
+
     @Override
     public boolean isNull() {
-        return relationNullValueValidator.isNullValue(value);
+        return isNullValue(value);
     }
 
     @Override
