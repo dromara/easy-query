@@ -343,7 +343,8 @@ public class M8SaveTest extends BaseTest {
                     .singleNotNull();
 
             List<M8SaveRootMany> m8SaveRootManyList = m8SaveRoot.getM8SaveRootManyList();
-            M8SaveRootMany remove = m8SaveRootManyList.remove(1);//移除index=1的元素因为原先有两个
+            M8SaveRootMany remove =   m8SaveRootManyList.stream().filter(o->o.getM8SaveRootManyOne()==null).findFirst().orElseThrow(()->new RuntimeException("123"));
+            m8SaveRootManyList.removeIf(o->o.getM8SaveRootManyOne()==null);
             M8SaveRootMany m8SaveRootMany2 = new M8SaveRootMany();
             m8SaveRootMany2.setName("newOneToMany2");
             M8SaveRootManyOne m8SaveRootManyOne = new M8SaveRootManyOne();
@@ -351,6 +352,7 @@ public class M8SaveTest extends BaseTest {
             m8SaveRootMany2.setM8SaveRootManyOne(m8SaveRootManyOne);
             m8SaveRootManyList.add(m8SaveRootMany2);//新加一个
 
+            System.out.println("----------------------");
 
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {
                 easyEntityQuery.savable(m8SaveRoot).executeCommand();
