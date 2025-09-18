@@ -466,6 +466,6 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         if (targetCollectionEmpty) {
             return EasyCollectionUtil.first(dbCollection);
         }
-        return null;
+        return EasyCollectionUtil.first(targetCollection);
     }
 }
