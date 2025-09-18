@@ -1,7 +1,7 @@
 package com.easy.query.test.mysql8;
 
 import com.alibaba.fastjson2.JSON;
-import com.easy.query.api.proxy.entity.save.OwnershipPolicyEnum;
+import com.easy.query.api.proxy.entity.save.SaveBehaviorEnum;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
@@ -285,7 +285,8 @@ public class M8Save2Test extends BaseTest {
 
 
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                easyEntityQuery.savable(list).ownershipPolicy(OwnershipPolicyEnum.AllowOwnershipChange).executeCommand();
+                easyEntityQuery.savable(list)
+                        .configure(s->s.getSaveBehavior().add(SaveBehaviorEnum.ALLOW_OWNERSHIP_CHANGE)).executeCommand();
                 transaction.commit();
             }
 
@@ -363,7 +364,7 @@ public class M8Save2Test extends BaseTest {
 
             Exception exception = null;
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                easyEntityQuery.savable(list).ownershipPolicy(OwnershipPolicyEnum.AllowOwnershipChange).executeCommand();
+                easyEntityQuery.savable(list).configure(s->s.getSaveBehavior().add(SaveBehaviorEnum.ALLOW_OWNERSHIP_CHANGE)).executeCommand();
                 transaction.commit();
             } catch (Exception e) {
                 exception = e;
@@ -371,6 +372,111 @@ public class M8Save2Test extends BaseTest {
 
             Assert.assertNotNull(exception);
             Assert.assertEquals("The current object:[M8SaveRootMany] has a conflicting save state and cannot be changed from [M8SaveRoot.INSERT] to [M8SaveRoot.UPDATE_IGNORE].", exception.getMessage());
+        });
+
+    }
+
+    @Test
+    public void testOne2Many4() {
+        deleteAll();
+        String rootId = insertOne();
+
+
+        invoke(listenerContext -> {
+            M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class)
+                    .includes(m -> m.m8SaveRootManyList())
+                    .firstNotNull();
+            m8SaveRoot.setM8SaveRootManyList(null);
+            try (Transaction transaction = easyEntityQuery.beginTransaction()) {
+                easyEntityQuery.savable(m8SaveRoot).executeCommand();
+                transaction.commit();
+            }
+
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+            Assert.assertEquals(4, listenerContext.getJdbcExecuteAfterArgs().size());
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+                Assert.assertEquals("DELETE FROM `m8_save_root_many` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                Assert.assertEquals(rootId + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+                Assert.assertEquals("DELETE FROM `m8_save_root_many` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                Assert.assertEquals(rootId + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+        });
+
+    }
+
+    @Test
+    public void testOne2Many5() {
+        deleteAll();
+        String rootId = insertOne();
+
+
+        invoke(listenerContext -> {
+            M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class)
+                    .includes(m -> m.m8SaveRootManyList())
+                    .firstNotNull();
+            m8SaveRoot.setM8SaveRootManyList(null);
+            try (Transaction transaction = easyEntityQuery.beginTransaction()) {
+                easyEntityQuery.savable(m8SaveRoot)
+                        .configure(s->{
+                            s.getSaveBehavior().add(SaveBehaviorEnum.IGNORE_NULL);
+                        }).executeCommand();
+                transaction.commit();
+            }
+
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+            Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+//            {
+//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+//                Assert.assertEquals("DELETE FROM `m8_save_root_many` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+////                Assert.assertEquals(rootId + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            }
+//            {
+//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+//                Assert.assertEquals("DELETE FROM `m8_save_root_many` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+////                Assert.assertEquals(rootId + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            }
+        });
+
+    }
+
+    @Test
+    public void testOne2Many6() {
+        deleteAll();
+        String rootId = insertOne();
+
+
+        invoke(listenerContext -> {
+            M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class)
+                    .includes(m -> m.m8SaveRootManyList())
+                    .firstNotNull();
+            m8SaveRoot.setM8SaveRootManyList(new ArrayList<>());
+            try (Transaction transaction = easyEntityQuery.beginTransaction()) {
+                easyEntityQuery.savable(m8SaveRoot)
+                        .configure(s->{
+                            s.getSaveBehavior().add(SaveBehaviorEnum.IGNORE_EMPTY);
+                        }).executeCommand();
+                transaction.commit();
+            }
+
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+            Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+//            {
+//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+//                Assert.assertEquals("DELETE FROM `m8_save_root_many` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+////                Assert.assertEquals(rootId + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            }
+//            {
+//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
+//                Assert.assertEquals("DELETE FROM `m8_save_root_many` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+////                Assert.assertEquals(rootId + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            }
         });
 
     }
@@ -395,7 +501,7 @@ public class M8Save2Test extends BaseTest {
 
 
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                easyEntityQuery.savable(list).ownershipPolicy(OwnershipPolicyEnum.AllowOwnershipChange).executeCommand();
+                easyEntityQuery.savable(list).configure(s->s.getSaveBehavior().add(SaveBehaviorEnum.ALLOW_OWNERSHIP_CHANGE)).executeCommand();
                 transaction.commit();
             }
 
@@ -444,7 +550,7 @@ public class M8Save2Test extends BaseTest {
 
 
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                easyEntityQuery.savable(list).ownershipPolicy(OwnershipPolicyEnum.AllowOwnershipChange).executeCommand();
+                easyEntityQuery.savable(list).configure(s->s.getSaveBehavior().add(SaveBehaviorEnum.ALLOW_OWNERSHIP_CHANGE)).executeCommand();
                 transaction.commit();
             }
 

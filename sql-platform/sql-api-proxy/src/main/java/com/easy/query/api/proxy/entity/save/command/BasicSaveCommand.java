@@ -1,8 +1,9 @@
 package com.easy.query.api.proxy.entity.save.command;
 
 import com.easy.query.api.proxy.entity.save.SavableContext;
+import com.easy.query.api.proxy.entity.save.SaveBehavior;
+import com.easy.query.api.proxy.entity.save.SaveBehaviorEnum;
 import com.easy.query.api.proxy.entity.save.SaveCommandContext;
-import com.easy.query.api.proxy.entity.save.SaveModeEnum;
 import com.easy.query.api.proxy.entity.save.SaveNode;
 import com.easy.query.api.proxy.entity.save.SaveNodeDbTypeEnum;
 import com.easy.query.api.proxy.entity.save.SaveNodeTypeEnum;
@@ -27,15 +28,15 @@ public class BasicSaveCommand implements SaveCommand {
     private final List<Object> updates;
     private final EasyQueryClient easyQueryClient;
     private final SaveCommandContext saveCommandContext;
-    private final SaveModeEnum saveMode;
+    private final SaveBehavior saveBehavior;
 
-    public BasicSaveCommand(EntityMetadata entityMetadata, List<Object> inserts, List<Object> updates, EasyQueryClient easyQueryClient, SaveCommandContext saveCommandContext, SaveModeEnum saveMode) {
+    public BasicSaveCommand(EntityMetadata entityMetadata, List<Object> inserts, List<Object> updates, EasyQueryClient easyQueryClient, SaveCommandContext saveCommandContext, SaveBehavior saveBehavior) {
         this.entityMetadata = entityMetadata;
         this.inserts = inserts;
         this.updates = updates;
         this.easyQueryClient = easyQueryClient;
         this.saveCommandContext = saveCommandContext;
-        this.saveMode = saveMode;
+        this.saveBehavior = saveBehavior;
     }
 
     @Override
@@ -90,7 +91,7 @@ public class BasicSaveCommand implements SaveCommand {
             }
         }
         easyQueryClient.insertable(inserts).batch(batch).executeRows(insertFillAutoIncrement(entityMetadata));
-        if (saveMode == SaveModeEnum.DEFAULT) {
+        if (!saveBehavior.hasBehavior(SaveBehaviorEnum.ROOT_UPDATE_IGNORE)) {
             easyQueryClient.updatable(updates).batch(batch).executeRows();
         }
         for (int i = 0; i < savableContexts.size(); i++) {

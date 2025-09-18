@@ -7,6 +7,7 @@ import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * create time 2025/9/5 16:10
@@ -18,14 +19,8 @@ public interface EntitySavable<TProxy extends ProxyEntity<TProxy, T>, T> extends
     List<T> getEntities();
 
 
-    EntitySavable<TProxy, T> saveMode(SaveModeEnum saveType);
+    EntitySavable<TProxy, T> configure(Consumer<SaveConfigurer> behaviorConfigure);
 
-    /**
-     * 设置对象所有权变更
-     * @param ownershipPolicy
-     * @return
-     */
-    EntitySavable<TProxy, T> ownershipPolicy(OwnershipPolicyEnum ownershipPolicy);
     EntitySavable<TProxy, T> savePath(SQLFuncExpression1<TProxy, List<MappingPath>> navigateIncludeSQLExpression);
 
 }

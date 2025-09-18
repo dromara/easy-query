@@ -1,6 +1,6 @@
 package com.easy.query.test.mysql8;
 
-import com.easy.query.api.proxy.entity.save.OwnershipPolicyEnum;
+import com.easy.query.api.proxy.entity.save.SaveBehaviorEnum;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
@@ -11,10 +11,6 @@ import com.easy.query.test.mysql8.entity.save.M8SaveA;
 import com.easy.query.test.mysql8.entity.save.M8SaveB;
 import com.easy.query.test.mysql8.entity.save.M8SaveC;
 import com.easy.query.test.mysql8.entity.save.M8SaveD;
-import com.easy.query.test.mysql8.entity.save.M8SaveRoot;
-import com.easy.query.test.mysql8.entity.save.M8SaveRootMany;
-import com.easy.query.test.mysql8.entity.save.M8SaveRootOne;
-import com.easy.query.test.mysql8.entity.save.M8SaveRootOne2;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -162,7 +158,7 @@ public class M8Save3Test extends BaseTest {
 
 
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                easyEntityQuery.savable(list).ownershipPolicy(OwnershipPolicyEnum.AllowOwnershipChange).executeCommand();
+                easyEntityQuery.savable(list).configure(s->s.getSaveBehavior().add(SaveBehaviorEnum.ALLOW_OWNERSHIP_CHANGE)).executeCommand();
                 transaction.commit();
             }
 
@@ -217,7 +213,7 @@ public class M8Save3Test extends BaseTest {
 
 
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                easyEntityQuery.savable(a1).ownershipPolicy(OwnershipPolicyEnum.AllowOwnershipChange).executeCommand();
+                easyEntityQuery.savable(a1).configure(s->s.getSaveBehavior().add(SaveBehaviorEnum.ALLOW_OWNERSHIP_CHANGE)).executeCommand();
                 transaction.commit();
             }
 
@@ -264,7 +260,7 @@ public class M8Save3Test extends BaseTest {
 
 
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                easyEntityQuery.savable(list).ownershipPolicy(OwnershipPolicyEnum.AllowOwnershipChange).executeCommand();
+                easyEntityQuery.savable(list).configure(s->s.getSaveBehavior().add(SaveBehaviorEnum.ALLOW_OWNERSHIP_CHANGE)).executeCommand();
                 transaction.commit();
             }
 

@@ -1,10 +1,10 @@
 package com.easy.query.api.proxy.entity.save.provider;
 
 import com.easy.query.api.proxy.entity.save.MemoryAddressCompareValue;
-import com.easy.query.api.proxy.entity.save.OwnershipPolicyEnum;
 import com.easy.query.api.proxy.entity.save.SavableContext;
+import com.easy.query.api.proxy.entity.save.SaveBehavior;
+import com.easy.query.api.proxy.entity.save.SaveBehaviorEnum;
 import com.easy.query.api.proxy.entity.save.SaveCommandContext;
-import com.easy.query.api.proxy.entity.save.SaveModeEnum;
 import com.easy.query.api.proxy.entity.save.TargetValueTypeEnum;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.EntityState;
@@ -44,20 +44,18 @@ public abstract class AbstractSaveProvider implements SaveProvider {
     protected final QueryRuntimeContext runtimeContext;
     protected final EntityMetadataManager entityMetadataManager;
     protected final TrackContext currentTrackContext;
-    protected final SaveModeEnum saveMode;
-    protected final OwnershipPolicyEnum ownershipPolicy;
+    protected final SaveBehavior saveBehavior;
     protected final List<Set<String>> savePathLimit;
     protected final Map<MemoryAddressCompareValue,DeleteValueObject> deleteValueObjectMap;
     protected final SaveCommandContext saveCommandContext;
 
-    public AbstractSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveModeEnum saveMode, OwnershipPolicyEnum ownershipPolicy) {
+    public AbstractSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveBehavior saveBehavior) {
         this.entityClass = entityClass;
         this.entities = entities;
         this.easyQueryClient = easyQueryClient;
         this.runtimeContext = easyQueryClient.getRuntimeContext();
         this.currentTrackContext = currentTrackContext;
-        this.saveMode = saveMode;
-        this.ownershipPolicy = ownershipPolicy;
+        this.saveBehavior = saveBehavior;
         this.entityMetadataManager = runtimeContext.getEntityMetadataManager();
         this.savePathLimit = savePathLimit;
         this.saveCommandContext = new SaveCommandContext(entityClass);
@@ -138,9 +136,9 @@ public abstract class AbstractSaveProvider implements SaveProvider {
                 ColumnMetadata targetColumn = targetEntityMetadata.getColumnNotNull(target);
 //                targetColumn.getSetterCaller().call(targetEntity, selfValue);
                 Object currentValue = targetColumn.getGetterCaller().apply(targetEntity);
-                if (currentValue == null || ownershipPolicy == OwnershipPolicyEnum.AllowOwnershipChange) {//允许分配的情况下就无脑赋值
+                if (currentValue == null || this.saveBehavior.hasBehavior(SaveBehaviorEnum.ALLOW_OWNERSHIP_CHANGE)) {//允许分配的情况下就无脑赋值
                     targetColumn.getSetterCaller().call(targetEntity, selfValue);
-                } else if (ownershipPolicy == OwnershipPolicyEnum.EnforceSingleOwner) {//严格模式下不允许发生抢夺
+                } else {//严格模式下不允许发生抢夺
                     if (!Objects.equals(currentValue, selfValue)) {
                         throw new EasyQueryInvalidOperationException("relation value not equals,entity:[" + EasyClassUtil.getInstanceSimpleName(targetEntity) + "],property:[" + target + "],value:[" + currentValue + "],should:[" + selfValue + "]. Current OwnershipPolicy does not allow reassignment.");
                     }
@@ -161,9 +159,9 @@ public abstract class AbstractSaveProvider implements SaveProvider {
 //                selfColumn.getSetterCaller().call(selfEntity, targetValue);
 
                 Object currentValue = selfColumn.getGetterCaller().apply(selfEntity);
-                if (currentValue == null || ownershipPolicy == OwnershipPolicyEnum.AllowOwnershipChange) {//允许分配的情况下就无脑赋值
+                if (currentValue == null || this.saveBehavior.hasBehavior(SaveBehaviorEnum.ALLOW_OWNERSHIP_CHANGE)) {//允许分配的情况下就无脑赋值
                     selfColumn.getSetterCaller().call(selfEntity, targetValue);
-                } else if (ownershipPolicy == OwnershipPolicyEnum.EnforceSingleOwner) {//严格模式下不允许发生抢夺
+                } else {//严格模式下不允许发生抢夺
                     if (!Objects.equals(currentValue, targetValue)) {
                         throw new EasyQueryInvalidOperationException("relation value not equals,entity:[" + EasyClassUtil.getInstanceSimpleName(selfEntity) + "],property:[" + self + "],value:[" + currentValue + "],should:[" + targetValue + "]. Current OwnershipPolicy does not allow reassignment.");
                     }

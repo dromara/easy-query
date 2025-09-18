@@ -6,6 +6,7 @@ import com.easy.query.core.proxy.ProxyEntity;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * create time 2025/9/5 21:38
@@ -20,12 +21,7 @@ public class EasyEmptySavable<TProxy extends ProxyEntity<TProxy, T>, T> implemen
     }
 
     @Override
-    public EntitySavable<TProxy, T> saveMode(SaveModeEnum saveType) {
-        return this;
-    }
-
-    @Override
-    public EntitySavable<TProxy, T> ownershipPolicy(OwnershipPolicyEnum ownershipTransfer) {
+    public EntitySavable<TProxy, T> configure(Consumer<SaveConfigurer> behaviorConfigure) {
         return this;
     }
 

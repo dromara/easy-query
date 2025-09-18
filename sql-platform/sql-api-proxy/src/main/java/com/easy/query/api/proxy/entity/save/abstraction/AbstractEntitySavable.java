@@ -1,8 +1,9 @@
 package com.easy.query.api.proxy.entity.save.abstraction;
 
+import com.easy.query.api.proxy.entity.save.DefaultSaveConfigurer;
 import com.easy.query.api.proxy.entity.save.EntitySavable;
-import com.easy.query.api.proxy.entity.save.OwnershipPolicyEnum;
-import com.easy.query.api.proxy.entity.save.SaveModeEnum;
+import com.easy.query.api.proxy.entity.save.SaveBehavior;
+import com.easy.query.api.proxy.entity.save.SaveConfigurer;
 import com.easy.query.api.proxy.entity.save.command.SaveCommand;
 import com.easy.query.api.proxy.entity.save.provider.AutoTrackSaveProvider;
 import com.easy.query.core.api.client.EasyQueryClient;
@@ -25,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * create time 2025/9/5 16:12
@@ -40,8 +42,7 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     private final QueryRuntimeContext runtimeContext;
     private final TrackContext currentTrackContext;
     private boolean batch;
-    private SaveModeEnum saveMode;
-    private OwnershipPolicyEnum ownershipPolicy;
+    private SaveBehavior saveBehavior;
     private IncludePathTreeNode includePathTreeRoot;
 
     public AbstractEntitySavable(TProxy tProxy, Class<T> entityClass, Collection<T> entities, EasyQueryClient easyQueryClient) {
@@ -59,8 +60,7 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
         }
         this.currentTrackContext = Objects.requireNonNull(runtimeContext.getTrackManager().getCurrentTrackContext(), "currentTrackContext can not be null");
         this.batch = false;
-        this.saveMode = SaveModeEnum.DEFAULT;
-        this.ownershipPolicy = OwnershipPolicyEnum.EnforceSingleOwner;
+        this.saveBehavior=new SaveBehavior();
     }
 
     @Override
@@ -75,14 +75,10 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     }
 
     @Override
-    public EntitySavable<TProxy, T> saveMode(SaveModeEnum saveType) {
-        this.saveMode = saveType;
-        return this;
-    }
-
-    @Override
-    public EntitySavable<TProxy, T> ownershipPolicy(OwnershipPolicyEnum ownershipPolicy) {
-        this.ownershipPolicy = ownershipPolicy;
+    public EntitySavable<TProxy, T> configure(Consumer<SaveConfigurer> behaviorConfigure) {
+        if(behaviorConfigure!=null){
+            behaviorConfigure.accept(new DefaultSaveConfigurer(saveBehavior));
+        }
         return this;
     }
 
@@ -106,7 +102,7 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     public void executeCommand() {
         if (!entities.isEmpty()) {
             List<Set<String>> savePathLimit = getSavePathLimit();
-            SaveCommand command = new AutoTrackSaveProvider(currentTrackContext, entityClass, EasyObjectUtil.typeCastNotNull(entities), easyQueryClient, savePathLimit, saveMode, ownershipPolicy).createCommand();
+            SaveCommand command = new AutoTrackSaveProvider(currentTrackContext, entityClass, EasyObjectUtil.typeCastNotNull(entities), easyQueryClient, savePathLimit, saveBehavior).createCommand();
             command.execute(batch);
         }
     }
