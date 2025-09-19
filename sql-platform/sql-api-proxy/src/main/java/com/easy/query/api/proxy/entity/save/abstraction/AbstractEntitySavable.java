@@ -42,6 +42,7 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     private final QueryRuntimeContext runtimeContext;
     private final TrackContext currentTrackContext;
     private boolean batch;
+    private boolean deleteAll;
     private SaveBehavior saveBehavior;
     private IncludePathTreeNode includePathTreeRoot;
 
@@ -60,7 +61,8 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
         }
         this.currentTrackContext = Objects.requireNonNull(runtimeContext.getTrackManager().getCurrentTrackContext(), "currentTrackContext can not be null");
         this.batch = false;
-        this.saveBehavior=new SaveBehavior();
+        this.deleteAll = false;
+        this.saveBehavior = new SaveBehavior();
     }
 
     @Override
@@ -76,9 +78,15 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
 
     @Override
     public EntitySavable<TProxy, T> configure(Consumer<SaveConfigurer> behaviorConfigure) {
-        if(behaviorConfigure!=null){
+        if (behaviorConfigure != null) {
             behaviorConfigure.accept(new DefaultSaveConfigurer(saveBehavior));
         }
+        return this;
+    }
+
+    @Override
+    public EntitySavable<TProxy, T> deleteAll(boolean delete) {
+        this.deleteAll = delete;
         return this;
     }
 
@@ -102,7 +110,7 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     public void executeCommand() {
         if (!entities.isEmpty()) {
             List<Set<String>> savePathLimit = getSavePathLimit();
-            SaveCommand command = new AutoTrackSaveProvider(currentTrackContext, entityClass, EasyObjectUtil.typeCastNotNull(entities), easyQueryClient, savePathLimit, saveBehavior).createCommand();
+            SaveCommand command = new AutoTrackSaveProvider(currentTrackContext, entityClass, EasyObjectUtil.typeCastNotNull(entities), easyQueryClient, savePathLimit, saveBehavior, deleteAll).createCommand();
             command.execute(batch);
         }
     }

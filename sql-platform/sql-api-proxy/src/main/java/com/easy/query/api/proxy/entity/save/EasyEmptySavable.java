@@ -31,6 +31,11 @@ public class EasyEmptySavable<TProxy extends ProxyEntity<TProxy, T>, T> implemen
     }
 
     @Override
+    public EntitySavable<TProxy, T> deleteAll(boolean delete) {
+        return this;
+    }
+
+    @Override
     public void executeCommand() {
 
     }

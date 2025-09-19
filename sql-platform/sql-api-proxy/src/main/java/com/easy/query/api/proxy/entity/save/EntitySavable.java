@@ -15,12 +15,23 @@ import java.util.function.Consumer;
  *
  * @author xuejiaming
  */
-public interface EntitySavable<TProxy extends ProxyEntity<TProxy, T>, T> extends Savable, SQLBatchExecute<EntitySavable<TProxy,T>> {
+public interface EntitySavable<TProxy extends ProxyEntity<TProxy, T>, T> extends Savable, SQLBatchExecute<EntitySavable<TProxy, T>> {
     List<T> getEntities();
 
 
     EntitySavable<TProxy, T> configure(Consumer<SaveConfigurer> behaviorConfigure);
 
     EntitySavable<TProxy, T> savePath(SQLFuncExpression1<TProxy, List<MappingPath>> navigateIncludeSQLExpression);
+
+    default EntitySavable<TProxy, T> deleteAll() {
+        return deleteAll(true);
+    }
+
+    /**
+     * 删除聚合根并且删除所有子对象清空当前导航全属性为null
+     * @param delete
+     * @return
+     */
+    EntitySavable<TProxy, T> deleteAll(boolean delete);
 
 }

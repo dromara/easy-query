@@ -29,14 +29,16 @@ public class BasicSaveCommand implements SaveCommand {
     private final EasyQueryClient easyQueryClient;
     private final SaveCommandContext saveCommandContext;
     private final SaveBehavior saveBehavior;
+    private final boolean deleteAll;
 
-    public BasicSaveCommand(EntityMetadata entityMetadata, List<Object> inserts, List<Object> updates, EasyQueryClient easyQueryClient, SaveCommandContext saveCommandContext, SaveBehavior saveBehavior) {
+    public BasicSaveCommand(EntityMetadata entityMetadata, List<Object> inserts, List<Object> updates, EasyQueryClient easyQueryClient, SaveCommandContext saveCommandContext, SaveBehavior saveBehavior,boolean deleteAll) {
         this.entityMetadata = entityMetadata;
         this.inserts = inserts;
         this.updates = updates;
         this.easyQueryClient = easyQueryClient;
         this.saveCommandContext = saveCommandContext;
         this.saveBehavior = saveBehavior;
+        this.deleteAll = deleteAll;
     }
 
     @Override
@@ -90,9 +92,17 @@ public class BasicSaveCommand implements SaveCommand {
                 }
             }
         }
-        easyQueryClient.insertable(inserts).batch(batch).executeRows(insertFillAutoIncrement(entityMetadata));
-        if (!saveBehavior.hasBehavior(SaveBehaviorEnum.ROOT_UPDATE_IGNORE)) {
-            easyQueryClient.updatable(updates).batch(batch).executeRows();
+        if(deleteAll){
+            if(!saveBehavior.hasBehavior(SaveBehaviorEnum.ROOT_IGNORE)){
+                easyQueryClient.deletable(updates).allowDeleteStatement(true).batch(batch).executeRows();
+            }
+        }else{
+            if(!saveBehavior.hasBehavior(SaveBehaviorEnum.ROOT_IGNORE)){
+                easyQueryClient.insertable(inserts).batch(batch).executeRows(insertFillAutoIncrement(entityMetadata));
+                if (!saveBehavior.hasBehavior(SaveBehaviorEnum.ROOT_UPDATE_IGNORE)) {
+                    easyQueryClient.updatable(updates).batch(batch).executeRows();
+                }
+            }
         }
         for (int i = 0; i < savableContexts.size(); i++) {
             SavableContext savableContext = savableContexts.get(i);
