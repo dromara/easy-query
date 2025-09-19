@@ -42,7 +42,7 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     private final QueryRuntimeContext runtimeContext;
     private final TrackContext currentTrackContext;
     private boolean batch;
-    private boolean deleteAll;
+    private boolean removeRoot;
     private SaveBehavior saveBehavior;
     private IncludePathTreeNode includePathTreeRoot;
 
@@ -61,7 +61,7 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
         }
         this.currentTrackContext = Objects.requireNonNull(runtimeContext.getTrackManager().getCurrentTrackContext(), "currentTrackContext can not be null");
         this.batch = false;
-        this.deleteAll = false;
+        this.removeRoot = false;
         this.saveBehavior = new SaveBehavior();
     }
 
@@ -85,8 +85,8 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     }
 
     @Override
-    public EntitySavable<TProxy, T> deleteAll(boolean delete) {
-        this.deleteAll = delete;
+    public EntitySavable<TProxy, T> removeRoot(boolean removeRoot) {
+        this.removeRoot = removeRoot;
         return this;
     }
 
@@ -110,7 +110,7 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     public void executeCommand() {
         if (!entities.isEmpty()) {
             List<Set<String>> savePathLimit = getSavePathLimit();
-            SaveCommand command = new AutoTrackSaveProvider(currentTrackContext, entityClass, EasyObjectUtil.typeCastNotNull(entities), easyQueryClient, savePathLimit, saveBehavior, deleteAll).createCommand();
+            SaveCommand command = new AutoTrackSaveProvider(currentTrackContext, entityClass, EasyObjectUtil.typeCastNotNull(entities), easyQueryClient, savePathLimit, saveBehavior, removeRoot).createCommand();
             command.execute(batch);
         }
     }

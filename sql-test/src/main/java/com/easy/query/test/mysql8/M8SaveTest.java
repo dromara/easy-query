@@ -1,12 +1,10 @@
 package com.easy.query.test.mysql8;
 
-import com.easy.query.api.proxy.entity.save.SaveBehaviorEnum;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.common.ValueHolder;
 import com.easy.query.core.proxy.sql.Include;
-import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
@@ -1183,7 +1181,7 @@ public class M8SaveTest extends BaseTest {
 
 
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                easyEntityQuery.savable(m8SaveRoot).deleteAll().executeCommand();
+                easyEntityQuery.savable(m8SaveRoot).removeRoot().executeCommand();
                 transaction.commit();
             }
 

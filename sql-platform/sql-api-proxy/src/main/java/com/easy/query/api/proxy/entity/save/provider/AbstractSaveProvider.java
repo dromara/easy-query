@@ -45,19 +45,19 @@ public abstract class AbstractSaveProvider implements SaveProvider {
     protected final EntityMetadataManager entityMetadataManager;
     protected final TrackContext currentTrackContext;
     protected final SaveBehavior saveBehavior;
-    protected final boolean deleteAll;
+    protected final boolean removeRoot;
     protected final List<Set<String>> savePathLimit;
     protected final Map<MemoryAddressCompareValue,DeleteValueObject> deleteValueObjectMap;
     protected final SaveCommandContext saveCommandContext;
 
-    public AbstractSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveBehavior saveBehavior,boolean deleteAll) {
+    public AbstractSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveBehavior saveBehavior,boolean removeRoot) {
         this.entityClass = entityClass;
         this.entities = entities;
         this.easyQueryClient = easyQueryClient;
         this.runtimeContext = easyQueryClient.getRuntimeContext();
         this.currentTrackContext = currentTrackContext;
         this.saveBehavior = saveBehavior;
-        this.deleteAll = deleteAll;
+        this.removeRoot = removeRoot;
         this.entityMetadataManager = runtimeContext.getEntityMetadataManager();
         this.savePathLimit = savePathLimit;
         this.saveCommandContext = new SaveCommandContext(entityClass);

@@ -44,8 +44,8 @@ import java.util.Set;
  */
 public class AutoTrackSaveProvider extends AbstractSaveProvider {
 
-    public AutoTrackSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveBehavior saveBehavior, boolean deleteAll) {
-        super(currentTrackContext, entityClass, entities, easyQueryClient, savePathLimit, saveBehavior, deleteAll);
+    public AutoTrackSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveBehavior saveBehavior, boolean removeRoot) {
+        super(currentTrackContext, entityClass, entities, easyQueryClient, savePathLimit, saveBehavior, removeRoot);
     }
 
 
@@ -79,7 +79,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                 //只有删除的脱钩才需要处理
                 deleteSelf(value.target, value.targetEntityMetadata, value.saveNode.getIndex() + 1);
             }
-            return new BasicSaveCommand(entityMetadata, inserts, updates, easyQueryClient, saveCommandContext, saveBehavior, deleteAll);
+            return new BasicSaveCommand(entityMetadata, inserts, updates, easyQueryClient, saveCommandContext, saveBehavior, removeRoot);
         }
 
         return EmptySaveCommand.INSTANCE;
@@ -87,7 +87,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
 
 
     private void cleanNavigates(Object entity, EntityMetadata entityMetadata) {
-        if (deleteAll) {
+        if (removeRoot) {
             Collection<NavigateMetadata> navigateMetadatas = entityMetadata.getNavigateMetadatas();
             for (NavigateMetadata navigateMetadata : navigateMetadatas) {
                 navigateMetadata.getSetter().call(entity, null);

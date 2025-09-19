@@ -23,15 +23,15 @@ public interface EntitySavable<TProxy extends ProxyEntity<TProxy, T>, T> extends
 
     EntitySavable<TProxy, T> savePath(SQLFuncExpression1<TProxy, List<MappingPath>> navigateIncludeSQLExpression);
 
-    default EntitySavable<TProxy, T> deleteAll() {
-        return deleteAll(true);
+    default EntitySavable<TProxy, T> removeRoot() {
+        return removeRoot(true);
     }
 
     /**
      * 删除聚合根并且删除所有子对象清空当前导航全属性为null
-     * @param delete
+     * @param remove
      * @return
      */
-    EntitySavable<TProxy, T> deleteAll(boolean delete);
+    EntitySavable<TProxy, T> removeRoot(boolean remove);
 
 }
