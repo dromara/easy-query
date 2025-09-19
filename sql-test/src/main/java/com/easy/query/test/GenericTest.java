@@ -35,6 +35,7 @@ import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyBitwiseUtil;
 import com.easy.query.core.util.EasyCheck;
 import com.easy.query.core.util.EasyClassUtil;
+import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.common.MyEnum;
@@ -52,6 +53,12 @@ import com.easy.query.test.increment.MyDatabaseIncrementSQLColumnGenerator;
 import com.easy.query.test.interceptor.MyEntityInterceptor;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
 import com.easy.query.test.testvo.MyUserDTO;
+import io.agroal.api.AgroalDataSource;
+import io.agroal.api.configuration.AgroalConnectionFactoryConfiguration;
+import io.agroal.api.configuration.AgroalConnectionPoolConfiguration;
+import io.agroal.api.configuration.AgroalDataSourceConfiguration;
+import io.agroal.api.configuration.supplier.AgroalDataSourceConfigurationSupplier;
+import io.agroal.api.security.SimplePassword;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -61,7 +68,12 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.attribute.UserPrincipal;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -1285,4 +1297,48 @@ public class GenericTest extends BaseTest {
             i++;
         }
     }
+
+
+    @Test
+     public void testAgroalGetUrl() throws SQLException {
+
+        // 1. 配置数据源
+        AgroalDataSourceConfigurationSupplier configurationSupplier = new AgroalDataSourceConfigurationSupplier();
+
+        // 设置 JDBC 连接 URL、用户名和密码
+        configurationSupplier
+                .connectionPoolConfiguration(cp -> cp
+                        .maxSize(10) // 连接池最大连接数
+                        .minSize(3)  // 连接池最小连接数
+                        .connectionFactoryConfiguration(cf -> cf
+                                .jdbcUrl("jdbc:mysql://127.0.0.1:3316/easy-query-test?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true")
+                                .connectionProviderClassName("com.mysql.cj.jdbc.Driver")
+                                .principal(new UserPrincipal() {
+                                    @Override
+                                    public String getName() {
+                                        return "root";
+                                    }
+                                })
+                                .credential(new SimplePassword("root"))
+                        )
+                );
+
+        // 2. 根据配置创建数据源
+        AgroalDataSourceConfiguration dataSourceConfiguration = configurationSupplier.get();
+
+
+         // 4. 创建数据源
+         try (AgroalDataSource dataSource = AgroalDataSource.from(dataSourceConfiguration)) {
+             // 5. 正常使用 JDBC
+             try (Connection conn = dataSource.getConnection();
+                  Statement stmt = conn.createStatement();
+                  ResultSet rs = stmt.executeQuery("SELECT 1")) {
+                 while (rs.next()) {
+                     System.out.println("Result = " + rs.getInt(1));
+                 }
+             }
+             String jdbcUrlByReflection = EasyDatabaseUtil.getJdbcUrlByReflection(dataSource);
+             Assert.assertEquals("",jdbcUrlByReflection);
+         }
+     }
 }

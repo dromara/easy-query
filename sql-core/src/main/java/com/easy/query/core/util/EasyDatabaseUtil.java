@@ -36,6 +36,9 @@ import java.util.regex.Pattern;
 public class EasyDatabaseUtil {
     private static final Log log = LogFactory.getLog(EasyDatabaseUtil.class);
 
+    public static Function<DataSource, String> GET_JDBC_URL_BY_DATASOURCE_FUNCTION = EasyDatabaseUtil::getJdbcUrlByReflection0;
+
+
     /**
      * 从 DataSource 中解析 JDBC URL（通过反射，兼容常见连接池）
      */
@@ -96,7 +99,8 @@ public class EasyDatabaseUtil {
         return new HashSet<>(); // 未能获取数据库列信息
 
     }
-    public static Set<String> getTableIndexes(DataSource dataSource,String tableName) {
+
+    public static Set<String> getTableIndexes(DataSource dataSource, String tableName) {
         try (Connection connection = dataSource.getConnection()) {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
             ResultSet resultSet = databaseMetaData.getIndexInfo(null, null, tableName, false, false);
@@ -114,7 +118,8 @@ public class EasyDatabaseUtil {
         return new HashSet<>(); // 未能获取数据库索引信息
 
     }
-    public static Set<String> getTableForeignKeys(DataSource dataSource,String tableName) {
+
+    public static Set<String> getTableForeignKeys(DataSource dataSource, String tableName) {
         try (Connection connection = dataSource.getConnection()) {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
             ResultSet resultSet = databaseMetaData.getImportedKeys(null, null, tableName);
@@ -209,6 +214,10 @@ public class EasyDatabaseUtil {
      * 反射获取 DataSource 的 JDBC URL
      */
     public static String getJdbcUrlByReflection(DataSource dataSource) {
+        return GET_JDBC_URL_BY_DATASOURCE_FUNCTION.apply(dataSource);
+    }
+
+    public static String getJdbcUrlByReflection0(DataSource dataSource) {
         try {
             // 尝试常见方法名: getJdbcUrl (HikariCP), getUrl (Tomcat JDBC)
             Method getUrlMethod = dataSource.getClass().getMethod("getJdbcUrl");
