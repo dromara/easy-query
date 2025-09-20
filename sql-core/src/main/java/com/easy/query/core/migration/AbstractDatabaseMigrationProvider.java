@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * create time 2025/1/18 20:09
@@ -71,13 +72,13 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
     }
 
     @Override
-    public void createDatabaseIfNotExists() {
+    public void createDatabaseIfNotExists(Function<DataSource,String> jdbcUrlByDataSourceFunction) {
         EasyDatabaseUtil.checkAndCreateDatabase(dataSource, (databaseName) -> {
             this.databaseName = databaseName;
             return databaseExistSQL(databaseName);
         }, databaseName -> {
             return createDatabaseSQL(databaseName);
-        });
+        },jdbcUrlByDataSourceFunction);
     }
 
     //    @Override

@@ -8,8 +8,11 @@ import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationContext;
 import com.easy.query.core.migration.MigrationsSQLGenerator;
 import com.easy.query.core.migration.data.TableMigrationData;
+import org.jetbrains.annotations.Nullable;
 
+import javax.sql.DataSource;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -30,9 +33,9 @@ public class DefaultDatabaseCodeFirst implements DatabaseCodeFirst {
     }
 
     @Override
-    public void createDatabaseIfNotExists() {
+    public void createDatabaseIfNotExists(@Nullable Function<DataSource, String> jdbcUrlByDataSourceFunction) {
         DatabaseMigrationProvider service = getRuntimeContext().getService(DatabaseMigrationProvider.class);
-        service.createDatabaseIfNotExists();
+        service.createDatabaseIfNotExists(jdbcUrlByDataSourceFunction);
     }
 
     @Override

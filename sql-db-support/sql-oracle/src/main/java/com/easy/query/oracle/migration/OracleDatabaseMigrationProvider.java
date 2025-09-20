@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +39,7 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
     }
 
     @Override
-    public void createDatabaseIfNotExists() {
+    public void createDatabaseIfNotExists(Function<DataSource,String> jdbcUrlByDataSourceFunction) {
 
     }
     @Override

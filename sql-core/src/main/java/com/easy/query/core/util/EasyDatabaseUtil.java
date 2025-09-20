@@ -6,6 +6,7 @@ import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -35,8 +36,6 @@ import java.util.regex.Pattern;
  */
 public class EasyDatabaseUtil {
     private static final Log log = LogFactory.getLog(EasyDatabaseUtil.class);
-
-    public static Function<DataSource, String> GET_JDBC_URL_BY_DATASOURCE_FUNCTION = EasyDatabaseUtil::getJdbcUrlByReflection0;
 
 
     /**
@@ -174,10 +173,16 @@ public class EasyDatabaseUtil {
     /**
      * 检查并自动创建数据库（如果不存在）
      */
-    public static void checkAndCreateDatabase(DataSource dataSource, Function<String, String> checkDbSqlFunc, Function<String, String> createDbSqlFunc) {
+    public static void checkAndCreateDatabase(DataSource dataSource, Function<String, String> checkDbSqlFunc, Function<String, String> createDbSqlFunc,Function<DataSource,String> jdbcUrlByDataSourceFunction) {
 
         // 1. 反射获取 DataSource 的 JDBC URL、用户名、密码
-        String jdbcUrl = getJdbcUrlByReflection(dataSource);
+        Function<DataSource,String> getJdbcUrl = ds->{
+            if(jdbcUrlByDataSourceFunction!=null){
+                return jdbcUrlByDataSourceFunction.apply(ds);
+            }
+            return getJdbcUrlByReflection(ds);
+        };
+        String jdbcUrl = getJdbcUrl(dataSource);
         String username = getDataSourceProperty(dataSource, "getUsername");
         String password = getDataSourceProperty(dataSource, "getPassword");
 
@@ -213,23 +218,65 @@ public class EasyDatabaseUtil {
     /**
      * 反射获取 DataSource 的 JDBC URL
      */
+
     public static String getJdbcUrlByReflection(DataSource dataSource) {
-        return GET_JDBC_URL_BY_DATASOURCE_FUNCTION.apply(dataSource);
+        Class<?> clazz = dataSource.getClass();
+
+        // 1. HikariCP
+        try {
+            Method method = clazz.getMethod("getJdbcUrl");
+            return (String) method.invoke(dataSource);
+        } catch (Exception ignored) {
+        }
+
+        // 2. Tomcat JDBC / Druid / C3P0
+        try {
+            Method method = clazz.getMethod("getUrl");
+            return (String) method.invoke(dataSource);
+        } catch (Exception ignored) {
+        }
+
+        // 3. Oracle UCP
+        try {
+            Method method = clazz.getMethod("getURL"); // 注意 UCP 用的是大写 URL
+            return (String) method.invoke(dataSource);
+        } catch (Exception ignored) {
+        }
+
+        // 4. Agroal DataSource
+        try {
+
+            String url = getJdbcUrlFromAgroalDataSource(dataSource);
+            if(url!=null){
+                return url;
+            }
+        } catch (Exception ignored) {
+        }
+
+        throw new RuntimeException("cant get JDBC URL，unknown DataSource type: " + clazz);
     }
 
-    public static String getJdbcUrlByReflection0(DataSource dataSource) {
+    private static String getJdbcUrlFromAgroalDataSource(DataSource dataSource) {
+
         try {
-            // 尝试常见方法名: getJdbcUrl (HikariCP), getUrl (Tomcat JDBC)
-            Method getUrlMethod = dataSource.getClass().getMethod("getJdbcUrl");
-            return (String) getUrlMethod.invoke(dataSource);
-        } catch (Exception e1) {
-            try {
-                Method getUrlMethod = dataSource.getClass().getMethod("getUrl");
-                return (String) getUrlMethod.invoke(dataSource);
-            } catch (Exception e2) {
-                throw new EasyQuerySQLCommandException("无法获取 JDBC URL", e2);
-            }
+            Class<?> clazz = dataSource.getClass();
+            Method getConfiguration = clazz.getMethod("getConfiguration");
+            Object config = getConfiguration.invoke(dataSource);
+
+            Method getPoolConfig = config.getClass().getMethod("connectionPoolConfiguration");
+            getPoolConfig.setAccessible(true);
+            Object poolConfig = getPoolConfig.invoke(config);
+
+            Method getFactoryConfig = poolConfig.getClass().getMethod("connectionFactoryConfiguration");
+            getFactoryConfig.setAccessible(true); // 必须加
+            Object factoryConfig = getFactoryConfig.invoke(poolConfig);
+
+            Method jdbcUrlMethod = factoryConfig.getClass().getMethod("jdbcUrl");
+            jdbcUrlMethod.setAccessible(true); // 必须加
+            return (String) jdbcUrlMethod.invoke(factoryConfig);
+        } catch (Exception ignored) {
         }
+        return null;
     }
 
     /**

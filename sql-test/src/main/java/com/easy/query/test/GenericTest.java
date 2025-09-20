@@ -3,6 +3,7 @@ package com.easy.query.test;
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.util.JdbcConstants;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.common.LinkedCaseInsensitiveMap;
 import com.easy.query.core.common.bean.FastBean;
@@ -67,6 +68,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.attribute.UserPrincipal;
 import java.sql.Connection;
@@ -1300,7 +1302,7 @@ public class GenericTest extends BaseTest {
 
 
     @Test
-     public void testAgroalGetUrl() throws SQLException {
+    public void testAgroalGetUrl() throws SQLException {
 
         // 1. 配置数据源
         AgroalDataSourceConfigurationSupplier configurationSupplier = new AgroalDataSourceConfigurationSupplier();
@@ -1327,18 +1329,25 @@ public class GenericTest extends BaseTest {
         AgroalDataSourceConfiguration dataSourceConfiguration = configurationSupplier.get();
 
 
-         // 4. 创建数据源
-         try (AgroalDataSource dataSource = AgroalDataSource.from(dataSourceConfiguration)) {
-             // 5. 正常使用 JDBC
-             try (Connection conn = dataSource.getConnection();
-                  Statement stmt = conn.createStatement();
-                  ResultSet rs = stmt.executeQuery("SELECT 1")) {
-                 while (rs.next()) {
-                     System.out.println("Result = " + rs.getInt(1));
-                 }
-             }
-             String jdbcUrlByReflection = EasyDatabaseUtil.getJdbcUrlByReflection(dataSource);
-             Assert.assertEquals("",jdbcUrlByReflection);
-         }
-     }
+        // 4. 创建数据源
+        try (AgroalDataSource dataSource = AgroalDataSource.from(dataSourceConfiguration)) {
+            // 5. 正常使用 JDBC
+            try (Connection conn = dataSource.getConnection();
+                 Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery("SELECT 1")) {
+                while (rs.next()) {
+                    System.out.println("Result = " + rs.getInt(1));
+                }
+            }
+
+
+//             ((AgroalDataSourceConfigurationSupplier)configuration).connectionPoolConfiguration
+            String jdbcUrlByReflection = EasyDatabaseUtil.getJdbcUrlByReflection(dataSource);
+            Assert.assertEquals("jdbc:mysql://127.0.0.1:3316/easy-query-test?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true", jdbcUrlByReflection);
+        }
+
+        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
+        //手动处理未知datasource
+        databaseCodeFirst.createDatabaseIfNotExists(ds -> "jdbc:mysql://127.0.0.1:3316/easy-query-test");
+    }
 }
