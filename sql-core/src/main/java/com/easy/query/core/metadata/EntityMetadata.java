@@ -14,6 +14,7 @@ import com.easy.query.core.annotation.NavigateJoin;
 import com.easy.query.core.annotation.NavigateSetter;
 import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.annotation.Nullable;
+import com.easy.query.core.annotation.SaveKey;
 import com.easy.query.core.annotation.ShardingDataSourceKey;
 import com.easy.query.core.annotation.ShardingExtraDataSourceKey;
 import com.easy.query.core.annotation.ShardingExtraTableKey;
@@ -172,6 +173,7 @@ public class EntityMetadata {
     private final Map<String, NavigateFlatMetadata> property2NavigateFlatMap = new LinkedHashMap<>();
     private final Map<String, NavigateJoinMetadata> property2NavigateJoinMap = new LinkedHashMap<>();
     private final Map<String/*property name*/, String/*column name*/> keyPropertiesMap = new LinkedHashMap<>();
+    private final Set<String/*property name*/> saveKeyPropertiesSet = new LinkedHashSet<>();
     private final List<String/*column name*/> generatedKeyColumns = new ArrayList<>(2);
     private final Map<String/*column name*/, ColumnMetadata> column2PropertyMap = new HashMap<>();
 
@@ -651,6 +653,10 @@ public class EntityMetadata {
         boolean exist = true;
 
         if (tableEntity) {
+            SaveKey saveKey = field.getAnnotation(SaveKey.class);
+            if (saveKey != null) {
+                saveKeyPropertiesSet.add(property);
+            }
 
             if (column != null) {
                 exist = column.exist();
@@ -1042,11 +1048,22 @@ public class EntityMetadata {
     public Collection<String> getKeyProperties() {
         return keyPropertiesMap.keySet();
     }
+    public Collection<String> getSaveKeyProperties() {
+        return saveKeyPropertiesSet;
+    }
+
     public boolean isKeyProperty(String propertyName) {
         if (propertyName == null) {
             return false;
         }
         return keyPropertiesMap.containsKey(propertyName);
+    }
+
+    public boolean isSaveKeyProperty(String propertyName) {
+        if (propertyName == null) {
+            return false;
+        }
+        return saveKeyPropertiesSet.contains(propertyName);
     }
 
     public NavigateMetadata getNavigateNotNull(String propertyName) {

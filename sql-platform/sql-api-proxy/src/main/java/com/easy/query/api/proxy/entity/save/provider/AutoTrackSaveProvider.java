@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.entity.save.provider;
 
+import com.easy.query.api.proxy.entity.save.DatabaseEntityValues;
 import com.easy.query.api.proxy.entity.save.MemoryAddressCompareValue;
 import com.easy.query.api.proxy.entity.save.SavableContext;
 import com.easy.query.api.proxy.entity.save.SaveBehavior;
@@ -67,7 +68,9 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                     updates.add(entity);
                 }
                 cleanNavigates(entity, entityMetadata);
-                saveSelf(entity, entityMetadata, 0);
+
+                EntityState entityState = currentTrackContext.getTrackEntityState(entity);
+                saveSelf(entity, entityState, entityMetadata, 0);
             }
             for (Map.Entry<MemoryAddressCompareValue, DeleteValueObject> deleteValueObjectKv : deleteValueObjectMap.entrySet()) {
                 MemoryAddressCompareValue key = deleteValueObjectKv.getKey();
@@ -96,9 +99,8 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
     }
 
 
-    private void saveSelf(Object entity, EntityMetadata entityMetadata, int deep) {
+    private void saveSelf(Object entity, EntityState entityState, EntityMetadata entityMetadata, int deep) {
 
-        EntityState entityState = currentTrackContext.getTrackEntityState(entity);
         SavableContext savableContext = this.saveCommandContext.getCreateSavableContext(deep);
 //        SavableContext savablePathContext = this.savePathCommandContext.getSavableContext(deep);
         //当前追踪的对象是否被追踪 如果被追踪那么应该以追踪上下文的导航值对象解析 如果未被追踪 应该以实体导航属性来获取值对象
@@ -178,7 +180,9 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
         saveNodeInsert(selfEntity, targetEntity, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
 
         if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
-            saveSelf(targetEntity, targetEntityMetadata, saveNode.getIndex() + 1);
+
+            EntityState entityState = currentTrackContext.getTrackEntityState(targetEntity);
+            saveSelf(targetEntity, entityState, targetEntityMetadata, saveNode.getIndex() + 1);
         }
 
     }
@@ -203,12 +207,12 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             if (saveNode == null) {
                 throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "." + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] save node is null");
             }
-            Map<String, Object> dbEntityMap = new LinkedHashMap<>();
+            DatabaseEntityValues databaseEntityValues = new DatabaseEntityValues(targetEntityMetadata, runtimeContext);
             //本次查询出来的结果有这么多
             for (String trackKey : trackKeys) {
                 EntityState trackEntityState = currentTrackContext.getTrackEntityState(navigateMetadata.getNavigatePropertyType(), trackKey);
                 Objects.requireNonNull(trackEntityState, "trackEntityState cant be null,trackKey:" + trackKey);
-                dbEntityMap.put(trackKey, trackEntityState.getCurrentValue());
+                databaseEntityValues.put(trackKey, trackEntityState.getCurrentValue());
             }
 
             Property<Object, ?> getter = navigateMetadata.getGetter();
@@ -219,44 +223,65 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                     return;
                 }
                 for (Object targetEntity : collection) {
-                    valueObjectEntityInsertUpdate(dbEntityMap, entity, targetEntity, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
+                    valueObjectEntityInsertUpdate(databaseEntityValues, entity, targetEntity, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
                 }
             } else {
                 if (navigates != null) {
-                    valueObjectEntityInsertUpdate(dbEntityMap, entity, navigates, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
+                    valueObjectEntityInsertUpdate(databaseEntityValues, entity, navigates, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
                 } else {
                     if (saveBehavior.hasBehavior(SaveBehaviorEnum.IGNORE_NULL)) {
                         return;
                     }
                 }
             }
-            for (Object value : dbEntityMap.values()) {
+            for (Object value : databaseEntityValues.values()) {
                 saveNodeDelete(entity, value, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode, true);
             }
         }
     }
 
 
-    private void valueObjectEntityInsertUpdate(Map<String, Object> dbEntityMap, Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata, EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode) {
+    private void valueObjectEntityInsertUpdate(DatabaseEntityValues databaseEntityValues, Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata, EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode) {
 
-        String newNavigateEntityKey = EasyTrackUtil.getTrackKey(targetEntityMetadata, targetEntity);
-        if (newNavigateEntityKey == null || !dbEntityMap.containsKey(newNavigateEntityKey)) {
+        EntityState entityState = null;
+        String newNavigateEntityKey = databaseEntityValues.getTrackKey(targetEntity);
+        if (newNavigateEntityKey == null || !databaseEntityValues.containsKey(newNavigateEntityKey)) {
             saveNodeInsert(selfEntity, targetEntity, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
+            entityState = currentTrackContext.getTrackEntityState(targetEntity);
         } else {
-            dbEntityMap.remove(newNavigateEntityKey);
+            databaseEntityValues.remove(newNavigateEntityKey);
             EntityState trackEntityState = currentTrackContext.getTrackEntityState(navigateMetadata.getNavigatePropertyType(), newNavigateEntityKey);
             Objects.requireNonNull(trackEntityState, "trackEntityState cant be null,trackKey:" + newNavigateEntityKey);
             if (targetEntity != trackEntityState.getCurrentValue()) {//必须是被追踪对象不然初始化空集合的navigate会有问题视为被删除
-                throw new EasyQueryInvalidOperationException("entity:" + targetEntity + " is not same with:" + trackEntityState.getCurrentValue());
+                mergeEntityWithTrackEntity(targetEntity, trackEntityState.getCurrentValue(), targetEntityMetadata);
             }
-            saveNodeUpdate(trackEntityState, selfEntity, targetEntity, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
+            saveNodeUpdate(trackEntityState, selfEntity, trackEntityState.getCurrentValue(), selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
+            entityState = currentTrackContext.getTrackEntityState(trackEntityState.getCurrentValue());
         }
 
 
         if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
-            saveSelf(targetEntity, targetEntityMetadata, saveNode.getIndex() + 1);
+            saveSelf(targetEntity, entityState, targetEntityMetadata, saveNode.getIndex() + 1);
         }
 
+    }
+
+    private void mergeEntityWithTrackEntity(Object source, Object currentEntity, EntityMetadata entityMetadata) {
+
+        for (Map.Entry<String, ColumnMetadata> propColumn : entityMetadata.getProperty2ColumnMap().entrySet()) {
+            String key = propColumn.getKey();
+            ColumnMetadata columnMetadata = propColumn.getValue();
+            Object sourceValue = columnMetadata.getGetterCaller().apply(source);
+            boolean keyProperty = entityMetadata.isKeyProperty(key);
+            if (keyProperty) {
+                if(sourceValue==null){
+                    Object value = columnMetadata.getGetterCaller().apply(currentEntity);
+                    columnMetadata.getSetterCaller().call(source, value);
+                }
+            }else{
+                columnMetadata.getSetterCaller().call(currentEntity, sourceValue);
+            }
+        }
     }
 
     private void saveNodeDelete(Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata, EntityMetadata targetEntityMetadata, NavigateMetadata navigateMetadata, SaveNode saveNode, boolean first) {
@@ -276,6 +301,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
 
             saveNode.getDeleteBys().add(mappingEntity);
         } else {
+
             if (navigateMetadata.getCascade() == CascadeTypeEnum.AUTO || navigateMetadata.getCascade() == CascadeTypeEnum.SET_NULL) {
                 //检查目标是否也是全主键
 
