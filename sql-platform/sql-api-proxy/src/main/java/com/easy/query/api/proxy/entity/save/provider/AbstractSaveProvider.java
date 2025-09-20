@@ -12,11 +12,13 @@ import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.enums.CascadeTypeEnum;
+import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
+import com.easy.query.core.metadata.ErrorMessage;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
@@ -47,10 +49,10 @@ public abstract class AbstractSaveProvider implements SaveProvider {
     protected final SaveBehavior saveBehavior;
     protected final boolean removeRoot;
     protected final List<Set<String>> savePathLimit;
-    protected final Map<MemoryAddressCompareValue,DeleteValueObject> deleteValueObjectMap;
+    protected final Map<MemoryAddressCompareValue, DeleteValueObject> deleteValueObjectMap;
     protected final SaveCommandContext saveCommandContext;
 
-    public AbstractSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveBehavior saveBehavior,boolean removeRoot) {
+    public AbstractSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveBehavior saveBehavior, boolean removeRoot) {
         this.entityClass = entityClass;
         this.entities = entities;
         this.easyQueryClient = easyQueryClient;
@@ -121,6 +123,15 @@ public abstract class AbstractSaveProvider implements SaveProvider {
         String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
         Collection<String> keyProperties = selfMetadata.getKeyProperties();
         return EasyArrayUtil.any(targetPropertiesOrPrimary, prop -> keyProperties.contains(prop));
+    }
+
+    protected void checkPrimaryKeyNotNull(EntityMetadata selfMetadata, Object entity,String error){
+        for (String keyProperty : selfMetadata.getKeyProperties()) {
+            Object value = selfMetadata.getColumnNotNull(keyProperty).getGetterCaller().apply(entity);
+            if (value == null) {
+                throw new EasyQueryInvalidOperationException(error);
+            }
+        }
     }
 
     protected void setTargetValue(TargetValueTypeEnum targetValueType, Object selfEntity, Object targetEntity, EntityMetadata selfEntityMetadata, NavigateMetadata navigateMetadata, EntityMetadata targetEntityMetadata) {

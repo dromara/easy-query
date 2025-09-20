@@ -777,21 +777,21 @@ public class M8SaveTest extends BaseTest {
             Assert.assertEquals(6, listenerContext.getJdbcExecuteAfterArgs().size());
             {
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                Assert.assertEquals("INSERT INTO `m8_save_root_middle_many` (`id`,`root_id`,`many_id`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("DELETE FROM `m8_save_root_middle_many` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                Assert.assertEquals(rootId + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             }
             {
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(3);
-                Assert.assertEquals("INSERT INTO `m8_save_root_middle_many` (`id`,`root_id`,`many_id`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("DELETE FROM `m8_save_root_middle_many` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //                Assert.assertEquals(rootId + "(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             }
             {
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(4);
-                Assert.assertEquals("UPDATE `m8_save_root_middle_many` SET `root_id` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("INSERT INTO `m8_save_root_middle_many` (`id`,`root_id`,`many_id`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
             }
             {
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(5);
-                Assert.assertEquals("UPDATE `m8_save_root_middle_many` SET `root_id` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("INSERT INTO `m8_save_root_middle_many` (`id`,`root_id`,`many_id`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
             }
         });
     }

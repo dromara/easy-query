@@ -177,7 +177,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
 
         saveNodeInsert(selfEntity, targetEntity, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
 
-        if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
+        if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany && navigateMetadata.getCascade() == CascadeTypeEnum.DELETE) {
 
             EntityState entityState = currentTrackContext.getTrackEntityState(targetEntity);
             saveSelf(targetEntity, entityState, targetEntityMetadata, saveNode.getIndex() + 1);
@@ -205,7 +205,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             if (saveNode == null) {
                 throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "." + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] save node is null");
             }
-            DatabaseEntityValues databaseEntityValues = new DatabaseEntityValues(navigateMetadata,targetEntityMetadata, runtimeContext);
+            DatabaseEntityValues databaseEntityValues = new DatabaseEntityValues(navigateMetadata, targetEntityMetadata, runtimeContext);
             //本次查询出来的结果有这么多
             for (String trackKey : trackKeys) {
                 EntityState trackEntityState = currentTrackContext.getTrackEntityState(navigateMetadata.getNavigatePropertyType(), trackKey);
@@ -258,7 +258,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
         }
 
 
-        if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
+        if (navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany && navigateMetadata.getCascade() == CascadeTypeEnum.DELETE) {
             saveSelf(targetEntity, entityState, targetEntityMetadata, saveNode.getIndex() + 1);
         }
 
@@ -272,11 +272,11 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             Object sourceValue = columnMetadata.getGetterCaller().apply(source);
             boolean keyProperty = entityMetadata.isKeyProperty(key);
             if (keyProperty) {
-                if(sourceValue==null){
+                if (sourceValue == null) {
                     Object value = columnMetadata.getGetterCaller().apply(currentEntity);
                     columnMetadata.getSetterCaller().call(source, value);
                 }
-            }else{
+            } else {
                 columnMetadata.getSetterCaller().call(currentEntity, sourceValue);
             }
         }
@@ -371,9 +371,19 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                 setMappingEntity(selfEntity, targetEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata, mappingClassEntityMetadata);
             });
         } else {
-            saveNode.putInsertItem(new MemoryAddressCompareValue(targetEntity), selfEntity, t -> {
-                setTargetValue(TargetValueTypeEnum.VALUE_OBJECT, selfEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
-            });
+
+            if (navigateMetadata.getCascade() == CascadeTypeEnum.AUTO || navigateMetadata.getCascade() == CascadeTypeEnum.SET_NULL) {
+                saveNode.putUpdateItem(new MemoryAddressCompareValue(targetEntity), selfEntity, t -> {
+                    checkPrimaryKeyNotNull(targetEntityMetadata, t, "entity:[" + selfEntityMetadata.getEntityClass() + "." + navigateMetadata.getPropertyName() + "] primary key is null");
+                    setTargetValue(TargetValueTypeEnum.VALUE_OBJECT, selfEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
+                });
+            } else if (navigateMetadata.getCascade() == CascadeTypeEnum.DELETE) {
+                saveNode.putInsertItem(new MemoryAddressCompareValue(targetEntity), selfEntity, t -> {
+                    setTargetValue(TargetValueTypeEnum.VALUE_OBJECT, selfEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
+                });
+            } else {
+                throw new EasyQueryInvalidOperationException("value object un support operate cascade:" + navigateMetadata.getCascade());
+            }
         }
     }
 }

@@ -42,7 +42,7 @@ public class M8SaveRoot implements ProxyEntityAvailable<M8SaveRoot, M8SaveRootPr
      **/
     @Navigate(value = RelationTypeEnum.OneToOne,
             selfProperty = {M8SaveRootProxy.Fields.id},
-            targetProperty = {M8SaveRootOne2Proxy.Fields.rootId})
+            targetProperty = {M8SaveRootOne2Proxy.Fields.rootId},cascade = CascadeTypeEnum.DELETE)
     private M8SaveRootOne2 m8SaveRootOne2;
 
     /**
@@ -66,11 +66,11 @@ public class M8SaveRoot implements ProxyEntityAvailable<M8SaveRoot, M8SaveRootPr
     /**
      *
      **/
-    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {M8SaveRootProxy.Fields.id}, targetProperty = {M8SaveRootMiddleManyProxy.Fields.rootId})
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {M8SaveRootProxy.Fields.id}, targetProperty = {M8SaveRootMiddleManyProxy.Fields.rootId}, cascade = CascadeTypeEnum.DELETE)
     private List<M8SaveRootMiddleMany> m8SaveRootMiddleManyList;
     /**
      *
      **/
-    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {M8SaveRootProxy.Fields.id}, targetProperty = {M8SaveRootMiddleMany2Proxy.Fields.rootId})
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {M8SaveRootProxy.Fields.id}, targetProperty = {M8SaveRootMiddleMany2Proxy.Fields.rootId}, cascade = CascadeTypeEnum.DELETE)
     private List<M8SaveRootMiddleMany2> m8SaveRootMiddleManyList2;
 }
