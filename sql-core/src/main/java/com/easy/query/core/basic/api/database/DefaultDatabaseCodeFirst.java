@@ -33,9 +33,9 @@ public class DefaultDatabaseCodeFirst implements DatabaseCodeFirst {
     }
 
     @Override
-    public void createDatabaseIfNotExists(@Nullable Function<DataSource, String> jdbcUrlByDataSourceFunction) {
+    public void createDatabaseIfNotExists(@Nullable Function<DataSource, Credentials> jdbcCredentialsByDataSourceFunction) {
         DatabaseMigrationProvider service = getRuntimeContext().getService(DatabaseMigrationProvider.class);
-        service.createDatabaseIfNotExists(jdbcUrlByDataSourceFunction);
+        service.createDatabaseIfNotExists(jdbcCredentialsByDataSourceFunction);
     }
 
     @Override

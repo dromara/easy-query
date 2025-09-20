@@ -1,5 +1,6 @@
 package com.easy.query.oracle.migration;
 
+import com.easy.query.core.basic.api.database.Credentials;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.migration.AbstractDatabaseMigrationProvider;
 import com.easy.query.core.migration.ColumnDbTypeResult;
@@ -39,7 +40,7 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
     }
 
     @Override
-    public void createDatabaseIfNotExists(Function<DataSource,String> jdbcUrlByDataSourceFunction) {
+    public void createDatabaseIfNotExists(Function<DataSource, Credentials> jdbcCredentialsByDataSourceFunction) {
 
     }
     @Override

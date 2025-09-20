@@ -1,5 +1,6 @@
 package com.easy.query.dameng.migration;
 
+import com.easy.query.core.basic.api.database.Credentials;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.migration.AbstractDatabaseMigrationProvider;
 import com.easy.query.core.migration.ColumnDbTypeResult;
@@ -47,7 +48,7 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 
 
     @Override
-    public void createDatabaseIfNotExists(Function<DataSource,String> jdbcUrlByDataSourceFunction) {
+    public void createDatabaseIfNotExists(Function<DataSource, Credentials> jdbcCredentialsByDataSourceFunction) {
 
     }
 

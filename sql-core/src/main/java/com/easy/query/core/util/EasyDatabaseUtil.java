@@ -1,5 +1,6 @@
 package com.easy.query.core.util;
 
+import com.easy.query.core.basic.api.database.Credentials;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.logging.Log;
@@ -17,6 +18,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,25 +39,6 @@ import java.util.regex.Pattern;
 public class EasyDatabaseUtil {
     private static final Log log = LogFactory.getLog(EasyDatabaseUtil.class);
 
-
-    /**
-     * 从 DataSource 中解析 JDBC URL（通过反射，兼容常见连接池）
-     */
-    public static String getJdbcUrl(DataSource dataSource) {
-        try {
-            // 尝试通过常见方法获取 URL（如 HikariCP、Tomcat JDBC 等）
-            Method getUrlMethod = dataSource.getClass().getMethod("getJdbcUrl");
-            return (String) getUrlMethod.invoke(dataSource);
-        } catch (Exception e) {
-            // 若反射失败，尝试其他方式（如 Spring 的 DriverManagerDataSource）
-            try {
-                Method getUrlMethod = dataSource.getClass().getMethod("getUrl");
-                return (String) getUrlMethod.invoke(dataSource);
-            } catch (Exception ex) {
-                throw new RuntimeException("无法获取 JDBC URL", ex);
-            }
-        }
-    }
 
     /**
      * 获取当前使用的数据库名称
@@ -173,25 +156,27 @@ public class EasyDatabaseUtil {
     /**
      * 检查并自动创建数据库（如果不存在）
      */
-    public static void checkAndCreateDatabase(DataSource dataSource, Function<String, String> checkDbSqlFunc, Function<String, String> createDbSqlFunc,Function<DataSource,String> jdbcUrlByDataSourceFunction) {
+    public static void checkAndCreateDatabase(DataSource dataSource, Function<String, String> checkDbSqlFunc, Function<String, String> createDbSqlFunc, Function<DataSource, Credentials> jdbcUrlByDataSourceFunction) {
 
         // 1. 反射获取 DataSource 的 JDBC URL、用户名、密码
-        Function<DataSource,String> getJdbcUrl = ds->{
-            if(jdbcUrlByDataSourceFunction!=null){
+        Function<DataSource, Credentials> getJdbcCredentials = ds -> {
+            if (jdbcUrlByDataSourceFunction != null) {
                 return jdbcUrlByDataSourceFunction.apply(ds);
             }
-            return getJdbcUrlByReflection(ds);
+            return getCredentialsByReflection(ds);
+//            String jdbcUrl = getJdbcUrl(ds);
+//            String username = getDataSourceProperty(ds, "getUsername");
+//            String password = getDataSourceProperty(ds, "getPassword");
+//            return new Credentials(jdbcUrl, username, password);
         };
-        String jdbcUrl = getJdbcUrl(dataSource);
-        String username = getDataSourceProperty(dataSource, "getUsername");
-        String password = getDataSourceProperty(dataSource, "getPassword");
+        Credentials credentials = getJdbcCredentials.apply(dataSource);
 
         // 2. 解析数据库名称和服务器基础 URL
-        String dbName = parseDatabaseName(jdbcUrl);
-        String serverUrl = getServerBaseUrl(jdbcUrl);
+        String dbName = parseDatabaseName(credentials.jdbcUrl);
+        String serverUrl = getServerBaseUrl(credentials.jdbcUrl);
 
         // 3. 连接到服务器（不带库名），创建数据库
-        try (Connection serverConn = DriverManager.getConnection(serverUrl, username, password)) {
+        try (Connection serverConn = DriverManager.getConnection(serverUrl, credentials.username, credentials.password)) {
 
             boolean databaseExist = false;
             try (Statement stmt = serverConn.createStatement()) {
@@ -247,7 +232,7 @@ public class EasyDatabaseUtil {
         try {
 
             String url = getJdbcUrlFromAgroalDataSource(dataSource);
-            if(url!=null){
+            if (url != null) {
                 return url;
             }
         } catch (Exception ignored) {
@@ -279,16 +264,99 @@ public class EasyDatabaseUtil {
         return null;
     }
 
-    /**
-     * 反射获取 DataSource 的用户名或密码
-     */
-    private static String getDataSourceProperty(DataSource dataSource, String methodName) {
-        try {
-            Method method = dataSource.getClass().getMethod(methodName);
-            return (String) method.invoke(dataSource);
-        } catch (Exception e) {
-            throw new EasyQueryInvalidOperationException("cant get datasource property: " + methodName, e);
+
+    public static Credentials getCredentialsByReflection(DataSource dataSource) {
+        Objects.requireNonNull(dataSource, "dataSource");
+
+        Class<?> clazz = dataSource.getClass();
+
+        String jdbcUrl = getJdbcUrlByReflection(dataSource);
+        // 常见 username / password getter 候选
+        List<String> usernameGetters = Arrays.asList(
+                "getUsername", "getUserName", "getUser", "getUserID", "getUserId"
+        );
+        List<String> passwordGetters = Arrays.asList(
+                "getPassword", "getPass", "getPwd"
+        );
+
+        // 1) 直接在 DataSource 实例上尝试常见 getter
+        String username = tryInvokeAnyNoArgStringMethod(clazz, dataSource, usernameGetters);
+        String password = tryInvokeAnyNoArgStringMethod(clazz, dataSource, passwordGetters);
+        if (username != null || password != null) {
+            return new Credentials(jdbcUrl, username, password);
         }
+
+        // 2) 针对一些实现类常见的特定方法（Hikari/HikariCP）
+        try {
+            // Hikari 有 getJdbcUrl, 其 config 也可能暴露 getUsername/getPassword
+            if (clazz.getName().contains("Hikari")) {
+                username = tryInvokeAnyNoArgStringMethod(clazz, dataSource, Arrays.asList("getUsername", "getUser"));
+                password = tryInvokeAnyNoArgStringMethod(clazz, dataSource, Arrays.asList("getPassword"));
+                if (username != null || password != null) {
+                    return new Credentials(jdbcUrl, username, password);
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+
+        // 3) 尝试 Tomcat/DBCP/Druid/C3P0/Oracle UCP 等常见的 getter（名字通常相似）
+        try {
+            username = tryInvokeAnyNoArgStringMethod(clazz, dataSource, usernameGetters);
+            password = tryInvokeAnyNoArgStringMethod(clazz, dataSource, passwordGetters);
+            if (username != null || password != null) {
+                return new Credentials(jdbcUrl, username, password);
+            }
+        } catch (Throwable ignored) {
+        }
+
+        // 如果还是没有b报错
+        throw new EasyQueryInvalidOperationException("Cannot get credentials from data source");
+    }
+
+    // 尝试一组方法名，返回第一个成功的 String 结果；会对 Method 做 setAccessible(true)
+    private static String tryInvokeAnyNoArgStringMethod(Class<?> clazz, Object instance, List<String> methodNames) {
+        for (String name : methodNames) {
+            try {
+                Method m = findMethodInHierarchy(clazz, name);
+                if (m == null) continue;
+                m.setAccessible(true);
+                Object val = m.invoke(instance);
+                if (val != null) return val.toString();
+            } catch (Throwable ignored) {
+            }
+        }
+        return null;
+    }
+
+    // 在类及其接口/父类中寻找无参方法（优先 public，然后 declared）
+    private static Method findMethodInHierarchy(Class<?> clazz, String methodName) {
+        // 先直接尝试 getMethod (public)
+        try {
+            return clazz.getMethod(methodName);
+        } catch (NoSuchMethodException ignored) {
+        }
+
+        // 再尝试 declared 方法（包括非 public）
+        Class<?> c = clazz;
+        while (c != null) {
+            try {
+                Method m = c.getDeclaredMethod(methodName);
+                if (m != null) return m;
+            } catch (NoSuchMethodException ignored) {
+            }
+            c = c.getSuperclass();
+        }
+
+        // 再尝试接口上可能定义的方法（有时实现是匿名类）
+        for (Class<?> i : clazz.getInterfaces()) {
+            try {
+                Method m = i.getMethod(methodName);
+                if (m != null) return m;
+            } catch (NoSuchMethodException ignored) {
+            }
+        }
+
+        return null;
     }
 
     /**

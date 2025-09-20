@@ -28,9 +28,9 @@ public interface DatabaseCodeFirst {
     /**
      * 如果数据库不存在则创建数据库(oracle、dameng不支持)
      *
-     * @param jdbcUrlByDataSourceFunction 根据datasource获取jdbc url
+     * @param jdbcCredentialsByDataSourceFunction 根据datasource获取jdbc url username password
      */
-    void createDatabaseIfNotExists(@Nullable Function<DataSource, String> jdbcUrlByDataSourceFunction);
+    void createDatabaseIfNotExists(@Nullable Function<DataSource, Credentials> jdbcCredentialsByDataSourceFunction);
 
     /**
      * 表是否存在

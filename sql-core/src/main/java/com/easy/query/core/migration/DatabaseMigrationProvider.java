@@ -1,5 +1,6 @@
 package com.easy.query.core.migration;
 
+import com.easy.query.core.basic.api.database.Credentials;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.migration.data.TableMigrationData;
@@ -36,11 +37,11 @@ public interface DatabaseMigrationProvider {
     }
 
     /**
-     * 创建数据库如果数据库不存在,手动指定如何通过数据源获取JDBC URL
+     * 创建数据库如果数据库不存在,手动指定如何通过数据源获取JDBC URL username password
      *
-     * @param jdbcUrlByDataSourceFunction
+     * @param jdbcCredentialsByDataSourceFunction
      */
-    void createDatabaseIfNotExists(@Nullable Function<DataSource, String> jdbcUrlByDataSourceFunction);
+    void createDatabaseIfNotExists(@Nullable Function<DataSource, Credentials> jdbcCredentialsByDataSourceFunction);
 
     boolean tableExists(String schema, String tableName);
 

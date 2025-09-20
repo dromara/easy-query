@@ -2,6 +2,7 @@ package com.easy.query.core.migration;
 
 import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.annotation.Nullable;
+import com.easy.query.core.basic.api.database.Credentials;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
@@ -72,13 +73,13 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
     }
 
     @Override
-    public void createDatabaseIfNotExists(Function<DataSource,String> jdbcUrlByDataSourceFunction) {
+    public void createDatabaseIfNotExists(Function<DataSource, Credentials> jdbcCredentialsByDataSourceFunction) {
         EasyDatabaseUtil.checkAndCreateDatabase(dataSource, (databaseName) -> {
             this.databaseName = databaseName;
             return databaseExistSQL(databaseName);
         }, databaseName -> {
             return createDatabaseSQL(databaseName);
-        },jdbcUrlByDataSourceFunction);
+        },jdbcCredentialsByDataSourceFunction);
     }
 
     //    @Override

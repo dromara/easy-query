@@ -145,7 +145,7 @@ public class MigrationTest extends BaseTest {
     @Test
     public void test2(){
 //        DriverManager.getConnection()
-        String jdbcUrl = EasyDatabaseUtil.getJdbcUrl(dataSource);
+        String jdbcUrl = EasyDatabaseUtil.getJdbcUrlByReflection(dataSource);
         System.out.println(jdbcUrl);
         String databaseName = EasyDatabaseUtil.getDatabaseName(dataSource,null);
         System.out.println(databaseName);
