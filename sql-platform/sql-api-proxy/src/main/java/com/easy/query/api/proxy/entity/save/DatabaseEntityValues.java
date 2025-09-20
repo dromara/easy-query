@@ -6,6 +6,7 @@ import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.expression.sql.include.relation.RelationValueFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyTrackUtil;
 
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -24,13 +26,15 @@ import java.util.Set;
  * @author xuejiaming
  */
 public class DatabaseEntityValues {
+    private final NavigateMetadata navigateMetadata;
     private final EntityMetadata entityMetadata;
     private final QueryRuntimeContext runtimeContext;
     private final RelationValueFactory relationValueFactory;
     private final Map<String, Object> dbEntityMap;
     private final Map<RelationValue, String> saveKeyIndexMap;
 
-    public DatabaseEntityValues(EntityMetadata entityMetadata, QueryRuntimeContext runtimeContext) {
+    public DatabaseEntityValues(NavigateMetadata navigateMetadata, EntityMetadata entityMetadata, QueryRuntimeContext runtimeContext) {
+        this.navigateMetadata = navigateMetadata;
         this.entityMetadata = entityMetadata;
         this.runtimeContext = runtimeContext;
         this.relationValueFactory = runtimeContext.getRelationValueFactory();
@@ -43,10 +47,15 @@ public class DatabaseEntityValues {
     }
 
     public void put(String trackKey, Object entity) {
+        Objects.requireNonNull(trackKey, "trackKey cant be null");
         dbEntityMap.put(trackKey, entity);
         if (hasSaveKey()) {
             RelationValue relationValue = getRelationValue(entity);
-            saveKeyIndexMap.put(relationValue, trackKey);
+            String oldTrackKey = saveKeyIndexMap.put(relationValue, trackKey);
+            if (oldTrackKey != null) {
+                //存在save key一样的对象
+                throw new EasyQueryInvalidOperationException("In [" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "." + navigateMetadata.getPropertyName() + "] , there are objects with the same @SaveKey, but their TrackKey values are [" + oldTrackKey + "," + trackKey + "]. Please verify the data accuracy.");
+            }
         }
     }
 
@@ -86,7 +95,8 @@ public class DatabaseEntityValues {
     public boolean containsKey(String tracKey) {
         return dbEntityMap.containsKey(tracKey);
     }
-    public Collection<Object> values(){
+
+    public Collection<Object> values() {
         return dbEntityMap.values();
     }
 }

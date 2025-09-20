@@ -26,12 +26,10 @@ import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.EasyTrackUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -207,7 +205,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             if (saveNode == null) {
                 throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "." + EasyClassUtil.getSimpleName(navigateMetadata.getNavigatePropertyType()) + "] save node is null");
             }
-            DatabaseEntityValues databaseEntityValues = new DatabaseEntityValues(targetEntityMetadata, runtimeContext);
+            DatabaseEntityValues databaseEntityValues = new DatabaseEntityValues(navigateMetadata,targetEntityMetadata, runtimeContext);
             //本次查询出来的结果有这么多
             for (String trackKey : trackKeys) {
                 EntityState trackEntityState = currentTrackContext.getTrackEntityState(navigateMetadata.getNavigatePropertyType(), trackKey);
