@@ -7,6 +7,9 @@ import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.proxy.sql.Include;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.entity.M8Role3;
+import com.easy.query.test.mysql8.entity.M8User3;
+import com.easy.query.test.mysql8.entity.M8UserRole3;
 import com.easy.query.test.mysql8.entity.save.M8SaveA;
 import com.easy.query.test.mysql8.entity.save.M8SaveB;
 import com.easy.query.test.mysql8.entity.save.M8SaveC;
@@ -14,7 +17,9 @@ import com.easy.query.test.mysql8.entity.save.M8SaveD;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -291,6 +296,48 @@ public class M8Save3Test extends BaseTest {
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(8);
                 Assert.assertEquals("UPDATE `m8_save_c` SET `pid` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
                 Assert.assertEquals("6(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+        });
+    }
+
+
+    @Test
+    public void many2manySetNullInsert(){
+        easyEntityQuery.deletable(M8User3.class).allowDeleteStatement(true).where(m -> m.userId().isNotNull()).executeRows();
+        easyEntityQuery.deletable(M8Role3.class).allowDeleteStatement(true).where(m -> m.roleId().isNotNull()).executeRows();
+        easyEntityQuery.deletable(M8UserRole3.class).allowDeleteStatement(true).where(m -> m.userRoleId().isNotNull()).executeRows();
+
+        invoke(listenerContext -> {
+
+            M8Role3 m8Role3 = new M8Role3();
+            m8Role3.setRoleId("r1");
+            m8Role3.setRoleName("r1");
+
+            M8User3 m8User3 = new M8User3();
+            m8User3.setUserId("u1");
+            m8User3.setUserAge(20);
+            m8User3.setUserName("u1");
+            m8User3.setCreateTime(LocalDateTime.of(2020,1,1,1,1));
+            m8User3.setRoles(Arrays.asList(m8Role3));
+
+            try(Transaction transaction = easyEntityQuery.beginTransaction()){
+                easyEntityQuery.savable(m8Role3).executeCommand();
+                easyEntityQuery.savable(m8User3).executeCommand();
+                transaction.commit();
+            }
+
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+            Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                Assert.assertEquals("INSERT INTO `m8_role3` (`role_id`,`role_name`) VALUES (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("r1(String),r1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                Assert.assertEquals("INSERT INTO `m8_user3` (`user_id`,`user_name`,`user_age`,`create_time`) VALUES (?,?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("u1(String),u1(String),20(Integer),2020-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             }
         });
     }
