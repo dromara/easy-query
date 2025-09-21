@@ -32,6 +32,7 @@ public class DatabaseEntityValues {
     private final RelationValueFactory relationValueFactory;
     private final Map<String, Object> dbEntityMap;
     private final Map<RelationValue, String> saveKeyIndexMap;
+    private final Map<RelationValue, Object> saveKeyCheckMap;
 
     public DatabaseEntityValues(NavigateMetadata navigateMetadata, EntityMetadata entityMetadata, QueryRuntimeContext runtimeContext) {
         this.navigateMetadata = navigateMetadata;
@@ -40,6 +41,7 @@ public class DatabaseEntityValues {
         this.relationValueFactory = runtimeContext.getRelationValueFactory();
         this.dbEntityMap = new LinkedHashMap<>();
         this.saveKeyIndexMap = new HashMap<>();
+        this.saveKeyCheckMap = new HashMap<>();
     }
 
     private boolean hasSaveKey() {
@@ -86,6 +88,16 @@ public class DatabaseEntityValues {
             }
         }
         return newNavigateEntityKey;
+    }
+
+    public void checkSaveKeyRepeat(Object entity) {
+        if (hasSaveKey()) {
+            RelationValue relationValue = getRelationValue(entity);
+            Object old = saveKeyCheckMap.put(relationValue, entity);
+            if (old != null && old != entity) {
+                throw new EasyQueryInvalidOperationException("In [" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "." + navigateMetadata.getPropertyName() + "] , there are objects with the same @SaveKey, but their entity values are [" + entity + "," + old + "]. Please verify the data accuracy.");
+            }
+        }
     }
 
     public void remove(String tracKey) {

@@ -160,14 +160,21 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
         SaveNode saveNode = savableContext.getSaveNode(navigateMetadata);
 
 
+        DatabaseEntityValues databaseEntityValues = new DatabaseEntityValues(navigateMetadata, targetEntityMetadata, runtimeContext);
         Property<Object, ?> getter = navigateMetadata.getGetter();
         Object navigates = getter.apply(entity);
         if (navigates instanceof Collection<?>) {
-            for (Object targetEntity : (Collection<?>) navigates) {
+            Collection<?> collection = (Collection<?>) navigates;
+            if (collection.isEmpty() && saveBehavior.hasBehavior(SaveBehaviorEnum.IGNORE_EMPTY)) {
+                return;
+            }
+            for (Object targetEntity : collection) {
+                databaseEntityValues.checkSaveKeyRepeat(targetEntity);
                 valueObjectEntityInsert(entity, targetEntity, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
             }
         } else {
             if (navigates != null) {
+                databaseEntityValues.checkSaveKeyRepeat(navigates);
                 valueObjectEntityInsert(entity, navigates, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
             }
         }
@@ -221,10 +228,12 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                     return;
                 }
                 for (Object targetEntity : collection) {
+                    databaseEntityValues.checkSaveKeyRepeat(targetEntity);
                     valueObjectEntityInsertUpdate(databaseEntityValues, entity, targetEntity, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
                 }
             } else {
                 if (navigates != null) {
+                    databaseEntityValues.checkSaveKeyRepeat(navigates);
                     valueObjectEntityInsertUpdate(databaseEntityValues, entity, navigates, selfEntityMetadata, targetEntityMetadata, navigateMetadata, saveNode);
                 } else {
                     if (saveBehavior.hasBehavior(SaveBehaviorEnum.IGNORE_NULL)) {

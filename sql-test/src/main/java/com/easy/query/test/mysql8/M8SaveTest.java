@@ -824,6 +824,41 @@ public class M8SaveTest extends BaseTest {
     }
 
     @Test
+    public void testMany2ManyMiddle3() {
+        String rootId = before();
+        invoke(listenerContext -> {
+            M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
+                    .includes(m -> m.m8SaveRootMiddleManyList2())
+                    .singleNotNull();
+            List<M8SaveRootMiddleMany2> m8SaveRoot2ManyList = m8SaveRoot.getM8SaveRootMiddleManyList2();
+            List<M8SaveRootMiddleMany2> newM8SaveRoot2ManyList = new ArrayList<>();
+            for (M8SaveRootMiddleMany2 item : m8SaveRoot2ManyList) {
+                M8SaveRootMiddleMany2 m8SaveRootMiddleMany = new M8SaveRootMiddleMany2();
+                newM8SaveRoot2ManyList.add(m8SaveRootMiddleMany);
+                m8SaveRootMiddleMany.setRootId(item.getRootId());
+                m8SaveRootMiddleMany.setManyId(item.getManyId());
+            }
+            M8SaveRootMiddleMany2 m8SaveRootMiddleMany2 = m8SaveRoot2ManyList.get(0);
+            M8SaveRootMiddleMany2 m8SaveRootMiddleMany = new M8SaveRootMiddleMany2();
+            newM8SaveRoot2ManyList.add(m8SaveRootMiddleMany);
+            m8SaveRootMiddleMany.setRootId(m8SaveRootMiddleMany2.getRootId());
+            m8SaveRootMiddleMany.setManyId(m8SaveRootMiddleMany2.getManyId());
+            m8SaveRoot.setM8SaveRootMiddleManyList2(newM8SaveRoot2ManyList);
+
+            Exception exception=null;
+            try (Transaction transaction = easyEntityQuery.beginTransaction()) {
+                easyEntityQuery.savable(m8SaveRoot).executeCommand();
+                transaction.commit();
+            }catch ( Exception ex){
+                exception=ex;
+            }
+            Assert.assertNotNull(exception);
+            Assert.assertTrue(exception.getMessage().startsWith("In [M8SaveRoot.m8SaveRootMiddleManyList2] , there are objects with the same @SaveKey, but their entity values are"));
+
+        });
+    }
+
+    @Test
     public void test2One1() {
         String rootId = before();
         ValueHolder<M8SaveRootOne> valueHolder = new ValueHolder<>();
