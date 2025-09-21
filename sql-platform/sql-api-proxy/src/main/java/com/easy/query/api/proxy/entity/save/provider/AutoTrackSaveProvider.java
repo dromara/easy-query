@@ -26,6 +26,7 @@ import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyTrackUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -382,8 +383,15 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
         } else {
 
             if (navigateMetadata.getCascade() == CascadeTypeEnum.AUTO || navigateMetadata.getCascade() == CascadeTypeEnum.SET_NULL) {
+                String trackKey = EasyTrackUtil.getTrackKey(targetEntityMetadata, targetEntity);
+                if (trackKey == null) {
+                    throw new EasyQueryInvalidOperationException("entity:[" + selfEntityMetadata.getEntityClass() + "." + navigateMetadata.getPropertyName() + "] track key is null,entity:[" + targetEntity + "]");
+                }
+                EntityState trackEntityState = currentTrackContext.getTrackEntityState(targetEntityMetadata.getEntityClass(), trackKey);
+                if (trackEntityState == null) {
+                    throw new EasyQueryInvalidOperationException("entity:[" + selfEntityMetadata.getEntityClass() + "." + navigateMetadata.getPropertyName() + "] track key:[" + trackKey + "] not found in track context");
+                }
                 saveNode.putUpdateItem(new MemoryAddressCompareValue(targetEntity), selfEntity, t -> {
-                    checkPrimaryKeyNotNull(targetEntityMetadata, t, "entity:[" + selfEntityMetadata.getEntityClass() + "." + navigateMetadata.getPropertyName() + "] primary key is null");
                     setTargetValue(TargetValueTypeEnum.VALUE_OBJECT, selfEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
                 });
             } else if (navigateMetadata.getCascade() == CascadeTypeEnum.DELETE) {
