@@ -374,12 +374,14 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
             if (navigateMetadata.getMappingClass() == null) {
                 throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass()) + "." + navigateMetadata.getPropertyName() + "] many to many relation must have mapping class");
             }
-            //自动处理中间表
-            EntityMetadata mappingClassEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getMappingClass());
-            Object mappingEntity = mappingClassEntityMetadata.getBeanConstructorCreator().get();
-            saveNode.putInsertItem(new MemoryAddressCompareValue(mappingEntity), selfEntity, t -> {
-                setMappingEntity(selfEntity, targetEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata, mappingClassEntityMetadata);
-            });
+            if (navigateMetadata.getCascade() == CascadeTypeEnum.DELETE) {
+                //自动处理中间表
+                EntityMetadata mappingClassEntityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getMappingClass());
+                Object mappingEntity = mappingClassEntityMetadata.getBeanConstructorCreator().get();
+                saveNode.putInsertItem(new MemoryAddressCompareValue(mappingEntity), selfEntity, t -> {
+                    setMappingEntity(selfEntity, targetEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata, mappingClassEntityMetadata);
+                });
+            }
         } else {
 
             if (navigateMetadata.getCascade() == CascadeTypeEnum.AUTO || navigateMetadata.getCascade() == CascadeTypeEnum.SET_NULL) {
