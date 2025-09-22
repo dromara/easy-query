@@ -235,7 +235,7 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
                 String columns = String.join("_", columnNames);
                 boolean unique = tableIndex.unique();
                 String indexPrefix = unique ? "u" : "";
-                indexName = String.format("%s_id_%s_%sidx", tableName, columns, indexPrefix);
+                indexName = String.format("%s_%s_%sidx", tableName, columns, indexPrefix);
             } else {
                 for (String field : tableIndex.fields()) {
                     String columnName = entityMetadata.getColumnNotNull(field).getName();
