@@ -386,6 +386,7 @@ public class QueryTest20 extends BaseTest {
                             t2.idCount()
                     )).toList();
         } catch (Exception e) {
+            e.printStackTrace();
 
         }
         listenerContextManager.clear();

@@ -1014,17 +1014,6 @@ public class QueryTest19 extends BaseTest {
                         t_topic3.id().eq("t2123");
                     }).toList();
 
-//            ClientQueryable<Topic> topicSQL = easyQueryClient.queryable(Topic.class)
-//                    .where(t_topic -> t_topic.eq("id", "456"))
-//                    .toCteAs();
-//
-//            List<Topic> list = easyQueryClient.queryable(Topic.class)
-//                    .leftJoin(topicSQL, (t_topic, t_topic1) -> t_topic.eq(t_topic1, "id", "id"))
-//                    .leftJoin(topicSQL, (t_topic, t_topic1, t_topic2) -> t_topic.eq(t_topic2, "id", "id"))
-//                    .where((t_topic, t_topic1,t_topic2) -> {
-//                        t_topic.eq("id", "123");
-//                        t_topic2.eq("id", "t2123");
-//                    }).toList();
         } catch (Exception ex) {
 
         }

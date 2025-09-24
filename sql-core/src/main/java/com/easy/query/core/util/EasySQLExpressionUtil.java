@@ -295,6 +295,14 @@ public class EasySQLExpressionUtil {
     public static boolean hasAnyOperate(EntityQueryExpressionBuilder sqlEntityExpression) {
         return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasWhere() || sqlEntityExpression.hasOrder() || sqlEntityExpression.hasHaving() || sqlEntityExpression.isDistinct() || sqlEntityExpression.hasGroup();
     }
+    public static boolean useTableForJoin(EntityQueryExpressionBuilder sqlEntityExpression) {
+        return !hasAnyOperate(sqlEntityExpression)&&EasyCollectionUtil.isSingle(sqlEntityExpression.getTables())
+                &&
+                !(sqlEntityExpression.getFromTable() instanceof AnonymousEntityTableExpressionBuilder)
+                &&
+                EasyCollectionUtil.isEmpty(sqlEntityExpression.getExpressionContext().getDeclareExpressions())
+                ;
+    }
 
     public static boolean hasAnyOperateWithoutWhereAndOrder(EntityQueryExpressionBuilder sqlEntityExpression) {
         return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasHaving() || sqlEntityExpression.isDistinct() || sqlEntityExpression.hasGroup();

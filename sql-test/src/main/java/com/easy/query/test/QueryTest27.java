@@ -555,11 +555,19 @@ public class QueryTest27 extends BaseTest {
 
     @Test
     public  void testSave1(){
-//        easyEntityQuery.savable(new Topic()).
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
 
         List<Topic> list = easyEntityQuery.queryable(Topic.class)
                 .leftJoin(easyEntityQuery.queryable(SysUser.class), (t_topic, e2) -> t_topic.id().eq(e2.id()))
+                .leftJoin(easyEntityQuery.queryable(SysUser.class),(a,v,c)->{
+                    a.id().eq(c.id());
+                })
                 .toList();
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `easy-query-test`.`t_sys_user` t1 ON t.`id` = t1.`id` LEFT JOIN `easy-query-test`.`t_sys_user` t2 ON t.`id` = t2.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("2025-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 
 }

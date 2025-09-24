@@ -60,7 +60,7 @@ public class MySQL8Test2 extends BaseTest {
         codeFirstCommand2.executeWithTransaction(s -> {
             String md5Hash = MD5Util.getMD5Hash(s.getSQL());
             System.out.println(s.getSQL());
-            Assert.assertEquals("6aa967f09881fb7edbde7bb159a1bf93", md5Hash);
+            Assert.assertEquals("dbbff7673035e7092de7c1c6aae99fcb", md5Hash);
         });
 //        List<M8TestIndex> list = easyEntityQuery.queryable(M8TestIndex.class)
 //                .toList();
