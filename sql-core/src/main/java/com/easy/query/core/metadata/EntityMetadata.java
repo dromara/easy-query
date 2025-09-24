@@ -1121,7 +1121,7 @@ public class EntityMetadata {
     public void checkTable() {
         if (entityMetadataType != EntityMetadataTypeEnum.MAP) {
             if (EasyStringUtil.isEmpty(tableName)) {
-                throw new EasyQueryException("current entity not mapping table name," + EasyClassUtil.getSimpleName(entityClass));
+                throw new EasyQueryException("current entity not mapping table name entity:[" + EasyClassUtil.getSimpleName(entityClass)+"] plz add annotation @Table");
             }
         }
     }

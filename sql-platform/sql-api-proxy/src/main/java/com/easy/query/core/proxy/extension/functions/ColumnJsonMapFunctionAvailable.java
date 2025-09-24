@@ -8,10 +8,12 @@ import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastBooleanAvailable;
+import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastNumberAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastStringAvailable;
 import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.JsonMapTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.impl.AnyTypeExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.type.impl.BooleanTypeExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.type.impl.JsonMapTypeExpressionImpl;
@@ -27,7 +29,8 @@ import java.util.function.Function;
  */
 public interface ColumnJsonMapFunctionAvailable<TProperty> extends ColumnObjectFunctionAvailable<TProperty, AnyTypeExpression<TProperty>>, SQLSelectAsExpression, PropTypeColumn<TProperty>,
         ColumnFunctionCastStringAvailable<TProperty>,
-        ColumnFunctionCastBooleanAvailable<TProperty> {
+        ColumnFunctionCastBooleanAvailable<TProperty>,
+        ColumnFunctionCastNumberAvailable<TProperty> {
 
     @Override
     default AnyTypeExpression<TProperty> createChainExpression(Function<SQLFunc, SQLFunction> func, Class<?> propType) {
@@ -40,6 +43,12 @@ public interface ColumnJsonMapFunctionAvailable<TProperty> extends ColumnObjectF
 
     default BooleanTypeExpression<Boolean> getBooleanField(String jsonKey) {
         return getField(jsonKey).toBoolean();
+    }
+    default NumberTypeExpression<Integer> getIntegerField(String jsonKey) {
+        return getField(jsonKey).toNumber(Integer.class);
+    }
+    default NumberTypeExpression<Long> getLongField(String jsonKey) {
+        return getField(jsonKey).toNumber(Long.class);
     }
 
     default <TP> JsonMapTypeExpression<TP> getField(String jsonKey, Class<TP> valueType) {

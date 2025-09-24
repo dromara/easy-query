@@ -556,6 +556,10 @@ public class QueryTest27 extends BaseTest {
     @Test
     public  void testSave1(){
 //        easyEntityQuery.savable(new Topic()).
+
+        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                .leftJoin(easyEntityQuery.queryable(SysUser.class), (t_topic, e2) -> t_topic.id().eq(e2.id()))
+                .toList();
     }
 
 }
