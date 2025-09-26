@@ -13,7 +13,10 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.Expression;
+import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
+import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
@@ -554,13 +557,13 @@ public class QueryTest27 extends BaseTest {
 
 
     @Test
-    public  void testSave1(){
+    public void testSave1() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<Topic> list = easyEntityQuery.queryable(Topic.class)
                 .leftJoin(easyEntityQuery.queryable(SysUser.class), (t_topic, e2) -> t_topic.id().eq(e2.id()))
-                .leftJoin(easyEntityQuery.queryable(SysUser.class),(a,v,c)->{
+                .leftJoin(easyEntityQuery.queryable(SysUser.class), (a, v, c) -> {
                     a.id().eq(c.id());
                 })
                 .toList();
@@ -568,6 +571,44 @@ public class QueryTest27 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `easy-query-test`.`t_sys_user` t1 ON t.`id` = t1.`id` LEFT JOIN `easy-query-test`.`t_sys_user` t2 ON t.`id` = t2.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //        Assert.assertEquals("2025-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+    }
+
+    @Test
+    public void updateTable() {
+
+
+        List<Topic> list = easyEntityQuery.queryable(Topic.class)
+                .where(b -> {
+                    b.id().eq("123");
+                }).orderBy(t -> {
+                    t.expression().rawSQLStatement("RAND()").executeSQL();
+                }).toList();
+
+
+        List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
+                .where(b -> {
+                    b.id().eq("123");
+                }).orderBy(t -> {
+                    t.expression().rawSQLCommand("IFNULL({0},{1}) DESC", t.stars(), 1);
+                    t.expression().rawSQLCommand("RAND()");
+                }).toList();
+        List<Draft2<Double, Integer>> list3 = easyEntityQuery.queryable(Topic.class)
+                .where(b -> {
+                    b.id().eq("123");
+                }).select(t -> Select.DRAFT.of(
+                        t.expression().rawSQLStatement("RAND()").asAnyType(Double.class),
+                        t.expression().rawSQLStatement("IFNULL({0},{1})", t.stars(), 1).asInteger()
+                )).toList();
+
+
+
+        List<Topic> listx = easyEntityQuery.queryable(Topic.class)
+                .where(b -> {
+                    b.id().eq("123");
+                }).select(Topic.class,t -> Select.of(
+                        t.expression().rawSQLStatement("RAND()").asAnyType(Double.class).as("stars"),
+                        t.expression().rawSQLStatement("IFNULL({0},{1})", t.stars(), 1).asInteger().as("createTime")
+                )).toList();
     }
 
 }

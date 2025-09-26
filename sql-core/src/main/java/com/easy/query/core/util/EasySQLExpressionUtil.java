@@ -293,7 +293,7 @@ public class EasySQLExpressionUtil {
      * @return
      */
     public static boolean hasAnyOperate(EntityQueryExpressionBuilder sqlEntityExpression) {
-        return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasWhere() || sqlEntityExpression.hasOrder() || sqlEntityExpression.hasHaving() || sqlEntityExpression.isDistinct() || sqlEntityExpression.hasGroup();
+        return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasWhere() || sqlEntityExpression.hasOrder() || sqlEntityExpression.hasHaving() || sqlEntityExpression.isDistinct() || sqlEntityExpression.hasGroup() || EasySQLSegmentUtil.isNotEmpty(sqlEntityExpression.getProjects());
     }
     public static boolean useTableForJoin(EntityQueryExpressionBuilder sqlEntityExpression) {
         return !hasAnyOperate(sqlEntityExpression)&&EasyCollectionUtil.isSingle(sqlEntityExpression.getTables())
