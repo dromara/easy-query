@@ -13,12 +13,12 @@ import com.easy.query.core.proxy.ProxyEntityAvailable;
  * @author xuejiaming
  */
 public interface EntitySubQueryConfigurable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
-    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable<T1Proxy, T1> subQueryConfigure(SQLFuncExpression1<T1Proxy, ManyPropColumn<T2Proxy,T2>> manyPropColumnExpression,
+    default <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable<T1Proxy, T1> subQueryConfigure(SQLFuncExpression1<T1Proxy, ManyPropColumn<T2Proxy,T2>> manyPropColumnExpression,
                                                                                                                                            SQLFuncExpression1<EntityQueryable<T2Proxy,T2>,EntityQueryable<T2Proxy,T2>> adapterExpression) {
         return subQueryConfigure(true, manyPropColumnExpression,adapterExpression);
     }
 
-    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable<T1Proxy, T1> subQueryConfigure(boolean condition, SQLFuncExpression1<T1Proxy, ManyPropColumn<T2Proxy,T2>> manyPropColumnExpression,
+    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable<T1Proxy, T1> subQueryConfigure(boolean condition, SQLFuncExpression1<T1Proxy, ManyPropColumn<T2Proxy,T2>> manyPropColumnExpression,
                                                                                                                                            SQLFuncExpression1<EntityQueryable<T2Proxy,T2>,EntityQueryable<T2Proxy,T2>> adapterExpression);
 
 }

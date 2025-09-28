@@ -561,6 +561,7 @@ public class QueryTest27 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
+
         List<Topic> list = easyEntityQuery.queryable(Topic.class)
                 .leftJoin(easyEntityQuery.queryable(SysUser.class), (t_topic, e2) -> t_topic.id().eq(e2.id()))
                 .leftJoin(easyEntityQuery.queryable(SysUser.class), (a, v, c) -> {
