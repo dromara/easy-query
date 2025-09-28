@@ -23,6 +23,7 @@ import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.UUIDEntity2;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
+import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -602,14 +603,50 @@ public class QueryTest27 extends BaseTest {
                 )).toList();
 
 
-
         List<Topic> listx = easyEntityQuery.queryable(Topic.class)
                 .where(b -> {
                     b.id().eq("123");
-                }).select(Topic.class,t -> Select.of(
+                }).select(Topic.class, t -> Select.of(
                         t.expression().rawSQLStatement("RAND()").asAnyType(Double.class).as("stars"),
                         t.expression().rawSQLStatement("IFNULL({0},{1})", t.stars(), 1).asInteger().as("createTime")
                 )).toList();
+    }
+
+    @Test
+    public void testQuery() {
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            List<Topic> list = dbContext.topic().where(s -> {
+                s.id().eq("123");
+            }).toList();
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+
+
+            List<Topic> list1 = dbContext.topic()
+                    .leftJoin(dbContext.blog(), (a, b) -> {
+                        a.id().eq(b.id());
+                    }).where((t_topic, t_blog) -> {
+                        t_topic.id().eq("123");
+                    }).toList();
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+
+
     }
 
 }

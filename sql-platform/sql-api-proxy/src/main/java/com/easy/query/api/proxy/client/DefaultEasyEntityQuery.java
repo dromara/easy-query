@@ -20,6 +20,8 @@ import com.easy.query.api.proxy.entity.update.impl.EasyEmptyEntityUpdatable;
 import com.easy.query.api.proxy.entity.update.impl.EasyEntityUpdatable;
 import com.easy.query.api.proxy.entity.update.impl.EasyExpressionUpdatable;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.proxy.DbSet;
+import com.easy.query.core.proxy.EasyDbSet;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -201,5 +203,10 @@ public class DefaultEasyEntityQuery implements EasyEntityQuery {
         EntitySavable<TProxy, T> savable = savable(tProxy);
         savable.getEntities().addAll(entities);
         return savable;
+    }
+
+    @Override
+    public <TProxy extends ProxyEntity<TProxy, T>, T> DbSet<TProxy, T> createDbSet(TProxy tProxy) {
+        return new EasyDbSet<>(tProxy, this);
     }
 }

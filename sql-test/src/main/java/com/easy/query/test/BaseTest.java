@@ -105,6 +105,7 @@ public abstract class BaseTest {
     public static EasyCacheClient easyCacheClient;
     public static EasyQueryShardingOption easyQueryShardingOption;
     public static EasyEntityQuery easyEntityQuery;
+    public static DbContext dbContext;
     public static ListenerContextManager listenerContextManager;
 
     static {
@@ -188,6 +189,7 @@ public abstract class BaseTest {
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
         easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
+        dbContext=new DbContext(easyEntityQuery);
         QueryRuntimeContext runtimeContext = easyEntityQuery.getRuntimeContext();
         QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
         configuration.applyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());

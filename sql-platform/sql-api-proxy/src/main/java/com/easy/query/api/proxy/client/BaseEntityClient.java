@@ -15,6 +15,7 @@ import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.PropColumn;
 import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.migration.MigrationEntityParser;
+import com.easy.query.core.proxy.DbSet;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.trigger.TriggerEvent;
@@ -118,6 +119,7 @@ public interface BaseEntityClient extends EasyBaseQuery {
 
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntitySavable<TProxy, T> savable(Collection<T> entities);
 
+    <TProxy extends ProxyEntity<TProxy, T>, T> DbSet<TProxy, T> createDbSet(TProxy tProxy);
 
     default <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> void loadInclude(T entity, SQLFuncExpression1<TProxy, PropColumn> navigateProperty) {
         if (entity == null) {
