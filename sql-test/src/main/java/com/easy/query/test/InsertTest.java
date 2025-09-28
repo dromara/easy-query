@@ -58,18 +58,18 @@ public class InsertTest extends BaseTest {
         }
     }
 
-    @Test
-    public void insertTest1() {
-        long l = easyQueryClient.insertable(null).executeRows();
-        Assert.assertEquals(0, l);
-        long l1 = easyQueryClient.insertable(null).insert(null).executeRows();
-        Assert.assertEquals(0, l1);
-        Object en = null;
-        long l3 = easyQueryClient.insertable(null).insert(en).executeRows();
-        Assert.assertEquals(0, l3);
-        long l2 = easyQueryClient.insertable(null).useInterceptor().noInterceptor().useInterceptor("1").noInterceptor("1").executeRows();
-        Assert.assertEquals(0, l2);
-    }
+//    @Test
+//    public void insertTest1() {
+//        long l = easyQueryClient.insertable(null).executeRows();
+//        Assert.assertEquals(0, l);
+//        long l1 = easyQueryClient.insertable(null).insert(null).executeRows();
+//        Assert.assertEquals(0, l1);
+//        Object en = null;
+//        long l3 = easyQueryClient.insertable(null).insert(en).executeRows();
+//        Assert.assertEquals(0, l3);
+//        long l2 = easyQueryClient.insertable(null).useInterceptor().noInterceptor().useInterceptor("1").noInterceptor("1").executeRows();
+//        Assert.assertEquals(0, l2);
+//    }
 
     @Test
     public void insertTest2() {

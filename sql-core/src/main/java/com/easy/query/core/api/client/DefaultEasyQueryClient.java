@@ -153,7 +153,12 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         if (entities == null || entities.isEmpty()) {
             return easySQLApiFactory.createEmptyInsertable(runtimeContext);
         }
-        return easySQLApiFactory.createInsertable((Class<T>) entities.iterator().next().getClass(), runtimeContext).insert(entities);
+        return insertable((Class<T>) entities.iterator().next().getClass()).insert(entities);
+    }
+
+    @Override
+    public <T> ClientInsertable<T> insertable(Class<T> entityClass) {
+        return easySQLApiFactory.createInsertable(entityClass, runtimeContext);
     }
 
     @Override
@@ -186,6 +191,11 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
     }
 
     @Override
+    public <T> ClientEntityUpdatable<T> entityUpdatable(Class<T> entityClass) {
+        return easySQLApiFactory.createEntityUpdatable(entityClass, runtimeContext);
+    }
+
+    @Override
     public <T> ClientEntityUpdatable<T> updatable(Collection<T> entities) {
         if (entities == null || entities.isEmpty()) {
             return easySQLApiFactory.createEmptyEntityUpdatable();
@@ -215,6 +225,11 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
             return easySQLApiFactory.createEmptyEntityDeletable();
         }
         return easySQLApiFactory.createEntityDeletable(entity, runtimeContext);
+    }
+
+    @Override
+    public <T> ClientEntityDeletable<T> entityDeletable(Class<T> entityClass) {
+        return easySQLApiFactory.createEntityDeletable(entityClass, runtimeContext);
     }
 
     @Override

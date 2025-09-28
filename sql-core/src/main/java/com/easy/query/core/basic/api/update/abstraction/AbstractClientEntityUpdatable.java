@@ -56,8 +56,8 @@ public abstract class AbstractClientEntityUpdatable<T> extends AbstractSQLExecut
 
     public AbstractClientEntityUpdatable(Class<T> clazz, Collection<T> entities, EntityUpdateExpressionBuilder entityUpdateExpression) {
         super(entityUpdateExpression);
-        if (entities == null || entities.isEmpty()) {
-            throw new EasyQueryException("不支持空对象的update");
+        if (entities == null) {
+            throw new EasyQueryException("entities can't be null");
         }
         this.entities = new ArrayList<>(entities);
 

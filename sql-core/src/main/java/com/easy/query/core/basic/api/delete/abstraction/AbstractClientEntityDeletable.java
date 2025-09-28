@@ -40,8 +40,8 @@ public abstract class AbstractClientEntityDeletable<T> extends AbstractSQLExecut
 
     public AbstractClientEntityDeletable(Class<T> clazz,Collection<T> entities, EntityDeleteExpressionBuilder entityDeleteExpressionBuilder) {
         super(entityDeleteExpressionBuilder);
-        if (entities == null || entities.isEmpty()) {
-            throw new EasyQueryException("不支持空对象的delete");
+        if (entities == null) {
+            throw new EasyQueryException("entities can not be null");
         }
         this.entities.addAll(entities);
         this.entityDeleteExpressionBuilder = entityDeleteExpressionBuilder;

@@ -146,6 +146,7 @@ public interface SQLClientApiFactory {
     <T> ClientEntityUpdatable<T> createEntityUpdatable(T entity, QueryRuntimeContext runtimeContext);
 
     <T> ClientEntityUpdatable<T> createEntityUpdatable(Collection<T> entities, QueryRuntimeContext runtimeContext);
+    <T> ClientEntityUpdatable<T> createEntityUpdatable(Class<T> entityClass, QueryRuntimeContext runtimeContext);
     <T> MapClientUpdatable<Map<String,Object>> createMapUpdatable(Map<String,Object> entity, QueryRuntimeContext runtimeContext);
 
     <T> MapClientUpdatable<Map<String,Object>> createMapUpdatable(Collection<Map<String,Object>> entities, QueryRuntimeContext runtimeContext);
@@ -155,6 +156,7 @@ public interface SQLClientApiFactory {
     <T> ClientEntityDeletable<T> createEmptyEntityDeletable();
 
     <T> ClientEntityDeletable<T> createEntityDeletable(T entity, QueryRuntimeContext runtimeContext);
+    <T> ClientEntityDeletable<T> createEntityDeletable(Class<T> entityClass, QueryRuntimeContext runtimeContext);
 
     <T> ClientEntityDeletable<T> createEntityDeletable(Collection<T> entities, QueryRuntimeContext runtimeContext);
 

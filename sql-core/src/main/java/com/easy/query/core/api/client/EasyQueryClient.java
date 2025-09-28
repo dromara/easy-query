@@ -100,14 +100,17 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
     <T> ClientInsertable<T> insertable(T entity);
 
     <T> ClientInsertable<T> insertable(Collection<T> entities);
+    <T> ClientInsertable<T> insertable(Class<T> entityClass);
 
     <T> ClientExpressionUpdatable<T> updatable(Class<T> entityClass);
 
     <T> ClientEntityUpdatable<T> updatable(T entity);
+    <T> ClientEntityUpdatable<T> entityUpdatable(Class<T> entityClass);
 
     <T> ClientEntityUpdatable<T> updatable(Collection<T> entities);
 
     <T> ClientEntityDeletable<T> deletable(T entity);
+    <T> ClientEntityDeletable<T> entityDeletable(Class<T> entityClass);
 
     <T> ClientEntityDeletable<T> deletable(Collection<T> entities);
 

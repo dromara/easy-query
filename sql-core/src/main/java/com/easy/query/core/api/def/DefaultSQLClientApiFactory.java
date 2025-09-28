@@ -518,10 +518,17 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
 
     @Override
     public <T> ClientEntityUpdatable<T> createEntityUpdatable(Collection<T> entities, QueryRuntimeContext runtimeContext) {
-        ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, ContextTypeEnum.UPDATE);
         Class<T> clazz = EasyObjectUtil.typeCastNullable(EasyCollectionUtil.first(entities).getClass());
-        EntityUpdateExpressionBuilder entityUpdateExpression = expressionBuilderFactory.createEntityUpdateExpressionBuilder(sqlExpressionContext, clazz, false);
-        return new EasyClientEntityUpdatable<>(clazz, entities, entityUpdateExpression);
+        ClientEntityUpdatable<T> entityUpdatable = createEntityUpdatable(clazz, runtimeContext);
+        entityUpdatable.getEntities().addAll(entities);
+        return entityUpdatable;
+    }
+
+    @Override
+    public <T> ClientEntityUpdatable<T> createEntityUpdatable(Class<T> entityClass, QueryRuntimeContext runtimeContext) {
+        ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, ContextTypeEnum.UPDATE);
+        EntityUpdateExpressionBuilder entityUpdateExpression = expressionBuilderFactory.createEntityUpdateExpressionBuilder(sqlExpressionContext, entityClass, false);
+        return new EasyClientEntityUpdatable<>(entityClass, new ArrayList<>(), entityUpdateExpression);
     }
 
     @Override
@@ -554,11 +561,18 @@ public class DefaultSQLClientApiFactory implements SQLClientApiFactory {
     }
 
     @Override
-    public <T> ClientEntityDeletable<T> createEntityDeletable(Collection<T> entities, QueryRuntimeContext runtimeContext) {
+    public <T> ClientEntityDeletable<T> createEntityDeletable(Class<T> entityClass, QueryRuntimeContext runtimeContext) {
         ExpressionContext sqlExpressionContext = expressionBuilderFactory.createExpressionContext(runtimeContext, ContextTypeEnum.DELETE);
+        EntityDeleteExpressionBuilder entityDeleteExpressionBuilder = expressionBuilderFactory.createEntityDeleteExpressionBuilder(sqlExpressionContext, entityClass, false);
+        return new EasyClientEntityDeletable<>(entityClass, new ArrayList<>(), entityDeleteExpressionBuilder);
+    }
+
+    @Override
+    public <T> ClientEntityDeletable<T> createEntityDeletable(Collection<T> entities, QueryRuntimeContext runtimeContext) {
         Class<T> clazz = EasyObjectUtil.typeCastNullable(EasyCollectionUtil.first(entities).getClass());
-        EntityDeleteExpressionBuilder entityDeleteExpressionBuilder = expressionBuilderFactory.createEntityDeleteExpressionBuilder(sqlExpressionContext, clazz, false);
-        return new EasyClientEntityDeletable<>(clazz, entities, entityDeleteExpressionBuilder);
+        ClientEntityDeletable<T> entityDeletable = createEntityDeletable(clazz, runtimeContext);
+        entityDeletable.getEntities().addAll( entities);
+        return entityDeletable;
     }
 
     @Override
