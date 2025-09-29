@@ -59,7 +59,7 @@ public class EqualsDirectToOneGetter implements RelationIncludeGetter {
             Object oldVal = resultMap.put(selfRelationId, value);
             if (oldVal != null) {
                 //如果你存在NotNull的列这一列的数据可能存在空值,空值之间会互相关联也会导致当前错误,还有一种就是ToOne或者ToMany配置错误
-                throw new EasyQueryInvalidOperationException("The relationship property '{" + targetRelationColumn.getPropertyNames() + "}' value ‘" + selfRelationId + "’ appears to have duplicates: [" + EasyClassUtil.getInstanceSimpleName(oldVal) + "]. Please confirm whether the data represents a One or Many relationship.");
+                throw new EasyQueryInvalidOperationException("The relationship property '{" + targetRelationColumn.getPropertyNames() + "}' value ‘" + selfRelationId + "’ appears to have duplicates: ["+EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass())+"." + EasyClassUtil.getInstanceSimpleName(oldVal) + "]. Please confirm whether the data represents a One or Many relationship.");
             }
 
         }

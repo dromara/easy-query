@@ -32,7 +32,7 @@ public class EqualsManyToOneGetter implements RelationIncludeGetter{
         }, o -> o.getEntity(), (key, old) -> {
             if (old != null) {
                 //应该使用ManyToOne而不是OneToOne所以请用户自行确认数据表示的是One-To-One还是Many-To-One
-                throw new EasyQueryInvalidOperationException("The relationship value ‘" + key + "’ appears to have duplicates: [" + EasyClassUtil.getInstanceSimpleName(old) + "]. Please confirm whether the data represents a One or Many relationship.");
+                throw new EasyQueryInvalidOperationException("The relationship value ‘" + key + "’ appears to have duplicates: ["+EasyClassUtil.getSimpleName(navigateMetadata.getEntityMetadata().getEntityClass())+"." + EasyClassUtil.getInstanceSimpleName(old) + "]. Please confirm whether the data represents a One or Many relationship.");
             }
         });
         this.targetEntityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType());
