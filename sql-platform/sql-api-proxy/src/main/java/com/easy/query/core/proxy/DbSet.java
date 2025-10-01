@@ -7,6 +7,7 @@ import com.easy.query.api.proxy.entity.save.EntitySavable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.update.EntityUpdatable;
 import com.easy.query.api.proxy.entity.update.ExpressionUpdatable;
+import com.easy.query.core.expression.lambda.SQLActionExpression1;
 
 import java.util.Collection;
 
@@ -20,12 +21,12 @@ public interface DbSet<TProxy extends ProxyEntity<TProxy, T>, T> extends EntityQ
 
     EntityInsertable<TProxy, T> insertable(T entity);
     EntityInsertable<TProxy, T> insertable(Collection<T> entities);
-    ExpressionUpdatable<TProxy, T> updatable();
+    ExpressionUpdatable<TProxy, T> setColumns(SQLActionExpression1<TProxy> columnSetExpression);
     EntityUpdatable<TProxy, T> updatable(T entity);
     EntityUpdatable<TProxy, T> updatable(Collection<T> entities);
     EntityDeletable<TProxy, T> deletable(T entity);
     EntityDeletable<TProxy, T> deletable(Collection<T> entities);
-    ExpressionDeletable<TProxy, T> deletable();
+    ExpressionDeletable<TProxy, T> deleteBy(SQLActionExpression1<TProxy> whereExpression);
     EntitySavable<TProxy, T> savable(T entity);
     EntitySavable<TProxy, T> savable(Collection<T> entities);
 }

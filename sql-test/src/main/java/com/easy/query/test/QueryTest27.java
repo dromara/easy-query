@@ -645,7 +645,11 @@ public class QueryTest27 extends BaseTest {
             Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
-
+//        dbContext.topic().updatable().setColumns(t_topic -> {
+//
+//        }).where(t_topic -> {
+//
+//        }).executeRows();
 
     }
 

@@ -68,8 +68,8 @@ public class EasyDbSet<TProxy extends ProxyEntity<TProxy, T>, T> implements DbSe
     }
 
     @Override
-    public ExpressionUpdatable<TProxy, T> updatable() {
-        return baseEntityClient.expressionUpdatable(tProxy);
+    public ExpressionUpdatable<TProxy, T> setColumns(SQLActionExpression1<TProxy> columnSetExpression) {
+        return baseEntityClient.expressionUpdatable(tProxy).setColumns(columnSetExpression);
     }
 
     @Override
@@ -101,8 +101,8 @@ public class EasyDbSet<TProxy extends ProxyEntity<TProxy, T>, T> implements DbSe
     }
 
     @Override
-    public ExpressionDeletable<TProxy, T> deletable() {
-        return baseEntityClient.expressionDeletable(tProxy);
+    public ExpressionDeletable<TProxy, T> deleteBy(SQLActionExpression1<TProxy> whereExpression) {
+        return baseEntityClient.expressionDeletable(tProxy).where(whereExpression);
     }
 
     @Override
