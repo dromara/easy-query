@@ -51,7 +51,7 @@ public class DuckDBBaseTest {
     public static void initDatasource() {
         dataSource = new HikariDataSource();
 //        dataSource.setJdbcUrl("jdbc:duckdb:/data/db/mydb.db");
-        dataSource.setJdbcUrl("jdbc:duckdb:/Users/xuejiaming/Desktop/dromara/easy-query/sql-test/src/main/resources/duckdb.duckdb");
+        dataSource.setJdbcUrl("jdbc:duckdb:./duckdb1.duckdb");
 //        dataSource.setUsername("duckdb");
 //        dataSource.setPassword("duckdb");
         dataSource.setDriverClassName("org.duckdb.DuckDBDriver");
