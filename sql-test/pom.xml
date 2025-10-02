@@ -49,6 +49,12 @@
         </dependency>
         <dependency>
             <groupId>com.easy-query</groupId>
+            <artifactId>sql-duckdb</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.easy-query</groupId>
             <artifactId>sql-processor</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>

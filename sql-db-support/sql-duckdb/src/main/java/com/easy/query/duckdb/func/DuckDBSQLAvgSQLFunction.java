@@ -3,7 +3,6 @@ package com.easy.query.duckdb.func;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.def.impl.AvgSQLFunction;
-import com.easy.query.pgsql.func.DuckDBSQLNullDefaultSQLFunction;
 
 import java.util.List;
 

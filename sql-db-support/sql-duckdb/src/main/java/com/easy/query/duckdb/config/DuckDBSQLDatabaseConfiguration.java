@@ -1,5 +1,7 @@
 package com.easy.query.duckdb.config;
 
+import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
+import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
@@ -11,8 +13,11 @@ import com.easy.query.duckdb.expression.DuckDBSQLExpressionFactory;
 import com.easy.query.duckdb.func.DuckDBSQLFuncImpl;
 import com.easy.query.duckdb.migration.DuckDBSQLDatabaseMigrationProvider;
 import com.easy.query.duckdb.migration.DuckDBSQLMigrationEntityParser;
+import com.easy.query.duckdb.types.LocalDateDuckDBTypeHandler;
 
+import java.time.LocalDate;
 import java.util.UUID;
+
 
 /**
  * create time 2023/5/10 13:40
@@ -28,5 +33,10 @@ public class DuckDBSQLDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(SQLFunc.class, DuckDBSQLFuncImpl.class);
         services.addService(DatabaseMigrationProvider.class, DuckDBSQLDatabaseMigrationProvider.class);
         services.addService(MigrationEntityParser.class, DuckDBSQLMigrationEntityParser.class);
+        services.addServiceFactory(JdbcTypeHandlerManager.class, s->{
+            EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager = new EasyJdbcTypeHandlerManager();
+            easyJdbcTypeHandlerManager.appendHandler(LocalDate.class, LocalDateDuckDBTypeHandler.INSTANCE,true);
+            return easyJdbcTypeHandlerManager;
+        });
     }
 }

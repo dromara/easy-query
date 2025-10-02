@@ -44,6 +44,7 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.dameng.config.DamengDatabaseConfiguration;
 import com.easy.query.db2.config.DB2DatabaseConfiguration;
+import com.easy.query.duckdb.config.DuckDBSQLDatabaseConfiguration;
 import com.easy.query.gauss.db.config.GaussDBDatabaseConfiguration;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
 import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
@@ -327,6 +328,8 @@ public class DbManager {
                 return new GaussDBDatabaseConfiguration();
             case DB2:
                 return new DB2DatabaseConfiguration();
+            case DUCKDB:
+                return new DuckDBSQLDatabaseConfiguration();
             case SQL92:
                 return new DefaultDatabaseConfiguration();
         }

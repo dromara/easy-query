@@ -29,5 +29,6 @@ public enum DatabaseEnum {
     CLICKHOUSE,
     GAUSS_DB,
     DB2,
+    DUCKDB,
     SQL92
 }

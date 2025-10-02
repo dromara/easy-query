@@ -4,6 +4,7 @@ import com.easy.query.core.migration.ColumnDbTypeResult;
 import com.easy.query.core.migration.DefaultMigrationEntityParser;
 
 import java.math.BigDecimal;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -39,6 +40,9 @@ public class DuckDBSQLMigrationEntityParser extends DefaultMigrationEntityParser
         columnTypeMap.put(LocalDateTime.class, new ColumnDbTypeResult("TIMESTAMP", null));
         columnTypeMap.put(LocalDate.class, new ColumnDbTypeResult("DATE", null));
         columnTypeMap.put(LocalTime.class, new ColumnDbTypeResult("TIME", null));
+        columnTypeMap.put(java.util.Date.class, new ColumnDbTypeResult("TIMESTAMP", null));
+        columnTypeMap.put(java.sql.Date.class, new ColumnDbTypeResult("TIMESTAMP", null));
+        columnTypeMap.put(Time.class, new ColumnDbTypeResult("TIME", null));
         columnTypeMap.put(String.class, new ColumnDbTypeResult("VARCHAR", null));
         columnTypeMap.put(UUID.class, new ColumnDbTypeResult("UUID", null));
     }
