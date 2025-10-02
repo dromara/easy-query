@@ -483,7 +483,7 @@ public class RelationTest extends BaseTest {
                     e = ex;
                 }
                 Assert.assertNotNull(e);
-                Assert.assertEquals("The relationship value ‘SingleRelationValue{value=class1}’ appears to have duplicates: [SchoolStudentDTOAO222]. Please confirm whether the data represents a One or Many relationship.", e.getMessage());
+                Assert.assertEquals("The relationship value ‘SingleRelationValue{value=class1}’ appears to have duplicates: [SchoolStudent2.SchoolStudentDTOAO222]. Please confirm whether the data represents a One or Many relationship.", e.getMessage());
             }
             {
                 System.out.println("92");
