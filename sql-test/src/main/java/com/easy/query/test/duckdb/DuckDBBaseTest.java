@@ -9,16 +9,20 @@ import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.duckdb.config.DuckDBSQLDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.MathTest;
 import com.easy.query.test.h2.domain.ALLTYPE;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * create time 2025/10/2 15:12
@@ -75,8 +79,8 @@ public class DuckDBBaseTest {
     public static void initData() {
 
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
-        databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(BlogEntity.class, ALLTYPE.class)).executeWithTransaction(s->s.commit());
-        databaseCodeFirst.syncTableCommand(Arrays.asList(BlogEntity.class, ALLTYPE.class)).executeWithTransaction(s->s.commit());
+        databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(BlogEntity.class, ALLTYPE.class, MathTest.class)).executeWithTransaction(s->s.commit());
+        databaseCodeFirst.syncTableCommand(Arrays.asList(BlogEntity.class, ALLTYPE.class, MathTest.class)).executeWithTransaction(s->s.commit());
 
 
         boolean any = easyEntityQuery.queryable(BlogEntity.class).any();
@@ -105,6 +109,26 @@ public class DuckDBBaseTest {
                 blogs.add(blog);
             }
             easyEntityQuery.insertable(blogs).executeRows();
+
+
+            int size = 10000;
+            List<MathTest> list = new ArrayList<>(size);
+            ThreadLocalRandom random = ThreadLocalRandom.current();
+
+            for (int i = 0; i < size; i++) {
+                MathTest entity = new MathTest();
+                entity.setId(UUID.randomUUID().toString());
+
+                // 随机生成 -1000.00 到 1000.00 的 BigDecimal
+                double value = random.nextDouble(-1000, 1000);
+                BigDecimal bigDecimalValue = BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP);
+
+                entity.setTestValue(bigDecimalValue);
+
+                list.add(entity);
+            }
+
+            easyEntityQuery.insertable(list).batch().executeRows();
         }
 
     }

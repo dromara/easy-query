@@ -74,7 +74,7 @@ public class DuckDBSQLMathSQLFunction extends AbstractExpressionSQLFunction {
                 return "ATAN2({0},{1})";
             }
             case Truncate:
-                return "TRUNC({0},0)";
+                return "TRUNC({0})";
         }
         throw new UnsupportedOperationException("不支持当前函数DuckDBSQLMathSQLFunction:"+ mathMethodEnum);
     }

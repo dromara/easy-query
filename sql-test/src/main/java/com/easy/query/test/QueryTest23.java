@@ -679,29 +679,6 @@ public class QueryTest23 extends BaseTest {
     @Test
     public void datetimeformat() {
 
-//        List<BigDecimal> list1 = easyEntityQuery.queryable(BlogEntity.class)
-//                .innerJoin(Topic.class, (t_blog, t_topic) -> t_blog.id().eq(t_topic.id()))
-//                .where((t_blog, t_topic) -> {
-//
-//                })
-//                .selectColumn((t_blog, t_topic) -> t_topic.stars().sumBigDecimal()).toList();
-//
-//
-//        BigDecimal bigDecimal = easyEntityQuery.queryable(BlogEntity.class)
-//                .innerJoin(Topic.class, (t_blog, t_topic) -> t_blog.id().eq(t_topic.id()))
-//                .where((t_blog, t_topic) -> {
-//
-//                })
-//                .sumBigDecimalOrDefault((t_blog, t_topic) -> t_topic.stars(), BigDecimal.ZERO);
-//
-
-//        Long l = easyEntityQuery.queryable(MyOrderDetail.class)
-//                .where(m -> {
-//                    m.productId().eq("123");
-//                    m.order().status().eq(2);
-//                }).sumOrDefault(m -> m.orderNum(), 0L);
-
-
         String formater = "yyyy年MM-01 HH:mm分ss秒";
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);

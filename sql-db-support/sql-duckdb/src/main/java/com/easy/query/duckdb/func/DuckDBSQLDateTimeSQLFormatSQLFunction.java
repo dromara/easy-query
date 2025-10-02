@@ -22,7 +22,7 @@ public class DuckDBSQLDateTimeSQLFormatSQLFunction extends AbstractSQLFunction {
     }
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        return "TO_CHAR({0}, '{1}')";
+        return "strftime({0}, '{1}')";
     }
 
     @Override
