@@ -51,9 +51,9 @@ public class DuckDBBaseTest {
     public static void initDatasource() {
         dataSource = new HikariDataSource();
 //        dataSource.setJdbcUrl("jdbc:duckdb:/data/db/mydb.db");
-        dataSource.setJdbcUrl("jdbc:duckdb:/Users/xuejiaming/Desktop/dromara/easy-query/sql-test/src/main/resources/duckdb.db");
-        dataSource.setUsername("duckdb");
-        dataSource.setPassword("duckdb");
+        dataSource.setJdbcUrl("jdbc:duckdb:/Users/xuejiaming/Desktop/dromara/easy-query/sql-test/src/main/resources/duckdb.duckdb");
+//        dataSource.setUsername("duckdb");
+//        dataSource.setPassword("duckdb");
         dataSource.setDriverClassName("org.duckdb.DuckDBDriver");
         dataSource.setMaximumPoolSize(50);
 //        postgres://postgres:postgrespw@localhost:55000
