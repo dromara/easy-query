@@ -185,6 +185,24 @@ ORDER BY
     t1.`value3` DESC LIMIT 2,2
 ```
 
+## Db Support
+
+| 数据库名称          | 包名            | springboot配置   | solon配置        |
+| ------------------- | --------------- | ---------------- | ---------------- |
+| MySQL               | sql-mysql       | mysql            | mysql            |
+| Oracle              | sql-oracle      | oracle           | oracle           |
+| PostgreSQL         | sql-pgsql       | pgsql            | pgsql            |
+| SqlServer           | sql-mssql       | mssql            | mssql            |
+| SqlServer RowNumber | sql-mssql       | mssql_row_number | mssql_row_number |
+| H2                  | sql-h2          | h2               | h2               |
+| SQLite              | sql-sqlite      | sqlite           | sqlite           |
+| ClickHouse          | sql-clickhouse  | clickhouse       | clickhouse       |
+| 达梦dameng          | sql-dameng      | dameng           | dameng           |
+| 人大金仓KingbaseES  | sql-kingbase-es | kingbase_es      | kingbase_es      |
+| 高斯  | sql-gauss-db | gauss-db      | gauss-db      |
+| duckdb  | sql-duckdb | duckdb      | duckdb      |
+| DB2  | sql-db2 | db2     | db2     |
+
 ## Dependency
 entity use `@EntityProxy` or `@EntityFileProxy` annotation then build project apt will auto generate java code for proxy
 ```xml
