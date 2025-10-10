@@ -79,8 +79,8 @@ public class DuckDBBaseTest {
     public static void initData() {
 
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
-        databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(BlogEntity.class, ALLTYPE.class, MathTest.class)).executeWithTransaction(s->s.commit());
-        databaseCodeFirst.syncTableCommand(Arrays.asList(BlogEntity.class, ALLTYPE.class, MathTest.class)).executeWithTransaction(s->s.commit());
+        databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(TestJdjg.class,BlogEntity.class, ALLTYPE.class, MathTest.class)).executeWithTransaction(s->s.commit());
+        databaseCodeFirst.syncTableCommand(Arrays.asList(TestJdjg.class,BlogEntity.class, ALLTYPE.class, MathTest.class)).executeWithTransaction(s->s.commit());
 
 
         boolean any = easyEntityQuery.queryable(BlogEntity.class).any();

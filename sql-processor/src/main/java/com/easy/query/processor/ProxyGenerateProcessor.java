@@ -10,6 +10,7 @@ import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.ValueObject;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.util.EasyStringUtil;
+import com.easy.query.processor.generate.ClassProxyGenerator;
 import com.easy.query.processor.helper.AptCreatorHelper;
 import com.easy.query.processor.helper.AptFileCompiler;
 import com.easy.query.processor.helper.AptPropertyInfo;
@@ -103,6 +104,10 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             "    /**\n" +
             "     * {@link @{entityClass}#get@{property}}\n" +
             "     */";
+
+    private static final ClassProxyGenerator FIELD_DOC_COMMENT_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_DOC_COMMENT_TEMPLATE);
+    private static final ClassProxyGenerator FIELD_EMPTY_DOC_COMMENT_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_EMPTY_DOC_COMMENT_TEMPLATE);
+
     private Filer filer;
     private Elements elementUtils;
     private Types typeUtils;
@@ -542,9 +547,11 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
     private FieldComment getFiledComment(String docComment, String className, String propertyName) {
         if (docComment == null) {
-            String proxyComment = FIELD_EMPTY_DOC_COMMENT_TEMPLATE
-                    .replace("@{entityClass}", className)
-                    .replace("@{property}", EasyStringUtil.toUpperCaseFirstOne(propertyName));
+
+            Map<String, String> replacements = new HashMap<>(2);
+            replacements.put("entityClass", className);
+            replacements.put("property", EasyStringUtil.toUpperCaseFirstOne(propertyName));
+            String proxyComment = FIELD_EMPTY_DOC_COMMENT_TEMPLATE_GENERATOR.generate(replacements);
             return new FieldComment(proxyComment, "");
         }
         String[] commentLines = docComment.trim().split("\n");
@@ -554,10 +561,11 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             fieldComment.append("\n     *").append(commentLines[i]);
         }
         String fieldCommentString = fieldComment.toString();
-        String proxyComment = FIELD_DOC_COMMENT_TEMPLATE
-                .replace("@{comment}", fieldCommentString)
-                .replace("@{entityClass}", className)
-                .replace("@{property}", EasyStringUtil.toUpperCaseFirstOne(propertyName));
+        Map<String, String> replacements = new HashMap<>(3);
+        replacements.put("comment", fieldCommentString);
+        replacements.put("entityClass", className);
+        replacements.put("property", EasyStringUtil.toUpperCaseFirstOne(propertyName));
+        String proxyComment = FIELD_DOC_COMMENT_TEMPLATE_GENERATOR.generate(replacements);
         return new FieldComment(proxyComment, fieldCommentString);
     }
 

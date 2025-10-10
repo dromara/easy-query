@@ -54,6 +54,7 @@ import com.easy.query.test.encryption.MyEncryptionStrategy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.TopicInteger;
 import com.easy.query.test.entity.company.ValueCompany;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
@@ -596,6 +597,12 @@ public class QueryTest25 extends BaseTest {
                     );
                 }).toList();
 
+    }
+    @Test
+    public void topicIntegerTest(){
+
+        List<TopicInteger> list = easyCacheClient.allStorage(TopicInteger.class).toList();
+        TopicInteger topicInteger = easyCacheClient.allStorage(TopicInteger.class).singleOrNull("88");
     }
 
     @Test

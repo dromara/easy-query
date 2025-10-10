@@ -247,7 +247,7 @@ public abstract class BaseTest {
         config.useSingleServer()
                 .setConnectionMinimumIdleSize(1)
                 .setDatabase(1)
-                .setAddress("redis://127.0.0.1:55001")
+                .setAddress("redis://127.0.0.1:55000")
                 .setNameMapper(createNameMapper("CACHE"));
         config.useSingleServer().setPassword("redispw");
         StringCodec codec = new StringCodec();
