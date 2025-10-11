@@ -59,4 +59,18 @@ public class NextSelector<TProperty, TChain> {
             throw new EasyQueryInvalidOperationException("offset must be greater than or equal to 0 (offset >= 0)");
         }
     }
+
+
+    public TChain firstValue() {
+        return createNextColumn.apply(new FirstValueOffset<>());
+    }
+
+    public TChain lastValue() {
+        return createNextColumn.apply(new LastValueOffset<>());
+    }
+
+    public TChain nthValue(int offset) {
+        checkOffset(offset);
+        return createNextColumn.apply(new NthValueOffset<>(offset));
+    }
 }

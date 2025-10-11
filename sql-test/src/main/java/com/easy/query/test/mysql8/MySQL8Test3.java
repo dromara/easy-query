@@ -732,6 +732,34 @@ public class MySQL8Test3 extends BaseTest {
         Assert.assertEquals("SELECT t.`type` AS `value1`,LAG(t.`type`, 1) OVER (ORDER BY t.`type` ASC,t.`code` DESC) AS `value2`,LEAD(t.`open_time`, 1) OVER (ORDER BY t.`type` ASC,t.`code` DESC) AS `value3`,LEAD(t.`open_time`, 1) OVER (PARTITION BY t.`bank_id`ORDER BY t.`type` ASC,t.`code` DESC) AS `value4`,LEAD(t.`open_time`, 1, ?) OVER (PARTITION BY t.`bank_id`ORDER BY t.`type` ASC,t.`code` DESC) AS `value5`,IFNULL(LEAD(t.`open_time`, 1) OVER (PARTITION BY t.`bank_id`ORDER BY t.`type` ASC,t.`code` DESC),?) AS `value6`,IFNULL(LEAD(t.`open_time`, 1, t.`open_time`) OVER (PARTITION BY t.`bank_id`ORDER BY t.`type` ASC,t.`code` DESC),?) AS `value7` FROM `t_bank_card` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("2025-01-01T00:00(LocalDateTime),2025-01-01T00:00(LocalDateTime),2025-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
+    @Test
+    public void nextTest1() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+       easyEntityQuery.queryable(SysBankCard.class)
+                .select(bank_card -> Select.DRAFT.of(
+                        bank_card.type(),
+                        bank_card.type().offset(o -> {
+                            o.orderBy(bank_card.type()).orderByDescending(bank_card.code());
+                        }).prev(1),
+                        bank_card.openTime().offset(o -> {
+                            o.orderBy(bank_card.type()).orderByDescending(bank_card.code());
+                        }).firstValue(),
+                        bank_card.openTime().offset(o -> {
+                            o.partitionBy(bank_card.bankId());
+                            o.orderBy(bank_card.type()).orderByDescending(bank_card.code());
+                        }).lastValue(),
+                        bank_card.openTime().offset(o -> {
+                            o.partitionBy(bank_card.bankId());
+                            o.orderBy(bank_card.type()).orderByDescending(bank_card.code());
+                        }).nthValue(2)
+                )).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`type` AS `value1`,LAG(t.`type`, 1) OVER (ORDER BY t.`type` ASC,t.`code` DESC) AS `value2`,FIRST_VALUE(t.`open_time`) OVER (ORDER BY t.`type` ASC,t.`code` DESC) AS `value3`,LAST_VALUE(t.`open_time`) OVER (PARTITION BY t.`bank_id`ORDER BY t.`type` ASC,t.`code` DESC) AS `value4`,NTH_VALUE(t.`open_time`, 2) OVER (PARTITION BY t.`bank_id`ORDER BY t.`type` ASC,t.`code` DESC) AS `value5` FROM `t_bank_card` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("2025-01-01T00:00(LocalDateTime),2025-01-01T00:00(LocalDateTime),2025-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
 
 //    public void test() {
 //        List<UserBankDTO> list = easyEntityQuery.queryable(SysUser.class)

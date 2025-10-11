@@ -89,16 +89,19 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
         Class<?> propertyType = getPropertyType();
         return new NextSelector<>(offset -> {
             return createChainExpression(fx -> {
-                boolean isNext = offset.isNext();
 
                 ArrayList<SQLFunction> sorts = new ArrayList<>();
                 ArrayList<PropTypeColumn<?>> partitions = new ArrayList<>();
                 OverExpression overExpression = new OverExpression(fx, sorts, partitions);
                 orderByExpression.apply(overExpression);
                 int i = 1;
-                StringBuilder nextSQL = new StringBuilder(isNext ? "LEAD" : "LAG");
-                nextSQL.append("({0}, ");
-                nextSQL.append(offset.getOffset());
+                StringBuilder nextSQL = new StringBuilder(offset.getSQLFunction());
+                nextSQL.append("({0}");
+                int offsetVal = offset.getOffset();
+                if (offsetVal >= 0) {
+                    nextSQL.append(", ");
+                    nextSQL.append(offsetVal);
+                }
                 boolean defaultValueIsNull = offset.getDefaultValue() == null && offset.getDefaultColumn() == null;
                 if (!defaultValueIsNull) {
                     nextSQL.append(", ").append("{").append(i++).append("}");

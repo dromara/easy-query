@@ -9,7 +9,7 @@ import com.easy.query.core.proxy.PropTypeColumn;
  * @author xuejiaming
  */
 public class Offset<TProperty> {
-    private final int offset;
+    protected final int offset;
     private  PropTypeColumn<TProperty> defaultColumn;
     private  TProperty defaultValue;
 
@@ -41,6 +41,9 @@ public class Offset<TProperty> {
         this.defaultValue = defaultValue;
     }
 
+    public String getSQLFunction(){
+        return isNext() ? "LEAD" : "LAG";
+    }
     public static <TProp> Offset<TProp> of(int offset){
         return of(offset, null);
     }
@@ -54,4 +57,5 @@ public class Offset<TProperty> {
         nextOffset.setDefaultValue(defaultValue);
         return nextOffset;
     }
+
 }
