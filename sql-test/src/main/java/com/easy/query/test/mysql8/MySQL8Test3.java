@@ -3,7 +3,6 @@ package com.easy.query.test.mysql8;
 import com.bestvike.linq.Linq;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.api.proxy.extension.window.NextOffset;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.enums.EasyBehaviorEnum;
@@ -703,28 +702,28 @@ public class MySQL8Test3 extends BaseTest {
         easyEntityQuery.queryable(SysBankCard.class)
                 .select(bank_card -> Select.DRAFT.of(
                         bank_card.type(),
-                        bank_card.type().next(NextOffset.of(-1), o -> {
+                        bank_card.type().offset(o -> {
                             o.orderBy(bank_card.type()).orderByDescending(bank_card.code());
-                        }),
-                        bank_card.openTime().next(NextOffset.of(1), o -> {
+                        }).prev(1),
+                        bank_card.openTime().offset(o -> {
                             o.orderBy(bank_card.type()).orderByDescending(bank_card.code());
-                        }),
-                        bank_card.openTime().next(NextOffset.of(1), o -> {
+                        }).next(1),
+                        bank_card.openTime().offset(o -> {
                             o.partitionBy(bank_card.bankId());
                             o.orderBy(bank_card.type()).orderByDescending(bank_card.code());
-                        }),
-                        bank_card.openTime().next(NextOffset.of(1, time), o -> {
+                        }).next(1),
+                        bank_card.openTime().offset(o -> {
                             o.partitionBy(bank_card.bankId());
                             o.orderBy(bank_card.type()).orderByDescending(bank_card.code());
-                        }),
-                        bank_card.openTime().next(NextOffset.of(1), o -> {
+                        }).next(1, time),
+                        bank_card.openTime().offset(o -> {
                             o.partitionBy(bank_card.bankId());
                             o.orderBy(bank_card.type()).orderByDescending(bank_card.code());
-                        }).nullOrDefault(time),
-                        bank_card.openTime().next(NextOffset.of(1, bank_card.openTime()), o -> {
+                        }).next(1).nullOrDefault(time),
+                        bank_card.openTime().offset(o -> {
                             o.partitionBy(bank_card.bankId());
                             o.orderBy(bank_card.type()).orderByDescending(bank_card.code());
-                        }).nullOrDefault(time)
+                        }).next(1, bank_card.openTime()).nullOrDefault(time)
                 )).toList();
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());

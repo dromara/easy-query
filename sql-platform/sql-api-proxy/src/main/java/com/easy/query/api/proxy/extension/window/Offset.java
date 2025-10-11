@@ -8,12 +8,12 @@ import com.easy.query.core.proxy.PropTypeColumn;
  *
  * @author xuejiaming
  */
-public class NextOffset<TProperty> {
+public class Offset<TProperty> {
     private final int offset;
     private  PropTypeColumn<TProperty> defaultColumn;
     private  TProperty defaultValue;
 
-    public NextOffset(int offset) {
+    public Offset(int offset) {
         this.offset = offset;
     }
 
@@ -41,16 +41,16 @@ public class NextOffset<TProperty> {
         this.defaultValue = defaultValue;
     }
 
-    public static <TProp> NextOffset<TProp> of(int offset){
+    public static <TProp> Offset<TProp> of(int offset){
         return of(offset, null);
     }
-    public static <TProp> NextOffset<TProp> of(int offset, PropTypeColumn<TProp> defaultColumn){
-        NextOffset<TProp> nextOffset = new NextOffset<>(offset);
+    public static <TProp> Offset<TProp> of(int offset, PropTypeColumn<TProp> defaultColumn){
+        Offset<TProp> nextOffset = new Offset<>(offset);
         nextOffset.setDefaultColumn(defaultColumn);
         return nextOffset;
     }
-    public static <TProp> NextOffset<TProp> of(int offset, TProp defaultValue){
-        NextOffset<TProp> nextOffset = new NextOffset<>(offset);
+    public static <TProp> Offset<TProp> of(int offset, TProp defaultValue){
+        Offset<TProp> nextOffset = new Offset<>(offset);
         nextOffset.setDefaultValue(defaultValue);
         return nextOffset;
     }

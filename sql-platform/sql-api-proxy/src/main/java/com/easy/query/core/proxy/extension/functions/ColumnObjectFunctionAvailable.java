@@ -1,6 +1,6 @@
 package com.easy.query.core.proxy.extension.functions;
 
-import com.easy.query.api.proxy.extension.window.NextOffset;
+import com.easy.query.api.proxy.extension.window.NextSelector;
 import com.easy.query.api.proxy.extension.window.OverExpression;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
@@ -9,9 +9,7 @@ import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
-import com.easy.query.core.proxy.columns.impl.EmptyPropTypeColumnImpl;
 import com.easy.query.core.proxy.core.Expression;
-import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.filter.NumberFilterTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.impl.BooleanTypeExpressionImpl;
@@ -19,7 +17,6 @@ import com.easy.query.core.proxy.extension.functions.type.filter.impl.NumberFilt
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.ArrayList;
 import java.util.function.Function;
@@ -88,59 +85,61 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
         }, getPropertyType());
     }
 
+    default NextSelector<TProperty, TChain> offset(SQLActionExpression1<OverExpression> orderByExpression) {
+        Class<?> propertyType = getPropertyType();
+        return new NextSelector<>(offset -> {
+            return createChainExpression(fx -> {
+                boolean isNext = offset.isNext();
 
-    default TChain next(NextOffset<TProperty> nextOffset, SQLActionExpression1<OverExpression> orderByExpression) {
-        return createChainExpression(fx -> {
-            boolean isNext = nextOffset.isNext();
-
-            ArrayList<SQLFunction> sorts = new ArrayList<>();
-            ArrayList<PropTypeColumn<?>> partitions = new ArrayList<>();
-            OverExpression overExpression = new OverExpression(fx, sorts, partitions);
-            orderByExpression.apply(overExpression);
-            int i = 1;
-            StringBuilder nextSQL = new StringBuilder(isNext ? "LEAD" : "LAG");
-            nextSQL.append("({0}, ");
-            nextSQL.append(nextOffset.getOffset());
-            boolean defaultValueIsNull = nextOffset.getDefaultValue() == null && nextOffset.getDefaultColumn() == null;
-            if (!defaultValueIsNull) {
-                nextSQL.append(", ").append("{").append(i++).append("}");
-            }
-            nextSQL.append(") OVER (");
-            if (EasyCollectionUtil.isNotEmpty(partitions)) {
-                nextSQL.append("PARTITION BY ");
-                nextSQL.append("{").append(i++).append("}");
-                for (int i1 = 0; i1 < partitions.size() - 1; i1++) {
-                    nextSQL.append(",{").append(i++).append("}");
-                }
-            }
-            if (EasyCollectionUtil.isEmpty(sorts)) {
-                throw new EasyQueryInvalidOperationException("In a PARTITION BY clause, the ORDER BY expression must be explicitly specified; otherwise, referencing the nth expression is not supported.");
-            }
-            nextSQL.append("ORDER BY ");
-            nextSQL.append("{").append(i++).append("}");
-            for (int i1 = 0; i1 < sorts.size() - 1; i1++) {
-                nextSQL.append(",{").append(i++).append("}");
-            }
-            nextSQL.append(")");
-
-            return fx.anySQLFunction(nextSQL.toString(), x -> {
-                PropTypeColumn.acceptAnyValue(x, this);
+                ArrayList<SQLFunction> sorts = new ArrayList<>();
+                ArrayList<PropTypeColumn<?>> partitions = new ArrayList<>();
+                OverExpression overExpression = new OverExpression(fx, sorts, partitions);
+                orderByExpression.apply(overExpression);
+                int i = 1;
+                StringBuilder nextSQL = new StringBuilder(isNext ? "LEAD" : "LAG");
+                nextSQL.append("({0}, ");
+                nextSQL.append(offset.getOffset());
+                boolean defaultValueIsNull = offset.getDefaultValue() == null && offset.getDefaultColumn() == null;
                 if (!defaultValueIsNull) {
-                    if (nextOffset.getDefaultValue() != null) {
-                        PropTypeColumn.acceptAnyValue(x, nextOffset.getDefaultValue());
-                    } else if (nextOffset.getDefaultColumn() != null) {
-                        PropTypeColumn.acceptAnyValue(x, nextOffset.getDefaultColumn());
+                    nextSQL.append(", ").append("{").append(i++).append("}");
+                }
+                nextSQL.append(") OVER (");
+                if (EasyCollectionUtil.isNotEmpty(partitions)) {
+                    nextSQL.append("PARTITION BY ");
+                    nextSQL.append("{").append(i++).append("}");
+                    for (int i1 = 0; i1 < partitions.size() - 1; i1++) {
+                        nextSQL.append(",{").append(i++).append("}");
                     }
                 }
-                for (PropTypeColumn<?> partition : partitions) {
-                    PropTypeColumn.acceptAnyValue(x, partition);
+                if (EasyCollectionUtil.isEmpty(sorts)) {
+                    throw new EasyQueryInvalidOperationException("In a PARTITION BY clause, the ORDER BY expression must be explicitly specified; otherwise, referencing the nth expression is not supported.");
                 }
-                for (SQLFunction sqlFunction : sorts) {
-                    PropTypeColumn.acceptAnyValue(x, sqlFunction);
+                nextSQL.append("ORDER BY ");
+                nextSQL.append("{").append(i++).append("}");
+                for (int i1 = 0; i1 < sorts.size() - 1; i1++) {
+                    nextSQL.append(",{").append(i++).append("}");
                 }
-            });
+                nextSQL.append(")");
 
-        }, getPropertyType());
+                return fx.anySQLFunction(nextSQL.toString(), x -> {
+                    PropTypeColumn.acceptAnyValue(x, this);
+                    if (!defaultValueIsNull) {
+                        if (offset.getDefaultValue() != null) {
+                            PropTypeColumn.acceptAnyValue(x, offset.getDefaultValue());
+                        } else if (offset.getDefaultColumn() != null) {
+                            PropTypeColumn.acceptAnyValue(x, offset.getDefaultColumn());
+                        }
+                    }
+                    for (PropTypeColumn<?> partition : partitions) {
+                        PropTypeColumn.acceptAnyValue(x, partition);
+                    }
+                    for (SQLFunction sqlFunction : sorts) {
+                        PropTypeColumn.acceptAnyValue(x, sqlFunction);
+                    }
+                });
+
+            }, propertyType);
+        });
     }
 
     /**
