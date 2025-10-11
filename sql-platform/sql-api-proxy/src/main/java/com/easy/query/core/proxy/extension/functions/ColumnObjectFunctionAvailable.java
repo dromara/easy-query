@@ -5,6 +5,9 @@ import com.easy.query.api.proxy.extension.window.OverExpression;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
+import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
@@ -17,6 +20,7 @@ import com.easy.query.core.proxy.extension.functions.type.filter.impl.NumberFilt
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelector;
 import com.easy.query.core.proxy.func.column.ProxyColumnFuncSelectorImpl;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.ArrayList;
 import java.util.function.Function;
@@ -85,6 +89,10 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
         }, getPropertyType());
     }
 
+    default NextSelector<TProperty, TChain> offset() {
+        return offset(o -> {});
+    }
+
     default NextSelector<TProperty, TChain> offset(SQLActionExpression1<OverExpression> orderByExpression) {
         Class<?> propertyType = getPropertyType();
         return new NextSelector<>(offset -> {
@@ -115,7 +123,11 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
                     }
                 }
                 if (EasyCollectionUtil.isEmpty(sorts)) {
-                    throw new EasyQueryInvalidOperationException("In a PARTITION BY clause, the ORDER BY expression must be explicitly specified; otherwise, referencing the nth expression is not supported.");
+                    EntityQueryExpressionBuilder entityQueryExpressionBuilder = (EntityQueryExpressionBuilder) getEntitySQLContext().getEntityExpressionBuilder();
+                    OrderBySQLBuilderSegment order = entityQueryExpressionBuilder.getOrder();
+                    if (EasySQLSegmentUtil.isEmpty(order)) {
+                        throw new EasyQueryInvalidOperationException("In a PARTITION BY clause, the ORDER BY expression must be explicitly specified; otherwise, referencing the nth expression is not supported.");
+                    }
                 }
                 nextSQL.append("ORDER BY ");
                 nextSQL.append("{").append(i++).append("}");
@@ -136,8 +148,16 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
                     for (PropTypeColumn<?> partition : partitions) {
                         PropTypeColumn.acceptAnyValue(x, partition);
                     }
-                    for (SQLFunction sqlFunction : sorts) {
-                        PropTypeColumn.acceptAnyValue(x, sqlFunction);
+                    if (EasyCollectionUtil.isEmpty(sorts)) {
+                        EntityQueryExpressionBuilder entityQueryExpressionBuilder = (EntityQueryExpressionBuilder) getEntitySQLContext().getEntityExpressionBuilder();
+                        OrderBySQLBuilderSegment order = entityQueryExpressionBuilder.getOrder();
+                        OrderBySQLBuilderSegmentImpl orderBySQLBuilderSegment = new OrderBySQLBuilderSegmentImpl();
+                        order.copyTo(orderBySQLBuilderSegment);
+                        PropTypeColumn.acceptAnyValue(x, orderBySQLBuilderSegment);
+                    } else {
+                        for (SQLFunction sqlFunction : sorts) {
+                            PropTypeColumn.acceptAnyValue(x, sqlFunction);
+                        }
                     }
                 });
 
