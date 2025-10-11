@@ -1,5 +1,7 @@
 package com.easy.query.core.migration.data;
 
+import com.easy.query.core.util.EasyStringUtil;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -46,10 +48,7 @@ public class TableMigrationData {
         return schema;
     }
     public String getSchemaOrDefault(String defaultSchema) {
-        if(schema==null){
-            return defaultSchema;
-        }
-        return schema;
+        return EasyStringUtil.defaultIfBank(schema, defaultSchema);
     }
 
     public void setSchema(String schema) {

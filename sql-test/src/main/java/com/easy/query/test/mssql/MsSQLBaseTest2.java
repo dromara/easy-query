@@ -3,6 +3,8 @@ package com.easy.query.test.mssql;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
+import com.easy.query.core.basic.api.database.CodeFirstCommand;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
@@ -12,6 +14,8 @@ import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameC
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
+import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.Topic;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
@@ -19,6 +23,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -71,7 +76,17 @@ public abstract class MsSQLBaseTest2 {
                 .build();
         entityQuery = new DefaultEasyEntityQuery(easyQueryClient);
 
+        DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
+        {
 
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(BlogEntity.class, Topic.class));
+            codeFirstCommand.executeWithTransaction(s->s.commit());
+        }
+        {
+
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(BlogEntity.class, Topic.class));
+            codeFirstCommand.executeWithTransaction(s->s.commit());
+        }
 
     }
 
