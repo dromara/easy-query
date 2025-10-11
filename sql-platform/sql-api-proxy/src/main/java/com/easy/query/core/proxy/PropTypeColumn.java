@@ -5,13 +5,19 @@ import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultColumnMetada
 import com.easy.query.core.expression.builder.AsSelector;
 import com.easy.query.core.expression.builder.Setter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.scec.context.SQLNativeExpressionContext;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.proxy.columns.impl.EmptyPropTypeColumnImpl;
+import com.easy.query.core.proxy.columns.impl.SQLStringColumnImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
+
+import java.util.Collection;
 
 /**
  * create time 2023/12/18 22:48
@@ -20,6 +26,11 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
  * @author xuejiaming
  */
 public interface PropTypeColumn<TProperty> extends PropTypeSetColumn<TProperty> {
+
+    static <TProp> PropTypeColumn<TProp> createEmpty() {
+        return new EmptyPropTypeColumnImpl<>();
+    }
+
     @Override
     <TR> PropTypeColumn<TR> asAnyType(Class<TR> clazz);
 
@@ -43,6 +54,14 @@ public interface PropTypeColumn<TProperty> extends PropTypeSetColumn<TProperty> 
             } else {
                 columnFuncSelector.column(column.getTable(), column.getValue());
             }
+        } else if (val instanceof SQLFunction) {
+            columnFuncSelector.sqlFunc((SQLFunction) val);
+        } else if (val instanceof PredicateSegment) {
+            columnFuncSelector.expression((PredicateSegment) val);
+        } else if (val instanceof SQLSegment) {
+            columnFuncSelector.sql((SQLSegment) val);
+        } else if (val instanceof Collection) {
+            columnFuncSelector.collection((Collection<?>) val);
         } else {
             columnFuncSelector.value(val);
         }

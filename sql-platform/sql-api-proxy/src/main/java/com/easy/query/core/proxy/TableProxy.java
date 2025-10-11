@@ -45,4 +45,7 @@ public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity>
     }
 
     TProxy create(TableAvailable table, EntitySQLContext entitySQLContext);
+    default TProxy createNew() {
+        throw new UnsupportedOperationException("not support createNew");
+    }
 }

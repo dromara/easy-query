@@ -167,7 +167,7 @@ public class MigrationTest extends BaseTest {
         dataSource.setUsername("root");
         dataSource.setPassword("root");
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setMaximumPoolSize(20);
+        dataSource.setMaximumPoolSize(1);
 
 
         EasyQueryClient client = EasyQueryBootstrapper.defaultBuilderConfiguration()

@@ -20,30 +20,42 @@ import java.util.function.Function;
  */
 public interface ColumnFuncSelector {
     ColumnFuncSelector expression(PredicateSegment sqlSegment);
+
     ColumnFuncSelector column(String property);
 
     /**
      * 使用{@link ColumnFuncSelector#column(TableAvailable, String)}
+     *
      * @param tableOwner
      * @param property
      * @return
      */
     @Deprecated
     ColumnFuncSelector column(SQLTableOwner tableOwner, String property);
+
     ColumnFuncSelector column(TableAvailable table, String property);
-    default <T extends SQLTableOwner& PropColumn> ColumnFuncSelector column(T tablePropColumn){
-        return column(tablePropColumn.getTable(),tablePropColumn.getValue());
+
+    default <T extends SQLTableOwner & PropColumn> ColumnFuncSelector column(T tablePropColumn) {
+        return column(tablePropColumn.getTable(), tablePropColumn.getValue());
     }
+
     ColumnFuncSelector value(Object val);
-    <T>ColumnFuncSelector collection(Collection<T> collections);
-    ColumnFuncSelector sqlFuncExpression(TableAvailable table, Function<SQLFunc,SQLFunction> sqlFunctionCreator);
-//    ColumnFuncSelector sqlParameter(SQLParameter sqlParameter);
+
+    <T> ColumnFuncSelector collection(Collection<T> collections);
+
+    ColumnFuncSelector sqlFuncExpression(TableAvailable table, Function<SQLFunc, SQLFunction> sqlFunctionCreator);
+
+    //    ColumnFuncSelector sqlParameter(SQLParameter sqlParameter);
     ColumnFuncSelector format(Object valFormat);
-//    ColumnFuncSelector predicate(SQLExpression1<Filter> filterExpression);
+
+    //    ColumnFuncSelector predicate(SQLExpression1<Filter> filterExpression);
     ColumnFuncSelector sql(SQLSegment sqlSegment);
-   default ColumnFuncSelector sqlFunc(SQLFunction sqlFunction){
-       return sqlFunc(null,sqlFunction);
-   }
-    ColumnFuncSelector sqlFunc(TableAvailable table,SQLFunction sqlFunction);
+
+    default ColumnFuncSelector sqlFunc(SQLFunction sqlFunction) {
+        return sqlFunc(null, sqlFunction);
+    }
+
+    ColumnFuncSelector sqlFunc(TableAvailable table, SQLFunction sqlFunction);
+
     ColumnFuncSelector subQuery(Query<?> subQuery);
 }

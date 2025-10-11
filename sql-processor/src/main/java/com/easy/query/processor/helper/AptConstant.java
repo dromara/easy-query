@@ -44,6 +44,10 @@ public class AptConstant {
             "        return entityClass;\n" +
             "    }\n" +
             "\n" +
+            "    @Override\n" +
+            "    public @{entityClassProxy} createNew(){\n" +
+            "        return createTable();\n" +
+            "    }\n" +
             "    @{valueObjectContext}\n" +
             "\n" +
             "    @{selectorContext}\n" +

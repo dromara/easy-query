@@ -11,6 +11,7 @@ import com.easy.query.api.proxy.extension.partition.CountOverBuilder;
 import com.easy.query.api.proxy.extension.partition.DenseRankOverBuilder;
 import com.easy.query.api.proxy.extension.partition.MaxOverBuilder;
 import com.easy.query.api.proxy.extension.partition.MinOverBuilder;
+import com.easy.query.api.proxy.extension.partition.NextBuilder;
 import com.easy.query.api.proxy.extension.partition.RankOverBuilder;
 import com.easy.query.api.proxy.extension.partition.RowNumberOverBuilder;
 import com.easy.query.api.proxy.extension.partition.SumOverBuilder;

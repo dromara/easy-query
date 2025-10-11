@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy;
 
+import com.easy.query.api.proxy.extension.partition.NextBuilder;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.RelationEntityTableAvailable;
 import com.easy.query.core.expression.RelationTableKey;
@@ -354,7 +355,8 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         return new EntityExtraAutoIncludeConfigureImpl<>();
     }
 
-    public IncludeQueryable<TProxy,TEntity> asIncludeQueryable(){
+    public IncludeQueryable<TProxy, TEntity> asIncludeQueryable() {
         return new EasyIncludeQueryable<>(castChain());
     }
+
 }

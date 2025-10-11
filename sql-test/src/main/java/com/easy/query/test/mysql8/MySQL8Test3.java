@@ -1,77 +1,39 @@
 package com.easy.query.test.mysql8;
 
 import com.bestvike.linq.Linq;
-import com.easy.query.api.proxy.base.ClassProxy;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
+import com.easy.query.api.proxy.extension.window.NextOffset;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.basic.extension.track.EntityState;
-import com.easy.query.core.basic.extension.track.EntityValueState;
-import com.easy.query.core.basic.extension.track.TrackContext;
-import com.easy.query.core.basic.extension.track.TrackManager;
-import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.enums.EasyBehaviorEnum;
-import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
-import com.easy.query.core.expression.builder.impl.FilterImpl;
-import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.core.FilterContext;
-import com.easy.query.core.expression.parser.core.base.impl.WherePredicateImpl;
-import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
-import com.easy.query.core.expression.segment.SQLSegment;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.impl.AnonymousDefaultTableExpressionBuilder;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
-import com.easy.query.core.metadata.ColumnMetadata;
-import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
-import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
-import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
-import com.easy.query.core.proxy.part.Part1;
-import com.easy.query.core.proxy.sql.Include;
 import com.easy.query.core.proxy.sql.Select;
-import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.core.util.EasyTrackUtil;
 import com.easy.query.test.dto.UserBankDTO;
 import com.easy.query.test.dto.proxy.UserBankDTO2Proxy;
 import com.easy.query.test.dto.proxy.UserBankDTOProxy;
-import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.dto.MyComment;
-import com.easy.query.test.mysql8.dto.MyComment2;
 import com.easy.query.test.mysql8.dto.MyComment3;
 import com.easy.query.test.mysql8.dto.MyComment4;
 import com.easy.query.test.mysql8.entity.BatchInsert;
 import com.easy.query.test.mysql8.entity.Comment;
 import com.easy.query.test.mysql8.entity.M8Parent;
-import com.easy.query.test.mysql8.entity.M8Role;
-import com.easy.query.test.mysql8.entity.M8User;
-import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
-import com.easy.query.test.mysql8.entity.bank.proxy.SysBankCardProxy;
-import com.easy.query.test.mysql8.entity.bank.proxy.SysBankProxy;
 import com.easy.query.test.mysql8.entity.many.M8Province;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -731,6 +693,44 @@ public class MySQL8Test3 extends BaseTest {
                 .unionAll(easyEntityQuery.queryable(SysUser.class)
                         .select(user -> new StringProxy(user.phone())))
                 .toList();
+    }
+
+    @Test
+    public void nextTest() {
+        LocalDateTime time = LocalDateTime.of(2025, 1, 1, 0, 0);
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        easyEntityQuery.queryable(SysBankCard.class)
+                .select(bank_card -> Select.DRAFT.of(
+                        bank_card.type(),
+                        bank_card.type().next(NextOffset.of(-1), o -> {
+                            o.orderBy(bank_card.type()).orderByDescending(bank_card.code());
+                        }),
+                        bank_card.openTime().next(NextOffset.of(1), o -> {
+                            o.orderBy(bank_card.type()).orderByDescending(bank_card.code());
+                        }),
+                        bank_card.openTime().next(NextOffset.of(1), o -> {
+                            o.partitionBy(bank_card.bankId());
+                            o.orderBy(bank_card.type()).orderByDescending(bank_card.code());
+                        }),
+                        bank_card.openTime().next(NextOffset.of(1, time), o -> {
+                            o.partitionBy(bank_card.bankId());
+                            o.orderBy(bank_card.type()).orderByDescending(bank_card.code());
+                        }),
+                        bank_card.openTime().next(NextOffset.of(1), o -> {
+                            o.partitionBy(bank_card.bankId());
+                            o.orderBy(bank_card.type()).orderByDescending(bank_card.code());
+                        }).nullOrDefault(time),
+                        bank_card.openTime().next(NextOffset.of(1, bank_card.openTime()), o -> {
+                            o.partitionBy(bank_card.bankId());
+                            o.orderBy(bank_card.type()).orderByDescending(bank_card.code());
+                        }).nullOrDefault(time)
+                )).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`type` AS `value1`,LAG(t.`type`, 1) OVER (ORDER BY t.`type` ASC,t.`code` DESC) AS `value2`,LEAD(t.`open_time`, 1) OVER (ORDER BY t.`type` ASC,t.`code` DESC) AS `value3`,LEAD(t.`open_time`, 1) OVER (PARTITION BY t.`bank_id`ORDER BY t.`type` ASC,t.`code` DESC) AS `value4`,LEAD(t.`open_time`, 1, ?) OVER (PARTITION BY t.`bank_id`ORDER BY t.`type` ASC,t.`code` DESC) AS `value5`,IFNULL(LEAD(t.`open_time`, 1) OVER (PARTITION BY t.`bank_id`ORDER BY t.`type` ASC,t.`code` DESC),?) AS `value6`,IFNULL(LEAD(t.`open_time`, 1, t.`open_time`) OVER (PARTITION BY t.`bank_id`ORDER BY t.`type` ASC,t.`code` DESC),?) AS `value7` FROM `t_bank_card` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2025-01-01T00:00(LocalDateTime),2025-01-01T00:00(LocalDateTime),2025-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 
 //    public void test() {

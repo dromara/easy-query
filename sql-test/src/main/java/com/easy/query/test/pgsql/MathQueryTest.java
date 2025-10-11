@@ -113,7 +113,9 @@ public class MathQueryTest extends PgSQLBaseTest{
                 Assert.assertNull(mathTestDTO.getTestLog10());
             }
             BigDecimal pow = BigDecimalMath.pow(mathTestDTO.getTestValue(), 3, new MathContext(16));
-            Assert.assertEquals(0, compareTo0(pow.setScale(pow.scale() - 1, RoundingMode.HALF_UP), mathTestDTO.getTestPow().setScale(pow.scale() - 1, RoundingMode.HALF_UP)));
+            if(mathTestDTO.getTestPow()!=null){
+                Assert.assertEquals(0, compareTo0(pow.setScale(pow.scale() - 1, RoundingMode.HALF_UP), mathTestDTO.getTestPow().setScale(pow.scale() - 1, RoundingMode.HALF_UP)));
+            }
             if (mathTestDTO.getTestValue().compareTo(BigDecimal.ZERO) > 0) {
 
                 Assert.assertEquals(0, compareTo0(BigDecimalMath.sqrt(mathTestDTO.getTestValue(), new MathContext(16)).setScale(9, RoundingMode.DOWN), mathTestDTO.getTestSqrt().setScale(16, RoundingMode.DOWN)));

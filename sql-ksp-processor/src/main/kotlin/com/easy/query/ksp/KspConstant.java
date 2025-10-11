@@ -39,8 +39,10 @@ public class KspConstant {
             "\n" +
             "    @{fieldContent}" +
             "\n" +
-            "    @Override\n" +
             "    override fun getEntityClass() = Companion.entityClass\n" +
+            "    override fun createNew(): @{entityClassProxy} {\n" +
+            "        return createTable()\n" +
+            "    }" +
             "\n" +
             "    @{valueObjectContext}\n" +
             "\n" +

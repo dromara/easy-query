@@ -28,7 +28,7 @@ public class MigrationPgTest {
     public void test(){
 
         HikariDataSource   dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl("jdbc:postgresql://127.0.0.1:55000/easy-query-test?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
+        dataSource.setJdbcUrl("jdbc:postgresql://127.0.0.1:55001/easy-query-test?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
         dataSource.setUsername("postgres");
         dataSource.setPassword("postgrespw");
         dataSource.setDriverClassName("org.postgresql.Driver");
