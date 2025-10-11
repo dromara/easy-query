@@ -777,7 +777,7 @@ public class MySQL8Test3 extends BaseTest {
             ex = e;
         }
         Assert.assertNotNull(ex);
-        Assert.assertEquals("In a PARTITION BY clause, the ORDER BY expression must be explicitly specified; otherwise, referencing the nth expression is not supported.", ex.getMessage());
+        Assert.assertEquals("In a PARTITION BY clause, the ORDER BY expression must be explicitly specified; otherwise, referencing the expression is not supported. plz confirm expression has ORDER BY clause", ex.getMessage());
 //        Assert.assertEquals("2025-01-01T00:00(LocalDateTime),2025-01-01T00:00(LocalDateTime),2025-01-01T00:00(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 

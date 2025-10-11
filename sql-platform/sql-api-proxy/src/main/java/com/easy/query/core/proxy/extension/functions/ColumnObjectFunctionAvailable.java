@@ -126,7 +126,7 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
                     EntityQueryExpressionBuilder entityQueryExpressionBuilder = (EntityQueryExpressionBuilder) getEntitySQLContext().getEntityExpressionBuilder();
                     OrderBySQLBuilderSegment order = entityQueryExpressionBuilder.getOrder();
                     if (EasySQLSegmentUtil.isEmpty(order)) {
-                        throw new EasyQueryInvalidOperationException("In a PARTITION BY clause, the ORDER BY expression must be explicitly specified; otherwise, referencing the nth expression is not supported.");
+                        throw new EasyQueryInvalidOperationException("In a PARTITION BY clause, the ORDER BY expression must be explicitly specified; otherwise, referencing the expression is not supported. plz confirm expression has ORDER BY clause");
                     }
                 }
                 nextSQL.append("ORDER BY ");
