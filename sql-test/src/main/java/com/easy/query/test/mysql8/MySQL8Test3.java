@@ -10,6 +10,7 @@ import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.core.draft.Draft1;
+import com.easy.query.core.proxy.core.draft.Draft7;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.dto.UserBankDTO;
@@ -699,7 +700,7 @@ public class MySQL8Test3 extends BaseTest {
         LocalDateTime time = LocalDateTime.of(2025, 1, 1, 0, 0);
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        easyEntityQuery.queryable(SysBankCard.class)
+        List<Draft7<String, String, LocalDateTime, LocalDateTime, LocalDateTime, LocalDateTime, LocalDateTime>> list = easyEntityQuery.queryable(SysBankCard.class)
                 .select(bank_card -> Select.DRAFT.of(
                         bank_card.type(),
                         bank_card.type().offset(o -> {
