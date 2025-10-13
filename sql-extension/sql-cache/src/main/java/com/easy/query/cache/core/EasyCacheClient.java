@@ -20,10 +20,18 @@ public interface EasyCacheClient {
             TEntity extends ProxyEntityAvailable<TEntity, T1Proxy> & CacheKvEntity>
     KvCacheQueryable<T1Proxy, TEntity> kvStorage(Class<TEntity> entityClass);
 
-    //    <T extends CacheMultiEntity> MultiCacheQueryable<T> multiStorage(Class<T> entityClass);
     <T1Proxy extends ProxyEntity<T1Proxy, TEntity>,
             TEntity extends ProxyEntityAvailable<TEntity, T1Proxy> & CacheAllEntity>
     AllCacheQueryable<T1Proxy, TEntity> allStorage(Class<TEntity> entityClass);
+
+
+    <T1Proxy extends ProxyEntity<T1Proxy, TEntity>,
+            TEntity extends CacheKvEntity>
+    KvCacheQueryable<T1Proxy, TEntity> kvStorage(T1Proxy t1Proxy);
+
+    <T1Proxy extends ProxyEntity<T1Proxy, TEntity>,
+            TEntity extends CacheAllEntity>
+    AllCacheQueryable<T1Proxy, TEntity> allStorage(T1Proxy t1Proxy);
 
     void deleteBy(CacheKey cacheKey);
 

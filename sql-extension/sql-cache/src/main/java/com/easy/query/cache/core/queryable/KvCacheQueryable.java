@@ -12,7 +12,7 @@ import com.easy.query.core.proxy.ProxyEntityAvailable;
  *
  * @author xuejiaming
  */
-public interface KvCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEntity>, TEntity extends ProxyEntityAvailable<TEntity, T1Proxy> & CacheEntity> extends SingleCacheQueryable<TEntity>, CacheFilterInterceptorQueryable<TEntity, KvCacheQueryable<T1Proxy, TEntity>> {
+public interface KvCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEntity>, TEntity extends CacheEntity> extends SingleCacheQueryable<TEntity>, CacheFilterInterceptorQueryable<TEntity, KvCacheQueryable<T1Proxy, TEntity>> {
 
     KvCacheQueryable<T1Proxy, TEntity> where(SQLActionExpression1<T1Proxy> whereExpression);
 

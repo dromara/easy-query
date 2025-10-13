@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public interface AllCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEntity>, TEntity extends ProxyEntityAvailable<TEntity, T1Proxy> & CacheEntity> extends SingleCacheQueryable<TEntity>, CacheFilterInterceptorQueryable<TEntity,AllCacheQueryable<T1Proxy,TEntity>> {
+public interface AllCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEntity>, TEntity extends CacheEntity> extends SingleCacheQueryable<TEntity>, CacheFilterInterceptorQueryable<TEntity,AllCacheQueryable<T1Proxy,TEntity>> {
     List<TEntity> toList();
     List<String> toIndexList();
     int count();

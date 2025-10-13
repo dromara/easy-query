@@ -39,14 +39,14 @@ import java.util.stream.Stream;
  *
  * @author xuejiaming
  */
-public class DefaultAllCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEntity>, TEntity extends ProxyEntityAvailable<TEntity, T1Proxy> & CacheAllEntity> extends AbstractSingleCacheQueryable<TEntity> implements AllCacheQueryable<T1Proxy, TEntity> {
+public class DefaultAllCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEntity>, TEntity extends CacheAllEntity> extends AbstractSingleCacheQueryable<TEntity> implements AllCacheQueryable<T1Proxy, TEntity> {
     private final T1Proxy t1Proxy;
     private final ClientQueryable<TEntity> indexQueryable;
 
-    public DefaultAllCacheQueryable(CacheRuntimeContext cacheRuntimeContext, Class<TEntity> entityClass) {
+    public DefaultAllCacheQueryable(CacheRuntimeContext cacheRuntimeContext, Class<TEntity> entityClass,T1Proxy t1Proxy) {
         super(cacheRuntimeContext, entityClass);
         this.indexQueryable = easyQueryClient.queryable(entityClass).asNoTracking();
-        this.t1Proxy = EntityQueryProxyManager.create(entityClass);
+        this.t1Proxy = t1Proxy;
     }
 
     @Override

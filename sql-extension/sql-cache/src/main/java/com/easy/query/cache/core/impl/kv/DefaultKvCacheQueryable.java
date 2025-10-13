@@ -33,12 +33,12 @@ import java.util.stream.Stream;
  *
  * @author xuejiaming
  */
-public class DefaultKvCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEntity>, TEntity extends ProxyEntityAvailable<TEntity, T1Proxy> & CacheKvEntity> extends AbstractSingleCacheQueryable<TEntity> implements KvCacheQueryable<T1Proxy, TEntity> {
+public class DefaultKvCacheQueryable<T1Proxy extends ProxyEntity<T1Proxy, TEntity>, TEntity extends CacheKvEntity> extends AbstractSingleCacheQueryable<TEntity> implements KvCacheQueryable<T1Proxy, TEntity> {
     private final T1Proxy t1Proxy;
 
-    public DefaultKvCacheQueryable(CacheRuntimeContext cacheRuntimeContext, Class<TEntity> entityClass) {
+    public DefaultKvCacheQueryable(CacheRuntimeContext cacheRuntimeContext, Class<TEntity> entityClass,T1Proxy t1Proxy) {
         super(cacheRuntimeContext, entityClass);
-        this.t1Proxy = EntityQueryProxyManager.create(entityClass);
+        this.t1Proxy = t1Proxy;
     }
 
     @Override

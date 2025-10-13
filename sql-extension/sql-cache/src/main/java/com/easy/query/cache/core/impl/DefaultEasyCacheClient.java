@@ -1,5 +1,6 @@
 package com.easy.query.cache.core.impl;
 
+import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.cache.core.CacheAllEntity;
 import com.easy.query.cache.core.CacheKvEntity;
 import com.easy.query.cache.core.EasyCacheClient;
@@ -26,7 +27,7 @@ public class DefaultEasyCacheClient implements EasyCacheClient {
     private final ServiceProvider serviceProvider;
 
 
-    public DefaultEasyCacheClient(CacheRuntimeContext cacheRuntimeContext, EasyCacheProvider easyCacheProvider, ServiceProvider serviceProvider){
+    public DefaultEasyCacheClient(CacheRuntimeContext cacheRuntimeContext, EasyCacheProvider easyCacheProvider, ServiceProvider serviceProvider) {
 
         this.cacheRuntimeContext = cacheRuntimeContext;
         this.easyCacheProvider = easyCacheProvider;
@@ -40,28 +41,26 @@ public class DefaultEasyCacheClient implements EasyCacheClient {
 
     @Override
     public <T1Proxy extends ProxyEntity<T1Proxy, TEntity>, TEntity extends ProxyEntityAvailable<TEntity, T1Proxy> & CacheKvEntity> KvCacheQueryable<T1Proxy, TEntity> kvStorage(Class<TEntity> entityClass) {
-        return new DefaultKvCacheQueryable<>(cacheRuntimeContext,entityClass);
+        T1Proxy t1Proxy = EntityQueryProxyManager.create(entityClass);
+        return new DefaultKvCacheQueryable<>(cacheRuntimeContext, entityClass, t1Proxy);
     }
 
     @Override
     public <T1Proxy extends ProxyEntity<T1Proxy, TEntity>, TEntity extends ProxyEntityAvailable<TEntity, T1Proxy> & CacheAllEntity> AllCacheQueryable<T1Proxy, TEntity> allStorage(Class<TEntity> entityClass) {
-        return new DefaultAllCacheQueryable<>(cacheRuntimeContext,entityClass);
+        T1Proxy t1Proxy = EntityQueryProxyManager.create(entityClass);
+        return new DefaultAllCacheQueryable<>(cacheRuntimeContext, entityClass, t1Proxy);
     }
 
-//    @Override
-//    public <T extends CacheKvEntity> KvCacheQueryable<T> kvStorage(Class<T> entityClass) {
-//        return new DefaultKvCacheQueryable<>(cacheRuntimeContext,entityClass);
-//    }
-//
-////    @Override
-////    public <T extends CacheMultiEntity> MultiCacheQueryable<T> multiStorage(Class<T> entityClass) {
-////        return new DefaultMultiCacheQueryable<>(easyCacheStorageOption,entityClass);
-////    }
-//
-//    @Override
-//    public <T extends CacheAllEntity> AllCacheQueryable<T> allStorage(Class<T> entityClass) {
-//        return new DefaultAllCacheQueryable<>(cacheRuntimeContext,entityClass);
-//    }
+    @Override
+    public <T1Proxy extends ProxyEntity<T1Proxy, TEntity>, TEntity extends CacheKvEntity> KvCacheQueryable<T1Proxy, TEntity> kvStorage(T1Proxy t1Proxy) {
+        return new DefaultKvCacheQueryable<>(cacheRuntimeContext, t1Proxy.getEntityClass(), t1Proxy);
+    }
+
+    @Override
+    public <T1Proxy extends ProxyEntity<T1Proxy, TEntity>, TEntity extends CacheAllEntity> AllCacheQueryable<T1Proxy, TEntity> allStorage(T1Proxy t1Proxy) {
+        return new DefaultAllCacheQueryable<>(cacheRuntimeContext, t1Proxy.getEntityClass(), t1Proxy);
+    }
+
     @Override
     public void deleteBy(CacheKey cacheKey) {
         easyCacheProvider.deleteBy(cacheKey);
