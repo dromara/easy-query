@@ -44,5 +44,5 @@ public @interface EntityProxy {
      * 修正版本号
      * @return
      */
-    int revision() default 6;
+    int revision() default 7;
 }
