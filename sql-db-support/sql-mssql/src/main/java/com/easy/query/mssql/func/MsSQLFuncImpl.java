@@ -165,4 +165,13 @@ public class MsSQLFuncImpl extends SQLFuncImpl {
     public SQLFunction indexOf(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new MsSQLIndexOfSQLFunction(getColumnExpressions(sqlExpression));
     }
+
+    @Override
+    public SQLFunction maxColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MsSQLMaxMinColumnsSQLFunction(true,getColumnExpressions(sqlExpression));
+    }
+    @Override
+    public SQLFunction minColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MsSQLMaxMinColumnsSQLFunction(false,getColumnExpressions(sqlExpression));
+    }
 }

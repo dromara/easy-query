@@ -10,9 +10,11 @@ import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.BigDecimalUtils;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mssql.entity.MsSQLCalc;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
@@ -43,26 +45,26 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public class MsSQLQueryTest extends MsSQLBaseTest{
+public class MsSQLQueryTest extends MsSQLBaseTest {
     @Before
-    public void beforeTest(){
+    public void beforeTest() {
         {
 
             DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MsSQLCalc.class));
-            codeFirstCommand.executeWithTransaction(s->s.commit());
+            codeFirstCommand.executeWithTransaction(s -> s.commit());
         }
         {
 
             DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(MsSQLCalc.class));
-            codeFirstCommand.executeWithTransaction(s->s.commit());
+            codeFirstCommand.executeWithTransaction(s -> s.commit());
         }
         {
 
             DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MsSQLCalc.class));
-            codeFirstCommand.executeWithTransaction(s->s.commit());
+            codeFirstCommand.executeWithTransaction(s -> s.commit());
         }
     }
 
@@ -75,10 +77,11 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         MsSQLMyTopic msSQLMyTopic = queryable.firstOrNull();
         Assert.assertNull(msSQLMyTopic);
     }
+
     @Test
     public void query1() {
         EntityQueryable<MsSQLMyTopicProxy, MsSQLMyTopic> queryable = entityQuery.queryable(MsSQLMyTopic.class)
-                .where(o -> o.id().eq( "1"));
+                .where(o -> o.id().eq("1"));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Id] = ?", sql);
         MsSQLMyTopic msSQLMyTopic = queryable.firstOrNull();
@@ -88,6 +91,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         Assert.assertNotNull(msSQLMyTopic.getTitle());
         Assert.assertNotNull(msSQLMyTopic.getCreateTime());
     }
+
     @Test
     public void query2() {
         EntityQueryable<MsSQLMyTopic1Proxy, MsSQLMyTopic1> queryable = entityQuery.queryable(MsSQLMyTopic1.class)
@@ -97,10 +101,11 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         MsSQLMyTopic1 msSQLMyTopic = queryable.firstOrNull();
         Assert.assertNull(msSQLMyTopic);
     }
+
     @Test
     public void query3() {
         EntityQueryable<MsSQLMyTopic1Proxy, MsSQLMyTopic1> queryable = entityQuery.queryable(MsSQLMyTopic1.class)
-                .where(o -> o.Id().eq( "1"));
+                .where(o -> o.Id().eq("1"));
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Id] = ?", sql);
         MsSQLMyTopic1 msSQLMyTopic = queryable.firstOrNull();
@@ -110,6 +115,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         Assert.assertNotNull(msSQLMyTopic.getTitle());
         Assert.assertNotNull(msSQLMyTopic.getCreateTime());
     }
+
     @Test
     public void query4() {
 
@@ -120,40 +126,41 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         List<MsSQLMyTopic> data = topicPageResult.getData();
         Assert.assertEquals(20, data.size());
     }
+
     @Test
     public void query5() {
 
         EasyPageResult<MsSQLMyTopic> topicPageResult = entityQuery
                 .queryable(MsSQLMyTopic.class)
                 .where(o -> o.id().isNotNull())
-                .orderBy(o->o.id().asc())
+                .orderBy(o -> o.id().asc())
                 .toPageResult(2, 20);
         List<MsSQLMyTopic> data = topicPageResult.getData();
         Assert.assertEquals(20, data.size());
     }
+
     @Test
     public void query6() {
 
         EasyPageResult<MsSQLMyTopic> topicPageResult = entityQuery
                 .queryable(MsSQLMyTopic.class)
                 .where(o -> o.id().isNotNull())
-                .orderBy(o->o.stars().asc())
+                .orderBy(o -> o.stars().asc())
                 .toPageResult(2, 20);
         List<MsSQLMyTopic> data = topicPageResult.getData();
         Assert.assertEquals(20, data.size());
         for (int i = 0; i < 20; i++) {
             MsSQLMyTopic msSQLMyTopic = data.get(i);
-            Assert.assertEquals(msSQLMyTopic.getId(),String.valueOf(i+20) );
-            Assert.assertEquals(msSQLMyTopic.getStars(),(Integer)(i+120) );
+            Assert.assertEquals(msSQLMyTopic.getId(), String.valueOf(i + 20));
+            Assert.assertEquals(msSQLMyTopic.getStars(), (Integer) (i + 120));
         }
     }
-    
+
     @Test
-    public void query7(){
+    public void query7() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-
 
 
         List<MsSQLMyTopic> list = entityQuery.queryable(MsSQLMyTopic.class)
@@ -166,12 +173,12 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         Assert.assertEquals("1(String),1(String),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void query8(){
+    public void query8() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-
 
 
         List<MsSQLMyTopic> list = entityQuery.queryable(MsSQLMyTopic.class)
@@ -184,8 +191,9 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void query9(){
+    public void query9() {
 //        String sql = entityQuery.queryable("select * from t_order", Map.class)
 //                .limit(10, 20).toSQL();
 //        {
@@ -211,7 +219,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
     }
 
     @Test
-    public void query10(){
+    public void query10() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -227,8 +235,9 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         Assert.assertEquals("年(String),月(String),日(String),2022年01月01日(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void query11(){
+    public void query11() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -244,8 +253,9 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         Assert.assertEquals("年(String),月(String),日 (String),时(String),分(String),秒(String),2022年01月01日 01时01分01秒(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void update1(){
+    public void update1() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -253,9 +263,11 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
                 .setColumns(m -> m.title().set("123xx"))
                 .where(m -> {
                     m.id().isNull();
-                    m.expression().exists(()->{
+                    m.expression().exists(() -> {
                         return entityQuery.queryable(MsSQLMyTopic.class)
-                                .where(m1 -> {m1.id().eq(m.id());});
+                                .where(m1 -> {
+                                    m1.id().eq(m.id());
+                                });
                     });
                 }).executeRows();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -266,11 +278,9 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
     }
 
     @Test
-     public void testLikeConcat1(){
+    public void testLikeConcat1() {
 
 //        List<Map<String, Object>> maps = entityQuery.sqlQueryMap("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Title] LIKE ('%'+(CAST(? + [Id] + ? AS NVARCHAR(MAX))+'%')");
-
-
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -305,12 +315,11 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         Assert.assertEquals("%(String),%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-     public void testLikeConcat2(){
+    public void testLikeConcat2() {
 
 //        List<Map<String, Object>> maps = entityQuery.sqlQueryMap("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Title] LIKE ('%'+(CAST(? + [Id] + ? AS NVARCHAR(MAX))+'%')");
-
-
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -345,12 +354,11 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
         Assert.assertEquals("%(String),%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-     public void testLikeConcat3(){
+    public void testLikeConcat3() {
 
 //        List<Map<String, Object>> maps = entityQuery.sqlQueryMap("SELECT [Id],[Stars],[Title],[CreateTime] FROM [MyTopic] WHERE [Title] LIKE ('%'+(CAST(? + [Id] + ? AS NVARCHAR(MAX))+'%')");
-
-
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -388,7 +396,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
 
 
     @Test
-    public void testBigDecimal(){
+    public void testBigDecimal() {
         try {
 
             entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereById("1").executeRows();
@@ -407,14 +415,15 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
                     )).toList();
             for (Draft1<BigDecimal> bigDecimalDraft1 : list) {
                 int i = new BigDecimal("-10.0200000000000000000").compareTo(bigDecimalDraft1.getValue1());
-                Assert.assertEquals(0,i);
+                Assert.assertEquals(0, i);
                 System.out.println(bigDecimalDraft1.getValue1());
             }
-        }finally {
+        } finally {
 
             entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereById("1").executeRows();
         }
     }
+
     @Test
     public void testBigDecima2() throws SQLException {
         try {
@@ -459,16 +468,17 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
                             )).toList();
             for (MsSQLCalc bigDecimalDraft1 : list) {
                 int i = new BigDecimal("-10.0200000000000000000").compareTo(bigDecimalDraft1.getColumn1());
-                Assert.assertEquals(0,i);
+                Assert.assertEquals(0, i);
                 System.out.println(bigDecimalDraft1.getColumn1());
             }
-        }finally {
+        } finally {
 
             entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereById("1").executeRows();
         }
     }
+
     @Test
-    public void testBigDecima4(){
+    public void testBigDecima4() {
         try {
 
             entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereById("1").executeRows();
@@ -492,17 +502,17 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
                     .where((a, b) -> {
                         b.get(bb).eq(a.id());
                     }).toList();
-        }finally {
+        } finally {
 
             entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereById("1").executeRows();
         }
     }
 
     @Test
-    public  void testBatchInsert(){
+    public void testBatchInsert() {
         try {
 
-            entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereByIds(Arrays.asList("2","3","4","5")).executeRows();
+            entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereByIds(Arrays.asList("2", "3", "4", "5")).executeRows();
             ArrayList<MsSQLCalc> msSQLCalcs = new ArrayList<>();
             {
 
@@ -546,25 +556,25 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
 
                 System.out.println(msSQLCalc);
             }
-        }finally {
-            entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereByIds(Arrays.asList("2","3","4","5")).executeRows();
+        } finally {
+            entityQuery.deletable(MsSQLCalc.class).allowDeleteStatement(true).whereByIds(Arrays.asList("2", "3", "4", "5")).executeRows();
         }
     }
 
     @Test
-    public void testFormat(){
+    public void testFormat() {
 //        entityQuery.queryable(MsSQLMyTopic.class);
 
-        String formater="yyyy年MM-01 HH:mm分ss秒";
+        String formater = "yyyy年MM-01 HH:mm分ss秒";
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        List<Draft2<LocalDateTime,String>> list = entityQuery.queryable(MsSQLMyTopic.class)
+        List<Draft2<LocalDateTime, String>> list = entityQuery.queryable(MsSQLMyTopic.class)
                 .select(d -> Select.DRAFT.of(
                         d.createTime(),
                         d.createTime().format(formater)
                 )).toList();
         Assert.assertFalse(list.isEmpty());
-        for (Draft2<LocalDateTime,String> timeAndFormat : list) {
+        for (Draft2<LocalDateTime, String> timeAndFormat : list) {
             LocalDateTime value1 = timeAndFormat.getValue1();
             String format = value1.format(DateTimeFormatter.ofPattern(formater));
             Assert.assertEquals(format, timeAndFormat.getValue2());
@@ -579,10 +589,54 @@ public class MsSQLQueryTest extends MsSQLBaseTest{
     }
 
     @Test
-    public void concat1(){
+    public void concat1() {
         List<Map> maps = entityQuery.sqlQuery("select CONCAT('a', null , 'b') as [aa] ", Map.class);
         System.out.println(maps);
         Object o = maps.get(0).get("aa");
-        Assert.assertEquals("ab",o);
+        Assert.assertEquals("ab", o);
+    }
+
+    @Test
+    public void testMaxColumns() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<MsSQLCalc> list = entityQuery.queryable(MsSQLCalc.class)
+                .where(m -> {
+                    m.expression().maxColumns(m.column1(), m.column2(), m.column3()).eq(BigDecimal.valueOf(1));
+                    m.expression().maxColumns(m.column1(), m.column2(), m.column3()).eq(BigDecimal.valueOf(2));
+                }).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT [Id],[Column1],[Column2],[Column3] FROM [t_calc] WHERE (SELECT MAX(__col__) FROM (VALUES ([Column1]), ([Column2]), ([Column3])) AS t(__col__)) = ? AND (SELECT MAX(__col__) FROM (VALUES ([Column1]), ([Column2]), ([Column3])) AS t(__col__)) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(BigDecimal),2(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+
+    @Test
+    public void testMaxColumns2() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft4<BigDecimal, BigDecimal, BigDecimal, BigDecimal>> list = entityQuery.queryable(MsSQLCalc.class)
+                .select(m -> Select.DRAFT.of(
+                        m.column1(),
+                        m.column2(),
+                        m.column3(),
+                        m.expression().maxColumns(m.column1(), m.column2(), m.column3())
+                )).toList();
+        listenerContextManager.clear();
+        for (Draft4<BigDecimal, BigDecimal, BigDecimal, BigDecimal> item : list) {
+            BigDecimal max = BigDecimalUtils.max(item.getValue1(), item.getValue2(), item.getValue3());
+            Assert.assertEquals(0, max.compareTo(item.getValue4()));
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.[Column1] AS [Value1],t.[Column2] AS [Value2],t.[Column3] AS [Value3],(SELECT MAX(__col__) FROM (VALUES (t.[Column1]), (t.[Column2]), (t.[Column3])) AS t(__col__)) AS [Value4] FROM [t_calc] t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("1(BigDecimal),2(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 }

@@ -16,4 +16,12 @@ public class MySQLFuncImpl extends SQLFuncImpl {
     public SQLFunction stringCompareTo(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new MySQLStringCompareToSQLFunction(getColumnExpressions(sqlExpression));
     }
+    @Override
+    public SQLFunction maxColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MySQLMaxMinColumnsSQLFunction(true,getColumnExpressions(sqlExpression));
+    }
+    @Override
+    public SQLFunction minColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MySQLMaxMinColumnsSQLFunction(false,getColumnExpressions(sqlExpression));
+    }
 }

@@ -167,4 +167,14 @@ public class DamengSQLFuncImpl extends SQLFuncImpl {
         };
         return new DamengBooleanSQLFunction(getColumnExpressions(sqlExpressionFunc));
     }
+
+    @Override
+    public SQLFunction maxColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new DamengMaxMinColumnsSQLFunction(true, getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction minColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new DamengMaxMinColumnsSQLFunction(false, getColumnExpressions(sqlExpression));
+    }
 }

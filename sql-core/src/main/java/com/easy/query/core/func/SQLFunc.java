@@ -168,4 +168,6 @@ public interface SQLFunc extends AggregateSQLFunc, SQLStringFunc, SQLDateTimeFun
     SQLFunction booleanSQLFunction(String sqlSegment, SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 
     SQLFunction booleanConstantSQLFunction(boolean trueOrFalse);
+    SQLFunction maxColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction minColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 }

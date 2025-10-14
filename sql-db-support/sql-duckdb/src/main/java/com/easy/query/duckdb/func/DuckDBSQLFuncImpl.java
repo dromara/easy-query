@@ -122,4 +122,14 @@ public class DuckDBSQLFuncImpl extends SQLFuncImpl {
     public SQLFunction indexOf(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new DuckDBSQLIndexOfSQLFunction(getColumnExpressions(sqlExpression));
     }
+
+    @Override
+    public SQLFunction maxColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new DuckDBSQLMaxMinColumnsSQLFunction(true,getColumnExpressions(sqlExpression));
+    }
+    @Override
+    public SQLFunction minColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new DuckDBSQLMaxMinColumnsSQLFunction(false,getColumnExpressions(sqlExpression));
+    }
+
 }

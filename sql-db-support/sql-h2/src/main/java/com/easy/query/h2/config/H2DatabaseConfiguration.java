@@ -5,10 +5,12 @@ import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
+import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.migration.DatabaseMigrationProvider;
 import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.h2.expression.H2ExpressionFactory;
+import com.easy.query.h2.func.H2SQLFuncImpl;
 import com.easy.query.h2.migration.H2DatabaseMigrationProvider;
 import com.easy.query.h2.migration.H2MigrationEntityParser;
 import com.easy.query.h2.types.UUIDH2SQLTypeHandler;
@@ -26,6 +28,7 @@ public class H2DatabaseConfiguration implements DatabaseConfiguration {
     public void configure(ServiceCollection services) {
         services.addService(SQLKeyword.class, H2SQLKeyword.class);
         services.addService(ExpressionFactory.class, H2ExpressionFactory.class);
+        services.addService(SQLFunc.class, H2SQLFuncImpl.class);
         services.addService(DatabaseMigrationProvider.class, H2DatabaseMigrationProvider.class);
         services.addService(MigrationEntityParser.class, H2MigrationEntityParser.class);
         services.addServiceFactory(JdbcTypeHandlerManager.class, s->{

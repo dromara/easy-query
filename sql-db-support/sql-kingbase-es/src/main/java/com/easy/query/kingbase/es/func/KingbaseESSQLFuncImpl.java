@@ -152,4 +152,13 @@ public class KingbaseESSQLFuncImpl extends SQLFuncImpl {
         };
         return new KingbaseESBooleanSQLFunction(getColumnExpressions(sqlExpressionFunc));
     }
+
+    @Override
+    public SQLFunction maxColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new KingbaseESMaxMinColumnsSQLFunction(true,getColumnExpressions(sqlExpression));
+    }
+    @Override
+    public SQLFunction minColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new KingbaseESMaxMinColumnsSQLFunction(false,getColumnExpressions(sqlExpression));
+    }
 }

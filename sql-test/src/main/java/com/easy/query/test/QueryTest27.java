@@ -13,6 +13,7 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.Expression;
+import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
@@ -652,5 +653,20 @@ public class QueryTest27 extends BaseTest {
 //        }).executeRows();
 
     }
+
+//    @Test
+//    public void testRowTable(){
+//        easyEntityQuery.queryable(BlogEntity.class).where(t_blog -> {
+//            t_blog.id().eq("123");
+//
+//            t_blog.expression()
+//
+//            t_blog.asListTable(o->{
+//                o.addRow(t_blog.id(),t_blog.title());
+//                o.addRow(t_blog.title(),t_blog.id());
+//                o.addRow(t_blog.title());
+//            }).where(o->o.cell1().isNotNull()).max()
+//        })
+//    }
 
 }

@@ -139,4 +139,12 @@ public class PgSQLFuncImpl extends SQLFuncImpl {
     public SQLFunction indexOf(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new PgSQLIndexOfSQLFunction(getColumnExpressions(sqlExpression));
     }
+    @Override
+    public SQLFunction maxColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new PgSQLMaxMinColumnsSQLFunction(true,getColumnExpressions(sqlExpression));
+    }
+    @Override
+    public SQLFunction minColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new PgSQLMaxMinColumnsSQLFunction(false,getColumnExpressions(sqlExpression));
+    }
 }

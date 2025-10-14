@@ -54,6 +54,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Supplier;
@@ -169,6 +170,7 @@ public class Expression {
         }, resultClass);
     }
 
+
     /**
      * 支持where having order
      * 请使用{@link #rawSQLCommand(String, Object...)}
@@ -257,6 +259,28 @@ public class Expression {
     }
     public NumberTypeExpression<BigDecimal> random() {
         return new NumberTypeExpressionImpl<>(entitySQLContext, null, null, SQLFunc::random, BigDecimal.class);
+    }
+    public <TProp> AnyTypeExpression<TProp> maxColumns(PropTypeColumn<TProp> column1,PropTypeColumn<TProp> column2,PropTypeColumn<?>... columns){
+        return new AnyTypeExpressionImpl<>(entitySQLContext, null, null, f -> {
+            return f.maxColumns(c -> {
+                PropTypeColumn.acceptAnyValue(c, column1);
+                PropTypeColumn.acceptAnyValue(c, column2);
+                for (PropTypeColumn<?> column : columns) {
+                    PropTypeColumn.acceptAnyValue(c, column);
+                }
+            });
+        }, column1.getPropertyType());
+    }
+    public <TProp> AnyTypeExpression<TProp> minColumns(PropTypeColumn<TProp> column1,PropTypeColumn<TProp> column2,PropTypeColumn<?>... columns){
+        return new AnyTypeExpressionImpl<>(entitySQLContext, null, null, f -> {
+            return f.minColumns(c -> {
+                PropTypeColumn.acceptAnyValue(c, column1);
+                PropTypeColumn.acceptAnyValue(c, column2);
+                for (PropTypeColumn<?> column : columns) {
+                    PropTypeColumn.acceptAnyValue(c, column);
+                }
+            });
+        }, column1.getPropertyType());
     }
 
     /**

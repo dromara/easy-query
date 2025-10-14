@@ -86,6 +86,7 @@ public class ClickHouseFuncImpl extends SQLFuncImpl {
     public SQLFunction utcNow() {
         return ClickHouseUtcNowSQLFunction.INSTANCE;
     }
+
     @Override
     public SQLFunction booleanSQLFunction(String sqlSegment, SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         SQLFunction sqlFunction = anySQLFunction(sqlSegment, sqlExpression);
@@ -95,5 +96,15 @@ public class ClickHouseFuncImpl extends SQLFuncImpl {
             columnFuncSelector.value(false);
         };
         return new ClickHouseBooleanSQLFunction(getColumnExpressions(sqlExpressionFunc));
+    }
+
+    @Override
+    public SQLFunction maxColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new ClickHouseMaxMinColumnsSQLFunction(true, getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction minColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new ClickHouseMaxMinColumnsSQLFunction(false, getColumnExpressions(sqlExpression));
     }
 }

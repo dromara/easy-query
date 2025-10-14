@@ -510,4 +510,56 @@ public class DamengQueryTest extends DamengBaseTest {
                 .asTreeCTE()
                 .toList();
     }
+
+    @Test
+    public void testMaxColumns1(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<DamengMyTopic> list = entityQuery.queryable(DamengMyTopic.class)
+                .where(d -> {
+                    d.expression().maxColumns(d.id(), d.title(), d.title().nullOrDefault(d.id())).eq("123");
+                }).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT \"ID\",\"STARS\",\"TITLE\",\"CREATE_TIME\" FROM \"MY_TOPIC\" WHERE (SELECT MAX(__mmc.__col__) FROM (SELECT \"ID\" AS __col__ FROM DUAL UNION ALL SELECT \"TITLE\" AS __col__ FROM DUAL UNION ALL SELECT NVL(\"TITLE\",\"ID\") AS __col__ FROM DUAL) __mmc) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testMaxColumns2(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<DamengMyTopic> list = entityQuery.queryable(DamengMyTopic.class)
+                .where(d -> {
+                    d.expression().maxColumns(d.id(), d.title().nullOrDefault(d.id())).eq("123");
+                }).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT \"ID\",\"STARS\",\"TITLE\",\"CREATE_TIME\" FROM \"MY_TOPIC\" WHERE (SELECT MAX(__mmc.__col__) FROM (SELECT \"ID\" AS __col__ FROM DUAL UNION ALL SELECT NVL(\"TITLE\",\"ID\") AS __col__ FROM DUAL) __mmc) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testMaxColumns3(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<DamengMyTopic> list = entityQuery.queryable(DamengMyTopic.class)
+                .where(d -> {
+                    d.expression().minColumns(d.id(), d.stars().asStr()).eq("123");
+                }).toList();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT \"ID\",\"STARS\",\"TITLE\",\"CREATE_TIME\" FROM \"MY_TOPIC\" WHERE (SELECT MIN(__mmc.__col__) FROM (SELECT \"ID\" AS __col__ FROM DUAL UNION ALL SELECT \"STARS\" AS __col__ FROM DUAL) __mmc) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 }

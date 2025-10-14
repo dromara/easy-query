@@ -47,6 +47,7 @@ import com.easy.query.core.func.def.impl.LeftPadSQLFunction;
 import com.easy.query.core.func.def.impl.LengthSQLFunction;
 import com.easy.query.core.func.def.impl.LikeSQLFunction;
 import com.easy.query.core.func.def.impl.MathSQLFunction;
+import com.easy.query.core.func.def.impl.MaxMinColumnsSQLFunction;
 import com.easy.query.core.func.def.impl.MaxOverSQLFunction;
 import com.easy.query.core.func.def.impl.MaxSQLFunction;
 import com.easy.query.core.func.def.impl.MinOverSQLFunction;
@@ -413,5 +414,15 @@ public class SQLFuncImpl implements SQLFunc {
     @Override
     public SQLFunction booleanConstantSQLFunction(boolean trueOrFalse) {
         return new BooleanConstantSQLFunction(trueOrFalse);
+    }
+
+    @Override
+    public SQLFunction maxColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MaxMinColumnsSQLFunction(true,getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction minColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MaxMinColumnsSQLFunction(false,getColumnExpressions(sqlExpression));
     }
 }

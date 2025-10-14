@@ -153,4 +153,13 @@ public class GaussDBFuncImpl extends SQLFuncImpl {
         };
         return new GaussDBBooleanSQLFunction(getColumnExpressions(sqlExpressionFunc));
     }
+
+    @Override
+    public SQLFunction maxColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new GaussDBMaxMinColumnsSQLFunction(true,getColumnExpressions(sqlExpression));
+    }
+    @Override
+    public SQLFunction minColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new GaussDBMaxMinColumnsSQLFunction(false,getColumnExpressions(sqlExpression));
+    }
 }

@@ -161,4 +161,12 @@ public class SQLiteFuncImpl extends SQLFuncImpl {
         };
         return new SQLiteBooleanSQLFunction(getColumnExpressions(sqlExpressionFunc));
     }
+    @Override
+    public SQLFunction maxColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new SQLiteMaxMinColumnsSQLFunction(true,getColumnExpressions(sqlExpression));
+    }
+    @Override
+    public SQLFunction minColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new SQLiteMaxMinColumnsSQLFunction(false,getColumnExpressions(sqlExpression));
+    }
 }

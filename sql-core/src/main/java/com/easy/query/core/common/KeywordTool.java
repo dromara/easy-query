@@ -8,6 +8,7 @@ package com.easy.query.core.common;
  */
 public final class KeywordTool {
     public static final String ROW_NUM="__rownum__";
+    public static final String MAX_COLUMN="__col__";
     private KeywordTool(){}
 
     public static boolean isIgnoreColumn(String columnName){
@@ -15,5 +16,8 @@ public final class KeywordTool {
             case ROW_NUM:return true;
         }
         return false;
+    }
+    public static String getMaxColumn(int index){
+        return "__col"+index+"__";
     }
 }

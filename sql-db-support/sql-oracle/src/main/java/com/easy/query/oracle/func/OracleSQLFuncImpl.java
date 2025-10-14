@@ -176,4 +176,12 @@ public class OracleSQLFuncImpl extends SQLFuncImpl {
         };
         return new OracleBooleanSQLFunction(getColumnExpressions(sqlExpressionFunc));
     }
+    @Override
+    public SQLFunction maxColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new OracleMaxMinColumnsSQLFunction(true,getColumnExpressions(sqlExpression));
+    }
+    @Override
+    public SQLFunction minColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new OracleMaxMinColumnsSQLFunction(false,getColumnExpressions(sqlExpression));
+    }
 }
