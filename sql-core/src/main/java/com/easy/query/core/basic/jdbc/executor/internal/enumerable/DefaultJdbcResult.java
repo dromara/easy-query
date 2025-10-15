@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 
+import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
@@ -35,7 +36,12 @@ public class DefaultJdbcResult<TR> implements JdbcResult<TR> {
             StreamIterable<TR> streamResult = jdbcStreamResultSet.getStreamIterable();
             List<TR> list = EasyCollectionUtil.newArrayList(streamResult);
             if (EasyJdbcExecutorUtil.isPrintSQL(jdbcStreamResult.getExecutorContext())) {
+
                 log.info("<== Total: " + list.size());
+                JdbcExecutorListener jdbcExecutorListener = jdbcStreamResult.getExecutorContext().getRuntimeContext().getJdbcExecutorListener();
+                if (jdbcExecutorListener.enable()) {
+                    jdbcExecutorListener.onQueryRows(jdbcStreamResult.getExecutorContext().getJdbcListenerTraceId(), list.size());
+                }
             }
             return list;
         } catch (SQLException e) {

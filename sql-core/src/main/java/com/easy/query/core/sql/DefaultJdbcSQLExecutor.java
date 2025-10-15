@@ -59,6 +59,7 @@ public class DefaultJdbcSQLExecutor implements JdbcSQLExecutor{
         try {
             if (listen) {
                 String traceId = jdbcExecutorListener.createTraceId();
+                executorContext.setJdbcListenerTraceId(traceId);
                 jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, Collections.singletonList(parameters), executorContext.getExecuteMethod());
                 jdbcExecutorListener.onExecuteBefore(jdbcListenBeforeArg);
             }
@@ -122,6 +123,7 @@ public class DefaultJdbcSQLExecutor implements JdbcSQLExecutor{
         try {
             if (listen) {
                 String traceId = jdbcExecutorListener.createTraceId();
+                executorContext.setJdbcListenerTraceId(traceId);
                 jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, new ArrayList<>(entities.size()), executorContext.getExecuteMethod());
                 jdbcExecutorListener.onExecuteBefore(jdbcListenBeforeArg);
             }
@@ -178,6 +180,7 @@ public class DefaultJdbcSQLExecutor implements JdbcSQLExecutor{
         try {
             if (listen) {
                 String traceId = jdbcExecutorListener.createTraceId();
+                executorContext.setJdbcListenerTraceId(traceId);
                 jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, new ArrayList<>(entities.size()), executorContext.getExecuteMethod());
                 jdbcExecutorListener.onExecuteBefore(jdbcListenBeforeArg);
             }
@@ -249,6 +252,7 @@ public class DefaultJdbcSQLExecutor implements JdbcSQLExecutor{
         try {
             if (listen) {
                 String traceId = jdbcExecutorListener.createTraceId();
+                executorContext.setJdbcListenerTraceId(traceId);
                 jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, Collections.singletonList(parameters), executorContext.getExecuteMethod());
                 jdbcExecutorListener.onExecuteBefore(jdbcListenBeforeArg);
             }

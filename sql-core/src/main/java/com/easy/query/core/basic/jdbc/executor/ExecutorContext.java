@@ -21,6 +21,7 @@ public class ExecutorContext {
     private final boolean tracking;
     private final EasyQueryOption easyQueryOption;
     private final LocalDateTime createTime;
+    private String jdbcListenerTraceId;
     private SQLConsumer<Statement> configurer;
 
     public ExecutorContext(ExpressionContext expressionContext, boolean isQuery, ExecuteMethodEnum executeMethod) {
@@ -103,5 +104,13 @@ public class ExecutorContext {
 
     public LocalDateTime getCreateTime() {
         return createTime;
+    }
+
+    public String getJdbcListenerTraceId() {
+        return jdbcListenerTraceId;
+    }
+
+    public void setJdbcListenerTraceId(String jdbcListenerTraceId) {
+        this.jdbcListenerTraceId = jdbcListenerTraceId;
     }
 }

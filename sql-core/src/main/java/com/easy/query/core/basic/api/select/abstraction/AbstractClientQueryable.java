@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.select.abstraction;
 
+import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
 import com.easy.query.core.common.Chunk;
 import com.easy.query.core.enums.SubQueryModeEnum;
@@ -468,6 +469,10 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
             if (printSQL) {
                 log.info("<== Total: " + total);
+                JdbcExecutorListener jdbcExecutorListener = runtimeContext.getJdbcExecutorListener();
+                if (jdbcExecutorListener.enable()) {
+                    jdbcExecutorListener.onQueryRows(jdbcStreamResult.getExecutorContext().getJdbcListenerTraceId(),total);
+                }
             }
 
         } catch (SQLException e) {

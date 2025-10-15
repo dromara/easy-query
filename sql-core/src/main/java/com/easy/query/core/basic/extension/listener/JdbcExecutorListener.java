@@ -20,5 +20,7 @@ public interface JdbcExecutorListener {
     void onExecuteBefore(JdbcExecuteBeforeArg arg);
 
     void onExecuteAfter(JdbcExecuteAfterArg afterArg);
+    default void onQueryRows(String traceId,long total){
 
+    }
 }
