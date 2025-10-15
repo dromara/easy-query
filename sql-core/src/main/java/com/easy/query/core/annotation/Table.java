@@ -52,4 +52,10 @@ public @interface Table {
     String renameFrom() default "";
 
     String comment() default "";
+
+    /**
+     * 表名是否添加关键字
+     * @return
+     */
+    boolean keyword() default true;
 }

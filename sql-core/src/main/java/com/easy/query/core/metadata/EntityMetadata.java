@@ -66,6 +66,8 @@ import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.configuration.bean.EasyMatcher;
 import com.easy.query.core.configuration.bean.PropertyDescriptorResult;
+import com.easy.query.core.configuration.dialect.DefaultSQLKeyword;
+import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.configuration.nameconversion.NameConversion;
 import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
 import com.easy.query.core.context.QueryRuntimeContext;
@@ -137,6 +139,7 @@ public class EntityMetadata {
     private String oldTableName;
     private String treeName;
     private String schema;
+    private boolean tableKeyword=true;
     private String comment;
     private ExtraAutoIncludeConfigure extraAutoIncludeConfigure;
     private ErrorMessage errorMessage;
@@ -217,6 +220,7 @@ public class EntityMetadata {
                 this.comment = table.comment();
             }
             this.schema = table.schema();
+            this.tableKeyword = table.keyword();
             if (EasyStringUtil.isBlank(this.schema)) {
                 //如果存在默认的schema那么就用这个
                 boolean hasDefaultSchema = EasyStringUtil.isNotBlank(easyQueryOption.getDefaultSchema());
@@ -970,6 +974,17 @@ public class EntityMetadata {
 
     public String getSchemaOrNull() {
         return schema;
+    }
+
+    public boolean isTableKeyword() {
+        return tableKeyword;
+    }
+
+    public SQLKeyword getSQLKeyword(SQLKeyword sqlKeyword) {
+        if(!isTableKeyword()){
+            return DefaultSQLKeyword.DEFAULT_SQL_KEYWORD;
+        }
+        return sqlKeyword;
     }
 
     public String getSchemaOrDefault(String defSchema) {

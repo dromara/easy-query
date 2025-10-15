@@ -8,6 +8,8 @@ package com.easy.query.core.configuration.dialect;
  */
 public final class DefaultSQLKeyword implements SQLKeyword {
 
+    public static final SQLKeyword DEFAULT_SQL_KEYWORD = new DefaultSQLKeyword();
+
     @Override
     public String getQuoteName(String keyword) {
         return keyword;

@@ -26,7 +26,7 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
 
     protected MultiTableTypeEnum multiTableType;
     protected final QueryRuntimeContext runtimeContext;
-    protected final SQLKeyword SQLKeyWord;
+    protected final SQLKeyword sqlKeyword;
     protected final TableAvailable entityTable;
     protected PredicateSegment on;
     protected Function<String, String> tableNameAs;
@@ -38,7 +38,7 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
         this.entityTable = entityTable;
         this.multiTableType = multiTableType;
         this.runtimeContext = runtimeContext;
-        this.SQLKeyWord = runtimeContext.getQueryConfiguration().getDialect();
+        this.sqlKeyword = runtimeContext.getQueryConfiguration().getDialect();
     }
 
     @Override
@@ -106,7 +106,8 @@ public class TableSQLExpressionImpl implements EntityTableSQLExpression {
 
     @Override
     public String getTableName() {
-        return EasyToSQLUtil.getSchemaTableName(SQLKeyWord, entityTable.getEntityMetadata().getSchemaOrNull(), entityTable.getTableName(), schemaAs, tableNameAs);
+        SQLKeyword keyword = entityTable.getEntityMetadata().getSQLKeyword(sqlKeyword);
+        return EasyToSQLUtil.getSchemaTableName(keyword, entityTable.getEntityMetadata().getSchemaOrNull(), entityTable.getTableName(), schemaAs, tableNameAs);
     }
 
     @Override
