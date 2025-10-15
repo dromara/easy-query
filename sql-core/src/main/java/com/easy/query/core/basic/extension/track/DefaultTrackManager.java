@@ -35,6 +35,11 @@ public class DefaultTrackManager implements TrackManager {
     }
 
     @Override
+    public void setCurrentTrackContext(TrackContext trackContext) {
+        threadTC.set(trackContext);
+    }
+
+    @Override
     public void release() {
         TrackContext trackContext = getCurrentTrackContext();
         if (trackContext == null) {

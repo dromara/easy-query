@@ -11,6 +11,7 @@ import com.easy.query.api.proxy.entity.update.ExpressionUpdatable;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.configuration.LoadIncludeConfiguration;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.PropColumn;
 import com.easy.query.core.expression.sql.include.RelationValue;
@@ -37,6 +38,7 @@ import java.util.function.Function;
  */
 public interface BaseEntityClient extends EasyBaseQuery {
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityQueryable<TProxy, T> queryable(Class<T> entityClass);
+
     <TProxy extends ProxyEntity<TProxy, T>, T> EntityQueryable<TProxy, T> queryable(TProxy tProxy);
 
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityQueryable<TProxy, T> queryable(String sql, Class<T> entityClass);
@@ -45,6 +47,7 @@ public interface BaseEntityClient extends EasyBaseQuery {
 
 
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityInsertable<TProxy, T> insertable(T entity);
+
     <TProxy extends ProxyEntity<TProxy, T>, T> EntityInsertable<TProxy, T> insertable(TProxy tProxy);
 
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityInsertable<TProxy, T> insertable(Collection<T> entities);
@@ -58,7 +61,8 @@ public interface BaseEntityClient extends EasyBaseQuery {
      * @return
      */
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> ExpressionUpdatable<TProxy, T> updatable(Class<T> entityClass);
-    <TProxy extends ProxyEntity<TProxy, T>, T > ExpressionUpdatable<TProxy, T> expressionUpdatable(TProxy tProxy);
+
+    <TProxy extends ProxyEntity<TProxy, T>, T> ExpressionUpdatable<TProxy, T> expressionUpdatable(TProxy tProxy);
 
     /**
      * 对象更新 更新条件默认是对象的主键
@@ -69,6 +73,7 @@ public interface BaseEntityClient extends EasyBaseQuery {
      * @return
      */
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityUpdatable<TProxy, T> updatable(T entity);
+
     <TProxy extends ProxyEntity<TProxy, T>, T> EntityUpdatable<TProxy, T> entityUpdatable(TProxy tProxy);
 
     /**
@@ -90,7 +95,9 @@ public interface BaseEntityClient extends EasyBaseQuery {
      * @return
      */
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityDeletable<TProxy, T> deletable(T entity);
+
     <TProxy extends ProxyEntity<TProxy, T>, T> ExpressionDeletable<TProxy, T> expressionDeletable(TProxy tProxy);
+
     <TProxy extends ProxyEntity<TProxy, T>, T> EntityDeletable<TProxy, T> entityDeletable(TProxy tProxy);
 
     /**
@@ -115,6 +122,7 @@ public interface BaseEntityClient extends EasyBaseQuery {
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> ExpressionDeletable<TProxy, T> deletable(Class<T> entityClass);
 
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntitySavable<TProxy, T> savable(T entity);
+
     <TProxy extends ProxyEntity<TProxy, T>, T> EntitySavable<TProxy, T> savable(TProxy tProxy);
 
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntitySavable<TProxy, T> savable(Collection<T> entities);
@@ -181,6 +189,10 @@ public interface BaseEntityClient extends EasyBaseQuery {
 
     default void syncTableByPackage(int groupSize, String... packageNames) {
         getEasyQueryClient().syncTableByPackage(groupSize, packageNames);
+    }
+
+    default <T> T trackScope(SQLFuncExpression<T> trackHandle) {
+        return getEasyQueryClient().trackScope(trackHandle);
     }
 
 }

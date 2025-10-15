@@ -10,6 +10,9 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
+import com.easy.query.core.basic.extension.track.TrackContext;
+import com.easy.query.core.basic.extension.track.TrackManager;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.parameter.EasyConstSQLParameter;
@@ -170,4 +173,19 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
     }
 
     void syncTableByPackage(int groupSize, String... packageNames);
+
+    default <T> T trackScope(SQLFuncExpression<T> trackHandle) {
+        TrackManager trackManager = getRuntimeContext().getTrackManager();
+        TrackContext currentTrackContext = trackManager.getCurrentTrackContext();
+        trackManager.setCurrentTrackContext(null);
+        try {
+            trackManager.begin();
+            return trackHandle.apply();
+        }finally {
+            trackManager.release();
+            trackManager.setCurrentTrackContext(currentTrackContext);
+        }
+
+
+    }
 }

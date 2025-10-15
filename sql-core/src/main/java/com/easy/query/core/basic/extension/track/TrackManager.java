@@ -18,6 +18,6 @@ public interface TrackManager extends InvokeTryFinally {
     }
 
     TrackContext getCurrentTrackContext();
-
+    void setCurrentTrackContext(TrackContext trackContext);
 
 }
