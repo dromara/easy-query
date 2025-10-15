@@ -1,6 +1,7 @@
 package com.easy.query.test.duckdb;
 
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.SQLMathExpression;
@@ -373,5 +374,79 @@ public class DuckDBQueryTest  extends DuckDBBaseTest{
 
     }
 
+    @Test
+    public void readExcel1(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<ExcelDuck> list = easyEntityQuery.queryable(ExcelDuck.class)
+                .where(e -> {
+                    e.name().eq("name2");
+                })
+                .toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT \"id\",\"name\",\"age\" FROM read_xlsx('./ducktest.xlsx',sheet='Sheet1') WHERE \"name\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("name2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void readExcel2(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<ExcelDuck> list = easyEntityQuery.queryable(ExcelDuck.class)
+                .where(e -> {
+                    e.excelDuck2List().any(s->s.id().eq("2"));
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.\"id\",t.\"name\",t.\"age\" FROM read_xlsx('./ducktest.xlsx',sheet='Sheet1') t WHERE EXISTS (SELECT 1 FROM read_xlsx('./ducktest.xlsx',sheet='Sheet2') t1 WHERE t1.\"uid\" = t.\"id\" AND t1.\"id\" = ? LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+    @Test
+    public void readExcel3(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<ExcelDuck> list = easyEntityQuery.queryable(ExcelDuck.class)
+                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(e -> {
+                    e.excelDuck2List().any(s->s.id().eq("2"));
+                }).toList();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.\"id\",t.\"name\",t.\"age\" FROM read_xlsx('./ducktest.xlsx',sheet='Sheet1') t LEFT JOIN (SELECT t1.\"uid\" AS \"uid\",(COUNT(?) > 0) AS \"__any2__\" FROM read_xlsx('./ducktest.xlsx',sheet='Sheet2') t1 WHERE t1.\"id\" = ? GROUP BY t1.\"uid\") t2 ON t2.\"uid\" = t.\"id\" WHERE COALESCE(t2.\"__any2__\",?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),2(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+
+    @Test
+    public void readExcel4(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<Draft2<String, String>> list = easyEntityQuery.queryable(ExcelDuck.class)
+                .where(e -> {
+                    e.name().subString(4, 1).eq("4");
+                })
+                .select(e -> Select.DRAFT.of(
+                        e.name(),
+                        e.name().subString(4, 1)
+                )).toList();
+        System.out.println(list);
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.\"name\" AS \"value1\",SUBSTR(t.\"name\",5,1) AS \"value2\" FROM read_xlsx('./ducktest.xlsx',sheet='Sheet1') t WHERE SUBSTR(t.\"name\",5,1) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("4(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
 
 }
