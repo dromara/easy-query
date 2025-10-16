@@ -13,6 +13,7 @@ import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
+import com.easy.query.core.enums.PrimaryKeyOnSaveInsertEnum;
 import com.easy.query.core.expression.many2group.DefaultSubQueryExtraPredicateProvider;
 import com.easy.query.core.expression.many2group.SubQueryExtraPredicateProvider;
 import com.easy.query.core.logging.LogFactory;
@@ -132,6 +133,8 @@ public class BaseTest {
                     op.setDeleteThrowError(false);
                     op.setIncludeLimitMode(IncludeLimitModeEnum.PARTITION);
                     op.setRelationGroupSize(50);
+                    //为了测试正常应该使用set_null
+                    op.setPrimaryKeyOnSaveInsert(PrimaryKeyOnSaveInsertEnum.NO_ACTION);
                 })
 //                .replaceService(Column2MapKeyConversion.class, UpperColumn2MapKeyConversion.class)
                 .useDatabaseConfigure(new MySQLDatabaseConfiguration())
