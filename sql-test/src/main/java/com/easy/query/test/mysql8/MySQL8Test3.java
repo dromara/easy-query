@@ -297,7 +297,7 @@ public class MySQL8Test3 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`order` FROM `m8_parent` t LEFT JOIN (SELECT t2.`parent_id` AS `parent_id`,(COUNT(?) > 0) AS `__any2__` FROM `m8_child` t1 INNER JOIN `m8_parent_child` t2 ON t1.`id` = t2.`child_id` WHERE t1.`name` = ? AND t1.`parent_id` = ? GROUP BY t2.`parent_id`) t4 ON t4.`parent_id` = t.`id` WHERE IFNULL(t4.`__any2__`,?) = ? AND t.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`order` FROM `m8_parent` t LEFT JOIN (SELECT t2.`parent_id` AS `parent_id`,(COUNT(?) > 0) AS `__any2__` FROM `m8_child` t1 INNER JOIN `m8_parent_child` t2 ON t1.`id` = t2.`child_id` WHERE t1.`name` = ? AND t2.`parent_id` = ? GROUP BY t2.`parent_id`) t4 ON t4.`parent_id` = t.`id` WHERE IFNULL(t4.`__any2__`,?) = ? AND t.`id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),123(String),123(String),false(Boolean),true(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }

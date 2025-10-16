@@ -40,16 +40,21 @@ public class DefaultSubQueryExtraPredicateProvider implements SubQueryExtraPredi
         if (mainEntityQueryExpressionBuilder.hasWhere()) {
 
             List<PredicateSegment> flatAndPredicateSegments = mainEntityQueryExpressionBuilder.getWhere().getFlatAndPredicateSegments();
-            WherePredicate<Object> wherePredicate = getWherePredicate(relationTableKey, entityQueryExpressionBuilder);
+            WherePredicate<Object> wherePredicate = getWherePredicate(relationTableKey,navigateMetadata, entityQueryExpressionBuilder);
             getWhereExtraPredicateSegment(flatAndPredicateSegments, relationTable.getOriginalTable(), selfProperties, targetProperties, wherePredicate);
         }
     }
 
-    private WherePredicate<Object> getWherePredicate(RelationTableKey relationTableKey, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
+    private WherePredicate<Object> getWherePredicate(RelationTableKey relationTableKey,NavigateMetadata navigateMetadata, EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
         SQLExpressionInvokeFactory sqlExpressionInvokeFactory = entityQueryExpressionBuilder.getRuntimeContext().getSQLExpressionInvokeFactory();
         if (relationTableKey instanceof PartitionByRelationTableKey) {
             EntityQueryExpressionBuilder queryExpressionBuilder = ((AnonymousDefaultTableExpressionBuilder) entityQueryExpressionBuilder.getTable(0)).getEntityQueryExpressionBuilder();
             return sqlExpressionInvokeFactory.createWherePredicate(queryExpressionBuilder.getTable(0).getEntityTable(), queryExpressionBuilder, queryExpressionBuilder.getWhere());
+        }
+        if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
+            if (navigateMetadata.getMappingClass() != null) {
+                return sqlExpressionInvokeFactory.createWherePredicate(entityQueryExpressionBuilder.getTable(1).getEntityTable(), entityQueryExpressionBuilder, entityQueryExpressionBuilder.getWhere());
+            }
         }
         return sqlExpressionInvokeFactory.createWherePredicate(entityQueryExpressionBuilder.getTable(0).getEntityTable(), entityQueryExpressionBuilder, entityQueryExpressionBuilder.getWhere());
     }

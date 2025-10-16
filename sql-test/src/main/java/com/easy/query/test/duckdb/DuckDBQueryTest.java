@@ -428,7 +428,6 @@ public class DuckDBQueryTest  extends DuckDBBaseTest{
 
     @Test
     public void readExcel4(){
-
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 

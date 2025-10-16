@@ -23,6 +23,8 @@ import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.UUIDEntity2;
+import com.easy.query.test.entity.blogtest.SysMenu;
+import com.easy.query.test.entity.m2m.Station;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
@@ -668,5 +670,43 @@ public class QueryTest27 extends BaseTest {
 //            }).where(o->o.cell1().isNotNull()).max()
 //        })
 //    }
+
+    @Test
+    public void autoMergeMany2Many1(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        try {
+
+            List<Station> list = easyEntityQuery.queryable(Station.class)
+                    .where(s -> {
+                        s.stationId().eq("123");
+                        s.operators().any(x->x.tenantOperatorId().eq("1234"));
+                    }).toList();
+        }catch (Exception ex){
+
+        }
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`station_id`,t.`station_name` FROM `t_station` t LEFT JOIN (SELECT t2.`station_id` AS `station_id`,(COUNT(?) > 0) AS `__any2__` FROM `t_tenant_operator` t1 INNER JOIN `t_station_tenant` t2 ON t1.`tenant_operator_id` = t2.`tenant_id` WHERE t1.`tenant_operator_id` = ? AND t2.`station_id` = ? GROUP BY t2.`station_id`) t4 ON t4.`station_id` = t.`station_id` WHERE t.`station_id` = ? AND IFNULL(t4.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),1234(String),123(String),123(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void autoMergeMany2Many2(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        try {
+
+            List<Station> list = easyEntityQuery.queryable(Station.class)
+                    .where(s -> {
+                        s.operators().any(x->x.tenantOperatorId().eq("1234"));
+                    }).toList();
+        }catch (Exception ex){
+
+        }
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`station_id`,t.`station_name` FROM `t_station` t LEFT JOIN (SELECT t2.`station_id` AS `station_id`,(COUNT(?) > 0) AS `__any2__` FROM `t_tenant_operator` t1 INNER JOIN `t_station_tenant` t2 ON t1.`tenant_operator_id` = t2.`tenant_id` WHERE t1.`tenant_operator_id` = ? GROUP BY t2.`station_id`) t4 ON t4.`station_id` = t.`station_id` WHERE IFNULL(t4.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer),1234(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
 
 }
