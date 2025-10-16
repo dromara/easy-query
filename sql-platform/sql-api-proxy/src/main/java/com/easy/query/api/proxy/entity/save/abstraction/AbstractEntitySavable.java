@@ -2,6 +2,7 @@ package com.easy.query.api.proxy.entity.save.abstraction;
 
 import com.easy.query.api.proxy.entity.save.DefaultSaveConfigurer;
 import com.easy.query.api.proxy.entity.save.EntitySavable;
+import com.easy.query.api.proxy.entity.save.PrimaryKeyInsertProcessor;
 import com.easy.query.api.proxy.entity.save.SaveBehavior;
 import com.easy.query.api.proxy.entity.save.SaveConfigurer;
 import com.easy.query.api.proxy.entity.save.command.SaveCommand;
@@ -12,6 +13,7 @@ import com.easy.query.core.common.ValueHolder;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.metadata.IncludePathTreeNode;
@@ -45,6 +47,7 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     private boolean removeRoot;
     private SaveBehavior saveBehavior;
     private IncludePathTreeNode includePathTreeRoot;
+    private final PrimaryKeyInsertProcessor primaryKeyInsertProcessor;
 
     public AbstractEntitySavable(TProxy tProxy, Class<T> entityClass, Collection<T> entities, EasyQueryClient easyQueryClient) {
         this.tProxy = tProxy;
@@ -63,6 +66,7 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
         this.batch = false;
         this.removeRoot = false;
         this.saveBehavior = new SaveBehavior();
+        this.primaryKeyInsertProcessor=new PrimaryKeyInsertProcessor(runtimeContext);
     }
 
     @Override
@@ -91,6 +95,12 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     }
 
     @Override
+    public EntitySavable<TProxy, T> primaryKeyOnInsert(SQLFuncExpression<Object> primaryKeyOnInsertGetter) {
+        primaryKeyInsertProcessor.setExpressionStrategy(primaryKeyOnInsertGetter);
+        return this;
+    }
+
+    @Override
     public EntitySavable<TProxy, T> savePath(SQLFuncExpression1<TProxy, List<MappingPath>> navigateIncludeSQLExpression) {
         ValueHolder<List<MappingPath>> includeAvailableValueHolder = new ValueHolder<>();
         tProxy.getEntitySQLContext()._include(() -> {
@@ -110,7 +120,7 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
     public void executeCommand() {
         if (!entities.isEmpty()) {
             List<Set<String>> savePathLimit = getSavePathLimit();
-            SaveCommand command = new AutoTrackSaveProvider(currentTrackContext, entityClass, EasyObjectUtil.typeCastNotNull(entities), easyQueryClient, savePathLimit, saveBehavior, removeRoot).createCommand();
+            SaveCommand command = new AutoTrackSaveProvider(currentTrackContext, entityClass, EasyObjectUtil.typeCastNotNull(entities), easyQueryClient, savePathLimit, saveBehavior, removeRoot,primaryKeyInsertProcessor).createCommand();
             command.execute(batch);
         }
     }

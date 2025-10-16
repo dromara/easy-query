@@ -2,6 +2,7 @@ package com.easy.query.api.proxy.entity.save.provider;
 
 import com.easy.query.api.proxy.entity.save.DatabaseEntityValues;
 import com.easy.query.api.proxy.entity.save.MemoryAddressCompareValue;
+import com.easy.query.api.proxy.entity.save.PrimaryKeyInsertProcessor;
 import com.easy.query.api.proxy.entity.save.SavableContext;
 import com.easy.query.api.proxy.entity.save.SaveBehavior;
 import com.easy.query.api.proxy.entity.save.SaveBehaviorEnum;
@@ -20,6 +21,7 @@ import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.enums.CascadeTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
@@ -44,8 +46,8 @@ import java.util.Set;
  */
 public class AutoTrackSaveProvider extends AbstractSaveProvider {
 
-    public AutoTrackSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveBehavior saveBehavior, boolean removeRoot) {
-        super(currentTrackContext, entityClass, entities, easyQueryClient, savePathLimit, saveBehavior, removeRoot);
+    public AutoTrackSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveBehavior saveBehavior, boolean removeRoot, PrimaryKeyInsertProcessor primaryKeyInsertProcessor) {
+        super(currentTrackContext, entityClass, entities, easyQueryClient, savePathLimit, saveBehavior, removeRoot,primaryKeyInsertProcessor);
     }
 
 
@@ -81,7 +83,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                 //只有删除的脱钩才需要处理
                 deleteSelf(value.target, value.targetEntityMetadata, value.saveNode.getIndex() + 1);
             }
-            return new BasicSaveCommand(entityMetadata, inserts, updates, easyQueryClient, saveCommandContext, saveBehavior, removeRoot);
+            return new BasicSaveCommand(entityMetadata, inserts, updates, easyQueryClient, saveCommandContext, saveBehavior, removeRoot,primaryKeyInsertProcessor);
         }
 
         return EmptySaveCommand.INSTANCE;

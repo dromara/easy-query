@@ -4,6 +4,7 @@ package com.easy.query.sql.starter.config;
 import com.easy.query.core.enums.DefaultConditionEnum;
 import com.easy.query.core.enums.EntityMappingStrategyEnum;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
+import com.easy.query.core.enums.PrimaryKeyOnSaveInsertEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -171,6 +172,10 @@ public class EasyQueryProperties {
      * 默认WhereObject使用的查询类型
      */
     private DefaultConditionEnum defaultCondition = DefaultConditionEnum.LIKE;
+    /**
+     * 当savable保存对象时主键如何设置 一般我们认为主键应该是有后端程序生成所以应该insert的时候将逐渐设置为null
+     */
+    private PrimaryKeyOnSaveInsertEnum primaryKeyOnSaveInsert = PrimaryKeyOnSaveInsertEnum.SET_NULL;
 
     public Boolean getEnable() {
         return enable;
@@ -518,6 +523,14 @@ public class EasyQueryProperties {
 
     public void setDefaultCondition(DefaultConditionEnum defaultCondition) {
         this.defaultCondition = defaultCondition;
+    }
+
+    public PrimaryKeyOnSaveInsertEnum getPrimaryKeyOnSaveInsert() {
+        return primaryKeyOnSaveInsert;
+    }
+
+    public void setPrimaryKeyOnSaveInsert(PrimaryKeyOnSaveInsertEnum primaryKeyOnSaveInsert) {
+        this.primaryKeyOnSaveInsert = primaryKeyOnSaveInsert;
     }
 
     public EasyQueryProperties() {

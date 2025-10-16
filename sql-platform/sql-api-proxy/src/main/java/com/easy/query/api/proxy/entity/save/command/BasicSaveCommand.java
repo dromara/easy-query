@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.entity.save.command;
 
+import com.easy.query.api.proxy.entity.save.PrimaryKeyInsertProcessor;
 import com.easy.query.api.proxy.entity.save.SavableContext;
 import com.easy.query.api.proxy.entity.save.SaveBehavior;
 import com.easy.query.api.proxy.entity.save.SaveBehaviorEnum;
@@ -9,6 +10,8 @@ import com.easy.query.api.proxy.entity.save.SaveNodeDbTypeEnum;
 import com.easy.query.api.proxy.entity.save.SaveNodeTypeEnum;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.enums.CascadeTypeEnum;
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -30,8 +33,9 @@ public class BasicSaveCommand implements SaveCommand {
     private final SaveCommandContext saveCommandContext;
     private final SaveBehavior saveBehavior;
     private final boolean deleteAll;
+    private final PrimaryKeyInsertProcessor primaryKeyInsertProcessor;
 
-    public BasicSaveCommand(EntityMetadata entityMetadata, List<Object> inserts, List<Object> updates, EasyQueryClient easyQueryClient, SaveCommandContext saveCommandContext, SaveBehavior saveBehavior,boolean deleteAll) {
+    public BasicSaveCommand(EntityMetadata entityMetadata, List<Object> inserts, List<Object> updates, EasyQueryClient easyQueryClient, SaveCommandContext saveCommandContext, SaveBehavior saveBehavior, boolean deleteAll, PrimaryKeyInsertProcessor primaryKeyInsertProcessor) {
         this.entityMetadata = entityMetadata;
         this.inserts = inserts;
         this.updates = updates;
@@ -39,6 +43,7 @@ public class BasicSaveCommand implements SaveCommand {
         this.saveCommandContext = saveCommandContext;
         this.saveBehavior = saveBehavior;
         this.deleteAll = deleteAll;
+        this.primaryKeyInsertProcessor = primaryKeyInsertProcessor;
     }
 
     @Override
@@ -49,7 +54,7 @@ public class BasicSaveCommand implements SaveCommand {
             SavableContext savableContext = savableContexts.get(i);
             for (Map.Entry<NavigateMetadata, SaveNode> saveNodeEntry : savableContext.getSaveNodeMap().entrySet()) {
                 SaveNode saveNode = saveNodeEntry.getValue();
-                List<Object> deleteItems = EasyCollectionUtil.mapFilterSelect(saveNode.getEntityItems(), kv -> kv.getValue().getType() == SaveNodeTypeEnum.DELETE&&kv.getValue().getDbType() == SaveNodeDbTypeEnum.DELETE, kv -> {
+                List<Object> deleteItems = EasyCollectionUtil.mapFilterSelect(saveNode.getEntityItems(), kv -> kv.getValue().getType() == SaveNodeTypeEnum.DELETE && kv.getValue().getDbType() == SaveNodeDbTypeEnum.DELETE, kv -> {
                     kv.getValue().executeBefore(kv.getKey().getEntity());
                     return kv.getKey().getEntity();
                 });
@@ -92,12 +97,15 @@ public class BasicSaveCommand implements SaveCommand {
                 }
             }
         }
-        if(deleteAll){
-            if(!saveBehavior.hasBehavior(SaveBehaviorEnum.ROOT_IGNORE)){
+        if (deleteAll) {
+            if (!saveBehavior.hasBehavior(SaveBehaviorEnum.ROOT_IGNORE)) {
                 easyQueryClient.deletable(updates).allowDeleteStatement(true).batch(batch).executeRows();
             }
-        }else{
-            if(!saveBehavior.hasBehavior(SaveBehaviorEnum.ROOT_IGNORE)){
+        } else {
+            if (!saveBehavior.hasBehavior(SaveBehaviorEnum.ROOT_IGNORE)) {
+                inserts.forEach(o -> {
+                    setPrimaryKeyOnInsert(o, entityMetadata);
+                });
                 easyQueryClient.insertable(inserts).batch(batch).executeRows(insertFillAutoIncrement(entityMetadata));
                 if (!saveBehavior.hasBehavior(SaveBehaviorEnum.ROOT_UPDATE_IGNORE)) {
                     easyQueryClient.updatable(updates).batch(batch).executeRows();
@@ -111,11 +119,13 @@ public class BasicSaveCommand implements SaveCommand {
 
                 List<Object> insertItems = EasyCollectionUtil.mapFilterSelect(saveNode.getEntityItems(), kv -> kv.getValue().getType() == SaveNodeTypeEnum.INSERT, kv -> {
                     kv.getValue().executeBefore(kv.getKey().getEntity());
-                    return kv.getKey().getEntity();
+                    Object entity = kv.getKey().getEntity();
+                    setPrimaryKeyOnInsert(entity, saveNode.getEntityMetadata());
+                    return entity;
                 });
                 easyQueryClient.insertable(insertItems).batch(batch).executeRows(insertFillAutoIncrement(saveNode.getEntityMetadata()));
 
-                List<Object> setNullItems = EasyCollectionUtil.mapFilterSelect(saveNode.getEntityItems(), kv -> kv.getValue().getType() == SaveNodeTypeEnum.DELETE&&kv.getValue().getDbType() == SaveNodeDbTypeEnum.UPDATE, kv -> {
+                List<Object> setNullItems = EasyCollectionUtil.mapFilterSelect(saveNode.getEntityItems(), kv -> kv.getValue().getType() == SaveNodeTypeEnum.DELETE && kv.getValue().getDbType() == SaveNodeDbTypeEnum.UPDATE, kv -> {
                     kv.getValue().executeBefore(kv.getKey().getEntity());
                     return kv.getKey().getEntity();
                 });
@@ -132,5 +142,9 @@ public class BasicSaveCommand implements SaveCommand {
     private boolean insertFillAutoIncrement(EntityMetadata entityMetadata) {
         List<String> generatedKeyColumns = entityMetadata.getGeneratedKeyColumns();
         return EasyCollectionUtil.isNotEmpty(generatedKeyColumns);
+    }
+
+    private void setPrimaryKeyOnInsert(Object entity, EntityMetadata entityMetadata) {
+        primaryKeyInsertProcessor.setPrimaryKeyOnInsert(entity, entityMetadata);
     }
 }

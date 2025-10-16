@@ -53,6 +53,7 @@ public class DefaultSubQueryExtraPredicateProvider implements SubQueryExtraPredi
         }
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
             if (navigateMetadata.getMappingClass() != null) {
+                //多对多 group join 第二张表即为中间表
                 return sqlExpressionInvokeFactory.createWherePredicate(entityQueryExpressionBuilder.getTable(1).getEntityTable(), entityQueryExpressionBuilder, entityQueryExpressionBuilder.getWhere());
             }
         }

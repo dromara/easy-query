@@ -1,5 +1,6 @@
 package com.easy.query.api.proxy.entity.save;
 
+import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.MappingPath;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -18,6 +19,11 @@ public class EasyEmptySavable<TProxy extends ProxyEntity<TProxy, T>, T> implemen
     @Override
     public List<T> getEntities() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public EntitySavable<TProxy, T> primaryKeyOnInsert(SQLFuncExpression<Object> primaryKeyOnInsert) {
+        return this;
     }
 
     @Override
