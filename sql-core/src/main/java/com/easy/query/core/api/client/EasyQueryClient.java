@@ -174,6 +174,12 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
 
     void syncTableByPackage(int groupSize, String... packageNames);
 
+    /**
+     * 开启一个新的追踪环境
+     * @param trackHandle
+     * @return
+     * @param <T>
+     */
     default <T> T trackScope(SQLFuncExpression<T> trackHandle) {
         TrackManager trackManager = getRuntimeContext().getTrackManager();
         TrackContext currentTrackContext = trackManager.getCurrentTrackContext();
@@ -185,7 +191,15 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
             trackManager.release();
             trackManager.setCurrentTrackContext(currentTrackContext);
         }
-
-
+    }
+    default <T> T noTackScope(SQLFuncExpression<T> trackHandle) {
+        TrackManager trackManager = getRuntimeContext().getTrackManager();
+        TrackContext currentTrackContext = trackManager.getCurrentTrackContext();
+        trackManager.setCurrentTrackContext(null);
+        try {
+            return trackHandle.apply();
+        }finally {
+            trackManager.setCurrentTrackContext(currentTrackContext);
+        }
     }
 }

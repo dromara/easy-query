@@ -191,8 +191,17 @@ public interface BaseEntityClient extends EasyBaseQuery {
         getEasyQueryClient().syncTableByPackage(groupSize, packageNames);
     }
 
+    /**
+     * 开启一个新的追踪环境
+     * @param trackHandle
+     * @return
+     * @param <T>
+     */
     default <T> T trackScope(SQLFuncExpression<T> trackHandle) {
         return getEasyQueryClient().trackScope(trackHandle);
+    }
+    default <T> T noTackScope(SQLFuncExpression<T> trackHandle) {
+        return getEasyQueryClient().noTackScope(trackHandle);
     }
 
 }
