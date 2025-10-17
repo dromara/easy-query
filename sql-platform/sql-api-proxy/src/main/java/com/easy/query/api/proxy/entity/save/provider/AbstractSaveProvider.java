@@ -1,7 +1,6 @@
 package com.easy.query.api.proxy.entity.save.provider;
 
 import com.easy.query.api.proxy.entity.save.MemoryAddressCompareValue;
-import com.easy.query.api.proxy.entity.save.PrimaryKeyInsertProcessor;
 import com.easy.query.api.proxy.entity.save.SavableContext;
 import com.easy.query.api.proxy.entity.save.SaveBehavior;
 import com.easy.query.api.proxy.entity.save.SaveBehaviorEnum;
@@ -13,14 +12,11 @@ import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.enums.CascadeTypeEnum;
-import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
-import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.metadata.ErrorMessage;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
@@ -50,12 +46,11 @@ public abstract class AbstractSaveProvider implements SaveProvider {
     protected final TrackContext currentTrackContext;
     protected final SaveBehavior saveBehavior;
     protected final boolean removeRoot;
-    protected final PrimaryKeyInsertProcessor primaryKeyInsertProcessor;
     protected final List<Set<String>> savePathLimit;
     protected final Map<MemoryAddressCompareValue, DeleteValueObject> deleteValueObjectMap;
     protected final SaveCommandContext saveCommandContext;
 
-    public AbstractSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveBehavior saveBehavior, boolean removeRoot, PrimaryKeyInsertProcessor primaryKeyInsertProcessor) {
+    public AbstractSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveBehavior saveBehavior, boolean removeRoot) {
         this.entityClass = entityClass;
         this.entities = entities;
         this.easyQueryClient = easyQueryClient;
@@ -63,7 +58,6 @@ public abstract class AbstractSaveProvider implements SaveProvider {
         this.currentTrackContext = currentTrackContext;
         this.saveBehavior = saveBehavior;
         this.removeRoot = removeRoot;
-        this.primaryKeyInsertProcessor = primaryKeyInsertProcessor;
         this.entityMetadataManager = runtimeContext.getEntityMetadataManager();
         this.savePathLimit = savePathLimit;
         this.saveCommandContext = new SaveCommandContext(entityClass);

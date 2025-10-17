@@ -2,7 +2,6 @@ package com.easy.query.api.proxy.entity.save.provider;
 
 import com.easy.query.api.proxy.entity.save.DatabaseEntityValues;
 import com.easy.query.api.proxy.entity.save.MemoryAddressCompareValue;
-import com.easy.query.api.proxy.entity.save.PrimaryKeyInsertProcessor;
 import com.easy.query.api.proxy.entity.save.SavableContext;
 import com.easy.query.api.proxy.entity.save.SaveBehavior;
 import com.easy.query.api.proxy.entity.save.SaveBehaviorEnum;
@@ -46,8 +45,8 @@ import java.util.Set;
  */
 public class AutoTrackSaveProvider extends AbstractSaveProvider {
 
-    public AutoTrackSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveBehavior saveBehavior, boolean removeRoot, PrimaryKeyInsertProcessor primaryKeyInsertProcessor) {
-        super(currentTrackContext, entityClass, entities, easyQueryClient, savePathLimit, saveBehavior, removeRoot,primaryKeyInsertProcessor);
+    public AutoTrackSaveProvider(TrackContext currentTrackContext, Class<?> entityClass, List<Object> entities, EasyQueryClient easyQueryClient, List<Set<String>> savePathLimit, SaveBehavior saveBehavior, boolean removeRoot) {
+        super(currentTrackContext, entityClass, entities, easyQueryClient, savePathLimit, saveBehavior, removeRoot);
     }
 
 
@@ -83,7 +82,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                 //只有删除的脱钩才需要处理
                 deleteSelf(value.target, value.targetEntityMetadata, value.saveNode.getIndex() + 1);
             }
-            return new BasicSaveCommand(entityMetadata, inserts, updates, easyQueryClient, saveCommandContext, saveBehavior, removeRoot,primaryKeyInsertProcessor);
+            return new BasicSaveCommand(entityMetadata, inserts, updates, easyQueryClient, saveCommandContext, saveBehavior, removeRoot);
         }
 
         return EmptySaveCommand.INSTANCE;
@@ -399,9 +398,24 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                     setTargetValue(TargetValueTypeEnum.VALUE_OBJECT, selfEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
                 });
             } else if (navigateMetadata.getCascade() == CascadeTypeEnum.DELETE) {
-                saveNode.putInsertItem(new MemoryAddressCompareValue(targetEntity), selfEntity, t -> {
-                    setTargetValue(TargetValueTypeEnum.VALUE_OBJECT, selfEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
-                });
+
+                String trackKey = EasyTrackUtil.getTrackKey(targetEntityMetadata, targetEntity);
+                EntityState trackEntityState = currentTrackContext.getTrackEntityState(targetEntityMetadata.getEntityClass(), trackKey);
+                if (trackEntityState != null) {
+                    //换了父级id那么插入应该用
+                    Object currentValue = trackEntityState.getCurrentValue();
+                    if (targetEntity != currentValue) {//必须是被追踪对象不然初始化空集合的navigate会有问题视为被删除
+                        mergeEntityWithTrackEntity(targetEntity, currentValue, targetEntityMetadata);
+                    }
+                    saveNode.putInsertItem(new MemoryAddressCompareValue(currentValue), selfEntity, t -> {
+                        setTargetValue(TargetValueTypeEnum.VALUE_OBJECT, selfEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
+                    });
+                }else{
+                    saveNode.putInsertItem(new MemoryAddressCompareValue(targetEntity), selfEntity, t -> {
+                        setTargetValue(TargetValueTypeEnum.VALUE_OBJECT, selfEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
+                    });
+                }
+
             } else {
                 throw new EasyQueryInvalidOperationException("value object un support operate cascade:" + navigateMetadata.getCascade());
             }

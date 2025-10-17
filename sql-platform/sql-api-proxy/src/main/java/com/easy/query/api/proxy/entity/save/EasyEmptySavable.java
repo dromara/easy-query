@@ -22,11 +22,6 @@ public class EasyEmptySavable<TProxy extends ProxyEntity<TProxy, T>, T> implemen
     }
 
     @Override
-    public EntitySavable<TProxy, T> primaryKeyOnInsert(SQLFuncExpression<Object> primaryKeyOnInsert) {
-        return this;
-    }
-
-    @Override
     public EntitySavable<TProxy, T> configure(Consumer<SaveConfigurer> behaviorConfigure) {
         return this;
     }

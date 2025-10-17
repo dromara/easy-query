@@ -6,7 +6,6 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.enums.PrimaryKeyOnSaveInsertEnum;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.duckdb.config.DuckDBSQLDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
@@ -73,7 +72,6 @@ public class DuckDBBaseTest {
                     op.setExecutorCorePoolSize(1);
                     op.setExecutorMaximumPoolSize(2);
                     op.setMaxShardingQueryLimit(1);
-                    op.setPrimaryKeyOnSaveInsert(PrimaryKeyOnSaveInsertEnum.NO_ACTION);
                 })
                 .useDatabaseConfigure(new DuckDBSQLDatabaseConfiguration())
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)

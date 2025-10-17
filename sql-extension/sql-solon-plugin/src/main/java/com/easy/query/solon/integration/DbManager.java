@@ -187,7 +187,6 @@ public class DbManager {
                     builder.setSaveComment(solonEasyQueryProperties.getSaveComment());
                     builder.setMaxInClauseSize(solonEasyQueryProperties.getMaxInClauseSize());
                     builder.setDefaultCondition(solonEasyQueryProperties.getDefaultCondition());
-                    builder.setPrimaryKeyOnSaveInsert(solonEasyQueryProperties.getPrimaryKeyOnSaveInsert());
                 });
 
 

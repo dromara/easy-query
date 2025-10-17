@@ -3,7 +3,6 @@ package com.easy.query.solon.integration;
 import com.easy.query.core.enums.DefaultConditionEnum;
 import com.easy.query.core.enums.EntityMappingStrategyEnum;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
-import com.easy.query.core.enums.PrimaryKeyOnSaveInsertEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -46,10 +45,6 @@ public class SolonEasyQueryProperties {
      * 默认WhereObject使用的查询类型
      */
     private final static DefaultConditionEnum defaultCondition = DefaultConditionEnum.LIKE;
-    /**
-     * 当savable保存对象时主键如何设置 一般我们认为主键应该是有后端程序生成所以应该insert的时候将逐渐设置为null
-     */
-    private final static PrimaryKeyOnSaveInsertEnum primaryKeyOnSaveInsert = PrimaryKeyOnSaveInsertEnum.SET_NULL;
     /**
      * 建议19
      */
@@ -316,17 +311,6 @@ public class SolonEasyQueryProperties {
                     return DefaultConditionEnum.LIKE;
                 case "contains":
                     return DefaultConditionEnum.CONTAINS;
-            }
-            return null;
-        });
-    }
-    public PrimaryKeyOnSaveInsertEnum getPrimaryKeyOnSaveInsert() {
-        return getOrDef("primary-key-on-save-insert", primaryKeyOnSaveInsert, v -> {
-            switch (v) {
-                case "set_null":
-                    return PrimaryKeyOnSaveInsertEnum.SET_NULL;
-                case "no_action":
-                    return PrimaryKeyOnSaveInsertEnum.NO_ACTION;
             }
             return null;
         });

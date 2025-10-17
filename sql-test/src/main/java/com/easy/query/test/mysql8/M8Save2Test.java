@@ -153,7 +153,7 @@ public class M8Save2Test extends BaseTest {
 
 
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                easyEntityQuery.savable(roots).primaryKeyOnInsert(null).executeCommand();
+                easyEntityQuery.savable(roots).executeCommand();
                 transaction.commit();
             }
         });

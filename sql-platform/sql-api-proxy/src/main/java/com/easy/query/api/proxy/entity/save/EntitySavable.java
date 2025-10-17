@@ -19,16 +19,6 @@ import java.util.function.Consumer;
 public interface EntitySavable<TProxy extends ProxyEntity<TProxy, T>, T> extends Savable, SQLBatchExecute<EntitySavable<TProxy, T>> {
     List<T> getEntities();
 
-
-    /**
-     * 如何处理主键生成当该对象为插入对象时
-     * 如果传入null表示不做任何操作
-     * 如果不传入则使用全局枚举primary-key-on-save-insert(默认为set_null)因为考虑到主键会影响表的插入和索引碎片所以必须由后端生成
-     * 也可以自行设置返回
-     * @param primaryKeyOnInsertGetter
-     * @return
-     */
-    EntitySavable<TProxy, T> primaryKeyOnInsert(SQLFuncExpression<Object> primaryKeyOnInsertGetter);
     EntitySavable<TProxy, T> configure(Consumer<SaveConfigurer> behaviorConfigure);
 
     EntitySavable<TProxy, T> savePath(SQLFuncExpression1<TProxy, List<MappingPath>> navigateIncludeSQLExpression);
