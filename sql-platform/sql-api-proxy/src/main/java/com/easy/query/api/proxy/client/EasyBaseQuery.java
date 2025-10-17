@@ -7,6 +7,9 @@ import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.lambda.SQLActionExpression;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -88,8 +91,19 @@ public interface EasyBaseQuery {
         return getEasyQueryClient().removeTracking(entity);
     }
 
-    default EntityState getTrackEntityStateNotNull(Object entity) {
+    default EntityState getTrackEntityStateNotNull(@NotNull Object entity) {
         return getEasyQueryClient().getTrackEntityStateNotNull(entity);
+    }
+
+    default @Nullable EntityState getTrackEntityState(@NotNull Object entity) {
+        return getEasyQueryClient().getTrackEntityState(entity);
+    }
+
+    default void notTrackingThen(@NotNull Object entity, SQLActionExpression actionExpression) {
+        EntityState trackEntityState = getEasyQueryClient().getTrackEntityState(entity);
+        if (trackEntityState == null) {
+            actionExpression.apply();
+        }
     }
 
     default MapClientInsertable<Map<String, Object>> mapInsertable(Map<String, Object> map) {

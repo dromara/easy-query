@@ -266,6 +266,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         return false;
     }
 
+    @NotNull
     @Override
     public EntityState getTrackEntityStateNotNull(Object entity) {
         TrackManager trackManager = runtimeContext.getTrackManager();
@@ -274,6 +275,17 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
             throw new EasyQueryInvalidOperationException("currentTrackContext can not be null ");
         }
         return currentTrackContext.getTrackEntityStateNotNull(entity);
+    }
+
+    @Nullable
+    @Override
+    public EntityState getTrackEntityState(@NotNull Object entity) {
+        TrackManager trackManager = runtimeContext.getTrackManager();
+        TrackContext currentTrackContext = trackManager.getCurrentTrackContext();
+        if (currentTrackContext == null) {
+            throw new EasyQueryInvalidOperationException("currentTrackContext can not be null ");
+        }
+        return currentTrackContext.getTrackEntityState(entity);
     }
 
     @Override

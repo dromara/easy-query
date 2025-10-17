@@ -26,6 +26,7 @@ import com.easy.query.core.trigger.TriggerEvent;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -130,7 +131,8 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
 
     boolean removeTracking(Object entity);
 
-    EntityState getTrackEntityStateNotNull(Object entity);
+    @NotNull EntityState getTrackEntityStateNotNull(Object entity);
+    @Nullable EntityState getTrackEntityState(@NotNull Object entity);
 
     MapClientInsertable<Map<String, Object>> mapInsertable(Map<String, Object> map);
 
