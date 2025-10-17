@@ -163,7 +163,7 @@ public class M8Save3Test extends BaseTest {
 
 
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                easyEntityQuery.savable(list).configure(s->s.getSaveBehavior().add(SaveBehaviorEnum.ALLOW_OWNERSHIP_CHANGE)).executeCommand();
+                easyEntityQuery.savable(list).configure(s -> s.getSaveBehavior().add(SaveBehaviorEnum.ALLOW_OWNERSHIP_CHANGE)).executeCommand();
                 transaction.commit();
             }
 
@@ -202,6 +202,7 @@ public class M8Save3Test extends BaseTest {
             }
         });
     }
+
     @Test
     public void testOwnershipChange2() {
         deleteAll();
@@ -218,7 +219,7 @@ public class M8Save3Test extends BaseTest {
 
 
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                easyEntityQuery.savable(a1).configure(s->s.getSaveBehavior().add(SaveBehaviorEnum.ALLOW_OWNERSHIP_CHANGE)).executeCommand();
+                easyEntityQuery.savable(a1).configure(s -> s.getSaveBehavior().add(SaveBehaviorEnum.ALLOW_OWNERSHIP_CHANGE)).executeCommand();
                 transaction.commit();
             }
 
@@ -242,6 +243,7 @@ public class M8Save3Test extends BaseTest {
             }
         });
     }
+
     @Test
     public void testOwnershipChange3() {
         deleteAll();
@@ -253,8 +255,8 @@ public class M8Save3Test extends BaseTest {
                     .includeBy(m -> Include.of(
                             m.m8SaveB().m8SaveC().m8SaveD().asIncludeQueryable()
                     )).toList();
-            M8SaveA a1 = list.stream().filter(o -> Objects.equals("1", o.getId())).findFirst().orElseThrow(()->new RuntimeException("a1 not found"));
-            M8SaveA a5 = list.stream().filter(o -> Objects.equals("5", o.getId())).findFirst().orElseThrow(()->new RuntimeException("a5 not found"));
+            M8SaveA a1 = list.stream().filter(o -> Objects.equals("1", o.getId())).findFirst().orElseThrow(() -> new RuntimeException("a1 not found"));
+            M8SaveA a5 = list.stream().filter(o -> Objects.equals("5", o.getId())).findFirst().orElseThrow(() -> new RuntimeException("a5 not found"));
             M8SaveB b2 = a1.getM8SaveB();
             a1.setM8SaveB(null);
             M8SaveC c3 = b2.getM8SaveC();
@@ -265,7 +267,7 @@ public class M8Save3Test extends BaseTest {
 
 
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                easyEntityQuery.savable(list).configure(s->s.getSaveBehavior().add(SaveBehaviorEnum.ALLOW_OWNERSHIP_CHANGE)).executeCommand();
+                easyEntityQuery.savable(list).configure(s -> s.getSaveBehavior().add(SaveBehaviorEnum.ALLOW_OWNERSHIP_CHANGE)).executeCommand();
                 transaction.commit();
             }
 
@@ -302,7 +304,7 @@ public class M8Save3Test extends BaseTest {
 
 
     @Test
-    public void many2manySetNullInsert(){
+    public void many2manySetNullInsert() {
         easyEntityQuery.deletable(M8User3.class).allowDeleteStatement(true).where(m -> m.userId().isNotNull()).executeRows();
         easyEntityQuery.deletable(M8Role3.class).allowDeleteStatement(true).where(m -> m.roleId().isNotNull()).executeRows();
         easyEntityQuery.deletable(M8UserRole3.class).allowDeleteStatement(true).where(m -> m.userRoleId().isNotNull()).executeRows();
@@ -317,10 +319,10 @@ public class M8Save3Test extends BaseTest {
             m8User3.setUserId("u1");
             m8User3.setUserAge(20);
             m8User3.setUserName("u1");
-            m8User3.setCreateTime(LocalDateTime.of(2020,1,1,1,1));
+            m8User3.setCreateTime(LocalDateTime.of(2020, 1, 1, 1, 1));
             m8User3.setRoles(Arrays.asList(m8Role3));
 
-            try(Transaction transaction = easyEntityQuery.beginTransaction()){
+            try (Transaction transaction = easyEntityQuery.beginTransaction()) {
                 easyEntityQuery.savable(m8Role3).executeCommand();
                 easyEntityQuery.savable(m8User3).executeCommand();
                 transaction.commit();
@@ -338,6 +340,41 @@ public class M8Save3Test extends BaseTest {
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
                 Assert.assertEquals("INSERT INTO `m8_user3` (`user_id`,`user_name`,`user_age`,`create_time`) VALUES (?,?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
                 Assert.assertEquals("u1(String),u1(String),20(Integer),2020-01-01T01:01(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+        });
+    }
+
+    @Test
+    public void testForeach() {
+        deleteAll();
+        insertOne();
+
+
+        invoke(listenerContext -> {
+            Exception e = null;
+            try {
+
+                M8SaveA a1 = easyEntityQuery.queryable(M8SaveA.class).whereById("1")
+                        .includeBy(m -> Include.of(
+                                m.m8SaveB().m8SaveC().m8SaveD().asIncludeQueryable()
+                        ))
+                        .forEach(item -> {
+                            if (item.getId().equals("1")) {
+                                throw new RuntimeException("123123");
+                            }
+                        }).singleNotNull();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                e = ex;
+            }
+            Assert.assertNotNull(e);
+            Assert.assertEquals("123123",e.getMessage());
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+            Assert.assertEquals(1, listenerContext.getJdbcExecuteAfterArgs().size());
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                Assert.assertEquals("SELECT `id`,`name` FROM `m8_save_a` WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             }
         });
     }

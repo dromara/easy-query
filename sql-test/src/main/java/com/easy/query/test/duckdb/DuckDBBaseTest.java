@@ -6,6 +6,7 @@ import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
+import com.easy.query.core.enums.PrimaryKeyOnSaveInsertEnum;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.duckdb.config.DuckDBSQLDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
@@ -13,6 +14,9 @@ import com.easy.query.test.entity.MathTest;
 import com.easy.query.test.h2.domain.ALLTYPE;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
+import com.easy.query.test.mysql8.entity.save.M8ToMany1;
+import com.easy.query.test.mysql8.entity.save.M8ToMany2;
+import com.easy.query.test.mysql8.entity.save.M8ToMany3;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.math.BigDecimal;
@@ -69,6 +73,7 @@ public class DuckDBBaseTest {
                     op.setExecutorCorePoolSize(1);
                     op.setExecutorMaximumPoolSize(2);
                     op.setMaxShardingQueryLimit(1);
+                    op.setPrimaryKeyOnSaveInsert(PrimaryKeyOnSaveInsertEnum.NO_ACTION);
                 })
                 .useDatabaseConfigure(new DuckDBSQLDatabaseConfiguration())
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)
@@ -79,9 +84,12 @@ public class DuckDBBaseTest {
     public static void initData() {
 
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
-        databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(TestJdjg.class,BlogEntity.class, ALLTYPE.class, MathTest.class)).executeWithTransaction(s->s.commit());
-        databaseCodeFirst.syncTableCommand(Arrays.asList(TestJdjg.class,BlogEntity.class, ALLTYPE.class, MathTest.class)).executeWithTransaction(s->s.commit());
+        databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(TestJdjg.class,BlogEntity.class, ALLTYPE.class, MathTest.class, M8ToMany1.class, M8ToMany2.class, M8ToMany3.class)).executeWithTransaction(s->s.commit());
+        databaseCodeFirst.syncTableCommand(Arrays.asList(TestJdjg.class,BlogEntity.class, ALLTYPE.class, MathTest.class, M8ToMany1.class, M8ToMany2.class, M8ToMany3.class)).executeWithTransaction(s->s.commit());
 
+        easyEntityQuery.deletable(M8ToMany1.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.a().isNotNull()).executeRows();
+        easyEntityQuery.deletable(M8ToMany2.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.d().isNotNull()).executeRows();
+        easyEntityQuery.deletable(M8ToMany3.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.g().isNotNull()).executeRows();
 
         boolean any = easyEntityQuery.queryable(BlogEntity.class).any();
         if (!any) {

@@ -11,6 +11,7 @@ import com.easy.query.api.proxy.entity.select.join.join2.RightJoinExpressionJoin
 import com.easy.query.api.proxy.extension.tree.EntityTreeCTEConfigurer;
 import com.easy.query.api.proxy.extension.tree.EntityTreeCTEConfigurerImpl;
 import com.easy.query.api.proxy.util.EasyProxyUtil;
+import com.easy.query.core.basic.api.select.executor.MethodQuery;
 import com.easy.query.core.common.Chunk;
 import com.easy.query.core.common.ValueHolder2;
 import com.easy.query.core.proxy.core.FlatEntitySQLContext;
@@ -64,6 +65,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -238,6 +240,11 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <TNumber extends Number> Query<TNumber> selectCount(Class<TNumber> numberClass) {
         return getClientQueryable().selectCount(numberClass);
+    }
+
+    @Override
+    public MethodQuery<T1> forEach(Consumer<T1> mapConfigure) {
+        return getClientQueryable().forEach(mapConfigure);
     }
 
     @Override

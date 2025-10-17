@@ -14,6 +14,7 @@ import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.basic.api.select.executor.MethodQuery;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.Chunk;
@@ -37,6 +38,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -562,5 +564,10 @@ public class EasyDbSet<TProxy extends ProxyEntity<TProxy, T>, T> implements DbSe
     @Override
     public EntityMetadata queryEntityMetadata() {
         return baseEntityClient.queryable(tProxy).queryEntityMetadata();
+    }
+
+    @Override
+    public MethodQuery<T> forEach(Consumer<T> mapConfigure) {
+        return baseEntityClient.queryable(tProxy).forEach(mapConfigure);
     }
 }

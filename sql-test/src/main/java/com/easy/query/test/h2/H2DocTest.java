@@ -12,12 +12,10 @@ import com.easy.query.test.doc.dto.proxy.DocUserVOProxy;
 import com.easy.query.test.doc.entity.DocBank;
 import com.easy.query.test.doc.entity.DocBankCard;
 import com.easy.query.test.doc.entity.DocUser;
-import com.easy.query.test.entity.Topic;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**

@@ -6,6 +6,7 @@ import com.easy.query.api.proxy.entity.select.extension.queryable.ClientEntityQu
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityAggregatable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityCountable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityFilterable1;
+import com.easy.query.api.proxy.entity.select.extension.queryable.EntityForEachConfigurable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntitySubQueryConfigurable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntitySubQueryToGroupJoinable1;
 import com.easy.query.api.proxy.entity.select.extension.queryable.EntityPageAble1;
@@ -40,6 +41,7 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
         ClientEntityQueryableAvailable<T1>,
         EntityFilterable1<T1Proxy, T1>,
         EntityCountable1<T1Proxy, T1>,
+        EntityForEachConfigurable1<T1Proxy, T1>,
         EntityHavingable1<T1Proxy, T1>,
         EntityIncludeable1<T1Proxy, T1>,
         EntityIncludesable1<T1Proxy, T1>,
