@@ -4,7 +4,6 @@ package com.easy.query.sql.starter.config;
 import com.easy.query.core.enums.DefaultConditionEnum;
 import com.easy.query.core.enums.EntityMappingStrategyEnum;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
-import com.easy.query.core.enums.PrimaryKeyOnSaveInsertEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -19,8 +18,6 @@ import java.util.concurrent.Executors;
 
 /**
  * @author xuejiaming
- * @FileName: EasyQueryProperties.java
- * @Description: 文件说明
  * create time 2023/3/11 14:25
  */
 @ConfigurationProperties(prefix = "easy-query")
