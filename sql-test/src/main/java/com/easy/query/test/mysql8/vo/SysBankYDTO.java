@@ -2,6 +2,7 @@ package com.easy.query.test.mysql8.vo;
 
 
 import com.easy.query.core.annotation.Navigate;
+import com.easy.query.core.enums.PartitionOrderEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import lombok.Data;
@@ -33,7 +34,7 @@ public class SysBankYDTO {
     /**
      * 拥有的银行卡
      */
-    @Navigate(value = RelationTypeEnum.OneToMany, limit = 3)
+    @Navigate(value = RelationTypeEnum.OneToMany, limit = 3,partitionOrder = PartitionOrderEnum.IGNORE)
     private List<InternalBankCards> bankCards;
 
 

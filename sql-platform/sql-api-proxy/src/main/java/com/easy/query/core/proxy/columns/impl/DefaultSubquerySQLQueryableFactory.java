@@ -4,7 +4,6 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.basic.api.select.ClientQueryable;
-import com.easy.query.core.common.OffsetLimitEntry;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.SubQueryModeEnum;
@@ -22,6 +21,7 @@ import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableEx
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.metadata.EndNavigateParams;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -206,8 +206,8 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
             NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
             ClientQueryable<TProperty> clientQueryable = EasyNavigateUtil.navigateOrderBy(
                     queryable,
-                    new OffsetLimitEntry(navigateMetadata.getOffset(), navigateMetadata.getLimit()),
-                    navigateMetadata.getOrderProps(),
+                    new EndNavigateParams(navigateMetadata),
+                    includeNavigateParams,
                     runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType()),
                     configureArgument,
                     runtimeContext);
@@ -254,8 +254,8 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
             NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
             ClientQueryable<TProperty> clientQueryable = EasyNavigateUtil.navigateOrderBy(
                     queryable,
-                    new OffsetLimitEntry(navigateMetadata.getOffset(), navigateMetadata.getLimit()),
-                    navigateMetadata.getOrderProps(),
+                    new EndNavigateParams(navigateMetadata)
+                    ,includeNavigateParams,
                     runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType()),
                     configureArgument,
                     runtimeContext);

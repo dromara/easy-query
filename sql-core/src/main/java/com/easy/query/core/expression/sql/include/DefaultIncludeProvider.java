@@ -5,9 +5,11 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
+import com.easy.query.core.enums.PartitionOrderEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.implicit.EntityRelationPropertyProvider;
+import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -28,14 +30,19 @@ import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
+import com.easy.query.core.metadata.NavigateOrderProp;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyNavigateUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyOptionUtil;
+import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
+import com.easy.query.core.util.EasySQLUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -95,79 +102,19 @@ public class DefaultIncludeProvider implements IncludeProvider {
 
     private <TProperty> ClientQueryable<TProperty> getIncludeQueryable(NavigateMetadata navigateMetadata, IncludeNavigateParams includeNavigateParams, boolean hasLimit, ClientQueryable<TProperty> clientQueryable, Boolean printNavSQL, boolean directMapping, QueryRuntimeContext runtimeContext) {
         List<List<Object>> relationIds = includeNavigateParams.getRelationIds();
+        EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
         if (hasLimit) {
-            EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
-            if (easyQueryOption.getIncludeLimitMode() == IncludeLimitModeEnum.PARTITION) {
-                EntityQueryExpressionBuilder sqlEntityExpressionBuilder = clientQueryable.cloneQueryable().getSQLEntityExpressionBuilder();
-                long offset = sqlEntityExpressionBuilder.getOffset();
-                long rows = sqlEntityExpressionBuilder.getRows();
-                ClientQueryable<TProperty> noLimitQueryable = clientQueryable.cloneQueryable().limit(0, 0);
-                OrderBySQLBuilderSegment order = noLimitQueryable.getSQLEntityExpressionBuilder().getOrder();
-                OrderBySQLBuilderSegmentImpl orderBySQLBuilderSegment = new OrderBySQLBuilderSegmentImpl();
-                order.copyTo(orderBySQLBuilderSegment);
-                order.clear();
-
-                EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
-                EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(navigateMetadata.getNavigatePropertyType());
-                ClientQueryable<?> partitionQueryable = noLimitQueryable.where(o -> {
-                            o.and(() -> {
-                                EntityRelationPropertyProvider relationPropertyProvider = navigateMetadata.getEntityRelationPropertyProvider();
-
-                                if (directMapping) {
-                                    relationPropertyProvider.relationMultiIdsFetcherPredicate(o, navigateMetadata.getDirectTargetPropertiesOrPrimary(runtimeContext), relationIds,includeNavigateParams.getQueryRelationGroupSize());
-                                } else {
-                                    relationPropertyProvider.relationMultiIdsFetcherPredicate(o, navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationIds,includeNavigateParams.getQueryRelationGroupSize());
-                                }
-                                navigateMetadata.predicateFilterApply(o);
-//                        navigateMetadata.predicateFilterApply(o);
-                            });
-                        }).select(Map.class, x -> {
-                            x.columnAll();
-//                            for (Map.Entry<String, ColumnMetadata> columnMetadataKv : x.getTable().getEntityMetadata().getProperty2ColumnMap().entrySet()) {
-//                                x.sqlNativeSegment("{0}", c -> {
-//                                    c.expression(columnMetadataKv.getKey());
-//                                    c.setAlias(columnMetadataKv.getValue().getName());
-//                                });
-////                                x.columnAs(columnMetadataKv.getKey(),columnMetadataKv.getValue().getName());
-//                            }
-
-
-                            PartitionBySQLFunction partitionBySQLFunction = runtimeContext.fx().rowNumberOver(s -> {
-
-                                if (directMapping) {
-                                    String[] directTargetPropertiesOrPrimary = navigateMetadata.getDirectTargetPropertiesOrPrimary(runtimeContext);
-                                    for (String column : directTargetPropertiesOrPrimary) {
-                                        s.column(column);
-                                    }
-//                    o.multiEq(true, navigateMetadata.getDirectTargetPropertiesOrPrimary(runtimeContext), relationId);
-                                } else {
-                                    String[] targetPropertiesOrPrimary = navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext);
-                                    for (String column : targetPropertiesOrPrimary) {
-                                        s.column(column);
-                                    }
-
-                                }
-                            });
-                            if (EasySQLSegmentUtil.isNotEmpty(orderBySQLBuilderSegment)) {
-                                partitionBySQLFunction.addOrder(orderBySQLBuilderSegment);
-                            }
-                            x.sqlFuncAs(partitionBySQLFunction, "__row__");
-
-                        }).where(m -> m.ge("__row__", offset + 1).le("__row__", offset + rows))
-                        .select(navigateMetadata.getNavigatePropertyType(), o -> {
-                            for (Map.Entry<String, ColumnMetadata> columnMetadataEntry : entityMetadata.getProperty2ColumnMap().entrySet()) {
-//                            o.column(columnMetadataEntry.getValue().getName());
-                                o.sqlNativeSegment("{0}", c -> {
-                                    c.expression(columnMetadataEntry.getValue().getName());
-                                    c.setAlias(columnMetadataEntry.getValue().getName());
-                                });
-                            }
-                        });
-                partitionQueryable.getSQLEntityExpressionBuilder().getExpressionContext().getRelationExtraMetadata().getRelationExtraColumnMap().clear();
-                partitionQueryable.getSQLEntityExpressionBuilder().getExpressionContext().getRelationExtraMetadata().getRelationExtraColumnList().clear();
-                return EasyObjectUtil.typeCastNullable(partitionQueryable);
-
-            } else if (easyQueryOption.getIncludeLimitMode() == IncludeLimitModeEnum.UNION_ALL) {
+//            if (easyQueryOption.getIncludeLimitMode() == IncludeLimitModeEnum.PARTITION) {
+//
+//                ClientQueryable<TProperty> navigateLimitPartitionByQueryable = EasyNavigateUtil.getNavigateLimitPartitionByQueryable(navigateMetadata, includeNavigateParams, clientQueryable, runtimeContext);
+//                SQLActionExpression navigatePartitionByWhereExpression = includeNavigateParams.getNavigatePartitionByWhereExpression();
+//                if (navigatePartitionByWhereExpression != null) {
+//                    navigatePartitionByWhereExpression.apply();
+//                }
+//                return navigateLimitPartitionByQueryable;
+//
+//            } else
+            if (easyQueryOption.getIncludeLimitMode() == IncludeLimitModeEnum.UNION_ALL) {
                 ClientQueryable<TProperty> unionAllRelationLimitQueryable = getUnionAllRelationLimitQueryable(navigateMetadata, includeNavigateParams, clientQueryable, printNavSQL, directMapping, runtimeContext);
                 if (unionAllRelationLimitQueryable != null) {
                     return unionAllRelationLimitQueryable;
@@ -176,18 +123,26 @@ public class DefaultIncludeProvider implements IncludeProvider {
                 throw new EasyQueryInvalidOperationException("include limit mode error:" + easyQueryOption.getIncludeLimitMode());
             }
         }
+        //延迟处理@Navigate时存在limit的情况并且全局配置了limit采用Partition By的bug
+        SQLActionExpression navigatePartitionByWhereExpression = includeNavigateParams.getNavigatePartitionByWhereExpression();
+        boolean hasInnerPredicate = navigatePartitionByWhereExpression != null;
+        if (hasInnerPredicate) {
+            navigatePartitionByWhereExpression.apply();
+            includeNavigateParams.setNavigatePartitionByWhereExpression(null);
+        }
+
         //                        navigateMetadata.predicateFilterApply(o);
         return clientQueryable.cloneQueryable().configure(s -> {
             s.setPrintSQL(printNavSQL);
             s.setPrintNavSQL(printNavSQL);
-        }).where(o -> {
+        }).where(!hasInnerPredicate, o -> {
             o.and(() -> {
                 EntityRelationPropertyProvider relationPropertyProvider = navigateMetadata.getEntityRelationPropertyProvider();
 
                 if (directMapping) {
-                    relationPropertyProvider.relationMultiIdsFetcherPredicate(o, navigateMetadata.getDirectTargetPropertiesOrPrimary(runtimeContext), relationIds,includeNavigateParams.getQueryRelationGroupSize());
+                    relationPropertyProvider.relationMultiIdsFetcherPredicate(o, navigateMetadata.getDirectTargetPropertiesOrPrimary(runtimeContext), relationIds, includeNavigateParams.getQueryRelationGroupSize());
                 } else {
-                    relationPropertyProvider.relationMultiIdsFetcherPredicate(o, navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationIds,includeNavigateParams.getQueryRelationGroupSize());
+                    relationPropertyProvider.relationMultiIdsFetcherPredicate(o, navigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), relationIds, includeNavigateParams.getQueryRelationGroupSize());
                 }
                 navigateMetadata.predicateFilterApply(o);
 //                        navigateMetadata.predicateFilterApply(o);

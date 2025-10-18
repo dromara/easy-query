@@ -109,7 +109,7 @@ public class M8OrderTest extends BaseTest {
         }
         Assert.assertNotNull(e);
 
-        Assert.assertEquals("In a PARTITION BY clause, the ORDER BY expression must be explicitly specified; otherwise, referencing the nth expression is not supported.",e.getMessage());
+        Assert.assertEquals("[M8OrderItem.orderItem2s]In a PARTITION BY clause, the ORDER BY expression must be explicitly specified; otherwise, referencing the nth expression is not supported.",e.getMessage());
 
     }
 }

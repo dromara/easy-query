@@ -241,6 +241,7 @@ public abstract class AbstractSelector<TChain> {
     }
 
     public TChain columnAll(TableAvailable table) {
+        EntityMetadata entityMetadata = table.getEntityMetadata();
         if (table.isAnonymous()) {
 
             EntityTableExpressionBuilder entityTableExpressionBuilder = getTableExpressionBuilderByTable(table);
@@ -249,7 +250,6 @@ public abstract class AbstractSelector<TChain> {
             }
             columnAnonymousAll((AnonymousEntityTableExpressionBuilder) entityTableExpressionBuilder);
         } else {
-            EntityMetadata entityMetadata = table.getEntityMetadata();
             Collection<ColumnMetadata> columns = entityMetadata.getColumns();
             for (ColumnMetadata columnMetadata : columns) {
                 appendColumnMetadata(table, columnMetadata, true, true, null);

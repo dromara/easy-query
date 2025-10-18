@@ -7,6 +7,7 @@ import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousDefaultTableExpressionBuilder;
+import com.easy.query.core.metadata.EndNavigateParams;
 import com.easy.query.core.metadata.TreeDeepItem;
 import com.easy.query.core.metadata.TreeSelfTargetItem;
 import com.easy.query.core.util.EasyArrayUtil;
@@ -1047,7 +1048,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //                        ClientQueryable<Object> with = t.with(navigatePropName);
                         EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
                         EntityMetadata navigateEntityMetadata = entityMetadataManager.getEntityMetadata(resultNavigateMetadata.getNavigatePropertyType());
-                        ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(t.with(resultNavigateMetadata.getPropertyName()), EasyNavigateUtil.getNavigateLimit(resultNavigateMetadata, t.getIncludeNavigateParams().getNavigateMetadata()), EasyNavigateUtil.getNavigateOrderProps(resultNavigateMetadata.getOrderProps(), t.getIncludeNavigateParams().getNavigateMetadata().getOrderProps()), navigateEntityMetadata, configureArgument, runtimeContext);
+                        ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(t.with(resultNavigateMetadata.getPropertyName()),new EndNavigateParams(entityNavigateMetadata,resultNavigateMetadata),t.getIncludeNavigateParams(), navigateEntityMetadata, configureArgument, runtimeContext);
 
                         IncludeNavigateExpression includeNavigateExpression = expressionContext.getIncludes().get(entityNavigateMetadata);
                         if (includeNavigateExpression != null) {
@@ -1152,7 +1153,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         if (flatClassType != null) {
                             flatClassTypeEntityMetadata = entityMetadataManager.getEntityMetadata(flatClassType);
                         }
-                        ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(propertyQueryable, EasyNavigateUtil.getNavigateLimit(entityNavigateMetadata, t.getIncludeNavigateParams().getNavigateMetadata()), EasyNavigateUtil.getNavigateOrderProps(entityNavigateMetadata.getOrderProps(), t.getIncludeNavigateParams().getNavigateMetadata().getOrderProps()), flatClassTypeEntityMetadata, configureArgument, runtimeContext);
+
+                        ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(propertyQueryable, new EndNavigateParams(entityNavigateMetadata),t.getIncludeNavigateParams(), flatClassTypeEntityMetadata, configureArgument, runtimeContext);
 
                         IncludeNavigateExpression includeNavigateExpression = expressionContext.getIncludes().get(entityNavigateMetadata);
                         if (includeNavigateExpression != null) {

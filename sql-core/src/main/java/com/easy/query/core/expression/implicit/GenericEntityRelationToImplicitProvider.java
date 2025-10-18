@@ -35,6 +35,7 @@ import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.include.RelationExtraEntity;
 import com.easy.query.core.func.def.PartitionBySQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EndNavigateParams;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.metadata.NavigateOrderProp;
@@ -154,40 +155,10 @@ public class GenericEntityRelationToImplicitProvider implements EntityRelationPr
         }
         clientQueryableSQLExpression.apply(clientQueryable);
 
-        OrderBySQLBuilderSegment order = clientQueryable.getSQLEntityExpressionBuilder().getOrder();
-        if (EasySQLSegmentUtil.isEmpty(order)) {
 
-            PartitionOrderEnum partitionOrder = navigateMetadata.getPartitionOrder();
-            if (PartitionOrderEnum.IGNORE != partitionOrder) {
-                if (PartitionOrderEnum.NAVIGATE == partitionOrder) {
-                    List<NavigateOrderProp> orderProps = navigateMetadata.getOrderProps();
-                    if (EasyCollectionUtil.isNotEmpty(orderProps)) {
-                        clientQueryable.orderByAsc(s -> {
-                            for (NavigateOrderProp orderProp : orderProps) {
-                                EasySQLUtil.dynamicOrderBy(s.getOrderSelector(), s.getTable(), orderProp.getProperty(), orderProp.isAsc(), orderProp.getMode(), true);
-                            }
-                        });
-                    }
-                } else if (PartitionOrderEnum.KEY_ASC == partitionOrder || PartitionOrderEnum.KEY_DESC == partitionOrder) {
-                    boolean asc = PartitionOrderEnum.KEY_ASC == partitionOrder;
-                    clientQueryable.orderBy(s -> {
-                        Collection<String> keyProperties = s.getEntityMetadata().getKeyProperties();
-                        if (EasyCollectionUtil.isNotEmpty(keyProperties)) {
-                            for (String keyProperty : keyProperties) {
-                                s.column(keyProperty);
-                            }
-                        }
-                    }, asc);
-                }
-                if (EasySQLSegmentUtil.isEmpty(order)) {
-                    //必须要指定order by
-                    throw new EasyQueryInvalidOperationException("In a PARTITION BY clause, the ORDER BY expression must be explicitly specified; otherwise, referencing the nth expression is not supported.");
-                }
-            }
-        }
         OrderBySQLBuilderSegmentImpl orderBySQLBuilderSegment = new OrderBySQLBuilderSegmentImpl();
-        order.copyTo(orderBySQLBuilderSegment);
-        order.clear();
+        EasySQLExpressionUtil.appendPartitionByOrderSegment(clientQueryable, new EndNavigateParams(navigateMetadata,null), orderBySQLBuilderSegment);
+
         EntityQueryExpressionBuilder sqlEntityExpressionBuilder = clientQueryable.getSQLEntityExpressionBuilder();
         return clientQueryable.select(Map.class, x -> {
             x.columnAll();

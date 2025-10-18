@@ -406,7 +406,7 @@ public class EntityMetadata {
             throw new EasyQueryInvalidOperationException(msg.toString());
         }
 
-        List<NavigateOrderProp> orderProps = toMany
+        List<NavigateOrderProp> orderProps = (toMany||navigate.limit()==1)
                 ? Arrays.stream(navigate.orderByProps()).map(orderByProperty -> new NavigateOrderProp(orderByProperty.property(), orderByProperty.asc(), getOrderByMode(orderByProperty.mode()))).collect(Collectors.toList())
                 : EasyCollectionUtil.emptyList();
 

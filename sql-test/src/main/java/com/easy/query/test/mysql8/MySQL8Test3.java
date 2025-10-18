@@ -26,6 +26,7 @@ import com.easy.query.test.mysql8.entity.M8Parent;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.many.M8Province;
+import com.easy.query.test.mysql8.vo.SysUserFirstCardDTO;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -828,7 +829,8 @@ public class MySQL8Test3 extends BaseTest {
 //        sysUser.setBankCards(Arrays.asList(sysBankCard));
 //
 //        //这么写会报错因为SysBankCard存在一个聚合根,那么会将这个聚合根的关联属性bankId赋值但是因为初始化所以sysBank还没有id会报错
-////        easyEntityQuery.savable(sysUser).executeCommand();
+
+    /// /        easyEntityQuery.savable(sysUser).executeCommand();
 //
 //        try(Transaction transaction = easyEntityQuery.beginTransaction()){
 //            easyEntityQuery.savable(sysBank).executeCommand();
@@ -837,6 +839,43 @@ public class MySQL8Test3 extends BaseTest {
 //        }
 //
 //    }
+    @Test
+    public void testQueryFirstLimit1() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                .include(s -> s.firstCard())
+                .toList();
+        for (SysUser sysUser : list) {
+            SysBankCard firstCard = sysUser.getFirstCard();
+        }
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t2.`id` AS `id`,t2.`uid` AS `uid`,t2.`code` AS `code`,t2.`type` AS `type`,t2.`bank_id` AS `bank_id`,t2.`open_time` AS `open_time` FROM (SELECT t1.`id` AS `id`,t1.`uid` AS `uid`,t1.`code` AS `code`,t1.`type` AS `type`,t1.`bank_id` AS `bank_id`,t1.`open_time` AS `open_time` FROM (SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time`,(ROW_NUMBER() OVER (PARTITION BY t.`uid` ORDER BY t.`open_time` ASC)) AS `__row__` FROM `t_bank_card` t WHERE t.`uid` IN (?,?)) t1 WHERE t1.`__row__` >= ? AND t1.`__row__` <= ?) t2", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("u1(String),u2(String),1(Long),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testQueryFirstLimit2() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysUserFirstCardDTO> list = easyEntityQuery.queryable(SysUser.class)
+                .include(s -> s.firstCard())
+                .selectAutoInclude(SysUserFirstCardDTO.class)
+                .toList();
+        for (SysUserFirstCardDTO sysUserFirstCardDTO : list) {
+
+        }
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t2.`code`,t2.`type`,t2.`open_time`,t2.`uid` AS `__relation__uid` FROM (SELECT t1.`id` AS `id`,t1.`uid` AS `uid`,t1.`code` AS `code`,t1.`type` AS `type`,t1.`bank_id` AS `bank_id`,t1.`open_time` AS `open_time` FROM (SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time`,(ROW_NUMBER() OVER (PARTITION BY t.`uid` ORDER BY t.`open_time` ASC)) AS `__row__` FROM `t_bank_card` t WHERE t.`uid` IN (?,?)) t1 WHERE t1.`__row__` >= ? AND t1.`__row__` <= ?) t2", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("u1(String),u2(String),1(Long),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
 
 
 }

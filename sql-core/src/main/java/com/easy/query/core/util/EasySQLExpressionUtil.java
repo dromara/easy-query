@@ -25,6 +25,7 @@ import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.enums.PartitionOrderEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
@@ -54,6 +55,8 @@ import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
 import com.easy.query.core.expression.segment.SQLSegment;
+import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
+import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
@@ -84,9 +87,11 @@ import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.fill.FillParams;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EndNavigateParams;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
 import com.easy.query.core.metadata.NavigateMetadata;
+import com.easy.query.core.metadata.NavigateOrderProp;
 import com.easy.query.core.metadata.RelationExtraColumn;
 import com.easy.query.core.metadata.RelationExtraColumnAddResult;
 import com.easy.query.core.metadata.RelationExtraMetadata;
@@ -109,6 +114,49 @@ import java.util.stream.Collectors;
  */
 public class EasySQLExpressionUtil {
     private EasySQLExpressionUtil() {
+    }
+
+    /**
+     * 添加partition by 的order by 片段
+     * @param queryable
+     * @param endNavigateParams
+     * @param orderBySQLBuilderSegment
+     */
+    public static void appendPartitionByOrderSegment(ClientQueryable<?> queryable, EndNavigateParams endNavigateParams, OrderBySQLBuilderSegmentImpl orderBySQLBuilderSegment){
+
+        OrderBySQLBuilderSegment order = queryable.getSQLEntityExpressionBuilder().getOrder();
+        if (EasySQLSegmentUtil.isEmpty(order)) {
+
+            PartitionOrderEnum partitionOrder = endNavigateParams.getPartitionOrder();
+            if (PartitionOrderEnum.IGNORE != partitionOrder) {
+                if (PartitionOrderEnum.NAVIGATE == partitionOrder) {
+                    List<NavigateOrderProp> orderProps = endNavigateParams.getOrderProps();
+                    if (EasyCollectionUtil.isNotEmpty(orderProps)) {
+                        queryable.orderByAsc(s -> {
+                            for (NavigateOrderProp orderProp : orderProps) {
+                                EasySQLUtil.dynamicOrderBy(s.getOrderSelector(), s.getTable(), orderProp.getProperty(), orderProp.isAsc(), orderProp.getMode(), true);
+                            }
+                        });
+                    }
+                } else if (PartitionOrderEnum.KEY_ASC == partitionOrder || PartitionOrderEnum.KEY_DESC == partitionOrder) {
+                    boolean asc = PartitionOrderEnum.KEY_ASC == partitionOrder;
+                    queryable.orderBy(s -> {
+                        Collection<String> keyProperties = s.getEntityMetadata().getKeyProperties();
+                        if (EasyCollectionUtil.isNotEmpty(keyProperties)) {
+                            for (String keyProperty : keyProperties) {
+                                s.column(keyProperty);
+                            }
+                        }
+                    }, asc);
+                }
+                if (EasySQLSegmentUtil.isEmpty(order)) {
+                    //必须要指定order by
+                    throw new EasyQueryInvalidOperationException("["+EasyClassUtil.getSimpleName(queryable.getSQLEntityExpressionBuilder().getFromTable().getEntityClass())+"."+endNavigateParams.getEntityNavigateMetadata().getPropertyName()+"]In a PARTITION BY clause, the ORDER BY expression must be explicitly specified; otherwise, referencing the nth expression is not supported.");
+                }
+            }
+        }
+        order.copyTo(orderBySQLBuilderSegment);
+        order.clear();
     }
 
     public static AndPredicateSegment resolve(QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, SQLActionExpression1<Filter> filterExpression) {

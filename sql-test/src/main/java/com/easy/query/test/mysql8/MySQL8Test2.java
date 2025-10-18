@@ -1033,6 +1033,11 @@ public class MySQL8Test2 extends BaseTest {
         List<SysBankXDTO> list = easyEntityQuery.queryable(SysBank.class)
                 .selectAutoInclude(SysBankXDTO.class)
                 .toList();
+        for (SysBankXDTO sysBankXDTO : list) {
+            for (SysBankXDTO.InternalBankCards bankCard : sysBankXDTO.getBankCards()) {
+
+            }
+        }
 
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());

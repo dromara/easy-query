@@ -3,6 +3,7 @@ package com.easy.query.core.metadata;
 import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.common.IncludeRelationIdAvailable;
+import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -30,6 +31,7 @@ public class IncludeNavigateParams implements IncludeRelationIdAvailable {
     private List<NavigateFlatMetadata> navigateFlatMetadataList;
     private EntityMetadata flatQueryEntityMetadata;
     private Class<?> flatClassType;
+    private SQLActionExpression navigatePartitionByWhereExpression;
     public IncludeNavigateParams(){
         relationIds=new ArrayList<>();
     }
@@ -124,6 +126,19 @@ public class IncludeNavigateParams implements IncludeRelationIdAvailable {
 
     public void setAdapterExpression(SQLActionExpression1<ClientQueryable<?>> adapterExpression) {
         this.adapterExpression = adapterExpression;
+    }
+
+    /**
+     * 延迟处理@Navigate时存在limit的情况并且全局配置了limit采用Partition By的bug
+     * 主要是用来处理NavigateFlat下对lastItem或者firstItem的处理
+     * @param navigatePartitionByWhereExpression
+     */
+    public void setNavigatePartitionByWhereExpression(SQLActionExpression navigatePartitionByWhereExpression){
+        this.navigatePartitionByWhereExpression =navigatePartitionByWhereExpression;
+    }
+
+    public SQLActionExpression getNavigatePartitionByWhereExpression() {
+        return navigatePartitionByWhereExpression;
     }
 
     @Override

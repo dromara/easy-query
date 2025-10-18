@@ -6,6 +6,7 @@ import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.OrderByProperty;
 import com.easy.query.core.annotation.Table;
+import com.easy.query.core.enums.PartitionOrderEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysBankProxy;

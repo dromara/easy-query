@@ -24,7 +24,7 @@ public class M8CommentTest extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<M8Comment> list = easyEntityQuery.queryable(M8Comment.class)
-                .includes(m -> m.subComments(), s -> s.limit(3))
+                .includes(m -> m.subComments(), s -> s.orderBy(x->x.time().asc()).limit(3))
                 .toList();
         listenerContextManager.clear();
 //        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -38,7 +38,7 @@ public class M8CommentTest extends BaseTest {
         }
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-            Assert.assertEquals("SELECT t2.`id` AS `id`,t2.`parent_id` AS `parent_id`,t2.`content` AS `content`,t2.`username` AS `username`,t2.`time` AS `time` FROM (SELECT t1.`id` AS `id`,t1.`parent_id` AS `parent_id`,t1.`content` AS `content`,t1.`username` AS `username`,t1.`time` AS `time` FROM (SELECT t.`id`,t.`parent_id`,t.`content`,t.`username`,t.`time`,(ROW_NUMBER() OVER (PARTITION BY t.`parent_id`)) AS `__row__` FROM `comment` t WHERE t.`parent_id` IN (?,?,?,?,?)) t1 WHERE t1.`__row__` >= ? AND t1.`__row__` <= ?) t2", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t2.`id` AS `id`,t2.`parent_id` AS `parent_id`,t2.`content` AS `content`,t2.`username` AS `username`,t2.`time` AS `time` FROM (SELECT t1.`id` AS `id`,t1.`parent_id` AS `parent_id`,t1.`content` AS `content`,t1.`username` AS `username`,t1.`time` AS `time` FROM (SELECT t.`id`,t.`parent_id`,t.`content`,t.`username`,t.`time`,(ROW_NUMBER() OVER (PARTITION BY t.`parent_id` ORDER BY t.`time` ASC)) AS `__row__` FROM `comment` t WHERE t.`parent_id` IN (?,?,?,?,?)) t1 WHERE t1.`__row__` >= ? AND t1.`__row__` <= ?) t2", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1(String),2(String),3(String),4(String),5(String),1(Long),3(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
     }

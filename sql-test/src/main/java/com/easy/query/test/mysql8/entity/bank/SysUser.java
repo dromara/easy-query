@@ -36,16 +36,23 @@ public class SysUser implements ProxyEntityAvailable<SysUser, SysUserProxy> {
     private String phone;
     private Integer age;
     private LocalDateTime createTime;
-
     /**
      * 用户拥有的银行卡数
      */
-    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"uid"},partitionOrder = PartitionOrderEnum.IGNORE)
+    @Navigate(value = RelationTypeEnum.OneToOne, selfProperty = {"id"}, targetProperty = {"uid"}
+            , partitionOrder = PartitionOrderEnum.NAVIGATE, limit = 1, orderByProps = {
+            @OrderByProperty(property = "openTime", asc = true)
+    })
+    private SysBankCard firstCard;
+    /**
+     * 用户拥有的银行卡数
+     */
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"uid"}, partitionOrder = PartitionOrderEnum.IGNORE)
     private List<SysBankCard> bankCards;
     /**
      * 用户拥有的银行卡数
      */
-    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"uid"},partitionOrder = PartitionOrderEnum.IGNORE)
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"uid"}, partitionOrder = PartitionOrderEnum.IGNORE)
     private List<SysBankCardInt> bankCardIntList;
     /**
      * 用户拥有的银行卡数
@@ -64,10 +71,10 @@ public class SysUser implements ProxyEntityAvailable<SysUser, SysUserProxy> {
     /**
      * 用户拥有的银行卡数
      */
-    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"uid"},orderByProps = {
-            @OrderByProperty(property = "openTime",asc = true),
-            @OrderByProperty(property = "code",asc = false,mode = OrderByPropertyModeEnum.NULLS_FIRST),
-    },partitionOrder = PartitionOrderEnum.NAVIGATE)
+    @Navigate(value = RelationTypeEnum.OneToMany, selfProperty = {"id"}, targetProperty = {"uid"}, orderByProps = {
+            @OrderByProperty(property = "openTime", asc = true),
+            @OrderByProperty(property = "code", asc = false, mode = OrderByPropertyModeEnum.NULLS_FIRST),
+    }, partitionOrder = PartitionOrderEnum.NAVIGATE)
     private List<SysBankCard> bankCard4s;
 
 }

@@ -67,6 +67,7 @@ public abstract class AbstractAsSelector<TChain> extends AbstractSelector<TChain
                     }
                 }
             }
+            autoColumnInclude(table.getEntityTable(), table.getEntityMetadata());
             return castChain();
         }
     }
