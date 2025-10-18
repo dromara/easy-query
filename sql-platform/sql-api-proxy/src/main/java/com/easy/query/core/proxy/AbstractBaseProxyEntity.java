@@ -284,15 +284,19 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
                 throw new EasyQueryInvalidOperationException(String.format("getNavigate %s cant not found table", property));
             }
             NavigateMetadata navigateMetadata = leftTable.getEntityMetadata().getNavigateNotNull(property);
-            EntityRelationPropertyProvider entityRelationToImplicitProvider = navigateMetadata.getEntityRelationPropertyProvider();
-            if(entityRelationToImplicitProvider==null){
-                throw new EasyQueryInvalidOperationException("entityRelationToImplicitProvider is null,Navigate property in non entity plz set supportNonEntity = true.");
+            if (navigateMetadata.getLimit() == 0) {
+                EntityRelationPropertyProvider entityRelationToImplicitProvider = navigateMetadata.getEntityRelationPropertyProvider();
+                if (entityRelationToImplicitProvider == null) {
+                    throw new EasyQueryInvalidOperationException("entityRelationToImplicitProvider is null,Navigate property in non entity plz set supportNonEntity = true.");
+                }
+                TableAvailable relationTable = entityRelationToImplicitProvider.toImplicitJoin(entityExpressionBuilder, leftTable, property);
+                TPropertyProxy tPropertyProxy = propertyProxy.create(relationTable, this.getEntitySQLContext());
+                String fullName = getFullNavValue(property);
+                tPropertyProxy.setNavValue(fullName);
+                return tPropertyProxy;
+            } else {
+                return getNavigateMany(property, propertyProxy).first();
             }
-            TableAvailable relationTable = entityRelationToImplicitProvider.toImplicitJoin(entityExpressionBuilder, leftTable, property);
-            TPropertyProxy tPropertyProxy = propertyProxy.create(relationTable, this.getEntitySQLContext());
-            String fullName = getFullNavValue(property);
-            tPropertyProxy.setNavValue(fullName);
-            return tPropertyProxy;
         }
     }
 
@@ -301,7 +305,7 @@ public abstract class AbstractBaseProxyEntity<TProxy extends ProxyEntity<TProxy,
         EntityExpressionBuilder entityExpressionBuilder = entitySQLContext.getEntityExpressionBuilder();
 //        QueryRuntimeContext runtimeContext = this.entitySQLContext.getRuntimeContext();
         String fullName = getFullNavValue(property);
-        return new PropertySQLManyQueryable<>(new SubQueryContext<TPropertyProxy, TProperty>(entityExpressionBuilder, this.getEntitySQLContext(), getTable(), property, fullName, propertyProxy,this));
+        return new PropertySQLManyQueryable<>(new SubQueryContext<TPropertyProxy, TProperty>(entityExpressionBuilder, this.getEntitySQLContext(), getTable(), property, fullName, propertyProxy, this));
     }
 
     private String getFullNavValue(String navValue) {

@@ -240,7 +240,9 @@ public class EasyRelationalUtil {
         QueryRuntimeContext runtimeContext = entityExpressionBuilder.getRuntimeContext();
 
         if (navigateMetadata.getRelationType() != RelationTypeEnum.OneToMany && navigateMetadata.getRelationType() != RelationTypeEnum.ManyToMany) {
-            throw new EasyQueryInvalidOperationException("navigate relation table should [OneToMany or ManyToMany],now is " + navigateMetadata.getRelationType());
+            if (navigateMetadata.getLimit() == 0) {
+                throw new EasyQueryInvalidOperationException("navigate relation table should [OneToMany or ManyToMany],now is " + navigateMetadata.getRelationType());
+            }
         }
         EntityTableExpressionBuilder entityTableExpressionBuilder = entityExpressionBuilder.addRelationEntityTableExpression(relationTableKey, key -> {
 //            TableAvailable leftTable = getTable();
