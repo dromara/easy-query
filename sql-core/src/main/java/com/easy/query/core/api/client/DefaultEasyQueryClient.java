@@ -14,6 +14,8 @@ import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.update.ClientEntityUpdatable;
 import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
+import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
+import com.easy.query.core.basic.extension.generated.SaveEntitySetPrimaryKeyGenerator;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.EntityValueState;
 import com.easy.query.core.basic.extension.track.TrackContext;
@@ -52,6 +54,7 @@ import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyPackageUtil;
+import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.core.util.EasyTrackUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -286,6 +289,28 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
             throw new EasyQueryInvalidOperationException("currentTrackContext can not be null ");
         }
         return currentTrackContext.getTrackEntityState(entity);
+    }
+
+    @Override
+    public void saveEntitySetPrimaryKey(@NotNull Object entity) {
+        EntityState trackEntityState = getTrackEntityState(entity);
+        if (trackEntityState == null) {
+            EntityMetadataManager entityMetadataManager = runtimeContext.getEntityMetadataManager();
+            EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entity.getClass());
+            if (EasyStringUtil.isBlank(entityMetadata.getTableName())) {
+                throw new EasyQueryInvalidOperationException(entity.getClass() + ": is not table entity,cant set save primary key");
+            }
+            for (String keyProperty : entityMetadata.getKeyProperties()) {
+                ColumnMetadata keyColumn = entityMetadata.getColumnNotNull(keyProperty);
+                PrimaryKeyGenerator primaryKeyGenerator = keyColumn.getPrimaryKeyGenerator();
+                if (primaryKeyGenerator != null) {
+                    primaryKeyGenerator.setPrimaryKey(entity, keyColumn);
+                }else{
+                    SaveEntitySetPrimaryKeyGenerator saveEntitySetPrimaryKeyGenerator = runtimeContext.getSaveEntitySetPrimaryKeyGenerator();
+                    saveEntitySetPrimaryKeyGenerator.setPrimaryKey(entity, keyColumn);
+                }
+            }
+        }
     }
 
     @Override

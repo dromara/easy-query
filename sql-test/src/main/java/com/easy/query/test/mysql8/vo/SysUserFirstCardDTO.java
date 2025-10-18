@@ -2,6 +2,9 @@ package com.easy.query.test.mysql8.vo;
 
 
 import com.easy.query.core.annotation.NavigateFlat;
+import com.easy.query.core.expression.parser.core.extra.ExtraAutoIncludeConfigure;
+import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.test.mysql8.entity.bank.proxy.SysUserProxy;
 import lombok.Data;
 import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.Navigate;

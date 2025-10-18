@@ -18,6 +18,8 @@ import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.formater.DefaultSQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
+import com.easy.query.core.basic.extension.generated.SaveEntitySetPrimaryKeyGenerator;
+import com.easy.query.core.basic.extension.generated.UnSupportSaveEntitySetPrimaryKeyGenerator;
 import com.easy.query.core.basic.extension.listener.EmptyJdbcExecutorListener;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.extension.print.DefaultJdbcSQLPrinter;
@@ -245,6 +247,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(SQLCaseWhenBuilderFactory.class, DefaultSQLCaseWhenBuilderFactory.class)
                 .replaceService(EntityExpressionTrigger.class, DefaultEntityExpressionTrigger.class)
                 .replaceService(EntityExpressionPrepareExecutor.class, DefaultEntityExpressionPrepareExecutor.class)
+                .replaceService(SaveEntitySetPrimaryKeyGenerator.class, UnSupportSaveEntitySetPrimaryKeyGenerator.class)
 //                .replaceService(NavigateNamedGuess.class, DefaultNavigateNamedGuess.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }

@@ -12,6 +12,7 @@ import com.easy.query.core.basic.api.update.ClientExpressionUpdatable;
 import com.easy.query.core.basic.api.update.map.MapClientUpdatable;
 import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.basic.extension.track.TrackManager;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.parser.core.available.RuntimeContextAvailable;
 import com.easy.query.core.basic.extension.track.EntityState;
@@ -133,6 +134,14 @@ public interface EasyQueryClient extends RuntimeContextAvailable {
 
     @NotNull EntityState getTrackEntityStateNotNull(Object entity);
     @Nullable EntityState getTrackEntityState(@NotNull Object entity);
+
+    /**
+     * 对保存的对象进行主键设置
+     * 如果对象的id不存在追踪上下文那么将会被视为非法id从而重新赋值
+     * @param entity
+     * @throws EasyQueryInvalidOperationException 1.如果当前未开启追踪 2.如果当前对象不是数据库对象
+     */
+    void saveEntitySetPrimaryKey(@NotNull Object entity);
 
     MapClientInsertable<Map<String, Object>> mapInsertable(Map<String, Object> map);
 

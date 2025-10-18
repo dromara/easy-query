@@ -7,6 +7,7 @@ import com.easy.query.core.basic.api.cte.CteTableNamedProvider;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
+import com.easy.query.core.basic.extension.generated.SaveEntitySetPrimaryKeyGenerator;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.extension.print.JdbcSQLPrinter;
 import com.easy.query.core.basic.extension.track.TrackManager;
@@ -293,6 +294,11 @@ public class EmptyQueryRuntimeContext implements QueryRuntimeContext{
 
     @Override
     public SmartPredicateAnonymousExpressionBuilderProvider getSmartPredicateAnonymousExpressionBuilderProvider() {
+        return null;
+    }
+
+    @Override
+    public SaveEntitySetPrimaryKeyGenerator getSaveEntitySetPrimaryKeyGenerator() {
         return null;
     }
 }

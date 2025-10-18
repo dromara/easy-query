@@ -7,6 +7,7 @@ import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -99,11 +100,15 @@ public interface EasyBaseQuery {
         return getEasyQueryClient().getTrackEntityState(entity);
     }
 
-    default void notTrackingThen(@NotNull Object entity, SQLActionExpression actionExpression) {
-        EntityState trackEntityState = getEasyQueryClient().getTrackEntityState(entity);
-        if (trackEntityState == null) {
-            actionExpression.apply();
-        }
+    /**
+     * 对保存的对象进行主键设置
+     * 如果对象的id不存在追踪上下文那么将会被视为非法id从而重新赋值
+     *
+     * @param entity
+     * @throws EasyQueryInvalidOperationException 1.如果当前未开启追踪 2.如果当前对象不是数据库对象
+     */
+    default void saveEntitySetPrimaryKey(@NotNull Object entity) {
+        getEasyQueryClient().saveEntitySetPrimaryKey(entity);
     }
 
     default MapClientInsertable<Map<String, Object>> mapInsertable(Map<String, Object> map) {

@@ -9,6 +9,7 @@ import com.easy.query.core.basic.api.cte.CteTableNamedProvider;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
+import com.easy.query.core.basic.extension.generated.SaveEntitySetPrimaryKeyGenerator;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.extension.print.JdbcSQLPrinter;
 import com.easy.query.core.basic.extension.track.TrackManager;
@@ -108,6 +109,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final JdbcSQLExecutor jdbcSQLExecutor;
     private final SubQueryExtraPredicateProvider subQueryExtraPredicateProvider;
     private final SmartPredicateAnonymousExpressionBuilderProvider smartPredicateAnonymousExpressionBuilderProvider;
+    private final SaveEntitySetPrimaryKeyGenerator saveEntitySetPrimaryKeyGenerator;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -157,7 +159,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           SQLCaseWhenBuilderFactory sqlCaseWhenBuilderFactory,
                                           JdbcSQLExecutor jdbcSQLExecutor,
                                           SubQueryExtraPredicateProvider subQueryExtraPredicateProvider,
-                                          SmartPredicateAnonymousExpressionBuilderProvider smartPredicateAnonymousExpressionBuilderProvider) {
+                                          SmartPredicateAnonymousExpressionBuilderProvider smartPredicateAnonymousExpressionBuilderProvider,
+                                          SaveEntitySetPrimaryKeyGenerator saveEntitySetPrimaryKeyGenerator) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -207,6 +210,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.jdbcSQLExecutor = jdbcSQLExecutor;
         this.subQueryExtraPredicateProvider = subQueryExtraPredicateProvider;
         this.smartPredicateAnonymousExpressionBuilderProvider = smartPredicateAnonymousExpressionBuilderProvider;
+        this.saveEntitySetPrimaryKeyGenerator = saveEntitySetPrimaryKeyGenerator;
     }
 
     @Override
@@ -452,5 +456,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public SmartPredicateAnonymousExpressionBuilderProvider getSmartPredicateAnonymousExpressionBuilderProvider() {
         return smartPredicateAnonymousExpressionBuilderProvider;
+    }
+
+    @Override
+    public SaveEntitySetPrimaryKeyGenerator getSaveEntitySetPrimaryKeyGenerator() {
+        return saveEntitySetPrimaryKeyGenerator;
     }
 }
