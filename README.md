@@ -2,6 +2,8 @@
   <img height="340" src="./imgs/logo.png">
 </p>
 
+# English | [中文](https://github.com/dromara/easy-query/blob/main/README-zh.md)
+
 
 <p align="center">
     <a target="_blank" href="https://central.sonatype.com/search?q=easy-query">

@@ -2,6 +2,7 @@
   <img height="340" src="./imgs/logo.png">
 </p>
 
+# [English](https://github.com/dromara/easy-query/blob/main/README.md) | 中文
 
 <p align="center">
     <a target="_blank" href="https://central.sonatype.com/search?q=easy-query">
