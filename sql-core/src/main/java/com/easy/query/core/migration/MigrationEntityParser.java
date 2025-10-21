@@ -59,7 +59,7 @@ public interface MigrationEntityParser {
      * @param columnMetadata
      * @return
      */
-    String getColumnRenameFrom(EntityMigrationMetadata entityMigrationMetadata,ColumnMetadata columnMetadata);
+    String getColumnOldName(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata);
 
     @NotNull
     List<TableIndexResult> getTableIndexes(EntityMigrationMetadata entityMigrationMetadata);

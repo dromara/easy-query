@@ -166,7 +166,7 @@ public @interface Column {
      * 原始列名
      * @return
      */
-    String renameFrom() default "";
+    String oldName() default "";
 
     /**
      * 表示字段的整体长度

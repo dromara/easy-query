@@ -14,6 +14,6 @@ import lombok.Data;
 @Data
 @Table(value = "t_topic")
 public class NewTopic3 {
-    @Column(renameFrom = "title",dbType = "varchar(200)")
+    @Column(oldName = "title",dbType = "varchar(200)")
     private String abc;
 }

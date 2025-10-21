@@ -11,8 +11,6 @@ import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.NavigateMetadata;
-import com.easy.query.core.migration.data.ColumnMigrationData;
-import com.easy.query.core.migration.data.TableMigrationData;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -174,13 +172,13 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
     }
 
     @Override
-    public String getColumnRenameFrom(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
+    public String getColumnOldName(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
         Field declaredField = entityMigrationMetadata.getFieldByColumnMetadata(columnMetadata);
         Column annotation = declaredField.getAnnotation(Column.class);
         if (annotation != null) {
-            String renameFrom = annotation.renameFrom();
-            if (EasyStringUtil.isNotBlank(renameFrom)) {
-                return renameFrom;
+            String oldName = annotation.oldName();
+            if (EasyStringUtil.isNotBlank(oldName)) {
+                return oldName;
             }
         }
         return null;

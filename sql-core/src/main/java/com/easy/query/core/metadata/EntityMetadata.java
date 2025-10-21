@@ -215,7 +215,7 @@ public class EntityMetadata {
         if (table != null) {
             this.tableName = EasyStringUtil.defaultIfBank(nameConversion.annotationCovert(entityClass, table.value(), true), nameConversion.convert(EasyClassUtil.getSimpleName(entityClass)));
             this.oldTableName = EasyStringUtil.defaultIfBank(nameConversion.annotationCovert(entityClass, table.
-                    renameFrom(), true), nameConversion.convert(EasyClassUtil.getSimpleName(entityClass)));
+                    oldName(), true), nameConversion.convert(EasyClassUtil.getSimpleName(entityClass)));
             if (easyQueryOption.isSaveComment()) {
                 this.comment = table.comment();
             }

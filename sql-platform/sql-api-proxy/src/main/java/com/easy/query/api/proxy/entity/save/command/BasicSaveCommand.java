@@ -44,6 +44,7 @@ public class BasicSaveCommand implements SaveCommand {
     @Override
     public void execute(boolean batch) {
         List<SavableContext> savableContexts = this.saveCommandContext.getSavableContexts();
+        boolean useLogicDelete = !saveBehavior.hasBehavior(SaveBehaviorEnum.IGNORE_LOGIC_DELETE);
 
         for (int i = savableContexts.size() - 1; i >= 0; i--) {
             SavableContext savableContext = savableContexts.get(i);
@@ -53,13 +54,13 @@ public class BasicSaveCommand implements SaveCommand {
                     kv.getValue().executeBefore(kv.getKey().getEntity());
                     return kv.getKey().getEntity();
                 });
-                easyQueryClient.deletable(deleteItems).batch(batch).allowDeleteStatement(true).executeRows();
+                easyQueryClient.deletable(deleteItems).batch(batch).useLogicDelete(useLogicDelete).allowDeleteStatement(true).executeRows();
                 if (EasyCollectionUtil.isNotEmpty(saveNode.getDeleteBys())) {
                     NavigateMetadata navigateMetadata = saveNodeEntry.getKey();
                     if (navigateMetadata.getCascade() == CascadeTypeEnum.DELETE) {
                         String[] selfMappingProperties = navigateMetadata.getSelfMappingProperties();
                         String[] targetMappingProperties = navigateMetadata.getTargetMappingProperties();
-                        easyQueryClient.deletable(saveNode.getDeleteBys()).batch(batch).allowDeleteStatement(true).whereColumns(col -> {
+                        easyQueryClient.deletable(saveNode.getDeleteBys()).batch(batch).useLogicDelete(useLogicDelete).allowDeleteStatement(true).whereColumns(col -> {
                             for (String selfMappingProperty : selfMappingProperties) {
                                 col.column(selfMappingProperty);
                             }
@@ -70,7 +71,7 @@ public class BasicSaveCommand implements SaveCommand {
                     } else if (navigateMetadata.getCascade() == CascadeTypeEnum.AUTO || navigateMetadata.getCascade() == CascadeTypeEnum.SET_NULL) {
                         String[] selfMappingProperties = navigateMetadata.getSelfMappingProperties();
                         String[] targetMappingProperties = navigateMetadata.getTargetMappingProperties();
-                        easyQueryClient.updatable(saveNode.getDeleteBys()).batch(batch)
+                        easyQueryClient.updatable(saveNode.getDeleteBys()).batch(batch).useLogicDelete(useLogicDelete)
                                 .setColumns(col -> {
                                     for (String selfMappingProperty : selfMappingProperties) {
                                         //noinspection EasyQuerySetColumns
@@ -94,13 +95,13 @@ public class BasicSaveCommand implements SaveCommand {
         }
         if (deleteAll) {
             if (!saveBehavior.hasBehavior(SaveBehaviorEnum.ROOT_IGNORE)) {
-                easyQueryClient.deletable(updates).allowDeleteStatement(true).batch(batch).executeRows();
+                easyQueryClient.deletable(updates).allowDeleteStatement(true).useLogicDelete(useLogicDelete).batch(batch).executeRows();
             }
         } else {
             if (!saveBehavior.hasBehavior(SaveBehaviorEnum.ROOT_IGNORE)) {
                 easyQueryClient.insertable(inserts).batch(batch).executeRows(insertFillAutoIncrement(entityMetadata));
                 if (!saveBehavior.hasBehavior(SaveBehaviorEnum.ROOT_UPDATE_IGNORE)) {
-                    easyQueryClient.updatable(updates).batch(batch).executeRows();
+                    easyQueryClient.updatable(updates).batch(batch).useLogicDelete(useLogicDelete).executeRows();
                 }
             }
         }
@@ -118,12 +119,12 @@ public class BasicSaveCommand implements SaveCommand {
                     kv.getValue().executeBefore(kv.getKey().getEntity());
                     return kv.getKey().getEntity();
                 });
-                easyQueryClient.updatable(setNullItems).batch(batch).executeRows();
+                easyQueryClient.updatable(setNullItems).batch(batch).useLogicDelete(useLogicDelete).executeRows();
                 List<Object> updateItems = EasyCollectionUtil.mapFilterSelect(saveNode.getEntityItems(), kv -> kv.getValue().getType() == SaveNodeTypeEnum.UPDATE || kv.getValue().getType() == SaveNodeTypeEnum.CHANGE, kv -> {
                     kv.getValue().executeBefore(kv.getKey().getEntity());
                     return kv.getKey().getEntity();
                 });
-                easyQueryClient.updatable(updateItems).batch(batch).executeRows();
+                easyQueryClient.updatable(updateItems).batch(batch).useLogicDelete(useLogicDelete).executeRows();
             }
         }
     }

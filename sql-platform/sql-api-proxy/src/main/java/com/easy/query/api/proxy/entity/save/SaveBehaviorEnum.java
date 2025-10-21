@@ -16,7 +16,9 @@ public enum SaveBehaviorEnum {
     //忽略NULL的值对象
     IGNORE_NULL(1<<3),
     //忽略空对象
-    IGNORE_EMPTY(1<<4);
+    IGNORE_EMPTY(1<<4),
+    //忽略逻辑删除
+    IGNORE_LOGIC_DELETE(1<<5);
     private final int code;
 
     SaveBehaviorEnum(int code) {

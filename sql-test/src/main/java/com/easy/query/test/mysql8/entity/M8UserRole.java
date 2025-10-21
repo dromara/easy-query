@@ -21,8 +21,8 @@ import lombok.experimental.FieldNameConstants;
 public class M8UserRole implements ProxyEntityAvailable<M8UserRole , M8UserRoleProxy> {
     @Column(primaryKey = true)
     private String id;
-    @Column(renameFrom = "uid")
+    @Column(oldName = "uid")
     private String userId;
-    @Column(renameFrom = "rid")
+    @Column(oldName = "rid")
     private String roleId;
 }

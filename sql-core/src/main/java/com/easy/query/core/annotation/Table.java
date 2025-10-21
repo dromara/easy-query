@@ -49,8 +49,12 @@ public @interface Table {
      * 旧表名
      * @return
      */
-    String renameFrom() default "";
+    String oldName() default "";
 
+    /**
+     * 表注释
+     * @return
+     */
     String comment() default "";
 
     /**

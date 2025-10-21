@@ -1,32 +1,20 @@
 package com.easy.query.core.migration;
 
-import com.easy.query.core.configuration.QueryConfiguration;
-import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
-import com.easy.query.core.migration.commands.DefaultMigrationCommand;
 import com.easy.query.core.migration.data.ColumnMigrationData;
 import com.easy.query.core.migration.data.ForeignKeyMigrationData;
 import com.easy.query.core.migration.data.IndexMigrationData;
 import com.easy.query.core.migration.data.TableMigrationData;
-import com.easy.query.core.util.EasyClassUtil;
-import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyStringUtil;
-import com.easy.query.core.util.EasyToSQLUtil;
 
-import javax.sql.DataSource;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * create time 2025/1/11 14:29
@@ -194,8 +182,8 @@ public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
             boolean nullable = databaseMigrationProvider.getMigrationEntityParser().isNullable(entityMigrationMetadata, column);
             columnMigrationData.setNotNull(!nullable);
             columnMigrationData.setOldColumnName(column.getFieldName());
-            String columnRenameFrom = databaseMigrationProvider.getMigrationEntityParser().getColumnRenameFrom(entityMigrationMetadata, column);
-            columnMigrationData.setOldColumnName(columnRenameFrom);
+            String columnOldName = databaseMigrationProvider.getMigrationEntityParser().getColumnOldName(entityMigrationMetadata, column);
+            columnMigrationData.setOldColumnName(columnOldName);
             columns.add(columnMigrationData);
 
         }

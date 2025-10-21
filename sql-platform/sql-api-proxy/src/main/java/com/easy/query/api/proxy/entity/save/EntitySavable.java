@@ -25,6 +25,7 @@ public interface EntitySavable<TProxy extends ProxyEntity<TProxy, T>, T> extends
 
     /**
      * 忽略根节点的保存
+     *
      * @return
      */
     default EntitySavable<TProxy, T> ignoreRoot() {
@@ -42,5 +43,29 @@ public interface EntitySavable<TProxy extends ProxyEntity<TProxy, T>, T> extends
      * @return
      */
     EntitySavable<TProxy, T> removeRoot(boolean remove);
+
+    /**
+     * 禁用逻辑删除
+     *
+     * @return
+     */
+    default EntitySavable<TProxy, T> disableLogicDelete() {
+        return useLogicDelete(false);
+    }
+
+    /**
+     * 启用逻辑删除
+     * @param use 是否启用
+     * @return
+     */
+    default EntitySavable<TProxy, T> useLogicDelete(boolean use) {
+        return configure(s -> {
+            if (use) {
+                s.getSaveBehavior().remove(SaveBehaviorEnum.IGNORE_LOGIC_DELETE);
+            } else {
+                s.getSaveBehavior().add(SaveBehaviorEnum.IGNORE_LOGIC_DELETE);
+            }
+        });
+    }
 
 }

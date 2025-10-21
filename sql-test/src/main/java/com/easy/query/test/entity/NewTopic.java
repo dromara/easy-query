@@ -11,7 +11,7 @@ import lombok.Data;
  */
 
 @Data
-@Table(value = "t_topic2", renameFrom = "t_topic")
+@Table(value = "t_topic2", oldName = "t_topic")
 public class NewTopic {
     private String abc;
 }
