@@ -2,8 +2,10 @@ package com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl;
 
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.JdbcShardingStreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.ShardingStreamResultSet;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
@@ -37,6 +39,11 @@ public final class EasyShardingStreamResultSet implements ShardingStreamResultSe
         this.preparedStatement = preparedStatement;
         this.hasElement = hasElement;
         skipFirst=true;
+    }
+
+    @Override
+    public ResultSet getResultSet() {
+        throw new EasyQueryInvalidOperationException("this Stream:["+ EasyClassUtil.getSimpleName(this.getClass()) +"] getResultSet not support");
     }
 
     @Override

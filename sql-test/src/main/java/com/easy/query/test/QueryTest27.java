@@ -9,6 +9,7 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.EntityValueState;
 import com.easy.query.core.basic.extension.track.TrackManager;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
@@ -31,7 +32,9 @@ import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.sql.ResultSet;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -672,7 +675,7 @@ public class QueryTest27 extends BaseTest {
 //    }
 
     @Test
-    public void autoMergeMany2Many1(){
+    public void autoMergeMany2Many1() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         try {
@@ -680,9 +683,9 @@ public class QueryTest27 extends BaseTest {
             List<Station> list = easyEntityQuery.queryable(Station.class)
                     .where(s -> {
                         s.stationId().eq("123");
-                        s.operators().any(x->x.tenantOperatorId().eq("1234"));
+                        s.operators().any(x -> x.tenantOperatorId().eq("1234"));
                     }).toList();
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -690,23 +693,26 @@ public class QueryTest27 extends BaseTest {
         Assert.assertEquals("1(Integer),1234(String),123(String),123(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void autoMergeMany2Many2(){
+    public void autoMergeMany2Many2() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         try {
 
             List<Station> list = easyEntityQuery.queryable(Station.class)
                     .where(s -> {
-                        s.operators().any(x->x.tenantOperatorId().eq("1234"));
+                        s.operators().any(x -> x.tenantOperatorId().eq("1234"));
                     }).toList();
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`station_id`,t.`station_name` FROM `t_station` t LEFT JOIN (SELECT t2.`station_id` AS `station_id`,(COUNT(?) > 0) AS `__any2__` FROM `t_tenant_operator` t1 INNER JOIN `t_station_tenant` t2 ON t1.`tenant_operator_id` = t2.`tenant_id` WHERE t1.`tenant_operator_id` = ? GROUP BY t2.`station_id`) t4 ON t4.`station_id` = t.`station_id` WHERE IFNULL(t4.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),1234(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+
     }
+
 
 }

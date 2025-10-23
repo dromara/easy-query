@@ -24,7 +24,8 @@ public enum ExecuteMethodEnum {
     DELETE(1<<14),
     StreamResult(1<<15),
     SINGLE(1<<16),
-    FIND(1<<17);
+    FIND(1<<17),
+    RESULT_SET(1<<18);
     private final int code;
 
     ExecuteMethodEnum(int code){

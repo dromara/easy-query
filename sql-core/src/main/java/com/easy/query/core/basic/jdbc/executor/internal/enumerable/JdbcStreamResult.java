@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 
+import com.easy.query.core.basic.api.select.ResultSetContext;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.internal.command.JdbcCommand;
 import com.easy.query.core.basic.jdbc.executor.internal.result.QueryExecuteResult;

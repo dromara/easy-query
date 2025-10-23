@@ -1,17 +1,20 @@
 package com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl;
 
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.ShardingStreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.OrderStreamMergeResultSet;
+import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
+import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.SQLXML;
@@ -55,6 +58,11 @@ private static final Log log= LogFactory.getLog(EasyMultiOrderStreamMergeResultS
             }
         }
         currentStreamResult= queue.isEmpty()? EasyCollectionUtil.firstOrNull(orderStreamMergeResultSets) : queue.peek();
+    }
+
+    @Override
+    public ResultSet getResultSet() {
+        throw new EasyQueryInvalidOperationException("this Stream:["+ EasyClassUtil.getSimpleName(this.getClass()) +"] getResultSet not support");
     }
 
     @Override

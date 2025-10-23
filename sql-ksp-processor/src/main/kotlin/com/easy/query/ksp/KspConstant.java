@@ -57,17 +57,20 @@ public class KspConstant {
             "}";
 
 
-
     public static final String FIELD_TEMPLATE = "\n" +
             "    @{comment}\n" +
             "    fun @{proxyProperty}(): @{SQLColumn}<@{entityClassProxy}>{\n" +
             "        return @{sqlColumnMethod}(\"@{property}\")\n" +
-            "    }";
+            "    }\n" +
+            "    @{comment}\n" +
+            "    val @{proxyProperty}: @{SQLColumn}<@{entityClassProxy}> get() = @{proxyProperty}()";
     public static final String ANY_FIELD_TEMPLATE = "\n" +
             "    @{comment}\n" +
             "    fun @{proxyProperty}(): @{SQLColumn}<@{entityClassProxy},@{propertyType}>{\n" +
             "        return @{sqlColumnMethod}(\"@{property}\",@{propertyTypeClass})\n" +
-            "    }";
+            "    }\n" +
+            "    @{comment}\n" +
+            "    val @{proxyProperty}: @{SQLColumn}<@{entityClassProxy},@{propertyType}> get() = @{proxyProperty}()";
 
     public static final String FIELD_NAVIGATE_TEMPLATE = "\n" +
             "    @{comment}\n" +
@@ -99,21 +102,21 @@ public class KspConstant {
 
     public static final String PROXY_SELECTOR_TEMPLATE =
             "\n" +
-            "    /**\n" +
-            "    * 数据库列的简单获取\n" +
-            "    * @return\n" +
-            "    */\n"+
-            "    val FETCHER = @{selectorName}(this,null,SQLSelectAsExpression.empty)\n"+
-            "\n" +
-            "    class @{selectorName}(proxy: @{entityClassProxy}, prev: @{selectorName}?, sqlSelectAsExpression: SQLSelectAsExpression) : AbstractFetcher<@{entityClassProxy},@{entityClass}, @{selectorName}>(proxy, prev, sqlSelectAsExpression) {\n" +
-            "\n" +
-            "        @{fieldSelectorContent}" +
-            "\n" +
-            "        override fun createFetcher(cp: @{entityClassProxy}, prev: AbstractFetcher<@{entityClassProxy}, @{entityClass}, @{selectorName}>, sqlSelectExpression: SQLSelectAsExpression): @{selectorName} {\n" +
-            "            return @{selectorName}(cp, this, sqlSelectExpression)\n" +
-            "        }"+
-            "\n" +
-            "    }";
+                    "    /**\n" +
+                    "    * 数据库列的简单获取\n" +
+                    "    * @return\n" +
+                    "    */\n" +
+                    "    val FETCHER = @{selectorName}(this,null,SQLSelectAsExpression.empty)\n" +
+                    "\n" +
+                    "    class @{selectorName}(proxy: @{entityClassProxy}, prev: @{selectorName}?, sqlSelectAsExpression: SQLSelectAsExpression) : AbstractFetcher<@{entityClassProxy},@{entityClass}, @{selectorName}>(proxy, prev, sqlSelectAsExpression) {\n" +
+                    "\n" +
+                    "        @{fieldSelectorContent}" +
+                    "\n" +
+                    "        override fun createFetcher(cp: @{entityClassProxy}, prev: AbstractFetcher<@{entityClassProxy}, @{entityClass}, @{selectorName}>, sqlSelectExpression: SQLSelectAsExpression): @{selectorName} {\n" +
+                    "            return @{selectorName}(cp, this, sqlSelectExpression)\n" +
+                    "        }" +
+                    "\n" +
+                    "    }";
     public static final String FIELD_SELECTOR_PROPERTY_TEMPLATE = "\n" +
             "        @{comment}\n" +
             "        fun @{proxyProperty}(): @{selectorName} {\n" +
@@ -124,18 +127,14 @@ public class KspConstant {
             "        const val @{property} = \"@{property}\"\n";
 
 
-
-
-
-
-    public static final ClassProxyGenerator PROXY_TEMPLATE_GENERATOR =new ClassProxyGenerator(PROXY_TEMPLATE);
-    public static final ClassProxyGenerator FIELD_VALUE_OBJECT_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_VALUE_OBJECT_TEMPLATE);
-    public static final ClassProxyGenerator FIELD_NAVIGATES_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_NAVIGATES_TEMPLATE);
-    public static final ClassProxyGenerator FIELD_NAVIGATE_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_NAVIGATE_TEMPLATE);
-    public static final ClassProxyGenerator ANY_FIELD_TEMPLATE_GENERATOR=new ClassProxyGenerator(ANY_FIELD_TEMPLATE);
-    public static final ClassProxyGenerator FIELD_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_TEMPLATE);
-    public static final ClassProxyGenerator PROXY_SELECTOR_TEMPLATE_GENERATOR=new ClassProxyGenerator(PROXY_SELECTOR_TEMPLATE);
-    public static final ClassProxyGenerator FIELD_SELECTOR_PROPERTY_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_SELECTOR_PROPERTY_TEMPLATE);
-    public static final ClassProxyGenerator FIELD_VALUE_OBJECT_CLASS_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_VALUE_OBJECT_CLASS_TEMPLATE);
-    public static final ClassProxyGenerator FIELD_STATIC_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_STATIC_TEMPLATE);
+    public static final ClassProxyGenerator PROXY_TEMPLATE_GENERATOR = new ClassProxyGenerator(PROXY_TEMPLATE);
+    public static final ClassProxyGenerator FIELD_VALUE_OBJECT_TEMPLATE_GENERATOR = new ClassProxyGenerator(FIELD_VALUE_OBJECT_TEMPLATE);
+    public static final ClassProxyGenerator FIELD_NAVIGATES_TEMPLATE_GENERATOR = new ClassProxyGenerator(FIELD_NAVIGATES_TEMPLATE);
+    public static final ClassProxyGenerator FIELD_NAVIGATE_TEMPLATE_GENERATOR = new ClassProxyGenerator(FIELD_NAVIGATE_TEMPLATE);
+    public static final ClassProxyGenerator ANY_FIELD_TEMPLATE_GENERATOR = new ClassProxyGenerator(ANY_FIELD_TEMPLATE);
+    public static final ClassProxyGenerator FIELD_TEMPLATE_GENERATOR = new ClassProxyGenerator(FIELD_TEMPLATE);
+    public static final ClassProxyGenerator PROXY_SELECTOR_TEMPLATE_GENERATOR = new ClassProxyGenerator(PROXY_SELECTOR_TEMPLATE);
+    public static final ClassProxyGenerator FIELD_SELECTOR_PROPERTY_TEMPLATE_GENERATOR = new ClassProxyGenerator(FIELD_SELECTOR_PROPERTY_TEMPLATE);
+    public static final ClassProxyGenerator FIELD_VALUE_OBJECT_CLASS_TEMPLATE_GENERATOR = new ClassProxyGenerator(FIELD_VALUE_OBJECT_CLASS_TEMPLATE);
+    public static final ClassProxyGenerator FIELD_STATIC_TEMPLATE_GENERATOR = new ClassProxyGenerator(FIELD_STATIC_TEMPLATE);
 }

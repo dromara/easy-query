@@ -1,13 +1,16 @@
 package com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl;
 
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.sharding.context.StreamMergeContext;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.ShardingStreamResultSet;
+import com.easy.query.core.util.EasyClassUtil;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
+import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.SQLXML;
@@ -42,6 +45,12 @@ public class EasyPaginationStreamMergeResultSet implements ShardingStreamResultS
         this.realRows=0;
         this.streamResultSet =streamResultSet;
     }
+
+    @Override
+    public ResultSet getResultSet() {
+        throw new EasyQueryInvalidOperationException("this Stream:["+ EasyClassUtil.getSimpleName(this.getClass()) +"] getResultSet not support");
+    }
+
     @Override
     public boolean hasElement() {
         return streamResultSet.hasElement();

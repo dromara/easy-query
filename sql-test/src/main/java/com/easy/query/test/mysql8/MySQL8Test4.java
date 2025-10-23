@@ -1,10 +1,13 @@
 package com.easy.query.test.mysql8;
 
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.proxy.core.draft.Draft6;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.m2m.Station;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysBankCardProxy;
@@ -14,7 +17,9 @@ import com.easy.query.test.mysql8.vo.proxy.UserDTO2Proxy;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.sql.ResultSet;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -113,5 +118,46 @@ public class MySQL8Test4 extends BaseTest {
         Assert.assertEquals("SELECT t.`id` AS `id`,t.`name` AS `name`,t5.`type` AS `third_card_type`,t5.`code` AS `third_card_code`,t6.`name` AS `third_card_bank_name` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE NULL END)) AS `__count2__`,(COUNT((CASE WHEN t1.`type` = ? THEN ? ELSE NULL END)) <= 0) AS `__none3__` FROM `t_bank_card` t1 GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` LEFT JOIN (SELECT t3.`id`,t3.`uid`,t3.`code`,t3.`type`,t3.`bank_id`,t3.`open_time`,(ROW_NUMBER() OVER (PARTITION BY t3.`uid` ORDER BY t3.`open_time` ASC)) AS `__row__` FROM `t_bank_card` t3) t5 ON (t5.`uid` = t.`id` AND t5.`__row__` = ?) INNER JOIN `t_bank` t6 ON t6.`id` = t5.`bank_id` WHERE IFNULL(t2.`__count2__`,0) > ? AND IFNULL(t2.`__none3__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("储蓄卡(String),1(Integer),信用卡(String),1(Integer),4(Integer),4(Long),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
+    }
+
+
+    @Test
+    public void testToResultSet() {
+        {
+            List<SysUser> list = easyEntityQuery.queryable(SysUser.class).toList();
+            List<BlogEntity> resultSet = easyEntityQuery.queryable(SysUser.class)
+                    .where(s -> {
+                        s.id().isNotNull();
+                    }).toResultSet(context -> {
+                        ArrayList<BlogEntity> blogEntities = new ArrayList<>();
+                        StreamResultSet streamResultSet = context.getStreamResultSet();
+                        ResultSet resultSetResultSet = streamResultSet.getResultSet();
+                        while (resultSetResultSet.next()) {
+                            BlogEntity blogEntity = new BlogEntity();
+                            blogEntity.setId(resultSetResultSet.getString(1));
+                            blogEntities.add(blogEntity);
+                        }
+                        return blogEntities;
+                    });
+            System.out.println(resultSet);
+        }
+        {
+
+            List<BlogEntity> resultSet = easyEntityQuery.queryable(SysUser.class)
+                    .where(s -> {
+                        s.id().isNotNull();
+                    }).toResultSet(context -> {
+                        ArrayList<BlogEntity> blogEntities = new ArrayList<>();
+                        StreamResultSet streamResultSet = context.getStreamResultSet();
+                        ResultSet resultSetResultSet = streamResultSet.getResultSet();
+                        while (resultSetResultSet.next()) {
+                            BlogEntity blogEntity = new BlogEntity();
+                            blogEntity.setId(resultSetResultSet.getString(1));
+                            blogEntities.add(blogEntity);
+                        }
+                        return blogEntities;
+                    });
+            System.out.println(resultSet);
+        }
     }
 }

@@ -35,6 +35,11 @@ public final class EasyStreamResultSet implements StreamResultSet {
     }
 
     @Override
+    public ResultSet getResultSet() {
+        return resultSet;
+    }
+
+    @Override
     public boolean hasElement() {
         throw new UnsupportedOperationException();
     }

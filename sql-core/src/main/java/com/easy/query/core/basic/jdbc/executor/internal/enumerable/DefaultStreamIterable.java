@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.jdbc.executor.internal.enumerable;
 
+import com.easy.query.core.basic.api.select.ResultSetContext;
 import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.ResultMetadata;
@@ -63,5 +64,10 @@ public class DefaultStreamIterable<T> implements StreamIterable<T> {
                 return new DefaultBeanStreamIterator<>(context, streamResultSet, resultMetadata);
             }
         }
+    }
+
+    @Override
+    public ResultSetContext getResultSetContext() {
+        return new ResultSetContext(context, resultMetadata, streamResultSet);
     }
 }

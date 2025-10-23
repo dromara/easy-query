@@ -11,9 +11,11 @@ import com.easy.query.api.proxy.entity.select.join.join2.RightJoinExpressionJoin
 import com.easy.query.api.proxy.extension.tree.EntityTreeCTEConfigurer;
 import com.easy.query.api.proxy.extension.tree.EntityTreeCTEConfigurerImpl;
 import com.easy.query.api.proxy.util.EasyProxyUtil;
+import com.easy.query.core.basic.api.select.ResultSetContext;
 import com.easy.query.core.basic.api.select.executor.MethodQuery;
 import com.easy.query.core.common.Chunk;
 import com.easy.query.core.common.ValueHolder2;
+import com.easy.query.core.expression.lambda.SQLResultSetFunc;
 import com.easy.query.core.metadata.EndNavigateParams;
 import com.easy.query.core.proxy.core.FlatEntitySQLContext;
 import org.jetbrains.annotations.NotNull;
@@ -201,6 +203,11 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <TR> List<TR> toList(@NotNull Class<TR> resultClass, @NotNull EntityMetadata resultEntityMetadata) {
         return clientQueryable.toList(resultClass, resultEntityMetadata);
+    }
+
+    @Override
+    public <TR> TR toResultSet(SQLResultSetFunc<ResultSetContext, TR> produce) {
+        return clientQueryable.toResultSet(produce);
     }
 
     @NotNull

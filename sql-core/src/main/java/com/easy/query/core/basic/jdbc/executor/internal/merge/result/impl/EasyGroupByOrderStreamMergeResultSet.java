@@ -3,6 +3,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.merge.result.impl;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.aggregation.AggregationUnitFactory;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.segment.PropertyGroup;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.expression.func.AggregationType;
 import com.easy.query.core.expression.segment.FuncColumnSegment;
@@ -21,6 +22,7 @@ import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
+import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.SQLXML;
@@ -96,6 +98,11 @@ public class EasyGroupByOrderStreamMergeResultSet implements ShardingStreamResul
 
     private ResultSetMetaData getResultSetMetaData() throws SQLException {
         return currentStreamResult.getMetaData();
+    }
+
+    @Override
+    public ResultSet getResultSet() {
+        throw new EasyQueryInvalidOperationException("this Stream:["+ EasyClassUtil.getSimpleName(this.getClass()) +"] getResultSet not support");
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.api.select;
 
+import com.easy.query.core.basic.api.select.executor.ResultSetAble;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.basic.api.select.executor.Fillable;
@@ -40,7 +41,7 @@ import java.util.function.Supplier;
  *
  * @author xuejiaming
  */
-public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble<T>, Fillable<T>, RuntimeContextAvailable {
+public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble<T>, Fillable<T>, ResultSetAble, RuntimeContextAvailable {
 
     /**
      * 只clone表达式共享上下文

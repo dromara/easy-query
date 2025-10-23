@@ -15,6 +15,7 @@ import com.easy.query.core.basic.api.flat.provider.impl.MapOrderByImpl;
 import com.easy.query.core.basic.api.flat.provider.impl.MapSelectorImpl;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.basic.api.select.ResultSetContext;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.common.Chunk;
@@ -26,6 +27,7 @@ import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.lambda.SQLResultSetFunc;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
@@ -464,5 +466,10 @@ public class DefaultMapQueryable implements MapQueryable {
             throw new EasyQueryInvalidOperationException("Unable to find a Navigate property where children is a reference to itself:[" + EasyClassUtil.getSimpleName(this.queryClass()) + "].");
         }
         return toList();
+    }
+
+    @Override
+    public <T> T toResultSet(SQLResultSetFunc<ResultSetContext, T> produce) {
+        return this.queryable.toResultSet(produce);
     }
 }

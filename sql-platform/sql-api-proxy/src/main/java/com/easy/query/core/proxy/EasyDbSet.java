@@ -14,6 +14,7 @@ import com.easy.query.core.api.dynamic.sort.ObjectSort;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.basic.api.select.Query;
+import com.easy.query.core.basic.api.select.ResultSetContext;
 import com.easy.query.core.basic.api.select.executor.MethodQuery;
 import com.easy.query.core.basic.jdbc.executor.internal.enumerable.JdbcStreamResult;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
@@ -24,6 +25,7 @@ import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.lambda.SQLConsumer;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
+import com.easy.query.core.expression.lambda.SQLResultSetFunc;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEConfigurer;
 import com.easy.query.core.expression.segment.ColumnSegment;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -569,5 +571,10 @@ public class EasyDbSet<TProxy extends ProxyEntity<TProxy, T>, T> implements DbSe
     @Override
     public MethodQuery<T> forEach(Consumer<T> mapConfigure) {
         return baseEntityClient.queryable(tProxy).forEach(mapConfigure);
+    }
+
+    @Override
+    public <TResult> TResult toResultSet(SQLResultSetFunc<ResultSetContext, TResult> produce) {
+        return baseEntityClient.queryable(tProxy).toResultSet(produce);
     }
 }

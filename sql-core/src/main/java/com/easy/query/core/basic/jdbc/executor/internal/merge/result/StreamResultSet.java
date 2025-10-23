@@ -3,6 +3,7 @@ package com.easy.query.core.basic.jdbc.executor.internal.merge.result;
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Clob;
+import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.SQLXML;
@@ -14,6 +15,7 @@ import java.sql.SQLXML;
  * @author xuejiaming
  */
 public interface StreamResultSet extends AutoCloseable {
+    ResultSet getResultSet();
     boolean hasElement();
 
     boolean skipFirst();
