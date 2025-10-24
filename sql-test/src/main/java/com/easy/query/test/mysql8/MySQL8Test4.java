@@ -1,17 +1,24 @@
 package com.easy.query.test.mysql8;
 
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.core.proxy.columns.SQLManyQueryable;
+import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft6;
+import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.m2m.Station;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysBankCardProxy;
+import com.easy.query.test.mysql8.entity.bank.proxy.SysUserProxy;
 import com.easy.query.test.mysql8.entity.many.M8Province;
 import com.easy.query.test.mysql8.vo.UserDTO2;
 import com.easy.query.test.mysql8.vo.proxy.UserDTO2Proxy;
@@ -163,11 +170,11 @@ public class MySQL8Test4 extends BaseTest {
     }
 
     @Test
-    public void testSubQueryCountCompareNull1(){
+    public void testSubQueryCountCompareNull1() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        Long val=null;
+        Long val = null;
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .where(user -> {
                     user.bankCards().count().gt(val);
@@ -181,12 +188,13 @@ public class MySQL8Test4 extends BaseTest {
         Assert.assertEquals("null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testSubQueryCountCompareNull2(){
+    public void testSubQueryCountCompareNull2() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        Long val=null;
+        Long val = null;
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
                 .where(user -> {
@@ -201,12 +209,13 @@ public class MySQL8Test4 extends BaseTest {
 //        Assert.assertEquals("null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testTimeAfterNull1(){
+    public void testTimeAfterNull1() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        LocalDateTime val=null;
+        LocalDateTime val = null;
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .where(user -> {
                     user.createTime().isAfter(val);
@@ -220,12 +229,13 @@ public class MySQL8Test4 extends BaseTest {
         Assert.assertEquals("null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testTimeAfterNull2(){
+    public void testTimeAfterNull2() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        LocalDateTime val=null;
+        LocalDateTime val = null;
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
                 .where(user -> {
@@ -240,12 +250,13 @@ public class MySQL8Test4 extends BaseTest {
 //        Assert.assertEquals("null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testTimeBeforeNull1(){
+    public void testTimeBeforeNull1() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        LocalDateTime val=null;
+        LocalDateTime val = null;
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .where(user -> {
                     user.createTime().isBefore(val);
@@ -259,12 +270,13 @@ public class MySQL8Test4 extends BaseTest {
         Assert.assertEquals("null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testTimeBeforeNull2(){
+    public void testTimeBeforeNull2() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        LocalDateTime val=null;
+        LocalDateTime val = null;
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
                 .where(user -> {
@@ -278,5 +290,41 @@ public class MySQL8Test4 extends BaseTest {
         Assert.assertEquals("SELECT `id`,`name`,`phone`,`age`,`create_time` FROM `t_sys_user`", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //        Assert.assertEquals("null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
+    }
+
+    @Test
+    public void navigateMany() {
+
+        EntityQueryable<Draft2Proxy<String, Integer>, Draft2<String, Integer>> userQuery = easyEntityQuery.queryable(SysUser.class)
+                .where(user -> {
+                    user.name().contains("小明");
+                })
+                .select(user -> Select.DRAFT.of(
+                        user.name(),
+                        user.age()
+                ));
+
+        List<SysBankCard> list = easyEntityQuery.queryable(SysBankCard.class)
+                .manyJoin(userQuery, (a,b)->{
+                    a.uid().eq(b.value1());
+                })
+                .where((bank_card, draft2List) -> {
+                    draft2List.where(d -> d.value2().gt(18)).count();
+                })
+                .toList();
+
+
+        List<Draft2<String, LocalDateTime>> list1 = easyEntityQuery.queryable(SysUser.class)
+                .manyJoin(SysBankCard.class, (a,b)->{
+                    a.id().eq(b.uid());
+                })
+                .where((user, bank_cards) -> {
+                    bank_cards.where(bank_card -> {
+                        bank_card.id().eq("1");
+                    }).any();
+                }).select((user, bank_cards) -> Select.DRAFT.of(
+                        user.name(),
+                        bank_cards.max(bank_card -> bank_card.openTime())
+                )).toList();
     }
 }

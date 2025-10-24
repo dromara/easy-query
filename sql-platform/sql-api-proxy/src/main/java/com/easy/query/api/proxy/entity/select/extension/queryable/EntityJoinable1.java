@@ -5,6 +5,7 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.core.proxy.columns.SQLManyQueryable;
 
 /**
  * create time 2023/8/17 11:19
@@ -206,6 +207,11 @@ public interface EntityJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
      * @return 返回可查询的对象
      */
     <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLActionExpression2<T1Proxy, T2Proxy> onExpression);
+
+    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, SQLManyQueryable<T1Proxy,T2Proxy,T2>, T2> manyJoin(Class<T2> navigateClass, String selfProperty,String targetProperty);
+    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, SQLManyQueryable<T1Proxy,T2Proxy,T2>, T2> manyJoin(Class<T2> navigateClass, SQLActionExpression2<T1Proxy, T2Proxy> onExpression);
+    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, SQLManyQueryable<T1Proxy,T2Proxy,T2>, T2> manyJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLActionExpression2<T1Proxy, T2Proxy> onExpression);
+    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, SQLManyQueryable<T1Proxy,T2Proxy,T2>, T2> manyJoin(EntityQueryable<T2Proxy, T2> joinQueryable, String selfProperty,String targetProperty);
 
 
 }
