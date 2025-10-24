@@ -626,13 +626,13 @@ public class MySQL8Test2 extends BaseTest {
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
                 .where(bank -> {
                     bank.name().eq("");
-                    bank.expression().exists(() -> {
-                        return bank.expression().subQueryable(SysBankCard.class)
-                                .where(bank_card -> {
-                                    bank_card.bankId().eq(bank.id());
-                                    bank_card.type().eq("");
-                                });
-                    });
+                    bank.expression().exists(
+                            bank.expression().subQueryable(SysBankCard.class)
+                                    .where(bank_card -> {
+                                        bank_card.bankId().eq(bank.id());
+                                        bank_card.type().eq("");
+                                    })
+                    );
                 }).toList();
 
         listenerContextManager.clear();
@@ -653,13 +653,13 @@ public class MySQL8Test2 extends BaseTest {
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
                 .where(bank -> {
                     bank.name().eq("");
-                    bank.expression().exists(() -> {
-                        return bank.expression().subQueryable(SysBankCard.class)
-                                .where(bank_card -> {
-                                    bank_card.bankId().eq(bank.id());
-                                    bank_card.type().eq("");
-                                });
-                    });
+                    bank.expression().exists(
+                            bank.expression().subQueryable(SysBankCard.class)
+                                    .where(bank_card -> {
+                                        bank_card.bankId().eq(bank.id());
+                                        bank_card.type().eq("");
+                                    })
+                    );
                 }).toList();
 
         listenerContextManager.clear();

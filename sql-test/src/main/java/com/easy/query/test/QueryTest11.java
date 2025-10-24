@@ -68,7 +68,7 @@ public class QueryTest11 extends BaseTest {
                 .where(o -> o.id().eq("1"));
         List<Topic> list2 = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
-                    o.expression().exists(() -> where.where(q -> q.id().eq(o.id())));
+                    o.expression().exists(where.where(q -> q.id().eq(o.id())));
                 }).toList();
 
         EntityQueryable<StringProxy, String> idQuery = easyEntityQuery.queryable(BlogEntity.class)
@@ -167,10 +167,10 @@ public class QueryTest11 extends BaseTest {
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
-                        o.expression().exists(() -> {
-                            return easyEntityQuery.queryable(Topic.class)
-                                    .where(x -> x.id().eq(o.id()));
-                        });
+                        o.expression().exists(
+                                easyEntityQuery.queryable(Topic.class)
+                                        .where(x -> x.id().eq(o.id()))
+                        );
                     })
                     .select(o -> new BlogEntityProxy().adapter(r -> {
                         PropTypeColumn<BigDecimal> integerPropTypeColumn = o.expression().sqlSegment("1").asAnyType(BigDecimal.class);
@@ -369,9 +369,9 @@ public class QueryTest11 extends BaseTest {
                 .where(o -> o.id().eq("1"));
 
         List<Topic> list = easyEntityQuery.queryable(Topic.class)
-                .where(o -> o.expression().exists(() -> {
-                    return subQueryable.where(q -> q.id().eq(o.id()));
-                })).toList();
+                .where(o -> o.expression().exists(
+                        subQueryable.where(q -> q.id().eq(o.id()))
+                )).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -390,9 +390,7 @@ public class QueryTest11 extends BaseTest {
                 .where(o -> o.id().eq("1"));
 
         List<Topic> list = easyEntityQuery.queryable(Topic.class)
-                .where(o -> o.expression().notExists(() -> {
-                    return subQueryable.where(q -> q.id().eq(o.id()));
-                })).toList();
+                .where(o -> o.expression().notExists(subQueryable.where(q -> q.id().eq(o.id())))).toList();
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -725,7 +723,9 @@ public class QueryTest11 extends BaseTest {
                 }).select(o -> Select.DRAFT.of(
                         o.id(),
                         o.url(),
-                        o.expression().subQuery(() -> easyEntityQuery.queryable(Topic.class).where(x -> x.id().eq(o.id())).selectCount())
+                        o.expression().subQueryColumn(
+                                easyEntityQuery.queryable(Topic.class).where(x -> x.id().eq(o.id())).selectCount()
+                        )
                 )).toList();
 
 

@@ -298,6 +298,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
                 child = new QueryPathTreeNode(fieldName);
                 child.setNavigateMetadata(navigateMetadata);
                 if (navigateMetadata != null) {
+                    //相当于toOne做join
                     if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToOne || navigateMetadata.getRelationType() == RelationTypeEnum.OneToOne) {
                         child.setEntityQueryExpressionBuilder(current.getEntityQueryExpressionBuilder());
                         EntityRelationPropertyProvider entityRelationToImplicitProvider = navigateMetadata.getEntityRelationPropertyProvider();
@@ -309,7 +310,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
                         child.setEntityQueryExpressionBuilder(current.getEntityQueryExpressionBuilder());
                         child.setFilter(current.getFilter());
                     } else {
-                        //创建新的表达式查询builder
+                        //创建新的表达式查询builder 做子查询
                         setSubQueryTreeNode(child, currentTable, fieldName, current.getEntityQueryExpressionBuilder(), navigateMetadata, tableIndex);
                     }
 

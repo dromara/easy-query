@@ -1,6 +1,5 @@
 package com.easy.query.test;
 
-import com.alibaba.fastjson2.JSON;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
@@ -912,9 +911,9 @@ public class ShardingTest extends ShardingBaseTest {
         Query<Topic> where = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.id().eq("123");
-                            o.expression().exists(()->{
-                                return topicShardingTimeQueryable.where(x -> x.id().eq(o.id()));
-                            });
+                            o.expression().exists(
+                                    topicShardingTimeQueryable.where(x -> x.id().eq(o.id()))
+                            );
                 });
         String sql = where.toSQL();
         //tosql是不会对表进行分片的展示
@@ -1026,9 +1025,9 @@ public class ShardingTest extends ShardingBaseTest {
                 .where(t -> t.title().isNotNull())
                 .select(TopicSubQueryBlog.class, t_topic -> Select.of(
                         t_topic.FETCHER.allFieldsExclude(t_topic.createTime()),
-                        t_topic.expression().subQuery(() -> {
-                            return queryable.where(x -> x.id().eq(t_topic.id())).selectColumn(t -> t.id().count());
-                        }).as(TopicSubQueryBlog::getBlogCount)
+                        t_topic.expression().subQueryColumn(
+                                queryable.where(x -> x.id().eq(t_topic.id())).selectColumn(t -> t.id().count())
+                        ).as(TopicSubQueryBlog::getBlogCount)
                 ));
         String sql = select.toSQL();
         System.out.println(sql);
@@ -1049,9 +1048,9 @@ public class ShardingTest extends ShardingBaseTest {
                 .where(t -> t.title().isNotNull())
                 .select(TopicSubQueryBlog.class, t_topic -> Select.of(
                         t_topic.FETCHER.allFieldsExclude(t_topic.createTime()),
-                        t_topic.expression().subQuery(() -> {
-                            return queryable.where(x -> x.stars().eq(t_topic.stars())).selectColumn(t -> t.id().count());
-                        }).as(TopicSubQueryBlog::getBlogCount)
+                        t_topic.expression().subQueryColumn(
+                                queryable.where(x -> x.stars().eq(t_topic.stars())).selectColumn(t -> t.id().count())
+                        ).as(TopicSubQueryBlog::getBlogCount)
                 ));
         String sql = select.toSQL();
         System.out.println(sql);

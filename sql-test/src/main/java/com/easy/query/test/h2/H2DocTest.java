@@ -1,6 +1,5 @@
 package com.easy.query.test.h2;
 
-import com.easy.query.api.proxy.base.LocalDateTimeProxy;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.proxy.sql.Select;
@@ -339,12 +338,12 @@ public class H2DocTest extends H2BaseTest {
                     })
                     .select(DocUserVO.class,user -> Select.of(
                             user.FETCHER.allFields(),
-                            user.expression().subQuery(()->{
-                                return easyEntityQuery.queryable(DocBankCard.class)
-                                        .where(bank_card -> {
-                                            bank_card.uid().eq(user.id());
-                                        }).selectCount();
-                            }).as(DocUserVO.Fields.cardCount)
+                            user.expression().subQueryColumn(
+                                    easyEntityQuery.queryable(DocBankCard.class)
+                                    .where(bank_card -> {
+                                        bank_card.uid().eq(user.id());
+                                    }).selectCount()
+                            ).as(DocUserVO.Fields.cardCount)
                     )).toList();
         } catch (Exception ex) {
         }

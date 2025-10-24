@@ -294,11 +294,11 @@ public class QueryTestRelationTest extends BaseTest {
         List<MySignUp> list = easyEntityQuery.queryable(MySignUp.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
                 .where(m -> {
-                    m.expression().exists(() -> {
-                        return easyEntityQuery.queryable(MySignUp.class).where(m1 -> {
-                            m1.comId().eq(m.comUser().comId());
-                        });
-                    });
+                    m.expression().exists(
+                            easyEntityQuery.queryable(MySignUp.class).where(m1 -> {
+                                m1.comId().eq(m.comUser().comId());
+                            })
+                    );
                     m.comId().eq("123");
                 }).toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());

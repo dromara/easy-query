@@ -480,10 +480,10 @@ public class MyTest2 extends BaseTest {
         List<Tuple4<String, String, LocalDateTime, String>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().like("123");
-                    o.expression().exists(() -> {
-                        return easyEntityQuery.queryable(BlogEntity.class)
-                                .where(x -> x.id().eq(o.id()));
-                    });
+                    o.expression().exists(
+                            easyEntityQuery.queryable(BlogEntity.class)
+                                    .where(x -> x.id().eq(o.id()))
+                    );
                     //创建时间和现在的相差天数现在小于0
                     o.createTime().duration(LocalDateTime.of(2021, 1, 1, 1, 1)).toDays().le(0L);
                 })
@@ -491,11 +491,9 @@ public class MyTest2 extends BaseTest {
                         o.id(),
                         o.title(),
                         o.createTime(),
-                        o.expression().subQuery(() -> {
-                            return easyEntityQuery.queryable(BlogEntity.class)
-                                    .where(x -> x.id().eq(o.id()))
-                                    .select(x -> new StringProxy(x.title()));
-                        })
+                        o.expression().subQueryColumn(easyEntityQuery.queryable(BlogEntity.class)
+                                .where(x -> x.id().eq(o.id()))
+                                .select(x -> new StringProxy(x.title())))
                 )).toList();
 
 
@@ -506,6 +504,7 @@ public class MyTest2 extends BaseTest {
         listenerContextManager.clear();
 
     }
+
     @Test
     public void testSelect1() {
 
@@ -678,6 +677,7 @@ public class MyTest2 extends BaseTest {
         Assert.assertEquals("2021-03-04T05:06(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testSelect6_2() {
 
@@ -707,6 +707,7 @@ public class MyTest2 extends BaseTest {
         Assert.assertEquals("2021-03-04T05:06(LocalDateTime)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testSelect6_3() {
 

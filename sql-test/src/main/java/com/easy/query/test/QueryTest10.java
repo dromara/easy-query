@@ -198,10 +198,10 @@ public class QueryTest10 extends BaseTest{
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.createTime().format("yyyy-MM-dd").likeMatchLeft("2023");
-                        o.expression().exists(() -> {
-                            return o.expression().subQueryable(Topic.class)
-                                    .where(x -> x.id().eq(o.id()));
-                        });
+                        o.expression().exists(
+                                o.expression().subQueryable(Topic.class)
+                                        .where(x -> x.id().eq(o.id()))
+                        );
                     })
                     .select(o -> new BlogEntityProxy().adapter(r->{
 
@@ -239,11 +239,11 @@ public class QueryTest10 extends BaseTest{
             List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                     .where(o -> {
                         o.id().in(tenantIds);
-                        o.expression().exists(() -> {
-                            return o.expression().subQueryable(Topic.class)
-                                    .where(x -> x.id().eq(o.id()))
-                                    .where(x -> x.id().in(roleIds));
-                        });
+                        o.expression().exists(
+                                o.expression().subQueryable(Topic.class)
+                                        .where(x -> x.id().eq(o.id()))
+                                        .where(x -> x.id().in(roleIds))
+                        );
                     })
                     .leftJoin(Topic.class, (t, t1) -> {
                         t.id().eq(t1.id());
@@ -276,11 +276,11 @@ public class QueryTest10 extends BaseTest{
                         o.id().in(tenantIds);
                         o.createTime().format("yyyy-MM-dd").likeMatchLeft("123");
                         o.createTime().format("yyyy-MM-dd").likeMatchRight("123");
-                        o.expression().exists(() -> {
-                            return o.expression().subQueryable(Topic.class)
-                                    .where(x -> x.id().eq(o.id()))
-                                    .where(x -> x.id().in(roleIds));
-                        });
+                        o.expression().exists(
+                                o.expression().subQueryable(Topic.class)
+                                        .where(x -> x.id().eq(o.id()))
+                                        .where(x -> x.id().in(roleIds))
+                        );
                     })
                     .leftJoin(Topic.class, (t, t1) -> {
                         t.id().eq(t1.id());

@@ -28,10 +28,8 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * create time 2023/12/23 23:54
@@ -482,10 +480,10 @@ public class MyTest1 extends BaseTest {
         List<Draft4<String, String, LocalDateTime, String>> list = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.title().like("123");
-                    o.expression().exists(() -> {
-                        return easyEntityQuery.queryable(BlogEntity.class)
-                                .where(x -> x.id().eq(o.id()));
-                    });
+                    o.expression().exists(
+                            easyEntityQuery.queryable(BlogEntity.class)
+                                    .where(x -> x.id().eq(o.id()))
+                    );
                     //创建时间和现在的相差天数现在小于0
                     o.createTime().duration(LocalDateTime.of(2021, 1, 1, 1, 1)).toDays().le(0L);
                 })
@@ -493,11 +491,9 @@ public class MyTest1 extends BaseTest {
                         o.id(),
                         o.title(),
                         o.createTime(),
-                        o.expression().subQuery(() -> {
-                            return easyEntityQuery.queryable(BlogEntity.class)
-                                    .where(x -> x.id().eq(o.id()))
-                                    .select(x -> new StringProxy(x.title()));
-                        })
+                        o.expression().subQueryColumn(easyEntityQuery.queryable(BlogEntity.class)
+                                .where(x -> x.id().eq(o.id()))
+                                .select(x -> new StringProxy(x.title())))
                 )).toList();
 
 

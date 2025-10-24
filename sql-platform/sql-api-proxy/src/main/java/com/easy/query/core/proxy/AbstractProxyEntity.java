@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy;
 
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.extension.partition.NextBuilder;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.RelationEntityTableAvailable;

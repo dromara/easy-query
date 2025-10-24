@@ -1275,13 +1275,13 @@ public class QueryTest extends BaseTest {
         EntityQueryable<BlogEntityProxy, BlogEntity> where = easyEntityQuery.queryable(BlogEntity.class)
                 .where(o -> o.id().eq("123"));
         String sql = easyEntityQuery
-                .queryable(Topic.class).where(o -> o.expression().exists(() -> where.where(q -> q.id().eq(o.id())))).toSQL();
+                .queryable(Topic.class).where(o -> o.expression().exists(where.where(q -> q.id().eq(o.id())))).toSQL();
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE EXISTS (SELECT 1 FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = ? AND t1.`id` = t.`id`)", sql);
 
         EntityQueryable<BlogEntityProxy, BlogEntity> subQueryable = easyEntityQuery.queryable(BlogEntity.class)
                 .where(o -> o.id().eq("1"));
         List<Topic> x = easyEntityQuery
-                .queryable(Topic.class).where(o -> o.expression().exists(() -> subQueryable.where(q -> q.id().eq(o.id())))).toList();
+                .queryable(Topic.class).where(o -> o.expression().exists(subQueryable.where(q -> q.id().eq(o.id())))).toList();
         Assert.assertEquals(1, x.size());
         Assert.assertEquals("1", x.get(0).getId());
     }
@@ -1291,17 +1291,13 @@ public class QueryTest extends BaseTest {
         {
 
             String sql = easyEntityQuery
-                    .queryable(Topic.class).where(o -> o.expression().notExists(() -> {
-                        return o.expression().subQueryable(BlogEntity.class).where(q -> q.id().eq("123")).where(q -> q.id().eq(o.id()));
-                    })).toSQL();
+                    .queryable(Topic.class).where(o -> o.expression().notExists(o.expression().subQueryable(BlogEntity.class).where(q -> q.id().eq("123")).where(q -> q.id().eq(o.id())))).toSQL();
             Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t WHERE NOT EXISTS (SELECT 1 FROM `t_blog` t1 WHERE t1.`deleted` = ? AND t1.`id` = ? AND t1.`id` = t.`id`)", sql);
 
         }
         {
             List<Topic> x = easyEntityQuery
-                    .queryable(Topic.class).where(o -> o.expression().notExists(() -> {
-                        return o.expression().subQueryable(BlogEntity.class).where(q -> q.id().eq("1")).where(q -> q.id().eq(o.id()));
-                    })).toList();
+                    .queryable(Topic.class).where(o -> o.expression().notExists(o.expression().subQueryable(BlogEntity.class).where(q -> q.id().eq("1")).where(q -> q.id().eq(o.id())))).toList();
             Assert.assertEquals(100, x.size());
             Assert.assertEquals("0", x.get(0).getId());
             Assert.assertEquals("10", x.get(1).getId());
@@ -1653,9 +1649,9 @@ public class QueryTest extends BaseTest {
                 .where(t -> t.title().isNotNull())
                 .select(TopicSubQueryBlog.class, o -> Select.of(
                         o.FETCHER.allFields(),
-                        o.expression().subQuery(() -> {
-                            return queryable.where(x -> x.id().eq(o.id())).selectColumn(t_blog -> t_blog.id().count());
-                        }).as(TopicSubQueryBlog::getBlogCount)
+                        o.expression().subQueryColumn(
+                                queryable.where(x -> x.id().eq(o.id())).selectColumn(t_blog -> t_blog.id().count())
+                        ).as(TopicSubQueryBlog::getBlogCount)
                 ));
         String sql = select.toSQL();
 
@@ -1682,9 +1678,9 @@ public class QueryTest extends BaseTest {
 //                }, TopicSubQueryBlog::getBlogCount)
                 .select(TopicSubQueryBlog.class, o -> Select.of(
                         o.FETCHER.allFields(),
-                        o.expression().subQuery(() -> {
-                            return queryable.where(x -> x.id().eq(o.id())).selectColumn(t_blog -> t_blog.star().sum());
-                        }).as(TopicSubQueryBlog::getBlogCount)
+                        o.expression().subQueryColumn(
+                                queryable.where(x -> x.id().eq(o.id())).selectColumn(t_blog -> t_blog.star().sum())
+                        ).as(TopicSubQueryBlog::getBlogCount)
                 ));
         String sql = select.toSQL();
 
@@ -1711,9 +1707,9 @@ public class QueryTest extends BaseTest {
 //                }, TopicSubQueryBlog::getBlogCount).columnIgnore(Topic::getCreateTime)
                 .select(TopicSubQueryBlog.class, o -> Select.of(
                         o.FETCHER.allFieldsExclude(o.createTime()),
-                        o.expression().subQuery(() -> {
-                            return queryable.where(x -> x.id().eq(o.id())).selectColumn(t_blog -> t_blog.id().count());
-                        }).as(TopicSubQueryBlog::getBlogCount)
+                        o.expression().subQueryColumn(
+                                queryable.where(x -> x.id().eq(o.id())).selectColumn(t_blog -> t_blog.id().count())
+                        ).as(TopicSubQueryBlog::getBlogCount)
                 ));
         String sql = select.toSQL();
 

@@ -584,11 +584,11 @@ public class QueryTest25 extends BaseTest {
 
                     BooleanTypeExpression<Boolean> booleanTypeExpression = expression.valueOf(() -> {
 
-                        expression.exists(() -> {
-                            return expression.subQueryable(BlogEntity.class).where(t -> {
-                                t.title().eq(t_topic.title());
-                            });
-                        });
+                        expression.exists(
+                                expression.subQueryable(BlogEntity.class).where(t -> {
+                                    t.title().eq(t_topic.title());
+                                })
+                        );
                     });
 
 

@@ -328,13 +328,13 @@ public class DocTest extends BaseTest {
                     o.createTime().format("yyyy-MM-dd" ).likeMatchLeft("2023" );
                 })
                 .select(BlogEntity.class,o -> {
-                    PropTypeColumn<BlogEntity> subQuery = o.expression().subQuery(() -> {
-                        return easyEntityQuery.queryable(BlogEntity.class)
-                                .where(x -> {
-                                    x.id().eq(o.id());
-                                })
-                                .select(x -> x.FETCHER.createTime());
-                    });
+                    PropTypeColumn<BlogEntity> subQuery = o.expression().subQueryColumn(
+                            easyEntityQuery.queryable(BlogEntity.class)
+                                    .where(x -> {
+                                        x.id().eq(o.id());
+                                    })
+                                    .select(x -> x.FETCHER.createTime())
+                    );
 //                    SQLSelectAsExpression subQuery = Select.subQueryAs(() -> {
 //                        return easyEntityQuery.queryable(BlogEntity.class)
 //                                .where(x -> {
@@ -366,13 +366,13 @@ public class DocTest extends BaseTest {
                 })
                 .select(BlogEntity.class,o -> {
 
-                    PropTypeColumn<Long> subQuery = o.expression().subQuery(() -> {
-                        return easyEntityQuery.queryable(BlogEntity.class)
-                                .where(x -> {
-                                    x.id().eq(o.id());
-                                })
-                                .selectColumn(t_blog -> t_blog.id().count());
-                    });
+                    PropTypeColumn<Long> subQuery = o.expression().subQueryColumn(
+                            easyEntityQuery.queryable(BlogEntity.class)
+                                    .where(x -> {
+                                        x.id().eq(o.id());
+                                    })
+                                    .selectColumn(t_blog -> t_blog.id().count())
+                    );
 //                    SQLSelectAsExpression subQuery = Select.subQueryAs(() -> {
 //                        return easyEntityQuery.queryable(BlogEntity.class)
 //                                .where(x -> {

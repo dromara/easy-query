@@ -44,7 +44,6 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -219,6 +218,7 @@ public class QueryTest19 extends BaseTest {
         Assert.assertEquals("小明(String),%管理员%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void test1_2() {
 
@@ -246,6 +246,7 @@ public class QueryTest19 extends BaseTest {
         Assert.assertEquals("小明(String),%管理员%(String),%普通员工%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void test1_3() {
 
@@ -256,7 +257,7 @@ public class QueryTest19 extends BaseTest {
         try {
 
             List<SysUser> userInHz = easyEntityQuery.queryable(SysUser.class)
-                    .subQueryToGroupJoin(u->u.roles())
+                    .subQueryToGroupJoin(u -> u.roles())
                     .where(u -> {
                         u.name().eq("小明");
                         u.roles().none(role -> role.name().like("管理员"));
@@ -406,14 +407,14 @@ public class QueryTest19 extends BaseTest {
         List<Draft2<String, String>> list = easyEntityQuery.queryable(Topic.class)
                 .select(t -> Select.DRAFT.of(
                         t.id(),
-                        t.expression().subQuery(() -> {
-                            return easyEntityQuery.queryable(BlogEntity.class)
-                                    .where(b -> {
-                                        b.createTime().lt(LocalDateTime.now());
-                                        b.id().eq(t.id());
-                                    }).groupBy(b -> GroupKeys.of(b.title()))
-                                    .selectColumn(group -> group.groupTable().content().joining("->"));
-                        })
+                        t.expression().subQueryColumn(
+                                easyEntityQuery.queryable(BlogEntity.class)
+                                        .where(b -> {
+                                            b.createTime().lt(LocalDateTime.now());
+                                            b.id().eq(t.id());
+                                        }).groupBy(b -> GroupKeys.of(b.title()))
+                                        .selectColumn(group -> group.groupTable().content().joining("->"))
+                        )
                 )).toList();
     }
 //    @Test

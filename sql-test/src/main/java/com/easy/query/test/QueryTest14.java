@@ -967,12 +967,12 @@ public class QueryTest14 extends BaseTest {
             try {
 
                 defaultEasyEntityQuery.deletable(BlogEntity.class)
-                        .where(b -> b.expression().exists(()->{
-                            return defaultEasyEntityQuery.queryable(BlogEntity.class)
-                                    .where(t_blog -> {
-                                        t_blog.id().eq(b.id());
-                                    });
-                        })).executeRows();
+                        .where(b -> b.expression().exists(
+                                defaultEasyEntityQuery.queryable(BlogEntity.class)
+                                        .where(t_blog -> {
+                                            t_blog.id().eq(b.id());
+                                        })
+                        )).executeRows();
             } catch (Exception ignore) {
             }
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -991,12 +991,12 @@ public class QueryTest14 extends BaseTest {
                 defaultEasyEntityQuery.deletable(BlogEntity.class)
                         .allowDeleteStatement(true)
                         .disableLogicDelete()
-                        .where(b -> b.expression().exists(()->{
-                            return defaultEasyEntityQuery.queryable(BlogEntity.class)
-                                    .where(t_blog -> {
-                                        t_blog.id().eq(b.id());
-                                    });
-                        })).executeRows();
+                        .where(b -> b.expression().exists(
+                                defaultEasyEntityQuery.queryable(BlogEntity.class)
+                                        .where(t_blog -> {
+                                            t_blog.id().eq(b.id());
+                                        })
+                        )).executeRows();
             } catch (Exception ignore) {
             }
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());

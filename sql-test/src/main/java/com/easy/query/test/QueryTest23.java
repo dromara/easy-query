@@ -369,15 +369,15 @@ public class QueryTest23 extends BaseTest {
                 .where(t_blog -> {
                     Expression expression = t_blog.expression();
                     t_blog.id().eq("123");
-                    expression.exists(() -> {
-                        return expression.subQueryable(Topic.class)
-                                .where(t_topic -> {
-                                    t_blog.id().eq(t_topic.id().nullOrDefault("1"));
-                                }).groupBy(t_topic -> GroupKeys.of(t_topic.id()))
-                                .having(group -> t_blog.id().count().gt(1L)).orderBy(t_topic -> {
-                                    t_blog.id().asc();
-                                });
-                    });
+                    expression.exists(
+                            expression.subQueryable(Topic.class)
+                                    .where(t_topic -> {
+                                        t_blog.id().eq(t_topic.id().nullOrDefault("1"));
+                                    }).groupBy(t_topic -> GroupKeys.of(t_topic.id()))
+                                    .having(group -> t_blog.id().count().gt(1L)).orderBy(t_topic -> {
+                                        t_blog.id().asc();
+                                    })
+                    );
 
                 })
                 .toList();

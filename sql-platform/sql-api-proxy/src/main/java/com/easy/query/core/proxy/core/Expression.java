@@ -11,7 +11,6 @@ import com.easy.query.api.proxy.extension.partition.CountOverBuilder;
 import com.easy.query.api.proxy.extension.partition.DenseRankOverBuilder;
 import com.easy.query.api.proxy.extension.partition.MaxOverBuilder;
 import com.easy.query.api.proxy.extension.partition.MinOverBuilder;
-import com.easy.query.api.proxy.extension.partition.NextBuilder;
 import com.easy.query.api.proxy.extension.partition.RankOverBuilder;
 import com.easy.query.api.proxy.extension.partition.RowNumberOverBuilder;
 import com.easy.query.api.proxy.extension.partition.SumOverBuilder;
@@ -54,7 +53,6 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Supplier;
@@ -230,6 +228,7 @@ public class Expression {
 
     /**
      * 返回子查询
+     * 请使用{@link #subQueryColumn(Query)}
      * <blockquote><pre>
      * {@code
      *      expression.subQuery(()->{
@@ -242,8 +241,29 @@ public class Expression {
      * @param <TSubQuery>
      * @return
      */
+    @Deprecated
     public <TSubQuery> AnyTypeExpression<TSubQuery> subQuery(SQLFuncExpression<Query<TSubQuery>> subQueryableFunc) {
         Query<TSubQuery> subQueryQuery = subQueryableFunc.apply();
+        return new AnyTypeExpressionImpl<>(entitySQLContext, null, null, f -> {
+            return f.anySQLFunction("{0}", c -> c.subQuery(subQueryQuery));
+        }, subQueryQuery.queryClass());
+    }
+
+
+    /**
+     * 返回子查询
+     * <blockquote><pre>
+     * {@code
+     *      expression.subQuery(easyEntityQuery.queryable(x.class).select(x->new StringProxy(x.id())))
+     *      expression.subQuery(easyEntityQuery.queryable(x.class).selectColumn(x-> x.id()))
+     *  }
+     * </pre></blockquote>
+     *
+     * @param subQueryQuery 创建子查询方法
+     * @param <TSubQuery>
+     * @return
+     */
+    public <TSubQuery> AnyTypeExpression<TSubQuery> subQueryColumn(Query<TSubQuery> subQueryQuery) {
         return new AnyTypeExpressionImpl<>(entitySQLContext, null, null, f -> {
             return f.anySQLFunction("{0}", c -> c.subQuery(subQueryQuery));
         }, subQueryQuery.queryClass());
@@ -310,19 +330,23 @@ public class Expression {
 
     /**
      * where exists(....)
+     * 请使用{@link #exists(Query)}
      *
      * @param subQueryFunc 子查询创建方法
      */
+    @Deprecated
     public void exists(Supplier<Query<?>> subQueryFunc) {
         exists(true, subQueryFunc);
     }
 
     /**
      * where exists(....)
+     * 请使用{@link #exists(boolean,Query)}
      *
      * @param condition    为true是exists生效
      * @param subQueryFunc 子查询创建方法
      */
+    @Deprecated
     public void exists(boolean condition, Supplier<Query<?>> subQueryFunc) {
         if (condition) {
             entitySQLContext.getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(subQueryFunc.get())));
@@ -331,9 +355,11 @@ public class Expression {
 
     /**
      * where not exists(....)
+     * 请使用{@link #notExists(Query)}
      *
      * @param subQueryFunc 子查询创建方法
      */
+    @Deprecated
     public void notExists(Supplier<Query<?>> subQueryFunc) {
         notExists(true, subQueryFunc);
     }
@@ -341,13 +367,60 @@ public class Expression {
 
     /**
      * where exists(....)
+     * 请使用{@link #notExists(boolean, Query)}
      *
      * @param condition    为true是not exists生效
      * @param subQueryFunc 子查询创建方法
      */
+    @Deprecated
     public void notExists(boolean condition, Supplier<Query<?>> subQueryFunc) {
         if (condition) {
             entitySQLContext.getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notExists(subQueryFunc.get())));
+        }
+    }
+
+
+
+    /**
+     * where exists(....)
+     *
+     * @param subQuery 子查询
+     */
+    public void exists(Query<?> subQuery) {
+        exists(true, subQuery);
+    }
+
+    /**
+     * where exists(....)
+     *
+     * @param condition    为true是exists生效
+     * @param subQuery 子查询
+     */
+    public void exists(boolean condition, Query<?> subQuery) {
+        if (condition) {
+            entitySQLContext.getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.exists(subQuery)));
+        }
+    }
+
+    /**
+     * where not exists(....)
+     *
+     * @param subQuery 子查询创建方法
+     */
+    public void notExists(Query<?> subQuery) {
+        notExists(true, subQuery);
+    }
+
+
+    /**
+     * where exists(....)
+     *
+     * @param condition    为true是not exists生效
+     * @param subQuery 子查询创建方法
+     */
+    public void notExists(boolean condition, Query<?> subQuery) {
+        if (condition) {
+            entitySQLContext.getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notExists(subQuery)));
         }
     }
 

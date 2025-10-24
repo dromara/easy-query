@@ -1483,13 +1483,13 @@ public class QueryTest12 extends BaseTest {
 
             easyEntityQuery.deletable(RelationUser.class)
                     .where(user -> {
-                        user.expression().exists(()->{
-                            return easyEntityQuery.queryable(RelationTeacher.class)
-                                    .where(teach -> {
-                                        teach.users().any(u->u.id().eq(user.id()));
-                                        teach.name().like("小明");
-                                    });
-                        });
+                        user.expression().exists(
+                                easyEntityQuery.queryable(RelationTeacher.class)
+                                        .where(teach -> {
+                                            teach.users().any(u->u.id().eq(user.id()));
+                                            teach.name().like("小明");
+                                        })
+                        );
                     }).executeRows();
 
 

@@ -4,15 +4,12 @@ package com.easy.query.test.mysql8;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONWriter;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.core.basic.api.database.CodeFirstCommand;
-import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
-import com.easy.query.core.proxy.core.draft.proxy.Draft3Proxy;
 import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.part.Part2;
 import com.easy.query.core.proxy.sql.GroupKeys;
@@ -24,7 +21,6 @@ import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
-import com.easy.query.test.mysql8.entity.bank.SysUserBook;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysUserProxy;
 import com.easy.query.test.mysql8.vo.MyUserVO;
 import com.easy.query.test.mysql8.vo.SysBank2DTO;
@@ -34,14 +30,9 @@ import com.easy.query.test.mysql8.vo.SysUserDTO;
 import com.easy.query.test.mysql8.vo.SysUserDTO2;
 import com.easy.query.test.mysql8.vo.proxy.MyUserVOProxy;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -588,14 +579,13 @@ public class M8BankTest extends BaseTest {
                 })
                 .select(bank -> Select.PART.of(
                         bank,
-                        bank.expression().subQuery(() -> {
-                            return bank.expression().subQueryable(SysBankCard.class)
-                                    .where(bank_card -> {
-                                        bank_card.bankId().eq(bank.id());
-                                    })
-                                    .selectColumn(bank_card -> bank_card.id().count());
-                            //.selectCount()
-                        })
+                        bank.expression().subQueryColumn(
+                                bank.expression().subQueryable(SysBankCard.class)
+                                        .where(bank_card -> {
+                                            bank_card.bankId().eq(bank.id());
+                                        })
+                                        .selectColumn(bank_card -> bank_card.id().count())
+                        )
                 )).toList();
         Assert.assertFalse(bankAndCounts.isEmpty());
 
@@ -712,24 +702,22 @@ public class M8BankTest extends BaseTest {
                 })
                 .select(bank -> Select.PART.of(
                         bank,
-                        bank.expression().subQuery(() -> {
-                            return bank.expression().subQueryable(SysBankCard.class)
-                                    .where(bank_card -> {
-                                        bank_card.bankId().eq(bank.id());
-                                        bank_card.type().eq("储蓄卡");
-                                    })
-                                    .selectColumn(bank_card -> bank_card.id().count());
-                            //.selectCount()
-                        }),
-                        bank.expression().subQuery(() -> {
-                            return bank.expression().subQueryable(SysBankCard.class)
-                                    .where(bank_card -> {
-                                        bank_card.bankId().eq(bank.id());
-                                        bank_card.type().eq("信用卡");
-                                    })
-                                    .selectColumn(bank_card -> bank_card.id().count());
-                            //.selectCount()
-                        })
+                        bank.expression().subQueryColumn(
+                                bank.expression().subQueryable(SysBankCard.class)
+                                        .where(bank_card -> {
+                                            bank_card.bankId().eq(bank.id());
+                                            bank_card.type().eq("储蓄卡");
+                                        })
+                                        .selectColumn(bank_card -> bank_card.id().count())
+                        ),
+                        bank.expression().subQueryColumn(
+                                bank.expression().subQueryable(SysBankCard.class)
+                                        .where(bank_card -> {
+                                            bank_card.bankId().eq(bank.id());
+                                            bank_card.type().eq("信用卡");
+                                        })
+                                        .selectColumn(bank_card -> bank_card.id().count())
+                        )
                 )).toList();
         Assert.assertFalse(bankAndCounts.isEmpty());
 
@@ -993,13 +981,13 @@ public class M8BankTest extends BaseTest {
                 .subQueryToGroupJoin(user -> user.bankCards())
                 .where(user -> {
 
-                    user.expression().exists(() -> {
-                        return user.expression().subQueryable(SysBankCard.class)
-                                .where(bank_card -> {
-                                    bank_card.uid().eq(user.id());
-                                    bank_card.type().eq("储蓄卡");
-                                });
-                    });
+                    user.expression().exists(
+                            user.expression().subQueryable(SysBankCard.class)
+                                    .where(bank_card -> {
+                                        bank_card.uid().eq(user.id());
+                                        bank_card.type().eq("储蓄卡");
+                                    })
+                    );
                 }).toList();
 
         listenerContextManager.clear();
@@ -1068,13 +1056,42 @@ public class M8BankTest extends BaseTest {
         List<SysUser> users = easyEntityQuery.queryable(SysUser.class)
                 .where(user -> {
 
-                    user.expression().subQuery(() -> {
-                        return user.expression().subQueryable(SysBankCard.class)
-                                .where(bank_card -> {
-                                    bank_card.uid().eq(user.id());
-                                    bank_card.type().eq("储蓄卡");
-                                }).selectCount();
-                    }).eq(2L);
+                    user.expression().subQueryColumn(
+                            user.expression().subQueryable(SysBankCard.class)
+                                    .where(bank_card -> {
+                                        bank_card.uid().eq(user.id());
+                                        bank_card.type().eq("储蓄卡");
+                                    }).selectCount()
+                    ).eq(2L);
+
+
+                }).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time` FROM `t_sys_user` t WHERE (SELECT COUNT(*) FROM `t_bank_card` t1 WHERE t1.`uid` = t.`id` AND t1.`type` = ?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("储蓄卡(String),2(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void whereSubQuery6_1() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<SysUser> users = easyEntityQuery.queryable(SysUser.class)
+                .where(user -> {
+                    user.expression().subQueryColumn(
+                            user.expression().subQueryable(SysBankCard.class)
+                                    .where(bank_card -> {
+                                        bank_card.uid().eq(user.id());
+                                        bank_card.type().eq("储蓄卡");
+                                    }).selectCount()
+                    ).eq(2L);
 
 
                 }).toList();

@@ -263,12 +263,12 @@ public class MsSQLQueryTest extends MsSQLBaseTest {
                 .setColumns(m -> m.title().set("123xx"))
                 .where(m -> {
                     m.id().isNull();
-                    m.expression().exists(() -> {
-                        return entityQuery.queryable(MsSQLMyTopic.class)
-                                .where(m1 -> {
-                                    m1.id().eq(m.id());
-                                });
-                    });
+                    m.expression().exists(
+                            entityQuery.queryable(MsSQLMyTopic.class)
+                                    .where(m1 -> {
+                                        m1.id().eq(m.id());
+                                    })
+                    );
                 }).executeRows();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
