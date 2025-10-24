@@ -64,7 +64,7 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor {
-    private final WhereConditionProvider whereConditionProvider;
+    protected final WhereConditionProvider whereConditionProvider;
 
     public DefaultWhereObjectQueryExecutor(WhereConditionProvider whereConditionProvider) {
         this.whereConditionProvider = whereConditionProvider;
@@ -77,7 +77,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
      * @param tablesIndex
      * @return
      */
-    private int[] buildTablesIndex(String[] propNames, int[] tablesIndex) {
+    protected int[] buildTablesIndex(String[] propNames, int[] tablesIndex) {
         if (tablesIndex == null) {
             return new int[propNames.length];
         } else if (propNames.length != tablesIndex.length) {
@@ -92,7 +92,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
     }
 
 
-    private static QueryPathTreeNode findChild(QueryPathTreeNode node, String fieldName) {
+    protected static QueryPathTreeNode findChild(QueryPathTreeNode node, String fieldName) {
         for (QueryPathTreeNode child : node.getChildren()) {
             if (fieldName.equals(child.getFieldName())) {
                 return child;
@@ -101,7 +101,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
         return null;
     }
 
-    private void setSubQueryTreeNode(QueryPathTreeNode treeNode, TableAvailable leftTable, String property, EntityQueryExpressionBuilder entityExpressionBuilder, NavigateMetadata navigateMetadata, int tableIndex) {
+    protected void setSubQueryTreeNode(QueryPathTreeNode treeNode, TableAvailable leftTable, String property, EntityQueryExpressionBuilder entityExpressionBuilder, NavigateMetadata navigateMetadata, int tableIndex) {
         ExpressionContext expressionContext = entityExpressionBuilder.getExpressionContext();
         QueryRuntimeContext runtimeContext = expressionContext.getRuntimeContext();
         RelationTableKey defaultRelationTableKey = new DefaultRelationTableKey(leftTable, property);
@@ -155,7 +155,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
         treeNode.setFilter(filter);
     }
 
-    private boolean subQueryToGroupJoin(boolean isSubQueryToGroupJoin, boolean hasBehavior, SubQueryModeEnum subQueryMode) {
+    protected boolean subQueryToGroupJoin(boolean isSubQueryToGroupJoin, boolean hasBehavior, SubQueryModeEnum subQueryMode) {
         if (subQueryMode == null) {
             return isSubQueryToGroupJoin || hasBehavior;
         } else {
@@ -183,7 +183,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
         }
     }
 
-    private List<InternalField> getQueryPropertiesOrNull(EasyWhereCondition q, String fieldName) {
+    protected List<InternalField> getQueryPropertiesOrNull(EasyWhereCondition q, String fieldName) {
         EasyWhereCondition.Mode mode = q.mode();
         switch (mode) {
             case SINGLE: {
@@ -282,7 +282,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
         }
     }
 
-    private QueryPathTreeNode buildQueryTree(QueryPathTreeNode root, InternalField internalField, QueryPathTreeNode.ConditionVal conditionVal) {
+    protected QueryPathTreeNode buildQueryTree(QueryPathTreeNode root, InternalField internalField, QueryPathTreeNode.ConditionVal conditionVal) {
 
         QueryPathTreeNode current = root;
         String[] fieldNames = internalField.fieldNames;
@@ -327,7 +327,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
         return current;
     }
 
-    private void acceptCondition(QueryPathTreeNode node, QueryPathTreeNode parent, Object whereObjectEntity) {
+    protected void acceptCondition(QueryPathTreeNode node, QueryPathTreeNode parent, Object whereObjectEntity) {
         if (EasyCollectionUtil.isNotEmpty(node.getConditions())) {
             for (QueryPathTreeNode.ConditionVal condition : node.getConditions()) {
                 acceptCondition0(whereObjectEntity, node.getFilter(), condition.condition, condition.field, condition.val, condition.fieldConditions);
@@ -401,7 +401,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
         return aliasSegment.getAlias();
     }
 
-    private void acceptCondition0(Object whereObjectEntity, Filter filter, EasyWhereCondition q, Field field, Object val, List<QueryPathTreeNode.FieldCondition> fieldConditions) {
+    protected void acceptCondition0(Object whereObjectEntity, Filter filter, EasyWhereCondition q, Field field, Object val, List<QueryPathTreeNode.FieldCondition> fieldConditions) {
 
         if (EasyCollectionUtil.isEmpty(fieldConditions)) {
             return;
@@ -657,7 +657,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
     }
 
     //数组处理
-    private void rangePairArray(Object[] pairArray, List<QueryPathTreeNode.FieldCondition> queries, Filter filter, MergeTuple2<SQLPredicateCompareEnum, SQLPredicateCompareEnum> sqlPredicateCompareEnum) {
+    protected void rangePairArray(Object[] pairArray, List<QueryPathTreeNode.FieldCondition> queries, Filter filter, MergeTuple2<SQLPredicateCompareEnum, SQLPredicateCompareEnum> sqlPredicateCompareEnum) {
 
         if (queries.size() > 1) {
             filter.and(x -> {
@@ -684,7 +684,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
         }
     }
 
-    private Object[] getPairArray(Collection<?> collection) {
+    protected Object[] getPairArray(Collection<?> collection) {
         Iterator<?> iterator = collection.iterator();
         Object first = iterator.next();
         Object[] array = {first, null};
@@ -694,7 +694,7 @@ public class DefaultWhereObjectQueryExecutor implements WhereObjectQueryExecutor
         return array;
     }
 
-    private SQLLikeEnum getSQLLike(EasyWhereCondition.Condition like) {
+    protected SQLLikeEnum getSQLLike(EasyWhereCondition.Condition like) {
         switch (like) {
             case LIKE:
             case CONTAINS:
