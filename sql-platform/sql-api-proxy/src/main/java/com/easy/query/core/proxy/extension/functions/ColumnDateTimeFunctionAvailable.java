@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.extension.functions;
 
+import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.lambda.SQLFuncExpression2;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
@@ -358,31 +359,37 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
 
 
     default <T extends Temporal> void isBefore(T time) {
-        BooleanTypeExpression<Boolean> isAfterValue = dateTimeCompareExpression(time, this, this.getCurrentEntitySQLContext(), false);
-        Expression.of(this.getCurrentEntitySQLContext()).sql("{0}",c->c.expression(isAfterValue));
+        ValueFilter valueFilter = this.getCurrentEntitySQLContext().getExpressionContext().getValueFilter();
+        if(valueFilter.accept(this.getTable(),this.getValue(),time)){
+            BooleanTypeExpression<Boolean> isAfterValue = dateTimeCompareExpression(time, this, this.getCurrentEntitySQLContext(), false);
+            Expression.of(this.getCurrentEntitySQLContext()).rawSQLCommand("{0}",isAfterValue);
+        }
     }
 
     default <T> void isBefore(ColumnDateTimeFunctionAvailable<T> time) {
         BooleanTypeExpression<Boolean> isAfterValue = dateTimeCompareExpression(time, this, this.getCurrentEntitySQLContext(), false);
-        Expression.of(this.getCurrentEntitySQLContext()).sql("{0}",c->c.expression(isAfterValue));
+        Expression.of(this.getCurrentEntitySQLContext()).rawSQLCommand("{0}",isAfterValue);
     }
     default void isBefore(PropTypeColumn<Date> time) {
         BooleanTypeExpression<Boolean> isAfterValue = dateTimeCompareExpression(time, this, this.getCurrentEntitySQLContext(), false);
-        Expression.of(this.getCurrentEntitySQLContext()).sql("{0}",c->c.expression(isAfterValue));
+        Expression.of(this.getCurrentEntitySQLContext()).rawSQLCommand("{0}",isAfterValue);
     }
 
     default <T extends Temporal> void isAfter(T time) {
-        BooleanTypeExpression<Boolean> isAfterValue = dateTimeCompareExpression(time, this, this.getCurrentEntitySQLContext(), true);
-        Expression.of(this.getCurrentEntitySQLContext()).sql("{0}",c->c.expression(isAfterValue));
+        ValueFilter valueFilter = this.getCurrentEntitySQLContext().getExpressionContext().getValueFilter();
+        if(valueFilter.accept(this.getTable(),this.getValue(),time)){
+            BooleanTypeExpression<Boolean> isAfterValue = dateTimeCompareExpression(time, this, this.getCurrentEntitySQLContext(), true);
+            Expression.of(this.getCurrentEntitySQLContext()).rawSQLCommand("{0}",isAfterValue);
+        }
     }
     default <T> void isAfter(ColumnDateTimeFunctionAvailable<T> time) {
         BooleanTypeExpression<Boolean> isAfterValue = dateTimeCompareExpression(time, this, this.getCurrentEntitySQLContext(), true);
-        Expression.of(this.getCurrentEntitySQLContext()).sql("{0}",c->c.expression(isAfterValue));
+        Expression.of(this.getCurrentEntitySQLContext()).rawSQLCommand("{0}",isAfterValue);
     }
 
     default void isAfter(Date time) {
         BooleanTypeExpression<Boolean> isAfterValue = dateTimeCompareExpression(time, this, this.getCurrentEntitySQLContext(), true);
-        Expression.of(this.getCurrentEntitySQLContext()).sql("{0}",c->c.expression(isAfterValue));
+        Expression.of(this.getCurrentEntitySQLContext()).rawSQLCommand("{0}",isAfterValue);
     }
 
      static <TProp> BooleanTypeExpression<Boolean> dateTimeCompareExpression(TProp time, PropTypeColumn<?> propTypeColumn, EntitySQLContext entitySQLContext, boolean isAfter) {
