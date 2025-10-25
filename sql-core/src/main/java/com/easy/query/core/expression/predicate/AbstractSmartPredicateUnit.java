@@ -28,7 +28,7 @@ import java.util.Objects;
  */
 public abstract class AbstractSmartPredicateUnit implements SmartPredicateUnit {
     protected final TableAvailable fromTable;
-    private final Map<String, SmartPredicateItem> aliasMap;
+    protected final Map<String, SmartPredicateItem> aliasMap;
 
     public AbstractSmartPredicateUnit(TableAvailable fromTable, Map<String, SmartPredicateItem> aliasMap) {
         this.fromTable = fromTable;
