@@ -8,6 +8,7 @@ import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft4;
@@ -22,6 +23,7 @@ import com.easy.query.test.mssql.entity.MsSQLMyTopic1;
 import com.easy.query.test.mssql.entity.proxy.MsSQLCalcProxy;
 import com.easy.query.test.mssql.entity.proxy.MsSQLMyTopic1Proxy;
 import com.easy.query.test.mssql.entity.proxy.MsSQLMyTopicProxy;
+import com.easy.query.test.mysql8.entity.bank.SysUser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +40,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * create time 2023/7/27 17:34
@@ -638,5 +642,177 @@ public class MsSQLQueryTest extends MsSQLBaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.[Column1] AS [Value1],t.[Column2] AS [Value2],t.[Column3] AS [Value3],(SELECT MAX(__col__) FROM (VALUES (t.[Column1]), (t.[Column2]), (t.[Column3])) AS t(__col__)) AS [Value4] FROM [t_calc] t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //        Assert.assertEquals("1(BigDecimal),2(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+    }
+
+
+    @Test
+    public void testAll() {
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SysUser> list = entityQuery.queryable(SysUser.class)
+                .includes(user -> user.bankCards())
+                .where(user -> {
+                    user.bankCards().where(bc -> bc.type().eq("储蓄卡")).all(bc -> bc.code().startsWith("33123"));
+                }).toList();
+        int size = list.size();
+        Assert.assertEquals(1, size);
+        List<SysUser> newCards = list.stream().filter(user -> {
+            //因为null记录不会被like返回所以直接过滤null
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123"));
+        }).collect(Collectors.toList());
+        Assert.assertEquals(1, newCards.size());
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.[Id],t.[Name],t.[Phone],t.[Age],t.[CreateTime] FROM [t_sys_user] t WHERE NOT ( EXISTS (SELECT TOP 1 1 FROM [t_bank_card] t1 WHERE t1.[Uid] = t.[Id] AND t1.[Type] = ? AND (NOT (t1.[Code] LIKE (CAST(? AS NVARCHAR(MAX))+'%')))))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("储蓄卡(String),33123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.[Id],t.[Uid],t.[Code],t.[Type],t.[BankId],t.[OpenTime] FROM [t_bank_card] t WHERE t.[Uid] IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testAll1() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SysUser> list = entityQuery.queryable(SysUser.class)
+                .includes(user -> user.bankCards())
+                .where(user -> {
+                    user.bankCards().where(bc -> bc.type().eq("储蓄卡")).all(bc -> bc.code().nullOrDefault("").startsWith("33123"));
+                }).toList();
+        int size = list.size();
+        Assert.assertEquals(1, size);
+        List<SysUser> newCards = list.stream().filter(user -> {
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")).allMatch(o -> (o.getCode() == null ? "" : o.getCode()).startsWith("33123"));
+        }).collect(Collectors.toList());
+        Assert.assertEquals(1, newCards.size());
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.[Id],t.[Name],t.[Phone],t.[Age],t.[CreateTime] FROM [t_sys_user] t WHERE NOT ( EXISTS (SELECT TOP 1 1 FROM [t_bank_card] t1 WHERE t1.[Uid] = t.[Id] AND t1.[Type] = ? AND (NOT (ISNULL(t1.[Code],?) LIKE (CAST(? AS NVARCHAR(MAX))+'%')))))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("储蓄卡(String),(String),33123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.[Id],t.[Uid],t.[Code],t.[Type],t.[BankId],t.[OpenTime] FROM [t_bank_card] t WHERE t.[Uid] IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testAll2() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SysUser> list = entityQuery.queryable(SysUser.class)
+                .includes(user -> user.bankCards())
+                .where(user -> {
+                    user.bankCards().where(bc -> bc.type().eq("储蓄卡")).all(bc -> {
+                        bc.code().startsWith("33123");
+                        bc.code().startsWith("45678");
+                    });
+                }).toList();
+        int size = list.size();
+        Assert.assertEquals(1, size);
+        List<SysUser> newCards = list.stream().filter(user -> {
+            //因为null记录不会被like返回所以直接过滤null
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123")&&o.getCode().startsWith("45678"));
+        }).collect(Collectors.toList());
+        Assert.assertEquals(1, newCards.size());
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.[Id],t.[Name],t.[Phone],t.[Age],t.[CreateTime] FROM [t_sys_user] t WHERE NOT ( EXISTS (SELECT TOP 1 1 FROM [t_bank_card] t1 WHERE t1.[Uid] = t.[Id] AND t1.[Type] = ? AND (NOT (t1.[Code] LIKE (CAST(? AS NVARCHAR(MAX))+'%') AND t1.[Code] LIKE (CAST(? AS NVARCHAR(MAX))+'%')))))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("储蓄卡(String),33123(String),45678(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.[Id],t.[Uid],t.[Code],t.[Type],t.[BankId],t.[OpenTime] FROM [t_bank_card] t WHERE t.[Uid] IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testAllGroupJoin() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SysUser> list = entityQuery.queryable(SysUser.class)
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .includes(user -> user.bankCards())
+                .where(user -> {
+                    user.bankCards().where(bc -> bc.type().eq("储蓄卡")).all(bc -> bc.code().startsWith("33123"));
+                }).toList();
+        int size = list.size();
+        Assert.assertEquals(1, size);
+        List<SysUser> newCards = list.stream().filter(user -> {
+            //因为null记录不会被like返回所以直接过滤null
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123"));
+        }).collect(Collectors.toList());
+        Assert.assertEquals(1, newCards.size());
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.[Id],t.[Name],t.[Phone],t.[Age],t.[CreateTime] FROM [t_sys_user] t LEFT JOIN (SELECT t1.[Uid] AS [uid],(CASE WHEN (COUNT(?) <= 0) THEN ? ELSE ? END) AS [__none2__] FROM [t_bank_card] t1 WHERE t1.[Type] = ? AND (NOT (t1.[Code] LIKE (CAST(? AS NVARCHAR(MAX))+'%'))) GROUP BY t1.[Uid]) t2 ON t2.[uid] = t.[Id] WHERE ISNULL(t2.[__none2__],?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer),true(Boolean),false(Boolean),储蓄卡(String),33123(String),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.[Id],t.[Uid],t.[Code],t.[Type],t.[BankId],t.[OpenTime] FROM [t_bank_card] t WHERE t.[Uid] IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testAllGroupJoin2() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SysUser> list = entityQuery.queryable(SysUser.class)
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .includes(user -> user.bankCards())
+                .where(user -> {
+                    user.bankCards().where(bc -> bc.type().eq("储蓄卡")).all(bc -> {
+                        bc.code().startsWith("33123");
+                        bc.id().startsWith("45678");
+                    });
+                }).toList();
+
+        int size = list.size();
+        Assert.assertEquals(1, size);
+        List<SysUser> newCards = list.stream().filter(user -> {
+            //因为null记录不会被like返回所以直接过滤null
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123")&&o.getCode().startsWith("45678"));
+        }).collect(Collectors.toList());
+        Assert.assertEquals(1, newCards.size());
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.[Id],t.[Name],t.[Phone],t.[Age],t.[CreateTime] FROM [t_sys_user] t LEFT JOIN (SELECT t1.[Uid] AS [uid],(CASE WHEN (COUNT(?) <= 0) THEN ? ELSE ? END) AS [__none2__] FROM [t_bank_card] t1 WHERE t1.[Type] = ? AND (NOT (t1.[Code] LIKE (CAST(? AS NVARCHAR(MAX))+'%') AND t1.[Id] LIKE (CAST(? AS NVARCHAR(MAX))+'%'))) GROUP BY t1.[Uid]) t2 ON t2.[uid] = t.[Id] WHERE ISNULL(t2.[__none2__],?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer),true(Boolean),false(Boolean),储蓄卡(String),33123(String),45678(String),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.[Id],t.[Uid],t.[Code],t.[Type],t.[BankId],t.[OpenTime] FROM [t_bank_card] t WHERE t.[Uid] IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        listenerContextManager.clear();
     }
 }

@@ -18,6 +18,9 @@ import com.easy.query.test.entity.MathTest;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
+import com.easy.query.test.mysql8.entity.bank.SysBank;
+import com.easy.query.test.mysql8.entity.bank.SysBankCard;
+import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.math.BigDecimal;
@@ -107,15 +110,19 @@ public abstract class MsSQLBaseTest {
         DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
         {
 
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(MathTest.class));
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(MathTest.class, SysUser.class, SysBankCard.class, SysBank.class));
             codeFirstCommand.executeWithTransaction(s->s.commit());
         }
         {
 
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MathTest.class));
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MathTest.class, SysUser.class,SysBank.class, SysBankCard.class));
             codeFirstCommand.executeWithTransaction(s->s.commit());
         }
 
+        entityQuery.deletable(SysBankCard.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
+        entityQuery.deletable(SysBank.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
+        entityQuery.deletable(SysUser.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
+        entityQuery.deletable(MathTest.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         int size = 10000;
         List<MathTest> list = new ArrayList<>(size);
         ThreadLocalRandom random = ThreadLocalRandom.current();
@@ -133,6 +140,103 @@ public abstract class MsSQLBaseTest {
             list.add(entity);
         }
 
+
+        ArrayList<SysBank> banks = new ArrayList<>();
+        ArrayList<SysBankCard> bankCards = new ArrayList<>();
+        ArrayList<SysUser> users = new ArrayList<>();
+
+        {
+            SysBank sysBank = new SysBank();
+            sysBank.setId("1");
+            sysBank.setName("工商银行");
+            sysBank.setCreateTime(LocalDateTime.of(2000, 1, 1, 0, 0));
+            banks.add(sysBank);
+
+            {
+                SysBankCard sysBankCard = new SysBankCard();
+                sysBankCard.setId("bc1");
+                sysBankCard.setUid("u1");
+                sysBankCard.setCode("123");
+                sysBankCard.setType("储蓄卡");
+                sysBankCard.setBankId(sysBank.getId());
+                sysBankCard.setOpenTime(LocalDateTime.of(2000, 1, 2, 0, 0));
+                bankCards.add(sysBankCard);
+            }
+            {
+                SysBankCard sysBankCard = new SysBankCard();
+                sysBankCard.setId("bc2");
+                sysBankCard.setUid("u1");
+                sysBankCard.setCode("1234");
+                sysBankCard.setType("信用卡");
+                sysBankCard.setBankId(sysBank.getId());
+                sysBankCard.setOpenTime(LocalDateTime.of(2000, 1, 2, 0, 0));
+                bankCards.add(sysBankCard);
+            }
+            {
+                SysBankCard sysBankCard = new SysBankCard();
+                sysBankCard.setId("bc3");
+                sysBankCard.setUid("u2");
+                sysBankCard.setCode("1235");
+                sysBankCard.setType("信用卡");
+                sysBankCard.setBankId(sysBank.getId());
+                sysBankCard.setOpenTime(LocalDateTime.of(2000, 1, 2, 0, 0));
+                bankCards.add(sysBankCard);
+            }
+        }
+        {
+            SysBank sysBank = new SysBank();
+            sysBank.setId("2");
+            sysBank.setName("建设银行");
+            sysBank.setCreateTime(LocalDateTime.of(2001, 1, 1, 0, 0));
+            banks.add(sysBank);
+            {
+                SysBankCard sysBankCard = new SysBankCard();
+                sysBankCard.setId("bc4");
+                sysBankCard.setUid("u1");
+                sysBankCard.setCode("1236");
+                sysBankCard.setType("储蓄卡");
+                sysBankCard.setBankId(sysBank.getId());
+                sysBankCard.setOpenTime(LocalDateTime.of(2001, 1, 2, 0, 0));
+                bankCards.add(sysBankCard);
+            }
+            {
+                SysBankCard sysBankCard = new SysBankCard();
+                sysBankCard.setId("bc5");
+                sysBankCard.setCode("1237");
+                sysBankCard.setType("储蓄卡");
+                sysBankCard.setBankId(sysBank.getId());
+                sysBankCard.setOpenTime(LocalDateTime.of(2001, 1, 2, 0, 0));
+                bankCards.add(sysBankCard);
+            }
+        }
+        {
+            SysBank sysBank = new SysBank();
+            sysBank.setId("3");
+            sysBank.setName("招商银行");
+            sysBank.setCreateTime(LocalDateTime.of(2002, 1, 1, 0, 0));
+            banks.add(sysBank);
+        }
+        {
+            SysUser sysUser = new SysUser();
+            sysUser.setId("u1");
+            sysUser.setName("用户1");
+            sysUser.setPhone("123");
+            sysUser.setAge(22);
+            sysUser.setCreateTime(LocalDateTime.of(2012, 1, 1, 0, 0));
+            users.add(sysUser);
+        }
+        {
+            SysUser sysUser = new SysUser();
+            sysUser.setId("u2");
+            sysUser.setName("用户2");
+            sysUser.setPhone("1234");
+            sysUser.setAge(23);
+            sysUser.setCreateTime(LocalDateTime.of(2012, 1, 1, 0, 0));
+            users.add(sysUser);
+        }
+        entityQuery.insertable(banks).executeRows();
+        entityQuery.insertable(bankCards).executeRows();
+        entityQuery.insertable(users).executeRows();
         entityQuery.insertable(list).batch().executeRows();
     }
 
