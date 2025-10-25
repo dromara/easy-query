@@ -539,4 +539,13 @@ public class MySQL8Test4 extends BaseTest {
         }
         listenerContextManager.clear();
     }
+
+    @Test
+    public  void testaaa(){
+        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                .toList();
+        List<SysUser> list1 = easyEntityQuery.queryable(SysUser.class)
+                .includes(user -> user.bankCards())
+                .toList();
+    }
 }

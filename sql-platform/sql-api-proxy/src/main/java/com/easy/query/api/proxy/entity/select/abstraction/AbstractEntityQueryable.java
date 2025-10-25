@@ -268,6 +268,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression1<T1Proxy, TRProxy> selectExpression) {
+
         TRProxy resultProxy = selectExpression.apply(get1Proxy());
         if (resultProxy instanceof EntityFetcher) {
             EntityFetcher resultProxy1 = (EntityFetcher) resultProxy;

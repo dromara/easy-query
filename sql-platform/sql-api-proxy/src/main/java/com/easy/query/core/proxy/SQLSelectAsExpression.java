@@ -22,9 +22,7 @@ public interface SQLSelectAsExpression extends SQLSelectExpression, SQLGroupByEx
 
     default SQLSelectAsExpression _concat(boolean condition, SQLSelectAsExpression... sqlSelectAs) {
         if (condition) {
-
             SQLSelectAsExpression expression = Select.of(sqlSelectAs);
-
             return new SQLSelectAs2Impl(this,expression);
         }
         return SQLSelectAsExpression.empty;

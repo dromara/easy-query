@@ -11,6 +11,7 @@ import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 import com.easy.query.core.expression.segment.condition.predicate.ValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ValuesPredicate;
 import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import java.util.Objects;
  *
  * @author xuejiaming
  */
-public abstract class AbstractSmartPredicateUnit implements SmartPredicateUnit{
+public abstract class AbstractSmartPredicateUnit implements SmartPredicateUnit {
     protected final TableAvailable fromTable;
     private final Map<String, SmartPredicateItem> aliasMap;
 
@@ -43,7 +44,7 @@ public abstract class AbstractSmartPredicateUnit implements SmartPredicateUnit{
                     SQLParameter parameter = valuePredicate.getParameter();
                     if (parameter instanceof ConstSQLParameter) {
                         Object value = parameter.getValue();
-                        return f -> f.eq(smartPredicateItem.table,smartPredicateItem.property, value);
+                        return f -> f.eq(smartPredicateItem.table, smartPredicateItem.property, value);
                     }
                 }
             } else if (predicate.getOperator() == SQLPredicateCompareEnum.IN) {
@@ -58,18 +59,31 @@ public abstract class AbstractSmartPredicateUnit implements SmartPredicateUnit{
                         }
                     }
                     if (EasyCollectionUtil.isNotEmpty(values)) {
-                        return f -> f.in(smartPredicateItem.table,smartPredicateItem.property, values);
+                        return f -> f.in(smartPredicateItem.table, smartPredicateItem.property, values);
                     }
                 }
             }
         }
         return null;
     }
+
     protected SmartPredicateItem getTargetPropertyName(Predicate predicate) {
         if (predicate.getTable() == fromTable &&
                 (predicate.getOperator() == SQLPredicateCompareEnum.EQ || predicate.getOperator() == SQLPredicateCompareEnum.IN)) {
-            return aliasMap.get(predicate.getPropertyName());
+            String aliasName = getAliasName(predicate);
+            return aliasMap.get(aliasName);
         }
         return null;
+    }
+
+    private String getAliasName(Predicate predicate) {
+        if (predicate.getTable() != null) {
+            EntityMetadata entityMetadata = predicate.getTable().getEntityMetadata();
+            ColumnMetadata columnOrNull = entityMetadata.getColumnOrNull(predicate.getPropertyName());
+            if(columnOrNull!=null){
+                return columnOrNull.getName();
+            }
+        }
+        return predicate.getPropertyName();
     }
 }

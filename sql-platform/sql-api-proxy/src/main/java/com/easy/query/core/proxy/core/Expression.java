@@ -22,13 +22,17 @@ import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
+import com.easy.query.core.expression.parser.core.SQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelector;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelectorImpl;
@@ -79,6 +83,27 @@ public class Expression {
         return new Expression(entitySQLContextAvailable.getEntitySQLContext());
     }
 
+    public SQLSelectAsExpression createSelectColumnExpression(String... properties) {
+        EntityTableExpressionBuilder fromTableExpressionBuilder = entitySQLContext.getEntityExpressionBuilder().getFromTable();
+        TableAvailable entityTable = fromTableExpressionBuilder.getEntityTable();
+        SQLSelectAsExpression selectAsExpression = SQLSelectAsExpression.empty;
+        for (String property : properties) {
+            selectAsExpression = selectAsExpression._concat(SQLSelectAsExpression.createDefault(entitySQLContext, entityTable, property));
+        }
+        return selectAsExpression;
+    }
+
+
+    /**
+     * 支持动态select+动态group取列防止sql注入
+     *
+     * @param sqlTableOwner 要查询的表
+     * @param property      要查询的属性
+     */
+    public SQLSelectAsExpression createSelectColumnExpression(SQLTableOwner sqlTableOwner, String property) {
+        return SQLSelectAsExpression.createDefault(entitySQLContext, sqlTableOwner.getTable(), property);
+    }
+
     /**
      * 支持where having order
      * 执行片段 直接在where having order中执行 插入片段
@@ -93,15 +118,15 @@ public class Expression {
      * </blockquote></pre>
      *
      * @param sqlTemplate sql模板参数使用{0}...{n}
-     * @param parameters 模板参数
+     * @param parameters  模板参数
      */
     public void rawSQLCommand(String sqlTemplate, Object... parameters) {
-        sql(true, sqlTemplate, c->c.parameters(parameters));
+        sql(true, sqlTemplate, c -> c.parameters(parameters));
     }
 
     /**
      * 类型片段
-     *
+     * <p>
      * 类型片段支持比较即后续的操作
      * <blockquote><pre>
      * {@code
@@ -113,16 +138,18 @@ public class Expression {
      *
      * }
      * </blockquote></pre>
+     *
      * @param sqlTemplate sql模板参数使用{0}...{n}
-     * @param parameters 模板参数
+     * @param parameters  模板参数
      * @return 类型表达式
      */
     public AnyTypeExpression<Object> rawSQLStatement(String sqlTemplate, Object... parameters) {
-        return sqlSegment(sqlTemplate, c->c.parameters(parameters));
+        return sqlSegment(sqlTemplate, c -> c.parameters(parameters));
     }
 
     /**
      * 请使用{@link #rawSQLStatement(String, Object...)}
+     *
      * @param sqlSegment
      * @return
      */
@@ -133,6 +160,7 @@ public class Expression {
 
     /**
      * 请使用{@link #rawSQLStatement(String, Object...)}
+     *
      * @param sqlSegment
      * @param contextConsume
      * @return
@@ -277,10 +305,12 @@ public class Expression {
     public DateTimeTypeExpression<LocalDateTime> utcNow() {
         return new DateTimeTypeExpressionImpl<>(entitySQLContext, null, null, SQLFunc::utcNow, LocalDateTime.class);
     }
+
     public NumberTypeExpression<BigDecimal> random() {
         return new NumberTypeExpressionImpl<>(entitySQLContext, null, null, SQLFunc::random, BigDecimal.class);
     }
-    public <TProp> AnyTypeExpression<TProp> maxColumns(PropTypeColumn<TProp> column1,PropTypeColumn<TProp> column2,PropTypeColumn<?>... columns){
+
+    public <TProp> AnyTypeExpression<TProp> maxColumns(PropTypeColumn<TProp> column1, PropTypeColumn<TProp> column2, PropTypeColumn<?>... columns) {
         return new AnyTypeExpressionImpl<>(entitySQLContext, null, null, f -> {
             return f.maxColumns(c -> {
                 PropTypeColumn.acceptAnyValue(c, column1);
@@ -291,7 +321,8 @@ public class Expression {
             });
         }, column1.getPropertyType());
     }
-    public <TProp> AnyTypeExpression<TProp> minColumns(PropTypeColumn<TProp> column1,PropTypeColumn<TProp> column2,PropTypeColumn<?>... columns){
+
+    public <TProp> AnyTypeExpression<TProp> minColumns(PropTypeColumn<TProp> column1, PropTypeColumn<TProp> column2, PropTypeColumn<?>... columns) {
         return new AnyTypeExpressionImpl<>(entitySQLContext, null, null, f -> {
             return f.minColumns(c -> {
                 PropTypeColumn.acceptAnyValue(c, column1);
@@ -341,7 +372,7 @@ public class Expression {
 
     /**
      * where exists(....)
-     * 请使用{@link #exists(boolean,Query)}
+     * 请使用{@link #exists(boolean, Query)}
      *
      * @param condition    为true是exists生效
      * @param subQueryFunc 子查询创建方法
@@ -380,7 +411,6 @@ public class Expression {
     }
 
 
-
     /**
      * where exists(....)
      *
@@ -393,8 +423,8 @@ public class Expression {
     /**
      * where exists(....)
      *
-     * @param condition    为true是exists生效
-     * @param subQuery 子查询
+     * @param condition 为true是exists生效
+     * @param subQuery  子查询
      */
     public void exists(boolean condition, Query<?> subQuery) {
         if (condition) {
@@ -415,8 +445,8 @@ public class Expression {
     /**
      * where exists(....)
      *
-     * @param condition    为true是not exists生效
-     * @param subQuery 子查询创建方法
+     * @param condition 为true是not exists生效
+     * @param subQuery  子查询创建方法
      */
     public void notExists(boolean condition, Query<?> subQuery) {
         if (condition) {
@@ -524,7 +554,7 @@ public class Expression {
 
     public <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityQueryable<TProxy, T> subQueryable(Class<T> entityClass) {
         SQLClientApiFactory sqlClientApiFactory = entitySQLContext.getRuntimeContext().getSQLClientApiFactory();
-        ClientQueryable<T> queryable = sqlClientApiFactory.createSubQueryable(entityClass, entitySQLContext.getRuntimeContext(),entitySQLContext.getExpressionContext());
+        ClientQueryable<T> queryable = sqlClientApiFactory.createSubQueryable(entityClass, entitySQLContext.getRuntimeContext(), entitySQLContext.getExpressionContext());
         TProxy tProxy = EntityQueryProxyManager.create(entityClass);
         EasyEntityQueryable<TProxy, T> tProxyTEasyEntityQueryable = new EasyEntityQueryable<>(tProxy, queryable);
         tProxyTEasyEntityQueryable.get1Proxy().getEntitySQLContext().setContextHolder(this.entitySQLContext.getContextHolder());

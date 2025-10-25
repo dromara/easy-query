@@ -20,6 +20,7 @@ import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.SQLSelectExpression;
 import com.easy.query.core.proxy.core.FlatEntitySQLContext;
 import com.easy.query.core.proxy.core.draft.proxy.DraftProxy;
+import com.easy.query.core.proxy.impl.SQLSelectAs2Impl;
 import com.easy.query.core.proxy.part.proxy.PartProxy;
 import com.easy.query.core.util.EasyArrayUtil;
 
@@ -55,10 +56,15 @@ public class Select {
 
         if (EasyArrayUtil.isNotEmpty(selectAss)) {
             SQLSelectAsExpression firstSQLSelectAs = selectAss[0];
-            for (int i = 1; i < selectAss.length; i++) {
-                firstSQLSelectAs = firstSQLSelectAs._concat(selectAss[i]);
+            if (selectAss.length == 1) {
+                return firstSQLSelectAs;
             }
-            return firstSQLSelectAs;
+            SQLSelectAsExpression secondSQLSelectAs = selectAss[1];
+            SQLSelectAs2Impl resultExpression = new SQLSelectAs2Impl(firstSQLSelectAs, secondSQLSelectAs);
+            for (int i = 2; i < selectAss.length; i++) {
+                resultExpression = new SQLSelectAs2Impl(resultExpression, selectAss[i]);
+            }
+            return resultExpression;
         }
         return SQLSelectAsExpression.empty;
     }

@@ -76,15 +76,9 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     }
 
     /**
-     * 请使用{@link #filter(SQLActionExpression1)}
-     *
+     * 对目标表进行额外筛选，如果目标表不是关联关系表则和普通where一样，如果是关联关系表则在join on上添加额外条件
      * @param filterExpression
      */
-    @Deprecated
-    public void appendOn(SQLActionExpression1<TProxy> filterExpression) {
-        filter(filterExpression);
-    }
-
     public void filter(SQLActionExpression1<TProxy> filterExpression) {
         TableAvailable thisTable = getTable();
         boolean isRelationTable = thisTable instanceof RelationEntityTableAvailable;
@@ -118,21 +112,21 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         return EasyObjectUtil.typeCastNullable(original);
     }
 
-
-    /**
-     * 所有主键列
-     *
-     * @return 选择所有主键列的表达式
-     */
-    public SQLSelectAsExpression columnKeys() {
-        return new SQLSelectKeysImpl(this.getEntitySQLContext(), getTable());
-    }
-
     /**
      * 如果当前表示关联关系表则可以选择性的设置是否逻辑删除
      *
+     * <blockquote><pre>
+     * {@code
+     *    .where(s -> {
+     *           //对s表进行逻辑删除禁用
+     *           s.configure(x->x.disableLogicDelete());
+     *     })
+     *  }
+     * </pre></blockquote>
+     *
      * @param tableLogic
      */
+    @Deprecated
     public void relationLogicDelete(Supplier<Boolean> tableLogic) {
         Map<RelationTableKey, EntityTableExpressionBuilder> relationTables = entitySQLContext.getEntityExpressionBuilder().getRelationTables();
         TableAvailable tableAvailable = getTable();
@@ -191,6 +185,7 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     /**
      * 快速选择表达式
+     * 请使用{@link #selectBy(SQLSelectAsExpression...)}
      * <blockquote><pre>
      * {@code
      *
@@ -204,33 +199,16 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      *
      * @param sqlSelectAsExpression 要查询的表达式
      */
+    @Deprecated
     public TProxy selectExpression(SQLSelectAsExpression... sqlSelectAsExpression) {
         entitySQLContext.accept(sqlSelectAsExpression);
         return castChain();
     }
-
-    /**
-     * 支持动态select+动态group取列防止sql注入
-     *
-     * @param sqlTableOwner 要查询的表
-     * @param property      要查询的属性
-     */
-    public TProxy selectColumn(SQLTableOwner sqlTableOwner, String property) {
-        entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(), sqlTableOwner.getTable(), property));
+    public TProxy selectBy(SQLSelectAsExpression... sqlSelectAsExpression) {
+        entitySQLContext.accept(sqlSelectAsExpression);
         return castChain();
     }
 
-    /**
-     * 支持动态select+动态selectAs取列防止sql注入
-     *
-     * @param sqlTableOwner 要查询的表
-     * @param property      要查询的属性
-     * @param propertyAlias 要查询的属性别名映射到返回结果的属性名称
-     */
-    public TProxy selectColumnAs(SQLTableOwner sqlTableOwner, String property, String propertyAlias) {
-        entitySQLContext.accept(new SQLSelectAsEntryImpl(this.getEntitySQLContext(), sqlTableOwner.getTable(), property, propertyAlias));
-        return castChain();
-    }
 
     /**
      * 增强当前代理对象

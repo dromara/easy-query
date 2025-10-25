@@ -13,6 +13,7 @@ import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.ColumnSelectSQLContext;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
+import com.easy.query.core.proxy.impl.SQLSelectKeysImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Collection;
@@ -23,7 +24,7 @@ import java.util.Collection;
  *
  * @author xuejiaming
  */
-public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy, TEntity>, TEntity, TChain extends AbstractFetcher<TProxy, TEntity, TChain>> implements EntityFetcher<TProxy, TEntity, TChain>, ProxyEntity<TChain,TEntity> {
+public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy, TEntity>, TEntity, TChain extends AbstractFetcher<TProxy, TEntity, TChain>> implements EntityFetcher<TProxy, TEntity, TChain>, ProxyEntity<TChain, TEntity> {
 
 
     private final TProxy tProxy;
@@ -88,7 +89,7 @@ public abstract class AbstractFetcher<TProxy extends AbstractProxyEntity<TProxy,
     }
 
     public TChain columnKeys() {
-        SQLSelectAsExpression keys = tProxy.columnKeys();
+        SQLSelectAsExpression keys = new SQLSelectKeysImpl(tProxy.getEntitySQLContext(), tProxy.getTable());
         return createFetcher(tProxy, this, keys);
     }
 

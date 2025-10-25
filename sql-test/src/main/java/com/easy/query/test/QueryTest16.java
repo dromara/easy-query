@@ -13,12 +13,14 @@ import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.oracle.config.OracleDatabaseConfiguration;
+import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.blogtest.Company;
 import com.easy.query.test.entity.blogtest.CompanyVO;
 import com.easy.query.test.entity.blogtest.SysUser;
 import com.easy.query.test.entity.blogtest.proxy.CompanyProxy;
 import com.easy.query.test.entity.blogtest.proxy.CompanyVOProxy;
+import com.easy.query.test.entity.m2m.Station;
 import com.easy.query.test.entity.navf.UVO;
 import com.easy.query.test.entity.navf.User;
 import com.easy.query.test.listener.ListenerContext;
@@ -274,21 +276,25 @@ public class QueryTest16 extends BaseTest {
 //
     @Test
     public void test8() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
         try {
-            List<SysUser> userInHz = easyEntityQuery.queryable(SysUser.class)
+            List<BlogEntity> userInHz = easyEntityQuery.queryable(BlogEntity.class)
                     .where(s -> {
-                        s.address().relationLogicDelete(() -> false);
-//                    EntityTableExpressionBuilder entityTableExpressionBuilder = s.getEntitySQLContext().getEntityExpressionBuilder().getRelationTables().get(new RelationTableKey(s.getEntityClass(), s.address().getTable().getEntityClass()));
-//                    entityTableExpressionBuilder.setTableLogicDelete(()->false);
-                        //隐式子查询会自动join用户表和地址表
+                        s.configure(x->x.disableLogicDelete());
                         s.or(() -> {
-                            s.address().city().eq("杭州市");
-                            s.address().city().eq("绍兴市");
+                            s.title().eq("杭州市");
+                            s.title().eq("绍兴市");
                         });
                     }).toList();
         } catch (Exception ex) {
 
         }
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE (`title` = ? OR `title` = ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("杭州市(String),绍兴市(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 //    @Test
 //    public void test8_1() {

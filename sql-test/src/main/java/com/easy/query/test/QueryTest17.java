@@ -17,6 +17,7 @@ import com.easy.query.core.expression.sql.builder.EmptyEntityExpressionBuilder;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
@@ -45,11 +46,9 @@ import com.easy.query.test.entity.school.proxy.SchoolStudentProxy;
 import com.easy.query.test.entity.school.proxy.SchoolTeacherProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
 import com.easy.query.test.listener.ListenerContext;
-import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.nop.MyObject;
 import com.easy.query.test.nop.OtherTable;
 import com.zaxxer.hikari.HikariDataSource;
-import lombok.val;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -59,7 +58,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -632,8 +630,8 @@ public class QueryTest17 extends BaseTest {
                     })
                     .select(t -> {
                         TopicProxy topicProxy = new TopicProxy();
-                        topicProxy.selectColumn(t, "id");
-                        topicProxy.selectColumn(t, "title");
+                        SQLSelectAsExpression selectColumn = t.expression().createSelectColumnExpression("id", "title");
+                        topicProxy.selectBy(selectColumn);
                         return topicProxy;
                     }).toList();
 

@@ -16,8 +16,11 @@ import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.core.draft.Draft3;
+import com.easy.query.core.proxy.core.draft.proxy.Draft3Proxy;
 import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
+import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
@@ -29,9 +32,13 @@ import com.easy.query.test.entity.m2m.Station;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.entity.bank.SysBankCard;
+import com.easy.query.test.vo.BlogEntityVO1;
+import com.easy.query.test.vo.proxy.BlogEntityVO1Proxy;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -714,5 +721,63 @@ public class QueryTest27 extends BaseTest {
 
     }
 
+//    @Test
+//    public void testSelectSet() {
+//        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+//                .where(t_blog -> t_blog.id().eq("123"))
+//                .select(t_blog -> {
+//                    return t_blog.selectBy(t_blog.id(), t_blog.title());
+//                }).toList();
+//
+//        List<Part1<SysUser, String>> userAndTypes = easyEntityQuery.queryable(SysUser.class)
+//                .leftJoin(SysBankCard.class, (user, bank_card) -> user.id().eq(bank_card.uid()))
+//                .where((user, bank_card) -> {
+//                    user.username().contains("小明");
+//                })
+//                .select((user, bank_card) -> Select.PART.of(
+//                        user,
+//                        bank_card.type()
+//                )).toList();
+//
+//        List<SysUser> list1 = easyEntityQuery.queryable(SysUser.class)
+//                .where(user -> {
+//                    user.id().in(
+//                            easyEntityQuery.queryable(SysBankCard.class)
+//                                    .where(bank_card -> {
+//                                        bank_card.uid().eq(user.id());
+//                                        bank_card.type().eq("储蓄卡");
+//                                    }).select(bank_card -> bank_card.uid())
+//                    );
+//                }).toList();
+//
+//    }
+
+
+    @Test
+    public void testDerivedTable1() {
+        EntityQueryable<BlogEntityVO1Proxy, BlogEntityVO1> query = easyEntityQuery.queryable(BlogEntity.class)
+                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.SMART_PREDICATE))
+                .select(t_blog -> new BlogEntityVO1Proxy()
+                        .score().set(t_blog.score()) // 评分
+                        .status().set(t_blog.status()) // 状态
+                        .order().set(t_blog.order()) // 排序
+                        .isTop().set(t_blog.isTop()) // 是否置顶
+                        .top().set(t_blog.top()) // 是否置顶
+                );
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        //下游操作或者前端用户传递json操作query
+        List<BlogEntityVO1> list = query.where(o -> {
+            o.status().eq(0);
+            o.order().eq(BigDecimal.ONE);
+        }).toList();
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`score` AS `score`,t1.`status1` AS `status1`,t1.`order` AS `order`,t1.`is_top` AS `is_top`,t1.`top` AS `top` FROM (SELECT t.`score` AS `score`,t.`status` AS `status1`,t.`order` AS `order`,t.`is_top` AS `is_top`,t.`top` AS `top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`status` = ? AND t.`order` = ?) t1 WHERE t1.`status1` = ? AND t1.`order` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),0(Integer),1(BigDecimal),0(Integer),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+
+    }
 
 }
