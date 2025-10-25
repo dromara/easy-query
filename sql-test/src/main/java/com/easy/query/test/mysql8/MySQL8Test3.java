@@ -770,10 +770,12 @@ public class MySQL8Test3 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         try {
             easyEntityQuery.queryable(SysBankCard.class)
-                    .select(bank_card -> Select.DRAFT.of(
-                            bank_card.type(),
-                            bank_card.type().offset().prev(1)
-                    )).toList();
+                    .select(bank_card -> {
+                        return Select.DRAFT.of(
+                                bank_card.type(),
+                                bank_card.type().offset().prev(1)
+                        );
+                    }).toList();
         } catch (Exception e) {
             ex = e;
         }

@@ -191,11 +191,17 @@ public class RelationTest extends BaseTest {
                 listenerContextManager.startListen(listenerContext);
                 System.out.println("------------------");
                 List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .includeBy(s->Include.of(
-                                s.schoolTeachers().flatElement().schoolClasses().asIncludeQueryable().where(a -> a.name().like("123")),
-                                s.schoolStudents().flatElement().schoolClass().asIncludeQueryable().where(x -> x.schoolStudents().flatElement().name().eq("123")),
-                                s.schoolStudents().asIncludeQueryable().where(x -> x.name().ne("123"))
-                        )).toList();
+//                        .includeBy(s->Include.of(
+//                                s.schoolTeachers().flatElement().schoolClasses().asIncludeQueryable().where(a -> a.name().like("123")),
+//                                s.schoolStudents().flatElement().schoolClass().asIncludeQueryable().where(x -> x.schoolStudents().flatElement().name().eq("123")),
+//                                s.schoolStudents().asIncludeQueryable().where(x -> x.name().ne("123"))
+//                        ))
+                        .include((c,s)->{
+                            c.query(s.schoolTeachers().flatElement().schoolClasses()).where(a -> a.name().like("123"));
+                            c.query(s.schoolStudents().flatElement().schoolClass()).where(x -> x.schoolStudents().flatElement().name().eq("123"));
+                            c.query(s.schoolStudents()).where(x -> x.name().ne("123"));
+                        })
+                        .toList();
 
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
                 Assert.assertEquals(7, listenerContext.getJdbcExecuteAfterArgs().size());
@@ -244,10 +250,14 @@ public class RelationTest extends BaseTest {
 
 
                 List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includeBy(s->Include.of(
-                                s.schoolStudents().flatElement().schoolStudentAddress().asIncludeQueryable(),
-                                s.schoolTeachers().where(x->x.id().isNotNull()).orderBy(x->x.name().asc()).asIncludeQueryable()
-                        ))
+//                        .includeBy(s->Include.of(
+//                                s.schoolStudents().flatElement().schoolStudentAddress().asIncludeQueryable(),
+//                                s.schoolTeachers().where(x->x.id().isNotNull()).orderBy(x->x.name().asc()).asIncludeQueryable()
+//                        ))
+                        .include((c,s)->{
+                            c.query(s.schoolStudents().flatElement().schoolStudentAddress());
+                            c.query(s.schoolTeachers().where(x->x.id().isNotNull()).orderBy(x->x.name().asc()));
+                        })
                         .select(SchoolClassVO.class)
                         .toList();
                 System.out.println("------------------");
@@ -310,11 +320,15 @@ public class RelationTest extends BaseTest {
 
 
                 List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includeBy(s->Include.of(
-                                s.schoolStudents().flatElement().schoolStudentAddress().asIncludeQueryable(),
-                                s.schoolTeachers().asIncludeQueryable()
-
-                        ))
+//                        .includeBy(s->Include.of(
+//                                s.schoolStudents().flatElement().schoolStudentAddress().asIncludeQueryable(),
+//                                s.schoolTeachers().asIncludeQueryable()
+//
+//                        ))
+                        .include((c,s)->{
+                            c.query(s.schoolStudents().flatElement().schoolStudentAddress());
+                            c.query(s.schoolTeachers());
+                        })
                         .select(SchoolClassVO.class)
                         .toList();
                 System.out.println("------------------");

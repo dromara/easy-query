@@ -403,7 +403,6 @@ public class MySQL8Test4 extends BaseTest {
     }
     @Test
     public void testAll1() {
-
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)

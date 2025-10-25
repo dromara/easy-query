@@ -494,11 +494,11 @@ public class QueryTest26 extends BaseTest {
     public void includeFlat() {
 
         List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
-                .includeBy(s -> Include.of(
-                        s.schoolTeachers().flatElement().schoolClasses().asIncludeQueryable().where(a -> a.name().like("123")),
-                        s.schoolStudents().flatElement().schoolClass().asIncludeQueryable().where(x -> x.schoolStudents().flatElement().name().eq("123")),
-                        s.schoolStudents().asIncludeQueryable().where(x -> x.name().eq("123"))
-                ))
+                .include((c, s) -> {
+                    c.query(s.schoolTeachers().flatElement().schoolClasses()).where(a -> a.name().like("123"));
+                    c.query(s.schoolStudents().flatElement().schoolClass()).where(x -> x.schoolStudents().flatElement().name().eq("123"));
+                    c.query(s.schoolStudents()).where(x -> x.name().eq("123"));
+                })
                 .toList();
     }
 

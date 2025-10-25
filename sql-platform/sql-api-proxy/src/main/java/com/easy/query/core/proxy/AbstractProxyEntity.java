@@ -360,6 +360,11 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
         return new EntityExtraAutoIncludeConfigureImpl<>();
     }
 
+    /**
+     * 请使用include2
+     * @return
+     */
+    @Deprecated
     public IncludeQueryable<TProxy, TEntity> asIncludeQueryable() {
         return new EasyIncludeQueryable<>(castChain());
     }

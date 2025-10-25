@@ -126,17 +126,17 @@ public class M8Save3Test extends BaseTest {
 
         invoke(listenerContext -> {
             M8SaveA a1 = easyEntityQuery.queryable(M8SaveA.class).whereById("1")
-                    .includeBy(m -> Include.of(
-                            m.m8SaveB().m8SaveC().m8SaveD().asIncludeQueryable()
-                    )).singleNotNull();
+                    .include((c,s)->{
+                        c.query(s.m8SaveB().m8SaveC().m8SaveD());
+                    }).singleNotNull();
             M8SaveA a5 = easyEntityQuery.queryable(M8SaveA.class).whereById("5")
-                    .includeBy(m -> Include.of(
-                            m.m8SaveB().m8SaveC().m8SaveD().asIncludeQueryable()
-                    )).singleNotNull();
+                    .include((c,s)->{
+                        c.query(s.m8SaveB().m8SaveC().m8SaveD());
+                    }).singleNotNull();
             M8SaveA a9 = easyEntityQuery.queryable(M8SaveA.class).whereById("9")
-                    .includeBy(m -> Include.of(
-                            m.m8SaveB().m8SaveC().m8SaveD().asIncludeQueryable()
-                    )).singleNotNull();
+                    .include((c,s)->{
+                        c.query(s.m8SaveB().m8SaveC().m8SaveD());
+                    }).singleNotNull();
 
             List<M8SaveA> list = new ArrayList<>();
             list.add(a1);
@@ -211,9 +211,9 @@ public class M8Save3Test extends BaseTest {
 
         invoke(listenerContext -> {
             M8SaveA a1 = easyEntityQuery.queryable(M8SaveA.class).whereById("1")
-                    .includeBy(m -> Include.of(
-                            m.m8SaveB().m8SaveC().m8SaveD().asIncludeQueryable()
-                    )).singleNotNull();
+                    .include((c,s)->{
+                        c.query(s.m8SaveB().m8SaveC().m8SaveD());
+                    }).singleNotNull();
 
             a1.setM8SaveB(null);
 
@@ -252,9 +252,13 @@ public class M8Save3Test extends BaseTest {
 
         invoke(listenerContext -> {
             List<M8SaveA> list = easyEntityQuery.queryable(M8SaveA.class)
-                    .includeBy(m -> Include.of(
-                            m.m8SaveB().m8SaveC().m8SaveD().asIncludeQueryable()
-                    )).toList();
+                    .include((c,s)->{
+                        c.query(s.m8SaveB().m8SaveC().m8SaveD());
+                    })
+//                    .includeBy(m -> Include.of(
+//                            m.m8SaveB().m8SaveC().m8SaveD().asIncludeQueryable()
+//                    ))
+                    .toList();
             M8SaveA a1 = list.stream().filter(o -> Objects.equals("1", o.getId())).findFirst().orElseThrow(() -> new RuntimeException("a1 not found"));
             M8SaveA a5 = list.stream().filter(o -> Objects.equals("5", o.getId())).findFirst().orElseThrow(() -> new RuntimeException("a5 not found"));
             M8SaveB b2 = a1.getM8SaveB();
@@ -355,9 +359,9 @@ public class M8Save3Test extends BaseTest {
             try {
 
                 M8SaveA a1 = easyEntityQuery.queryable(M8SaveA.class).whereById("1")
-                        .includeBy(m -> Include.of(
-                                m.m8SaveB().m8SaveC().m8SaveD().asIncludeQueryable()
-                        ))
+                        .include((c,s)->{
+                            c.query(s.m8SaveB().m8SaveC().m8SaveD());
+                        })
                         .forEach(item -> {
                             if (item.getId().equals("1")) {
                                 throw new RuntimeException("123123");

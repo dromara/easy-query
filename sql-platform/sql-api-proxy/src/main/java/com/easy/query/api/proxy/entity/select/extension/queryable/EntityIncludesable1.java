@@ -2,6 +2,7 @@ package com.easy.query.api.proxy.entity.select.extension.queryable;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
@@ -9,14 +10,14 @@ import com.easy.query.core.proxy.columns.SQLQueryable;
 
 /**
  * create time 2023/8/17 13:34
- * 建议使用{@link EntityIncludeable1#includeBy(SQLFuncExpression1)}
+ * 建议使用{@link EntityIncludeable1#include(SQLActionExpression2)}
  *
  * @author xuejiaming
  */
 public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends ClientEntityQueryableAvailable<T1>, EntityQueryableAvailable<T1Proxy, T1> {
 
     /**
-     * 建议使用{@link EntityIncludeable1#includeBy(SQLFuncExpression1)}
+     * 建议使用{@link EntityIncludeable1#include(SQLActionExpression2)}
      * <blockquote><pre>
      * {@code
      * easyEntityQuery.queryable(SchoolStudent.class)
@@ -34,7 +35,7 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
     }
 
     /**
-     * 建议使用{@link EntityIncludeable1#includeBy(SQLFuncExpression1)}
+     * 建议使用{@link EntityIncludeable1#include(SQLActionExpression2)}
      * @param condition
      * @param navigateIncludeSQLExpression
      * @return
@@ -46,7 +47,7 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
     }
 
     /**
-     * 建议使用{@link EntityIncludeable1#includeBy(SQLFuncExpression1)}
+     * 建议使用{@link EntityIncludeable1#include(SQLActionExpression2)}
      * <blockquote><pre>
      * {@code
      * easyEntityQuery.queryable(SchoolStudent.class)
@@ -65,7 +66,7 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
     }
 
     /**
-     * 建议使用{@link EntityIncludeable1#includeBy(SQLFuncExpression1)}
+     * 建议使用{@link EntityIncludeable1#include(SQLActionExpression2)}
      * @param condition
      * @param navigateIncludeSQLExpression
      * @param groupSize
@@ -78,7 +79,7 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
     }
 
     /**
-     * 建议使用{@link EntityIncludeable1#includeBy(SQLFuncExpression1)}
+     * 建议使用{@link EntityIncludeable1#include(SQLActionExpression2)}
      * <blockquote><pre>
      * {@code
      * easyEntityQuery.queryable(SchoolStudent.class)
@@ -97,7 +98,7 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
     }
 
     /**
-     * 建议使用{@link EntityIncludeable1#includeBy(SQLFuncExpression1)}
+     * 建议使用{@link EntityIncludeable1#include(SQLActionExpression2)}
      * @param condition
      * @param navigateIncludeSQLExpression
      * @param includeAdapterExpression
@@ -110,7 +111,7 @@ public interface EntityIncludesable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
     }
 
     /**
-     * 建议使用{@link EntityIncludeable1#includeBy(SQLFuncExpression1)}
+     * 建议使用{@link EntityIncludeable1#include(SQLActionExpression2)}
      * @param navigateIncludeSQLExpression
      * @param includeAdapterExpression
      * @param groupSize

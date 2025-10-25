@@ -13,6 +13,12 @@ import java.util.List;
  * @author xuejiaming
  */
 public class Include {
+    /**
+     * 请使用include2
+     * @param include2s
+     * @return
+     */
+    @Deprecated
     public static List<IncludeAvailable> of(IncludeAvailable...include2s) {
         if(include2s==null){
             return null;

@@ -4,13 +4,10 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.common.ValueHolder;
-import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.sql.Include;
-import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
-import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.save.M8SaveRoot;
 import com.easy.query.test.mysql8.entity.save.M8SaveRoot2Many;
 import com.easy.query.test.mysql8.entity.save.M8SaveRootMany;
@@ -1350,12 +1347,12 @@ public class M8SaveTest extends BaseTest {
 
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
-                    .includeBy(m -> Include.of(
-                            m.m8SaveRootOne().asIncludeQueryable(),
-                            m.m8SaveRootOne2().asIncludeQueryable(),
-                            m.m8SaveRoot2ManyList().asIncludeQueryable(),
-                            m.m8SaveRootManyList().flatElement().m8SaveRootManyOne().asIncludeQueryable()
-                    ))
+                    .include((context,table)->{
+                        context.query(table.m8SaveRootOne());
+                        context.query(table.m8SaveRootOne2());
+                        context.query(table.m8SaveRoot2ManyList());
+                        context.query(table.m8SaveRootManyList().flatElement().m8SaveRootManyOne());
+                    })
                     .singleNotNull();
 
 

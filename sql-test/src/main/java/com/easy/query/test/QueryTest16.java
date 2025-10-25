@@ -29,8 +29,10 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * create time 2024/4/29 23:02
@@ -46,8 +48,26 @@ public class QueryTest16 extends BaseTest {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
+//        ArrayList<SysUser> sysUsers = new ArrayList<>();
+//        List<SysUser> users = sysUsers.stream()
+//                .filter(user -> {
+////                    return user.getRoles().stream().filter(role -> role.getName().endsWith("管理员")).count() >= 3;
+//                    return user.getRoles().stream().filter(role -> role.getName().endsWith("管理员")).anyMatch(o->true);
+//                    return user.getRoles().stream().anyMatch(role -> role.getName().endsWith("管理员"));
+//                })
+//                .collect(Collectors.toList());
 
         try {
+//            easyEntityQuery.queryable(SysUser.class)
+//                    .where(user -> {
+//                        //用户拥有的角色是xxxx管理员的数量大于等于3个
+//                        user.roles().where(role->role.name().endsWith("管理员")).count().gt(2L);
+//
+//                        //用户拥有的角色是xxxx管理员的数量大于等于1个 也叫做存在至少一个
+//                        user.roles().where(role->role.name().endsWith("管理员")).any();
+//                        user.roles().any(role->role.name().endsWith("管理员"));//这是上面的any的语法糖
+//                    })
+
             List<SysUser> managers = easyEntityQuery.queryable(SysUser.class)
                     .where(s -> {
                         //筛选条件为角色集合里面有角色名称叫做管理员的
