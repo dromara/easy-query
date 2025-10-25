@@ -3,6 +3,7 @@ package com.easy.query.core.proxy.columns.impl;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -12,6 +13,7 @@ import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SubQueryContext;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.ProxyFlatElementEntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
@@ -134,6 +136,20 @@ public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
     }
 
     @Override
+    public void all(SQLActionExpression1<T1Proxy> allExpression) {
+
+        SQLActionExpression1<T1Proxy> reverseAllExpression = table -> {
+            Expression expression = Expression.of(table.getEntitySQLContext());
+            expression.not(() -> {
+                allExpression.apply(table);
+            });
+        };
+        where(reverseAllExpression);
+        queryableAcceptExpression();
+        getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notExists(this.easyEntityQueryable)));
+    }
+
+    @Override
     public void none(SQLActionExpression1<T1Proxy> whereExpression) {
         where(whereExpression).none();
     }
@@ -227,7 +243,7 @@ public class EasySQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> 
     @Override
     public T1Proxy flatElement(SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> flatAdapterExpression) {
         QueryRuntimeContext runtimeContext = this.getEntitySQLContext().getRuntimeContext();
-        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), new ProxyFlatElementEntitySQLContext(this, this.easyEntityQueryable.getClientQueryable(),this.getEntitySQLContext().getContextHolder(), runtimeContext, flatAdapterExpression));
+        T1Proxy tPropertyProxy = getProxy().create(getProxy().getTable(), new ProxyFlatElementEntitySQLContext(this, this.easyEntityQueryable.getClientQueryable(), this.getEntitySQLContext().getContextHolder(), runtimeContext, flatAdapterExpression));
         tPropertyProxy.setNavValue(getNavValue());
         return tPropertyProxy;
     }

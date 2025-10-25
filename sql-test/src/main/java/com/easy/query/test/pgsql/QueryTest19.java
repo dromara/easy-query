@@ -14,6 +14,7 @@ import com.easy.query.core.proxy.grouping.Grouping1;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.dto.MyCategoryDTO;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MyCategory;
@@ -21,6 +22,7 @@ import com.easy.query.test.entity.UUIDEntity;
 import com.easy.query.test.entity.vo.MyCategoryVO2;
 import com.easy.query.test.entity.vo.MyCategoryVO3;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.view.TreeC;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,7 +31,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * create time 2024/11/9 09:26
@@ -49,7 +53,7 @@ public class QueryTest19 extends PgSQLBaseTest {
                 .where(m -> {
                     m.id().eq("1");
                 })
-                .asTreeCTE(op->{
+                .asTreeCTE(op -> {
                     op.setDeepColumnName("deep1");
                 })
                 .selectAutoInclude(MyCategoryVO3.class).toTreeList();
@@ -79,6 +83,7 @@ public class QueryTest19 extends PgSQLBaseTest {
         Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void tree9() {
 
@@ -514,7 +519,7 @@ public class QueryTest19 extends PgSQLBaseTest {
     @Test
     public void datetimeformat() {
 
-        String formater = "yyyy年MM-01 HH:mm分ss秒" ;
+        String formater = "yyyy年MM-01 HH:mm分ss秒";
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<Draft2<LocalDateTime, String>> list = entityQuery.queryable(BlogEntity.class)
@@ -554,12 +559,12 @@ public class QueryTest19 extends PgSQLBaseTest {
 
 
     @Test
-     public void test(){
+    public void test() {
         BlogEntity blogEntity = entityQuery.queryable(BlogEntity.class).includes(t_blog -> t_blog.users()).where(t_blog -> {
             t_blog.title().eq("title0");
         }).singleNotNull();
         Assert.assertNotNull(blogEntity.getUsers());
-        Assert.assertEquals(1,blogEntity.getUsers().size());
+        Assert.assertEquals(1, blogEntity.getUsers().size());
         List<BlogEntity> list = entityQuery.queryable(BlogEntity.class)
                 .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(t_blog -> {
@@ -573,13 +578,13 @@ public class QueryTest19 extends PgSQLBaseTest {
         List<BlogEntity> list2 = entityQuery.queryable(BlogEntity.class)
                 .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(t_blog -> {
-                    t_blog.users().where(s->s.id().isNotBlank()).any();
+                    t_blog.users().where(s -> s.id().isNotBlank()).any();
                 }).toList();
     }
 
 
     @Test
-    public void testUUId(){
+    public void testUUId() {
         UUID uuid = UUID.randomUUID();
 
         UUIDEntity uuidEntity = new UUIDEntity();
@@ -592,6 +597,7 @@ public class QueryTest19 extends PgSQLBaseTest {
         Assert.assertEquals(uuid, uuidEntity1.getId1());
         Assert.assertEquals(uuid, uuidEntity1.getId2());
     }
+
     @Test
     public void testToTreeListDTO() {
         ListenerContext listenerContext = new ListenerContext();
@@ -636,11 +642,184 @@ public class QueryTest19 extends PgSQLBaseTest {
 
 
     @Test
-    public  void cteViewTree1(){
+    public void cteViewTree1() {
         ServiceProvider service = entityQuery.getRuntimeContext().getService(ServiceProvider.class);
 
         List<TreeC> list = entityQuery.queryable(TreeC.class)
                 .asTreeCTE()
                 .toList();
+    }
+
+
+    @Test
+    public void testAll() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<DocUser> list = entityQuery.queryable(DocUser.class)
+                .includes(user -> user.bankCards())
+                .where(user -> {
+                    user.bankCards().where(bc -> bc.type().eq("储蓄卡")).all(bc -> bc.code().startsWith("33123"));
+                }).toList();
+        int size = list.size();
+        Assert.assertEquals(3, size);
+        List<DocUser> newCards = list.stream().filter(user -> {
+            //因为null记录不会被like返回所以直接过滤null
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123"));
+        }).collect(Collectors.toList());
+        Assert.assertEquals(3, newCards.size());
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.\"id\",t.\"name\",t.\"phone\",t.\"age\" FROM \"doc_user\" t WHERE NOT ( EXISTS (SELECT 1 FROM \"doc_bank_card\" t1 WHERE t1.\"uid\" = t.\"id\" AND t1.\"type\" = ? AND (NOT (t1.\"code\" LIKE (CONCAT((?)::TEXT , '%')))) LIMIT 1))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("储蓄卡(String),33123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.\"id\",t.\"uid\",t.\"code\",t.\"type\",t.\"bank_id\" FROM \"doc_bank_card\" t WHERE t.\"uid\" IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("小明id(String),小红id(String),小黄id(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testAll1() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<DocUser> list = entityQuery.queryable(DocUser.class)
+                .includes(user -> user.bankCards())
+                .where(user -> {
+                    user.bankCards().where(bc -> bc.type().eq("储蓄卡")).all(bc -> bc.code().nullOrDefault("").startsWith("33123"));
+                }).toList();
+        int size = list.size();
+        Assert.assertEquals(1, size);
+        List<DocUser> newCards = list.stream().filter(user -> {
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")).allMatch(o -> (o.getCode() == null ? "" : o.getCode()).startsWith("33123"));
+        }).collect(Collectors.toList());
+        Assert.assertEquals(1, newCards.size());
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.\"id\",t.\"name\",t.\"phone\",t.\"age\" FROM \"doc_user\" t WHERE NOT ( EXISTS (SELECT 1 FROM \"doc_bank_card\" t1 WHERE t1.\"uid\" = t.\"id\" AND t1.\"type\" = ? AND (NOT (COALESCE(t1.\"code\",?) LIKE (CONCAT((?)::TEXT , '%')))) LIMIT 1))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("储蓄卡(String),(String),33123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.\"id\",t.\"uid\",t.\"code\",t.\"type\",t.\"bank_id\" FROM \"doc_bank_card\" t WHERE t.\"uid\" IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("小黄id(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testAll2() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<DocUser> list = entityQuery.queryable(DocUser.class)
+                .includes(user -> user.bankCards())
+                .where(user -> {
+                    user.bankCards().where(bc -> bc.type().eq("储蓄卡")).all(bc -> {
+                        bc.code().startsWith("33123");
+                        bc.code().startsWith("45678");
+                    });
+                }).toList();
+        int size = list.size();
+        Assert.assertEquals(3, size);
+        List<DocUser> newCards = list.stream().filter(user -> {
+            //因为null记录不会被like返回所以直接过滤null
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123")&&o.getCode().startsWith("45678"));
+        }).collect(Collectors.toList());
+        Assert.assertEquals(3, newCards.size());
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.\"id\",t.\"name\",t.\"phone\",t.\"age\" FROM \"doc_user\" t WHERE NOT ( EXISTS (SELECT 1 FROM \"doc_bank_card\" t1 WHERE t1.\"uid\" = t.\"id\" AND t1.\"type\" = ? AND (NOT (t1.\"code\" LIKE (CONCAT((?)::TEXT , '%')) AND t1.\"code\" LIKE (CONCAT((?)::TEXT , '%')))) LIMIT 1))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("储蓄卡(String),33123(String),45678(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.\"id\",t.\"uid\",t.\"code\",t.\"type\",t.\"bank_id\" FROM \"doc_bank_card\" t WHERE t.\"uid\" IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("小明id(String),小红id(String),小黄id(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testAllGroupJoin() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<DocUser> list = entityQuery.queryable(DocUser.class)
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .includes(user -> user.bankCards())
+                .where(user -> {
+                    user.bankCards().where(bc -> bc.type().eq("储蓄卡")).all(bc -> bc.code().startsWith("33123"));
+                }).toList();
+        int size = list.size();
+        Assert.assertEquals(3, size);
+        List<DocUser> newCards = list.stream().filter(user -> {
+            //因为null记录不会被like返回所以直接过滤null
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123"));
+        }).collect(Collectors.toList());
+        Assert.assertEquals(3, newCards.size());
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.\"id\",t.\"name\",t.\"phone\",t.\"age\" FROM \"doc_user\" t LEFT JOIN (SELECT t1.\"uid\" AS \"uid\",(COUNT(?) <= 0) AS \"__none2__\" FROM \"doc_bank_card\" t1 WHERE t1.\"type\" = ? AND (NOT (t1.\"code\" LIKE (CONCAT((?)::TEXT , '%')))) GROUP BY t1.\"uid\") t2 ON t2.\"uid\" = t.\"id\" WHERE COALESCE(t2.\"__none2__\",?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer),储蓄卡(String),33123(String),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.\"id\",t.\"uid\",t.\"code\",t.\"type\",t.\"bank_id\" FROM \"doc_bank_card\" t WHERE t.\"uid\" IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("小明id(String),小红id(String),小黄id(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testAllGroupJoin2() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<DocUser> list = entityQuery.queryable(DocUser.class)
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .includes(user -> user.bankCards())
+                .where(user -> {
+                    user.bankCards().where(bc -> bc.type().eq("储蓄卡")).all(bc -> {
+                        bc.code().startsWith("33123");
+                        bc.code().startsWith("45678");
+                    });
+                }).toList();
+
+        int size = list.size();
+        Assert.assertEquals(3, size);
+        List<DocUser> newCards = list.stream().filter(user -> {
+            //因为null记录不会被like返回所以直接过滤null
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123")&&o.getCode().startsWith("45678"));
+        }).collect(Collectors.toList());
+        Assert.assertEquals(3, newCards.size());
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.\"id\",t.\"name\",t.\"phone\",t.\"age\" FROM \"doc_user\" t LEFT JOIN (SELECT t1.\"uid\" AS \"uid\",(COUNT(?) <= 0) AS \"__none2__\" FROM \"doc_bank_card\" t1 WHERE t1.\"type\" = ? AND (NOT (t1.\"code\" LIKE (CONCAT((?)::TEXT , '%')) AND t1.\"code\" LIKE (CONCAT((?)::TEXT , '%')))) GROUP BY t1.\"uid\") t2 ON t2.\"uid\" = t.\"id\" WHERE COALESCE(t2.\"__none2__\",?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer),储蓄卡(String),33123(String),45678(String),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.\"id\",t.\"uid\",t.\"code\",t.\"type\",t.\"bank_id\" FROM \"doc_bank_card\" t WHERE t.\"uid\" IN (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("小明id(String),小红id(String),小黄id(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        listenerContextManager.clear();
     }
 }

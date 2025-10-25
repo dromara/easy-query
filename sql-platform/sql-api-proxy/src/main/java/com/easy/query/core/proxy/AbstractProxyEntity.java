@@ -87,23 +87,27 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
 
     public void filter(SQLActionExpression1<TProxy> filterExpression) {
         TableAvailable thisTable = getTable();
-        if (!(thisTable instanceof RelationEntityTableAvailable)) {
-            throw new EasyQueryInvalidOperationException("can not use extraFilter for " + EasyClassUtil.getSimpleName(getTable().getEntityClass()));
-        }
-        RelationTableKey relationTableKey = ((RelationEntityTableAvailable) thisTable).getRelationTableKey();
-        EntityTableExpressionBuilder entityTableExpressionBuilder = entitySQLContext.getEntityExpressionBuilder().getRelationTables().get(relationTableKey);
-        if (entityTableExpressionBuilder == null) {
-            throw new EasyQueryInvalidOperationException("can not find relation table for " + EasyClassUtil.getSimpleName(getTable().getEntityClass()) + ", field:" + getValue());
-        }
-        AndPredicateSegment filterPredicate = new AndPredicateSegment(true);
-        FilterImpl onFilter = new FilterImpl(entitySQLContext.getRuntimeContext(), entitySQLContext.getExpressionContext(), filterPredicate, false, entitySQLContext.getExpressionContext().getValueFilter());
-        getEntitySQLContext()._where(onFilter, () -> {
+        boolean isRelationTable = thisTable instanceof RelationEntityTableAvailable;
+        if (isRelationTable) {//处理relation的join on条件
+            RelationTableKey relationTableKey = ((RelationEntityTableAvailable) thisTable).getRelationTableKey();
+            EntityTableExpressionBuilder entityTableExpressionBuilder = entitySQLContext.getEntityExpressionBuilder().getRelationTables().get(relationTableKey);
+            if (entityTableExpressionBuilder == null) {
+                throw new EasyQueryInvalidOperationException("can not find relation table for " + EasyClassUtil.getSimpleName(getTable().getEntityClass()) + ", field:" + getValue());
+            }
+            AndPredicateSegment filterPredicate = new AndPredicateSegment(true);
+            FilterImpl onFilter = new FilterImpl(entitySQLContext.getRuntimeContext(), entitySQLContext.getExpressionContext(), filterPredicate, false, entitySQLContext.getExpressionContext().getValueFilter());
+            getEntitySQLContext()._where(onFilter, () -> {
+                filterExpression.apply(EasyObjectUtil.typeCastNullable(this));
+            });
+            PredicateSegment on = entityTableExpressionBuilder.getOn();
+            PredicateSegment filterOn = entityTableExpressionBuilder.getFilterOn();
+            on.addPredicateSegment(filterPredicate);
+            filterOn.addPredicateSegment(filterPredicate);
+        } else {
+            //如果不是关联关系表在on环境下就处理join on  其他情况都放到where里面
             filterExpression.apply(EasyObjectUtil.typeCastNullable(this));
-        });
-        PredicateSegment on = entityTableExpressionBuilder.getOn();
-        PredicateSegment filterOn = entityTableExpressionBuilder.getFilterOn();
-        on.addPredicateSegment(filterPredicate);
-        filterOn.addPredicateSegment(filterPredicate);
+        }
+//        throw new EasyQueryInvalidOperationException("can not use extraFilter for " + EasyClassUtil.getSimpleName(getTable().getEntityClass()));
     }
 
     public void configure(SQLActionExpression1<TableConfigurer<TProxy, TEntity>> configurer) {

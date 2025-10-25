@@ -13,6 +13,7 @@ import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.columns.SubQueryContext;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.ProxyManyJoinFlatElementEntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
@@ -40,7 +41,7 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
     public EasyManyJoinSQLManyQueryable(SubQueryContext<T1Proxy, T1> subQueryContext, AnonymousManyJoinEntityTableExpressionBuilder manyGroupJoinEntityTableExpressionBuilder, T1Proxy propertyProxy) {
         String property = subQueryContext.getProperty();
         this.required = subQueryContext.getLeftTable().getEntityMetadata().getNavigateNotNull(property).isRequired();
-        this.rewritePredicateToSelectProvider = new RewritePredicateToSelectProvider<>(subQueryContext, manyGroupJoinEntityTableExpressionBuilder, propertyProxy,required);
+        this.rewritePredicateToSelectProvider = new RewritePredicateToSelectProvider<>(subQueryContext, manyGroupJoinEntityTableExpressionBuilder, propertyProxy, required);
     }
 
     @Override
@@ -99,6 +100,18 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
     }
 
     @Override
+    public void all(SQLActionExpression1<T1Proxy> allExpression) {
+        SQLActionExpression1<T1Proxy> reverseAllExpression = table -> {
+            Expression expression = Expression.of(table.getEntitySQLContext());
+            expression.not(() -> {
+                allExpression.apply(table);
+            });
+        };
+        this.rewritePredicateToSelectProvider.getSubQueryContext().appendWhereExpression(reverseAllExpression);
+        this.rewritePredicateToSelectProvider.noneValue().eq(true);
+    }
+
+    @Override
     public void any() {
         this.rewritePredicateToSelectProvider.anyValue().eq(true);
     }
@@ -124,7 +137,7 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
         return this.rewritePredicateToSelectProvider.noneValue();
     }
 
-    private DefaultSQLGroupQueryable<T1Proxy> getDefaultSQLGroupQueryable(){
+    private DefaultSQLGroupQueryable<T1Proxy> getDefaultSQLGroupQueryable() {
         DefaultSQLGroupQueryable<T1Proxy> t1ProxyDefaultSQLGroupQueryable = new DefaultSQLGroupQueryable<>(rewritePredicateToSelectProvider.getPropertyProxy(), rewritePredicateToSelectProvider.getPropertyProxy().getEntitySQLContext(), rewritePredicateToSelectProvider.getSubQueryContext().getWhereExpression());
         GroupJoinPredicateSegmentContext groupJoinPredicateSegmentContext = t1ProxyDefaultSQLGroupQueryable.getGroupJoinPredicateSegmentContext();
         rewritePredicateToSelectProvider.getManyGroupJoinEntityTableExpressionBuilder().addGroupJoinPredicateSegmentContext(groupJoinPredicateSegmentContext);
@@ -137,9 +150,9 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
         String alias = rewritePredicateToSelectProvider.getOrAppendGroupProjects(count, "count");
         return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias, f -> {
             if (required) {
-                return f.anySQLFunction("{0}", c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(),alias));
+                return f.anySQLFunction("{0}", c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias));
             } else {
-                return f.nullOrDefault(c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(),alias).format(0));
+                return f.nullOrDefault(c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias).format(0));
             }
         }, Long.class);
     }
@@ -151,9 +164,9 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
         String alias = rewritePredicateToSelectProvider.getOrAppendGroupProjects(count, "count");
         return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias, f -> {
             if (required) {
-                return f.anySQLFunction("{0}", c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(),alias));
+                return f.anySQLFunction("{0}", c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias));
             } else {
-                return f.nullOrDefault(c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(),alias).format(0));
+                return f.nullOrDefault(c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias).format(0));
             }
         }, Long.class);
     }
@@ -174,9 +187,9 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
         String alias = rewritePredicateToSelectProvider.getOrAppendGroupProjects(sum, "sum");
         return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias, f -> {
             if (required) {
-                return f.anySQLFunction("{0}", c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(),alias));
+                return f.anySQLFunction("{0}", c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias));
             } else {
-                return f.nullOrDefault(c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(),alias).format(0));
+                return f.nullOrDefault(c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias).format(0));
             }
         }, BigDecimal.class);
 
@@ -193,9 +206,9 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
         String alias = rewritePredicateToSelectProvider.getOrAppendGroupProjects(avg, "avg");
         return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias, f -> {
             if (required) {
-                return f.anySQLFunction("{0}", c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(),alias));
+                return f.anySQLFunction("{0}", c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias));
             } else {
-                return f.nullOrDefault(c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(),alias).format(0));
+                return f.nullOrDefault(c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias).format(0));
             }
         }, BigDecimal.class);
 
@@ -205,21 +218,21 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
     public <TMember> AnyTypeExpression<TMember> max(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
         AnyTypeExpression<TMember> max = getDefaultSQLGroupQueryable().max(columnSelector);
         String alias = rewritePredicateToSelectProvider.getOrAppendGroupProjects(max, "max");
-        return new AnyTypeExpressionImpl<>(this.getEntitySQLContext(), rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias, f -> f.anySQLFunction("{0}", c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(),alias)), max.getPropertyType());
+        return new AnyTypeExpressionImpl<>(this.getEntitySQLContext(), rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias, f -> f.anySQLFunction("{0}", c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias)), max.getPropertyType());
     }
 
     @Override
     public <TMember> AnyTypeExpression<TMember> min(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
         AnyTypeExpression<TMember> min = getDefaultSQLGroupQueryable().min(columnSelector);
         String alias = rewritePredicateToSelectProvider.getOrAppendGroupProjects(min, "min");
-        return new AnyTypeExpressionImpl<>(this.getEntitySQLContext(), rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias, f -> f.anySQLFunction("{0}", c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(),alias)), min.getPropertyType());
+        return new AnyTypeExpressionImpl<>(this.getEntitySQLContext(), rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias, f -> f.anySQLFunction("{0}", c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias)), min.getPropertyType());
     }
 
     @Override
     public StringTypeExpression<String> joining(SQLFuncExpression1<T1Proxy, PropTypeColumn<String>> columnSelector, String delimiter) {
         StringTypeExpression<String> joining = getDefaultSQLGroupQueryable().distinct(rewritePredicateToSelectProvider.getSubQueryContext().isDistinct()).joining(columnSelector, delimiter);
         String alias = rewritePredicateToSelectProvider.getOrAppendGroupProjects(joining, "joining");
-        return new StringTypeExpressionImpl<>(this.getEntitySQLContext(), rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias, f -> f.anySQLFunction("{0}", c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(),alias)), String.class);
+        return new StringTypeExpressionImpl<>(this.getEntitySQLContext(), rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias, f -> f.anySQLFunction("{0}", c -> c.column(rewritePredicateToSelectProvider.getManyGroupJoinTable(), alias)), String.class);
     }
 
     @Override

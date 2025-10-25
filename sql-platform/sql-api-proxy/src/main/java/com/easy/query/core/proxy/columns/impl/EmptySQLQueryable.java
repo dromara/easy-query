@@ -61,22 +61,22 @@ public class EmptySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> imp
 
     @Override
     public SubQueryContext<T1Proxy, T1> getSubQueryContext() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public SQLQueryable<T1Proxy, T1> distinct(boolean distinct) {
-        return this;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public SQLQueryable<T1Proxy, T1> orderBy(boolean condition, SQLActionExpression1<T1Proxy> orderExpression) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public SQLQueryable<T1Proxy, T1> where(SQLActionExpression1<T1Proxy> whereExpression) {
-        return this;
+        throw new UnsupportedOperationException();
     }
     @Override
     public void any(SQLActionExpression1<T1Proxy> whereExpression) {
@@ -84,8 +84,13 @@ public class EmptySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> imp
     }
 
     @Override
-    public void any() {
+    public void all(SQLActionExpression1<T1Proxy> allExpression) {
+        throw new UnsupportedOperationException();
+    }
 
+    @Override
+    public void any() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -95,37 +100,37 @@ public class EmptySQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> imp
 
     @Override
     public void none() {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public BooleanTypeExpression<Boolean> anyValue() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public BooleanTypeExpression<Boolean> noneValue() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public <TMember> NumberTypeExpression<Long> count(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public NumberTypeExpression<Long> count() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public <TMember> NumberTypeExpression<Integer> intCount(SQLFuncExpression1<T1Proxy, PropTypeColumn<TMember>> columnSelector) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public NumberTypeExpression<Integer> intCount() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
 

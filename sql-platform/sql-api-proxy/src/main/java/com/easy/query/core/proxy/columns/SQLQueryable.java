@@ -52,6 +52,12 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
      */
     void any(SQLActionExpression1<T1Proxy> whereExpression);
 
+    /**
+     * 之前的集合都满足条件
+     * @param allExpression
+     */
+    void all(SQLActionExpression1<T1Proxy> allExpression);
+
 
     /**
      * 存在任意一个满足条件

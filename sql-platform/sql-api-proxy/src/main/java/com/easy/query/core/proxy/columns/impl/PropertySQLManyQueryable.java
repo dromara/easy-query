@@ -15,11 +15,13 @@ import com.easy.query.core.proxy.columns.SQLManyQueryable;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 import com.easy.query.core.proxy.columns.SubQueryContext;
 import com.easy.query.core.proxy.core.EntitySQLContext;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
+import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.math.BigDecimal;
@@ -128,9 +130,23 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
 
     @Override
     public void mode(SubQueryModeEnum subQueryMode) {
-        Objects.requireNonNull(subQueryMode,"subQueryMode cant be null");
+        Objects.requireNonNull(subQueryMode, "subQueryMode cant be null");
         DefaultRelationTableKey defaultRelationTableKey = new DefaultRelationTableKey(subQueryContext.getLeftTable(), subQueryContext.getProperty());
         subQueryContext.getEntityExpressionBuilder().putSubQueryToGroupJoinJoin(defaultRelationTableKey, subQueryMode);
+    }
+
+    @Override
+    public void all(SQLActionExpression1<T1Proxy> allExpression) {
+
+        SQLActionExpression1<T1Proxy> reverseAllExpression = table -> {
+            Expression expression = Expression.of(table.getEntitySQLContext());
+            expression.not(() -> {
+                allExpression.apply(table);
+            });
+        };
+        subQueryContext.appendWhereExpression(reverseAllExpression);
+        SQLQueryable<T1Proxy, T1> sqlQueryable = DefaultSubquerySQLQueryableFactory.INSTANCE.create(subQueryContext);
+        sqlQueryable.none();
     }
 
     @Override

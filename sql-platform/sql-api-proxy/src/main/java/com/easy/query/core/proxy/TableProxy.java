@@ -28,10 +28,23 @@ public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity>
 
     Class<TEntity> getEntityClass();
 
+    /**
+     * 框架内部api用户无需调用
+     * @param table
+     * @param entityExpressionBuilder
+     * @return
+     */
     default TProxy create(TableAvailable table, EntityExpressionBuilder entityExpressionBuilder) {
         return create(table, entityExpressionBuilder,entityExpressionBuilder.getRuntimeContext());
     }
 
+    /**
+     * 框架内部api用户无需调用
+     * @param table
+     * @param entityExpressionBuilder
+     * @param runtimeContext
+     * @return
+     */
     default TProxy create(TableAvailable table, EntityExpressionBuilder entityExpressionBuilder, QueryRuntimeContext runtimeContext) {
         EntitySQLContext entitySQLContext = getEntitySQLContext();
         if (entitySQLContext instanceof ProxyEntitySQLContext && entitySQLContext.getEntityExpressionBuilder() == entityExpressionBuilder) {
@@ -40,11 +53,26 @@ public interface TableProxy<TProxy extends TableProxy<TProxy, TEntity>, TEntity>
         return create(table, new ProxyEntitySQLContext(entityExpressionBuilder, runtimeContext));
     }
 
+    /**
+     * 框架内部api用户无需调用
+     * @return
+     */
     default TProxy createEmpty() {
         return create(EmptyTableAvailable.DEFAULT, EmptyEntityExpressionBuilder.DEFAULT, EmptyQueryRuntimeContext.DEFAULT);
     }
 
+    /**
+     * 框架内部api用户无需调用
+     * @param table
+     * @param entitySQLContext
+     * @return
+     */
     TProxy create(TableAvailable table, EntitySQLContext entitySQLContext);
+
+    /**
+     * 框架内部api用户无需调用
+     * @return
+     */
     default TProxy createNew() {
         throw new UnsupportedOperationException("not support createNew");
     }
