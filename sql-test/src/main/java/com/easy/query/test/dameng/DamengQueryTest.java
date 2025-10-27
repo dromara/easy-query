@@ -18,6 +18,7 @@ import com.easy.query.test.dameng.entity.DamengMyTopicDTO;
 import com.easy.query.test.dameng.entity.DamengNameCustom;
 import com.easy.query.test.dameng.entity.proxy.DamengMyTopicProxy;
 import com.easy.query.test.dameng.vo.DamengNameCustomDTO;
+import com.easy.query.test.dameng.vo.DamengNameCustomDTO2;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.view.TreeC;
@@ -768,5 +769,73 @@ public class DamengQueryTest extends DamengBaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.\"ID\",t.\"NAME\",t.\"ISDELETE\" AS \"IS_DELETE\",t.\"ROWNUMBER\" AS \"ROW_NUMBER\" FROM \"MY_CUSTOM\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+    }
+    @Test
+    public void testQueryAlias(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<DamengNameCustomDTO> list = entityQuery.queryable(DamengNameCustom.class)
+                .select(DamengNameCustomDTO.class)
+                .toList();
+        Assert.assertEquals(1,list.size());
+        DamengNameCustomDTO damengNameCustomDTO = list.get(0);
+        Assert.assertEquals("123",damengNameCustomDTO.getId());
+        Assert.assertEquals(123,damengNameCustomDTO.getRowNumber().intValue());
+        Assert.assertEquals("name",damengNameCustomDTO.getName());
+        Assert.assertEquals(198,damengNameCustomDTO.getIsDelete().intValue());
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.\"ID\",t.\"NAME\",t.\"ROWNUMBER\" AS \"ROW_NUMBER\",t.\"ISDELETE\" AS \"IS_DELETE\" FROM \"MY_CUSTOM\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+    }
+    @Test
+    public void testQueryAlias2(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<DamengNameCustomDTO2> list = entityQuery.queryable(DamengNameCustom.class)
+                .select(DamengNameCustomDTO2.class)
+                .toList();
+        Assert.assertEquals(1,list.size());
+        DamengNameCustomDTO2 damengNameCustomDTO = list.get(0);
+        Assert.assertEquals("123",damengNameCustomDTO.getId());
+        Assert.assertEquals(123,damengNameCustomDTO.getRowNumber().intValue());
+        Assert.assertEquals("name",damengNameCustomDTO.getName());
+        Assert.assertEquals(198,damengNameCustomDTO.getIsDelete().intValue());
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.\"ID\",t.\"NAME\",t.\"ROWNUMBER\",t.\"ISDELETE\" FROM \"MY_CUSTOM\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+    }
+    @Test
+    public void testQueryAlias3(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<DamengNameCustomDTO2> list = entityQuery.queryable(DamengNameCustom.class)
+                .select(DamengNameCustomDTO2.class,o->Select.of(
+                        o.id(),o.name(),o.rowNumber(),o.isDelete()
+                ))
+                .toList();
+        Assert.assertEquals(1,list.size());
+        DamengNameCustomDTO2 damengNameCustomDTO = list.get(0);
+        Assert.assertEquals("123",damengNameCustomDTO.getId());
+        Assert.assertEquals(123,damengNameCustomDTO.getRowNumber().intValue());
+        Assert.assertEquals("name",damengNameCustomDTO.getName());
+        Assert.assertEquals(198,damengNameCustomDTO.getIsDelete().intValue());
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.\"ID\",t.\"NAME\",t.\"ROWNUMBER\",t.\"ISDELETE\" FROM \"MY_CUSTOM\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
     }
 }
