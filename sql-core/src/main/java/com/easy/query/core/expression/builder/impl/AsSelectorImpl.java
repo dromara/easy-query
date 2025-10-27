@@ -33,6 +33,7 @@ import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.SQLFunctionTranslateImpl;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.metadata.MapEntityMetadata;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.Collection;
@@ -72,6 +73,31 @@ public class AsSelectorImpl extends AbstractAsSelector<AsSelector> implements As
         return groupKeysAs(index, null);
     }
 
+
+    @Override
+    public AsSelector column(TableAvailable table, String property) {
+        if (Objects.equals(table.getEntityClass(), resultEntityMetadata.getEntityClass()) || table.getEntityMetadata() instanceof MapEntityMetadata) {
+            return super.column(table, property);
+        } else {
+            ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
+
+            EntityMappingRule entityMappingRule = runtimeContext.getEntityMappingRule();
+
+            ColumnMetadata resultColumnMetadata = entityMappingRule.getColumnMetadataBySourcColumnMetadata(table.getEntityMetadata(), columnMetadata, resultEntityMetadata);
+            String columnName = columnMetadata.getName();
+//                String aliasPropertyName = resultEntityMetadata.getPropertyNameOrNull(columnName);
+            if (resultColumnMetadata != null) {
+                String aliasColumnName = resultColumnMetadata.getName();
+                String alias = Objects.equals(columnName, aliasColumnName) ? null : aliasColumnName;
+                appendColumnMetadata(table, columnMetadata, false, false, alias);
+            } else {
+                appendColumnMetadata(table, columnMetadata, false, false, null);
+            }
+
+
+            return this;
+        }
+    }
 
     @Override
     public AsSelector columnAs(TableAvailable table, String property, String propertyAlias) {

@@ -12,6 +12,7 @@ import com.easy.query.core.configuration.nameconversion.impl.UpperUnderlinedName
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.dameng.config.DamengDatabaseConfiguration;
 import com.easy.query.test.dameng.entity.DamengMyTopic;
+import com.easy.query.test.dameng.entity.DamengNameCustom;
 import com.easy.query.test.entity.MathTest;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
@@ -87,16 +88,17 @@ public abstract class DamengBaseTest {
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DamengMyTopic.class));
         codeFirstCommand.executeWithTransaction(s->s.commit());
 
-        CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(TreeA.class, TreeB.class,MathTest.class, SysUser.class, SysBankCard.class, SysBank.class));
+        CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(DamengNameCustom.class,TreeA.class, TreeB.class,MathTest.class, SysUser.class, SysBankCard.class, SysBank.class));
         codeFirstCommand1.executeWithTransaction(e->e.commit());
 
-        CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.syncTableCommand(Arrays.asList(TreeA.class, TreeB.class,MathTest.class, SysUser.class,SysBank.class, SysBankCard.class));
+        CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.syncTableCommand(Arrays.asList(DamengNameCustom.class,TreeA.class, TreeB.class,MathTest.class, SysUser.class,SysBank.class, SysBankCard.class));
         codeFirstCommand2.executeWithTransaction(s->s.commit());
 
         entityQuery.deletable(SysBankCard.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         entityQuery.deletable(SysBank.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         entityQuery.deletable(SysUser.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         entityQuery.deletable(DamengMyTopic.class).where(d -> d.id().isNotNull()).allowDeleteStatement(true).disableLogicDelete().executeRows();
+        entityQuery.deletable(DamengNameCustom.class).where(d -> d.id().isNotNull()).allowDeleteStatement(true).disableLogicDelete().executeRows();
         boolean topicAny = entityQuery.queryable(DamengMyTopic.class).any();
         if (!topicAny) {
             List<DamengMyTopic> topics = new ArrayList<>();
@@ -223,6 +225,13 @@ public abstract class DamengBaseTest {
             sysUser.setCreateTime(LocalDateTime.of(2012, 1, 1, 0, 0));
             users.add(sysUser);
         }
+
+        DamengNameCustom damengNameCustom = new DamengNameCustom();
+        damengNameCustom.setId("123");
+        damengNameCustom.setName("name");
+        damengNameCustom.setRowNumber(123);
+        damengNameCustom.setIsDelete(198);
+        entityQuery.insertable(damengNameCustom).batch().executeRows();
         entityQuery.insertable(list).batch().executeRows();
         entityQuery.insertable(banks).executeRows();
         entityQuery.insertable(bankCards).executeRows();
