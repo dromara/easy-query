@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.sql.include;
 
+import com.easy.query.core.proxy.AbstractProxyEntity;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.columns.SQLQueryable;
 
@@ -10,6 +11,6 @@ import com.easy.query.core.proxy.columns.SQLQueryable;
  * @author xuejiaming
  */
 public interface IncludeContext {
-     <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> NavigateInclude<TPropertyProxy, TProperty> query(SQLQueryable<TPropertyProxy, TProperty> includeMany);
-     <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> NavigateInclude<TPropertyProxy, TProperty> query(TPropertyProxy includeOne) ;
+     <TPropertyProxy extends AbstractProxyEntity<TPropertyProxy, TProperty>, TProperty> NavigateInclude<TPropertyProxy, TProperty> query(SQLQueryable<TPropertyProxy, TProperty> includeMany);
+     <TPropertyProxy extends AbstractProxyEntity<TPropertyProxy, TProperty>, TProperty> NavigateInclude<TPropertyProxy, TProperty> query(TPropertyProxy includeOne) ;
 }
