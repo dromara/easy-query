@@ -204,7 +204,7 @@ public class M8SaveTest extends BaseTest {
 
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
-                    .includes(m -> m.m8SaveRootManyList())
+                    .include(m -> m.m8SaveRootManyList())
                     .singleNotNull();
             m8SaveRoot.setName("namenew2");
             List<M8SaveRootMany> m8SaveRootManyList = m8SaveRoot.getM8SaveRootManyList();
@@ -296,7 +296,7 @@ public class M8SaveTest extends BaseTest {
 
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
-                    .includes(m -> m.m8SaveRootManyList())
+                    .include(m -> m.m8SaveRootManyList())
                     .singleNotNull();
 
             List<M8SaveRootMany> m8SaveRootManyList = m8SaveRoot.getM8SaveRootManyList();
@@ -342,7 +342,7 @@ public class M8SaveTest extends BaseTest {
 
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
-                    .includes(m -> m.m8SaveRootManyList())
+                    .include(m -> m.m8SaveRootManyList())
                     .singleNotNull();
 
             List<M8SaveRootMany> m8SaveRootManyList = m8SaveRoot.getM8SaveRootManyList();
@@ -401,7 +401,7 @@ public class M8SaveTest extends BaseTest {
 
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
-                    .includes(m -> m.m8SaveRootManyList(), rq -> rq.include(s -> s.m8SaveRootManyOne()))
+                    .include(m -> m.m8SaveRootManyList(), rq -> rq.include(s -> s.m8SaveRootManyOne()))
                     .singleNotNull();
 
             List<M8SaveRootMany> m8SaveRootManyList = m8SaveRoot.getM8SaveRootManyList();
@@ -462,7 +462,7 @@ public class M8SaveTest extends BaseTest {
 
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
-                    .includes(m -> m.m8SaveRootManyList())
+                    .include(m -> m.m8SaveRootManyList())
                     .singleNotNull();
             List<M8SaveRootMany> m8SaveRootManyList = m8SaveRoot.getM8SaveRootManyList();
             M8SaveRootMany m8SaveRootMany2 = new M8SaveRootMany();
@@ -509,7 +509,7 @@ public class M8SaveTest extends BaseTest {
 
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
-                    .includes(m -> m.m8SaveRootManyList())
+                    .include(m -> m.m8SaveRootManyList())
                     .singleNotNull();
             List<M8SaveRootMany> m8SaveRootManyList = m8SaveRoot.getM8SaveRootManyList();
             M8SaveRootManyOne m8SaveRootManyOne = new M8SaveRootManyOne();
@@ -537,7 +537,7 @@ public class M8SaveTest extends BaseTest {
 
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
-                    .includes(m -> m.m8SaveRootManyList())
+                    .include(m -> m.m8SaveRootManyList())
                     .singleNotNull();
             List<M8SaveRootMany> m8SaveRootManyList = m8SaveRoot.getM8SaveRootManyList();
             M8SaveRootManyOne m8SaveRootManyOne = new M8SaveRootManyOne();
@@ -562,7 +562,7 @@ public class M8SaveTest extends BaseTest {
         ArrayList<M8SaveRoot2Many> m8SaveRoot2Manies = new ArrayList<>();
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
-                    .includes(m -> m.m8SaveRoot2ManyList())
+                    .include(m -> m.m8SaveRoot2ManyList())
                     .singleNotNull();
             List<M8SaveRoot2Many> m8SaveRoot2ManyList = m8SaveRoot.getM8SaveRoot2ManyList();
             List<String> m8SaveRoot2Manies0 = new ArrayList<>();
@@ -613,7 +613,7 @@ public class M8SaveTest extends BaseTest {
         });
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
-                    .includes(m -> m.m8SaveRoot2ManyList())
+                    .include(m -> m.m8SaveRoot2ManyList())
                     .singleNotNull();
             m8SaveRoot.getM8SaveRoot2ManyList().addAll(m8SaveRoot2Manies);
             List<M8SaveRoot2Many> m8SaveRoot2ManyList = m8SaveRoot.getM8SaveRoot2ManyList();
@@ -656,7 +656,7 @@ public class M8SaveTest extends BaseTest {
         ArrayList<M8SaveRoot2Many> m8SaveRoot2Manies = new ArrayList<>();
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
-                    .includes(m -> m.m8SaveRoot2ManyList())
+                    .include(m -> m.m8SaveRoot2ManyList())
                     .singleNotNull();
             List<M8SaveRoot2Many> m8SaveRoot2ManyList = m8SaveRoot.getM8SaveRoot2ManyList();
             List<String> m8SaveRoot2Manies0 = new ArrayList<>();
@@ -709,7 +709,7 @@ public class M8SaveTest extends BaseTest {
         });
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
-                    .includes(m -> m.m8SaveRoot2ManyList())
+                    .include(m -> m.m8SaveRoot2ManyList())
                     .singleNotNull();
             m8SaveRoot.getM8SaveRoot2ManyList().addAll(m8SaveRoot2Manies);
             List<M8SaveRoot2Many> m8SaveRoot2ManyList = m8SaveRoot.getM8SaveRoot2ManyList();
@@ -752,7 +752,7 @@ public class M8SaveTest extends BaseTest {
         String rootId = before();
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
-                    .includes(m -> m.m8SaveRootMiddleManyList())
+                    .include(m -> m.m8SaveRootMiddleManyList())
                     .singleNotNull();
             List<M8SaveRootMiddleMany> m8SaveRoot2ManyList = m8SaveRoot.getM8SaveRootMiddleManyList();
             List<M8SaveRootMiddleMany> newM8SaveRoot2ManyList = new ArrayList<>();
@@ -797,7 +797,7 @@ public class M8SaveTest extends BaseTest {
         String rootId = before();
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
-                    .includes(m -> m.m8SaveRootMiddleManyList2())
+                    .include(m -> m.m8SaveRootMiddleManyList2())
                     .singleNotNull();
             List<M8SaveRootMiddleMany2> m8SaveRoot2ManyList = m8SaveRoot.getM8SaveRootMiddleManyList2();
             List<M8SaveRootMiddleMany2> newM8SaveRoot2ManyList = new ArrayList<>();
@@ -825,7 +825,7 @@ public class M8SaveTest extends BaseTest {
         String rootId = before();
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
-                    .includes(m -> m.m8SaveRootMiddleManyList2())
+                    .include(m -> m.m8SaveRootMiddleManyList2())
                     .singleNotNull();
             List<M8SaveRootMiddleMany2> m8SaveRoot2ManyList = m8SaveRoot.getM8SaveRootMiddleManyList2();
             List<M8SaveRootMiddleMany2> newM8SaveRoot2ManyList = new ArrayList<>();
@@ -1136,7 +1136,7 @@ public class M8SaveTest extends BaseTest {
         ArrayList<M8SaveRoot2Many> m8SaveRoot2Manies = new ArrayList<>();
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
-                    .includes(m -> m.m8SaveRoot2ManyList())
+                    .include(m -> m.m8SaveRoot2ManyList())
                     .singleNotNull();
 
             List<M8SaveRoot2Many> m8SaveRoot2ManyList = m8SaveRoot.getM8SaveRoot2ManyList();
@@ -1194,7 +1194,7 @@ public class M8SaveTest extends BaseTest {
         ArrayList<M8SaveRoot2Many> m8SaveRoot2Manies = new ArrayList<>();
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
-                    .includes(m -> m.m8SaveRoot2ManyList())
+                    .include(m -> m.m8SaveRoot2ManyList())
                     .include(m -> m.m8SaveRootOne())
                     .singleNotNull();
 

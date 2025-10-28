@@ -263,4 +263,30 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
         return subQueryContext.getEntitySQLContext();
     }
 
+    @Override
+    public T1Proxy __createNavigatePathEmpty() {
+        return getProxy().createEmpty();
+    }
+
+//    @Override
+//    public TableAvailable getTableOrNull() {
+////        return getProxy().getTableOrNull();
+//        throw new UnsupportedOperationException();
+//    }
+
+//    @Override
+//    public Class<T1> getEntityClass() {
+//        return getProxy().getEntityClass();
+//    }
+//
+//    @Override
+//    public SQLManyQueryable<TProxy, T1Proxy, T1> create(TableAvailable table, EntitySQLContext entitySQLContext) {
+//        throw new UnsupportedOperationException();
+//    }
+//
+//    @Override
+//    public TableAvailable getTable() {
+////        return getProxy().getTable();
+//        throw new UnsupportedOperationException();
+//    }
 }

@@ -13,6 +13,7 @@ import com.easy.query.core.proxy.impl.SQLColumnIncludeColumn2Impl;
 import com.easy.query.core.proxy.sql.EasyIncludeQueryable;
 import com.easy.query.core.proxy.sql.Include;
 import com.easy.query.core.proxy.sql.IncludeQueryable;
+import com.easy.query.core.proxy.sql.include.NavigatePathAvailable;
 import com.easy.query.core.util.EasyObjectUtil;
 
 /**
@@ -21,7 +22,7 @@ import com.easy.query.core.util.EasyObjectUtil;
  *
  * @author xuejiaming
  */
-public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends SQLQueryable<T1Proxy, T1>, LogicDeletable<SQLManyQueryable<TProxy, T1Proxy, T1>> {
+public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends SQLQueryable<T1Proxy, T1>, LogicDeletable<SQLManyQueryable<TProxy, T1Proxy, T1>>, NavigatePathAvailable<T1Proxy,T1> {//ProxyEntity<SQLManyQueryable<TProxy,T1Proxy,T1>,T1>
 
     //    void _setProxy(TProxy tProxy);
 
@@ -118,10 +119,6 @@ public interface SQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Proxy, T
         T1Proxy t1Proxy = propertyProxy.create(null, this.getEntitySQLContext());
         getEntitySQLContext().accept(new SQLColumnIncludeColumn2Impl<>(columnProxy.getOriginalTable(), columnProxy.getNavValue(), getNavValue(), columnProxy.getProxy(), t1Proxy, navigateSelectExpression));
         return EasyObjectUtil.typeCastNullable(this.getSubQueryContext().getLeftTableProxy());
-    }
-
-    default IncludeQueryable<T1Proxy, T1> asIncludeQueryable() {
-        return new EasyIncludeQueryable<>(this);
     }
 
 }

@@ -314,8 +314,8 @@ public class QueryTest18 extends BaseTest {
 
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .include(s -> s.myBlog())
-                .includes(s -> s.blogs(), b -> {
-                    b.includes(x -> x.users());
+                .include(s -> s.blogs(), b -> {
+                    b.include(x -> x.users());
                 }).toList();
 
         ListenerContext listenerContext = new ListenerContext(true);
@@ -1004,7 +1004,7 @@ public class QueryTest18 extends BaseTest {
     @Test
     public void esss() {
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
-                .includes(s -> s.blogs())
+                .include(s -> s.blogs())
                 .toList();
         EntityQueryable<SysUserProxy, SysUser> sysUserProxySysUserEntityQueryable = easyEntityQuery.queryable(SysUser.class).cloneQueryable();
         for (SysUser sysUser : list) {

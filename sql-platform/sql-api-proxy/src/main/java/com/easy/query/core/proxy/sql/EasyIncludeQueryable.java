@@ -19,6 +19,7 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
+@Deprecated
 public class EasyIncludeQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> implements IncludeQueryable<T1Proxy, T1> {
     private final T1Proxy t1Proxy;
     private final String navValue;

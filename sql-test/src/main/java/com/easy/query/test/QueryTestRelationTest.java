@@ -33,6 +33,7 @@ import com.easy.query.test.doc.dto.MySignUpDTO1;
 import com.easy.query.test.doc.dto.MySignUpDTO2;
 import com.easy.query.test.doc.dto.MySignUpDTO3;
 import com.easy.query.test.doc.dto.MySignUpDTO4;
+import com.easy.query.test.doc.proxy.MyComUser1Proxy;
 import com.easy.query.test.doc.proxy.MySignUpProxy;
 import com.easy.query.test.entity.school.SchoolClassAggregate;
 import com.easy.query.test.listener.ListenerContext;
@@ -442,6 +443,33 @@ public class QueryTestRelationTest extends BaseTest {
 
             before();
 
+
+            {
+                System.out.println("5");
+                ListenerContext listenerContext = new ListenerContext(true);
+                listenerContextManager.startListen(listenerContext);
+                List<MyComUser1> list = easyEntityQuery.queryable(MyComUser1.class)
+                        .include(s -> s.mySignUps())
+                        .toList();
+
+
+                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+                Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+
+                {
+
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+                    Assert.assertEquals("SELECT `id`,`com_id`,`user_id`,`gw` FROM `my_com_user`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+                {
+                    JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+                    Assert.assertEquals("SELECT t.`id`,t.`com_id`,t.`user_id`,t.`time`,t.`content` FROM `my_sign_up` t WHERE ((t.`com_id` =? AND t.`user_id` =?) OR (t.`com_id` =? AND t.`user_id` =?) OR (t.`com_id` =? AND t.`user_id` =?) OR (t.`com_id` =? AND t.`user_id` =?)) ORDER BY t.`com_id` ASC,CASE WHEN t.`time` IS NULL THEN 0 ELSE 1 END ASC,t.`time` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("c1(String),u1(String),c2(String),u1(String),c1(String),u2(String),c1(String),u3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+                }
+
+                System.out.println("55");
+            }
             {
                 System.out.println("1");
                 ListenerContext listenerContext = new ListenerContext(true);
@@ -983,7 +1011,7 @@ public class QueryTestRelationTest extends BaseTest {
                 ListenerContext listenerContext = new ListenerContext(true);
                 listenerContextManager.startListen(listenerContext);
                 List<MyComUser1> list = easyEntityQuery.queryable(MyComUser1.class)
-                        .includes(s -> s.mySignUps())
+                        .include(s -> s.mySignUps())
                         .toList();
 
 

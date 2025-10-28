@@ -18,6 +18,7 @@ import com.easy.query.core.common.ValueHolder2;
 import com.easy.query.core.expression.lambda.SQLResultSetFunc;
 import com.easy.query.core.metadata.EndNavigateParams;
 import com.easy.query.core.proxy.core.FlatEntitySQLContext;
+import com.easy.query.core.proxy.sql.include.NavigatePathAvailable;
 import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.api.dynamic.sort.ObjectSort;
@@ -386,15 +387,15 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
 //    }
 
     @Override
-    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(boolean condition, SQLFuncExpression1<T1Proxy, TPropertyProxy> navigateIncludeSQLExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
+    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(boolean condition, SQLFuncExpression1<T1Proxy, NavigatePathAvailable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
         if (condition) {
 
             T1Proxy proxy = getQueryable().get1Proxy();
             ValueHolder2<TPropertyProxy,String> valueHolder = new ValueHolder2<>();
             proxy.getEntitySQLContext()._include(() -> {
-                TPropertyProxy navigateColumn = navigateIncludeSQLExpression.apply(proxy);
+                NavigatePathAvailable<TPropertyProxy, TProperty> navigateColumn = navigateIncludeSQLExpression.apply(proxy);
                 valueHolder.setValue2(navigateColumn.getNavValue());
-                TPropertyProxy empty = navigateColumn.createEmpty();
+                TPropertyProxy empty = navigateColumn.__createNavigatePathEmpty();
                 empty.setNavValue(null);
                 valueHolder.setValue1(empty);
             });

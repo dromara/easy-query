@@ -160,7 +160,7 @@ public class M8Save2Test extends BaseTest {
 
         invoke(listenerContext -> {
             List<M8SaveRoot> list = easyEntityQuery.queryable(M8SaveRoot.class).whereByIds(Arrays.asList("1", "4"))
-                    .includes(m -> m.m8SaveRootManyList())
+                    .include(m -> m.m8SaveRootManyList())
                     .toList();
             String jsonString = JSON.toJSONString(list);
             System.out.println(jsonString);
@@ -268,7 +268,7 @@ public class M8Save2Test extends BaseTest {
 
         invoke(listenerContext -> {
             List<M8SaveRoot> list = easyEntityQuery.queryable(M8SaveRoot.class).whereByIds(Arrays.asList("1", "4"))
-                    .includes(m -> m.m8SaveRootManyList())
+                    .include(m -> m.m8SaveRootManyList())
                     .toList();
             String jsonString = JSON.toJSONString(list);
             System.out.println(jsonString);
@@ -347,7 +347,7 @@ public class M8Save2Test extends BaseTest {
 
         invoke(listenerContext -> {
             List<M8SaveRoot> list = easyEntityQuery.queryable(M8SaveRoot.class).whereByIds(Arrays.asList("1", "4"))
-                    .includes(m -> m.m8SaveRootManyList())
+                    .include(m -> m.m8SaveRootManyList())
                     .toList();
             String jsonString = JSON.toJSONString(list);
             System.out.println(jsonString);
@@ -383,7 +383,7 @@ public class M8Save2Test extends BaseTest {
 
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class)
-                    .includes(m -> m.m8SaveRootManyList())
+                    .include(m -> m.m8SaveRootManyList())
                     .firstNotNull();
             m8SaveRoot.setM8SaveRootManyList(null);
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {
@@ -416,7 +416,7 @@ public class M8Save2Test extends BaseTest {
 
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class)
-                    .includes(m -> m.m8SaveRootManyList())
+                    .include(m -> m.m8SaveRootManyList())
                     .firstNotNull();
             m8SaveRoot.setM8SaveRootManyList(null);
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {
@@ -452,7 +452,7 @@ public class M8Save2Test extends BaseTest {
 
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class)
-                    .includes(m -> m.m8SaveRootManyList())
+                    .include(m -> m.m8SaveRootManyList())
                     .firstNotNull();
             m8SaveRoot.setM8SaveRootManyList(new ArrayList<>());
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {

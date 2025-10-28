@@ -10,6 +10,7 @@ import com.easy.query.core.metadata.IncludePathTreeNode;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.sql.include.DefaultIncludeContext;
 import com.easy.query.core.proxy.sql.include.IncludeContext;
+import com.easy.query.core.proxy.sql.include.NavigatePathAvailable;
 import com.easy.query.core.util.EasyUtil;
 
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.List;
  */
 public interface EntityIncludeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> extends ClientEntityQueryableAvailable<T1>, EntityQueryableAvailable<T1Proxy, T1> {
 
-//   <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty > EntityQueryable<T1Proxy, T1> includeMany(SQLExpression1<T1Proxy> navigateIncludeSQLExpression);
+//   <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty > EntityQueryable<T1Proxy, T1> includeMany(SQLExpression1<T1Proxy> navigatePathExpression);
 
     /**
      * <blockquote><pre>
@@ -30,17 +31,17 @@ public interface EntityIncludeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
      *                         .include(o->o.schoolClass())
      * </pre></blockquote>
      *
-     * @param navigateIncludeSQLExpression
+     * @param navigatePathExpression
      * @param <TPropertyProxy>
      * @param <TProperty>
      * @return
      */
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(SQLFuncExpression1<T1Proxy, TPropertyProxy> navigateIncludeSQLExpression) {
-        return include(navigateIncludeSQLExpression, null, null);
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(SQLFuncExpression1<T1Proxy, NavigatePathAvailable<TPropertyProxy, TProperty>> navigatePathExpression) {
+        return include(navigatePathExpression, null, null);
     }
 
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(boolean condition, SQLFuncExpression1<T1Proxy, TPropertyProxy> navigateIncludeSQLExpression) {
-        return include(condition, navigateIncludeSQLExpression, null, null);
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(boolean condition, SQLFuncExpression1<T1Proxy, NavigatePathAvailable<TPropertyProxy, TProperty>> navigatePathExpression) {
+        return include(condition, navigatePathExpression, null, null);
     }
 
     /**
@@ -51,18 +52,18 @@ public interface EntityIncludeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
      *                    }
      * </pre></blockquote>
      *
-     * @param navigateIncludeSQLExpression
+     * @param navigatePathExpression
      * @param groupSize
      * @param <TPropertyProxy>
      * @param <TProperty>
      * @return
      */
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(SQLFuncExpression1<T1Proxy, TPropertyProxy> navigateIncludeSQLExpression, Integer groupSize) {
-        return include(navigateIncludeSQLExpression, null, groupSize);
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(SQLFuncExpression1<T1Proxy, NavigatePathAvailable<TPropertyProxy, TProperty>> navigatePathExpression, Integer groupSize) {
+        return include(navigatePathExpression, null, groupSize);
     }
 
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(boolean condition, SQLFuncExpression1<T1Proxy, TPropertyProxy> navigateIncludeSQLExpression, Integer groupSize) {
-        return include(condition, navigateIncludeSQLExpression, null, groupSize);
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(boolean condition, SQLFuncExpression1<T1Proxy, NavigatePathAvailable<TPropertyProxy, TProperty>> navigatePathExpression, Integer groupSize) {
+        return include(condition, navigatePathExpression, null, groupSize);
     }
 
     /**
@@ -73,18 +74,18 @@ public interface EntityIncludeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
      *                    }
      * </pre></blockquote>
      *
-     * @param navigateIncludeSQLExpression
+     * @param navigatePathExpression
      * @param includeAdapterExpression
      * @param <TPropertyProxy>
      * @param <TProperty>
      * @return
      */
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(SQLFuncExpression1<T1Proxy, TPropertyProxy> navigateIncludeSQLExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression) {
-        return include(navigateIncludeSQLExpression, includeAdapterExpression, null);
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(SQLFuncExpression1<T1Proxy, NavigatePathAvailable<TPropertyProxy, TProperty>> navigatePathExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression) {
+        return include(navigatePathExpression, includeAdapterExpression, null);
     }
 
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(boolean condition, SQLFuncExpression1<T1Proxy, TPropertyProxy> navigateIncludeSQLExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression) {
-        return include(condition, navigateIncludeSQLExpression, includeAdapterExpression, null);
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(boolean condition, SQLFuncExpression1<T1Proxy, NavigatePathAvailable<TPropertyProxy, TProperty>> navigatePathExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression) {
+        return include(condition, navigatePathExpression, includeAdapterExpression, null);
     }
 
     /**
@@ -95,18 +96,18 @@ public interface EntityIncludeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
      *                    }
      * </pre></blockquote>
      *
-     * @param navigateIncludeSQLExpression
+     * @param navigatePathExpression
      * @param includeAdapterExpression
      * @param groupSize
      * @param <TPropertyProxy>
      * @param <TProperty>
      * @return
      */
-    <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(boolean condition, SQLFuncExpression1<T1Proxy, TPropertyProxy> navigateIncludeSQLExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize);
+    <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(boolean condition, SQLFuncExpression1<T1Proxy, NavigatePathAvailable<TPropertyProxy, TProperty>> navigatePathExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize);
 
 
-    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(SQLFuncExpression1<T1Proxy, TPropertyProxy> navigateIncludeSQLExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
-        return include(true, navigateIncludeSQLExpression, includeAdapterExpression, groupSize);
+    default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(SQLFuncExpression1<T1Proxy, NavigatePathAvailable<TPropertyProxy, TProperty>> navigatePathExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
+        return include(true, navigatePathExpression, includeAdapterExpression, groupSize);
     }
 
     /**
@@ -118,15 +119,15 @@ public interface EntityIncludeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
      *      }
      * </pre></blockquote>
      *
-     * @param navigateIncludeSQLExpression
+     * @param navigatePathExpression
      * @return
      */
     @Deprecated
-    default EntityQueryable<T1Proxy, T1> includeBy(SQLFuncExpression1<T1Proxy, List<IncludeAvailable>> navigateIncludeSQLExpression) {
+    default EntityQueryable<T1Proxy, T1> includeBy(SQLFuncExpression1<T1Proxy, List<IncludeAvailable>> navigatePathExpression) {
         T1Proxy t1Proxy = getQueryable().get1Proxy();
         ValueHolder<List<IncludeAvailable>> includeAvailableValueHolder = new ValueHolder<>();
         t1Proxy.getEntitySQLContext()._include(() -> {
-            List<IncludeAvailable> values = navigateIncludeSQLExpression.apply(t1Proxy);
+            List<IncludeAvailable> values = navigatePathExpression.apply(t1Proxy);
             if (values != null) {
                 includeAvailableValueHolder.setValue(values);
             }
@@ -147,14 +148,14 @@ public interface EntityIncludeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
      *      }
      * </pre></blockquote>
      *
-     * @param navigateIncludeSQLExpression
+     * @param navigatePathExpression
      * @return
      */
-    default EntityQueryable<T1Proxy, T1> include(SQLActionExpression2<IncludeContext, T1Proxy> navigateIncludeSQLExpression) {
+    default EntityQueryable<T1Proxy, T1> include(SQLActionExpression2<IncludeContext, T1Proxy> navigatePathExpression) {
         T1Proxy t1Proxy = getQueryable().get1Proxy();
         DefaultIncludeContext defaultIncludeCollector = new DefaultIncludeContext();
         t1Proxy.getEntitySQLContext()._include(() -> {
-            navigateIncludeSQLExpression.apply(defaultIncludeCollector, t1Proxy);
+            navigatePathExpression.apply(defaultIncludeCollector, t1Proxy);
         });
         List<IncludeAvailable> values = defaultIncludeCollector.getIncludes();
         if (values != null) {

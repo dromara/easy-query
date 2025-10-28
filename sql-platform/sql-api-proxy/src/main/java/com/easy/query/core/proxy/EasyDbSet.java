@@ -32,6 +32,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.internal.ContextConfigurer;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.proxy.columns.SQLQueryable;
+import com.easy.query.core.proxy.sql.include.NavigatePathAvailable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -225,10 +226,6 @@ public class EasyDbSet<TProxy extends ProxyEntity<TProxy, T>, T> implements DbSe
         return baseEntityClient.queryable(tProxy).having(condition, aggregateFilterSQLExpression);
     }
 
-    @Override
-    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<TProxy, T> include(boolean condition, SQLFuncExpression1<TProxy, TPropertyProxy> navigateIncludeSQLExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
-        return baseEntityClient.queryable(tProxy).include(condition, navigateIncludeSQLExpression, includeAdapterExpression, groupSize);
-    }
 
     @Override
     public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<TProxy, T> includes(boolean condition, SQLFuncExpression1<TProxy, SQLQueryable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
@@ -313,6 +310,11 @@ public class EasyDbSet<TProxy extends ProxyEntity<TProxy, T>, T> implements DbSe
     @Override
     public <TR> Query<TR> select(Class<TR> resultClass, SQLFuncExpression1<TProxy, SQLSelectAsExpression> selectExpression) {
         return baseEntityClient.queryable(tProxy).select(resultClass, selectExpression);
+    }
+
+    @Override
+    public <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<TProxy, T> include(boolean condition, SQLFuncExpression1<TProxy, NavigatePathAvailable<TPropertyProxy, TProperty>> navigateIncludeSQLExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
+        return baseEntityClient.queryable(tProxy).include(condition,navigateIncludeSQLExpression,includeAdapterExpression,groupSize);
     }
 
     @Override

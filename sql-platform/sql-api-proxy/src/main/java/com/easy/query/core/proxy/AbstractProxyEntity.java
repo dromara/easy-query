@@ -29,6 +29,7 @@ import com.easy.query.core.proxy.impl.SQLSelectIgnoreImpl;
 import com.easy.query.core.proxy.impl.SQLSelectKeysImpl;
 import com.easy.query.core.proxy.sql.EasyIncludeQueryable;
 import com.easy.query.core.proxy.sql.IncludeQueryable;
+import com.easy.query.core.proxy.sql.include.NavigatePathAvailable;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
@@ -44,7 +45,7 @@ import java.util.function.Supplier;
  *
  * @author xuejiaming
  */
-public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> extends AbstractBaseProxyEntity<TProxy, TEntity> {
+public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> extends AbstractBaseProxyEntity<TProxy, TEntity> implements NavigatePathAvailable<TProxy,TEntity> {
 
     protected <TPropertyProxy extends SQLColumn<TProxy, TProperty>, TProperty> TPropertyProxy getValueObject(TPropertyProxy propertyProxy) {
         propertyProxy._setProxy(castChain());
@@ -345,6 +346,15 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
     @Deprecated
     public IncludeQueryable<TProxy, TEntity> asIncludeQueryable() {
         return new EasyIncludeQueryable<>(castChain());
+    }
+
+    /**
+     * 创建导航属性路径空对象
+     * @return
+     */
+    @Override
+    public TProxy __createNavigatePathEmpty(){
+        return createEmpty();
     }
 
 }

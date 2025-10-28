@@ -309,12 +309,12 @@ public class RelationTest extends BaseTest {
                 System.out.println("------------------");
 //                List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
 //                        //返回班级下的所有学生 班级和学生是一对多
-//                        .includes(s -> s.schoolStudents(), x -> {
+//                        .include(s -> s.schoolStudents(), x -> {
 //                            //返回学生下的所有学生地址 学生和学生地址是一对一
 //                            x.include(y -> y.schoolStudentAddress());
 //                        })
 //                        //返回班级下面的所有老师 老师和班级多对多
-//                        .includes(s -> s.schoolTeachers())
+//                        .include(s -> s.schoolTeachers())
 //                        .select(SchoolClassVO.class)
 //                        .toList();
 
@@ -468,7 +468,7 @@ public class RelationTest extends BaseTest {
                 ListenerContext listenerContext = new ListenerContext(true);
                 listenerContextManager.startListen(listenerContext);
                 List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(s -> s.schoolStudents(), s -> {
+                        .include(s -> s.schoolStudents(), s -> {
                             s.select(o -> o.FETCHER.name());
                         }).toList();
 
@@ -1761,10 +1761,10 @@ public class RelationTest extends BaseTest {
 
 //                Assert.assertEquals("1","2");
                 List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents())
+                        .include(o -> o.schoolStudents())
                         .toList();
                 List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
+                        .include(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
                         .toList();
                 for (SchoolClass schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());
@@ -1806,10 +1806,10 @@ public class RelationTest extends BaseTest {
 
 //                Assert.assertEquals("1","2");
                 List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents())
+                        .include(o -> o.schoolStudents())
                         .toList();
                 List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
+                        .include(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
                         .toList();
                 for (SchoolClass schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());
@@ -1852,10 +1852,10 @@ public class RelationTest extends BaseTest {
 
 //                Assert.assertEquals("1","2");
                 List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents())
+                        .include(o -> o.schoolStudents())
                         .toList();
                 List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
+                        .include(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
                         .toList();
                 for (SchoolClass schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());
@@ -1898,10 +1898,10 @@ public class RelationTest extends BaseTest {
 
 //                Assert.assertEquals("1","2");
                 List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents())
+                        .include(o -> o.schoolStudents())
                         .toList();
                 List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
+                        .include(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
                         .toList();
                 for (SchoolClass schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());
@@ -1957,7 +1957,7 @@ public class RelationTest extends BaseTest {
                 listenerContextManager.startListen(listenerContext);
                 System.out.println("------------------");
 //                List<SchoolClass1VO> listx= easyEntityQuery.queryable(SchoolClass.class)
-//                        .includes(s -> s.schoolStudents(),schoolStudentQuery->{
+//                        .include(s -> s.schoolStudents(),schoolStudentQuery->{
 //                            schoolStudentQuery.where(st->{
 //                                st.schoolStudentAddress().address().like("北京");
 //                            }).any();
@@ -1965,7 +1965,7 @@ public class RelationTest extends BaseTest {
 //                        .selectAutoInclude(SchoolClass1VO.class,false)
 //                        .toList();
                 List<SchoolClass1VO> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(s -> s.schoolStudents(), schoolStudentQuery -> {
+                        .include(s -> s.schoolStudents(), schoolStudentQuery -> {
                             schoolStudentQuery.where(st -> st.name().like("123")).limit(2);
                         })
                         .selectAutoInclude(SchoolClass1VO.class)
@@ -1997,7 +1997,7 @@ public class RelationTest extends BaseTest {
 //                listenerContextManager.startListen(listenerContext);
 //
 //                List<SchoolClassTeachIdsVO> list = easyEntityQuery.queryable(SchoolClass.class)
-////                        .includes(s -> s.schoolTeachers(),x->x.selectColumn(y->y.id()))
+////                        .include(s -> s.schoolTeachers(),x->x.selectColumn(y->y.id()))
 //                        .selectAutoInclude(SchoolClassTeachIdsVO.class)
 //                        .toList();
 //                Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
@@ -2074,7 +2074,7 @@ public class RelationTest extends BaseTest {
                 ListenerContext listenerContext = new ListenerContext();
                 listenerContextManager.startListen(listenerContext);
                 List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(s -> s.schoolStudents())
+                        .include(s -> s.schoolStudents())
                         .select(SchoolClassVO.class)
                         .toList();
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -2091,7 +2091,7 @@ public class RelationTest extends BaseTest {
                 ListenerContext listenerContext = new ListenerContext();
                 listenerContextManager.startListen(listenerContext);
                 List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(s -> s.schoolStudents())
+                        .include(s -> s.schoolStudents())
                         .select(SchoolClassVO.class)
                         .toList();
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -2110,12 +2110,12 @@ public class RelationTest extends BaseTest {
                 System.out.println("------------------");
                 List<SchoolClassVO> listx = easyEntityQuery.queryable(SchoolClass.class)
                         //返回班级下的所有学生 班级和学生是一对多
-                        .includes(s -> s.schoolStudents(), x -> {
+                        .include(s -> s.schoolStudents(), x -> {
                             //返回学生下的所有学生地址 学生和学生地址是一对一
                             x.include(y -> y.schoolStudentAddress());
                         })
                         //返回班级下面的所有老师 老师和班级多对多
-                        .includes(s -> s.schoolTeachers())
+                        .include(s -> s.schoolTeachers())
                         .select(SchoolClassVO.class)
                         .toList();
                 System.out.println("------------------");
@@ -2248,12 +2248,12 @@ public class RelationTest extends BaseTest {
                 System.out.println("------------------");
                 List<SchoolClassOnlyVO> listx = easyEntityQuery.queryable(SchoolClass.class)
                         //返回班级下的所有学生 班级和学生是一对多
-                        .includes(s -> s.schoolStudents(), x -> {
+                        .include(s -> s.schoolStudents(), x -> {
                             //返回学生下的所有学生地址 学生和学生地址是一对一
                             x.include(y -> y.schoolStudentAddress());
                         })
                         //返回班级下面的所有老师 老师和班级多对多
-                        .includes(s -> s.schoolTeachers())
+                        .include(s -> s.schoolTeachers())
                         .select(SchoolClassOnlyVO.class)
                         .toList();
                 System.out.println("------------------");
@@ -2321,7 +2321,7 @@ public class RelationTest extends BaseTest {
                 ListenerContext listenerContext = new ListenerContext();
                 listenerContextManager.startListen(listenerContext);
                 List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(s -> s.schoolStudents())
+                        .include(s -> s.schoolStudents())
                         .select(s -> s.FETCHER.name())
                         .toList();
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -2330,7 +2330,7 @@ public class RelationTest extends BaseTest {
                 Assert.assertEquals("class1(String),class2(String),class3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
                 listenerContextManager.clear();
                 String sql1 = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(s -> s.schoolStudents())
+                        .include(s -> s.schoolStudents())
                         .select(s -> s.FETCHER.name()).toSQL();
                 Assert.assertEquals("SELECT t.`name`,t.`id` AS `__relation__id` FROM `school_class` t", sql1);
             }
@@ -2340,7 +2340,7 @@ public class RelationTest extends BaseTest {
                 listenerContextManager.startListen(listenerContext);
 
                 List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(), x -> x.limit(2))
+                        .include(o -> o.schoolStudents(), x -> x.limit(2))
                         .toList();
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -2354,7 +2354,7 @@ public class RelationTest extends BaseTest {
                 listenerContextManager.startListen(listenerContext);
 
                 List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(), x -> x.where(y -> y.name().like("123")))
+                        .include(o -> o.schoolStudents(), x -> x.where(y -> y.name().like("123")))
                         .toList();
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -2368,7 +2368,7 @@ public class RelationTest extends BaseTest {
                 listenerContextManager.startListen(listenerContext);
 
                 List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(), x -> x.limit(2), 1)
+                        .include(o -> o.schoolStudents(), x -> x.limit(2), 1)
                         .toList();
                 Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
                 JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
@@ -2541,10 +2541,10 @@ public class RelationTest extends BaseTest {
 //                easyQueryClient.queryable(SchoolClass.class)
 //                        .include(o-> o.with("schoolStudents"))
                 List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents())
+                        .include(o -> o.schoolStudents())
                         .toList();
                 List<SchoolClass> listx = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
+                        .include(o -> o.schoolStudents(), y -> y.where(x -> x.name().like("123")))
                         .toList();
                 for (SchoolClass schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());
@@ -2556,7 +2556,7 @@ public class RelationTest extends BaseTest {
 //                easyQueryClient.queryable(SchoolClass.class)
 //                        .include(o-> o.with("schoolStudents"))
                 List<SchoolClass> list1 = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(s -> s.schoolStudents(), 1)
+                        .include(s -> s.schoolStudents(), 1)
                         .toList();
                 for (SchoolClass schoolClass : list1) {
                     Assert.assertNotNull(schoolClass.getSchoolStudents());
@@ -2566,7 +2566,7 @@ public class RelationTest extends BaseTest {
             {
                 //todo alias
                 List<SchoolClassVO> list1 = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(s -> s.schoolStudents())
+                        .include(s -> s.schoolStudents())
                         .select(s -> new SchoolClassVOProxy().adapter(r -> {
                             r.selectAll(s);
                             r.schoolStudents().set(s.schoolStudents());
@@ -2623,7 +2623,7 @@ public class RelationTest extends BaseTest {
             {
 
                 List<SchoolClass> list2 = easyEntityQuery.queryable(SchoolClass.class)
-                        .includes(o -> o.schoolTeachers(), 1)
+                        .include(o -> o.schoolTeachers(), 1)
                         .toList();
                 for (SchoolClass schoolClass : list2) {
                     Assert.assertNotNull(schoolClass.getSchoolTeachers());
@@ -2633,7 +2633,7 @@ public class RelationTest extends BaseTest {
 //            {
 //                //todo alias
 //                List<SchoolClassVO> list2 = easyEntityQuery.queryable(SchoolClass.class)
-//                        .includes(s -> s.schoolTeachers())
+//                        .include(s -> s.schoolTeachers())
 //                        .select(s -> new SchoolClassVOProxy().adapter(r->{
 //                            r.selectAll(s);
 //                            r.schoolTeachers().set(s.schoolStudents());
@@ -2657,8 +2657,8 @@ public class RelationTest extends BaseTest {
 //            }
 
             List<SchoolClass> list2 = easyEntityQuery.queryable(SchoolClass.class)
-                    .includes(o -> o.schoolTeachers())
-                    .includes(o -> o.schoolStudents())
+                    .include(o -> o.schoolTeachers())
+                    .include(o -> o.schoolStudents())
                     .toList();
             Assert.assertEquals(3, list2.size());
 
@@ -2679,7 +2679,7 @@ public class RelationTest extends BaseTest {
             }
 
             List<SchoolTeacher> list3 = easyEntityQuery.queryable(SchoolTeacher.class)
-                    .includes(o -> o.schoolClasses())
+                    .include(o -> o.schoolClasses())
                     .toList();
             Assert.assertEquals(2, list3.size());
             for (SchoolTeacher schoolTeacher : list3) {
@@ -2701,7 +2701,7 @@ public class RelationTest extends BaseTest {
     @Test
     public void provinceTest() {
         List<Province> list = easyEntityQuery.queryable(Province.class)
-                .includes(o -> o.cities(), cq -> cq.includes(s -> s.areas()))
+                .include(o -> o.cities(), cq -> cq.include(s -> s.areas()))
                 .toList();
         Assert.assertEquals(2, list.size());
         for (Province province : list) {
@@ -2720,7 +2720,7 @@ public class RelationTest extends BaseTest {
     @Test
     public void provinceTest6() {
         EasyPageResult<Province> page = easyEntityQuery.queryable(Province.class)
-                .includes(o -> o.cities(), cq -> cq.includes(s -> s.areas()))
+                .include(o -> o.cities(), cq -> cq.include(s -> s.areas()))
                 .toPageResult(1, 100);
         List<Province> list = page.getData();
         Assert.assertEquals(2, list.size());
@@ -2740,7 +2740,7 @@ public class RelationTest extends BaseTest {
     @Test
     public void provinceTest7() {
         EasyPageResult<Province> page = easyEntityQuery.queryable(Province.class)
-                .includes(o -> o.cities(), cq -> cq.includes(s -> s.areas()))
+                .include(o -> o.cities(), cq -> cq.include(s -> s.areas()))
                 .toPageResult(1, 1);
         List<Province> list = page.getData();
         Assert.assertEquals(1, list.size());
@@ -2761,8 +2761,8 @@ public class RelationTest extends BaseTest {
     public void provinceTest1() {
 
         List<Province> list = easyEntityQuery.queryable(Province.class)
-                .includes(p -> p.cities(), pq -> {
-                    pq.includes(s -> s.areas(), aq -> {
+                .include(p -> p.cities(), pq -> {
+                    pq.include(s -> s.areas(), aq -> {
                         aq.where(x -> x.code().eq("330602"));
                     });
                     pq.where(x -> x.code().eq("3306"));
@@ -2791,7 +2791,7 @@ public class RelationTest extends BaseTest {
 
         List<Province> list = easyEntityQuery.queryable(Province.class)
                 .whereById("33")
-                .includes(o -> o.cities())
+                .include(o -> o.cities())
                 .toList();
         Assert.assertEquals(1, list.size());
     }
@@ -2801,7 +2801,7 @@ public class RelationTest extends BaseTest {
 
         List<Province> list = easyEntityQuery.queryable(Province.class)
                 .whereById("33")
-                .includes(p -> p.cities(), cq -> {
+                .include(p -> p.cities(), cq -> {
                     cq.leftJoin(Topic.class, (x, y) -> {
                         x.code().eq(y.id());
                     }).where((c1, t_topic) -> {

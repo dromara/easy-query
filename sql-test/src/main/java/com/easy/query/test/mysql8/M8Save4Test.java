@@ -115,8 +115,8 @@ public class M8Save4Test extends BaseTest {
                     .where(m -> {
                         m.a().eq("a");
                     })
-                    .includes(m -> m.m8ToMany2List(), m2 -> {
-                        m2.includes(x -> x.m8ToMany3List());
+                    .include(m -> m.m8ToMany2List(), m2 -> {
+                        m2.include(x -> x.m8ToMany3List());
                     }).singleNotNull();
 
             m8ToMany1.setM8ToMany2List(new ArrayList<>());
@@ -219,8 +219,8 @@ public class M8Save4Test extends BaseTest {
                     .where(m -> {
                         m.a().eq("a");
                     })
-                    .includes(m -> m.m8ToMany2List(), m2 -> {
-                        m2.includes(x -> x.m8ToMany3List());
+                    .include(m -> m.m8ToMany2List(), m2 -> {
+                        m2.include(x -> x.m8ToMany3List());
                     }).singleNotNull();
 
             m8ToMany1.setM8ToMany2List(new ArrayList<>());
