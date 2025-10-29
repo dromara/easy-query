@@ -1,6 +1,8 @@
 package com.easy.query.core.basic.api.select;
 
 import com.easy.query.core.basic.api.select.executor.ResultSetAble;
+import com.easy.query.core.expression.sql.fill.FillContext;
+import com.easy.query.core.expression.sql.fill.FillContextImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.basic.api.select.executor.Fillable;
@@ -32,6 +34,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -149,7 +152,7 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
     }
 
     @NotNull
-    <TR> String toSQL(@NotNull Class<TR> resultClass,@NotNull ToSQLContext toSQLContext);
+    <TR> String toSQL(@NotNull Class<TR> resultClass, @NotNull ToSQLContext toSQLContext);
 
     /**
      * 返回long类型的数量结果
@@ -186,7 +189,7 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
         required(() -> getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createRequiredException(this, msg, null));
     }
 
-    default void required(@Nullable String msg,@Nullable String code) {
+    default void required(@Nullable String msg, @Nullable String code) {
         required(() -> getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createRequiredException(this, msg, code));
     }
 
@@ -215,11 +218,11 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * @param code
      * @return
      */
-    default @NotNull T firstNotNull(@Nullable String msg,@Nullable String code) {
+    default @NotNull T firstNotNull(@Nullable String msg, @Nullable String code) {
         return firstNotNull(queryClass(), msg, code);
     }
 
-    default <TR> @NotNull TR firstNotNull(@NotNull Class<TR> resultClass,@Nullable String msg,@Nullable String code) {
+    default <TR> @NotNull TR firstNotNull(@NotNull Class<TR> resultClass, @Nullable String msg, @Nullable String code) {
         return firstNotNull(resultClass, () -> getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createFirstNotNullException(this, msg, code));
     }
 
@@ -288,13 +291,15 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * @throws EasyQuerySingleNotNullException     如果查询不到数据
      */
     @NotNull
-    default T singleNotNull(@Nullable String msg,@Nullable String code) {
+    default T singleNotNull(@Nullable String msg, @Nullable String code) {
         return singleNotNull(queryClass(), msg, code);
     }
+
     @NotNull
-    default <TR> TR singleNotNull(@NotNull Class<TR> resultClass,@Nullable String msg,@Nullable String code) {
+    default <TR> TR singleNotNull(@NotNull Class<TR> resultClass, @Nullable String msg, @Nullable String code) {
         return singleNotNull(resultClass, () -> getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createSingleNotNullException(this, msg, code));
     }
+
     @NotNull
     default T singleNotNull(@NotNull Supplier<RuntimeException> throwFunc) {
         return singleNotNull(queryClass(), throwFunc);
@@ -333,7 +338,7 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * @throws com.easy.query.core.exception.EasyQueryFindNotNullException     可以通过 {@link AssertExceptionFactory#createFindNotNullException(Query, String, String)} 自定义
      */
     @NotNull
-    default T findNotNull(@NotNull Object id,@Nullable String msg,@Nullable String code) {
+    default T findNotNull(@NotNull Object id, @Nullable String msg, @Nullable String code) {
         return findNotNull(id, () -> getSQLEntityExpressionBuilder().getRuntimeContext().getAssertExceptionFactory().createFindNotNullException(this, msg, code));
     }
 
@@ -434,6 +439,7 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
     Query<T> useConnectionMode(ConnectionModeEnum connectionMode);
 
     /**
+     *
      * <blockquote><pre>
      *     {@code
      *          List<Province> provinces =  easyQuery.queryable(Province.class)
@@ -444,26 +450,27 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      *                 },false).toList();
      *      }
      * </pre></blockquote>
-     *
      * @param fillSetterExpression
-     * @param targetProperty
-     * @param selfProperty
+     * @param fillContextConsumer
      * @param produce
-     * @param consumeNull
-     * @param <TREntity>
      * @return
+     * @param <TREntity>
      */
     @NotNull
     @Override
-    default <TREntity> Query<T> fillMany(SQLFuncExpression<Query<TREntity>> fillSetterExpression, String targetProperty, String selfProperty, BiConsumer<T, Collection<TREntity>> produce, boolean consumeNull) {
-        SQLFuncExpression1<FillParams, Query<?>> fillQueryableExpression = EasySQLExpressionUtil.getFillSQLExpression(fillSetterExpression, targetProperty, consumeNull);
-        FillExpression fillExpression = new FillExpression(queryClass(), true, targetProperty, selfProperty, fillQueryableExpression);
+    default <TREntity> Query<T> fillMany(SQLFuncExpression<Query<TREntity>> fillSetterExpression, Consumer<FillContext> fillContextConsumer, BiConsumer<T, Collection<TREntity>> produce) {
+        FillContextImpl fillContext = new FillContextImpl();
+        fillContextConsumer.accept(fillContext);
+        fillContext.validate();
+        SQLFuncExpression1<FillParams, Query<?>> fillQueryableExpression = EasySQLExpressionUtil.getFillSQLExpression(fillSetterExpression, fillContext.getTargetProp(), fillContext.isConsumeNull());
+        FillExpression fillExpression = new FillExpression(queryClass(), true, fillContext.getTargetProp(), fillContext.getSelfProp(), fillQueryableExpression);
         fillExpression.setProduceMany(EasyObjectUtil.typeCastNullable(produce));
         getSQLEntityExpressionBuilder().getExpressionContext().getFills().add(fillExpression);
         return this;
     }
 
     /**
+     *
      * <blockquote><pre>
      *     {@code
      *         List<City> cities = easyQuery.queryable(City.class)
@@ -477,18 +484,18 @@ public interface Query<T> extends QueryAvailable<T>, QueryExecutable<T>, MapAble
      * </pre></blockquote>
      *
      * @param fillSetterExpression
-     * @param targetProperty
-     * @param selfProperty
-     * @param produce
-     * @param consumeNull
+     * @param fillContextConsumer
      * @param <TREntity>
      * @return
      */
     @NotNull
     @Override
-    default <TREntity> Query<T> fillOne(SQLFuncExpression<Query<TREntity>> fillSetterExpression, String targetProperty, String selfProperty, BiConsumer<T, TREntity> produce, boolean consumeNull) {
-        SQLFuncExpression1<FillParams, Query<?>> fillQueryableExpression = EasySQLExpressionUtil.getFillSQLExpression(fillSetterExpression, targetProperty, consumeNull);
-        FillExpression fillExpression = new FillExpression(queryClass(), false, targetProperty, selfProperty, fillQueryableExpression);
+    default <TREntity> Query<T> fillOne(SQLFuncExpression<Query<TREntity>> fillSetterExpression, Consumer<FillContext> fillContextConsumer, BiConsumer<T, TREntity> produce) {
+        FillContextImpl fillContext = new FillContextImpl();
+        fillContextConsumer.accept(fillContext);
+        fillContext.validate();
+        SQLFuncExpression1<FillParams, Query<?>> fillQueryableExpression = EasySQLExpressionUtil.getFillSQLExpression(fillSetterExpression, fillContext.getTargetProp(), fillContext.isConsumeNull());
+        FillExpression fillExpression = new FillExpression(queryClass(), false, fillContext.getTargetProp(), fillContext.getSelfProp(), fillQueryableExpression);
         fillExpression.setProduceOne(EasyObjectUtil.typeCastNullable(produce));
         getSQLEntityExpressionBuilder().getExpressionContext().getFills().add(fillExpression);
         return this;
