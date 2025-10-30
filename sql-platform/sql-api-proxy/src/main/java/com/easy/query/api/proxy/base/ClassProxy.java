@@ -34,4 +34,8 @@ public class ClassProxy<T> extends AbstractProxyEntity<ClassProxy<T>, T> {
     public <TProperty> SQLAnyTypeColumn<ClassProxy<T>, TProperty> field(Property<T, TProperty> fieldName) {
         return getAnyTypeColumn(EasyPropertyLambdaUtil.getPropertyName(fieldName), EasyObjectUtil.typeCastNotNull(Object.class));
     }
+    public static <TE> ClassProxy<TE> of(Class<TE> entityClass){
+        return new ClassProxy<>(entityClass);
+    }
+
 }

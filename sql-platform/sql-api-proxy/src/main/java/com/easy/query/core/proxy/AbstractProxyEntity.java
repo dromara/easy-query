@@ -24,11 +24,7 @@ import com.easy.query.core.proxy.extra.EntityExtraAutoIncludeConfigureImpl;
 import com.easy.query.core.proxy.impl.SQLColumnIncludeColumn2Impl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
-import com.easy.query.core.proxy.impl.SQLSelectAsEntryImpl;
 import com.easy.query.core.proxy.impl.SQLSelectIgnoreImpl;
-import com.easy.query.core.proxy.impl.SQLSelectKeysImpl;
-import com.easy.query.core.proxy.sql.EasyIncludeQueryable;
-import com.easy.query.core.proxy.sql.IncludeQueryable;
 import com.easy.query.core.proxy.sql.include.NavigatePathAvailable;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -337,15 +333,6 @@ public abstract class AbstractProxyEntity<TProxy extends ProxyEntity<TProxy, TEn
      */
     public EntityExtraAutoIncludeConfigure<TProxy, TEntity> EXTRA_AUTO_INCLUDE_CONFIGURE() {
         return new EntityExtraAutoIncludeConfigureImpl<>();
-    }
-
-    /**
-     * 请使用include2
-     * @return
-     */
-    @Deprecated
-    public IncludeQueryable<TProxy, TEntity> asIncludeQueryable() {
-        return new EasyIncludeQueryable<>(castChain());
     }
 
     /**

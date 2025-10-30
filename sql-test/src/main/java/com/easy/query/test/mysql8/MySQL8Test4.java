@@ -4,7 +4,11 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.core.proxy.columns.types.SQLIntegerTypeColumn;
+import com.easy.query.core.proxy.core.draft.Draft5;
 import com.easy.query.core.proxy.core.draft.Draft6;
+import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.doc.entity.DocUser;
@@ -19,6 +23,7 @@ import com.easy.query.test.mysql8.vo.proxy.UserDTO2Proxy;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -166,11 +171,11 @@ public class MySQL8Test4 extends BaseTest {
     }
 
     @Test
-    public void testSubQueryCountCompareNull1(){
+    public void testSubQueryCountCompareNull1() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        Long val=null;
+        Long val = null;
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .where(user -> {
                     user.bankCards().count().gt(val);
@@ -184,12 +189,13 @@ public class MySQL8Test4 extends BaseTest {
         Assert.assertEquals("null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testSubQueryCountCompareNull2(){
+    public void testSubQueryCountCompareNull2() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        Long val=null;
+        Long val = null;
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
                 .where(user -> {
@@ -204,12 +210,13 @@ public class MySQL8Test4 extends BaseTest {
 //        Assert.assertEquals("null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testTimeAfterNull1(){
+    public void testTimeAfterNull1() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        LocalDateTime val=null;
+        LocalDateTime val = null;
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .where(user -> {
                     user.createTime().isAfter(val);
@@ -223,12 +230,13 @@ public class MySQL8Test4 extends BaseTest {
         Assert.assertEquals("null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testTimeAfterNull2(){
+    public void testTimeAfterNull2() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        LocalDateTime val=null;
+        LocalDateTime val = null;
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
                 .where(user -> {
@@ -243,12 +251,13 @@ public class MySQL8Test4 extends BaseTest {
 //        Assert.assertEquals("null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testTimeBeforeNull1(){
+    public void testTimeBeforeNull1() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        LocalDateTime val=null;
+        LocalDateTime val = null;
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .where(user -> {
                     user.createTime().isBefore(val);
@@ -262,12 +271,13 @@ public class MySQL8Test4 extends BaseTest {
         Assert.assertEquals("null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testTimeBeforeNull2(){
+    public void testTimeBeforeNull2() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        LocalDateTime val=null;
+        LocalDateTime val = null;
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
                 .where(user -> {
@@ -284,30 +294,30 @@ public class MySQL8Test4 extends BaseTest {
     }
 
     @Test
-    public void testFilter(){
+    public void testFilter() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        LocalDateTime val=null;
+        LocalDateTime val = null;
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
-                .leftJoin(SysUser.class,(user1, user2) ->{
+                .leftJoin(SysUser.class, (user1, user2) -> {
                     user1.id().eq(user2.id());
-                    user1.filter(u->{
+                    user1.filter(u -> {
                         u.name().contains("123");
                     });
-                    user2.filter(u->{
+                    user2.filter(u -> {
                         u.name().contains("456");
                     });
-                    user1.firstCard().filter(s->{
+                    user1.firstCard().filter(s -> {
                         s.type().eq("4567");
                     });
                 })
                 .where((user1, user2) -> {
-                    user1.filter(u->{
+                    user1.filter(u -> {
                         u.name().contains("789");
                     });
-                    user2.filter(u->{
+                    user2.filter(u -> {
                         u.name().contains("987");
                     });
                     user1.firstCard().type().eq("123123");
@@ -322,32 +332,31 @@ public class MySQL8Test4 extends BaseTest {
     }
 
     @Test
-    public void testFilterAndDependency(){
+    public void testFilterAndDependency() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        LocalDateTime val=null;
+        LocalDateTime val = null;
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
-                .leftJoin(SysUser.class,(user1, user2) ->{
+                .leftJoin(SysUser.class, (user1, user2) -> {
                     user1.firstCard().uid().eq(user2.id());//会将firstCard提级到先join firstCard
                     user1.id().eq(user2.id());
-                    user1.filter(u->{
+                    user1.filter(u -> {
                         u.name().contains("123");
                     });
-                    user2.filter(u->{
+                    user2.filter(u -> {
                         u.name().contains("456");
                     });
                 })
                 .where((user1, user2) -> {
-                    user1.filter(u->{
+                    user1.filter(u -> {
                         u.name().contains("789");
                     });
-                    user2.filter(u->{
+                    user2.filter(u -> {
                         u.name().contains("987");
                     });
                     user1.firstCard().type().eq("123123");
-
 
 
                     //所有的卡都是储蓄卡
@@ -383,7 +392,7 @@ public class MySQL8Test4 extends BaseTest {
         Assert.assertEquals(1, size);
         List<SysUser> newCards = list.stream().filter(user -> {
             //因为null记录不会被like返回所以直接过滤null
-            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123"));
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡") && o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123"));
         }).collect(Collectors.toList());
         Assert.assertEquals(1, newCards.size());
 
@@ -401,6 +410,7 @@ public class MySQL8Test4 extends BaseTest {
         }
         listenerContextManager.clear();
     }
+
     @Test
     public void testAll1() {
         ListenerContext listenerContext = new ListenerContext(true);
@@ -449,7 +459,7 @@ public class MySQL8Test4 extends BaseTest {
         Assert.assertEquals(1, size);
         List<SysUser> newCards = list.stream().filter(user -> {
             //因为null记录不会被like返回所以直接过滤null
-            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123")&&o.getCode().startsWith("45678"));
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡") && o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123") && o.getCode().startsWith("45678"));
         }).collect(Collectors.toList());
         Assert.assertEquals(1, newCards.size());
 
@@ -483,7 +493,7 @@ public class MySQL8Test4 extends BaseTest {
         Assert.assertEquals(1, size);
         List<SysUser> newCards = list.stream().filter(user -> {
             //因为null记录不会被like返回所以直接过滤null
-            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123"));
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡") && o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123"));
         }).collect(Collectors.toList());
         Assert.assertEquals(1, newCards.size());
 
@@ -521,7 +531,7 @@ public class MySQL8Test4 extends BaseTest {
         Assert.assertEquals(1, size);
         List<SysUser> newCards = list.stream().filter(user -> {
             //因为null记录不会被like返回所以直接过滤null
-            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123")&&o.getCode().startsWith("45678"));
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡") && o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123") && o.getCode().startsWith("45678"));
         }).collect(Collectors.toList());
         Assert.assertEquals(1, newCards.size());
 
@@ -540,12 +550,23 @@ public class MySQL8Test4 extends BaseTest {
         listenerContextManager.clear();
     }
 
-    @Test
-    public  void testaaa(){
-        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
-                .toList();
-        List<SysUser> list1 = easyEntityQuery.queryable(SysUser.class)
-                .includes(user -> user.bankCards())
-                .toList();
-    }
+//    @Test
+//    public void testaaa() {
+//        LocalDateTime now = LocalDateTime.now();
+//        LocalDateTime after15days = LocalDateTime.now().plusDays(15);
+//        easyEntityQuery.queryable(Scheduling.class)
+//                .where(s -> {
+//                    s.schedulingDay().rangeClosed(now, after15days);
+//                }).groupBy(s -> GroupKeys.of(s.process()))
+//                .select(group -> new SchedulingVOProxy()
+//                        .process().set(group.key1())
+//                        .estmateCapacity().set(
+//                                group.where(x -> x.origin().eq(1)).sumBigDecimal(x -> x.allocateCapacity())
+//                        )
+//                        .otherCapacity().set(
+//                                group.where(x -> x.origin().eq(3)).sumBigDecimal(x -> x.allocateCapacity())
+//                        )
+//                ).toList();
+//
+//    }
 }

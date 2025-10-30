@@ -7,12 +7,8 @@ import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.proxy.ProxyEntity;
-import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.columns.impl.DefaultSubquerySQLQueryableFactory;
 import com.easy.query.core.proxy.impl.SQLColumnIncludeColumn2Impl;
-import com.easy.query.core.proxy.sql.EasyIncludeQueryable;
-import com.easy.query.core.proxy.sql.Include;
-import com.easy.query.core.proxy.sql.IncludeQueryable;
 import com.easy.query.core.proxy.sql.include.NavigatePathAvailable;
 import com.easy.query.core.util.EasyObjectUtil;
 

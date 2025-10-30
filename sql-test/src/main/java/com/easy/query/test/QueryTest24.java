@@ -921,8 +921,12 @@ public class QueryTest24 extends BaseTest {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
+//        List<TopicTypeTest1> list = easyEntityQuery.queryable(TopicTypeTest1.class)
+//                .select(t -> new ClassProxy<>(TopicTypeTest1.class)
+//                        .field(TopicTypeTest1.Fields.topicType).set(t.topicType())
+//                ).toList();
         List<TopicTypeTest1> list = easyEntityQuery.queryable(TopicTypeTest1.class)
-                .select(t -> new ClassProxy<>(TopicTypeTest1.class)
+                .select(t -> ClassProxy.of(TopicTypeTest1.class)
                         .field(TopicTypeTest1.Fields.topicType).set(t.topicType())
                 ).toList();
 
