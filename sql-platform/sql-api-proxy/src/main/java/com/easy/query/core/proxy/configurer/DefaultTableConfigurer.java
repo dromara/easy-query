@@ -10,6 +10,7 @@ import com.easy.query.core.proxy.core.EntitySQLContext;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -70,6 +71,12 @@ public class DefaultTableConfigurer<TProxy extends ProxyEntity<TProxy, TEntity>,
     @Override
     public TableConfigurer<TProxy, TEntity> asAlias(String alias) {
         tableExpressionBuilder.asAlias(alias);
+        return this;
+    }
+
+    @Override
+    public TableConfigurer<TProxy, TEntity> asTableSegment(BiFunction<String, String, String> segmentAs) {
+        tableExpressionBuilder.setTableSegmentAs(segmentAs);
         return this;
     }
 }

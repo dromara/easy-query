@@ -95,10 +95,20 @@ public interface TableReNameable<TChain> {
     TChain asTableLink(Function<String, String> linkAs);
 
 
+    /**
+     * 替换原来的表名+别名的处理
+     * @param segmentAs
+     * @return
+     */
     default TChain asTableSegment(String segmentAs) {
         return asTableSegment((table, alias) -> segmentAs);
     }
 
+    /**
+     * arg1.表名 arg2别名 返回的表名+别名
+     * @param segmentAs
+     * @return
+     */
     TChain asTableSegment(BiFunction<String, String, String> segmentAs);
 
 }

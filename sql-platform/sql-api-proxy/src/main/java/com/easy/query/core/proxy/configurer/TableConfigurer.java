@@ -3,6 +3,7 @@ package com.easy.query.core.proxy.configurer;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.util.EasyStringUtil;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -50,4 +51,5 @@ public interface TableConfigurer<TProxy extends ProxyEntity<TProxy, TEntity>, TE
      */
     TableConfigurer<TProxy, TEntity>  asTable(Function<String, String> tableNameAs);
     TableConfigurer<TProxy, TEntity>  asAlias(String alias);
+    TableConfigurer<TProxy, TEntity> asTableSegment(BiFunction<String, String, String> segmentAs);
 }

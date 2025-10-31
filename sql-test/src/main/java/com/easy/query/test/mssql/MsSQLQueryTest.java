@@ -16,6 +16,7 @@ import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.BigDecimalUtils;
+import com.easy.query.test.QueryTest18;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mssql.entity.MsSQLCalc;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
@@ -23,6 +24,7 @@ import com.easy.query.test.mssql.entity.MsSQLMyTopic1;
 import com.easy.query.test.mssql.entity.proxy.MsSQLCalcProxy;
 import com.easy.query.test.mssql.entity.proxy.MsSQLMyTopic1Proxy;
 import com.easy.query.test.mssql.entity.proxy.MsSQLMyTopicProxy;
+import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,6 +43,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -815,4 +818,57 @@ public class MsSQLQueryTest extends MsSQLBaseTest {
         }
         listenerContextManager.clear();
     }
+
+
+    @Test
+    public void testWithNolock1(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<SysBankCard> list1 = entityQuery.queryable(SysBankCard.class)
+                .where(bank_card -> {
+                    bank_card.configure(s -> s.asTableSegment(WITHNOLOCK.DEFAULT));
+                    bank_card.user().configure(s -> s.asTableSegment(WITHNOLOCK.DEFAULT));
+                    bank_card.user().name().like("123");
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.[Id],t.[Uid],t.[Code],t.[Type],t.[BankId],t.[OpenTime] FROM [t_bank_card] t WITH(NOLOCK) LEFT JOIN [t_sys_user] t1 WITH(NOLOCK) ON t1.[Id] = t.[Uid] WHERE t1.[Name] LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testWithNolock2(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+
+        List<SysUser> list = entityQuery.queryable(SysUser.class)
+                .asTableSegment(WITHNOLOCK.DEFAULT)
+                .leftJoin(SysBankCard.class,(user, bank_card) -> user.id().eq(bank_card.uid()))
+                .asTableSegment(WITHNOLOCK.DEFAULT)
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.[Id],t.[Name],t.[Phone],t.[Age],t.[CreateTime] FROM [t_sys_user] t WITH(NOLOCK) LEFT JOIN [t_bank_card] t1 WITH(NOLOCK) ON t.[Id] = t1.[Uid]", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+
+    public static class WITHNOLOCK implements BiFunction<String, String, String> {
+        public static final WITHNOLOCK DEFAULT = new WITHNOLOCK();
+
+        @Override
+        public String apply(String table, String alias) {
+            if (alias == null) {
+                return table + " WITH(NOLOCK)";
+            }
+            return table + " " + alias + " WITH(NOLOCK)";
+        }
+    }
+
 }
