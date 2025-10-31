@@ -661,7 +661,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest {
         Assert.assertEquals(1, size);
         List<SysUser> newCards = list.stream().filter(user -> {
             //因为null记录不会被like返回所以直接过滤null
-            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123"));
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡") && o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123"));
         }).collect(Collectors.toList());
         Assert.assertEquals(1, newCards.size());
 
@@ -679,6 +679,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest {
         }
         listenerContextManager.clear();
     }
+
     @Test
     public void testAll1() {
 
@@ -728,7 +729,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest {
         Assert.assertEquals(1, size);
         List<SysUser> newCards = list.stream().filter(user -> {
             //因为null记录不会被like返回所以直接过滤null
-            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123")&&o.getCode().startsWith("45678"));
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡") && o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123") && o.getCode().startsWith("45678"));
         }).collect(Collectors.toList());
         Assert.assertEquals(1, newCards.size());
 
@@ -762,7 +763,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest {
         Assert.assertEquals(1, size);
         List<SysUser> newCards = list.stream().filter(user -> {
             //因为null记录不会被like返回所以直接过滤null
-            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123"));
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡") && o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123"));
         }).collect(Collectors.toList());
         Assert.assertEquals(1, newCards.size());
 
@@ -800,7 +801,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest {
         Assert.assertEquals(1, size);
         List<SysUser> newCards = list.stream().filter(user -> {
             //因为null记录不会被like返回所以直接过滤null
-            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123")&&o.getCode().startsWith("45678"));
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡") && o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123") && o.getCode().startsWith("45678"));
         }).collect(Collectors.toList());
         Assert.assertEquals(1, newCards.size());
 
@@ -821,7 +822,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest {
 
 
     @Test
-    public void testWithNolock1(){
+    public void testWithNolock1() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -839,8 +840,9 @@ public class MsSQLQueryTest extends MsSQLBaseTest {
         Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testWithNolock2(){
+    public void testWithNolock2() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -848,12 +850,35 @@ public class MsSQLQueryTest extends MsSQLBaseTest {
 
         List<SysUser> list = entityQuery.queryable(SysUser.class)
                 .asTableSegment(WITHNOLOCK.DEFAULT)
-                .leftJoin(SysBankCard.class,(user, bank_card) -> user.id().eq(bank_card.uid()))
+                .leftJoin(SysBankCard.class, (user, bank_card) -> user.id().eq(bank_card.uid()))
                 .asTableSegment(WITHNOLOCK.DEFAULT)
                 .toList();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.[Id],t.[Name],t.[Phone],t.[Age],t.[CreateTime] FROM [t_sys_user] t WITH(NOLOCK) LEFT JOIN [t_bank_card] t1 WITH(NOLOCK) ON t.[Id] = t1.[Uid]", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testWithIndex() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        Exception e=null;
+        try {
+
+            List<SysUser> list = entityQuery.queryable(SysUser.class)
+                    .asTableSegment(TABLEINDEX.of("myIndex"))
+                    .leftJoin(SysBankCard.class, (user, bank_card) -> user.id().eq(bank_card.uid()))
+                    .toList();
+        } catch (Exception ex){
+            e=ex;
+        }
+        Assert.assertNotNull( e);
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.[Id],t.[Name],t.[Phone],t.[Age],t.[CreateTime] FROM [t_sys_user] t WITH(INDEX(myIndex)) LEFT JOIN [t_bank_card] t1 ON t.[Id] = t1.[Uid]", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //        Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -868,6 +893,29 @@ public class MsSQLQueryTest extends MsSQLBaseTest {
                 return table + " WITH(NOLOCK)";
             }
             return table + " " + alias + " WITH(NOLOCK)";
+        }
+    }
+
+    public static class TABLEINDEX implements BiFunction<String, String, String> {
+        private final String indexName;
+
+        private TABLEINDEX(String indexName) {
+            if (indexName == null) {
+                throw new IllegalArgumentException("indexName can not be null");
+            }
+            this.indexName = indexName;
+        }
+
+        public static TABLEINDEX of(String indexName) {
+            return new TABLEINDEX(indexName);
+        }
+
+        @Override
+        public String apply(String table, String alias) {
+            if (alias == null) {
+                return table + " WITH(INDEX(" + indexName + "))";
+            }
+            return table + " " + alias + " WITH(INDEX(" + indexName + "))";
         }
     }
 
