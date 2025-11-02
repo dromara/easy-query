@@ -3,6 +3,7 @@ package com.easy.query.core.configuration;
 import com.easy.query.core.enums.DefaultConditionEnum;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.enums.SelectAutoIncludeTableEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 
@@ -139,6 +140,7 @@ public class EasyQueryOption {
      * 为字符串时的默认条件
      */
     private final DefaultConditionEnum defaultCondition;
+    private final SelectAutoIncludeTableEnum selectAutoIncludeTable;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy,
                            SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode,
@@ -154,7 +156,8 @@ public class EasyQueryOption {
                            String defaultSchema, long resultSizeLimit, boolean printNavSql,
                            ShardingQueryInTransactionEnum shardingQueryInTransaction, int mssqlMinBigDecimalScale,
                            IncludeLimitModeEnum includeLimitMode,
-                           boolean saveComment, int maxInClauseSize,DefaultConditionEnum defaultCondition) {
+                           boolean saveComment, int maxInClauseSize,DefaultConditionEnum defaultCondition,SelectAutoIncludeTableEnum selectAutoIncludeTable) {
+
 
 
         if (executorMaximumPoolSize > 0) {
@@ -230,6 +233,7 @@ public class EasyQueryOption {
         this.saveComment = saveComment;
         this.maxInClauseSize = maxInClauseSize;
         this.defaultCondition = defaultCondition;
+        this.selectAutoIncludeTable = selectAutoIncludeTable;
     }
 
     public int getMaxShardingRouteCount() {
@@ -377,5 +381,9 @@ public class EasyQueryOption {
 
     public DefaultConditionEnum getDefaultCondition() {
         return defaultCondition;
+    }
+
+    public SelectAutoIncludeTableEnum getSelectAutoIncludeTable() {
+        return selectAutoIncludeTable;
     }
 }

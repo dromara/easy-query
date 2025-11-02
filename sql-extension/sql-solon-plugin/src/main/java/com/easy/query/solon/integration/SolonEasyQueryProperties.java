@@ -4,6 +4,7 @@ import com.easy.query.core.enums.DefaultConditionEnum;
 import com.easy.query.core.enums.EntityMappingStrategyEnum;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.enums.SelectAutoIncludeTableEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.solon.integration.option.DatabaseEnum;
@@ -45,6 +46,10 @@ public class SolonEasyQueryProperties {
      * 默认WhereObject使用的查询类型
      */
     private final static DefaultConditionEnum defaultCondition = DefaultConditionEnum.LIKE;
+    /**
+     * selectAutoInclude使用表对象是是否报错
+     */
+    private final static SelectAutoIncludeTableEnum autoIncludeTable = SelectAutoIncludeTableEnum.THROW;
     /**
      * 建议19
      */
@@ -311,6 +316,19 @@ public class SolonEasyQueryProperties {
                     return DefaultConditionEnum.LIKE;
                 case "contains":
                     return DefaultConditionEnum.CONTAINS;
+            }
+            return null;
+        });
+    }
+    public SelectAutoIncludeTableEnum getAutoIncludeTable() {
+        return getOrDef("auto-include-table", autoIncludeTable, v -> {
+            switch (v) {
+                case "throw":
+                    return SelectAutoIncludeTableEnum.THROW;
+                case "warning":
+                    return SelectAutoIncludeTableEnum.WARNING;
+                case "ignore":
+                    return SelectAutoIncludeTableEnum.IGNORE;
             }
             return null;
         });

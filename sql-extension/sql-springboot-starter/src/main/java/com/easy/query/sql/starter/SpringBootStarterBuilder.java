@@ -176,6 +176,7 @@ public class SpringBootStarterBuilder {
                     builder.setSaveComment(easyQueryProperties.isSaveComment());
                     builder.setMaxInClauseSize(easyQueryProperties.getMaxInClauseSize());
                     builder.setDefaultCondition(easyQueryProperties.getDefaultCondition());
+                    builder.setSelectAutoIncludeTable(easyQueryProperties.getAutoIncludeTable());
                 })
                 .customConfigure(s -> {
                     switch (easyQueryProperties.getDatabase()) {

@@ -5,6 +5,7 @@ import com.easy.query.core.enums.DefaultConditionEnum;
 import com.easy.query.core.enums.EntityMappingStrategyEnum;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.enums.SelectAutoIncludeTableEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.sql.starter.option.DatabaseEnum;
@@ -169,6 +170,7 @@ public class EasyQueryProperties {
      * 默认WhereObject使用的查询类型
      */
     private DefaultConditionEnum defaultCondition = DefaultConditionEnum.LIKE;
+    private SelectAutoIncludeTableEnum autoIncludeTable = SelectAutoIncludeTableEnum.THROW;
 
     public Boolean getEnable() {
         return enable;
@@ -516,6 +518,14 @@ public class EasyQueryProperties {
 
     public void setDefaultCondition(DefaultConditionEnum defaultCondition) {
         this.defaultCondition = defaultCondition;
+    }
+
+    public SelectAutoIncludeTableEnum getAutoIncludeTable() {
+        return autoIncludeTable;
+    }
+
+    public void setAutoIncludeTable(SelectAutoIncludeTableEnum autoIncludeTable) {
+        this.autoIncludeTable = autoIncludeTable;
     }
 
     public EasyQueryProperties() {

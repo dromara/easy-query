@@ -4,6 +4,8 @@ import com.easy.query.core.basic.api.select.ResultSetContext;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
 import com.easy.query.core.common.Chunk;
+import com.easy.query.core.configuration.EasyQueryOption;
+import com.easy.query.core.enums.SelectAutoIncludeTableEnum;
 import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.expression.lambda.SQLResultSetFunc;
 import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
@@ -1042,7 +1044,12 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata, IncludeCirculateChecker includeCirculateChecker, ConfigureArgument configureArgument, boolean replace, int deep) {
 
         if (resultEntityMetadata.getTableName() != null) {
-            log.warn("selectAutoInclude should not use database entity objects as return results :[{" + EasyClassUtil.getSimpleName(resultEntityMetadata.getEntityClass()) + "}] ");
+            EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
+            if (easyQueryOption.getSelectAutoIncludeTable()== SelectAutoIncludeTableEnum.THROW){
+                throw new EasyQueryInvalidOperationException("selectAutoInclude should not use database entity objects as return results :[{" + EasyClassUtil.getSimpleName(resultEntityMetadata.getEntityClass()) + "}] ");
+            }else if(easyQueryOption.getSelectAutoIncludeTable()== SelectAutoIncludeTableEnum.WARNING){
+                log.warn("selectAutoInclude should not use database entity objects as return results :[{" + EasyClassUtil.getSimpleName(resultEntityMetadata.getEntityClass()) + "}] ");
+            }
         }
         Collection<NavigateMetadata> resultNavigateMetadatas = resultEntityMetadata.getNavigateMetadatas();
         if (EasyCollectionUtil.isEmpty(resultNavigateMetadatas)) {

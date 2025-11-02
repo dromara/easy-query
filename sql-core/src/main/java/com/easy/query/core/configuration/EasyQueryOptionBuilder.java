@@ -3,6 +3,7 @@ package com.easy.query.core.configuration;
 import com.easy.query.core.enums.DefaultConditionEnum;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.enums.SelectAutoIncludeTableEnum;
 import com.easy.query.core.enums.ShardingQueryInTransactionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 
@@ -96,6 +97,7 @@ public class EasyQueryOptionBuilder {
      */
     private int maxInClauseSize;
     private DefaultConditionEnum defaultCondition;
+    private SelectAutoIncludeTableEnum selectAutoIncludeTable;
 
 
     public EasyQueryOptionBuilder() {
@@ -132,6 +134,7 @@ public class EasyQueryOptionBuilder {
         this.saveComment = false;
         this.maxInClauseSize = MAX_IN_CLAUSE_SIZE;
         this.defaultCondition = DefaultConditionEnum.LIKE;
+        this.selectAutoIncludeTable = SelectAutoIncludeTableEnum.THROW;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -298,6 +301,10 @@ public class EasyQueryOptionBuilder {
         this.defaultCondition = defaultCondition;
     }
 
+    public void setSelectAutoIncludeTable(SelectAutoIncludeTableEnum selectAutoIncludeTable) {
+        this.selectAutoIncludeTable = selectAutoIncludeTable;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -333,6 +340,7 @@ public class EasyQueryOptionBuilder {
                 this.includeLimitMode,
                 this.saveComment,
                 this.maxInClauseSize,
-                this.defaultCondition);
+                this.defaultCondition,
+                this.selectAutoIncludeTable);
     }
 }
