@@ -609,7 +609,7 @@ public class DamengQueryTest extends DamengBaseTest {
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
         List<SysUser> list = entityQuery.queryable(SysUser.class)
-                .includes(user -> user.bankCards())
+                .include(user -> user.bankCards())
                 .where(user -> {
                     user.bankCards().where(bc -> bc.type().eq("储蓄卡")).all(bc -> bc.code().nullOrDefault("").startsWith("33123"));
                 }).toList();
@@ -838,4 +838,5 @@ public class DamengQueryTest extends DamengBaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.\"ID\",t.\"NAME\",t.\"ROWNUMBER\",t.\"ISDELETE\" FROM \"MY_CUSTOM\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
     }
+
 }

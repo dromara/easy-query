@@ -4,26 +4,18 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
-import com.easy.query.core.proxy.columns.types.SQLIntegerTypeColumn;
-import com.easy.query.core.proxy.core.draft.Draft5;
 import com.easy.query.core.proxy.core.draft.Draft6;
-import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
-import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.entity.BlogEntity;
-import com.easy.query.test.entity.m2m.Station;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysBankCardProxy;
-import com.easy.query.test.mysql8.entity.many.M8Province;
 import com.easy.query.test.mysql8.vo.UserDTO2;
 import com.easy.query.test.mysql8.vo.proxy.UserDTO2Proxy;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -550,6 +542,48 @@ public class MySQL8Test4 extends BaseTest {
         listenerContextManager.clear();
     }
 
+    @Test
+    public void testAll4() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                .where(user -> {
+                    user.bankCards().where(bc -> bc.type().eq("储蓄卡")).notEmptyAll(bc -> bc.code().startsWith("33123"));
+                }).toList();
+
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(1, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time` FROM `t_sys_user` t WHERE (EXISTS (SELECT 1 FROM `t_bank_card` t1 WHERE t1.`uid` = t.`id` AND t1.`type` = ? LIMIT 1) AND NOT ( EXISTS (SELECT 1 FROM `t_bank_card` t2 WHERE t2.`uid` = t.`id` AND t2.`type` = ? AND (NOT (t2.`code` LIKE CONCAT(?,'%'))) LIMIT 1)))", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("储蓄卡(String),储蓄卡(String),33123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testAll5() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+        List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
+                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(user -> {
+                    user.bankCards().where(bc -> bc.type().eq("储蓄卡")).notEmptyAll(bc -> bc.code().startsWith("33123"));
+                }).toList();
+
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(1, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT t.`id`,t.`name`,t.`phone`,t.`age`,t.`create_time` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `uid`,(COUNT(?) > 0) AS `__any2__`,(COUNT((CASE WHEN (NOT (t1.`code` LIKE CONCAT(?,'%'))) THEN ? ELSE NULL END)) <= 0) AS `__none3__` FROM `t_bank_card` t1 WHERE t1.`type` = ? GROUP BY t1.`uid`) t2 ON t2.`uid` = t.`id` WHERE (IFNULL(t2.`__any2__`,?) = ? AND IFNULL(t2.`__none3__`,?) = ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("1(Integer),33123(String),1(Integer),储蓄卡(String),false(Boolean),true(Boolean),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        listenerContextManager.clear();
+    }
 //    @Test
 //    public void testaaa() {
 //        LocalDateTime now = LocalDateTime.now();

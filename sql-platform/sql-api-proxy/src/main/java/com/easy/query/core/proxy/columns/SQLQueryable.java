@@ -58,6 +58,16 @@ public interface SQLQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> exte
      */
     void all(SQLActionExpression1<T1Proxy> allExpression);
 
+    /**
+     * 至少集合非空且全部满足where条件
+     * @param whereExpression
+     */
+    default void notEmptyAll(SQLActionExpression1<T1Proxy> whereExpression){
+        getEntitySQLContext()._whereAnd(()->{
+            any();
+            all(whereExpression);
+        });
+    }
 
     /**
      * 存在任意一个满足条件
