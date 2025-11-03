@@ -28,6 +28,7 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
@@ -105,8 +106,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             "     * {@link @{entityClass}#get@{property}}\n" +
             "     */";
 
-    private static final ClassProxyGenerator FIELD_DOC_COMMENT_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_DOC_COMMENT_TEMPLATE);
-    private static final ClassProxyGenerator FIELD_EMPTY_DOC_COMMENT_TEMPLATE_GENERATOR=new ClassProxyGenerator(FIELD_EMPTY_DOC_COMMENT_TEMPLATE);
+    private static final ClassProxyGenerator FIELD_DOC_COMMENT_TEMPLATE_GENERATOR = new ClassProxyGenerator(FIELD_DOC_COMMENT_TEMPLATE);
+    private static final ClassProxyGenerator FIELD_EMPTY_DOC_COMMENT_TEMPLATE_GENERATOR = new ClassProxyGenerator(FIELD_EMPTY_DOC_COMMENT_TEMPLATE);
 
     private Filer filer;
     private Elements elementUtils;
@@ -166,43 +167,44 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 //                        break;
 //                    }
 //                }
-                EntityFileProxy entityFileProxy = entityClassElement.getAnnotation(EntityFileProxy.class);
-                if (entityFileProxy != null) {
-                    return;
-                }
-                EntityProxy entityProxy = entityClassElement.getAnnotation(EntityProxy.class);
+                        EntityFileProxy entityFileProxy = entityClassElement.getAnnotation(EntityFileProxy.class);
+                        if (entityFileProxy != null) {
+                            return;
+                        }
+                        EntityProxy entityProxy = entityClassElement.getAnnotation(EntityProxy.class);
 
-                Table tableAnnotation = entityClassElement.getAnnotation(Table.class);
+                        Table tableAnnotation = entityClassElement.getAnnotation(Table.class);
 
 
-                //每一个 entity 生成一个独立的文件
+                        //每一个 entity 生成一个独立的文件
 
-                String entityFullName = entityClassElement.toString();
-                String realGenPackage = guessTablesPackage(entityFullName);
-                String entityClassName = entityClassElement.getSimpleName().toString();
-                String proxyInstanceName = EasyStringUtil.isBlank(entityProxy.value()) ? entityClassName + "Proxy" : entityProxy.value();
+                        String entityFullName = entityClassElement.toString();
+                        String generatePackage = entityProxy.generatePackage();
+                        String realGenPackage = "".equals(generatePackage) ? getPackageName(entityClassElement) : generatePackage;
+                        String entityClassName = entityClassElement.getSimpleName().toString();
+                        String proxyInstanceName = EasyStringUtil.isBlank(entityProxy.value()) ? entityClassName + "Proxy" : entityProxy.value();
 //                if (EasyStringUtil.isBlank(proxyInstanceName)) {
 //                    proxyInstanceName = buildName(entityClassNameReference + "Proxy", "upperCase");
 //                }
-                HashSet<String> ignoreProperties = new HashSet<>(Arrays.asList(entityProxy.ignoreProperties()));
+                        HashSet<String> ignoreProperties = new HashSet<>(Arrays.asList(entityProxy.ignoreProperties()));
 
 
-                TypeElement classElement = (TypeElement) entityClassElement;
-                AptFileCompiler aptFileCompiler = new AptFileCompiler(realGenPackage, entityClassName, proxyInstanceName, tableAnnotation, new AptSelectorInfo(proxyInstanceName + "Fetcher"));
-                aptFileCompiler.addImports("com.easy.query.core.proxy.fetcher.AbstractFetcher");
-                aptFileCompiler.addImports("com.easy.query.core.proxy.SQLSelectAsExpression");
-                aptFileCompiler.addImports("com.easy.query.core.proxy.core.EntitySQLContext");
-                AptValueObjectInfo aptValueObjectInfo = new AptValueObjectInfo(entityClassName);
-                aptFileCompiler.addImports(entityFullName);
-                do {
-                    fillPropertyAndColumns(aptFileCompiler, aptValueObjectInfo, classElement, ignoreProperties);
-                    classElement = (TypeElement) typeUtils.asElement(classElement.getSuperclass());
-                } while (classElement != null);
+                        TypeElement classElement = (TypeElement) entityClassElement;
+                        AptFileCompiler aptFileCompiler = new AptFileCompiler(realGenPackage, entityClassName, proxyInstanceName, tableAnnotation, new AptSelectorInfo(proxyInstanceName + "Fetcher"));
+                        aptFileCompiler.addImports("com.easy.query.core.proxy.fetcher.AbstractFetcher");
+                        aptFileCompiler.addImports("com.easy.query.core.proxy.SQLSelectAsExpression");
+                        aptFileCompiler.addImports("com.easy.query.core.proxy.core.EntitySQLContext");
+                        AptValueObjectInfo aptValueObjectInfo = new AptValueObjectInfo(entityClassName);
+                        aptFileCompiler.addImports(entityFullName);
+                        do {
+                            fillPropertyAndColumns(aptFileCompiler, aptValueObjectInfo, classElement, ignoreProperties);
+                            classElement = (TypeElement) typeUtils.asElement(classElement.getSuperclass());
+                        } while (classElement != null);
 
-                String content = buildTablesClass(aptFileCompiler, aptValueObjectInfo);
-                genClass(basePath, realGenPackage, proxyInstanceName, content);
+                        String content = buildTablesClass(aptFileCompiler, aptValueObjectInfo);
+                        genClass(basePath, realGenPackage, proxyInstanceName, content);
 
-            });
+                    });
         }
         return false;
     }
@@ -360,6 +362,16 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         return AptCreatorHelper.createProxy(aptFileCompiler, aptValueObjectInfo);
     }
 
+    /**
+     * 获取类的包名
+     */
+    private String getPackageName(Element element) {
+        PackageElement packageElement = elementUtils.getPackageOf(element);
+        if(packageElement==null){
+            return guessTablesPackage(element.toString());
+        }
+        return packageElement.getQualifiedName().toString()+".proxy";
+    }
     private String guessTablesPackage(String entityClassName) {
         StringBuilder guessPackage = new StringBuilder();
         if (!entityClassName.contains(".")) {

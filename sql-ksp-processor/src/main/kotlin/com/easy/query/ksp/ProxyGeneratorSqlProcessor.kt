@@ -100,7 +100,9 @@ class ProxyGeneratorSqlProcessor(
 
         // 每一个 entity 生成一个独立的文件
         val entityFullName = entityClassElement.qualifiedName!!.asString()
-        val realGenPackage = entityClassElement.packageName.asString() + ".proxy"
+        val realGenPackage = entityProxy.generatePackage
+            .takeIf { it.isNotBlank() } ?: (entityClassElement.packageName.asString() + ".proxy")
+//        val realGenPackage = entityClassElement.packageName.asString() + ".proxy"
         val entityClassName = entityClassElement.simpleName.asString()
         val proxyInstanceName = entityProxy.value.takeIf { it.isNotBlank() } ?: "${entityClassName}Proxy"
 
@@ -265,12 +267,14 @@ class ProxyGeneratorSqlProcessor(
         // 将kotlin的类型转为java对应的类型
         val arguments = type.arguments
         return if (arguments.isNotEmpty()) { // 泛型
-            "$className<${arguments.joinToString(", ") {
-                // 如果是可空的，增加问号
-                val resolve = it.type?.resolve()
-                val nullable = if (resolve?.isMarkedNullable == true) "?" else ""
-                resolve?.toJavaString()?.let { ktType  -> ktType + nullable } ?: "*" 
-            }}>"
+            "$className<${
+                arguments.joinToString(", ") {
+                    // 如果是可空的，增加问号
+                    val resolve = it.type?.resolve()
+                    val nullable = if (resolve?.isMarkedNullable == true) "?" else ""
+                    resolve?.toJavaString()?.let { ktType -> ktType + nullable } ?: "*"
+                }
+            }>"
         } else {
             className
         }

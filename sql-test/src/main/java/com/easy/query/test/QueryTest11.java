@@ -6,6 +6,7 @@ import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable2;
+import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.func.def.enums.OrderByModeEnum;
@@ -771,6 +772,7 @@ public class QueryTest11 extends BaseTest {
         Assert.assertEquals("1(String),false(Boolean),123(String),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testx27() {
         ListenerContext listenerContext = new ListenerContext();
@@ -787,6 +789,7 @@ public class QueryTest11 extends BaseTest {
         Assert.assertEquals("9(Integer),1(Integer),1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testx28() {
         ArrayList<TopicTypeEnum> topicTypeEnums = new ArrayList<>();
@@ -806,9 +809,9 @@ public class QueryTest11 extends BaseTest {
         Assert.assertEquals("9(Integer),1(Integer),9(Integer),3(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testdraft()
-    {
+    public void testdraft() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -825,9 +828,9 @@ public class QueryTest11 extends BaseTest {
         Assert.assertEquals("SELECT t.`id` AS `value1`,COUNT(*) AS `value2` FROM `t_topic` t GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         listenerContextManager.clear();
     }
+
     @Test
-    public void testOrder()
-    {
+    public void testOrder() {
 
         {
 
@@ -835,21 +838,21 @@ public class QueryTest11 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
             List<Topic> list3 = easyEntityQuery.queryable(Topic.class)
                     .where(o -> {
-                        o.title().eq("title" );
-                        o.id().eq("1" );
+                        o.title().eq("title");
+                        o.id().eq("1");
                     })
                     .orderBy(o -> {
-                        o.createTime().format("yyyy-MM-dd HH:mm:ss" ).asc();
+                        o.createTime().format("yyyy-MM-dd HH:mm:ss").asc();
                         o.stars().asc(OrderByModeEnum.NULLS_LAST);
-                        o.createTime().format("yyyy-MM-dd HH:mm:ss" ).desc();
+                        o.createTime().format("yyyy-MM-dd HH:mm:ss").desc();
                         o.stars().desc(OrderByModeEnum.NULLS_FIRST);
                     })
-                    .select(o -> new TopicProxy().selectExpression(o.FETCHER.title().id(), o.createTime().format("yyyy-MM-dd HH:mm:ss" )))
+                    .select(o -> new TopicProxy().selectExpression(o.FETCHER.title().id(), o.createTime().format("yyyy-MM-dd HH:mm:ss")))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`title`,t.`id`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') FROM `t_topic` t WHERE t.`title` = ? AND t.`id` = ? ORDER BY DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') ASC,CASE WHEN t.`stars` IS NULL THEN 1 ELSE 0 END ASC,t.`stars` ASC,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') DESC,CASE WHEN t.`stars` IS NULL THEN 0 ELSE 1 END ASC,t.`stars` DESC" , jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("title(String),1(String)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("SELECT t.`title`,t.`id`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') FROM `t_topic` t WHERE t.`title` = ? AND t.`id` = ? ORDER BY DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') ASC,CASE WHEN t.`stars` IS NULL THEN 1 ELSE 0 END ASC,t.`stars` ASC,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') DESC,CASE WHEN t.`stars` IS NULL THEN 0 ELSE 1 END ASC,t.`stars` DESC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("title(String),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
 
@@ -868,17 +871,17 @@ public class QueryTest11 extends BaseTest {
                         topicTypeJsonValue.setAge(1);
                         topicTypeJsonValue.setName("1");
                         o.title().eq(topicTypeJsonValue);
-                        o.id().eq("1" );
+                        o.id().eq("1");
                     })
                     .orderBy(o -> {
                         o.title2().asc();
                     })
-                    .select(o -> new TopicProxy().selectExpression(o.FETCHER.title().id(), o.createTime().format("yyyy-MM-dd HH:mm:ss" )))
+                    .select(o -> new TopicProxy().selectExpression(o.FETCHER.title().id(), o.createTime().format("yyyy-MM-dd HH:mm:ss")))
                     .toList();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`title`,t.`id`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') FROM `t_topic_type_array` t WHERE t.`title2` LIKE ? AND t.`title2` = ? AND t.`title` LIKE ? AND t.`title` = ? AND t.`id` = ? ORDER BY t.`title2` ASC" , jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("%123%(String),[{\"age\":null,\"name\":\"123\"}](String),%456%(String),{\"age\":1,\"name\":\"1\"}(String),1(String)" , EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            Assert.assertEquals("SELECT t.`title`,t.`id`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') FROM `t_topic_type_array` t WHERE t.`title2` LIKE ? AND t.`title2` = ? AND t.`title` LIKE ? AND t.`title` = ? AND t.`id` = ? ORDER BY t.`title2` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%123%(String),[{\"age\":null,\"name\":\"123\"}](String),%456%(String),{\"age\":1,\"name\":\"1\"}(String),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
             easyEntityQuery.queryable(TopicTypeArrayJson2.class)
                     .where(t -> {
@@ -899,5 +902,101 @@ public class QueryTest11 extends BaseTest {
             Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
             listenerContextManager.clear();
         }
+    }
+
+    @Test
+    public void testOrder1() {
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            TopicTypeJsonValue topicTypeJsonValue1 = new TopicTypeJsonValue();
+            topicTypeJsonValue1.setName("123");
+            List<Topic> list3 = easyEntityQuery.queryable(TopicTypeArrayJson.class)
+                    .where(o -> {
+                        o.title2().asAny().likeRaw("123");
+                        o.title2().eq(Collections.singletonList(topicTypeJsonValue1));
+                        o.title().asAny().like("456");
+                        TopicTypeJsonValue topicTypeJsonValue = new TopicTypeJsonValue();
+                        topicTypeJsonValue.setAge(1);
+                        topicTypeJsonValue.setName("1");
+                        o.title().eq(topicTypeJsonValue);
+                        o.id().eq("1");
+                    })
+                    .orderBy(o -> {
+                        o.title2().asc();
+                    })
+                    .select(o -> new TopicProxy().selectExpression(o.FETCHER.title().id(), o.createTime().format("yyyy-MM-dd HH:mm:ss")))
+                    .toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`title`,t.`id`,DATE_FORMAT(t.`create_time`,'%Y-%m-%d %H:%i:%s') FROM `t_topic_type_array` t WHERE t.`title2` LIKE ? AND t.`title2` = ? AND t.`title` LIKE ? AND t.`title` = ? AND t.`id` = ? ORDER BY t.`title2` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%123%(String),[{\"age\":null,\"name\":\"123\"}](String),%456%(String),{\"age\":1,\"name\":\"1\"}(String),1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+            easyEntityQuery.queryable(TopicTypeArrayJson2.class)
+                    .where(t -> {
+                        t.title3().eq(new Integer[1]);
+                    });
+        }
+    }
+
+    @Test
+    public void testOrder2() {
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            List<TopicTypeTest1> list = easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
+                o.topicType().likeRaw(TopicTypeEnum.STUDENT.getCode());
+            }).toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT `id`,`stars`,`title`,`topic_type`,`create_time` FROM `t_topic_type` WHERE `topic_type` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+    }
+    @Test
+    public void testOrder3() {
+
+
+        {
+
+            ListenerContext listenerContext = new ListenerContext();
+            listenerContextManager.startListen(listenerContext);
+            easyEntityQuery.queryable(TopicTypeTest1.class).where(o -> {
+                o.topicType().likeRaw(TopicTypeEnum.STUDENT.getCode());
+            }).select(t -> new MyTestProxy()
+                            .id().set(t.id())
+                            .name().set(t.title())
+                    ).toList();
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+            Assert.assertEquals("SELECT t.`id` AS `id`,t.`title` AS `name` FROM `t_topic_type` t WHERE t.`topic_type` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("%1%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            listenerContextManager.clear();
+        }
+    }
+
+    @Data
+    @EntityProxy(generatePackage = "com.easy.query.test")
+    public static class MyTest{
+        private String id;
+        private String name;
+    }
+    @Data
+    @EntityProxy(value = "MyTesta",generatePackage = "com.easy.query.test1")
+    public static class MyTest1{
+        private String id;
+        private String name;
+    }
+    @Data
+    @EntityProxy(value = "MyTesta",generatePackage = "com.easy.query.test1")
+    public static class MyTest2{
+        private String id;
+        private String name;
     }
 }

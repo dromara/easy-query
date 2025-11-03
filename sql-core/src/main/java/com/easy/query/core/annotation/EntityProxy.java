@@ -19,12 +19,14 @@ public @interface EntityProxy {
     /**
      * 设置代理实例对象名称比如'SysUserProxy'
      * 不建议设置别名
+     *
      * @return
      */
     String value() default "";
 
     /**
      * 需要忽略生成的属性
+     *
      * @return
      */
     String[] ignoreProperties() default {};
@@ -35,6 +37,7 @@ public @interface EntityProxy {
      * 为了兼容1.x版本的eq的apt所以这边增加了版本号这个值,请不要随意修改这个值并且这个值与eq版本不一一对应
      * 无或者1表示第一个版本
      * 2表示第二个版本columnType生成
+     *
      * @return
      */
     int version() default 2;
@@ -42,7 +45,14 @@ public @interface EntityProxy {
     /**
      * 提供给插件
      * 修正版本号
+     *
      * @return
      */
-    int revision() default 8;
+    int revision() default 9;
+
+    /**
+     * 生成包名
+     * @return
+     */
+    String generatePackage() default "";
 }

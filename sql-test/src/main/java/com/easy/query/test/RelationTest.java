@@ -3096,7 +3096,7 @@ public class RelationTest extends BaseTest {
                 .groupBy((p, a) -> GroupKeys.of(
                         p.code()
                 )).select(group -> {
-                    var r = new MyProvinceVOProxy();
+                    MyProvinceVOProxy r = new MyProvinceVOProxy();
 
                     r.myCode().set(group.key1());
 

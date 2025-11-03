@@ -52,5 +52,10 @@ public @interface EntityFileProxy {
      * 修正版本号
      * @return
      */
-    int revision() default 8;
+    int revision() default 9;
+    /**
+     * 生成包名
+     * @return
+     */
+    String generatePackage() default "";
 }
