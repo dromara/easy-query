@@ -1,7 +1,6 @@
 package com.easy.query.api.proxy.entity.select.extension.queryable;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
-import com.easy.query.core.common.ValueHolder;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
@@ -108,36 +107,6 @@ public interface EntityIncludeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
 
     default <TPropertyProxy extends ProxyEntity<TPropertyProxy, TProperty>, TProperty> EntityQueryable<T1Proxy, T1> include(SQLFuncExpression1<T1Proxy, NavigatePathAvailable<TPropertyProxy, TProperty>> navigatePathExpression, SQLActionExpression1<EntityQueryable<TPropertyProxy, TProperty>> includeAdapterExpression, Integer groupSize) {
         return include(true, navigatePathExpression, includeAdapterExpression, groupSize);
-    }
-
-    /**
-     * 请使用{@link #include(SQLActionExpression2)}
-     *
-     * <blockquote><pre>
-     *     {@code
-     *
-     *      }
-     * </pre></blockquote>
-     *
-     * @param navigatePathExpression
-     * @return
-     */
-    @Deprecated
-    default EntityQueryable<T1Proxy, T1> includeBy(SQLFuncExpression1<T1Proxy, List<IncludeAvailable>> navigatePathExpression) {
-        T1Proxy t1Proxy = getQueryable().get1Proxy();
-        ValueHolder<List<IncludeAvailable>> includeAvailableValueHolder = new ValueHolder<>();
-        t1Proxy.getEntitySQLContext()._include(() -> {
-            List<IncludeAvailable> values = navigatePathExpression.apply(t1Proxy);
-            if (values != null) {
-                includeAvailableValueHolder.setValue(values);
-            }
-        });
-        List<IncludeAvailable> values = includeAvailableValueHolder.getValue();
-        if (values != null) {
-            IncludePathTreeNode includePathTreeRoot = EasyUtil.getIncludePathTreeRoot(values);
-            EasyUtil.includeMany(this.getClientQueryable(), includePathTreeRoot);
-        }
-        return getQueryable();
     }
 
     /**

@@ -994,7 +994,7 @@ public class QueryTest11 extends BaseTest {
         private String name;
     }
     @Data
-    @EntityProxy(value = "MyTesta",generatePackage = "com.easy.query.test1")
+    @EntityProxy(value = "MyTestb",generatePackage = "com.easy.query.test1")
     public static class MyTest2{
         private String id;
         private String name;

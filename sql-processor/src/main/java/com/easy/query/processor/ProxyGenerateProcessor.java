@@ -9,6 +9,7 @@ import com.easy.query.core.annotation.ProxyProperty;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.ValueObject;
 import com.easy.query.core.enums.RelationTypeEnum;
+import com.easy.query.core.exception.EasyQueryAptFileException;
 import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.processor.generate.ClassProxyGenerator;
 import com.easy.query.processor.helper.AptCreatorHelper;
@@ -21,6 +22,7 @@ import com.easy.query.processor.helper.PropertyColumn;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
+import javax.annotation.processing.FilerException;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
@@ -202,7 +204,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                         } while (classElement != null);
 
                         String content = buildTablesClass(aptFileCompiler, aptValueObjectInfo);
-                        genClass(basePath, realGenPackage, proxyInstanceName, content);
+                        genClass(basePath, realGenPackage, proxyInstanceName, content, entityFullName);
 
                     });
         }
@@ -243,7 +245,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         return path.contains("test-sources") || path.contains("test-annotations");
     }
 
-    private void genClass(String basePath, String genPackageName, String className, String genContent) {
+    private void genClass(String basePath, String genPackageName, String className, String genContent, String entityFullName) {
         Writer writer = null;
         try {
             JavaFileObject sourceFile = filer.createSourceFile(genPackageName + "." + className);
@@ -295,7 +297,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             writer.write(genContent);
             writer.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new EasyQueryAptFileException(">>>>>ERROR: can not write file by easy-query processor for class[" + entityFullName + "]: " + e.getMessage(), e);
         } finally {
             if (writer != null) {
                 try {
@@ -367,11 +369,12 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
      */
     private String getPackageName(Element element) {
         PackageElement packageElement = elementUtils.getPackageOf(element);
-        if(packageElement==null){
+        if (packageElement == null) {
             return guessTablesPackage(element.toString());
         }
-        return packageElement.getQualifiedName().toString()+".proxy";
+        return packageElement.getQualifiedName().toString() + ".proxy";
     }
+
     private String guessTablesPackage(String entityClassName) {
         StringBuilder guessPackage = new StringBuilder();
         if (!entityClassName.contains(".")) {
