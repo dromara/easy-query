@@ -48,12 +48,12 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
 
     @Override
     public String databaseExistSQL(String databaseName) {
-        return String.format("select 1 from pg_namespace where nspname = '%s'", databaseName);
+        return String.format("SELECT 1 FROM pg_database WHERE datname = '%s'", databaseName);
     }
 
     @Override
     public String createDatabaseSQL(String databaseName) {
-        return "CREATE SCHEMA IF NOT EXISTS " + getQuoteSQLName(databaseName) + ";";
+        return "CREATE DATABASE " + getQuoteSQLName(databaseName) + ";";
     }
 
     @Override

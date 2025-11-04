@@ -21,5 +21,6 @@ import java.math.BigDecimal;
 public class MathTest implements ProxyEntityAvailable<MathTest , MathTestProxy> {
     @Column(primaryKey = true)
     private String id;
+    @Column(comment = "值")
     private BigDecimal testValue;
 }
