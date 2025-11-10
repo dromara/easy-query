@@ -32,4 +32,8 @@ public class ColumnJdbcProperty implements JdbcProperty {
     public boolean isPrimitive() {
         return columnMetadata.isPrimitive();
     }
+
+    public ColumnMetadata getColumnMetadata() {
+        return columnMetadata;
+    }
 }

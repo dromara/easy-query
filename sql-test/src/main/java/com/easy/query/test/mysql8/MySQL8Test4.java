@@ -5,6 +5,7 @@ import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResul
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.proxy.core.draft.Draft6;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
@@ -586,21 +587,12 @@ public class MySQL8Test4 extends BaseTest {
     }
 //    @Test
 //    public void testaaa() {
-//        LocalDateTime now = LocalDateTime.now();
-//        LocalDateTime after15days = LocalDateTime.now().plusDays(15);
-//        easyEntityQuery.queryable(Scheduling.class)
-//                .where(s -> {
-//                    s.schedulingDay().rangeClosed(now, after15days);
-//                }).groupBy(s -> GroupKeys.of(s.process()))
-//                .select(group -> new SchedulingVOProxy()
-//                        .process().set(group.key1())
-//                        .estmateCapacity().set(
-//                                group.where(x -> x.origin().eq(1)).sumBigDecimal(x -> x.allocateCapacity())
-//                        )
-//                        .otherCapacity().set(
-//                                group.where(x -> x.origin().eq(3)).sumBigDecimal(x -> x.allocateCapacity())
-//                        )
-//                ).toList();
+//
+//
+//        List<SysUser> list2 = easyEntityQuery.queryable(SysUser.class)
+//                .where(user -> {
+//                    user.bankCards().max(o -> o.openTime()).eq(LocalDateTime.now());
+//                }).toList();
 //
 //    }
 

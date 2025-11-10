@@ -51,10 +51,12 @@ import com.easy.query.test.entity.school.dto.proxy.SchoolClassVOProxy;
 import com.easy.query.test.entity.school.dto.proxy.SchoolStudentVOProxy;
 import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.entity.bank.SysUser;
 import lombok.var;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -3149,6 +3151,7 @@ public class RelationTest extends BaseTest {
 
     @Test
     public void provinceTest3() {
+
         List<Province> list = easyEntityQuery.queryable(Province.class)
                 .fillMany(() -> {
                     return easyEntityQuery.queryable(City.class).where(c -> c.code().eq("3306"));
