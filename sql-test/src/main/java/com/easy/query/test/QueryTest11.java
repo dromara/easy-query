@@ -917,7 +917,7 @@ public class QueryTest11 extends BaseTest {
                     .where(o -> {
                         o.title2().asAny().likeRaw("123");
                         o.title2().eq(Collections.singletonList(topicTypeJsonValue1));
-                        o.title().asAny().like("456");
+                        o.title().asAny().likeRaw("456");
                         TopicTypeJsonValue topicTypeJsonValue = new TopicTypeJsonValue();
                         topicTypeJsonValue.setAge(1);
                         topicTypeJsonValue.setName("1");
