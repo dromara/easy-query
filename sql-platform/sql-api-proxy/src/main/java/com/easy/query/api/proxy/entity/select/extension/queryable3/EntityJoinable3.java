@@ -112,6 +112,32 @@ public interface EntityJoinable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return new EasyEntityQueryable4<>(get1Proxy(), get2Proxy(),get3Proxy(), joinQueryable.get1Proxy(), entityQueryable4);
     }
 
+    default <T4Proxy extends ProxyEntity<T4Proxy, T4>, T4 extends ProxyEntityAvailable<T4,T4Proxy>> EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> crossJoin(Class<T4> joinClass, SQLActionExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy> on) {
+        T4Proxy t4Proxy = EntityQueryProxyManager.create(joinClass);
+        return crossJoin(t4Proxy,on);
+    }
+
+    default <T4Proxy extends ProxyEntity<T4Proxy, T4>, T4> EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> crossJoin(T4Proxy t4Proxy, SQLActionExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy> on) {
+        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = getClientQueryable3().crossJoin(t4Proxy.getEntityClass(), (t, t1, t2, t3) -> {
+            get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
+                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), t4Proxy.create(t3.getTable(),get1Proxy().getEntitySQLContext()));
+            });
+        });
+        return new EasyEntityQueryable4<>(get1Proxy(), get2Proxy(),get3Proxy(), t4Proxy, entityQueryable4);
+    }
+
+    default <T4Proxy extends ProxyEntity<T4Proxy, T4>, T4> EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> crossJoin(EntityQueryable<T4Proxy, T4> joinQueryable, SQLActionExpression4<T1Proxy, T2Proxy, T3Proxy, T4Proxy> on) {
+        if(EasySQLExpressionUtil.useTableForJoin(joinQueryable.getSQLEntityExpressionBuilder())){
+            return crossJoin(joinQueryable.get1Proxy(),on);
+        }
+        ClientQueryable4<T1, T2, T3, T4> entityQueryable4 = getClientQueryable3().crossJoin(joinQueryable.getClientQueryable(), (t, t1, t2, t3) -> {
+            get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
+                on.apply(get1Proxy(), get2Proxy(), get3Proxy(), joinQueryable.get1Proxy().create(t3.getTable(), get1Proxy().getEntitySQLContext()));
+            });
+        });
+        return new EasyEntityQueryable4<>(get1Proxy(), get2Proxy(),get3Proxy(), joinQueryable.get1Proxy(), entityQueryable4);
+    }
+
 
     default <T4Proxy extends ProxyEntity<T4Proxy, T4>, T4 extends ProxyEntityAvailable<T4,T4Proxy>> EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> leftJoinMerge(Class<T4> joinClass, SQLActionExpression1<MergeTuple4<T1Proxy, T2Proxy, T3Proxy,T4Proxy>> on) {
         return leftJoin(joinClass, (t1, t2, t3,t4) -> {
@@ -145,6 +171,18 @@ public interface EntityJoinable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
 
     default <T4Proxy extends ProxyEntity<T4Proxy, T4>, T4> EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> innerJoinMerge(EntityQueryable<T4Proxy, T4> joinQueryable, SQLActionExpression1<MergeTuple4<T1Proxy, T2Proxy, T3Proxy,T4Proxy>> on) {
         return innerJoin(joinQueryable, (t1, t2, t3,t4) -> {
+            on.apply(new MergeTuple4<>(t1, t2, t3,t4));
+        });
+    }
+
+    default <T4Proxy extends ProxyEntity<T4Proxy, T4>, T4 extends ProxyEntityAvailable<T4,T4Proxy>> EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> crossJoinMerge(Class<T4> joinClass, SQLActionExpression1<MergeTuple4<T1Proxy, T2Proxy, T3Proxy,T4Proxy>> on) {
+        return crossJoin(joinClass, (t1, t2, t3,t4) -> {
+            on.apply(new MergeTuple4<>(t1, t2, t3,t4));
+        });
+    }
+
+    default <T4Proxy extends ProxyEntity<T4Proxy, T4>, T4> EntityQueryable4<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4> crossJoinMerge(EntityQueryable<T4Proxy, T4> joinQueryable, SQLActionExpression1<MergeTuple4<T1Proxy, T2Proxy, T3Proxy,T4Proxy>> on) {
+        return crossJoin(joinQueryable, (t1, t2, t3,t4) -> {
             on.apply(new MergeTuple4<>(t1, t2, t3,t4));
         });
     }

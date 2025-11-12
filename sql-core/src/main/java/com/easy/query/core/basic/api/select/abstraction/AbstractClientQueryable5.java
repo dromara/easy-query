@@ -104,6 +104,20 @@ public abstract class AbstractClientQueryable5<T1, T2, T3, T4, T5> extends Abstr
     }
 
     @Override
+    public <T6> ClientQueryable6<T1, T2, T3, T4, T5, T6> crossJoin(Class<T6> joinClass, SQLActionExpression6<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>> on) {
+        ClientQueryable6<T1, T2, T3, T4, T5, T6> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable6(t1Class, t2Class, t3Class, t4Class, t5Class, joinClass, MultiTableTypeEnum.CROSS_JOIN, entityQueryExpressionBuilder);
+        return EasySQLExpressionUtil.executeJoinOn(queryable, on);
+    }
+
+    @Override
+    public <T6> ClientQueryable6<T1, T2, T3, T4, T5, T6> crossJoin(ClientQueryable<T6> joinQueryable, SQLActionExpression6<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>> on) {
+        ClientQueryable<T6> selectAllTQueryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        entityQueryExpressionBuilder.getExpressionContext().extract(selectAllTQueryable.getSQLEntityExpressionBuilder().getExpressionContext());
+        ClientQueryable6<T1, T2, T3, T4, T5, T6> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable6(t1Class, t2Class, t3Class, t4Class,t5Class, selectAllTQueryable, MultiTableTypeEnum.CROSS_JOIN, entityQueryExpressionBuilder);
+        return EasySQLExpressionUtil.executeJoinOn(queryable, on);
+    }
+
+    @Override
     public ClientQueryable5<T1, T2, T3, T4, T5> where(boolean condition, SQLActionExpression5<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>> whereExpression) {
         if (condition) {
             FilterContext whereFilterContext = getSQLExpressionProvider1().getWhereFilterContext();

@@ -23,5 +23,8 @@ public interface Joinable1<T1> {
     <T2> ClientQueryable2<T1, T2> innerJoin(Class<T2> joinClass, SQLActionExpression2<WherePredicate<T1>, WherePredicate<T2>> on);
 
     <T2> ClientQueryable2<T1, T2> innerJoin(ClientQueryable<T2> joinQueryable, SQLActionExpression2<WherePredicate<T1>, WherePredicate<T2>> on);
+    <T2> ClientQueryable2<T1, T2> crossJoin(Class<T2> joinClass, SQLActionExpression2<WherePredicate<T1>, WherePredicate<T2>> on);
+
+    <T2> ClientQueryable2<T1, T2> crossJoin(ClientQueryable<T2> joinQueryable, SQLActionExpression2<WherePredicate<T1>, WherePredicate<T2>> on);
 
 }

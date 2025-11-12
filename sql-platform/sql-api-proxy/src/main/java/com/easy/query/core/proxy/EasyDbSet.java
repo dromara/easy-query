@@ -278,6 +278,20 @@ public class EasyDbSet<TProxy extends ProxyEntity<TProxy, T>, T> implements DbSe
     }
 
     @Override
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<TProxy, T, T2Proxy, T2> crossJoin(Class<T2> joinClass, SQLActionExpression2<TProxy, T2Proxy> onExpression) {
+        return baseEntityClient.queryable(tProxy).crossJoin(joinClass, onExpression);
+    }
+
+    @Override
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<TProxy, T, T2Proxy, T2> crossJoin(T2Proxy t2Proxy, SQLActionExpression2<TProxy, T2Proxy> onExpression) {
+        return baseEntityClient.queryable(tProxy).crossJoin(t2Proxy, onExpression);
+    }
+    @Override
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<TProxy, T, T2Proxy, T2> crossJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLActionExpression2<TProxy, T2Proxy> onExpression) {
+        return baseEntityClient.queryable(tProxy).crossJoin(joinQueryable, onExpression);
+    }
+
+    @Override
     public EntityQueryable<TProxy, T> orderBy(boolean condition, SQLActionExpression1<TProxy> selectExpression) {
         return baseEntityClient.queryable(tProxy).orderBy(condition, selectExpression);
     }

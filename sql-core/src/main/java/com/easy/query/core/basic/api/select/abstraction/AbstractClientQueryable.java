@@ -1563,10 +1563,24 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public <T2> ClientQueryable2<T1, T2> innerJoin(ClientQueryable<T2> joinQueryable, SQLActionExpression2<WherePredicate<T1>, WherePredicate<T2>> on) {
         //todo 需要判断当前的表达式是否存在where group order之类的操作,是否是一个clear expression如果不是那么就需要先select all如果没有select过然后创建一个anonymous的table去join
         //简单理解就是queryable需要支持join操作 还有queryable 和queryable之间如何join
-
         ClientQueryable<T2> selectAllTQueryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
         entityQueryExpressionBuilder.getExpressionContext().extract(selectAllTQueryable.getSQLEntityExpressionBuilder().getExpressionContext());
         ClientQueryable2<T1, T2> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable2(t1Class, selectAllTQueryable, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
+        return EasySQLExpressionUtil.executeJoinOn(queryable, on);
+    }
+    @Override
+    public <T2> ClientQueryable2<T1, T2> crossJoin(Class<T2> joinClass, SQLActionExpression2<WherePredicate<T1>, WherePredicate<T2>> on) {
+        ClientQueryable2<T1, T2> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.CROSS_JOIN, entityQueryExpressionBuilder);
+        return EasySQLExpressionUtil.executeJoinOn(queryable, on);
+    }
+
+    @Override
+    public <T2> ClientQueryable2<T1, T2> crossJoin(ClientQueryable<T2> joinQueryable, SQLActionExpression2<WherePredicate<T1>, WherePredicate<T2>> on) {
+        //todo 需要判断当前的表达式是否存在where group order之类的操作,是否是一个clear expression如果不是那么就需要先select all如果没有select过然后创建一个anonymous的table去join
+        //简单理解就是queryable需要支持join操作 还有queryable 和queryable之间如何join
+        ClientQueryable<T2> selectAllTQueryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        entityQueryExpressionBuilder.getExpressionContext().extract(selectAllTQueryable.getSQLEntityExpressionBuilder().getExpressionContext());
+        ClientQueryable2<T1, T2> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable2(t1Class, selectAllTQueryable, MultiTableTypeEnum.CROSS_JOIN, entityQueryExpressionBuilder);
         return EasySQLExpressionUtil.executeJoinOn(queryable, on);
     }
 

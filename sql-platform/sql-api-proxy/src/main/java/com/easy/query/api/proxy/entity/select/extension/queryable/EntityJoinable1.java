@@ -208,4 +208,29 @@ public interface EntityJoinable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> {
     <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLActionExpression2<T1Proxy, T2Proxy> onExpression);
 
 
+    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> crossJoin(Class<T2> joinClass, SQLActionExpression2<T1Proxy, T2Proxy> onExpression);
+
+    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> crossJoin(T2Proxy t2Proxy, SQLActionExpression2<T1Proxy, T2Proxy> onExpression);
+
+    /**
+     * 创建join可查询对象
+     * 单个条件比如Province表的id和City表的provinceId
+     * 生成的sql from province p inner join (select * from city where status=1) c on p.id=c.province_id
+     * <blockquote><pre>
+     * {@code
+     * var cityQuery=queryable(City.class).where(o->o.status().eq(1))
+     * queryable(Province.class)
+     * .crossJoin(cityQuery, (p, c) -> p.id().eq(c.provinceId()))
+     * }
+     * </pre></blockquote>
+     *
+     * @param joinQueryable join的对象表达式
+     * @param onExpression  join的条件,入参个数取决于join的表数目,一次join入参两个后续依次递增
+     * @param <T2Proxy>     join对象的代理
+     * @param <T2>          join对象
+     * @return 返回可查询的对象
+     */
+    <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> crossJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLActionExpression2<T1Proxy, T2Proxy> onExpression);
+
+
 }

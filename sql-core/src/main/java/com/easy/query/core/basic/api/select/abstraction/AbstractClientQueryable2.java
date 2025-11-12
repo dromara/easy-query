@@ -108,6 +108,20 @@ public abstract class AbstractClientQueryable2<T1, T2> extends AbstractOverrideC
     }
 
     @Override
+    public <T3> ClientQueryable3<T1, T2, T3> crossJoin(Class<T3> joinClass, SQLActionExpression3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>> on) {
+        ClientQueryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable3(t1Class, t2Class, joinClass, MultiTableTypeEnum.CROSS_JOIN, entityQueryExpressionBuilder);
+        return EasySQLExpressionUtil.executeJoinOn(queryable3, on);
+    }
+
+    @Override
+    public <T3> ClientQueryable3<T1, T2, T3> crossJoin(ClientQueryable<T3> joinQueryable, SQLActionExpression3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>> on) {
+        ClientQueryable<T3> selectAllT2Queryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        entityQueryExpressionBuilder.getExpressionContext().extract(selectAllT2Queryable.getSQLEntityExpressionBuilder().getExpressionContext());
+        ClientQueryable3<T1, T2, T3> queryable3 = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable3(t1Class, t2Class, selectAllT2Queryable, MultiTableTypeEnum.CROSS_JOIN, entityQueryExpressionBuilder);
+        return EasySQLExpressionUtil.executeJoinOn(queryable3, on);
+    }
+
+    @Override
     public ClientQueryable2<T1, T2> subQueryToGroupJoin(boolean condition, SQLFuncExpression2<SubQueryPropertySelector, SubQueryPropertySelector, SubQueryProperty> manyPropColumnExpression) {
         if (condition) {
             EntityTableExpressionBuilder table1 = entityQueryExpressionBuilder.getTable(0);

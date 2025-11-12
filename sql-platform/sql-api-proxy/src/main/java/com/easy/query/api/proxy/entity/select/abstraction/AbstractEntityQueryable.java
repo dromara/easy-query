@@ -5,6 +5,7 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api.proxy.entity.select.impl.EasyEntityQueryable;
 import com.easy.query.api.proxy.entity.select.impl.EasySelectFlatQueryable;
+import com.easy.query.api.proxy.entity.select.join.join2.CrossJoinExpressionJoiner2;
 import com.easy.query.api.proxy.entity.select.join.join2.InnerJoinExpressionJoiner2;
 import com.easy.query.api.proxy.entity.select.join.join2.LeftJoinExpressionJoiner2;
 import com.easy.query.api.proxy.entity.select.join.join2.RightJoinExpressionJoiner2;
@@ -768,6 +769,22 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     @Override
     public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> innerJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLActionExpression2<T1Proxy, T2Proxy> onExpression) {
         return new InnerJoinExpressionJoiner2<>(t1Proxy, this.clientQueryable).join(joinQueryable, onExpression);
+    }
+
+    @Override
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2 extends ProxyEntityAvailable<T2, T2Proxy>> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> crossJoin(Class<T2> joinClass, SQLActionExpression2<T1Proxy, T2Proxy> on) {
+        T2Proxy t2Proxy = EntityQueryProxyManager.create(joinClass);
+        return crossJoin(t2Proxy, on);
+    }
+
+    @Override
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> crossJoin(T2Proxy t2Proxy, SQLActionExpression2<T1Proxy, T2Proxy> onExpression) {
+        return new CrossJoinExpressionJoiner2<>(t1Proxy, this.clientQueryable).join(t2Proxy, onExpression);
+    }
+
+    @Override
+    public <T2Proxy extends ProxyEntity<T2Proxy, T2>, T2> EntityQueryable2<T1Proxy, T1, T2Proxy, T2> crossJoin(EntityQueryable<T2Proxy, T2> joinQueryable, SQLActionExpression2<T1Proxy, T2Proxy> onExpression) {
+        return new CrossJoinExpressionJoiner2<>(t1Proxy, this.clientQueryable).join(joinQueryable, onExpression);
     }
 
     @Override

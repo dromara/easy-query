@@ -274,6 +274,31 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return new EasyEntityQueryable3<>(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy(), entityQueryable3);
 
     }
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> crossJoin(Class<T3> joinClass, SQLActionExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
+        T3Proxy t3Proxy = EntityQueryProxyManager.create(joinClass);
+        return crossJoin(t3Proxy,onExpression);
+
+    }
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> crossJoin(T3Proxy t3Proxy, SQLActionExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
+        ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().crossJoin(t3Proxy.getEntityClass(), (t, t1, t2) -> {
+            get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
+                onExpression.apply(get1Proxy(), get2Proxy(), t3Proxy.create(t2.getTable(),get1Proxy().getEntitySQLContext()));
+            });
+        });
+        return new EasyEntityQueryable3<>(get1Proxy(), get2Proxy(), t3Proxy, entityQueryable3);
+
+    }
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> crossJoin(EntityQueryable<T3Proxy, T3> joinQueryable, SQLActionExpression3<T1Proxy, T2Proxy, T3Proxy> onExpression) {
+        if(EasySQLExpressionUtil.useTableForJoin(joinQueryable.getSQLEntityExpressionBuilder())){
+            return crossJoin(joinQueryable.get1Proxy(),onExpression);
+        }
+        ClientQueryable3<T1, T2, T3> entityQueryable3 = getClientQueryable2().crossJoin(joinQueryable.getClientQueryable(), (t, t1, t2) -> {
+            get1Proxy().getEntitySQLContext()._where(t.getFilter(),()->{
+                onExpression.apply(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy().create(t2.getTable(), get1Proxy().getEntitySQLContext()));
+            });
+        });
+        return new EasyEntityQueryable3<>(get1Proxy(), get2Proxy(), joinQueryable.get1Proxy(), entityQueryable3);
+    }
 
 
     /**
@@ -367,6 +392,37 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      */
     default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
         return innerJoin(joinQueryable, (t1, t2, t3) -> {
+            onExpression.apply(new MergeTuple3<>(t1, t2, t3));
+        });
+    }
+    /**
+     *
+     * 同join但是入参参数仅一个合并为tuple如crossJoin(XXX.class,o->o.t1.id().eq(o.t2.id()))
+     * 当join表过多时又不需要使用其他表时可以采用这种模式
+     * @param joinClass
+     * @param onExpression
+     * @return
+     * @param <T3Proxy>
+     * @param <T3>
+     */
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> crossJoinMerge(Class<T3> joinClass, SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
+        return crossJoin(joinClass, (t1, t2, t3) -> {
+            onExpression.apply( new MergeTuple3<>(t1, t2, t3));
+        });
+    }
+
+    /**
+     *
+     * 同join但是入参参数仅一个合并为tuple如crossJoin(query(),o->o.t1.id().eq(o.t2.id()))
+     * 当join表过多时又不需要使用其他表时可以采用这种模式
+     * @param joinQueryable
+     * @param onExpression
+     * @return
+     * @param <T3Proxy>
+     * @param <T3>
+     */
+    default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> crossJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
+        return crossJoin(joinQueryable, (t1, t2, t3) -> {
             onExpression.apply(new MergeTuple3<>(t1, t2, t3));
         });
     }

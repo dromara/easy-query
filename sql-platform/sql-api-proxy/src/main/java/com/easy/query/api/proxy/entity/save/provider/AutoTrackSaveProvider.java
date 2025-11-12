@@ -370,6 +370,7 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
         if (navigateMetadata.getCascade() == CascadeTypeEnum.NO_ACTION) {
             return;
         }
+        //多对多
         if (navigateMetadata.getRelationType() == RelationTypeEnum.ManyToMany) {
             //检查中间表并且创建新增操作
             if (navigateMetadata.getMappingClass() == null) {
@@ -397,6 +398,18 @@ public class AutoTrackSaveProvider extends AbstractSaveProvider {
                 saveNode.putUpdateItem(new MemoryAddressCompareValue(targetEntity), selfEntity, t -> {
                     setTargetValue(TargetValueTypeEnum.VALUE_OBJECT, selfEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
                 });
+
+//                String trackKey = EasyTrackUtil.getTrackKey(targetEntityMetadata, targetEntity);
+//                EntityState trackEntityState = currentTrackContext.getTrackEntityState(targetEntityMetadata.getEntityClass(), trackKey);
+//                if (trackEntityState != null) {
+//                    saveNode.putUpdateItem(new MemoryAddressCompareValue(targetEntity), selfEntity, t -> {
+//                        setTargetValue(TargetValueTypeEnum.VALUE_OBJECT, selfEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
+//                    });
+//                }else{
+//                    saveNode.putInsertItem(new MemoryAddressCompareValue(targetEntity), selfEntity, t -> {
+//                        setTargetValue(TargetValueTypeEnum.VALUE_OBJECT, selfEntity, t, selfEntityMetadata, navigateMetadata, targetEntityMetadata);
+//                    });
+//                }
             } else if (navigateMetadata.getCascade() == CascadeTypeEnum.DELETE) {
 
                 String trackKey = EasyTrackUtil.getTrackKey(targetEntityMetadata, targetEntity);

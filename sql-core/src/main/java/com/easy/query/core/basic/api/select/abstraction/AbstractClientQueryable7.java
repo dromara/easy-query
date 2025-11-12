@@ -102,6 +102,20 @@ public abstract class AbstractClientQueryable7<T1, T2, T3, T4,T5,T6,T7> extends 
     }
 
     @Override
+    public <T8> ClientQueryable8<T1, T2, T3, T4, T5, T6,T7,T8> crossJoin(Class<T8> joinClass, SQLActionExpression8<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>> on) {
+        ClientQueryable8<T1, T2, T3, T4, T5, T6,T7,T8> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable8(t1Class, t2Class, t3Class, t4Class, t5Class,t6Class,t7Class, joinClass, MultiTableTypeEnum.CROSS_JOIN, entityQueryExpressionBuilder);
+        return EasySQLExpressionUtil.executeJoinOn(queryable, on);
+    }
+
+    @Override
+    public <T8> ClientQueryable8<T1, T2, T3, T4, T5, T6,T7,T8> crossJoin(ClientQueryable<T8> joinQueryable, SQLActionExpression8<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>> on) {
+        ClientQueryable<T8> selectAllTQueryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        entityQueryExpressionBuilder.getExpressionContext().extract(selectAllTQueryable.getSQLEntityExpressionBuilder().getExpressionContext());
+        ClientQueryable8<T1, T2, T3, T4, T5, T6,T7,T8> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable8(t1Class, t2Class, t3Class, t4Class,t5Class,t6Class,t7Class, selectAllTQueryable, MultiTableTypeEnum.CROSS_JOIN, entityQueryExpressionBuilder);
+        return EasySQLExpressionUtil.executeJoinOn(queryable, on);
+    }
+
+    @Override
     public ClientQueryable7<T1, T2, T3, T4,T5, T6, T7> where(boolean condition, SQLActionExpression7<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>> whereExpression) {
         if (condition) {
             FilterContext whereFilterContext = getSQLExpressionProvider1().getWhereFilterContext();

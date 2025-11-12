@@ -26,6 +26,10 @@ public interface Joinable4<T1, T2,T3,T4> {
 
     <T5> ClientQueryable5<T1, T2, T3,T4,T5> innerJoin(ClientQueryable<T5> joinQueryable, SQLActionExpression5<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>> on);
 
+    <T5> ClientQueryable5<T1, T2, T3,T4,T5> crossJoin(Class<T5> joinClass, SQLActionExpression5<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>> on);
+
+    <T5> ClientQueryable5<T1, T2, T3,T4,T5> crossJoin(ClientQueryable<T5> joinQueryable, SQLActionExpression5<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>> on);
+
 
     default <T5> ClientQueryable5<T1, T2, T3,T4,T5> leftJoinMerge(Class<T5> joinClass, SQLActionExpression1<EasyTuple5<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>>> on){
         return leftJoin(joinClass,(t,t1,t2,t3,t4)->{
@@ -59,6 +63,18 @@ public interface Joinable4<T1, T2,T3,T4> {
 
     default <T5> ClientQueryable5<T1, T2, T3,T4,T5> innerJoinMerge(ClientQueryable<T5> joinQueryable, SQLActionExpression1<EasyTuple5<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>>> on){
         return innerJoin(joinQueryable,(t,t1,t2,t3,t4)->{
+            on.apply(new EasyTuple5<>(t,t1,t2,t3,t4));
+        });
+    }
+
+    default <T5> ClientQueryable5<T1, T2, T3,T4,T5> crossJoinMerge(Class<T5> joinClass, SQLActionExpression1<EasyTuple5<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>>> on){
+        return crossJoin(joinClass,(t,t1,t2,t3,t4)->{
+            on.apply(new EasyTuple5<>(t,t1,t2,t3,t4));
+        });
+    }
+
+    default <T5> ClientQueryable5<T1, T2, T3,T4,T5> crossJoinMerge(ClientQueryable<T5> joinQueryable, SQLActionExpression1<EasyTuple5<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>>> on){
+        return crossJoin(joinQueryable,(t,t1,t2,t3,t4)->{
             on.apply(new EasyTuple5<>(t,t1,t2,t3,t4));
         });
     }

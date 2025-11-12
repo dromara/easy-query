@@ -103,6 +103,20 @@ public abstract class AbstractClientQueryable8<T1, T2, T3, T4,T5,T6,T7,T8> exten
     }
 
     @Override
+    public <T9> ClientQueryable9<T1, T2, T3, T4, T5, T6,T7,T8,T9> crossJoin(Class<T9> joinClass, SQLActionExpression9<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>, WherePredicate<T9>> on) {
+        ClientQueryable9<T1, T2, T3, T4, T5, T6,T7,T8,T9> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable9(t1Class, t2Class, t3Class, t4Class, t5Class,t6Class,t7Class,t8Class, joinClass, MultiTableTypeEnum.CROSS_JOIN, entityQueryExpressionBuilder);
+        return EasySQLExpressionUtil.executeJoinOn(queryable, on);
+    }
+
+    @Override
+    public <T9> ClientQueryable9<T1, T2, T3, T4, T5, T6,T7,T8,T9> crossJoin(ClientQueryable<T9> joinQueryable, SQLActionExpression9<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>, WherePredicate<T9>> on) {
+        ClientQueryable<T9> selectAllTQueryable = EasySQLExpressionUtil.cloneAndSelectAllQueryable(joinQueryable);
+        entityQueryExpressionBuilder.getExpressionContext().extract(selectAllTQueryable.getSQLEntityExpressionBuilder().getExpressionContext());
+        ClientQueryable9<T1, T2, T3, T4, T5, T6,T7,T8,T9> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable9(t1Class, t2Class, t3Class, t4Class,t5Class,t6Class,t7Class,t8Class, selectAllTQueryable, MultiTableTypeEnum.CROSS_JOIN, entityQueryExpressionBuilder);
+        return EasySQLExpressionUtil.executeJoinOn(queryable, on);
+    }
+
+    @Override
     public ClientQueryable8<T1, T2, T3, T4,T5, T6,T7,T8> where(boolean condition, SQLActionExpression8<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>, WherePredicate<T4>, WherePredicate<T5>, WherePredicate<T6>, WherePredicate<T7>, WherePredicate<T8>> whereExpression) {
         if (condition) {
             FilterContext whereFilterContext = getSQLExpressionProvider1().getWhereFilterContext();

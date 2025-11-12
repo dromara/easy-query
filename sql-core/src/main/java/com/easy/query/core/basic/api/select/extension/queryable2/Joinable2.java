@@ -27,6 +27,11 @@ public interface Joinable2<T1, T2> {
     <T3> ClientQueryable3<T1, T2, T3> innerJoin(ClientQueryable<T3> joinQueryable, SQLActionExpression3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>> on);
 
 
+    <T3> ClientQueryable3<T1, T2, T3> crossJoin(Class<T3> joinClass, SQLActionExpression3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>> on);
+
+    <T3> ClientQueryable3<T1, T2, T3> crossJoin(ClientQueryable<T3> joinQueryable, SQLActionExpression3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>> on);
+
+
     default <T3> ClientQueryable3<T1, T2, T3> leftJoinMerge(Class<T3> joinClass, SQLActionExpression1<EasyTuple3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>>> on) {
         return leftJoin(joinClass, (t1, t2,t3) -> {
             on.apply(new EasyTuple3<>(t1, t2,t3));
@@ -59,6 +64,18 @@ public interface Joinable2<T1, T2> {
 
     default <T3> ClientQueryable3<T1, T2, T3> innerJoinMerge(ClientQueryable<T3> joinQueryable, SQLActionExpression1<EasyTuple3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>>> on) {
         return innerJoin(joinQueryable, (t1, t2,t3) -> {
+            on.apply(new EasyTuple3<>(t1, t2,t3));
+        });
+    }
+
+    default <T3> ClientQueryable3<T1, T2, T3> crossJoinMerge(Class<T3> joinClass, SQLActionExpression1<EasyTuple3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>>> on) {
+        return crossJoin(joinClass, (t1, t2,t3) -> {
+            on.apply(new EasyTuple3<>(t1, t2,t3));
+        });
+    }
+
+    default <T3> ClientQueryable3<T1, T2, T3> crossJoinMerge(ClientQueryable<T3> joinQueryable, SQLActionExpression1<EasyTuple3<WherePredicate<T1>, WherePredicate<T2>, WherePredicate<T3>>> on) {
+        return crossJoin(joinQueryable, (t1, t2,t3) -> {
             on.apply(new EasyTuple3<>(t1, t2,t3));
         });
     }
