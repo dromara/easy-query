@@ -512,6 +512,11 @@ public class QueryTest26 extends BaseTest {
 
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .orderBy(t_blog -> {
+//                    AnyTypeExpression<Object> objectAnyTypeExpression = t_blog.expression().caseWhen(() -> { }).then(1).elseEnd(0);
+//                    AnyTypeExpression<Number> sum = objectAnyTypeExpression.sum();
+//                    sum.asBigDecimal().divide( sum)
+
+
                     t_blog.expression().newMap()
                             .put(1, t_blog.title())
                             .put(2, 3)

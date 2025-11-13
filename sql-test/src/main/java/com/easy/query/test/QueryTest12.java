@@ -640,7 +640,7 @@ public class QueryTest12 extends BaseTest {
                                 c.expression(b.groupTable().score()).value(1);
                             }).asAnyType(Integer.class);
                     blogEntityProxy.star().set(
-                            anyType.sum()
+                            anyType.sum().asInteger()
                     );
                     return blogEntityProxy;
                 }).toList();
@@ -895,7 +895,7 @@ public class QueryTest12 extends BaseTest {
                     blogEntityProxy.star().set(
                             expression.caseWhen(() -> b.groupTable().id().eq("123"))
                                     .then(1).elseEnd(0)
-                                    .sum()
+                                    .sum().asInteger()
                     );
                     blogEntityProxy.score().set(b.expression().sqlSegment("case {0} when {1} then 1 else 0 end",
                             c -> {
@@ -933,7 +933,7 @@ public class QueryTest12 extends BaseTest {
                     blogEntityProxy.star().set(
                             expression.caseWhen(() -> b.id().eq("123"))
                                     .then(b.score()).elseEnd(0)
-                                    .sum()
+                                    .sum().asInteger()
                     );
                     return blogEntityProxy;
                 }).toList();
@@ -972,7 +972,7 @@ public class QueryTest12 extends BaseTest {
                     blogEntityProxy.star().set(
                             expression.caseWhen(() -> b.id().eq("123"))
                                     .then(b.score()).elseEnd(b.status().multiply(1))
-                                    .sum()
+                                    .sum().asInteger()
                     );
                     return blogEntityProxy;
                 }).toList();

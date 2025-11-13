@@ -1301,7 +1301,7 @@ public class QueryTest18 extends BaseTest {
         var monthQuery = easyEntityQuery.queryable(BlogEntity.class)
                 .groupBy(b -> GroupKeys.of(b.createTime().format("yyyyMM").toNumber(Integer.class)))
                 .select(group -> Select.DRAFT.of(group.key1(), group.groupTable().score().sumBigDecimal()));
-        List<Draft2<Integer, Number>> list = monthQuery.cloneQueryable()
+        List<Draft2<Integer, BigDecimal>> list = monthQuery.cloneQueryable()
                 .leftJoin(monthQuery.cloneQueryable(), (b, b2) -> b.value1().lt(b2.value1()))
                 .groupBy((b1, b2) -> GroupKeys.of(b1.value1()))
                 .select(group -> Select.DRAFT.of(

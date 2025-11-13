@@ -52,6 +52,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -407,7 +408,7 @@ public class QueryTest17 extends BaseTest {
 
 
             try {
-                List<Draft3<String, Number, Long>> list2 = easyEntityQuery.queryable(MyObject.class)
+                List<Draft3<String, BigDecimal, Long>> list2 = easyEntityQuery.queryable(MyObject.class)
                         .where(m -> {
                             m.parent().children()
                                     .where(children -> {
@@ -442,7 +443,7 @@ public class QueryTest17 extends BaseTest {
 
 
             try {
-                List<Draft3<String, Number, Long>> list2 = easyEntityQuery.queryable(MyObject.class)
+                List<Draft3<String, BigDecimal, Long>> list2 = easyEntityQuery.queryable(MyObject.class)
                         .where(m -> {
 
                             m.parent().children().flatElement().myChildren().flatElement().name().gt("3");
