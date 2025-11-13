@@ -179,7 +179,7 @@ public class DuckDBSQLDatabaseMigrationProvider extends AbstractDatabaseMigratio
         String columnComment = getColumnComment(column, "'");
         if (EasyStringUtil.isNotBlank(columnComment)) {
             sql.append(newLine);
-            sql.append(" COMMENT ON COLUMN ").append(getQuoteSQLName(table.getSchema(), table.getTableName())).append(" IS ").append(columnComment);
+            sql.append(" COMMENT ON COLUMN ").append(getQuoteSQLName(table.getSchema(), table.getTableName())).append(".").append(getQuoteSQLName(column.getName())).append(" IS ").append(columnComment);
             sql.append(";");
         }
         return new DefaultMigrationCommand(sql.toString());
