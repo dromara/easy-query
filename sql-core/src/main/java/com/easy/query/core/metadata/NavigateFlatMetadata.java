@@ -1,5 +1,6 @@
 package com.easy.query.core.metadata;
 
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.expression.lambda.PropertySetterCaller;
 
 import java.util.List;
@@ -20,23 +21,22 @@ public class NavigateFlatMetadata {
     private final String[] mappingPath;
     private final Class<?> navigatePropertyType;
     private final boolean basicType;
-    private final PropertySetterCaller<Object> beanSetter;
     private final String property;
+    private final ColumnMetadata columnMetadata;
 
     public NavigateFlatMetadata(EntityMetadata entityMetadata,
                                 boolean toMany,
                                 String[] mappingPath,
                                 Class<?> navigatePropertyType,
                                 boolean basicType,
-                                PropertySetterCaller<Object> beanSetter,
-                                String property) {
+                                String property, ColumnMetadata columnMetadata) {
         this.entityMetadata = entityMetadata;
         this.toMany = toMany;
         this.mappingPath = mappingPath;
         this.navigatePropertyType = navigatePropertyType;
         this.basicType=basicType;
-        this.beanSetter = beanSetter;
         this.property = property;
+        this.columnMetadata = columnMetadata;
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -56,7 +56,7 @@ public class NavigateFlatMetadata {
     }
 
     public PropertySetterCaller<Object> getBeanSetter() {
-        return beanSetter;
+        return columnMetadata.getSetterCaller();
     }
 
     public Class<?> getNavigatePropertyType() {
@@ -65,5 +65,13 @@ public class NavigateFlatMetadata {
 
     public String getProperty() {
         return property;
+    }
+
+    public ValueConverter<?, ?> getValueConverter() {
+        return columnMetadata.getValueConverter();
+    }
+
+    public ColumnMetadata getColumnMetadata() {
+        return columnMetadata;
     }
 }

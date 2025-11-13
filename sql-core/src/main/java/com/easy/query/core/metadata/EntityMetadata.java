@@ -139,7 +139,7 @@ public class EntityMetadata {
     private String oldTableName;
     private String treeName;
     private String schema;
-    private boolean tableKeyword=true;
+    private boolean tableKeyword = true;
     private String comment;
     private ExtraAutoIncludeConfigure extraAutoIncludeConfigure;
     private ErrorMessage errorMessage;
@@ -313,7 +313,7 @@ public class EntityMetadata {
             if (!tableEntity) {
                 NavigateFlat navigateFlat = field.getAnnotation(NavigateFlat.class);
                 if (navigateFlat != null) {
-                    createNavigateFlatMappingMetadata(navigateFlat, staticFields, field, fastBean, fastBeanProperty, property, configuration);
+                    createNavigateFlatMappingMetadata(propertyDescriptor, navigateFlat, staticFields, field, fastBean, fastBeanProperty, property, configuration);
                     continue;
                 }
                 NavigateJoin navigateJoin = field.getAnnotation(NavigateJoin.class);
@@ -406,7 +406,7 @@ public class EntityMetadata {
             throw new EasyQueryInvalidOperationException(msg.toString());
         }
 
-        List<NavigateOrderProp> orderProps = (toMany||navigate.limit()==1)
+        List<NavigateOrderProp> orderProps = (toMany || navigate.limit() == 1)
                 ? Arrays.stream(navigate.orderByProps()).map(orderByProperty -> new NavigateOrderProp(orderByProperty.property(), orderByProperty.asc(), getOrderByMode(orderByProperty.mode()))).collect(Collectors.toList())
                 : EasyCollectionUtil.emptyList();
 
@@ -502,7 +502,7 @@ public class EntityMetadata {
         throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityClass) + " mapping path:[" + mapping + "] cant parse");
     }
 
-    private void createNavigateFlatMappingMetadata(NavigateFlat navigateFlat, Map<String, Field> staticFields, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property, QueryConfiguration configuration) {
+    private void createNavigateFlatMappingMetadata(PropertyDescriptor propertyDescriptor, NavigateFlat navigateFlat, Map<String, Field> staticFields, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property, QueryConfiguration configuration) {
         String[] mappingPath = getFlatMappingPath(navigateFlat, staticFields, property);
         if (mappingPath.length <= 1) {
             throw new EasyQueryInvalidOperationException("navigate flat, mappingPath at least two path");
@@ -514,9 +514,21 @@ public class EntityMetadata {
             throw new EasyQueryInvalidOperationException("not found navigate flat type, property:[" + property + "]");
         }
 //        Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
-        PropertySetterCaller<Object> beanSetter = getBeanSetter(field, fastBean, fastBeanProperty, configuration);
+        Column column = field.getAnnotation(Column.class);
+        boolean hasColumnName = column != null && EasyStringUtil.isNotBlank(column.value());
+        NameConversion nameConversion = configuration.getNameConversion();
+        String columnName = hasColumnName ? nameConversion.annotationCovert(entityClass, column.value(), false) : nameConversion.convert(property);
 
-        NavigateFlatMetadata navigateFlatMetadata = new NavigateFlatMetadata(this, toMany, mappingPath, navigateType, EasyClassUtil.isBasicTypeOrEnum(navigateType), beanSetter, property);
+        ValueConverter<?, ?> valueConverter = getValueConverter(property, propertyDescriptor.getPropertyType(), configuration, column);
+
+        ColumnOption columnOption = new ColumnOption(false, this, columnName, propertyDescriptor.getName(), field.getName());
+
+        PropertySetterCaller<Object> beanSetter = getBeanSetter(field, fastBean, fastBeanProperty, configuration);
+        columnOption.setSetterCaller(beanSetter);
+        columnOption.setGetterCaller(fastBean.getBeanGetter(fastBeanProperty));
+        columnOption.setValueConverter(valueConverter);
+        ColumnMetadata columnMetadata = new ColumnMetadata(columnOption);
+        NavigateFlatMetadata navigateFlatMetadata = new NavigateFlatMetadata(this, toMany, mappingPath, navigateType, EasyClassUtil.isBasicTypeOrEnum(navigateType), property, columnMetadata);
 
         property2NavigateFlatMap.put(property, navigateFlatMetadata);
     }
@@ -576,17 +588,36 @@ public class EntityMetadata {
     }
 
 
-    private void processEnumValueConverter(ColumnOption columnOption, Class<?> propertyType, QueryConfiguration configuration) {
+    private ValueConverter<?, ?> processEnumValueConverter(Class<?> propertyType, QueryConfiguration configuration) {
         //如果是默认的那么就通过自动关联的值转换处进行寻找
         if (Enum.class.isAssignableFrom(propertyType)) {
             List<EnumValueAutoConverter<?, ?>> enumValueAutoConverters = configuration.getEnumValueAutoConverters();
             for (EnumValueAutoConverter<?, ?> enumValueAutoConverter : enumValueAutoConverters) {
                 if (enumValueAutoConverter.apply(entityClass, EasyObjectUtil.typeCastNotNull(propertyType))) {
-                    columnOption.setValueConverter(enumValueAutoConverter);
-                    break;
+                    return enumValueAutoConverter;
                 }
             }
         }
+        return DefaultValueConverter.INSTANCE;
+    }
+
+    private ValueConverter<?, ?> getValueConverter(String property, Class<?> propertyType, QueryConfiguration configuration, @Nullable Column column) {
+
+        if (column != null) {
+            Class<? extends ValueConverter<?, ?>> conversionClass = column.conversion();
+            //如果不是默认的就代表添加了
+            if (!Objects.equals(DefaultValueConverter.class, conversionClass)) {
+                ValueConverter<?, ?> valueConverter = configuration.getValueConverter(conversionClass);
+                if (valueConverter == null) {
+                    throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " conversion unknown, plz register this component");
+                }
+                return valueConverter;
+            } else {
+                //如果是默认的那么就通过自动关联的值转换处进行寻找
+                return processEnumValueConverter(propertyType, configuration);
+            }
+        }
+        return processEnumValueConverter(propertyType, configuration);
     }
 
     private ColumnOption createColumnOption(Field field, PropertyDescriptor propertyDescriptor, boolean tableEntity, String property, FastBeanProperty fastBeanProperty, QueryConfiguration configuration, FastBean fastBean, JdbcTypeHandlerManager jdbcTypeHandlerManager, boolean defaultAutoSelect, String fieldName, EasyQueryOption easyQueryOption) {
@@ -623,18 +654,6 @@ public class EntityMetadata {
             }
             columnOption.setJdbcType(column.jdbcType());
             //获取默认的属性值转换
-            Class<? extends ValueConverter<?, ?>> conversionClass = column.conversion();
-            //如果不是默认的就代表添加了
-            if (!Objects.equals(DefaultValueConverter.class, conversionClass)) {
-                ValueConverter<?, ?> valueConverter = configuration.getValueConverter(conversionClass);
-                if (valueConverter == null) {
-                    throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " conversion unknown, plz register this component");
-                }
-                columnOption.setValueConverter(valueConverter);
-            } else {
-                //如果是默认的那么就通过自动关联的值转换处进行寻找
-                processEnumValueConverter(columnOption, propertyDescriptor.getPropertyType(), configuration);
-            }
             Class<? extends ComplexPropType> complexPropTypeClass = column.complexPropType();
             if (Objects.equals(DefaultComplexPropType.class, complexPropTypeClass)) {
                 ComplexPropType complexPropType = new DefaultComplexPropType(fastBeanProperty.getPropertyType());
@@ -650,10 +669,11 @@ public class EntityMetadata {
             }
 
 
-        } else {
-            //如果是默认的那么就通过自动关联的值转换处进行寻找
-            processEnumValueConverter(columnOption, propertyDescriptor.getPropertyType(), configuration);
         }
+
+        ValueConverter<?, ?> valueConverter = getValueConverter(property, propertyDescriptor.getPropertyType(), configuration, column);
+        columnOption.setValueConverter(valueConverter);
+
         boolean exist = true;
 
         if (tableEntity) {
@@ -981,7 +1001,7 @@ public class EntityMetadata {
     }
 
     public SQLKeyword getSQLKeyword(SQLKeyword sqlKeyword) {
-        if(!isTableKeyword()){
+        if (!isTableKeyword()) {
             return DefaultSQLKeyword.DEFAULT_SQL_KEYWORD;
         }
         return sqlKeyword;
@@ -1063,6 +1083,7 @@ public class EntityMetadata {
     public Collection<String> getKeyProperties() {
         return keyPropertiesMap.keySet();
     }
+
     public Collection<String> getSaveKeyProperties() {
         return saveKeyPropertiesSet;
     }
@@ -1136,7 +1157,7 @@ public class EntityMetadata {
     public void checkTable() {
         if (entityMetadataType != EntityMetadataTypeEnum.MAP) {
             if (EasyStringUtil.isEmpty(tableName)) {
-                throw new EasyQueryException("current entity not mapping table name entity:[" + EasyClassUtil.getSimpleName(entityClass)+"] plz add annotation @Table");
+                throw new EasyQueryException("current entity not mapping table name entity:[" + EasyClassUtil.getSimpleName(entityClass) + "] plz add annotation @Table");
             }
         }
     }

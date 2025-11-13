@@ -1,5 +1,6 @@
 package com.easy.query.core.expression.include;
 
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
@@ -9,6 +10,7 @@ import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.NavigateFlatMetadata;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,11 +108,17 @@ public class EasyFlatIncludeProcessor extends EasyIncludeProcess {
                 navigateFlatMetadata.getBeanSetter().call(entity, values);
             } else {
                 Object val = EasyCollectionUtil.firstOrNull(values);
-                if(flatClassObject){
+                if (flatClassObject) {
                     Object target = includeParserResult.getFlatClassMap().get(val);
                     navigateFlatMetadata.getBeanSetter().call(entity, target);
-                }else{
-                    navigateFlatMetadata.getBeanSetter().call(entity, val);
+                } else {
+                    ValueConverter<?, ?> valueConverter = navigateFlatMetadata.getValueConverter();
+                    if (valueConverter != null) {
+                        Object deserialize = valueConverter.deserialize(EasyObjectUtil.typeCastNullable(val), navigateFlatMetadata.getColumnMetadata());
+                        navigateFlatMetadata.getBeanSetter().call(entity, deserialize);
+                    } else {
+                        navigateFlatMetadata.getBeanSetter().call(entity, val);
+                    }
                 }
             }
         } else {

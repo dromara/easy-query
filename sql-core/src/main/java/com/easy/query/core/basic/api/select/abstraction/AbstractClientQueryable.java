@@ -1190,7 +1190,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                         }
 
                         EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
-                        EntityMetadata resultEntityMetadata = entityMetadataManager.getEntityMetadata(with.queryClass());
+//                        EntityMetadata resultEntityMetadata = entityMetadataManager.getEntityMetadata(with.queryClass());
 
 //                        if(!entityEntityMetadata.getEntityClass().equals(entityNavigateMetadata.getNavigatePropertyType())){
 //                            throw new EasyQueryInvalidOperationException("NavigateFlat 仅支持基本类型和数据库类型");

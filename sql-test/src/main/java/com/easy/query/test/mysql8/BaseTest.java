@@ -20,6 +20,7 @@ import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.common.M8Interceptor;
 import com.easy.query.test.common.MockEntityExpressionExecutor;
 import com.easy.query.test.common.MyQueryConfiguration;
+import com.easy.query.test.conversion.StarCodeValueConvert;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.mysql8.entity.BatchInsert;
@@ -153,6 +154,7 @@ public class BaseTest {
         queryConfiguration.applyInterceptor(new M8Interceptor());
         queryConfiguration.applyInterceptor(new QueryInterceptor());
         queryConfiguration.applyInterceptor(new SaveInterceptor());
+        queryConfiguration.applyValueConverter(new StarCodeValueConvert());
         easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
         beforex();
     }

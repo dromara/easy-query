@@ -24,6 +24,7 @@ import com.easy.query.test.entity.vo.MyCategoryVO3;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.view.TreeC;
+import com.easy.query.test.vo.BuildTest;
 import org.junit.Assert;
 import org.junit.Test;
 
