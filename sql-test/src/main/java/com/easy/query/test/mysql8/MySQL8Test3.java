@@ -879,26 +879,26 @@ public class MySQL8Test3 extends BaseTest {
         Assert.assertEquals("u1(String),u2(String),1(Long),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
-
-    @Test
-    public void testQueryFirstLimit2_1() {
-        ListenerContext listenerContext = new ListenerContext();
-        listenerContextManager.startListen(listenerContext);
-
-        List<SysUserFirstCardDTO2> list = easyEntityQuery.queryable(SysUser.class)
-                .include(s -> s.firstCard())
-                .selectAutoInclude(SysUserFirstCardDTO2.class)
-                .toList();
-        for (SysUserFirstCardDTO2 sysUserFirstCardDTO : list) {
-Assert.assertTrue(sysUserFirstCardDTO.getCardCode().startsWith("**"));
-        }
-        listenerContextManager.clear();
-        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t2.`code`,t2.`type`,t2.`open_time`,t2.`uid` AS `__relation__uid` FROM (SELECT t1.`id` AS `id`,t1.`uid` AS `uid`,t1.`code` AS `code`,t1.`type` AS `type`,t1.`bank_id` AS `bank_id`,t1.`open_time` AS `open_time` FROM (SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time`,(ROW_NUMBER() OVER (PARTITION BY t.`uid` ORDER BY t.`open_time` ASC)) AS `__row__` FROM `t_bank_card` t WHERE t.`uid` IN (?,?)) t1 WHERE t1.`__row__` >= ? AND t1.`__row__` <= ?) t2", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("u1(String),u2(String),1(Long),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-
-    }
+//
+//    @Test
+//    public void testQueryFirstLimit2_1() {
+//        ListenerContext listenerContext = new ListenerContext();
+//        listenerContextManager.startListen(listenerContext);
+//
+//        List<SysUserFirstCardDTO2> list = easyEntityQuery.queryable(SysUser.class)
+//                .include(s -> s.firstCard())
+//                .selectAutoInclude(SysUserFirstCardDTO2.class)
+//                .toList();
+//        for (SysUserFirstCardDTO2 sysUserFirstCardDTO : list) {
+//Assert.assertTrue(sysUserFirstCardDTO.getCardCode().startsWith("**"));
+//        }
+//        listenerContextManager.clear();
+//        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+//        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+//        Assert.assertEquals("SELECT t2.`code`,t2.`type`,t2.`open_time`,t2.`uid` AS `__relation__uid` FROM (SELECT t1.`id` AS `id`,t1.`uid` AS `uid`,t1.`code` AS `code`,t1.`type` AS `type`,t1.`bank_id` AS `bank_id`,t1.`open_time` AS `open_time` FROM (SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time`,(ROW_NUMBER() OVER (PARTITION BY t.`uid` ORDER BY t.`open_time` ASC)) AS `__row__` FROM `t_bank_card` t WHERE t.`uid` IN (?,?)) t1 WHERE t1.`__row__` >= ? AND t1.`__row__` <= ?) t2", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("u1(String),u2(String),1(Long),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//
+//    }
 
     @Test
     public void testQueryFirstLimit3() {

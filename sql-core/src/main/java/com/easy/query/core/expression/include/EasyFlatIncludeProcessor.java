@@ -112,12 +112,6 @@ public class EasyFlatIncludeProcessor extends EasyIncludeProcess {
                     Object target = includeParserResult.getFlatClassMap().get(val);
                     navigateFlatMetadata.getBeanSetter().call(entity, target);
                 } else {
-                    ValueConverter<?, ?> valueConverter = navigateFlatMetadata.getValueConverter();
-                    if (valueConverter != null) {
-                        Object deserialize = valueConverter.deserialize(EasyObjectUtil.typeCastNullable(val), navigateFlatMetadata.getColumnMetadata());
-                        navigateFlatMetadata.getBeanSetter().call(entity, deserialize);
-                    } else {
-                    }
                     navigateFlatMetadata.getBeanSetter().call(entity, val);
                 }
             }
