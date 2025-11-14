@@ -313,7 +313,7 @@ public class EntityMetadata {
             if (!tableEntity) {
                 NavigateFlat navigateFlat = field.getAnnotation(NavigateFlat.class);
                 if (navigateFlat != null) {
-                    createNavigateFlatMappingMetadata(propertyDescriptor, navigateFlat, staticFields, field, fastBean, fastBeanProperty, property, configuration);
+                    createNavigateFlatMappingMetadata(navigateFlat, staticFields, field, fastBean, fastBeanProperty, property, configuration);
                     continue;
                 }
                 NavigateJoin navigateJoin = field.getAnnotation(NavigateJoin.class);
@@ -502,7 +502,7 @@ public class EntityMetadata {
         throw new EasyQueryInvalidOperationException(EasyClassUtil.getSimpleName(entityClass) + " mapping path:[" + mapping + "] cant parse");
     }
 
-    private void createNavigateFlatMappingMetadata(PropertyDescriptor propertyDescriptor, NavigateFlat navigateFlat, Map<String, Field> staticFields, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property, QueryConfiguration configuration) {
+    private void createNavigateFlatMappingMetadata(NavigateFlat navigateFlat, Map<String, Field> staticFields, Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, String property, QueryConfiguration configuration) {
         String[] mappingPath = getFlatMappingPath(navigateFlat, staticFields, property);
         if (mappingPath.length <= 1) {
             throw new EasyQueryInvalidOperationException("navigate flat, mappingPath at least two path");
@@ -513,22 +513,9 @@ public class EntityMetadata {
         if (navigateType == null) {
             throw new EasyQueryInvalidOperationException("not found navigate flat type, property:[" + property + "]");
         }
-//        Property<Object, ?> beanGetter = fastBean.getBeanGetter(fastBeanProperty);
-        Column column = field.getAnnotation(Column.class);
-        boolean hasColumnName = column != null && EasyStringUtil.isNotBlank(column.value());
-        NameConversion nameConversion = configuration.getNameConversion();
-        String columnName = hasColumnName ? nameConversion.annotationCovert(entityClass, column.value(), false) : nameConversion.convert(property);
-
-        ValueConverter<?, ?> valueConverter = getValueConverter(property, propertyDescriptor.getPropertyType(), configuration, column);
-
-        ColumnOption columnOption = new ColumnOption(false, this, columnName, propertyDescriptor.getName(), field.getName());
 
         PropertySetterCaller<Object> beanSetter = getBeanSetter(field, fastBean, fastBeanProperty, configuration);
-        columnOption.setSetterCaller(beanSetter);
-        columnOption.setGetterCaller(fastBean.getBeanGetter(fastBeanProperty));
-        columnOption.setValueConverter(valueConverter);
-        ColumnMetadata columnMetadata = new ColumnMetadata(columnOption);
-        NavigateFlatMetadata navigateFlatMetadata = new NavigateFlatMetadata(this, toMany, mappingPath, navigateType, EasyClassUtil.isBasicTypeOrEnum(navigateType), property, columnMetadata);
+        NavigateFlatMetadata navigateFlatMetadata = new NavigateFlatMetadata(this, toMany, mappingPath, navigateType, EasyClassUtil.isBasicTypeOrEnum(navigateType), beanSetter, property);
 
         property2NavigateFlatMap.put(property, navigateFlatMetadata);
     }

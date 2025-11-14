@@ -117,8 +117,8 @@ public class EasyFlatIncludeProcessor extends EasyIncludeProcess {
                         Object deserialize = valueConverter.deserialize(EasyObjectUtil.typeCastNullable(val), navigateFlatMetadata.getColumnMetadata());
                         navigateFlatMetadata.getBeanSetter().call(entity, deserialize);
                     } else {
-                        navigateFlatMetadata.getBeanSetter().call(entity, val);
                     }
+                    navigateFlatMetadata.getBeanSetter().call(entity, val);
                 }
             }
         } else {
