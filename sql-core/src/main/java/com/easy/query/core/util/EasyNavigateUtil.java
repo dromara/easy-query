@@ -68,8 +68,10 @@ public class EasyNavigateUtil {
         }
     }
 
-    public static <T> ClientQueryable<T> navigateOrderBy(ClientQueryable<T> clientQueryable, EndNavigateParams endNavigateParams, IncludeNavigateParams includeNavigateParams, @Nullable EntityMetadata navigateEntityMetadata, ConfigureArgument configureArgument, QueryRuntimeContext runtimeContext) {
-        clientQueryable.configure(o -> o.setConfigureArgument(configureArgument.getArg()));
+    public static <T> ClientQueryable<T> navigateOrderBy(ClientQueryable<T> clientQueryable, EndNavigateParams endNavigateParams, IncludeNavigateParams includeNavigateParams, @Nullable EntityMetadata navigateEntityMetadata, @Nullable ConfigureArgument configureArgument, QueryRuntimeContext runtimeContext) {
+        if (configureArgument != null) {
+            clientQueryable.configure(o -> o.setConfigureArgument(configureArgument.getArg()));
+        }
         if (navigateEntityMetadata != null && navigateEntityMetadata.getExtraAutoIncludeConfigure() != null) {
             ExtraAutoIncludeConfigure extraAutoIncludeConfigure = navigateEntityMetadata.getExtraAutoIncludeConfigure();
             if (extraAutoIncludeConfigure.getExtraConfigure() != null) {

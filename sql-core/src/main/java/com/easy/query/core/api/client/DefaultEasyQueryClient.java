@@ -2,6 +2,7 @@ package com.easy.query.core.api.client;
 
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.api.SQLClientApiFactory;
+import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.api.delete.ClientEntityDeletable;
@@ -41,9 +42,11 @@ import com.easy.query.core.expression.sql.include.relation.RelationValueFactory;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
+import com.easy.query.core.metadata.EndNavigateParams;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.IncludeNavigateExpression;
+import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.migration.DatabaseMigrationProvider;
 import com.easy.query.core.migration.MigrationEntityParser;
@@ -52,6 +55,7 @@ import com.easy.query.core.trigger.TriggerEvent;
 import com.easy.query.core.util.EasyBeanUtil;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.util.EasyNavigateUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyPackageUtil;
 import com.easy.query.core.util.EasyStringUtil;
@@ -340,10 +344,19 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         boolean isNoTracking = tracking != null && !tracking;
         includeProvider.include(null, entityMetadata, expressionContext, ic -> {
             ClientQueryable<Object> with = ic.with(navigateProperty, loadIncludeConfiguration.getGroupSize());
+            IncludeNavigateParams includeNavigateParams = ic.getIncludeNavigateParams();
             if (isNoTracking) {
-                return with.asNoTracking();
+                 with.asNoTracking();
             }
-            return with;
+
+            ClientQueryable<Object> clientQueryable = EasyNavigateUtil.navigateOrderBy(
+                    with,
+                    new EndNavigateParams(navigateMetadata),
+                    includeNavigateParams,
+                    runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType()),
+                    null,
+                    runtimeContext);
+            return clientQueryable;
         });
 
         IncludeProcessorFactory includeProcessorFactory = runtimeContext.getIncludeProcessorFactory();

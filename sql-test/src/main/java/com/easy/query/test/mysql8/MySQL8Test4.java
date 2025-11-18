@@ -10,6 +10,7 @@ import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysBankCardProxy;
 import com.easy.query.test.mysql8.vo.UserDTO2;
@@ -585,15 +586,67 @@ public class MySQL8Test4 extends BaseTest {
         }
         listenerContextManager.clear();
     }
-//    @Test
-//    public void testaaa() {
-//
-//
-//        List<SysUser> list2 = easyEntityQuery.queryable(SysUser.class)
-//                .where(user -> {
-//                    user.bankCards().max(o -> o.openTime()).eq(LocalDateTime.now());
-//                }).toList();
-//
-//    }
+    @Test
+    public void includeOneTest1() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysUser> list2 = easyEntityQuery.queryable(SysUser.class)
+                .include(user -> user.firstCard())
+                .toList();
+
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT `id`,`name`,`phone`,`age`,`create_time` FROM `t_sys_user`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("1(Integer),33123(String),1(Integer),储蓄卡(String),false(Boolean),true(Boolean),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t2.`id` AS `id`,t2.`uid` AS `uid`,t2.`code` AS `code`,t2.`type` AS `type`,t2.`bank_id` AS `bank_id`,t2.`open_time` AS `open_time` FROM (SELECT t1.`id` AS `id`,t1.`uid` AS `uid`,t1.`code` AS `code`,t1.`type` AS `type`,t1.`bank_id` AS `bank_id`,t1.`open_time` AS `open_time` FROM (SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time`,(ROW_NUMBER() OVER (PARTITION BY t.`uid` ORDER BY t.`open_time` ASC)) AS `__row__` FROM `t_bank_card` t WHERE t.`uid` IN (?,?)) t1 WHERE t1.`__row__` >= ? AND t1.`__row__` <= ?) t2", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("u1(String),u2(String),1(Long),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        listenerContextManager.clear();
+
+        for (SysUser sysUser : list2) {
+            SysBankCard firstCard = sysUser.getFirstCard();
+            Assert.assertNotNull(firstCard);
+        }
+
+    }
+    @Test
+    public void includeOneTest2() {
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysUser> list2 = easyEntityQuery.queryable(SysUser.class)
+                .toList();
+
+        easyEntityQuery.loadInclude(list2,s->s.firstCard());
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT `id`,`name`,`phone`,`age`,`create_time` FROM `t_sys_user`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("1(Integer),33123(String),1(Integer),储蓄卡(String),false(Boolean),true(Boolean),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t2.`id` AS `id`,t2.`uid` AS `uid`,t2.`code` AS `code`,t2.`type` AS `type`,t2.`bank_id` AS `bank_id`,t2.`open_time` AS `open_time` FROM (SELECT t1.`id` AS `id`,t1.`uid` AS `uid`,t1.`code` AS `code`,t1.`type` AS `type`,t1.`bank_id` AS `bank_id`,t1.`open_time` AS `open_time` FROM (SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time`,(ROW_NUMBER() OVER (PARTITION BY t.`uid` ORDER BY t.`open_time` ASC)) AS `__row__` FROM `t_bank_card` t WHERE t.`uid` IN (?,?)) t1 WHERE t1.`__row__` >= ? AND t1.`__row__` <= ?) t2", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("u1(String),u2(String),1(Long),1(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        listenerContextManager.clear();
+
+        for (SysUser sysUser : list2) {
+            SysBankCard firstCard = sysUser.getFirstCard();
+            Assert.assertNotNull(firstCard);
+        }
+
+    }
 
 }

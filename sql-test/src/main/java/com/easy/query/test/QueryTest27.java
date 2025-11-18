@@ -55,6 +55,10 @@ import java.util.UUID;
 public class QueryTest27 extends BaseTest {
     @Test
     public void testRandom() {
+//        Topic[] objects = easyEntityQuery.queryable(Topic.class)
+//                .where(t_topic -> {
+//                    t_topic.title().isNotNull();
+//                }).streamBy(s -> s.toArray(Topic[]::new));
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);

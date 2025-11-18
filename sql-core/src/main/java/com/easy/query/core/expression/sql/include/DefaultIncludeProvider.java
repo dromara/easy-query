@@ -69,17 +69,7 @@ public class DefaultIncludeProvider implements IncludeProvider {
         NavigateInclude navigateInclude = new NavigateIncludeImpl(table, entityMetadata, expressionContext.getRuntimeContext(), includeNavigateParams, expressionContext);
         ClientQueryable<TProperty> clientQueryable = navigateIncludeSQLExpression.apply(navigateInclude);
         boolean hasOrder = EasySQLSegmentUtil.isNotEmpty(clientQueryable.getSQLEntityExpressionBuilder().getOrder());
-//        int i=1;
-//        for (SQLSegment sqlSegment : clientQueryable.getSQLEntityExpressionBuilder().getOrder().getSQLSegments()) {
-//            if(sqlSegment instanceof OrderBySegment){
-//                OrderBySegment orderBySegment = (OrderBySegment) sqlSegment;
-//                boolean asc = orderBySegment.isAsc();
-//                SQLNativeSegment columnSegment = ((SQLNativeSegment)orderBySegment).cloneSQLColumnSegment();
-//                columnSegment.setAlias(String.format("__relation__%s__%s__",i,asc?"asc":"desc"));
-//                clientQueryable.getSQLEntityExpressionBuilder().getProjects().append(columnSegment);
-//            }
-//            i++;
-//        }
+
         includeNavigateParams.setHasOrder(hasOrder);
         boolean hasLimit = clientQueryable.getSQLEntityExpressionBuilder().hasLimit();
         NavigateMetadata navigateMetadata = includeNavigateParams.getNavigateMetadata();
@@ -104,16 +94,6 @@ public class DefaultIncludeProvider implements IncludeProvider {
         List<List<Object>> relationIds = includeNavigateParams.getRelationIds();
         EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
         if (hasLimit) {
-//            if (easyQueryOption.getIncludeLimitMode() == IncludeLimitModeEnum.PARTITION) {
-//
-//                ClientQueryable<TProperty> navigateLimitPartitionByQueryable = EasyNavigateUtil.getNavigateLimitPartitionByQueryable(navigateMetadata, includeNavigateParams, clientQueryable, runtimeContext);
-//                SQLActionExpression navigatePartitionByWhereExpression = includeNavigateParams.getNavigatePartitionByWhereExpression();
-//                if (navigatePartitionByWhereExpression != null) {
-//                    navigatePartitionByWhereExpression.apply();
-//                }
-//                return navigateLimitPartitionByQueryable;
-//
-//            } else
             if (easyQueryOption.getIncludeLimitMode() == IncludeLimitModeEnum.UNION_ALL) {
                 ClientQueryable<TProperty> unionAllRelationLimitQueryable = getUnionAllRelationLimitQueryable(navigateMetadata, includeNavigateParams, clientQueryable, printNavSQL, directMapping, runtimeContext);
                 if (unionAllRelationLimitQueryable != null) {
@@ -131,7 +111,6 @@ public class DefaultIncludeProvider implements IncludeProvider {
             includeNavigateParams.setNavigatePartitionByWhereExpression(null);
         }
 
-        //                        navigateMetadata.predicateFilterApply(o);
         return clientQueryable.cloneQueryable().configure(s -> {
             s.setPrintSQL(printNavSQL);
             s.setPrintNavSQL(printNavSQL);
