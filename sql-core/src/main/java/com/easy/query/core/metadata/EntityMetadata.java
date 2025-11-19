@@ -247,7 +247,7 @@ public class EntityMetadata {
         if (easyAssertMessage != null) {
             this.errorMessage = new ErrorMessage(easyAssertMessage.value());
         } else {
-            this.errorMessage = new ErrorMessage(EasyUtil.NOT_NULL);
+            this.errorMessage = new NoneErrorMessage(EasyUtil.NOT_NULL);
         }
         HashSet<String> ignoreProperties = table != null ? new HashSet<>(Arrays.asList(table.ignoreProperties())) : new HashSet<>();
         Map<String, Field> staticFields = new HashMap<>();

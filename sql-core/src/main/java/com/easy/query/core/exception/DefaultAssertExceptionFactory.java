@@ -1,10 +1,14 @@
 package com.easy.query.core.exception;
 
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
+import com.easy.query.core.metadata.NoneErrorMessage;
 import org.jetbrains.annotations.NotNull;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.EntityMetadataManager;
 import com.easy.query.core.metadata.ErrorMessage;
+
+import java.util.List;
 
 /**
  * create time 2023/12/1 13:16
@@ -57,8 +61,17 @@ public class DefaultAssertExceptionFactory implements AssertExceptionFactory {
     @NotNull
     public <T> RuntimeException createSingleNotNullException(Query<T> query, String msg, String code) {
         if (msg == null && code == null) {
+
             EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(query.queryClass());
             ErrorMessage errorMessage = entityMetadata.getErrorMessage();
+            if(errorMessage instanceof NoneErrorMessage){//如果没有这个错误消息那么就使用table的
+                List<EntityTableExpressionBuilder> tables = query.getSQLEntityExpressionBuilder().getTables();
+                if (tables.size() == 1) {
+                    EntityMetadata tableEntityMetadata = tables.get(0).getEntityMetadata();
+                    ErrorMessage errorMsg = tableEntityMetadata.getErrorMessage();
+                    return new EasyQuerySingleNotNullException(errorMsg.getNotNull(), null);
+                }
+            }
             return new EasyQuerySingleNotNullException(errorMessage.getNotNull(), null);
         }
         return new EasyQuerySingleNotNullException(msg, code);

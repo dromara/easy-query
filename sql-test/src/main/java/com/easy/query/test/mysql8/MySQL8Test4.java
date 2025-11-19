@@ -1,13 +1,15 @@
 package com.easy.query.test.mysql8;
 
+import com.easy.query.api.proxy.base.ClassProxy;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.core.draft.Draft6;
-import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.doc.TopicSelfVO;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
@@ -571,7 +573,7 @@ public class MySQL8Test4 extends BaseTest {
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);
         List<SysUser> list = easyEntityQuery.queryable(SysUser.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(user -> {
                     user.bankCards().where(bc -> bc.type().eq("储蓄卡")).notEmptyAll(bc -> bc.code().startsWith("33123"));
                 }).toList();
@@ -586,6 +588,7 @@ public class MySQL8Test4 extends BaseTest {
         }
         listenerContextManager.clear();
     }
+
     @Test
     public void includeOneTest1() {
 
@@ -617,6 +620,7 @@ public class MySQL8Test4 extends BaseTest {
         }
 
     }
+
     @Test
     public void includeOneTest2() {
 
@@ -626,7 +630,7 @@ public class MySQL8Test4 extends BaseTest {
         List<SysUser> list2 = easyEntityQuery.queryable(SysUser.class)
                 .toList();
 
-        easyEntityQuery.loadInclude(list2,s->s.firstCard());
+        easyEntityQuery.loadInclude(list2, s -> s.firstCard());
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
         Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
@@ -646,6 +650,88 @@ public class MySQL8Test4 extends BaseTest {
             SysBankCard firstCard = sysUser.getFirstCard();
             Assert.assertNotNull(firstCard);
         }
+
+    }
+
+    @Test
+    public void testIncludeIdOnly1() {
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysUser> list2 = easyEntityQuery.queryable(SysUser.class)
+                .include(user -> user.bankCards(), then -> {
+                    then.select(s -> s.FETCHER.id());
+                })
+                .toList();
+
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT `id`,`name`,`phone`,`age`,`create_time` FROM `t_sys_user`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("1(Integer),33123(String),1(Integer),储蓄卡(String),false(Boolean),true(Boolean),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`id`,t.`uid` AS `__relation__uid` FROM `t_bank_card` t WHERE t.`uid` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("u1(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testIncludeIdOnly2() {
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysUser> list2 = easyEntityQuery.queryable(SysUser.class)
+                .include(user -> user.bankCards(), then -> {
+                    then.select(s -> s.FETCHER.id());
+                })
+                .toList();
+//        easyEntityQuery.updatable(SysUser.class)
+//                .setColumns(user -> user.id().set("1"))
+//                .where(user -> user.id().eq("xxxxx123123123"))
+//                .executeRows();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT `id`,`name`,`phone`,`age`,`create_time` FROM `t_sys_user`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//            Assert.assertEquals("1(Integer),33123(String),1(Integer),储蓄卡(String),false(Boolean),true(Boolean),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`id`,t.`uid` AS `__relation__uid` FROM `t_bank_card` t WHERE t.`uid` IN (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("u1(String),u2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testSelect(){
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysUser> name = easyEntityQuery.queryable(SysUser.class)
+                .select(user -> ClassProxy.of(SysUser.class)
+                        .columns(
+                                user.id(),
+                                user.name().as("phone"),
+                                user.age()
+                        )
+                ).where(t -> {
+                    t.field("phone").asStr().contains("123");
+                }).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`id`,t1.`phone` AS `phone`,t1.`age` FROM (SELECT t.`id`,t.`name` AS `phone`,t.`age` FROM `t_sys_user` t) t1 WHERE t1.`phone` LIKE CONCAT('%',?,'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 

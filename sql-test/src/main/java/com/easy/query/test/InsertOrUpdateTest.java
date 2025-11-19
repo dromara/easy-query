@@ -6,7 +6,10 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
+import com.easy.query.core.proxy.ProxyEntity;
+import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.impl.SQLSelectAllImpl;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -17,6 +20,7 @@ import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
+import com.easy.query.test.proxy.InsertOrUpdateMultiKeyEntityProxy;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -81,6 +85,13 @@ public class InsertOrUpdateTest extends BaseTest{
                         .setSQLStrategy(SQLExecuteStrategyEnum.ALL_COLUMNS)
                         .onConflictThen(o -> o.FETCHER.allFields(), o -> o.column2())
                         .executeRows();
+
+//                long l2 = defaultEasyEntityQuery.insertable(insertOrUpdateMultiKeyEntity)
+//                        .setSQLStrategy(SQLExecuteStrategyEnum.ALL_COLUMNS)
+//                        .onConflictThen(o -> {
+//                            return new SQLSelectAllImpl(o.getEntitySQLContext(), o.getTable(), null);
+//                        })
+//                        .executeRows();
             } catch (Exception ignore) {
             }
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
