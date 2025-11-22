@@ -30,10 +30,12 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.exception.EasyQueryMultiPrimaryKeyException;
 import com.easy.query.core.exception.EasyQueryNoPrimaryKeyException;
 import com.easy.query.core.expression.builder.Filter;
+import com.easy.query.core.expression.builder.OrderSelector;
 import com.easy.query.core.expression.builder.core.PropagationValueFilter;
 import com.easy.query.core.expression.builder.core.SQLNative;
 import com.easy.query.core.expression.builder.core.ValueFilter;
 import com.easy.query.core.expression.builder.impl.FilterImpl;
+import com.easy.query.core.expression.builder.impl.OrderSelectorImpl;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLActionExpression10;
 import com.easy.query.core.expression.lambda.SQLActionExpression2;
@@ -169,6 +171,12 @@ public class EasySQLExpressionUtil {
         FilterImpl filter = new FilterImpl(runtimeContext, expressionContext, andPredicateSegment, false, expressionContext.getValueFilter());
         filterExpression.apply(filter);
         return andPredicateSegment;
+    }
+    public static OrderBySQLBuilderSegment resolveOrderBy(EntityQueryExpressionBuilder entityQueryExpressionBuilder,QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, SQLActionExpression1<OrderSelector> orderExpression) {
+        OrderBySQLBuilderSegmentImpl orderBySQLBuilderSegment = new OrderBySQLBuilderSegmentImpl();
+        OrderSelectorImpl orderSelector = new OrderSelectorImpl(entityQueryExpressionBuilder,runtimeContext, expressionContext, orderBySQLBuilderSegment);
+        orderExpression.apply(orderSelector);
+        return orderBySQLBuilderSegment;
     }
 
     public static void propagationValueFilter(ClientQueryable<?> clientQueryable, ExpressionContext expressionContext) {

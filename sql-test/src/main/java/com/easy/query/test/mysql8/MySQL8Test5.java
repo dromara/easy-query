@@ -7,11 +7,13 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft6;
+import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.M8User;
+import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysBankCardProxy;
@@ -35,17 +37,17 @@ import java.util.stream.Collectors;
  */
 public class MySQL8Test5 extends BaseTest {
     @Test
-    public void testManyLimit1(){
+    public void testManyLimit1() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<Draft2<String, String>> list = easyEntityQuery.queryable(M8User.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .select(m -> Select.DRAFT.of(
                         m.id(),
-                        m.roles().where(r-> r.name().startsWith("管理员")).orderBy(s->s.name().asc()).elements(0, 5).joining(s -> s.name(), ",")
+                        m.roles().where(r -> r.name().startsWith("管理员")).orderBy(s -> s.name().asc()).elements(0, 5).joining(s -> s.name(), ",")
                 )).toList();
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -55,8 +57,9 @@ public class MySQL8Test5 extends BaseTest {
 
 
     }
+
     @Test
-    public void testManyLimit1_1(){
+    public void testManyLimit1_1() {
 
         {
 
@@ -64,10 +67,10 @@ public class MySQL8Test5 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
             List<Draft2<String, String>> list = easyEntityQuery.queryable(M8User.class)
-                    .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                    .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                     .select(m -> Select.DRAFT.of(
                             m.id(),
-                            m.roles().where(r-> r.name().startsWith("管理员")).orderBy(s->s.name().asc()).joining(s -> s.m8SaveA().name(), ",")
+                            m.roles().where(r -> r.name().startsWith("管理员")).orderBy(s -> s.name().asc()).joining(s -> s.m8SaveA().name(), ",")
                     )).toList();
             listenerContextManager.clear();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -78,8 +81,9 @@ public class MySQL8Test5 extends BaseTest {
 
         }
     }
+
     @Test
-    public void testManyLimit1_2(){
+    public void testManyLimit1_2() {
 
         {
 
@@ -87,10 +91,10 @@ public class MySQL8Test5 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
             List<Draft2<String, String>> list = easyEntityQuery.queryable(M8User.class)
-                    .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                    .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                     .select(m -> Select.DRAFT.of(
                             m.id(),
-                            m.roles().where(r-> r.name().startsWith("管理员")).orderBy(s->s.name().asc()).elements(0, 5).joining(s -> s.m8SaveA().name(), ",")
+                            m.roles().where(r -> r.name().startsWith("管理员")).orderBy(s -> s.name().asc()).elements(0, 5).joining(s -> s.m8SaveA().name(), ",")
                     )).toList();
             listenerContextManager.clear();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -101,8 +105,9 @@ public class MySQL8Test5 extends BaseTest {
 
         }
     }
+
     @Test
-    public void testManyLimit1_3(){
+    public void testManyLimit1_3() {
 
         {
 
@@ -110,11 +115,11 @@ public class MySQL8Test5 extends BaseTest {
             listenerContextManager.startListen(listenerContext);
 
             easyEntityQuery.queryable(M8User.class)
-                    .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                    .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                     .select(m -> Select.DRAFT.of(
                             m.id(),
-                            m.roles().where(r-> r.name().startsWith("管理员")).orderBy(s->s.name().asc()).elements(0, 5).joining(s -> s.m8SaveA().name(), ","),
-                            m.roles().where(r-> r.name().startsWith("管理员")).orderBy(s->s.name().asc()).elements(0, 5).joining(s -> s.m8SaveA().id(), ",")
+                            m.roles().where(r -> r.name().startsWith("管理员")).orderBy(s -> s.name().asc()).elements(0, 5).joining(s -> s.m8SaveA().name(), ","),
+                            m.roles().where(r -> r.name().startsWith("管理员")).orderBy(s -> s.name().asc()).elements(0, 5).joining(s -> s.m8SaveA().id(), ",")
                     )).toList();
             listenerContextManager.clear();
             Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -127,17 +132,17 @@ public class MySQL8Test5 extends BaseTest {
     }
 
     @Test
-    public void testManyLimit2(){
+    public void testManyLimit2() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<Draft2<String, String>> list1 = easyEntityQuery.queryable(M8User.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .select(m -> Select.DRAFT.of(
                         m.id(),
-                        m.roles().where(r-> r.name().startsWith("管理员")).joining(s -> s.name(), ",")
+                        m.roles().where(r -> r.name().startsWith("管理员")).joining(s -> s.name(), ",")
                 )).toList();
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
@@ -171,13 +176,13 @@ public class MySQL8Test5 extends BaseTest {
 
 
     @Test
-    public void testManyLimit4(){
+    public void testManyLimit4() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<Draft2<String, String>> list2 = easyEntityQuery.queryable(SysUser.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .select(user -> Select.DRAFT.of(
                         user.id(),
                         user.bankCards().where(bankCard -> bankCard.code().startsWith("小")).joining(s -> s.type(), ",")
@@ -192,16 +197,16 @@ public class MySQL8Test5 extends BaseTest {
     }
 
     @Test
-    public void testManyLimit5(){
+    public void testManyLimit5() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<Draft2<String, String>> list2 = easyEntityQuery.queryable(SysUser.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .select(user -> Select.DRAFT.of(
                         user.id(),
-                        user.bankCards().where(bankCard -> bankCard.code().startsWith("小")).orderBy(s->s.bank().createTime().asc()).elements(0,2).joining(s -> s.type(), ",")
+                        user.bankCards().where(bankCard -> bankCard.code().startsWith("小")).orderBy(s -> s.bank().createTime().asc()).elements(0, 2).joining(s -> s.type(), ",")
                 )).toList();
 
         listenerContextManager.clear();
@@ -211,17 +216,18 @@ public class MySQL8Test5 extends BaseTest {
         Assert.assertEquals(",(String),小(String),1(Long),3(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testManyLimit6(){
+    public void testManyLimit6() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<Draft2<String, String>> list2 = easyEntityQuery.queryable(SysUser.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .select(user -> Select.DRAFT.of(
                         user.id(),
-                        user.bankCards().where(bankCard -> bankCard.code().startsWith("小")).orderBy(s->s.bank().createTime().asc()).elements(0,2).joining(s -> s.bank().name(), ",")
+                        user.bankCards().where(bankCard -> bankCard.code().startsWith("小")).orderBy(s -> s.bank().createTime().asc()).elements(0, 2).joining(s -> s.bank().name(), ",")
                 )).toList();
 
         listenerContextManager.clear();
@@ -231,14 +237,15 @@ public class MySQL8Test5 extends BaseTest {
         Assert.assertEquals(",(String),小(String),1(Long),3(Long)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
-    public void testManyLimit7(){
+    public void testManyLimit7() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<Draft2<String, String>> list2 = easyEntityQuery.queryable(SysUser.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .select(user -> Select.DRAFT.of(
                         user.id(),
                         user.bankCards().where(bankCard -> bankCard.code().startsWith("小")).joining(s -> s.bank().name(), ",")
@@ -249,6 +256,31 @@ public class MySQL8Test5 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id` AS `value1`,t2.`__joining2__` AS `value2` FROM `t_sys_user` t LEFT JOIN (SELECT t1.`uid` AS `__group_key1__`,GROUP_CONCAT(t3.`name` SEPARATOR ?) AS `__joining2__` FROM `t_bank_card` t1 INNER JOIN `t_bank` t3 ON t3.`id` = t1.`bank_id` WHERE t1.`code` LIKE CONCAT(?,'%') GROUP BY t1.`uid`) t2 ON t2.`__group_key1__` = t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals(",(String),小(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void testDOC() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        easyEntityQuery.queryable(SysBank.class)
+                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(bank -> {
+                    bank.name().like("银行");
+                })
+                .select(bank -> Select.PART.of(
+                        bank,
+                        bank.bankCards().orderBy(o -> o.openTime().asc()).orderBy(o -> o.type().desc()).joining(s->s.type())
+                )).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time`,t2.`__joining2__` AS `__part__column1` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `__group_key1__`,GROUP_CONCAT(t1.`type` ORDER BY t1.`open_time` ASC,t1.`type` DESC SEPARATOR ?) AS `__joining2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`__group_key1__` = t.`id` WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(",(String),%银行%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 

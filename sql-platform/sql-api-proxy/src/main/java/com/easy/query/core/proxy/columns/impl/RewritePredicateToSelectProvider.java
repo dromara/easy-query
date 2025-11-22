@@ -130,7 +130,7 @@ public class RewritePredicateToSelectProvider<T1Proxy extends ProxyEntity<T1Prox
 
 
     private DefaultSQLGroupQueryable<T1Proxy> getDefaultSQLGroupQueryable() {
-        DefaultSQLGroupQueryable<T1Proxy> t1ProxyDefaultSQLGroupQueryable = new DefaultSQLGroupQueryable<>(getPropertyProxy(), getPropertyProxy().getEntitySQLContext(), getSubQueryContext().getWhereExpression());
+        DefaultSQLGroupQueryable<T1Proxy> t1ProxyDefaultSQLGroupQueryable = new DefaultSQLGroupQueryable<>(getPropertyProxy(), getPropertyProxy().getEntitySQLContext(), getSubQueryContext().getWhereExpression(),getSubQueryContext().getOrderByExpression());
         GroupJoinPredicateSegmentContext groupJoinPredicateSegmentContext = t1ProxyDefaultSQLGroupQueryable.getGroupJoinPredicateSegmentContext();
         manyGroupJoinEntityTableExpressionBuilder.addGroupJoinPredicateSegmentContext(groupJoinPredicateSegmentContext);
         return t1ProxyDefaultSQLGroupQueryable;

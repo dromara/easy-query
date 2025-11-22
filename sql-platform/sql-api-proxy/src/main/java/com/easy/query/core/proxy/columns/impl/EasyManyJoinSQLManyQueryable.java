@@ -138,7 +138,8 @@ public class EasyManyJoinSQLManyQueryable<T1Proxy extends ProxyEntity<T1Proxy, T
     }
 
     private DefaultSQLGroupQueryable<T1Proxy> getDefaultSQLGroupQueryable() {
-        DefaultSQLGroupQueryable<T1Proxy> t1ProxyDefaultSQLGroupQueryable = new DefaultSQLGroupQueryable<>(rewritePredicateToSelectProvider.getPropertyProxy(), rewritePredicateToSelectProvider.getPropertyProxy().getEntitySQLContext(), rewritePredicateToSelectProvider.getSubQueryContext().getWhereExpression());
+        SubQueryContext<T1Proxy, T1> subQueryContext = rewritePredicateToSelectProvider.getSubQueryContext();
+        DefaultSQLGroupQueryable<T1Proxy> t1ProxyDefaultSQLGroupQueryable = new DefaultSQLGroupQueryable<>(rewritePredicateToSelectProvider.getPropertyProxy(), rewritePredicateToSelectProvider.getPropertyProxy().getEntitySQLContext(), subQueryContext.getWhereExpression(),subQueryContext.getOrderByExpression());
         GroupJoinPredicateSegmentContext groupJoinPredicateSegmentContext = t1ProxyDefaultSQLGroupQueryable.getGroupJoinPredicateSegmentContext();
         rewritePredicateToSelectProvider.getManyGroupJoinEntityTableExpressionBuilder().addGroupJoinPredicateSegmentContext(groupJoinPredicateSegmentContext);
         return t1ProxyDefaultSQLGroupQueryable;

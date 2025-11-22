@@ -62,7 +62,7 @@ public class DamengQueryTest extends DamengBaseTest {
     @Test
     public void query0_1() {
         EntityQueryable<DamengMyTopicProxy, DamengMyTopic> queryable = entityQuery.queryable(DamengMyTopic.class)
-                .where(o -> o.id().eq( "123xxx")).limit(1);
+                .where(o -> o.id().eq("123xxx")).limit(1);
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT \"ID\",\"STARS\",\"TITLE\",\"CREATE_TIME\" FROM \"MY_TOPIC\" WHERE \"ID\" = ? AND ROWNUM < 2", sql);
     }
@@ -70,7 +70,7 @@ public class DamengQueryTest extends DamengBaseTest {
     @Test
     public void query1() {
         EntityQueryable<DamengMyTopicProxy, DamengMyTopic> queryable = entityQuery.queryable(DamengMyTopic.class)
-                .where(o -> o.id().eq( "123xxx")).limit(10, 10);
+                .where(o -> o.id().eq("123xxx")).limit(10, 10);
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT rt.* FROM(SELECT \"ID\",\"STARS\",\"TITLE\",\"CREATE_TIME\", ROWNUM AS \"__rownum__\" FROM \"MY_TOPIC\" WHERE \"ID\" = ? AND ROWNUM < 21) rt WHERE rt.\"__rownum__\" > 10", sql);
         List<DamengMyTopic> msSQLMyTopic = queryable.toList();
@@ -80,7 +80,7 @@ public class DamengQueryTest extends DamengBaseTest {
     @Test
     public void query2() {
         EntityQueryable<DamengMyTopicProxy, DamengMyTopic> queryable = entityQuery.queryable(DamengMyTopic.class)
-                .where(o -> o.id().eq( "123xxx")).limit(10, 10).orderBy(o -> o.createTime().asc());
+                .where(o -> o.id().eq("123xxx")).limit(10, 10).orderBy(o -> o.createTime().asc());
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT rt1.* FROM (SELECT rt.*, ROWNUM AS \"__rownum__\" FROM (SELECT \"ID\",\"STARS\",\"TITLE\",\"CREATE_TIME\" FROM \"MY_TOPIC\" WHERE \"ID\" = ? ORDER BY \"CREATE_TIME\" ASC) rt WHERE ROWNUM < 21) rt1 WHERE rt1.\"__rownum__\" > 10", sql);
         List<DamengMyTopic> msSQLMyTopic = queryable.toList();
@@ -90,7 +90,7 @@ public class DamengQueryTest extends DamengBaseTest {
     @Test
     public void query3() {
         EntityQueryable<DamengMyTopicProxy, DamengMyTopic> queryable = entityQuery.queryable(DamengMyTopic.class)
-                .where(o -> o.id().eq( "123xxx")).limit(0, 10).orderBy(o -> o.createTime().asc());
+                .where(o -> o.id().eq("123xxx")).limit(0, 10).orderBy(o -> o.createTime().asc());
         String sql = queryable.toSQL();
         Assert.assertEquals("SELECT rt.* FROM (SELECT \"ID\",\"STARS\",\"TITLE\",\"CREATE_TIME\" FROM \"MY_TOPIC\" WHERE \"ID\" = ? ORDER BY \"CREATE_TIME\" ASC) rt WHERE ROWNUM < 11", sql);
         List<DamengMyTopic> msSQLMyTopic = queryable.toList();
@@ -117,7 +117,7 @@ public class DamengQueryTest extends DamengBaseTest {
                 .where(o -> o.id().isNotNull())
                 .where(o -> o.id().ne("xxasdasda"))
                 .orderBy(o -> o.id().asc())
-                .select(DamengMyTopicDTO.class,s->Select.of(
+                .select(DamengMyTopicDTO.class, s -> Select.of(
                         s.id().as(DamengMyTopicDTO::getTitle)
                 ))
                 .toPageResult(2, 20);
@@ -348,7 +348,7 @@ public class DamengQueryTest extends DamengBaseTest {
                 .having(d -> d.groupTable().t1.id().count().ne(-1L))
                 .select(DamengMyTopic.class, group -> Select.of(
                         group.count().as(DamengMyTopic::getStars)
-                )).toPageResult(2,1);
+                )).toPageResult(2, 1);
 
         listenerContextManager.clear();
 
@@ -365,6 +365,7 @@ public class DamengQueryTest extends DamengBaseTest {
         }
 
     }
+
     @Test
     public void query17() {
         List<DamengMyTopic> list = entityQuery.queryable(DamengMyTopic.class)
@@ -375,16 +376,16 @@ public class DamengQueryTest extends DamengBaseTest {
     @Test
     public void queryFormat1() {
 
-        String formater="yyyy-MM-01";
+        String formater = "yyyy-MM-01";
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        List<Draft2<LocalDateTime,String>> list = entityQuery.queryable(DamengMyTopic.class)
+        List<Draft2<LocalDateTime, String>> list = entityQuery.queryable(DamengMyTopic.class)
                 .select(d -> Select.DRAFT.of(
                         d.createTime(),
                         d.createTime().format(formater)
                 )).toList();
         Assert.assertFalse(list.isEmpty());
-        for (Draft2<LocalDateTime,String> timeAndFormat : list) {
+        for (Draft2<LocalDateTime, String> timeAndFormat : list) {
             LocalDateTime value1 = timeAndFormat.getValue1();
             String format = value1.format(DateTimeFormatter.ofPattern(formater));
             Assert.assertEquals(format, timeAndFormat.getValue2());
@@ -400,16 +401,16 @@ public class DamengQueryTest extends DamengBaseTest {
     @Test
     public void queryFormat2() {
 
-        String formater="yyyy年MM-01";
+        String formater = "yyyy年MM-01";
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        List<Draft2<LocalDateTime,String>> list = entityQuery.queryable(DamengMyTopic.class)
+        List<Draft2<LocalDateTime, String>> list = entityQuery.queryable(DamengMyTopic.class)
                 .select(d -> Select.DRAFT.of(
                         d.createTime(),
                         d.createTime().format(formater)
                 )).toList();
         Assert.assertFalse(list.isEmpty());
-        for (Draft2<LocalDateTime,String> timeAndFormat : list) {
+        for (Draft2<LocalDateTime, String> timeAndFormat : list) {
             LocalDateTime value1 = timeAndFormat.getValue1();
             String format = value1.format(DateTimeFormatter.ofPattern(formater));
             Assert.assertEquals(format, timeAndFormat.getValue2());
@@ -425,16 +426,16 @@ public class DamengQueryTest extends DamengBaseTest {
     @Test
     public void queryFormat3() {
 
-        String formater="yyyy年MM-01 HH时mm分ss秒";
+        String formater = "yyyy年MM-01 HH时mm分ss秒";
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        List<Draft2<LocalDateTime,String>> list = entityQuery.queryable(DamengMyTopic.class)
+        List<Draft2<LocalDateTime, String>> list = entityQuery.queryable(DamengMyTopic.class)
                 .select(d -> Select.DRAFT.of(
                         d.createTime(),
                         d.createTime().format(formater)
                 )).toList();
         Assert.assertFalse(list.isEmpty());
-        for (Draft2<LocalDateTime,String> timeAndFormat : list) {
+        for (Draft2<LocalDateTime, String> timeAndFormat : list) {
             LocalDateTime value1 = timeAndFormat.getValue1();
             String format = value1.format(DateTimeFormatter.ofPattern(formater));
             Assert.assertEquals(format, timeAndFormat.getValue2());
@@ -450,16 +451,16 @@ public class DamengQueryTest extends DamengBaseTest {
     @Test
     public void queryFormat4() {
 
-        String formater="yyyy年MM-01 HH:mm分ss秒";
+        String formater = "yyyy年MM-01 HH:mm分ss秒";
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        List<Draft2<LocalDateTime,String>> list = entityQuery.queryable(DamengMyTopic.class)
+        List<Draft2<LocalDateTime, String>> list = entityQuery.queryable(DamengMyTopic.class)
                 .select(d -> Select.DRAFT.of(
                         d.createTime(),
                         d.createTime().format(formater)
                 )).toList();
         Assert.assertFalse(list.isEmpty());
-        for (Draft2<LocalDateTime,String> timeAndFormat : list) {
+        for (Draft2<LocalDateTime, String> timeAndFormat : list) {
             LocalDateTime value1 = timeAndFormat.getValue1();
             String format = value1.format(DateTimeFormatter.ofPattern(formater));
             Assert.assertEquals(format, timeAndFormat.getValue2());
@@ -471,15 +472,16 @@ public class DamengQueryTest extends DamengBaseTest {
         Assert.assertEquals("SELECT t.\"CREATE_TIME\" AS \"VALUE1\",TO_CHAR(t.\"CREATE_TIME\",'YYYY\"年\"MM-\"01\" HH24:MI\"分\"SS\"秒\"') AS \"VALUE2\" FROM \"MY_TOPIC\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
 
     }
+
     @Test
-    public void subQueryTest1(){
+    public void subQueryTest1() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<DamengMyTopic> list = entityQuery.queryable(DamengMyTopic.class)
-                .subQueryToGroupJoin(s->s.myTopics())
+                .subQueryToGroupJoin(s -> s.myTopics())
                 .where(d -> {
                     d.myTopics().any();
                 }).toList();
@@ -492,33 +494,34 @@ public class DamengQueryTest extends DamengBaseTest {
     }
 
     @Test
-    public void testEasyQuery(){
+    public void testEasyQuery() {
         List<DamengMyTopic> list = entityQuery.queryable(DamengMyTopic.class)
                 .where(d -> {
                     d.id().isNull();
                 })
                 .groupBy(d -> GroupKeys.of(d.title()))
                 .select(DamengMyTopic.class, o -> {
-                   return o.key1().as(DamengMyTopic::getTitle);
+                    return o.key1().as(DamengMyTopic::getTitle);
                 }).limit(0, 9).toList();
     }
 
     @Test
-     public void concat1(){
-         List<Map> maps = easyQueryClient.sqlQuery("select 'a' || null || 'b' as \"aa\" from DUAL", Map.class);
-         System.out.println(maps);
+    public void concat1() {
+        List<Map> maps = easyQueryClient.sqlQuery("select 'a' || null || 'b' as \"aa\" from DUAL", Map.class);
+        System.out.println(maps);
         Object o = maps.get(0).get("aa");
-        Assert.assertEquals("ab",o);
+        Assert.assertEquals("ab", o);
     }
+
     @Test
-    public  void cteViewTree1(){
+    public void cteViewTree1() {
         List<TreeC> list = entityQuery.queryable(TreeC.class)
                 .asTreeCTE()
                 .toList();
     }
 
     @Test
-    public void testMaxColumns1(){
+    public void testMaxColumns1() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -534,8 +537,9 @@ public class DamengQueryTest extends DamengBaseTest {
         Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testMaxColumns2(){
+    public void testMaxColumns2() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -551,8 +555,9 @@ public class DamengQueryTest extends DamengBaseTest {
         Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void testMaxColumns3(){
+    public void testMaxColumns3() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -570,7 +575,6 @@ public class DamengQueryTest extends DamengBaseTest {
     }
 
 
-
     @Test
     public void testAll() {
 
@@ -585,7 +589,7 @@ public class DamengQueryTest extends DamengBaseTest {
         Assert.assertEquals(1, size);
         List<SysUser> newCards = list.stream().filter(user -> {
             //因为null记录不会被like返回所以直接过滤null
-            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123"));
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡") && o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123"));
         }).collect(Collectors.toList());
         Assert.assertEquals(1, newCards.size());
 
@@ -603,6 +607,7 @@ public class DamengQueryTest extends DamengBaseTest {
         }
         listenerContextManager.clear();
     }
+
     @Test
     public void testAll1() {
 
@@ -652,7 +657,7 @@ public class DamengQueryTest extends DamengBaseTest {
         Assert.assertEquals(1, size);
         List<SysUser> newCards = list.stream().filter(user -> {
             //因为null记录不会被like返回所以直接过滤null
-            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123")&&o.getCode().startsWith("45678"));
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡") && o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123") && o.getCode().startsWith("45678"));
         }).collect(Collectors.toList());
         Assert.assertEquals(1, newCards.size());
 
@@ -686,7 +691,7 @@ public class DamengQueryTest extends DamengBaseTest {
         Assert.assertEquals(1, size);
         List<SysUser> newCards = list.stream().filter(user -> {
             //因为null记录不会被like返回所以直接过滤null
-            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123"));
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡") && o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123"));
         }).collect(Collectors.toList());
         Assert.assertEquals(1, newCards.size());
 
@@ -724,7 +729,7 @@ public class DamengQueryTest extends DamengBaseTest {
         Assert.assertEquals(1, size);
         List<SysUser> newCards = list.stream().filter(user -> {
             //因为null记录不会被like返回所以直接过滤null
-            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡")&&o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123")&&o.getCode().startsWith("45678"));
+            return user.getBankCards().stream().filter(o -> Objects.equals(o.getType(), "储蓄卡") && o.getCode() != null).allMatch(o -> o.getCode().startsWith("33123") && o.getCode().startsWith("45678"));
         }).collect(Collectors.toList());
         Assert.assertEquals(1, newCards.size());
 
@@ -744,34 +749,35 @@ public class DamengQueryTest extends DamengBaseTest {
     }
 
     @Test
-    public void testQuery(){
+    public void testQuery() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<DamengNameCustomDTO> list = entityQuery.queryable(DamengNameCustom.class)
-                .select(DamengNameCustomDTO.class,o->Select.of(
+                .select(DamengNameCustomDTO.class, o -> Select.of(
                         o.id(),
                         o.name(),
                         o.isDelete(),
                         o.rowNumber()
                 ))
                 .toList();
-        Assert.assertEquals(1,list.size());
+        Assert.assertEquals(1, list.size());
         DamengNameCustomDTO damengNameCustomDTO = list.get(0);
-        Assert.assertEquals("123",damengNameCustomDTO.getId());
-        Assert.assertEquals(123,damengNameCustomDTO.getRowNumber().intValue());
-        Assert.assertEquals("name",damengNameCustomDTO.getName());
-        Assert.assertEquals(198,damengNameCustomDTO.getIsDelete().intValue());
+        Assert.assertEquals("123", damengNameCustomDTO.getId());
+        Assert.assertEquals(123, damengNameCustomDTO.getRowNumber().intValue());
+        Assert.assertEquals("name", damengNameCustomDTO.getName());
+        Assert.assertEquals(198, damengNameCustomDTO.getIsDelete().intValue());
 
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.\"ID\",t.\"NAME\",t.\"ISDELETE\" AS \"IS_DELETE\",t.\"ROWNUMBER\" AS \"ROW_NUMBER\" FROM \"MY_CUSTOM\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
     }
+
     @Test
-    public void testQueryAlias(){
+    public void testQueryAlias() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -780,20 +786,21 @@ public class DamengQueryTest extends DamengBaseTest {
         List<DamengNameCustomDTO> list = entityQuery.queryable(DamengNameCustom.class)
                 .select(DamengNameCustomDTO.class)
                 .toList();
-        Assert.assertEquals(1,list.size());
+        Assert.assertEquals(1, list.size());
         DamengNameCustomDTO damengNameCustomDTO = list.get(0);
-        Assert.assertEquals("123",damengNameCustomDTO.getId());
-        Assert.assertEquals(123,damengNameCustomDTO.getRowNumber().intValue());
-        Assert.assertEquals("name",damengNameCustomDTO.getName());
-        Assert.assertEquals(198,damengNameCustomDTO.getIsDelete().intValue());
+        Assert.assertEquals("123", damengNameCustomDTO.getId());
+        Assert.assertEquals(123, damengNameCustomDTO.getRowNumber().intValue());
+        Assert.assertEquals("name", damengNameCustomDTO.getName());
+        Assert.assertEquals(198, damengNameCustomDTO.getIsDelete().intValue());
 
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.\"ID\",t.\"NAME\",t.\"ROWNUMBER\" AS \"ROW_NUMBER\",t.\"ISDELETE\" AS \"IS_DELETE\" FROM \"MY_CUSTOM\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
     }
+
     @Test
-    public void testQueryAlias2(){
+    public void testQueryAlias2() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -802,41 +809,80 @@ public class DamengQueryTest extends DamengBaseTest {
         List<DamengNameCustomDTO2> list = entityQuery.queryable(DamengNameCustom.class)
                 .select(DamengNameCustomDTO2.class)
                 .toList();
-        Assert.assertEquals(1,list.size());
+        Assert.assertEquals(1, list.size());
         DamengNameCustomDTO2 damengNameCustomDTO = list.get(0);
-        Assert.assertEquals("123",damengNameCustomDTO.getId());
-        Assert.assertEquals(123,damengNameCustomDTO.getRowNumber().intValue());
-        Assert.assertEquals("name",damengNameCustomDTO.getName());
-        Assert.assertEquals(198,damengNameCustomDTO.getIsDelete().intValue());
+        Assert.assertEquals("123", damengNameCustomDTO.getId());
+        Assert.assertEquals(123, damengNameCustomDTO.getRowNumber().intValue());
+        Assert.assertEquals("name", damengNameCustomDTO.getName());
+        Assert.assertEquals(198, damengNameCustomDTO.getIsDelete().intValue());
 
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.\"ID\",t.\"NAME\",t.\"ROWNUMBER\",t.\"ISDELETE\" FROM \"MY_CUSTOM\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
     }
+
     @Test
-    public void testQueryAlias3(){
+    public void testQueryAlias3() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<DamengNameCustomDTO2> list = entityQuery.queryable(DamengNameCustom.class)
-                .select(DamengNameCustomDTO2.class,o->Select.of(
-                        o.id(),o.name(),o.rowNumber(),o.isDelete()
+                .select(DamengNameCustomDTO2.class, o -> Select.of(
+                        o.id(), o.name(), o.rowNumber(), o.isDelete()
                 ))
                 .toList();
-        Assert.assertEquals(1,list.size());
+        Assert.assertEquals(1, list.size());
         DamengNameCustomDTO2 damengNameCustomDTO = list.get(0);
-        Assert.assertEquals("123",damengNameCustomDTO.getId());
-        Assert.assertEquals(123,damengNameCustomDTO.getRowNumber().intValue());
-        Assert.assertEquals("name",damengNameCustomDTO.getName());
-        Assert.assertEquals(198,damengNameCustomDTO.getIsDelete().intValue());
+        Assert.assertEquals("123", damengNameCustomDTO.getId());
+        Assert.assertEquals(123, damengNameCustomDTO.getRowNumber().intValue());
+        Assert.assertEquals("name", damengNameCustomDTO.getName());
+        Assert.assertEquals(198, damengNameCustomDTO.getIsDelete().intValue());
 
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.\"ID\",t.\"NAME\",t.\"ROWNUMBER\",t.\"ISDELETE\" FROM \"MY_CUSTOM\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
     }
+
+    @Test
+    public void testJoining() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        entityQuery.queryable(SysUser.class)
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(user -> {
+                    user.bankCards().where(bc -> bc.type().eq("储蓄卡")).orderBy(s -> s.openTime().asc()).joining(x -> x.type()).eq("123");
+                }).toList();
+
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.\"ID\",t.\"NAME\",t.\"PHONE\",t.\"AGE\",t.\"CREATE_TIME\" FROM \"t_sys_user\" t LEFT JOIN (SELECT t1.\"UID\" AS \"__group_key1__\",LISTAGG(TO_CHAR(t1.\"TYPE\"), ?) WITHIN GROUP(ORDER BY t1.\"OPEN_TIME\" ASC) AS \"__joining2__\" FROM \"t_bank_card\" t1 WHERE t1.\"TYPE\" = ? GROUP BY t1.\"UID\") t2 ON t2.\"__group_key1__\" = t.\"ID\" WHERE t2.\"__joining2__\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(",(String),储蓄卡(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testJoining1() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        entityQuery.queryable(SysUser.class)
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(user -> {
+                    user.bankCards().where(bc -> bc.type().eq("储蓄卡")).joining(x -> x.type()).eq("123");
+                }).toList();
+
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.\"ID\",t.\"NAME\",t.\"PHONE\",t.\"AGE\",t.\"CREATE_TIME\" FROM \"t_sys_user\" t LEFT JOIN (SELECT t1.\"UID\" AS \"__group_key1__\",LISTAGG(TO_CHAR(t1.\"TYPE\"), ?) AS \"__joining2__\" FROM \"t_bank_card\" t1 WHERE t1.\"TYPE\" = ? GROUP BY t1.\"UID\") t2 ON t2.\"__group_key1__\" = t.\"ID\" WHERE t2.\"__joining2__\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals(",(String),储蓄卡(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
 
 }

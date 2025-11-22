@@ -5,7 +5,9 @@ import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.segment.GroupJoinPredicateSegmentContext;
 import com.easy.query.core.expression.segment.GroupJoinPredicateSegmentContextImpl;
+import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.ColumnNumberFunctionAvailable;
@@ -31,9 +33,10 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
     protected final TProxy groupTable;
     protected final EntitySQLContext entitySQLContext;
     protected final GroupJoinPredicateSegmentContext groupJoinPredicateSegmentContext;
+    protected final OrderBySQLBuilderSegment orderBySQLBuilderSegment;
     protected boolean distinct = false;
 
-    public DefaultSQLGroupQueryable(TProxy groupTable, EntitySQLContext entitySQLContext, SQLActionExpression1<TProxy> predicate) {
+    public DefaultSQLGroupQueryable(TProxy groupTable, EntitySQLContext entitySQLContext, SQLActionExpression1<TProxy> predicate, SQLActionExpression1<TProxy> sort) {
         this.groupTable = groupTable;
         this.entitySQLContext = entitySQLContext;
         this.predicate = predicate;
@@ -42,7 +45,12 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
                 predicate.apply(groupTable);
             });
         });
-        this.groupJoinPredicateSegmentContext=new GroupJoinPredicateSegmentContextImpl(predicateSegment);
+        this.orderBySQLBuilderSegment = sort == null ? null : EasySQLExpressionUtil.resolveOrderBy((EntityQueryExpressionBuilder) entitySQLContext.getEntityExpressionBuilder(), entitySQLContext.getRuntimeContext(), entitySQLContext.getExpressionContext(), orderSelector -> {
+            entitySQLContext._orderBy(orderSelector, () -> {
+                sort.apply(groupTable);
+            });
+        });
+        this.groupJoinPredicateSegmentContext = new GroupJoinPredicateSegmentContextImpl(predicateSegment);
     }
 
     public GroupJoinPredicateSegmentContext getGroupJoinPredicateSegmentContext() {
@@ -73,6 +81,7 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
             }, Long.class);
         }
     }
+
     @Override
     public <TMember> NumberTypeExpression<Long> count(SQLFuncExpression1<TProxy, PropTypeColumn<TMember>> columnSelector) {
         PropTypeColumn<TMember> column = columnSelector.apply(groupTable);
@@ -167,6 +176,9 @@ public class DefaultSQLGroupQueryable<TProxy> implements SQLGroupQueryable<TProx
             return fx.joining(x -> {
                 x.value(delimiter);
                 PropTypeColumn.columnFuncSelector(x, preColumn);
+                if (orderBySQLBuilderSegment != null) {
+                    x.sql(orderBySQLBuilderSegment);
+                }
             }, distinct);
         }, column.getPropertyType());
     }

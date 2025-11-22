@@ -24,27 +24,20 @@ public class MsSQLJoiningSQLFunction extends AbstractExpressionSQLFunction {
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        if (columnExpressions.size() != 2) {
-            throw new IllegalArgumentException("joining arguments != 2");
+        if (columnExpressions.size() < 2) {
+            throw new IllegalArgumentException("joining arguments < 2");
         }
-//        if(defaultTable!=null){
-//            ColumnPropertyExpression columnPropertyExpression = (ColumnPropertyExpression)columnExpressions.get(1);
-//            ColumnFuncValueExpression columnFuncValueExpression = (ColumnFuncValueExpression)columnExpressions.get(0);
-//            String property = columnPropertyExpression.getProperty();
-//            EasyQueryClient easyQueryClient=serviceProvider.getService(EasyQueryClient.class);
-//            ClientQueryable<?> forXmlQuery = easyQueryClient.queryable(defaultTable.getEntityClass())
-//                    .where(o -> o.getFilter().eq(o.getTable(), property, defaultTable, property))
-//                    .select(o -> o.sqlNativeSegment("{0} + {1}", c -> c.value(columnFuncValueExpression.getValue()).expression(property)));
-//            columnExpressions.clear();
-//            columnExpressions.add(new ColumnFuncValueExpressionImpl(columnFuncValueExpression.getValue()));
-//            columnExpressions.add(new ColumnSubQueryExpressionImpl(forXmlQuery));
-//            return "STUFF(({1} FOR XML PATH('')),1,LEN({0}),'')";
-//        }
-        if (distinct) {
-            return "STRING_AGG(DISTINCT {1}, {0})";
+        if(columnExpressions.size()==2){
+            if (distinct) {
+                return "STRING_AGG(DISTINCT {1}, {0})";
+            }
+            return "STRING_AGG({1}, {0})";
+        }else{
+            if (distinct) {
+                return "STRING_AGG(DISTINCT {1}, {0}) WITHIN GROUP (ORDER BY {2})";
+            }
+            return "STRING_AGG({1}, {0}) WITHIN GROUP (ORDER BY {2})";
         }
-        return "STRING_AGG({1}, {0})";
-        //
     }
 
     @Override

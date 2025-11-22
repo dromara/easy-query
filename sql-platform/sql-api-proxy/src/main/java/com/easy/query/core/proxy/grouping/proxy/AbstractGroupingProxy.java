@@ -44,7 +44,9 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
     public TSourceProxy groupTable() {
         return tSourceProxy;
     }
+
     public abstract List<PropTypeColumn<?>> getKeys();
+
     public NumberTypeExpression<Long> count() {
         return where(null).count();
     }
@@ -53,6 +55,7 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
     public SQLGroupQueryable<TSourceProxy> distinct() {
         return where(null).distinct();
     }
+
     public <TMember> NumberTypeExpression<Long> count(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TMember>> columnSelector) {
         return where(null).count(columnSelector);
     }
@@ -106,6 +109,7 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
     public <TProperty extends Number> NumberTypeExpression<BigDecimal> avg(SQLFuncExpression1<TSourceProxy, ColumnNumberFunctionAvailable<TProperty>> columnSelector) {
         return where(null).avg(columnSelector);
     }
+
     public <TProperty> StringTypeExpression<String> joining(SQLFuncExpression1<TSourceProxy, PropTypeColumn<TProperty>> columnSelector) {
         return where(null).joining(columnSelector, ",");
     }
@@ -117,7 +121,7 @@ public abstract class AbstractGroupingProxy<TProxy extends ProxyEntity<TProxy, T
 
 
     public SQLGroupQueryable<TSourceProxy> where(SQLActionExpression1<TSourceProxy> where) {
-        return new DefaultSQLGroupQueryable<>(tSourceProxy, this.entitySQLContext, where);
+        return new DefaultSQLGroupQueryable<>(tSourceProxy, this.entitySQLContext, where, null);
     }
 //
 //    public <T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> T1Proxy element(int index, SQLFuncExpression1<TSourceProxy,T1Proxy> elementSelector) {

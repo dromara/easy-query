@@ -24,13 +24,20 @@ public class JoiningSQLFunction extends AbstractExpressionSQLFunction {
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        if (columnExpressions.size() != 2) {
-            throw new IllegalArgumentException("joining arguments != 2");
+        if (columnExpressions.size() < 2) {
+            throw new IllegalArgumentException("joining arguments < 2");
         }
-        if (distinct) {
-            return "GROUP_CONCAT(DISTINCT {1} SEPARATOR {0})";
+        if(columnExpressions.size()==2){
+            if (distinct) {
+                return "GROUP_CONCAT(DISTINCT {1} SEPARATOR {0})";
+            }
+            return "GROUP_CONCAT({1} SEPARATOR {0})";
+        }else{
+            if (distinct) {
+                return "GROUP_CONCAT(DISTINCT {1} ORDER BY {2} SEPARATOR {0})";
+            }
+            return "GROUP_CONCAT({1} ORDER BY {2} SEPARATOR {0})";
         }
-        return "GROUP_CONCAT({1} SEPARATOR {0})";
     }
 
     @Override

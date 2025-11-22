@@ -6,3 +6,5 @@
 # DTO是否保留Column注解 true/false
 ## DTO是否保留 @Column 注解, 当字段映射为 属性优先/属性唯一 的时候可以不用保留 @Column 注解
 dto.keepAnnoColumn=true
+
+sql.format=mysql,postgresql,sqlserver,oracle,h2,sqlite
