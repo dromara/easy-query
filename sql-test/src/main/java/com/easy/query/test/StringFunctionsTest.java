@@ -913,7 +913,7 @@ public class StringFunctionsTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.\"code\" AS \"value1\",LISTAGG(DISTINCT TO_CHAR((CASE WHEN t.\"type\" = ? THEN t1.\"name\" ELSE NULL END)), ?) WITHIN GROUP(ORDER BY 1) AS \"value2\",LISTAGG(DISTINCT TO_CHAR(t.\"bank_id\"), ?) WITHIN GROUP(ORDER BY t.\"id\") AS \"value3\" FROM \"doc_bank_card\" t LEFT JOIN \"doc_user\" t1 ON t1.\"id\" = t.\"uid\" GROUP BY t.\"code\"", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.\"code\" AS \"value1\",LISTAGG(DISTINCT TO_CHAR((CASE WHEN t.\"type\" = ? THEN t1.\"name\" ELSE NULL END)), ?) AS \"value2\",LISTAGG(DISTINCT TO_CHAR(t.\"bank_id\"), ?) AS \"value3\" FROM \"doc_bank_card\" t LEFT JOIN \"doc_user\" t1 ON t1.\"id\" = t.\"uid\" GROUP BY t.\"code\"", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("储蓄卡(String),,(String),,(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
