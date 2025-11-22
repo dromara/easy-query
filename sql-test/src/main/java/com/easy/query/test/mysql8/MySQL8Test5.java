@@ -267,13 +267,13 @@ public class MySQL8Test5 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         easyEntityQuery.queryable(SysBank.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(bank -> {
                     bank.name().like("银行");
                 })
                 .select(bank -> Select.PART.of(
                         bank,
-                        bank.bankCards().orderBy(o -> o.openTime().asc()).orderBy(o -> o.type().desc()).joining(s->s.type())
+                        bank.bankCards().orderBy(o -> o.openTime().asc()).orderBy(o -> o.type().desc()).joining(s -> s.type())
                 )).toList();
 
         listenerContextManager.clear();
@@ -283,6 +283,7 @@ public class MySQL8Test5 extends BaseTest {
         Assert.assertEquals(",(String),%银行%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+
     @Test
     public void testJoining2() {
 
@@ -291,7 +292,7 @@ public class MySQL8Test5 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         easyEntityQuery.queryable(SysBank.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(bank -> {
                     bank.name().like("银行");
                 })
@@ -301,7 +302,7 @@ public class MySQL8Test5 extends BaseTest {
                                 .orderBy(o -> o.openTime().asc())
                                 .orderBy(o -> o.type().desc())
                                 .distinct()
-                                .joining(s->s.type())
+                                .joining(s -> s.type())
                 )).toList();
 
         listenerContextManager.clear();
@@ -309,6 +310,94 @@ public class MySQL8Test5 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time`,t2.`__joining2__` AS `__part__column1` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `__group_key1__`,GROUP_CONCAT(DISTINCT t1.`type` ORDER BY t1.`open_time` ASC,t1.`type` DESC SEPARATOR ?) AS `__joining2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`__group_key1__` = t.`id` WHERE t.`name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals(",(String),%银行%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void testToSelectPageResult() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        String type = null;
+        easyEntityQuery.queryable(SysBank.class)
+                .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT_PROPAGATION_SUPPORTS)
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(bank -> {
+                    bank.name().like("银行");
+                })
+                .toPageSelectResult(q -> {
+                    return q.select(bank -> Select.PART.of(
+                            bank,
+                            bank.bankCards()
+                                    .where(s -> s.type().eq(type))
+                                    .joining(s -> s.type())
+                    ));
+                }, 1, 2);
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`id`,t1.`name`,t1.`create_time`,t3.`__joining2__` AS `__part__column1` FROM (SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t WHERE t.`name` LIKE ? LIMIT 2) t1 LEFT JOIN (SELECT t2.`bank_id` AS `__group_key1__`,GROUP_CONCAT(t2.`type` SEPARATOR ?) AS `__joining2__` FROM `t_bank_card` t2 GROUP BY t2.`bank_id`) t3 ON t3.`__group_key1__` = t1.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%银行%(String),,(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testToSelectPageResult2() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        String type = null;
+        easyEntityQuery.queryable(SysBank.class)
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(bank -> {
+                    bank.name().like("银行");
+                })
+                .toPageSelectResult(q -> {
+                    return q.select(bank -> Select.PART.of(
+                            bank,
+                            bank.bankCards()
+                                    .where(s -> s.type().eq(type))
+                                    .joining(s -> s.type())
+                    ));
+                }, 1, 2);
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`id`,t1.`name`,t1.`create_time`,t3.`__joining2__` AS `__part__column1` FROM (SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t WHERE t.`name` LIKE ? LIMIT 2) t1 LEFT JOIN (SELECT t2.`bank_id` AS `__group_key1__`,GROUP_CONCAT(t2.`type` SEPARATOR ?) AS `__joining2__` FROM `t_bank_card` t2 WHERE t2.`type` = ? GROUP BY t2.`bank_id`) t3 ON t3.`__group_key1__` = t1.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%银行%(String),,(String),null(null)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void testToSelectPageResult3() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        String type = "123";
+        easyEntityQuery.queryable(SysBank.class)
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .where(bank -> {
+                    bank.name().like("银行");
+                    bank.bankCards().filter(t->{
+                        t.type().eq(type);
+                    });
+                })
+                .toPageSelectResult(q -> {
+                    return q.select(bank -> Select.PART.of(
+                            bank,
+                            bank.bankCards()
+                                    .joining(s -> s.type())
+                    ));
+                }, 1, 2);
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`id`,t1.`name`,t1.`create_time`,t3.`__joining2__` AS `__part__column1` FROM (SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t WHERE t.`name` LIKE ? LIMIT 2) t1 LEFT JOIN (SELECT t2.`bank_id` AS `__group_key1__`,GROUP_CONCAT(t2.`type` SEPARATOR ?) AS `__joining2__` FROM `t_bank_card` t2 WHERE t2.`type` = ? GROUP BY t2.`bank_id`) t3 ON t3.`__group_key1__` = t1.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%银行%(String),,(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 

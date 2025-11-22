@@ -541,7 +541,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         }
         if (super.manyJoinConfigurationMaps != null) {
             for (Map.Entry<RelationTableKey, SubQueryModeEnum> subQueryModeKv : super.manyJoinConfigurationMaps.entrySet()) {
-                updateExpressionBuilder.putSubQueryToGroupJoinJoin(subQueryModeKv.getKey(), subQueryModeKv.getValue());
+                updateExpressionBuilder.putSubQueryToGroupJoin(subQueryModeKv.getKey(), subQueryModeKv.getValue());
             }
         }
         return updateExpressionBuilder;

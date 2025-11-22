@@ -39,9 +39,9 @@ public interface EntityExpressionBuilder extends ExpressionBuilder, RuntimeConte
     ManyConfiguration putManyConfiguration(RelationTableKey relationTableKey, ManyConfiguration manyConfiguration);
     ManyConfiguration getManyConfiguration(RelationTableKey relationTableKey);
     Map<RelationTableKey, ManyConfiguration> getManyConfigurations();
-    void putSubQueryToGroupJoinJoin(RelationTableKey relationTableKey, SubQueryModeEnum subQueryMode);
     SubQueryModeEnum getSubQueryToGroupJoin(RelationTableKey relationTableKey);
-    Map<RelationTableKey,SubQueryModeEnum> getManyJoinConfigurationMaps();
+    Map<RelationTableKey,SubQueryModeEnum> getSubQueryToGroupJoinConfigurationMaps();
+    void putSubQueryToGroupJoin(RelationTableKey relationTableKey, SubQueryModeEnum subQueryMode);
     //    EntityTableExpressionBuilder removeRelationEntityTableExpression(RelationTableKey relationTableKey);
     Map<RelationTableKey, EntityTableExpressionBuilder> getRelationTables();
 

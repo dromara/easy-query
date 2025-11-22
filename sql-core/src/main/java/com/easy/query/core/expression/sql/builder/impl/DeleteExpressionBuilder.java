@@ -278,7 +278,7 @@ public class DeleteExpressionBuilder extends AbstractPredicateEntityExpressionBu
         }
         if(super.manyJoinConfigurationMaps !=null){
             for (Map.Entry<RelationTableKey, SubQueryModeEnum> subQueryModeKv : super.manyJoinConfigurationMaps.entrySet()) {
-                deleteExpressionBuilder.putSubQueryToGroupJoinJoin(subQueryModeKv.getKey(),subQueryModeKv.getValue());
+                deleteExpressionBuilder.putSubQueryToGroupJoin(subQueryModeKv.getKey(),subQueryModeKv.getValue());
             }
         }
 

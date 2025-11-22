@@ -125,7 +125,7 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
     }
 
     @Override
-    public void putSubQueryToGroupJoinJoin(RelationTableKey relationTableKey, SubQueryModeEnum subQueryMode) {
+    public void putSubQueryToGroupJoin(RelationTableKey relationTableKey, SubQueryModeEnum subQueryMode) {
         if (manyJoinConfigurationMaps == null) {
             this.manyJoinConfigurationMaps = new HashMap<>();
         }
@@ -140,7 +140,7 @@ public abstract class AbstractEntityExpressionBuilder implements EntityExpressio
         return manyJoinConfigurationMaps.get(relationTableKey);
     }
     @Override
-    public Map<RelationTableKey,SubQueryModeEnum> getManyJoinConfigurationMaps() {
+    public Map<RelationTableKey,SubQueryModeEnum> getSubQueryToGroupJoinConfigurationMaps() {
         return manyJoinConfigurationMaps;
     }
     //

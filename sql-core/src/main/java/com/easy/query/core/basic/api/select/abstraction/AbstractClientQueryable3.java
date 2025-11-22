@@ -128,7 +128,7 @@ public abstract class AbstractClientQueryable3<T1, T2, T3> extends AbstractOverr
             EasyRelationalUtil.TableOrRelationTable tableOrRelationalTable = EasyRelationalUtil.getTableOrRelationalTable(entityQueryExpressionBuilder, subQueryProperty.getTable(), subQueryProperty.getNavValue());
             TableAvailable leftTable = tableOrRelationalTable.table;
             String property = tableOrRelationalTable.property;
-            entityQueryExpressionBuilder.putSubQueryToGroupJoinJoin(new DefaultRelationTableKey(leftTable, property), SubQueryModeEnum.GROUP_JOIN);
+            entityQueryExpressionBuilder.putSubQueryToGroupJoin(new DefaultRelationTableKey(leftTable, property), SubQueryModeEnum.GROUP_JOIN);
         }
         return this;
     }

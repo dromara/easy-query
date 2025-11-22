@@ -13,10 +13,6 @@ import com.easy.query.core.expression.ManyConfiguration;
 import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.predicate.SmartPredicateAnonymousExpressionBuilderProvider;
-import com.easy.query.core.expression.segment.Column2Segment;
-import com.easy.query.core.expression.segment.ColumnSegment;
-import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
-import com.easy.query.core.expression.segment.SQLSegment;
 import com.easy.query.core.expression.segment.SelectConstSegment;
 import com.easy.query.core.expression.segment.builder.GroupBySQLBuilderSegmentImpl;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
@@ -48,9 +44,7 @@ import com.easy.query.core.util.EasySQLSegmentUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author xuejiaming
@@ -383,7 +377,7 @@ public class QueryExpressionBuilder extends AbstractPredicateEntityExpressionBui
         if (super.manyJoinConfigurationMaps != null) {
             for (Map.Entry<RelationTableKey, SubQueryModeEnum> subQueryModeKv : super.manyJoinConfigurationMaps.entrySet()) {
 
-                queryExpressionBuilder.putSubQueryToGroupJoinJoin(subQueryModeKv.getKey(), subQueryModeKv.getValue());
+                queryExpressionBuilder.putSubQueryToGroupJoin(subQueryModeKv.getKey(), subQueryModeKv.getValue());
             }
         }
         return queryExpressionBuilder;

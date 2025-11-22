@@ -21,7 +21,6 @@ import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
-import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.math.BigDecimal;
@@ -132,7 +131,7 @@ public class PropertySQLManyQueryable<TProxy, T1Proxy extends ProxyEntity<T1Prox
     public void mode(SubQueryModeEnum subQueryMode) {
         Objects.requireNonNull(subQueryMode, "subQueryMode cant be null");
         DefaultRelationTableKey defaultRelationTableKey = new DefaultRelationTableKey(subQueryContext.getLeftTable(), subQueryContext.getProperty());
-        subQueryContext.getEntityExpressionBuilder().putSubQueryToGroupJoinJoin(defaultRelationTableKey, subQueryMode);
+        subQueryContext.getEntityExpressionBuilder().putSubQueryToGroupJoin(defaultRelationTableKey, subQueryMode);
     }
 
     @Override

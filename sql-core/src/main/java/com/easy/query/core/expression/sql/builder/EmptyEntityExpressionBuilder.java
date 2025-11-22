@@ -67,7 +67,7 @@ public class EmptyEntityExpressionBuilder implements EntityExpressionBuilder{
     }
 
     @Override
-    public void putSubQueryToGroupJoinJoin(RelationTableKey relationTableKey, SubQueryModeEnum subQueryMode) {
+    public void putSubQueryToGroupJoin(RelationTableKey relationTableKey, SubQueryModeEnum subQueryMode) {
 
     }
 
@@ -77,7 +77,7 @@ public class EmptyEntityExpressionBuilder implements EntityExpressionBuilder{
     }
 
     @Override
-    public Map<RelationTableKey,SubQueryModeEnum> getManyJoinConfigurationMaps() {
+    public Map<RelationTableKey,SubQueryModeEnum> getSubQueryToGroupJoinConfigurationMaps() {
         return null;
     }
 
