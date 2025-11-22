@@ -771,7 +771,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest {
         Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-            Assert.assertEquals("SELECT t.[Id],t.[Name],t.[Phone],t.[Age],t.[CreateTime] FROM [t_sys_user] t LEFT JOIN (SELECT t1.[Uid] AS [uid],(CASE WHEN (COUNT(?) <= 0) THEN ? ELSE ? END) AS [__none2__] FROM [t_bank_card] t1 WHERE t1.[Type] = ? AND (NOT (t1.[Code] LIKE (CAST(? AS NVARCHAR(MAX))+'%'))) GROUP BY t1.[Uid]) t2 ON t2.[uid] = t.[Id] WHERE ISNULL(t2.[__none2__],?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.[Id],t.[Name],t.[Phone],t.[Age],t.[CreateTime] FROM [t_sys_user] t LEFT JOIN (SELECT t1.[Uid] AS [__group_key1__],(CASE WHEN (COUNT(?) <= 0) THEN ? ELSE ? END) AS [__none2__] FROM [t_bank_card] t1 WHERE t1.[Type] = ? AND (NOT (t1.[Code] LIKE (CAST(? AS NVARCHAR(MAX))+'%'))) GROUP BY t1.[Uid]) t2 ON t2.[__group_key1__] = t.[Id] WHERE ISNULL(t2.[__none2__],?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1(Integer),true(Boolean),false(Boolean),储蓄卡(String),33123(String),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
         {
@@ -809,7 +809,7 @@ public class MsSQLQueryTest extends MsSQLBaseTest {
         Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-            Assert.assertEquals("SELECT t.[Id],t.[Name],t.[Phone],t.[Age],t.[CreateTime] FROM [t_sys_user] t LEFT JOIN (SELECT t1.[Uid] AS [uid],(CASE WHEN (COUNT(?) <= 0) THEN ? ELSE ? END) AS [__none2__] FROM [t_bank_card] t1 WHERE t1.[Type] = ? AND (NOT (t1.[Code] LIKE (CAST(? AS NVARCHAR(MAX))+'%') AND t1.[Id] LIKE (CAST(? AS NVARCHAR(MAX))+'%'))) GROUP BY t1.[Uid]) t2 ON t2.[uid] = t.[Id] WHERE ISNULL(t2.[__none2__],?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.[Id],t.[Name],t.[Phone],t.[Age],t.[CreateTime] FROM [t_sys_user] t LEFT JOIN (SELECT t1.[Uid] AS [__group_key1__],(CASE WHEN (COUNT(?) <= 0) THEN ? ELSE ? END) AS [__none2__] FROM [t_bank_card] t1 WHERE t1.[Type] = ? AND (NOT (t1.[Code] LIKE (CAST(? AS NVARCHAR(MAX))+'%') AND t1.[Id] LIKE (CAST(? AS NVARCHAR(MAX))+'%'))) GROUP BY t1.[Uid]) t2 ON t2.[__group_key1__] = t.[Id] WHERE ISNULL(t2.[__none2__],?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1(Integer),true(Boolean),false(Boolean),储蓄卡(String),33123(String),45678(String),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
         {

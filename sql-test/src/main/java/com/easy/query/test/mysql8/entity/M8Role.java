@@ -7,6 +7,8 @@ import com.easy.query.core.annotation.Table;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.mysql8.entity.proxy.M8RoleProxy;
+import com.easy.query.test.mysql8.entity.save.M8SaveA;
+import com.easy.query.test.mysql8.entity.save.proxy.M8SaveAProxy;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
@@ -31,4 +33,9 @@ public class M8Role implements ProxyEntityAvailable<M8Role, M8RoleProxy> {
 
     @Navigate(value = RelationTypeEnum.ManyToMany, selfProperty = {M8Role.Fields.id}, selfMappingProperty = {M8RoleMenu.Fields.roleId}, mappingClass = M8RoleMenu.class, targetProperty = {M8Menu.Fields.id}, targetMappingProperty = {M8RoleMenu.Fields.menuId})
     private List<M8Menu> menus;
+    /**
+     *
+     **/
+    @Navigate(value = RelationTypeEnum.ManyToOne, selfProperty = {M8Role.Fields.id}, targetProperty = {M8SaveAProxy.Fields.id})
+    private M8SaveA m8SaveA;
 }

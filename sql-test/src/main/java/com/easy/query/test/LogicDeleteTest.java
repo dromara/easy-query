@@ -141,4 +141,10 @@ public class LogicDeleteTest extends BaseTest {
                 .where(o->o.id().eq("1")).firstOrNull();
         Assert.assertNotNull(logicDelTopic);
     }
+//    @Test
+//    public void Test11(){
+//        easyEntityQuery.deletable(LogicDelTopicCustom.class)
+//                .where(o->o.id().eq("1xxxxasd123"))
+//                .executeRows();
+//    }
 }

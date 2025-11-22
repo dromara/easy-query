@@ -775,7 +775,7 @@ public class QueryTest19 extends PgSQLBaseTest {
         Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-            Assert.assertEquals("SELECT t.\"id\",t.\"name\",t.\"phone\",t.\"age\" FROM \"doc_user\" t LEFT JOIN (SELECT t1.\"uid\" AS \"uid\",(COUNT(?) <= 0) AS \"__none2__\" FROM \"doc_bank_card\" t1 WHERE t1.\"type\" = ? AND (NOT (t1.\"code\" LIKE (CONCAT((?)::TEXT , '%')))) GROUP BY t1.\"uid\") t2 ON t2.\"uid\" = t.\"id\" WHERE COALESCE(t2.\"__none2__\",?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.\"id\",t.\"name\",t.\"phone\",t.\"age\" FROM \"doc_user\" t LEFT JOIN (SELECT t1.\"uid\" AS \"__group_key1__\",(COUNT(?) <= 0) AS \"__none2__\" FROM \"doc_bank_card\" t1 WHERE t1.\"type\" = ? AND (NOT (t1.\"code\" LIKE (CONCAT((?)::TEXT , '%')))) GROUP BY t1.\"uid\") t2 ON t2.\"__group_key1__\" = t.\"id\" WHERE COALESCE(t2.\"__none2__\",?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1(Integer),储蓄卡(String),33123(String),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
         {
@@ -813,7 +813,7 @@ public class QueryTest19 extends PgSQLBaseTest {
         Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-            Assert.assertEquals("SELECT t.\"id\",t.\"name\",t.\"phone\",t.\"age\" FROM \"doc_user\" t LEFT JOIN (SELECT t1.\"uid\" AS \"uid\",(COUNT(?) <= 0) AS \"__none2__\" FROM \"doc_bank_card\" t1 WHERE t1.\"type\" = ? AND (NOT (t1.\"code\" LIKE (CONCAT((?)::TEXT , '%')) AND t1.\"code\" LIKE (CONCAT((?)::TEXT , '%')))) GROUP BY t1.\"uid\") t2 ON t2.\"uid\" = t.\"id\" WHERE COALESCE(t2.\"__none2__\",?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.\"id\",t.\"name\",t.\"phone\",t.\"age\" FROM \"doc_user\" t LEFT JOIN (SELECT t1.\"uid\" AS \"__group_key1__\",(COUNT(?) <= 0) AS \"__none2__\" FROM \"doc_bank_card\" t1 WHERE t1.\"type\" = ? AND (NOT (t1.\"code\" LIKE (CONCAT((?)::TEXT , '%')) AND t1.\"code\" LIKE (CONCAT((?)::TEXT , '%')))) GROUP BY t1.\"uid\") t2 ON t2.\"__group_key1__\" = t.\"id\" WHERE COALESCE(t2.\"__none2__\",?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1(Integer),储蓄卡(String),33123(String),45678(String),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
         {

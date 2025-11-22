@@ -486,7 +486,7 @@ public class DamengQueryTest extends DamengBaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.\"ID\",t.\"STARS\",t.\"TITLE\",t.\"CREATE_TIME\" FROM \"MY_TOPIC\" t LEFT JOIN (SELECT t1.\"TITLE\" AS \"title\",(CASE WHEN (COUNT(*) > 0) THEN ? ELSE ? END) AS \"__any2__\" FROM \"MY_TOPIC\" t1 GROUP BY t1.\"TITLE\") t2 ON t2.\"title\" = t.\"ID\" WHERE NVL(t2.\"__any2__\",?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.\"ID\",t.\"STARS\",t.\"TITLE\",t.\"CREATE_TIME\" FROM \"MY_TOPIC\" t LEFT JOIN (SELECT t1.\"TITLE\" AS \"__group_key1__\",(CASE WHEN (COUNT(*) > 0) THEN ? ELSE ? END) AS \"__any2__\" FROM \"MY_TOPIC\" t1 GROUP BY t1.\"TITLE\") t2 ON t2.\"__group_key1__\" = t.\"ID\" WHERE NVL(t2.\"__any2__\",?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("true(Boolean),false(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
@@ -694,7 +694,7 @@ public class DamengQueryTest extends DamengBaseTest {
         Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-            Assert.assertEquals("SELECT t.\"ID\",t.\"NAME\",t.\"PHONE\",t.\"AGE\",t.\"CREATE_TIME\" FROM \"t_sys_user\" t LEFT JOIN (SELECT t1.\"UID\" AS \"uid\",(CASE WHEN (COUNT(?) <= 0) THEN ? ELSE ? END) AS \"__none2__\" FROM \"t_bank_card\" t1 WHERE t1.\"TYPE\" = ? AND (NOT (t1.\"CODE\" LIKE (TO_CHAR(?)||'%'))) GROUP BY t1.\"UID\") t2 ON t2.\"uid\" = t.\"ID\" WHERE NVL(t2.\"__none2__\",?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.\"ID\",t.\"NAME\",t.\"PHONE\",t.\"AGE\",t.\"CREATE_TIME\" FROM \"t_sys_user\" t LEFT JOIN (SELECT t1.\"UID\" AS \"__group_key1__\",(CASE WHEN (COUNT(?) <= 0) THEN ? ELSE ? END) AS \"__none2__\" FROM \"t_bank_card\" t1 WHERE t1.\"TYPE\" = ? AND (NOT (t1.\"CODE\" LIKE (TO_CHAR(?)||'%'))) GROUP BY t1.\"UID\") t2 ON t2.\"__group_key1__\" = t.\"ID\" WHERE NVL(t2.\"__none2__\",?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1(Integer),true(Boolean),false(Boolean),储蓄卡(String),33123(String),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
         {
@@ -732,7 +732,7 @@ public class DamengQueryTest extends DamengBaseTest {
         Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-            Assert.assertEquals("SELECT t.\"ID\",t.\"NAME\",t.\"PHONE\",t.\"AGE\",t.\"CREATE_TIME\" FROM \"t_sys_user\" t LEFT JOIN (SELECT t1.\"UID\" AS \"uid\",(CASE WHEN (COUNT(?) <= 0) THEN ? ELSE ? END) AS \"__none2__\" FROM \"t_bank_card\" t1 WHERE t1.\"TYPE\" = ? AND (NOT (t1.\"CODE\" LIKE (TO_CHAR(?)||'%') AND t1.\"CODE\" LIKE (TO_CHAR(?)||'%'))) GROUP BY t1.\"UID\") t2 ON t2.\"uid\" = t.\"ID\" WHERE NVL(t2.\"__none2__\",?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.\"ID\",t.\"NAME\",t.\"PHONE\",t.\"AGE\",t.\"CREATE_TIME\" FROM \"t_sys_user\" t LEFT JOIN (SELECT t1.\"UID\" AS \"__group_key1__\",(CASE WHEN (COUNT(?) <= 0) THEN ? ELSE ? END) AS \"__none2__\" FROM \"t_bank_card\" t1 WHERE t1.\"TYPE\" = ? AND (NOT (t1.\"CODE\" LIKE (TO_CHAR(?)||'%') AND t1.\"CODE\" LIKE (TO_CHAR(?)||'%'))) GROUP BY t1.\"UID\") t2 ON t2.\"__group_key1__\" = t.\"ID\" WHERE NVL(t2.\"__none2__\",?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1(Integer),true(Boolean),false(Boolean),储蓄卡(String),33123(String),45678(String),true(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
         {

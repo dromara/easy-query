@@ -6,6 +6,7 @@ import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.basic.api.select.ClientQueryable;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.DefaultRelationTableKey;
@@ -21,7 +22,9 @@ import com.easy.query.core.expression.sql.builder.AnonymousManyJoinEntityTableEx
 import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EndNavigateParams;
+import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.metadata.IncludeNavigateParams;
 import com.easy.query.core.metadata.NavigateMetadata;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -30,6 +33,8 @@ import com.easy.query.core.proxy.columns.SubQueryContext;
 import com.easy.query.core.proxy.columns.SubquerySQLQueryableFactory;
 import com.easy.query.core.util.EasyNavigateUtil;
 import com.easy.query.core.util.EasyObjectUtil;
+
+import java.util.Map;
 
 /**
  * create time 2025/3/12 15:55
@@ -98,7 +103,6 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
                     }
                     if (subQueryContext.hasElements()) {
 
-
                         if (subQueryContext.getWhereExpression() != null) {
                             entityQueryable.where(subQueryContext.getWhereExpression());
                             subQueryContext.setWhereExpression(null);
@@ -107,11 +111,9 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
                             entityQueryable.orderBy(subQueryContext.getOrderByExpression());
                             subQueryContext.setOrderByExpression(null);
                         }
-                        if (subQueryContext.hasElements()) {
-                            entityQueryable.limit(subQueryContext.getOffset(), subQueryContext.getLimit());
-                            entityQueryable = entityQueryable.select(s -> s);
-                        }
-                        return entityQueryable.getClientQueryable();
+                        entityQueryable.limit(subQueryContext.getOffset(), subQueryContext.getLimit());
+//                        entityQueryable = entityQueryable.select(s -> s);
+//                        return entityQueryable.getClientQueryable();
                     }
                     return clientQueryable;
                 });
@@ -255,7 +257,7 @@ public class DefaultSubquerySQLQueryableFactory implements SubquerySQLQueryableF
             ClientQueryable<TProperty> clientQueryable = EasyNavigateUtil.navigateOrderBy(
                     queryable,
                     new EndNavigateParams(navigateMetadata)
-                    ,includeNavigateParams,
+                    , includeNavigateParams,
                     runtimeContext.getEntityMetadataManager().getEntityMetadata(navigateMetadata.getNavigatePropertyType()),
                     configureArgument,
                     runtimeContext);

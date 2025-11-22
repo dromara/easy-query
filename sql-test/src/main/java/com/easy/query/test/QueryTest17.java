@@ -1198,7 +1198,7 @@ public class QueryTest17 extends BaseTest {
         Map<String, Topic> mapWithMap = easyEntityQuery.queryable(Topic.class)
                 .where(t -> {
                     t.id().eq("1");
-                }).streamBy(s -> s.collect(Collectors.toMap(o -> o.getId(), o -> o, (d1, d2) -> d2)));
+                }).streamBy(s -> s.collect(Collectors.toMap(o -> o.getId(), o -> o, (v1, v2) -> v2)));
         System.out.println("1");
         boolean error = false;
         try {

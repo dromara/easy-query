@@ -361,6 +361,10 @@ public abstract class BaseTest {
             }
             long l = easyEntityQuery.insertable(logicDelTopics).executeRows();
         }
+        easyEntityQuery.deletable(LogicDelTopicCustom.class).disableLogicDelete().allowDeleteStatement(true)
+                .where(l -> {
+                    l.id().isNotNull();
+                }).executeRows();
         boolean logicDeleteCusAny = easyEntityQuery.queryable(LogicDelTopicCustom.class).any();
         if (!logicDeleteCusAny) {
             List<LogicDelTopicCustom> logicDelTopics = new ArrayList<>();

@@ -128,7 +128,7 @@ public class MySQL8Test2 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t3.`id`,t3.`name`,t3.`create_time`,t3.`__part__column1` AS `__part__column1` FROM (SELECT t.`id`,t.`name`,t.`create_time`,IFNULL(t2.`__count2__`,0) AS `__part__column1` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,COUNT(*) AS `__count2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` WHERE t.`name` LIKE ?) t3 LEFT JOIN `t_bank_card` t4 ON t3.`id` = t4.`bank_id` LEFT JOIN (SELECT t5.`bank_id` AS `bankId`,(COUNT(*) > 0) AS `__any2__` FROM `t_bank_card` t5 GROUP BY t5.`bank_id`) t6 ON t6.`bankId` = t3.`id` WHERE t3.`__part__column1` = t4.`type` AND IFNULL(t6.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t3.`id`,t3.`name`,t3.`create_time`,t3.`__part__column1` AS `__part__column1` FROM (SELECT t.`id`,t.`name`,t.`create_time`,IFNULL(t2.`__count2__`,0) AS `__part__column1` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `__group_key1__`,COUNT(*) AS `__count2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`__group_key1__` = t.`id` WHERE t.`name` LIKE ?) t3 LEFT JOIN `t_bank_card` t4 ON t3.`id` = t4.`bank_id` LEFT JOIN (SELECT t5.`bank_id` AS `__group_key1__`,(COUNT(*) > 0) AS `__any2__` FROM `t_bank_card` t5 GROUP BY t5.`bank_id`) t6 ON t6.`__group_key1__` = t3.`id` WHERE t3.`__part__column1` = t4.`type` AND IFNULL(t6.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%银行%(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -185,7 +185,7 @@ public class MySQL8Test2 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time` FROM `t_bank_card` t LEFT JOIN (SELECT t1.`id`,t1.`name`,t1.`create_time`,(SELECT COUNT(*) FROM `t_bank_card` t2 WHERE t2.`bank_id` = t1.`id`) AS `__part__column1` FROM `t_bank` t1 WHERE t1.`name` LIKE ?) t4 ON t.`bank_id` = t4.`id` LEFT JOIN (SELECT t5.`bank_id` AS `bankId`,(COUNT(*) > 0) AS `__any2__` FROM `t_bank_card` t5 GROUP BY t5.`bank_id`) t6 ON t6.`bankId` = t4.`id` WHERE IFNULL(t6.`__any2__`,?) = ? AND t4.`__part__column1` = t.`type`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time` FROM `t_bank_card` t LEFT JOIN (SELECT t1.`id`,t1.`name`,t1.`create_time`,(SELECT COUNT(*) FROM `t_bank_card` t2 WHERE t2.`bank_id` = t1.`id`) AS `__part__column1` FROM `t_bank` t1 WHERE t1.`name` LIKE ?) t4 ON t.`bank_id` = t4.`id` LEFT JOIN (SELECT t5.`bank_id` AS `__group_key1__`,(COUNT(*) > 0) AS `__any2__` FROM `t_bank_card` t5 GROUP BY t5.`bank_id`) t6 ON t6.`__group_key1__` = t4.`id` WHERE IFNULL(t6.`__any2__`,?) = ? AND t4.`__part__column1` = t.`type`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%银行%(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -215,7 +215,7 @@ public class MySQL8Test2 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time` FROM `t_bank_card` t LEFT JOIN (SELECT t1.`id`,t1.`name`,t1.`create_time`,IFNULL(t3.`__count2__`,0) AS `__part__column1` FROM `t_bank` t1 LEFT JOIN (SELECT t2.`bank_id` AS `bankId`,COUNT(*) AS `__count2__` FROM `t_bank_card` t2 GROUP BY t2.`bank_id`) t3 ON t3.`bankId` = t1.`id` WHERE t1.`name` LIKE ?) t5 ON t.`bank_id` = t5.`id` LEFT JOIN (SELECT t6.`bank_id` AS `bankId`,(COUNT(*) > 0) AS `__any2__` FROM `t_bank_card` t6 GROUP BY t6.`bank_id`) t7 ON t7.`bankId` = t5.`id` WHERE IFNULL(t7.`__any2__`,?) = ? AND t5.`__part__column1` = t.`type`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`uid`,t.`code`,t.`type`,t.`bank_id`,t.`open_time` FROM `t_bank_card` t LEFT JOIN (SELECT t1.`id`,t1.`name`,t1.`create_time`,IFNULL(t3.`__count2__`,0) AS `__part__column1` FROM `t_bank` t1 LEFT JOIN (SELECT t2.`bank_id` AS `__group_key1__`,COUNT(*) AS `__count2__` FROM `t_bank_card` t2 GROUP BY t2.`bank_id`) t3 ON t3.`__group_key1__` = t1.`id` WHERE t1.`name` LIKE ?) t5 ON t.`bank_id` = t5.`id` LEFT JOIN (SELECT t6.`bank_id` AS `__group_key1__`,(COUNT(*) > 0) AS `__any2__` FROM `t_bank_card` t6 GROUP BY t6.`bank_id`) t7 ON t7.`__group_key1__` = t5.`id` WHERE IFNULL(t7.`__any2__`,?) = ? AND t5.`__part__column1` = t.`type`", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%银行%(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -385,7 +385,7 @@ public class MySQL8Test2 extends BaseTest {
 
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
 //                    Assert.assertEquals("SELECT `id` FROM `school_class`", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            Assert.assertEquals("SELECT t.`id` AS `value1`,IFNULL(t2.`__count2__`,0) AS `value2` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,COUNT(*) AS `__count2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` LIMIT 3", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`id` AS `value1`,IFNULL(t2.`__count2__`,0) AS `value2` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `__group_key1__`,COUNT(*) AS `__count2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`__group_key1__` = t.`id` LIMIT 3", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //            Assert.assertEquals("绍兴市(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
     }
@@ -451,7 +451,7 @@ public class MySQL8Test2 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,(COUNT(?) > 0) AS `__any2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `__group_key1__`,(COUNT(?) > 0) AS `__any2__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`__group_key1__` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 
@@ -479,7 +479,7 @@ public class MySQL8Test2 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,(COUNT((CASE WHEN t1.`code` = ? THEN ? ELSE NULL END)) > 0) AS `__any2__`,(COUNT(?) > 0) AS `__any3__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ? AND IFNULL(t2.`__any3__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `__group_key1__`,(COUNT((CASE WHEN t1.`code` = ? THEN ? ELSE NULL END)) > 0) AS `__any2__`,(COUNT(?) > 0) AS `__any3__` FROM `t_bank_card` t1 GROUP BY t1.`bank_id`) t2 ON t2.`__group_key1__` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ? AND IFNULL(t2.`__any3__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("123(String),1(Integer),1(Integer),false(Boolean),true(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 
@@ -501,7 +501,7 @@ public class MySQL8Test2 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `bankId`,(COUNT(?) > 0) AS `__any2__` FROM `t_bank_card` t1 WHERE t1.`type` = ? GROUP BY t1.`bank_id`) t2 ON t2.`bankId` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`name`,t.`create_time` FROM `t_bank` t LEFT JOIN (SELECT t1.`bank_id` AS `__group_key1__`,(COUNT(?) > 0) AS `__any2__` FROM `t_bank_card` t1 WHERE t1.`type` = ? GROUP BY t1.`bank_id`) t2 ON t2.`__group_key1__` = t.`id` WHERE IFNULL(t2.`__any2__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 
@@ -808,7 +808,7 @@ public class MySQL8Test2 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT IFNULL(t2.`__sum2__`,0) AS `value1`,IFNULL(t2.`__sum3__`,0) AS `value2` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,SUM(IFNULL(t4.`__count2__`,0)) AS `__sum2__`,SUM(IFNULL(t4.`__count3__`,0)) AS `__sum3__` FROM `m8_city` t1 LEFT JOIN (SELECT t3.`cid` AS `cid`,COUNT((CASE WHEN t3.`name` LIKE CONCAT('%',?,'%') THEN ? ELSE NULL END)) AS `__count2__`,COUNT((CASE WHEN t3.`name` LIKE CONCAT('%',?,'%') THEN ? ELSE NULL END)) AS `__count3__` FROM `m8_area` t3 WHERE t3.`id` LIKE CONCAT('%',?,'%') GROUP BY t3.`cid`) t4 ON t4.`cid` = t1.`id` GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT IFNULL(t2.`__sum2__`,0) AS `value1`,IFNULL(t2.`__sum3__`,0) AS `value2` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `__group_key1__`,SUM(IFNULL(t4.`__count2__`,0)) AS `__sum2__`,SUM(IFNULL(t4.`__count3__`,0)) AS `__sum3__` FROM `m8_city` t1 LEFT JOIN (SELECT t3.`cid` AS `__group_key1__`,COUNT((CASE WHEN t3.`name` LIKE CONCAT('%',?,'%') THEN ? ELSE NULL END)) AS `__count2__`,COUNT((CASE WHEN t3.`name` LIKE CONCAT('%',?,'%') THEN ? ELSE NULL END)) AS `__count3__` FROM `m8_area` t3 WHERE t3.`id` LIKE CONCAT('%',?,'%') GROUP BY t3.`cid`) t4 ON t4.`__group_key1__` = t1.`id` GROUP BY t1.`pid`) t2 ON t2.`__group_key1__` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("绍兴(String),1(Integer),绍兴1(String),1(Integer),123(String),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -841,7 +841,7 @@ public class MySQL8Test2 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT IFNULL(t2.`__count2__`,0) AS `value1`,IFNULL(t2.`__count3__`,0) AS `value2` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE NULL END)) AS `__count2__`,COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE NULL END)) AS `__count3__` FROM `m8_city` t1 WHERE t1.`name` LIKE ? GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT IFNULL(t2.`__count2__`,0) AS `value1`,IFNULL(t2.`__count3__`,0) AS `value2` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `__group_key1__`,COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE NULL END)) AS `__count2__`,COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE NULL END)) AS `__count3__` FROM `m8_city` t1 WHERE t1.`name` LIKE ? GROUP BY t1.`pid`) t2 ON t2.`__group_key1__` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%绍兴1%(String),1(Integer),%绍兴2%(String),1(Integer),%绍兴%(String),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -884,12 +884,12 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-            Assert.assertEquals("SELECT COUNT(*) FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,COUNT(?) AS `__count2__` FROM `m8_city` t1 WHERE t1.`name` IS NOT NULL AND t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') AND  t.`id` <= IFNULL(t2.`__count2__`,0)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT COUNT(*) FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `__group_key1__`,COUNT(?) AS `__count2__` FROM `m8_city` t1 WHERE t1.`name` IS NOT NULL AND t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`__group_key1__` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') AND  t.`id` <= IFNULL(t2.`__count2__`,0)", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1(Integer),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-            Assert.assertEquals("SELECT ( t.`id` <= IFNULL(t2.`__count2__`,0)) AS `value1` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,COUNT(?) AS `__count2__` FROM `m8_city` t1 WHERE t1.`name` IS NOT NULL AND t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') AND  t.`id` <= IFNULL(t2.`__count2__`,0) LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT ( t.`id` <= IFNULL(t2.`__count2__`,0)) AS `value1` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `__group_key1__`,COUNT(?) AS `__count2__` FROM `m8_city` t1 WHERE t1.`name` IS NOT NULL AND t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`__group_key1__` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') AND  t.`id` <= IFNULL(t2.`__count2__`,0) LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1(Integer),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
     }
@@ -924,12 +924,12 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-            Assert.assertEquals("SELECT COUNT(*) FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,COUNT(?) AS `__count2__` FROM `m8_city` t1 WHERE t1.`name` IS NOT NULL AND t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') AND  t.`id` <= IFNULL(t2.`__count2__`,0)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT COUNT(*) FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `__group_key1__`,COUNT(?) AS `__count2__` FROM `m8_city` t1 WHERE t1.`name` IS NOT NULL AND t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`__group_key1__` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') AND  t.`id` <= IFNULL(t2.`__count2__`,0)", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1(Integer),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-            Assert.assertEquals("SELECT t.`name` AS `value1` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,COUNT(?) AS `__count2__` FROM `m8_city` t1 WHERE t1.`name` IS NOT NULL AND t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') AND  t.`id` <= IFNULL(t2.`__count2__`,0) LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`name` AS `value1` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `__group_key1__`,COUNT(?) AS `__count2__` FROM `m8_city` t1 WHERE t1.`name` IS NOT NULL AND t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`__group_key1__` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') AND  t.`id` <= IFNULL(t2.`__count2__`,0) LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1(Integer),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
     }
@@ -969,7 +969,7 @@ public class MySQL8Test2 extends BaseTest {
         }
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-            Assert.assertEquals("SELECT ( t.`id` <= IFNULL(t2.`__count2__`,0)) AS `value1` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,COUNT(?) AS `__count2__` FROM `m8_city` t1 WHERE t1.`name` IS NOT NULL AND t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT ( t.`id` <= IFNULL(t2.`__count2__`,0)) AS `value1` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `__group_key1__`,COUNT(?) AS `__count2__` FROM `m8_city` t1 WHERE t1.`name` IS NOT NULL AND t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`__group_key1__` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1(Integer),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
     }
@@ -1011,12 +1011,12 @@ public class MySQL8Test2 extends BaseTest {
         Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-            Assert.assertEquals("SELECT COUNT(*) FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,COUNT((CASE WHEN t1.`name` IS NOT NULL THEN ? ELSE NULL END)) AS `__count2__`,COUNT((CASE WHEN t1.`name` IS NULL THEN ? ELSE NULL END)) AS `__count3__` FROM `m8_city` t1 WHERE t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') AND  t.`id` <= IFNULL(t2.`__count2__`,0) AND  t.`id` >= IFNULL(t2.`__count3__`,0)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT COUNT(*) FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `__group_key1__`,COUNT((CASE WHEN t1.`name` IS NOT NULL THEN ? ELSE NULL END)) AS `__count2__`,COUNT((CASE WHEN t1.`name` IS NULL THEN ? ELSE NULL END)) AS `__count3__` FROM `m8_city` t1 WHERE t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`__group_key1__` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') AND  t.`id` <= IFNULL(t2.`__count2__`,0) AND  t.`id` >= IFNULL(t2.`__count3__`,0)", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1(Integer),1(Integer),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
         {
             JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-            Assert.assertEquals("SELECT t.`name` AS `value1` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,COUNT((CASE WHEN t1.`name` IS NOT NULL THEN ? ELSE NULL END)) AS `__count2__`,COUNT((CASE WHEN t1.`name` IS NULL THEN ? ELSE NULL END)) AS `__count3__` FROM `m8_city` t1 WHERE t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') AND  t.`id` <= IFNULL(t2.`__count2__`,0) AND  t.`id` >= IFNULL(t2.`__count3__`,0) LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+            Assert.assertEquals("SELECT t.`name` AS `value1` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `__group_key1__`,COUNT((CASE WHEN t1.`name` IS NOT NULL THEN ? ELSE NULL END)) AS `__count2__`,COUNT((CASE WHEN t1.`name` IS NULL THEN ? ELSE NULL END)) AS `__count3__` FROM `m8_city` t1 WHERE t1.`id` IS NOT NULL GROUP BY t1.`pid`) t2 ON t2.`__group_key1__` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%') AND  t.`id` <= IFNULL(t2.`__count2__`,0) AND  t.`id` >= IFNULL(t2.`__count3__`,0) LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
             Assert.assertEquals("1(Integer),1(Integer),浙江(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
     }

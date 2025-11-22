@@ -16,6 +16,7 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
+import com.easy.query.core.proxy.columns.SQLManyQueryable;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.core.tuple.Tuple4;
@@ -44,6 +45,8 @@ import com.easy.query.test.entity.onrelation.OnRelationD;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.school.SchoolClass;
+import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
+import com.easy.query.test.entity.school.proxy.SchoolTeacherProxy;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
@@ -497,6 +500,17 @@ public class QueryTest26 extends BaseTest {
         List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
                 .include((c, s) -> {
                     c.query(s.schoolTeachers().flatElement().schoolClasses()).where(a -> a.name().like("123"));
+                    c.query(s.schoolStudents().flatElement().schoolClass()).where(x -> x.schoolStudents().flatElement().name().eq("123"));
+                    c.query(s.schoolStudents()).where(x -> x.name().eq("123"));
+                })
+                .toList();
+
+
+        List<SchoolClass> list2 = easyEntityQuery.queryable(SchoolClass.class)
+                .include((c, s) -> {
+                    SQLManyQueryable<SchoolTeacherProxy, SchoolClassProxy, SchoolClass> xa = s.schoolTeachers().flatElement().schoolClasses();
+                    c.query(xa).where(a -> a.name().like("123"));
+                    c.query(xa.flatElement().schoolStudents()).where(a -> a.name().like("123"));
                     c.query(s.schoolStudents().flatElement().schoolClass()).where(x -> x.schoolStudents().flatElement().name().eq("123"));
                     c.query(s.schoolStudents()).where(x -> x.name().eq("123"));
                 })

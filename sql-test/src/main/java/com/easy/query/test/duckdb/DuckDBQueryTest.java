@@ -422,7 +422,7 @@ public class DuckDBQueryTest  extends DuckDBBaseTest{
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.\"id\",t.\"name\",t.\"age\" FROM read_xlsx('./ducktest.xlsx',sheet='Sheet1') t LEFT JOIN (SELECT t1.\"uid\" AS \"uid\",(COUNT(?) > 0) AS \"__any2__\" FROM read_xlsx('./ducktest.xlsx',sheet='Sheet2') t1 WHERE t1.\"id\" = ? GROUP BY t1.\"uid\") t2 ON t2.\"uid\" = t.\"id\" WHERE COALESCE(t2.\"__any2__\",?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.\"id\",t.\"name\",t.\"age\" FROM read_xlsx('./ducktest.xlsx',sheet='Sheet1') t LEFT JOIN (SELECT t1.\"uid\" AS \"__group_key1__\",(COUNT(?) > 0) AS \"__any2__\" FROM read_xlsx('./ducktest.xlsx',sheet='Sheet2') t1 WHERE t1.\"id\" = ? GROUP BY t1.\"uid\") t2 ON t2.\"__group_key1__\" = t.\"id\" WHERE COALESCE(t2.\"__any2__\",?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(Integer),2(String),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 

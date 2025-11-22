@@ -271,7 +271,7 @@ public class QueryTest19 extends BaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN (SELECT t2.`user_id` AS `user_id`,(COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE NULL END)) <= 0) AS `__none2__`,(COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE NULL END)) > 0) AS `__any3__` FROM `t_role` t1 INNER JOIN `t_user_role` t2 ON t1.`id` = t2.`role_id` GROUP BY t2.`user_id`) t4 ON t4.`user_id` = t.`id` WHERE t.`name` = ? AND IFNULL(t4.`__none2__`,?) = ? AND IFNULL(t4.`__any3__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.`id`,t.`company_id`,t.`name`,t.`age`,t.`create_time` FROM `t_user` t LEFT JOIN (SELECT t2.`user_id` AS `__group_key1__`,(COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE NULL END)) <= 0) AS `__none2__`,(COUNT((CASE WHEN t1.`name` LIKE ? THEN ? ELSE NULL END)) > 0) AS `__any3__` FROM `t_role` t1 INNER JOIN `t_user_role` t2 ON t1.`id` = t2.`role_id` GROUP BY t2.`user_id`) t4 ON t4.`__group_key1__` = t.`id` WHERE t.`name` = ? AND IFNULL(t4.`__none2__`,?) = ? AND IFNULL(t4.`__any3__`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("%管理员%(String),1(Integer),%普通员工%(String),1(Integer),小明(String),true(Boolean),true(Boolean),false(Boolean),true(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }

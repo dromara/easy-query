@@ -116,6 +116,11 @@ public class EasySQLExpressionUtil {
     private EasySQLExpressionUtil() {
     }
 
+    public static OrderBySQLBuilderSegment appendPartitionByOrderSegment(ClientQueryable<?> queryable, EndNavigateParams endNavigateParams){
+        OrderBySQLBuilderSegmentImpl orderBySQLBuilderSegment = new OrderBySQLBuilderSegmentImpl();
+        appendPartitionByOrderSegment(queryable, endNavigateParams, orderBySQLBuilderSegment);
+        return orderBySQLBuilderSegment;
+    }
     /**
      * 添加partition by 的order by 片段
      * @param queryable
