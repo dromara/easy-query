@@ -598,6 +598,10 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
             String typeString = defTypeString(isDeclared, includeProperty, type);
             if (typeString.contains("<") && typeString.contains(">")) {
+
+                if (type.getKind() == TypeKind.DECLARED) {
+                    return toTypeString(type);
+                }
                 String trim = type.toString().trim();
                 if (type.getAnnotationMirrors().size() > 0) {
                     if (trim.lastIndexOf(") ::") > -1) {
@@ -606,6 +610,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                         for (AnnotationMirror annotationMirror : type.getAnnotationMirrors()) {
                             trim = trim.replace(annotationMirror.toString(), "").trim();
                         }
+                        trim = cleanType(trim);
                     }
                 }
                 return trim;
@@ -613,6 +618,35 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
 
             return TYPE_MAPPING.getOrDefault(typeString, typeString);
         }
+    }
+
+    public static String toTypeString(TypeMirror typeMirror) {
+        return toTypeString(typeMirror, false);
+    }
+
+    private static String toTypeString(TypeMirror typeMirror, boolean inGeneric) {
+        DeclaredType declaredType = (DeclaredType) typeMirror;
+        TypeElement typeElement = (TypeElement) declaredType.asElement();
+        StringBuilder sb = new StringBuilder(typeElement.getQualifiedName());
+
+        // 泛型参数
+        List<? extends TypeMirror> typeArgs = declaredType.getTypeArguments();
+        if (!typeArgs.isEmpty()) {
+            sb.append("<");
+            for (int i = 0; i < typeArgs.size(); i++) {
+                if (i > 0) sb.append(", ");
+                sb.append(toTypeString(typeArgs.get(i), true));
+            }
+            sb.append(">");
+        }
+        return sb.toString();
+    }
+    private String cleanType(String s) {
+        // 去掉注解后若出现开头多个逗号，只清除开头的，不动泛型里的
+        while (s.trim().startsWith(",")) {
+            s = s.replaceFirst("^\\s*,\\s*", "");
+        }
+        return s.trim();
     }
 
     private String defTypeString(boolean isDeclared, boolean includeProperty, TypeMirror type) {
