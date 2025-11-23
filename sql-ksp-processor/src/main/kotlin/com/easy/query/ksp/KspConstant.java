@@ -106,6 +106,7 @@ public class KspConstant {
                     "    * 数据库列的简单获取\n" +
                     "    * @return\n" +
                     "    */\n" +
+                    "    @kotlin.jvm.JvmField"+
                     "    val FETCHER = @{selectorName}(this,null,SQLSelectAsExpression.empty)\n" +
                     "\n" +
                     "    class @{selectorName}(proxy: @{entityClassProxy}, prev: @{selectorName}?, sqlSelectAsExpression: SQLSelectAsExpression) : AbstractFetcher<@{entityClassProxy},@{entityClass}, @{selectorName}>(proxy, prev, sqlSelectAsExpression) {\n" +
