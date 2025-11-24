@@ -1,5 +1,6 @@
 package com.easy.query.pgsql.migration;
 
+import com.easy.query.core.basic.api.database.Credentials;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -25,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +38,15 @@ import java.util.stream.Collectors;
 public class PgSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationProvider {
     public PgSQLDatabaseMigrationProvider(DataSource dataSource, SQLKeyword sqlKeyword, MigrationEntityParser migrationEntityParser) {
         super(dataSource, sqlKeyword, migrationEntityParser);
+    }
+
+    @Override
+    protected Credentials getCredentials(Function<DataSource, Credentials> jdbcCredentialsByDataSourceFunction) {
+        Credentials credentials = super.getCredentials(jdbcCredentialsByDataSourceFunction);
+        if (jdbcCredentialsByDataSourceFunction == null) {
+            return new Credentials(credentials.jdbcUrl, credentials.username, credentials.password, credentials.serverUrl + "postgres", credentials.databaseName);
+        }
+        return credentials;
     }
 
     @Override

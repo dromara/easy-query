@@ -142,20 +142,6 @@ public class MigrationTest extends BaseTest {
         Assert.assertNotNull(ex);
     }
 
-    @Test
-    public void test2(){
-//        DriverManager.getConnection()
-        String jdbcUrl = EasyDatabaseUtil.getJdbcUrlByReflection(dataSource);
-        System.out.println(jdbcUrl);
-        String databaseName = EasyDatabaseUtil.getDatabaseName(dataSource,null);
-        System.out.println(databaseName);
-        String s = EasyDatabaseUtil.parseDatabaseName(jdbcUrl);
-        System.out.println(s);
-        String serverBaseUrl = EasyDatabaseUtil.getServerBaseUrl(jdbcUrl);
-        System.out.println(serverBaseUrl);
-        String serverBaseUrl1 = EasyDatabaseUtil.getServerBaseUrl("jdbc:sqlserver://localhost:1433;databaseName=mydb;encrypt=true");
-        System.out.println(serverBaseUrl1);
-    }
 
 
     @SneakyThrows

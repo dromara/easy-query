@@ -74,12 +74,22 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
 
     @Override
     public void createDatabaseIfNotExists(Function<DataSource, Credentials> jdbcCredentialsByDataSourceFunction) {
-        EasyDatabaseUtil.checkAndCreateDatabase(dataSource, (databaseName) -> {
-            this.databaseName = databaseName;
-            return databaseExistSQL(databaseName);
-        }, databaseName -> {
-            return createDatabaseSQL(databaseName);
-        },jdbcCredentialsByDataSourceFunction);
+        Credentials credentials = getCredentials(jdbcCredentialsByDataSourceFunction);
+        this.databaseName = credentials.databaseName;
+        String checkDbSQL = databaseExistSQL(databaseName);
+        String createDbSQL = createDatabaseSQL(databaseName);
+
+        EasyDatabaseUtil.checkAndCreateDatabase(dataSource,credentials,checkDbSQL,createDbSQL);
+    }
+    protected Credentials getCredentials(Function<DataSource, Credentials> jdbcCredentialsByDataSourceFunction){
+        // 1. 反射获取 DataSource 的 JDBC URL、用户名、密码
+        Function<DataSource, Credentials> getJdbcCredentials = ds -> {
+            if (jdbcCredentialsByDataSourceFunction != null) {
+                return jdbcCredentialsByDataSourceFunction.apply(ds);
+            }
+            return EasyDatabaseUtil.getCredentialsByReflection(ds);
+        };
+        return getJdbcCredentials.apply(dataSource);
     }
 
     //    @Override
