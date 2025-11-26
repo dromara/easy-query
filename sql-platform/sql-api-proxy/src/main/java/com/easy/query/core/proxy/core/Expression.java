@@ -82,6 +82,9 @@ public class Expression {
     public static Expression of(EntitySQLContextAvailable entitySQLContextAvailable) {
         return new Expression(entitySQLContextAvailable.getEntitySQLContext());
     }
+    public EntitySQLContext getEntitySQLContext() {
+        return entitySQLContext;
+    }
 
     public SQLSelectAsExpression createSelectColumnExpression(String... properties) {
         EntityTableExpressionBuilder fromTableExpressionBuilder = entitySQLContext.getEntityExpressionBuilder().getFromTable();
