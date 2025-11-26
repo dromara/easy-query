@@ -554,6 +554,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public List<T1> toTreeList(boolean ignore) {
 
         List<T1> list = this.toList(this.queryClass());
+        if(EasyCollectionUtil.isEmpty(list)){
+            return list;
+        }
 
         MergeTuple2<NavigateMetadata, String> treeNavigateMetadataTuple2 = getTreeNavigateMetadata(entityMetadata);
         NavigateMetadata treeNavigateMetadata = treeNavigateMetadataTuple2.t1;
