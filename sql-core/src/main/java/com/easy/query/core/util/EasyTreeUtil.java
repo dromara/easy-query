@@ -166,7 +166,7 @@ public class EasyTreeUtil {
         if (EasyCollectionUtil.isEmpty(deepItems)) {
             String propertyNameOrNull = entityMetadata.getPropertyNameOrNull(treeCTEOption.getDeepColumnName());
             if (propertyNameOrNull == null) {
-                throw new EasyQueryInvalidOperationException("Unable to obtain depth information, so the corresponding tree structure cannot be constructed. deep column:[" + treeCTEOption.getDeepColumnName() + "]");
+                throw new EasyQueryInvalidOperationException("Unable to obtain depth information, so the corresponding tree structure cannot be constructed. deep column:[" + treeCTEOption.getDeepColumnName() + "], plz [op.setDeepInCustomSelect(true)] in [asTreeCTE]");
             }
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyNameOrNull);
             return new PropertyTreeDeepItemAvailable(columnMetadata);
