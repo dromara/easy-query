@@ -41,4 +41,13 @@ public interface TreeCTEConfigurer {
     void setDeepColumnName(String deepColumnName);
 
     void setChildFilter(SQLActionExpression1<WherePredicate<?>> whereExpression);
+
+
+    boolean isDeepInCustomSelect();
+
+    /**
+     * 是否自动将深度信息也查询出来如果使用手动select的时候
+     * @param deepInCustomSelect
+     */
+    void setDeepInCustomSelect(boolean deepInCustomSelect);
 }

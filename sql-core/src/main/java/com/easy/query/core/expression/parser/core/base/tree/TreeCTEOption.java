@@ -14,6 +14,10 @@ public class TreeCTEOption {
     private int limitDeep = -1;
     private boolean up = false;
     private boolean unionAll = true;
+    /**
+     * 当使用手动select的时候是否将深度信息也查询出来
+     */
+    private boolean deepInCustomSelect = false;
     private String cteTableName = "as_tree_cte";
     private String deepColumnName = "cte_deep";
     private SQLActionExpression1<WherePredicate<?>> whereExpression;
@@ -68,5 +72,13 @@ public class TreeCTEOption {
 
     public SQLUnionEnum sqlUnion() {
         return unionAll ? SQLUnionEnum.UNION_ALL : SQLUnionEnum.UNION;
+    }
+
+    public boolean isDeepInCustomSelect() {
+        return deepInCustomSelect;
+    }
+
+    public void setDeepInCustomSelect(boolean deepInCustomSelect) {
+        this.deepInCustomSelect = deepInCustomSelect;
     }
 }

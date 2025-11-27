@@ -52,4 +52,14 @@ public class EntityTreeCTEConfigurerImpl<T1Proxy extends ProxyEntity<T1Proxy, T1
             });
         });
     }
+
+    @Override
+    public boolean isDeepInCustomSelect() {
+        return treeCTEConfigurer.isDeepInCustomSelect();
+    }
+
+    @Override
+    public void setDeepInCustomSelect(boolean deepInCustomSelect) {
+        treeCTEConfigurer.setDeepInCustomSelect(deepInCustomSelect);
+    }
 }

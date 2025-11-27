@@ -45,4 +45,14 @@ public class TreeCTEConfigurerImpl implements TreeCTEConfigurer {
     public void setChildFilter(SQLActionExpression1<WherePredicate<?>> whereExpression) {
         treeCTEOption.setChildFilter(whereExpression);
     }
+
+    @Override
+    public boolean isDeepInCustomSelect() {
+        return treeCTEOption.isDeepInCustomSelect();
+    }
+
+    @Override
+    public void setDeepInCustomSelect(boolean deepInCustomSelect) {
+        treeCTEOption.setDeepInCustomSelect(deepInCustomSelect);
+    }
 }

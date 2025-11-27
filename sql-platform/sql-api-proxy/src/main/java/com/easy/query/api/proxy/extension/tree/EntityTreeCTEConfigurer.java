@@ -41,4 +41,13 @@ public interface EntityTreeCTEConfigurer<T1Proxy extends ProxyEntity<T1Proxy, T1
     void setDeepColumnName(String deepColumnName);
 
     void setChildFilter(SQLActionExpression1<T1Proxy> whereExpression);
+
+
+    boolean isDeepInCustomSelect();
+
+    /**
+     * 是否自动将深度信息也查询出来如果使用手动select的时候
+     * @param deepInCustomSelect
+     */
+    void setDeepInCustomSelect(boolean deepInCustomSelect);
 }

@@ -476,7 +476,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 log.info("<== Total: " + total);
                 JdbcExecutorListener jdbcExecutorListener = runtimeContext.getJdbcExecutorListener();
                 if (jdbcExecutorListener.enable()) {
-                    jdbcExecutorListener.onQueryRows(jdbcStreamResult.getExecutorContext().getJdbcListenerTraceId(),total);
+                    jdbcExecutorListener.onQueryRows(jdbcStreamResult.getExecutorContext().getJdbcListenerTraceId(), total);
                 }
             }
 
@@ -536,9 +536,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public <T> T toResultSet(SQLResultSetFunc<ResultSetContext, T> produce) {
         setExecuteMethod(ExecuteMethodEnum.RESULT_SET, true);
         EntityMetadata resultEntityMetadata = entityQueryExpressionBuilder.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(queryClass());
-        JdbcResultWrap<?> jdbcResultWrap = toInternalStreamByExpression(entityQueryExpressionBuilder,resultEntityMetadata, false, null);
+        JdbcResultWrap<?> jdbcResultWrap = toInternalStreamByExpression(entityQueryExpressionBuilder, resultEntityMetadata, false, null);
 
-        try(JdbcStreamResult<?> jdbcStreamResult = jdbcResultWrap.getJdbcResult().getJdbcStreamResult()) {
+        try (JdbcStreamResult<?> jdbcStreamResult = jdbcResultWrap.getJdbcResult().getJdbcStreamResult()) {
             StreamIterable<?> streamIterable = jdbcStreamResult.getStreamIterable();
             ResultSetContext resultSetContext = streamIterable.getResultSetContext();
             T result = produce.apply(resultSetContext);
@@ -554,7 +554,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public List<T1> toTreeList(boolean ignore) {
 
         List<T1> list = this.toList(this.queryClass());
-        if(EasyCollectionUtil.isEmpty(list)){
+        if (EasyCollectionUtil.isEmpty(list)) {
             return list;
         }
 
@@ -906,6 +906,19 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         } else {
             processorIncludeRelationProperty(sqlColumnSelector.getSQLNative(), sqlColumnSelector.getTable());
         }
+
+        // 是否是cte
+        TreeCTEOption treeCTEOption = entityQueryExpressionBuilder.getExpressionContext().getTreeCTEOption();
+        if (treeCTEOption != null && treeCTEOption.isDeepInCustomSelect()) {
+
+            EntityTableExpressionBuilder fromTable = entityQueryExpressionBuilder.getFromTable();
+            EntityMetadata fromTableEntityMetadata = fromTable.getEntityMetadata();
+            //对象没有深度字段
+            String propertyNameOrNull = fromTableEntityMetadata.getPropertyNameOrNull(treeCTEOption.getDeepColumnName());
+            if (propertyNameOrNull == null) {
+                sqlColumnSelector.sqlNativeSegment("{0}", c -> c.columnName(treeCTEOption.getDeepColumnName()));
+            }
+        }
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable(resultClass, entityMetadata, entityQueryExpressionBuilder);
     }
 
@@ -1047,9 +1060,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
         if (resultEntityMetadata.getTableName() != null) {
             EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
-            if (easyQueryOption.getSelectAutoIncludeTable()== SelectAutoIncludeTableEnum.THROW){
+            if (easyQueryOption.getSelectAutoIncludeTable() == SelectAutoIncludeTableEnum.THROW) {
                 throw new EasyQueryInvalidOperationException("selectAutoInclude should not use database entity objects as return results :[{" + EasyClassUtil.getSimpleName(resultEntityMetadata.getEntityClass()) + "}] ");
-            }else if(easyQueryOption.getSelectAutoIncludeTable()== SelectAutoIncludeTableEnum.WARNING){
+            } else if (easyQueryOption.getSelectAutoIncludeTable() == SelectAutoIncludeTableEnum.WARNING) {
                 log.warn("selectAutoInclude should not use database entity objects as return results :[{" + EasyClassUtil.getSimpleName(resultEntityMetadata.getEntityClass()) + "}] ");
             }
         }
@@ -1075,7 +1088,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //                        ClientQueryable<Object> with = t.with(navigatePropName);
                         EntityMetadata entityEntityMetadata = entityMetadataManager.getEntityMetadata(entityNavigateMetadata.getNavigatePropertyType());
                         EntityMetadata navigateEntityMetadata = entityMetadataManager.getEntityMetadata(resultNavigateMetadata.getNavigatePropertyType());
-                        ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(t.with(resultNavigateMetadata.getPropertyName()),new EndNavigateParams(entityNavigateMetadata,resultNavigateMetadata),t.getIncludeNavigateParams(), navigateEntityMetadata, configureArgument, runtimeContext);
+                        ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(t.with(resultNavigateMetadata.getPropertyName()), new EndNavigateParams(entityNavigateMetadata, resultNavigateMetadata), t.getIncludeNavigateParams(), navigateEntityMetadata, configureArgument, runtimeContext);
 
                         IncludeNavigateExpression includeNavigateExpression = expressionContext.getIncludes().get(entityNavigateMetadata);
                         if (includeNavigateExpression != null) {
@@ -1181,7 +1194,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                             flatClassTypeEntityMetadata = entityMetadataManager.getEntityMetadata(flatClassType);
                         }
 
-                        ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(propertyQueryable, new EndNavigateParams(entityNavigateMetadata),t.getIncludeNavigateParams(), flatClassTypeEntityMetadata, configureArgument, runtimeContext);
+                        ClientQueryable<Object> with = EasyNavigateUtil.navigateOrderBy(propertyQueryable, new EndNavigateParams(entityNavigateMetadata), t.getIncludeNavigateParams(), flatClassTypeEntityMetadata, configureArgument, runtimeContext);
 
                         IncludeNavigateExpression includeNavigateExpression = expressionContext.getIncludes().get(entityNavigateMetadata);
                         if (includeNavigateExpression != null) {
@@ -1570,6 +1583,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         ClientQueryable2<T1, T2> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable2(t1Class, selectAllTQueryable, MultiTableTypeEnum.INNER_JOIN, entityQueryExpressionBuilder);
         return EasySQLExpressionUtil.executeJoinOn(queryable, on);
     }
+
     @Override
     public <T2> ClientQueryable2<T1, T2> crossJoin(Class<T2> joinClass, SQLActionExpression2<WherePredicate<T1>, WherePredicate<T2>> on) {
         ClientQueryable2<T1, T2> queryable = entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable2(t1Class, joinClass, MultiTableTypeEnum.CROSS_JOIN, entityQueryExpressionBuilder);
