@@ -16,6 +16,7 @@ import com.easy.query.core.enums.MultiTableTypeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.parser.core.EntitySQLTableOwner;
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnAsSelector;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.scec.expression.FormatValueParamExpressionImpl;
@@ -488,7 +489,7 @@ public class QueryTest15 extends BaseTest {
     }
 
     @Test
-    public void testxxx() {
+    public void tes123txxx() {
         {
             String format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
             List<Topic> list = easyEntityQuery.queryable(Topic.class)
@@ -497,6 +498,22 @@ public class QueryTest15 extends BaseTest {
                                 t.expression().constant(format).toDateTime(LocalDateTime.class).plus(1, TimeUnitEnum.DAYS)
                         );
                     }).toList();
+        }
+    }
+    @Test
+    public void testxxx() {
+        {
+            MapQueryable tableQueryable = easyEntityQuery.getEasyQueryClient().mapQueryable().asTable("table1");
+            List<Map<String, Object>> list = tableQueryable.join(MultiTableTypeEnum.INNER_JOIN, on -> {
+
+                        EntitySQLTableOwner<?> table2 = on.getTableOwner(1);
+
+                        WherePredicate<?> wherePredicate = on.getWherePredicate(0);
+                        wherePredicate.eq(table2, "id1", "id2");
+
+                    }).asTable("table2")
+                    .toList();
+
         }
     }
 

@@ -12,6 +12,7 @@ import com.easy.query.core.func.column.ColumnFuncValueExpression;
 import com.easy.query.core.func.column.ColumnFunctionExpression;
 import com.easy.query.core.func.column.ColumnLazyFunctionExpression;
 import com.easy.query.core.func.column.ColumnMultiValueExpression;
+import com.easy.query.core.func.column.ColumnNameExpression;
 import com.easy.query.core.func.column.ColumnPropertyExpression;
 import com.easy.query.core.func.column.ColumnSubQueryExpression;
 import com.easy.query.core.util.EasyClassUtil;
@@ -51,6 +52,12 @@ public abstract class AbstractExpressionSQLFunction extends AbstractSQLFunction 
             } else {
                 context.expression(tableOrNull, concatColumnExpression.getProperty());
             }
+        }else if (columnExpression instanceof ColumnNameExpression) {
+            ColumnNameExpression columnNameExpression = (ColumnNameExpression) columnExpression;
+            TableAvailable table = columnNameExpression.getTableNotNull();
+            String columnName = columnNameExpression.getColumnName();
+
+            context.columnName(table, columnName);
         }else if (columnExpression instanceof ColumnFuncValueExpression) {
             ColumnFuncValueExpression concatValueExpression = (ColumnFuncValueExpression) columnExpression;
             context.value(concatValueExpression.getValue());

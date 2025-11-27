@@ -15,6 +15,7 @@ import com.easy.query.core.func.column.impl.ColumnFuncValueExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnFunctionExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnLazyFunctionExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnMultiValueExpressionImpl;
+import com.easy.query.core.func.column.impl.ColumnNameExpressionImpl;
 import com.easy.query.core.func.column.impl.ColumnSubQueryExpressionImpl;
 import com.easy.query.core.util.EasySQLSegmentUtil;
 
@@ -45,6 +46,12 @@ public class ColumnFuncSelectorImpl implements ColumnFuncSelector {
     @Override
     public ColumnFuncSelector column(String property) {
         concatExpressions.add(new ColumnFuncExpressionImpl(null,property));
+        return this;
+    }
+
+    @Override
+    public ColumnFuncSelector columnName(TableAvailable table, String columnName) {
+        concatExpressions.add(new ColumnNameExpressionImpl(table,columnName));
         return this;
     }
 

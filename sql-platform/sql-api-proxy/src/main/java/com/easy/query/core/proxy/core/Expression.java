@@ -34,6 +34,7 @@ import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
+import com.easy.query.core.proxy.columns.types.impl.SQLAnyTypeColumnImpl;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelector;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelectorImpl;
 import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
@@ -141,6 +142,8 @@ public class Expression {
      *
      * }
      * </blockquote></pre>
+     *
+     * 如果您的参数是ColumnName又希望可以添加关键字处理可以使用new ColumnParameter(table,columnName)作为参数
      *
      * @param sqlTemplate sql模板参数使用{0}...{n}
      * @param parameters  模板参数

@@ -905,7 +905,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             selectAllExpression.apply(sqlColumnSelector);
         } else {
             processorIncludeRelationProperty(sqlColumnSelector.getSQLNative(), sqlColumnSelector.getTable());
-
         }
         return entityQueryExpressionBuilder.getRuntimeContext().getSQLClientApiFactory().createQueryable(resultClass, entityMetadata, entityQueryExpressionBuilder);
     }

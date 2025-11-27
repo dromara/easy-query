@@ -19,6 +19,7 @@ import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.core.Expression;
+import com.easy.query.core.proxy.func.column.ColumnParameter;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 import com.easy.query.core.util.EasyParamExpressionUtil;
 import org.jetbrains.annotations.NotNull;
@@ -60,6 +61,9 @@ public class EasyProxyParamExpressionUtil {
             SQLFunc fx = dslsqlFunctionAvailable.getEntitySQLContext().getRuntimeContext().fx();
             SQLFunction sqlFunction = dslsqlFunctionAvailable.func().apply(fx);
             columnFuncSelector.sqlFunc(dslsqlFunctionAvailable.getTable(), sqlFunction);
+        } else if (value instanceof ColumnParameter) {
+            ColumnParameter sqlColumn = (ColumnParameter) value;
+            columnFuncSelector.columnName(sqlColumn.getTableOwner().getTable(),sqlColumn.getColumnName());
         } else if (value instanceof SQLColumn) {
             SQLColumn<?, ?> sqlColumn = (SQLColumn<?, ?>) value;
             columnFuncSelector.column(sqlColumn);

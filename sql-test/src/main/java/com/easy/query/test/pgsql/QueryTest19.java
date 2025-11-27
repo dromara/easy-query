@@ -1,5 +1,6 @@
 package com.easy.query.test.pgsql;
 
+import com.easy.query.api.proxy.base.ClassProxy;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
@@ -10,6 +11,7 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
+import com.easy.query.core.proxy.func.column.ColumnParameter;
 import com.easy.query.core.proxy.grouping.Grouping1;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
@@ -21,6 +23,7 @@ import com.easy.query.test.entity.MyCategory;
 import com.easy.query.test.entity.UUIDEntity;
 import com.easy.query.test.entity.vo.MyCategoryVO2;
 import com.easy.query.test.entity.vo.MyCategoryVO3;
+import com.easy.query.test.entity.vo.MyCategoryVO4;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.view.TreeC;
@@ -61,6 +64,32 @@ public class QueryTest19 extends PgSQLBaseTest {
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("WITH RECURSIVE \"as_tree_cte\" AS ( (SELECT 0 AS \"deep1\",t1.\"id\",t1.\"parent_id\",t1.\"name\" FROM \"category\" t1 WHERE t1.\"id\" = ?)  UNION ALL  (SELECT t2.\"deep1\" + 1 AS \"deep1\",t3.\"id\",t3.\"parent_id\",t3.\"name\" FROM \"as_tree_cte\" t2 INNER JOIN \"category\" t3 ON t3.\"parent_id\" = t2.\"id\") ) SELECT t.\"id\",t.\"parent_id\",t.\"name\",t.\"deep1\" FROM \"as_tree_cte\" t", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void tree7_1() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<MyCategoryVO4> list = entityQuery.queryable(MyCategory.class)
+                .where(m -> {
+                    m.id().eq("1");
+                })
+                .asTreeCTE(op -> {
+                    op.setDeepColumnName("deep1");
+                })
+                .leftJoin(MyCategory.class, (m, b2) -> m.id().eq(b2.id()))
+                .select(MyCategoryVO4.class,(m1, m2) -> Select.of(
+                        m1.FETCHER.allFields(),
+                        m2.name().as("joinName"),
+                        m1.expression().rawSQLStatement("{0}",new ColumnParameter(m1,"deep1")).as("deep1")
+                )).toTreeList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("WITH RECURSIVE \"as_tree_cte\" AS ( (SELECT 0 AS \"deep1\",t1.\"id\",t1.\"parent_id\",t1.\"name\" FROM \"category\" t1 WHERE t1.\"id\" = ?)  UNION ALL  (SELECT t2.\"deep1\" + 1 AS \"deep1\",t3.\"id\",t3.\"parent_id\",t3.\"name\" FROM \"as_tree_cte\" t2 INNER JOIN \"category\" t3 ON t3.\"parent_id\" = t2.\"id\") ) SELECT t.\"id\",t.\"parent_id\",t.\"name\",t6.\"name\" AS \"join_name\",t.\"deep1\" AS \"deep1\" FROM \"as_tree_cte\" t LEFT JOIN \"category\" t6 ON t.\"id\" = t6.\"id\"", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }

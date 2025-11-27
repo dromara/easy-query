@@ -22,6 +22,7 @@ public interface ColumnFuncSelector {
     ColumnFuncSelector expression(PredicateSegment sqlSegment);
 
     ColumnFuncSelector column(String property);
+    ColumnFuncSelector columnName(TableAvailable table,String columnName);
 
     /**
      * 使用{@link ColumnFuncSelector#column(TableAvailable, String)}
