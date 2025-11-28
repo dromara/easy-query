@@ -500,22 +500,35 @@ public class QueryTest15 extends BaseTest {
                     }).toList();
         }
     }
-//    @Test
-//    public void testxxx() {
-//        {
-//            MapQueryable tableQueryable = easyEntityQuery.getEasyQueryClient().mapQueryable().asTable("table1");
-//            List<Map<String, Object>> list = tableQueryable.join(MultiTableTypeEnum.INNER_JOIN, on -> {
-//
-//                        EntitySQLTableOwner<?> table2 = on.getTableOwner(1);
-//
-//                        WherePredicate<?> wherePredicate = on.getWherePredicate(0);
-//                        wherePredicate.eq(table2, "id1", "id2");
-//
-//                    }).asTable("table2")
-//                    .toList();
-//
-//        }
-//    }
+    @Test
+    public void testxxx() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+            MapQueryable tableQueryable = easyEntityQuery.getEasyQueryClient().mapQueryable().asTable("table1");
+            List<Map<String, Object>> list = tableQueryable.join(MultiTableTypeEnum.INNER_JOIN, on -> {
+
+                        EntitySQLTableOwner<?> table2 = on.getTableOwner(1);
+
+                        WherePredicate<?> wherePredicate = on.getWherePredicate(0);
+                        wherePredicate.eq(table2, "id1", "id2");
+
+                    }).asTable("table2")
+                    .toList();
+        }catch (Exception ex){
+
+        }
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT * FROM `table1` t INNER JOIN `table2` t1 ON t.`id1` = t1.`id2`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("false(Boolean),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+        listenerContextManager.clear();
+    }
 
     @Test
     public void testCaseWhenLazy() {

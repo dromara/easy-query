@@ -72,7 +72,7 @@ public class DefaultMapQueryable implements MapQueryable {
     @Override
     public MapQueryable join(MultiTableTypeEnum joinTable, SQLActionExpression1<MapFilter> on) {
         EntityMetadata entityMetadata = runtimeContext.getEntityMetadataManager().getEntityMetadata(Map.class);
-        EntityTableExpressionBuilder sqlTable = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, MultiTableTypeEnum.LEFT_JOIN, expressionContext);
+        EntityTableExpressionBuilder sqlTable = runtimeContext.getExpressionBuilderFactory().createEntityTableExpressionBuilder(entityMetadata, joinTable, expressionContext);
         queryable.getSQLEntityExpressionBuilder().addSQLEntityTableExpression(sqlTable);
         on.apply(new MapOnFilterImpl(this.queryable));
         return this;
