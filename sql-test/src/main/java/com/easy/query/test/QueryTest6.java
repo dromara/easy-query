@@ -1,6 +1,5 @@
 package com.easy.query.test;
 
-import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.test.dto.TopicRequest;

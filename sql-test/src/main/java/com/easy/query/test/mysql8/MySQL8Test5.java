@@ -1,33 +1,19 @@
 package com.easy.query.test.mysql8;
 
-import com.easy.query.api.proxy.base.ClassProxy;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.proxy.core.draft.Draft2;
-import com.easy.query.core.proxy.core.draft.Draft6;
-import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.M8User;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
-import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
-import com.easy.query.test.mysql8.entity.bank.proxy.SysBankCardProxy;
-import com.easy.query.test.mysql8.vo.UserDTO2;
-import com.easy.query.test.mysql8.vo.proxy.UserDTO2Proxy;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.sql.ResultSet;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * create time 2025/10/19 22:28

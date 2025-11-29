@@ -13,21 +13,15 @@ import com.easy.query.api.proxy.base.ShortProxy;
 import com.easy.query.api.proxy.base.TimeProxy;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.entity.Topic;
 import com.easy.query.test.h2.domain.ALLTYPE;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.UUID;
 
 /**
  * create time 2024/12/31 15:02

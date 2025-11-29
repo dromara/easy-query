@@ -9,7 +9,6 @@ import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationContext;
 import com.easy.query.core.migration.MigrationsSQLGenerator;
 import com.easy.query.core.migration.data.TableMigrationData;
-import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.common.MD5Util;
 import com.easy.query.test.entity.BlogEntity;

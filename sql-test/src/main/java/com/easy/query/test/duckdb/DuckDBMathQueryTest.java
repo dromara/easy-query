@@ -7,7 +7,6 @@ import com.easy.query.test.entity.MathTest;
 import com.easy.query.test.entity.MathTestDTO;
 import com.easy.query.test.entity.proxy.MathTestDTOProxy;
 import com.easy.query.test.listener.ListenerContext;
-import com.easy.query.test.mssql.MsSQLBaseTest;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -10,6 +10,7 @@ import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.columns.SQLAnyColumn;
+import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
 import com.easy.query.core.proxy.columns.types.impl.SQLAnyTypeColumnImpl;
 import com.easy.query.core.proxy.impl.SQLColumnSetPropColumnImpl;
 import com.easy.query.core.proxy.impl.SQLColumnSetValueImpl;
@@ -66,12 +67,12 @@ public class MapProxy extends AbstractProxyEntity<MapProxy, Map<String, Object>>
         return this;
     }
 
-    public SQLAnyColumn<MapProxy, Object> get(String key) {
-        return getAnyColumn(key, Object.class);
+    public SQLAnyTypeColumn<MapProxy, Object> get(String key) {
+        return getAnyTypeColumn(key, Object.class);
     }
 
-    public <TProperty> SQLAnyColumn<MapProxy, TProperty> get(String key, Class<TProperty> propType) {
-        return getAnyColumn(key, propType);
+    public <TProperty> SQLAnyTypeColumn<MapProxy, TProperty> get(String key, Class<TProperty> propType) {
+        return getAnyTypeColumn(key, propType);
     }
 
     public <TRProxy extends ProxyEntity<TRProxy, TREntity>, TREntity> MapProxy selectAll(TRProxy proxy, MapKeyModeEnum mapKeyMode) {

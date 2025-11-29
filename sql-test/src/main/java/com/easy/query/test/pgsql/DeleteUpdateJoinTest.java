@@ -1,19 +1,11 @@
 package com.easy.query.test.pgsql;
 
-import com.easy.query.core.basic.api.database.CodeFirstCommand;
-import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.doc.entity.DocBank;
 import com.easy.query.test.doc.entity.DocBankCard;
-import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * create time 2025/2/22 23:43

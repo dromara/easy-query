@@ -1,5 +1,7 @@
 package com.easy.query.api.proxy.client;
 
+import com.easy.query.api.proxy.base.ClassProxy;
+import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.entity.EntityQueryProxyManager;
 import com.easy.query.api.proxy.entity.delete.EntityDeletable;
 import com.easy.query.api.proxy.entity.delete.ExpressionDeletable;
@@ -14,7 +16,6 @@ import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.expression.parser.core.PropColumn;
-import com.easy.query.core.expression.sql.include.RelationValue;
 import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.proxy.DbSet;
 import com.easy.query.core.proxy.ProxyEntity;
@@ -22,13 +23,12 @@ import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.core.trigger.TriggerEvent;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * create time 2025/7/24 16:08
@@ -39,6 +39,17 @@ import java.util.function.Function;
 public interface BaseEntityClient extends EasyBaseQuery {
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityQueryable<TProxy, T> queryable(Class<T> entityClass);
 
+    default EntityQueryable<MapProxy, Map<String, Object>> mapQueryable(String tableName){
+        return queryable(new MapProxy()).asTable(tableName);
+    }
+
+    /**
+     * ClassProxy.of(AnyClass.class)
+     * @param tProxy
+     * @return
+     * @param <TProxy>
+     * @param <T>
+     */
     <TProxy extends ProxyEntity<TProxy, T>, T> EntityQueryable<TProxy, T> queryable(TProxy tProxy);
 
     <TProxy extends ProxyEntity<TProxy, T>, T extends ProxyEntityAvailable<T, TProxy>> EntityQueryable<TProxy, T> queryable(String sql, Class<T> entityClass);

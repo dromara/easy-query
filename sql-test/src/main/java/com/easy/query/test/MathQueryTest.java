@@ -6,7 +6,6 @@ import com.easy.query.core.proxy.SQLMathExpression;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.MathTest;
 import com.easy.query.test.entity.MathTestDTO;
-import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.proxy.MathTestDTOProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;

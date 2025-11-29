@@ -15,7 +15,6 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.router.manager.TableRouteManager;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
-import com.easy.query.h2.config.H2SQLKeyword;
 import com.easy.query.test.h2.domain.ALLTYPE;
 import com.easy.query.test.h2.domain.DefTable;
 import com.easy.query.test.h2.domain.DefTableLeft1;

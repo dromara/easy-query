@@ -2,7 +2,6 @@ package com.easy.query.test.pgsql;
 
 import ch.obermuhlner.math.big.BigDecimalMath;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.proxy.SQLMathExpression;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.MathTest;
 import com.easy.query.test.entity.MathTestDTO;

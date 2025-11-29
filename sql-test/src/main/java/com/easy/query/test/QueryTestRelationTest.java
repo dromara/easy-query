@@ -33,7 +33,6 @@ import com.easy.query.test.doc.dto.MySignUpDTO1;
 import com.easy.query.test.doc.dto.MySignUpDTO2;
 import com.easy.query.test.doc.dto.MySignUpDTO3;
 import com.easy.query.test.doc.dto.MySignUpDTO4;
-import com.easy.query.test.doc.proxy.MyComUser1Proxy;
 import com.easy.query.test.doc.proxy.MySignUpProxy;
 import com.easy.query.test.entity.school.SchoolClassAggregate;
 import com.easy.query.test.listener.ListenerContext;

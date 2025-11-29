@@ -1,13 +1,10 @@
 package com.easy.query.test;
 
-import com.easy.query.core.api.pagination.EasyPageResult;
-import com.easy.query.core.enums.AggregatePredicateCompare;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.test.dto.TopicRequest;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
-import com.easy.query.test.entity.proxy.TopicProxy;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,7 +13,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * create time 2023/10/19 15:12

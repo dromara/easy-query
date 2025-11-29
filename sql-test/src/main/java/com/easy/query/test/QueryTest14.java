@@ -39,12 +39,7 @@ import com.easy.query.test.entity.testrelation.TestJoinEntity;
 import com.easy.query.test.entity.testrelation.TestRoleEntity;
 import com.easy.query.test.entity.testrelation.TestRouteEntity;
 import com.easy.query.test.entity.testrelation.TestUserEntity;
-import com.easy.query.test.entity.testrelation.vo.TestRoleDTO1;
-import com.easy.query.test.entity.testrelation.vo.TestRouteDTO1;
 import com.easy.query.test.entity.testrelation.vo.TestUserDTO;
-import com.easy.query.test.entity.testrelation.vo.TestUserDTO1;
-import com.easy.query.test.entity.testrelation.vo.proxy.TestRoleDTO1Proxy;
-import com.easy.query.test.entity.testrelation.vo.proxy.TestUserDTO1Proxy;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
@@ -60,7 +55,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 /**
  * create time 2024/3/8 11:08

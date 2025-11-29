@@ -27,7 +27,6 @@ import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.many.M8Province;
 import com.easy.query.test.mysql8.vo.SysUserFirstCardDTO;
-import com.easy.query.test.mysql8.vo.SysUserFirstCardDTO2;
 import org.junit.Assert;
 import org.junit.Test;
 

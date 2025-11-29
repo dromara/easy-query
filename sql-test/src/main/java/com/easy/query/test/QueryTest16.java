@@ -20,7 +20,6 @@ import com.easy.query.test.entity.blogtest.CompanyVO;
 import com.easy.query.test.entity.blogtest.SysUser;
 import com.easy.query.test.entity.blogtest.proxy.CompanyProxy;
 import com.easy.query.test.entity.blogtest.proxy.CompanyVOProxy;
-import com.easy.query.test.entity.m2m.Station;
 import com.easy.query.test.entity.navf.UVO;
 import com.easy.query.test.entity.navf.User;
 import com.easy.query.test.listener.ListenerContext;
@@ -31,10 +30,8 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * create time 2024/4/29 23:02

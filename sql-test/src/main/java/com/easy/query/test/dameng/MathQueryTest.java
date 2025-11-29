@@ -1,21 +1,17 @@
 package com.easy.query.test.dameng;
 
-import ch.obermuhlner.math.big.BigDecimalMath;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.MathTest;
 import com.easy.query.test.entity.MathTestDTO;
 import com.easy.query.test.entity.proxy.MathTestDTOProxy;
 import com.easy.query.test.listener.ListenerContext;
-import com.easy.query.test.pgsql.PgSQLBaseTest;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.Map;
 
 /**
  * create time 2025/8/29 08:10

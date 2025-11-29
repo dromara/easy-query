@@ -1,14 +1,10 @@
 package com.easy.query.test.mssql;
 
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.proxy.core.draft.Draft2;
-import com.easy.query.core.proxy.sql.GroupKeys;
-import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mssql.entity.MSSQLA;
 import com.easy.query.test.mssql.entity.MSSQLB;
-import com.easy.query.test.mssql.entity.MsSQLMyTopic;
 import com.easy.query.test.mssql.proxy.MSSQLADTOProxy;
 import org.junit.Assert;
 import org.junit.Test;

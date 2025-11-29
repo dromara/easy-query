@@ -146,7 +146,7 @@ public interface Fillable<T1> {
      *         List<City> cities = easyQuery.queryable(City.class)
      *                 .fillOne(()->{
      *                     return easyQuery.queryable(Province.class);
-     *                 },c-> c.self("provinceCode").target("code"), (x, y) -> {
+     *                 },c-> c.self_target("provinceCode","code"), (x, y) -> {
      *                     x.setProvince(y);
      *                 })
      *                 .toList();

@@ -6,7 +6,6 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.sql.GroupKeys;
-import com.easy.query.core.proxy.sql.Include;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.dto.autodto.SchoolClassAO;
@@ -49,14 +48,11 @@ import com.easy.query.test.entity.school.dto.SchoolStudentOnlyVO;
 import com.easy.query.test.entity.school.dto.SchoolStudentVO;
 import com.easy.query.test.entity.school.dto.proxy.SchoolClassVOProxy;
 import com.easy.query.test.entity.school.dto.proxy.SchoolStudentVOProxy;
-import com.easy.query.test.entity.school.proxy.SchoolClassProxy;
 import com.easy.query.test.listener.ListenerContext;
-import com.easy.query.test.mysql8.entity.bank.SysUser;
 import lombok.var;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -3128,7 +3124,7 @@ public class RelationTest extends BaseTest {
                 .fillOne(() -> {
                     return easyEntityQuery.queryable(Province.class);
                 }, c -> {
-                    c.self_target("provinceCode", "code");
+                    c.self_target("provinceCode", "code", false);
                 }, (x, y) -> {
                     x.setProvince(y);
                 })

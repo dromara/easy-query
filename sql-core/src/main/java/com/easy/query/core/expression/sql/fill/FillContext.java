@@ -9,10 +9,6 @@ import java.util.function.BiConsumer;
  * @author xuejiaming
  */
 public interface FillContext {
-    default FillContext self_target(String selfProp, String targetProp) {
-        return self_target(selfProp, targetProp, false);
-    }
-
     /**
      * 消费函数里面是否
      * @param selfProp 主表属性

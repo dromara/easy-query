@@ -41,13 +41,6 @@ import com.easy.query.test.dto.autotest.RoleJoin;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.encryption.MyEncryptionStrategy;
-import com.easy.query.test.entity.BlogEntity;
-import com.easy.query.test.entity.LogicDelTopic;
-import com.easy.query.test.entity.LogicDelTopicCustom;
-import com.easy.query.test.entity.SysUser;
-import com.easy.query.test.entity.Topic;
-import com.easy.query.test.entity.TopicAuto;
-import com.easy.query.test.entity.TopicInterceptor;
 import com.easy.query.test.entity.TopicSharding;
 import com.easy.query.test.entity.TopicShardingDataSource;
 import com.easy.query.test.entity.TopicShardingDataSourceTime;
@@ -75,14 +68,12 @@ import com.easy.query.test.sharding.TopicShardingTimeShardingInitializer;
 import com.easy.query.test.sharding.TopicShardingTimeTableRoute;
 import com.zaxxer.hikari.HikariDataSource;
 
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 

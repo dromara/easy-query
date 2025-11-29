@@ -4,7 +4,6 @@ import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
-import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.test.dto.ValueCompanyDTO;
 import com.easy.query.test.entity.Company;
 import com.easy.query.test.entity.CompanyAddress;

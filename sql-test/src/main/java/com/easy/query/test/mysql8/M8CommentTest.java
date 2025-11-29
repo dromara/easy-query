@@ -1,22 +1,13 @@
 package com.easy.query.test.mysql8;
 
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.proxy.core.tuple.Tuple2;
-import com.easy.query.core.proxy.part.Part1;
-import com.easy.query.core.proxy.sql.Select;
-import com.easy.query.core.proxy.sql.Tuple;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.M8Comment;
-import com.easy.query.test.mysql8.entity.M8User2;
-import com.easy.query.test.mysql8.entity.bank.SysBank;
-import com.easy.query.test.mysql8.entity.bank.SysUser;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * create time 2025/5/6 14:24

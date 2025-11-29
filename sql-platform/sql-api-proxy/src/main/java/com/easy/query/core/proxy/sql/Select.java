@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.sql;
 
+import com.easy.query.api.proxy.base.ClassProxy;
 import com.easy.query.api.proxy.base.MapTypeAvailable;
 import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
@@ -39,6 +40,10 @@ public class Select {
             return of(selects);
         }
         return SQLSelectExpression.empty;
+    }
+
+    public static <T> ClassProxy<T> of(Class<T> entityClass, SQLSelectAsExpression... selects) {
+        return ClassProxy.of(entityClass).columns(selects);
     }
 
     public static SQLSelectExpression of(SQLSelectExpression... selects) {

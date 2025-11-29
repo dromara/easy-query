@@ -3,7 +3,6 @@ package com.easy.query.test.mysql8;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.test.mysql8.entity.M8User;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
-import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import org.junit.Test;
 
 import java.util.ArrayList;

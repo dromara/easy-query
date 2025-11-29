@@ -1,6 +1,5 @@
 package com.easy.query.test.pgsql;
 
-import com.easy.query.api.proxy.base.ClassProxy;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
@@ -11,7 +10,6 @@ import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.inject.ServiceProvider;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
-import com.easy.query.core.proxy.func.column.ColumnParameter;
 import com.easy.query.core.proxy.grouping.Grouping1;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
@@ -25,9 +23,7 @@ import com.easy.query.test.entity.vo.MyCategoryVO2;
 import com.easy.query.test.entity.vo.MyCategoryVO3;
 import com.easy.query.test.entity.vo.MyCategoryVO4;
 import com.easy.query.test.listener.ListenerContext;
-import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.view.TreeC;
-import com.easy.query.test.vo.BuildTest;
 import org.junit.Assert;
 import org.junit.Test;
 

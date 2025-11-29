@@ -5,15 +5,11 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.executor.internal.merge.result.StreamResultSet;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
-import com.easy.query.core.proxy.SQLSelectAsExpression;
-import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft6;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.doc.TopicSelfVO;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.listener.ListenerContext;
-import com.easy.query.test.mysql8.entity.M8User;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import com.easy.query.test.mysql8.entity.bank.proxy.SysBankCardProxy;
@@ -713,7 +709,7 @@ public class MySQL8Test4 extends BaseTest {
     }
 
     @Test
-    public void testSelect(){
+    public void testSelect() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -727,6 +723,30 @@ public class MySQL8Test4 extends BaseTest {
                                 user.age()
                         )
                 ).where(t -> {
+                    t.field("phone").asStr().contains("123");
+                }).toList();
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t1.`id`,t1.`phone` AS `phone`,t1.`age` FROM (SELECT t.`id`,t.`name` AS `phone`,t.`age` FROM `t_sys_user` t) t1 WHERE t1.`phone` LIKE CONCAT('%',?,'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+
+    @Test
+    public void testSelect1() {
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<SysUser> name = easyEntityQuery.queryable(SysUser.class)
+                .select(user -> Select.of(
+                        SysUser.class,
+                        user.id(),
+                        user.name().as("phone"),
+                        user.age()
+                )).where(t -> {
                     t.field("phone").asStr().contains("123");
                 }).toList();
         listenerContextManager.clear();

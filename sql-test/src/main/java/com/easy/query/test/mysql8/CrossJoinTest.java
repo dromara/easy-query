@@ -1,9 +1,7 @@
 package com.easy.query.test.mysql8;
 
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.listener.ListenerContext;
-import com.easy.query.test.mysql8.dto.BankCardQueryDTO;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import org.junit.Assert;
 import org.junit.Test;

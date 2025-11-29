@@ -2,7 +2,6 @@ package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
-import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
@@ -11,7 +10,6 @@ import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
-import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.builder.core.ValueFilterFactory;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.oracle.config.OracleDatabaseConfiguration;
@@ -25,8 +23,6 @@ import com.easy.query.test.vo.Topic2DTO;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**

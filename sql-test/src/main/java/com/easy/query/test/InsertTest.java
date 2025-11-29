@@ -1,7 +1,6 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.entity.insert.EntityInsertable;
-import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.parameter.BeanSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.DefaultToSQLContext;
 import com.easy.query.core.basic.jdbc.parameter.PropertySQLParameter;
@@ -14,7 +13,6 @@ import com.easy.query.core.exception.EasyQuerySQLStatementException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.EntityInsertExpressionBuilder;
 import com.easy.query.core.util.EasyCollectionUtil;
-import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.CustomIncrement;
 import com.easy.query.test.entity.SysUserSQLEncryption;

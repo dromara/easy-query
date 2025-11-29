@@ -1,16 +1,12 @@
 package com.easy.query.test.mysql8;
 
-import com.alibaba.druid.support.json.JSONUtils;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
-import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.sql.GroupKeys;
-import com.easy.query.core.proxy.sql.Include;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.dto.BankCardGroupBO;
 import com.easy.query.test.mysql8.dto.BankCardSelectAutoInclude;

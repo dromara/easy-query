@@ -4,7 +4,6 @@ import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.duckdb.DuckDBBaseTest;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.save.M8ToMany1;
 import com.easy.query.test.mysql8.entity.save.M8ToMany2;

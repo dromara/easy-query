@@ -1,15 +1,8 @@
 package com.easy.query.test.mysql8;
 
-import com.easy.query.core.basic.api.database.CodeFirstCommand;
-import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.enums.EasyBehaviorEnum;
-import com.easy.query.core.metadata.EntityMetadata;
-import com.easy.query.core.proxy.core.draft.Draft2;
-import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.core.util.EasyStringUtil;
-import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.dto.BankCardQueryDTO;
 import com.easy.query.test.mysql8.dto.SysUserQueryDTO;
@@ -21,7 +14,6 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * create time 2025/8/10 21:05

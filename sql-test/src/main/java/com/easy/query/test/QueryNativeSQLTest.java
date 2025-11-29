@@ -28,7 +28,7 @@ public class QueryNativeSQLTest extends BaseTest{
                     c.column(t.title());
                 }, String.class)
         )).toList();
-        List<Topic> list2 = easyEntityQuery.queryable(Topic.class).select(Topic.class,t -> t.expression().sqlSegment("{0}", c -> {
+        List<Topic> list2 = easyEntityQuery.queryable(Topic.class).select(Topic.class, t -> t.expression().sqlSegment("{0}", c -> {
             c.column(t.stars());
         }, String.class).as("title")).toList();
     }

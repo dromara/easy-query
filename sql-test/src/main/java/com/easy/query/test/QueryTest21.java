@@ -15,7 +15,6 @@ import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameC
 import com.easy.query.core.configuration.nameconversion.impl.UpperSnakeCaseNameConversion;
 import com.easy.query.core.configuration.nameconversion.impl.UpperUnderlinedNameConversion;
 import com.easy.query.core.expression.builder.Filter;
-import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.core.FilterContext;
 import com.easy.query.core.expression.segment.SQLEntityAliasSegment;
@@ -51,7 +50,6 @@ import lombok.NoArgsConstructor;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.beans.PropertyDescriptor;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

@@ -34,7 +34,6 @@ import com.easy.query.test.sharding.FixShardingInitializer;
 import com.easy.query.test.sharding.TopicShardingTableRoute;
 import com.easy.query.test.sharding.TopicShardingTimeTableRoute;
 import com.zaxxer.hikari.HikariDataSource;
-import org.junit.Before;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

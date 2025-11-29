@@ -14,7 +14,6 @@ import com.easy.query.test.entity.direct.Direct2;
 import com.easy.query.test.entity.direct.Direct3;
 import com.easy.query.test.entity.direct.Direct4;
 import com.easy.query.test.entity.direct.Direct5;
-import com.easy.query.test.entity.school.SchoolStudent;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Before;
