@@ -1,13 +1,11 @@
-package com.easy.query.core.func.def.impl;
+package com.easy.query.mysql.func;
 
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.column.ColumnFuncValueExpression;
-import com.easy.query.core.func.column.ColumnFunctionExpression;
-import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
-import com.easy.query.core.util.EasyCollectionUtil;
+import com.easy.query.core.func.column.impl.ColumnFuncValueExpressionImpl;
+import com.easy.query.core.func.def.impl.AbstractLikeSQLFunction;
 
 import java.util.List;
 
@@ -17,11 +15,11 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class LikeSQLFunction extends AbstractLikeSQLFunction {
+public class MySQLLikeSQLFunction extends AbstractLikeSQLFunction {
     private final List<ColumnExpression> columnExpressions;
     private final SQLLikeEnum sqlLikeEnum;
 
-    public LikeSQLFunction(List<ColumnExpression> columnExpressions, SQLLikeEnum sqlLikeEnum) {
+    public MySQLLikeSQLFunction(List<ColumnExpression> columnExpressions, SQLLikeEnum sqlLikeEnum) {
 
         this.columnExpressions = columnExpressions;
         this.sqlLikeEnum = sqlLikeEnum;
@@ -39,13 +37,18 @@ public class LikeSQLFunction extends AbstractLikeSQLFunction {
             if (value instanceof String) {
                 String valueString = (String) value;
                 if (valueString.contains("%") || valueString.contains("_")) {
+
+                    String escapeValue = escape(valueString);//转义
+                    ColumnFuncValueExpressionImpl columnFuncEscapeValueExpression = new ColumnFuncValueExpressionImpl(escapeValue);
+                    columnExpressions.set(1, columnFuncEscapeValueExpression);
                     if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_RIGHT) {
-                        return "LOCATE({1},{0}) = 1";
+                        return  "{0} LIKE CONCAT({1},'%') ESCAPE '\\\\'";
+//                        return "LOCATE({1},{0}) = 1";
                     }
                     if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_LEFT) {
-                        return "LOCATE({1}, {0}) = (CHAR_LENGTH({0}) - CHAR_LENGTH({1}) + 1)";
+                        return "{0} LIKE CONCAT('%',{1}) ESCAPE '\\\\'";
                     }
-                    return "LOCATE({1},{0}) > 0";
+                    return "{0} LIKE CONCAT('%',{1},'%') ESCAPE '\\\\'";
                 }
             }
         }
@@ -56,6 +59,18 @@ public class LikeSQLFunction extends AbstractLikeSQLFunction {
             return "{0} LIKE CONCAT('%',{1})";
         }
         return "{0} LIKE CONCAT('%',{1},'%')";
+    }
+    /**
+     * 转义 LIKE 中的特殊字符：%, _, \
+     * 使用 ESCAPE '\'
+     */
+    private String escape(String input) {
+        if (input == null) return null;
+
+        return input
+                .replace("\\", "\\\\")   // 转义反斜杠
+                .replace("%", "\\%")      // 转义百分号
+                .replace("_", "\\_");     // 转义下划线
     }
 
     @Override

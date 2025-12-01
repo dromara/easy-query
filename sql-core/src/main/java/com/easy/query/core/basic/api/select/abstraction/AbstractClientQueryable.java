@@ -46,8 +46,8 @@ import com.easy.query.core.basic.jdbc.executor.internal.enumerable.StreamIterabl
 import com.easy.query.core.basic.jdbc.executor.internal.reader.DataReader;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
-import com.easy.query.core.common.IncludeCirculateChecker;
-import com.easy.query.core.common.IncludePath;
+import com.easy.query.core.common.CycleDetector;
+import com.easy.query.core.common.RelationPath;
 import com.easy.query.core.common.tuple.MergeTuple2;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
@@ -1056,7 +1056,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
 
-    private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata, IncludeCirculateChecker includeCirculateChecker, ConfigureArgument configureArgument, boolean replace, int deep) {
+    private void selectAutoInclude0(EntityMetadataManager entityMetadataManager, ClientQueryable<?> clientQueryable, EntityMetadata entityMetadata, EntityMetadata resultEntityMetadata, CycleDetector cycleDetector, ConfigureArgument configureArgument, boolean replace, int deep) {
 
         if (resultEntityMetadata.getTableName() != null) {
             EasyQueryOption easyQueryOption = runtimeContext.getQueryConfiguration().getEasyQueryOption();
@@ -1076,8 +1076,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 continue;
             }
             //循环引用检查
-            IncludeCirculateChecker circulateChecker = includeCirculateChecker == null ? new IncludeCirculateChecker() : includeCirculateChecker;
-            if (circulateChecker.includePathRepeat(new IncludePath(entityNavigateMetadata.getNavigatePropertyType(), resultNavigateMetadata.getNavigatePropertyType(), resultNavigateMetadata.getPropertyName(), deep))) {
+            CycleDetector circulateChecker = cycleDetector == null ? new CycleDetector() : cycleDetector;
+            if (circulateChecker.relationPathRepeat(new RelationPath(entityNavigateMetadata.getNavigatePropertyType(), resultNavigateMetadata.getNavigatePropertyType(), resultNavigateMetadata.getPropertyName(), deep))) {
                 continue;
             }
 //            String navigatePropName = resultNavigateMetadata.isBasicType() ? resultNavigateMetadata.getMappingProp().split("//.")[0] : resultNavigateMetadata.getPropertyName();

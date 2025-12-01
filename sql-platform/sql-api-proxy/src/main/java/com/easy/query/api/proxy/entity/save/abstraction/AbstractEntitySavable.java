@@ -6,6 +6,7 @@ import com.easy.query.api.proxy.entity.save.SaveBehavior;
 import com.easy.query.api.proxy.entity.save.SaveConfigurer;
 import com.easy.query.api.proxy.entity.save.command.SaveCommand;
 import com.easy.query.api.proxy.entity.save.provider.AutoTrackSaveProvider;
+import com.easy.query.api.proxy.entity.save.provider.AutoTrackSaveProvider2;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.common.ValueHolder;
@@ -112,6 +113,14 @@ public abstract class AbstractEntitySavable<TProxy extends ProxyEntity<TProxy, T
         if (!entities.isEmpty()) {
             List<Set<String>> savePathLimit = getSavePathLimit();
             SaveCommand command = new AutoTrackSaveProvider(currentTrackContext, entityClass, EasyObjectUtil.typeCastNotNull(entities), easyQueryClient, savePathLimit, saveBehavior, removeRoot).createCommand();
+            command.execute(batch);
+        }
+    }
+    @Override
+    public void executeCommand2() {
+        if (!entities.isEmpty()) {
+            List<Set<String>> savePathLimit = getSavePathLimit();
+            SaveCommand command = new AutoTrackSaveProvider2(currentTrackContext, entityClass, EasyObjectUtil.typeCastNotNull(entities), easyQueryClient, savePathLimit, saveBehavior, removeRoot).createCommand();
             command.execute(batch);
         }
     }

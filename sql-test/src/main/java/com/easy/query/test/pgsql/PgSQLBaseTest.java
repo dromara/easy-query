@@ -9,6 +9,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.QueryConfiguration;
+import com.easy.query.core.enums.SelectAutoIncludeTableEnum;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.router.manager.TableRouteManager;
 import com.easy.query.test.doc.entity.DocBank;
@@ -88,6 +89,7 @@ public class PgSQLBaseTest {
                     op.setExecutorCorePoolSize(1);
                     op.setExecutorMaximumPoolSize(2);
                     op.setMaxShardingQueryLimit(1);
+//                    op.setSelectAutoIncludeTable(SelectAutoIncludeTableEnum.WARNING);
                 })
                 .useDatabaseConfigure(new PgSQLDatabaseConfiguration())
                 .replaceService(JdbcExecutorListener.class, myJdbcListener)

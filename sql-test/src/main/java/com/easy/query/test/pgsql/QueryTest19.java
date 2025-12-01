@@ -5,6 +5,8 @@ import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.key.MapKey;
 import com.easy.query.api.proxy.key.MapKeys;
+import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.inject.ServiceProvider;
@@ -44,6 +46,20 @@ import java.util.stream.Collectors;
 public class QueryTest19 extends PgSQLBaseTest {
     @Test
     public void tree7() {
+
+//
+//        Query<String> pidQuery = entityQuery.queryable(MyCategory.class)
+//                .where(m -> {
+//                    m.name().eq("myuid");//查询我执行的
+//                }).asTreeCTE(op -> op.setUp(true))//向上递归
+//                .where(m -> m.parentId().isNull())//只要树根节点
+//                .selectColumn(m -> m.id());//构建顶级节点的id集合
+//
+//        EasyPageResult<MyCategory> pageResult = entityQuery.queryable(MyCategory.class)
+//                .where(m -> {
+//                    m.parentId().isNull();
+//                    m.id().in(pidQuery);
+//                }).toPageResult(1, 20);
 
 
         ListenerContext listenerContext = new ListenerContext();

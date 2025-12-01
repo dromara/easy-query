@@ -65,8 +65,8 @@ public class QueryTest24 extends BaseTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND LOCATE(?,`star`) > 0 AND LOCATE(?,IFNULL(`star`,?)) = 1 AND LOCATE(?,`title`) > 0 AND LOCATE(?,IFNULL(`title`,?)) > 0 AND LOCATE(?,SUBSTR(`title`,2,6)) > 0 AND `title` LIKE CONCAT('%',`content`,'%') AND `title` LIKE CONCAT('%',IFNULL(`content`,?),'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("false(Boolean),30%(String),30%(String),1(Integer),30%(String),30%(String),1(String),30%(String),(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT `id`,`create_time`,`update_time`,`create_by`,`update_by`,`deleted`,`title`,`content`,`url`,`star`,`publish_time`,`score`,`status`,`order`,`is_top`,`top` FROM `t_blog` WHERE `deleted` = ? AND `star` LIKE CONCAT('%',?,'%') ESCAPE '\\\\' AND IFNULL(`star`,?) LIKE CONCAT(?,'%') ESCAPE '\\\\' AND `title` LIKE CONCAT('%',?,'%') ESCAPE '\\\\' AND IFNULL(`title`,?) LIKE CONCAT('%',?,'%') ESCAPE '\\\\' AND SUBSTR(`title`,2,6) LIKE CONCAT('%',?,'%') ESCAPE '\\\\' AND `title` LIKE CONCAT('%',`content`,'%') AND `title` LIKE CONCAT('%',IFNULL(`content`,?),'%')", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),30\\%(String),1(Integer),30\\%(String),30\\%(String),1(String),30\\%(String),30\\%(String),(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
 
     }

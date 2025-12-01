@@ -1,49 +1,47 @@
-package com.easy.query.core.common;
+package com.easy.query.api.proxy.entity.save.diff;
+
+import com.easy.query.core.metadata.NavigateMetadata;
 
 import java.util.Objects;
 
 /**
- * create time 2024/2/26 21:43
+ * create time 2025/11/30 12:58
  * 文件说明
  *
  * @author xuejiaming
  */
-public class IncludePath {
+public class PropertyKey {
     private final Class<?> from;
     private final Class<?> to;
     private final String property;
-    private int deep;
 
-    public IncludePath(Class<?> from, Class<?> to,String property,int deep){
-
+    public PropertyKey(Class<?> from, Class<?> to, NavigateMetadata navigateMetadata) {
         this.from = from;
         this.to = to;
-        this.property = property;
-        this.deep = deep;
+        this.property = navigateMetadata == null ? null : navigateMetadata.getPropertyName();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        IncludePath that = (IncludePath) o;
-        return Objects.equals(from, that.from) && Objects.equals(to, that.to) && Objects.equals(property, that.property);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(from, to, property);
+    public Class<?> getFrom() {
+        return from;
     }
 
     public Class<?> getTo() {
         return to;
     }
 
-    public int getDeep() {
-        return deep;
+    public String getProperty() {
+        return property;
     }
 
-    public void setDeep(int deep) {
-        this.deep = deep;
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        PropertyKey that = (PropertyKey) o;
+        return Objects.equals(from, that.from) && Objects.equals(to, that.to) && Objects.equals(property, that.property);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(from, to, property);
     }
 }

@@ -102,6 +102,14 @@ public class EntityState {
         return includeWithTrackKeyMap.get(navigateMetadata);
     }
 
+    public Set<String> getTrackKeys(NavigateMetadata navigateMetadata, Set<String> defaultValue) {
+        Set<String> trackKeys = getTrackKeys(navigateMetadata);
+        if (trackKeys == null) {
+            return defaultValue;
+        }
+        return trackKeys;
+    }
+
     public EntityValueState getEntityValueState(String propertyName) {
         ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(propertyName);
         return getEntityValueState(columnMetadata);
@@ -114,7 +122,7 @@ public class EntityState {
     }
 
     public void refresh() {
-        this.originalValue= EasyTrackUtil.createAndCopyValue(currentValue, entityMetadata);
+        this.originalValue = EasyTrackUtil.createAndCopyValue(currentValue, entityMetadata);
     }
 
 }

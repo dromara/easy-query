@@ -17,4 +17,5 @@ public interface Savable {
      * @return
      */
     void executeCommand();
+    void executeCommand2();
 }

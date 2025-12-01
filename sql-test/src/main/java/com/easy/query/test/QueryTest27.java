@@ -10,11 +10,14 @@ import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.EntityValueState;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.enums.EasyBehaviorEnum;
+import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
@@ -24,8 +27,10 @@ import com.easy.query.test.entity.UUIDEntity2;
 import com.easy.query.test.entity.m2m.Station;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.entity.TableNoKey;
 import com.easy.query.test.vo.BlogEntityVO1;
 import com.easy.query.test.vo.proxy.BlogEntityVO1Proxy;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -502,6 +507,7 @@ public class QueryTest27 extends BaseTest {
         return expression.rawSQLStatement("SUBSTR({0},{1},{2})", column, begin, end).asAnyType(String.class);
     }
 
+
     @Test
     public void testMap() {
 
@@ -749,7 +755,7 @@ public class QueryTest27 extends BaseTest {
     @Test
     public void testDerivedTable1() {
         EntityQueryable<BlogEntityVO1Proxy, BlogEntityVO1> query = easyEntityQuery.queryable(BlogEntity.class)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.SMART_PREDICATE))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.SMART_PREDICATE))
                 .select(t_blog -> new BlogEntityVO1Proxy()
                         .score().set(t_blog.score()) // 评分
                         .status().set(t_blog.status()) // 状态
@@ -772,5 +778,6 @@ public class QueryTest27 extends BaseTest {
         listenerContextManager.clear();
 
     }
+
 
 }

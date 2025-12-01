@@ -317,7 +317,7 @@ public class M8Save4Test extends BaseTest {
 //            }
 //
 //            try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-//                easyEntityQuery.savable(m8AutoA).executeCommand();
+//                easyEntityQuery.savable(m8AutoA).executeCommand2();
 //                transaction.commit();
 //            }
 //

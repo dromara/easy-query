@@ -45,6 +45,9 @@ public class EasyCollectionUtil {
     public static <T> List<T> emptyList() {
         return new ArrayList<>(0);
     }
+    public static <T> List<T> asList(T... elements) {
+        return new ArrayList<>(Arrays.asList(elements));
+    }
 
     public static String join(int size, String separator, String placeholder) {
         if (size <= 0) {
