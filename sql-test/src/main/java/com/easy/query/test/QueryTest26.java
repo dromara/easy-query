@@ -491,7 +491,7 @@ public class QueryTest26 extends BaseTest {
     public void includeFlat() {
 
         List<SchoolClass> list = easyEntityQuery.queryable(SchoolClass.class)
-                .include((c, s) -> {
+                .include2((c, s) -> {
                     c.query(s.schoolTeachers().flatElement().schoolClasses()).where(a -> a.name().like("123"));
                     c.query(s.schoolStudents().flatElement().schoolClass()).where(x -> x.schoolStudents().flatElement().name().eq("123"));
                     c.query(s.schoolStudents()).where(x -> x.name().eq("123"));
@@ -500,7 +500,7 @@ public class QueryTest26 extends BaseTest {
 
 
         List<SchoolClass> list2 = easyEntityQuery.queryable(SchoolClass.class)
-                .include((c, s) -> {
+                .include2((c, s) -> {
                     SQLManyQueryable<SchoolTeacherProxy, SchoolClassProxy, SchoolClass> xa = s.schoolTeachers().flatElement().schoolClasses();
                     c.query(xa).where(a -> a.name().like("123"));
                     c.query(xa.flatElement().schoolStudents()).where(a -> a.name().like("123"));

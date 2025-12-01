@@ -125,15 +125,15 @@ public class M8Save3Test extends BaseTest {
 
         invoke(listenerContext -> {
             M8SaveA a1 = easyEntityQuery.queryable(M8SaveA.class).whereById("1")
-                    .include((c,s)->{
+                    .include2((c, s)->{
                         c.query(s.m8SaveB().m8SaveC().m8SaveD());
                     }).singleNotNull();
             M8SaveA a5 = easyEntityQuery.queryable(M8SaveA.class).whereById("5")
-                    .include((c,s)->{
+                    .include2((c, s)->{
                         c.query(s.m8SaveB().m8SaveC().m8SaveD());
                     }).singleNotNull();
             M8SaveA a9 = easyEntityQuery.queryable(M8SaveA.class).whereById("9")
-                    .include((c,s)->{
+                    .include2((c, s)->{
                         c.query(s.m8SaveB().m8SaveC().m8SaveD());
                     }).singleNotNull();
 
@@ -210,7 +210,7 @@ public class M8Save3Test extends BaseTest {
 
         invoke(listenerContext -> {
             M8SaveA a1 = easyEntityQuery.queryable(M8SaveA.class).whereById("1")
-                    .include((c,s)->{
+                    .include2((c, s)->{
                         c.query(s.m8SaveB().m8SaveC().m8SaveD());
                     }).singleNotNull();
 
@@ -251,7 +251,7 @@ public class M8Save3Test extends BaseTest {
 
         invoke(listenerContext -> {
             List<M8SaveA> list = easyEntityQuery.queryable(M8SaveA.class)
-                    .include((c,s)->{
+                    .include2((c, s)->{
                         c.query(s.m8SaveB().m8SaveC().m8SaveD());
                     })
 //                    .includeBy(m -> Include.of(
@@ -358,7 +358,7 @@ public class M8Save3Test extends BaseTest {
             try {
 
                 M8SaveA a1 = easyEntityQuery.queryable(M8SaveA.class).whereById("1")
-                        .include((c,s)->{
+                        .include2((c, s)->{
                             c.query(s.m8SaveB().m8SaveC().m8SaveD());
                         })
                         .forEach(item -> {

@@ -1347,7 +1347,7 @@ public class M8SaveTest extends BaseTest {
 
         invoke(listenerContext -> {
             M8SaveRoot m8SaveRoot = easyEntityQuery.queryable(M8SaveRoot.class).whereById(rootId)
-                    .include((context,table)->{
+                    .include2((context, table)->{
                         context.query(table.m8SaveRootOne());
                         context.query(table.m8SaveRootOne2());
                         context.query(table.m8SaveRoot2ManyList());

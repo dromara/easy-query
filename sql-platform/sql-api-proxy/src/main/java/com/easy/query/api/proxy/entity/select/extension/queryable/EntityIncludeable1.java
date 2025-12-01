@@ -120,7 +120,7 @@ public interface EntityIncludeable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1
      * @param navigatePathExpression
      * @return
      */
-    default EntityQueryable<T1Proxy, T1> include(SQLActionExpression2<IncludeContext, T1Proxy> navigatePathExpression) {
+    default EntityQueryable<T1Proxy, T1> include2(SQLActionExpression2<IncludeContext, T1Proxy> navigatePathExpression) {
         T1Proxy t1Proxy = getQueryable().get1Proxy();
         DefaultIncludeContext defaultIncludeCollector = new DefaultIncludeContext();
         t1Proxy.getEntitySQLContext()._include(() -> {

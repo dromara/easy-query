@@ -194,7 +194,7 @@ public class RelationTest extends BaseTest {
 //                                s.schoolStudents().flatElement().schoolClass().asIncludeQueryable().where(x -> x.schoolStudents().flatElement().name().eq("123")),
 //                                s.schoolStudents().asIncludeQueryable().where(x -> x.name().ne("123"))
 //                        ))
-                        .include((c, s) -> {
+                        .include2((c, s) -> {
                             c.query(s.schoolTeachers().flatElement().schoolClasses()).where(a -> a.name().like("123"));
                             c.query(s.schoolStudents().flatElement().schoolClass()).where(x -> x.schoolStudents().flatElement().name().eq("123"));
                             c.query(s.schoolStudents()).where(x -> x.name().ne("123"));
@@ -252,7 +252,7 @@ public class RelationTest extends BaseTest {
 //                                s.schoolStudents().flatElement().schoolStudentAddress().asIncludeQueryable(),
 //                                s.schoolTeachers().where(x->x.id().isNotNull()).orderBy(x->x.name().asc()).asIncludeQueryable()
 //                        ))
-                        .include((c, s) -> {
+                        .include2((c, s) -> {
                             c.query(s.schoolStudents().flatElement().schoolStudentAddress());
                             c.query(s.schoolTeachers().where(x -> x.id().isNotNull()).orderBy(x -> x.name().asc()));
                         })
@@ -323,7 +323,7 @@ public class RelationTest extends BaseTest {
 //                                s.schoolTeachers().asIncludeQueryable()
 //
 //                        ))
-                        .include((c, s) -> {
+                        .include2((c, s) -> {
                             c.query(s.schoolStudents().flatElement().schoolStudentAddress());
                             c.query(s.schoolTeachers());
                         })
