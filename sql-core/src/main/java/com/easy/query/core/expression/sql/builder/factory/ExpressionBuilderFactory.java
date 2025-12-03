@@ -47,8 +47,8 @@ public interface ExpressionBuilderFactory {
     default EntityQueryExpressionBuilder createAnonymousUnionQueryExpressionBuilder(List<EntityQueryExpressionBuilder> entityQueryExpressionBuilders, ExpressionContext sqlExpressionContext,Class<?> queryClass, SQLUnionEnum sqlUnion){
         return new AnonymousUnionQueryExpressionBuilder(entityQueryExpressionBuilders,sqlExpressionContext,queryClass,sqlUnion);
     }
-    default EntityQueryExpressionBuilder createAnonymousCTEQueryExpressionBuilder(String cteTableName,EntityQueryExpressionBuilder sqlAnonymousUnionEntityQueryExpressionBuilder, ExpressionContext queryExpressionContext, Class<?> queryClass){
-        return new AnonymousTreeCTERECURSIVEQueryExpressionBuilder(cteTableName,sqlAnonymousUnionEntityQueryExpressionBuilder,queryExpressionContext,queryClass);
+    default EntityQueryExpressionBuilder createAnonymousCTEQueryExpressionBuilder(String cteTableName,List<String> columnNames,EntityQueryExpressionBuilder sqlAnonymousUnionEntityQueryExpressionBuilder, ExpressionContext queryExpressionContext, Class<?> queryClass){
+        return new AnonymousTreeCTERECURSIVEQueryExpressionBuilder(cteTableName,columnNames,sqlAnonymousUnionEntityQueryExpressionBuilder,queryExpressionContext,queryClass);
     }
     default EntityQueryExpressionBuilder createAnonymousWithTableQueryExpressionBuilder(String withTableName,EntityQueryExpressionBuilder sqlAnonymousUnionEntityQueryExpressionBuilder, ExpressionContext queryExpressionContext, Class<?> queryClass){
         return new AnonymousCteTableQueryExpressionBuilder(withTableName,sqlAnonymousUnionEntityQueryExpressionBuilder,queryExpressionContext,queryClass);

@@ -1786,7 +1786,14 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         this.entityQueryExpressionBuilder.getExpressionContext().extendFrom(expressionContext);
         AnonymousEntityTableExpressionBuilder table = (AnonymousEntityTableExpressionBuilder) t1ClientQueryable.getSQLEntityExpressionBuilder().getTable(0);
         EntityQueryExpressionBuilder unionAllEntityQueryExpressionBuilder = table.getEntityQueryExpressionBuilder();
-        EntityQueryExpressionBuilder anonymousCTEQueryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousCTEQueryExpressionBuilder(cteTableName, unionAllEntityQueryExpressionBuilder, t1ClientQueryable.getSQLEntityExpressionBuilder().getExpressionContext(), t1ClientQueryable.queryClass());
+        EntityMetadata entityMetadata = t1ClientQueryable.getSQLEntityExpressionBuilder().getFromTable().getEntityMetadata();
+        List<String> columnNames = new ArrayList<>();
+        columnNames.add(deepColumnName);
+        for (Map.Entry<String, ColumnMetadata> kv : entityMetadata.getProperty2ColumnMap().entrySet()) {
+            columnNames.add(kv.getValue().getName());
+        }
+
+        EntityQueryExpressionBuilder anonymousCTEQueryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousCTEQueryExpressionBuilder(cteTableName,columnNames, unionAllEntityQueryExpressionBuilder, t1ClientQueryable.getSQLEntityExpressionBuilder().getExpressionContext(), t1ClientQueryable.queryClass());
         myQueryable.getSQLEntityExpressionBuilder().getExpressionContext().getDeclareExpressions().add(anonymousCTEQueryExpressionBuilder);
         myQueryable.asTable(cteTableName);
         if (limitDeep >= 0) {

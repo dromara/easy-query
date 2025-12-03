@@ -72,7 +72,7 @@ public class DefaultEasyExpressionFactory implements ExpressionFactory {
     }
 
     @Override
-    public AnonymousEntityQuerySQLExpression createEasyAnonymousCTEQuerySQLExpression(String cteTableName, EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityQuerySQLExpression querySQLExpression) {
+    public AnonymousEntityQuerySQLExpression createEasyAnonymousCTEQuerySQLExpression(String cteTableName,List<String> columnNames, EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityQuerySQLExpression querySQLExpression) {
         return new AnonymousTreeCTEQuerySQLExpressionImpl(cteTableName, entitySQLExpressionMetadata, querySQLExpression);
     }
 }

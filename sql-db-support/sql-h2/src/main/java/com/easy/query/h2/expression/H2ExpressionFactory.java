@@ -40,7 +40,7 @@ public class H2ExpressionFactory implements ExpressionFactory {
 
     @Override
     public EntityUpdateSQLExpression createEasyUpdateSQLExpression(EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityTableSQLExpression entityTableSQLExpression) {
-        return new H2UpdateSQLExpression(entitySQLExpressionMetadata,entityTableSQLExpression);
+        return new H2UpdateSQLExpression(entitySQLExpressionMetadata, entityTableSQLExpression);
     }
 
     @Override
@@ -70,8 +70,8 @@ public class H2ExpressionFactory implements ExpressionFactory {
     }
 
     @Override
-    public AnonymousEntityQuerySQLExpression createEasyAnonymousCTEQuerySQLExpression(String cteTableName, EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityQuerySQLExpression querySQLExpression) {
-        return new AnonymousTreeCTEQuerySQLExpressionImpl(cteTableName,entitySQLExpressionMetadata,querySQLExpression);
+    public AnonymousEntityQuerySQLExpression createEasyAnonymousCTEQuerySQLExpression(String cteTableName, List<String> columnNames, EntitySQLExpressionMetadata entitySQLExpressionMetadata, EntityQuerySQLExpression querySQLExpression) {
+        return new H2AnonymousTreeCTEQuerySQLExpressionImpl(cteTableName, columnNames, entitySQLExpressionMetadata, querySQLExpression);
     }
 }
 

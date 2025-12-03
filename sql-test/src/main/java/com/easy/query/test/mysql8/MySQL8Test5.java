@@ -526,4 +526,14 @@ public class MySQL8Test5 extends BaseTest {
                 .replace("%", "\\%")      // 转义百分号
                 .replace("_", "\\_");     // 转义下划线
     }
+
+
+    @Test
+    public  void testWhereJoin(){
+        List<M8User> list = easyEntityQuery.queryable(M8User.class)
+                .where(m -> {
+                    m.name().like("123");
+                }).leftJoin(M8User.class, (m, m2) -> m.id().eq(m2.id()))
+                .toList();
+    }
 }
