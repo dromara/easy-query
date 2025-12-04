@@ -60,6 +60,7 @@ import com.easy.query.solon.integration.option.MapKeyConversionEnum;
 import com.easy.query.solon.integration.option.NameConversionEnum;
 import com.easy.query.solon.integration.option.SQLParameterPrintEnum;
 import com.easy.query.sqlite.config.SQLiteDatabaseConfiguration;
+import com.easy.query.tsdb.config.TSDBDatabaseConfiguration;
 import org.noear.solon.Utils;
 import org.noear.solon.core.BeanWrap;
 import org.noear.solon.core.Props;
@@ -316,6 +317,8 @@ public class DbManager {
                 return new DuckDBSQLDatabaseConfiguration();
             case SQL92:
                 return new DefaultDatabaseConfiguration();
+            case TSDB:
+                return new TSDBDatabaseConfiguration();
         }
         return null;
     }

@@ -79,6 +79,12 @@
         </dependency>
         <dependency>
             <groupId>com.easy-query</groupId>
+            <artifactId>sql-tsdb</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.easy-query</groupId>
             <artifactId>sql-mssql</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
@@ -131,11 +137,11 @@
             <version>6.0.0</version>
         </dependency>
         <!-- mysql驱动 -->
-<!--        <dependency>-->
-<!--            <groupId>mysql</groupId>-->
-<!--            <artifactId>mysql-connector-java</artifactId>-->
-<!--            <version>8.0.17</version>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>mysql</groupId>-->
+        <!--            <artifactId>mysql-connector-java</artifactId>-->
+        <!--            <version>8.0.17</version>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>io.agroal</groupId>
             <artifactId>agroal-pool</artifactId>
@@ -206,6 +212,11 @@
             <version>8.6.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/libraries/kingbase8-8.6.0.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.taosdata.jdbc</groupId>
+            <artifactId>taos-jdbcdriver</artifactId>
+            <version>3.7.8</version>
         </dependency>
         <dependency>
             <groupId>ch.obermuhlner</groupId>

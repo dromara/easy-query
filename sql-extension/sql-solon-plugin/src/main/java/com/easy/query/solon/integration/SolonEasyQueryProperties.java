@@ -212,6 +212,8 @@ public class SolonEasyQueryProperties {
                     return DatabaseEnum.DUCKDB;
                 case "sql92":
                     return DatabaseEnum.SQL92;
+                case "tsdb":
+                    return DatabaseEnum.TSDB;
             }
             return null;
         });

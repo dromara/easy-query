@@ -42,5 +42,6 @@ public enum DatabaseEnum {
     GAUSS_DB,
     DB2,
     DUCKDB,
-    SQL92
+    SQL92,
+    TSDB
 }
