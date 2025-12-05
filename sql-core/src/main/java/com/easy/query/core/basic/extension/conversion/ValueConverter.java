@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.extension.conversion;
 
+import com.easy.query.core.migration.ColumnDbTypeResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -32,4 +33,9 @@ public interface ValueConverter<TProperty, TProvider> {
      * @return
      */
     @Nullable TProperty deserialize(@Nullable TProvider provider,@NotNull ColumnMetadata columnMetadata);
+
+    default @Nullable ColumnDbTypeResult getColumnDbTypeResult(Class<?> entityClass,@NotNull ColumnMetadata columnMetadata){
+        return null;
+    }
+
 }

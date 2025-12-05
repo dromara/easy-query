@@ -5,6 +5,8 @@ import com.easy.query.core.annotation.ForeignKey;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.TableIndex;
 import com.easy.query.core.annotation.TableIndexes;
+import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
+import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -112,8 +114,19 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
                 return new ColumnDbTypeResult(dbType, dbDefault);
             }
         }
+
+        ValueConverter<?, ?> valueConverter = columnMetadata.getValueConverter();
+        if (!(valueConverter instanceof DefaultValueConverter)) {//不是默认的值转换器
+            // 如果有valueConverter那么使用valueConverter的columnDbTypeResult
+            ColumnDbTypeResult valueConverterColumnDbTypeResult = valueConverter.getColumnDbTypeResult(columnMetadata.getEntityMetadata().getEntityClass(), columnMetadata);
+            if (valueConverterColumnDbTypeResult != null) {
+                return valueConverterColumnDbTypeResult;
+            }
+        }
+
         ColumnDbTypeResult columnDbTypeResult = getColumnTypeMap().get(columnMetadata.getPropertyType());
         if (columnDbTypeResult == null) {
+
             throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(entityMigrationMetadata.getEntityMetadata().getEntityClass()) + "] field name:" + columnMetadata.getFieldName() + " not found column db type.");
         }
         if (EasyStringUtil.isNotBlank(dbDefault)) {
