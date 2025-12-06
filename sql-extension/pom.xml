@@ -6,8 +6,9 @@
     <parent>
         <groupId>com.easy-query</groupId>
         <artifactId>easy-query-all</artifactId>
-        <version>3.1.66-preview2</version>
+        <version>3.1.66-preview3</version>
     </parent>
+    <packaging>pom</packaging>
 
     <name>sql-extension</name>
     <artifactId>sql-extension</artifactId>

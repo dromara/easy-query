@@ -7,7 +7,7 @@
     <groupId>com.easy-query</groupId>
     <artifactId>easy-query-all</artifactId>
     <packaging>pom</packaging>
-    <version>3.1.66-preview2</version>
+    <version>3.1.66-preview3</version>
     <name>easy-query</name>
     <description>java object query distributed connector</description>
     <url>https://github.com/xuejmnet/easy-query</url>
@@ -24,6 +24,7 @@
         <module>sql-platform/sql-api-proxy</module>
         <module>sql-extension</module>
         <module>sql-extension/sql-springboot-starter</module>
+        <module>sql-extension/sql-springboot4-starter</module>
         <module>sql-extension/sql-solon-plugin</module>
         <module>sql-extension/sql-cache</module>
         <module>sql-extension/sql-search</module>

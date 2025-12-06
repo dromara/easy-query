@@ -25,13 +25,13 @@ import javax.sql.DataSource;
 @Configuration
 @EnableConfigurationProperties(EasyQueryProperties.class)
 @ConditionalOnBean(DataSource.class)
-@AutoConfigureAfter({EasyQueryStarter4AutoConfiguration.class})
+@AutoConfigureAfter({EasyQueryStarterAutoConfiguration.class})
 @ConditionalOnProperty(
         prefix = "easy-query",
         value = {"build"},
         matchIfMissing = true
 )
-public class EasyQueryStarter4BuildAutoConfiguration {
+public class EasyQueryStarterBuildAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean

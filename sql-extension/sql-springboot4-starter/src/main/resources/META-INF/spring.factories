@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.easy.query.sql.starter.EasyQueryStarterAutoConfiguration,\
+  com.easy.query.sql.starter.EasyQueryStarterBuildAutoConfiguration,\
+  com.easy.query.sql.starter.EasyQueryTrackAopConfiguration

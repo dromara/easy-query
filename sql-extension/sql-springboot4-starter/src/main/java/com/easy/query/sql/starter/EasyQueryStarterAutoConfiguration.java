@@ -28,8 +28,8 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -44,15 +44,15 @@ import java.util.Map;
 @Configuration
 @EnableConfigurationProperties(EasyQueryProperties.class)
 @ConditionalOnBean(DataSource.class)
-@AutoConfigureAfter(name = "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration")
+@AutoConfigureAfter({DataSourceAutoConfiguration.class})
 @ConditionalOnProperty(
         prefix = "easy-query",
         value = {"enable"},
         matchIfMissing = true
 )
-public class EasyQueryStarter4AutoConfiguration {
+public class EasyQueryStarterAutoConfiguration {
 
-    public EasyQueryStarter4AutoConfiguration(EasyQueryProperties easyQueryProperties) {
+    public EasyQueryStarterAutoConfiguration(EasyQueryProperties easyQueryProperties) {
         if (EasyStringUtil.isBlank(easyQueryProperties.getLogClass())) {
             LogFactory.useCustomLogging(Slf4jImpl.class);
         } else {
