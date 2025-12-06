@@ -34,8 +34,4 @@ public interface ValueConverter<TProperty, TProvider> {
      */
     @Nullable TProperty deserialize(@Nullable TProvider provider,@NotNull ColumnMetadata columnMetadata);
 
-    default @Nullable ColumnDbTypeResult getColumnDbTypeResult(Class<?> entityClass,@NotNull ColumnMetadata columnMetadata){
-        return null;
-    }
-
 }

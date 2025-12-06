@@ -115,18 +115,8 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
             }
         }
 
-        ValueConverter<?, ?> valueConverter = columnMetadata.getValueConverter();
-        if (!(valueConverter instanceof DefaultValueConverter)) {//不是默认的值转换器
-            // 如果有valueConverter那么使用valueConverter的columnDbTypeResult
-            ColumnDbTypeResult valueConverterColumnDbTypeResult = valueConverter.getColumnDbTypeResult(columnMetadata.getEntityMetadata().getEntityClass(), columnMetadata);
-            if (valueConverterColumnDbTypeResult != null) {
-                return valueConverterColumnDbTypeResult;
-            }
-        }
-
         ColumnDbTypeResult columnDbTypeResult = getColumnTypeMap().get(columnMetadata.getPropertyType());
         if (columnDbTypeResult == null) {
-
             throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(entityMigrationMetadata.getEntityMetadata().getEntityClass()) + "] field name:" + columnMetadata.getFieldName() + " not found column db type.");
         }
         if (EasyStringUtil.isNotBlank(dbDefault)) {

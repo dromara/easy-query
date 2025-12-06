@@ -9,8 +9,18 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public class ColumnDbTypeResult {
+    /**
+     * 比如varchar(255)
+     */
     public final String columnType;
+    /**
+     * null表示没有默认值
+     */
     public final String defValue;
+
+    public ColumnDbTypeResult(String columnType) {
+        this(columnType, null);
+    }
 
     public ColumnDbTypeResult(String columnType, String defValue) {
         Objects.requireNonNull(columnType, "columnType cannot be null");

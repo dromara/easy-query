@@ -297,7 +297,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             writer.write(genContent);
             writer.flush();
         } catch (IOException e) {
-            throw new EasyQueryAptFileException(">>>>>ERROR: can not write file by easy-query processor for class[" + entityFullName + "]: " + e.getMessage(), e);
+            e.printStackTrace();
+//            throw new EasyQueryAptFileException(">>>>>ERROR: can not write file by easy-query processor for class[" + entityFullName + "]: " + e.getMessage(), e);
         } finally {
             if (writer != null) {
                 try {
