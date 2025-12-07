@@ -1,9 +1,10 @@
-package com.easy.query.sql.starter;
+package com.easy.query.sql.starter.v4;
 
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.StarterConfigurer;
+import com.easy.query.sql.starter.SpringBootStarterBuilder;
 import com.easy.query.sql.starter.config.EasyQueryInitializeOption;
 import com.easy.query.sql.starter.config.EasyQueryProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
