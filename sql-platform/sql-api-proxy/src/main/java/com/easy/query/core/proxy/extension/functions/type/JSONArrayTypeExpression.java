@@ -1,5 +1,6 @@
 package com.easy.query.core.proxy.extension.functions.type;
 
+import com.easy.query.core.proxy.extension.functions.ColumnJSONArrayFunctionAvailable;
 import com.easy.query.core.proxy.extension.functions.ColumnJSONObjectFunctionAvailable;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -10,7 +11,7 @@ import com.easy.query.core.util.EasyObjectUtil;
  * @author xuejiaming
  */
 public interface JSONArrayTypeExpression<T> extends ObjectTypeExpression<T>,
-        ColumnJSONObjectFunctionAvailable<T> {
+        ColumnJSONArrayFunctionAvailable<T> {
     @Override
     default <TR> JSONArrayTypeExpression<TR> asAnyType(Class<TR> clazz) {
         ObjectTypeExpression.super.asAnyType(clazz);

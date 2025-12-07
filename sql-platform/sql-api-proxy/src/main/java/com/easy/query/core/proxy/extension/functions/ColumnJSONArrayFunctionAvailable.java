@@ -1,6 +1,5 @@
 package com.easy.query.core.proxy.extension.functions;
 
-import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.PropTypeColumn;
@@ -11,15 +10,12 @@ import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastNumb
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastStringAvailable;
 import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
-import com.easy.query.core.proxy.extension.functions.type.JsonArrayTypeExpression;
-import com.easy.query.core.proxy.extension.functions.type.JsonMapTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.JSONArrayTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.JSONObjectTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.impl.AnyTypeExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.type.impl.BooleanTypeExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.type.impl.JsonArrayTypeExpressionImpl;
-import com.easy.query.core.proxy.extension.functions.type.impl.JsonMapTypeExpressionImpl;
-import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -40,45 +36,44 @@ public interface ColumnJSONArrayFunctionAvailable<TProperty> extends ColumnObjec
         return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), func, propType);
     }
 
-    default AnyTypeExpression<Object> get(int index) {
+    default AnyTypeExpression<Object> getElement(int index) {
         return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.jsonObjectField(x -> x.sqlFunc(sqlFunction).format(key));
-            } else {
-                return fx.jsonObjectField(x -> x.column(this.getValue()).format(key));
-            }
+            return fx.jsonArrayByIndex(s -> {
+                PropTypeColumn.columnFuncSelector(s, this);
+                s.format(index);
+            });
         }, Objects.class);
     }
 
-    default BooleanTypeExpression<Boolean> getBooleanField(String jsonKey) {
-        return getField(jsonKey).toBoolean();
-    }
-    default NumberTypeExpression<Integer> getIntegerField(String jsonKey) {
-        return getField(jsonKey).toNumber(Integer.class);
-    }
-    default NumberTypeExpression<Long> getLongField(String jsonKey) {
-        return getField(jsonKey).toNumber(Long.class);
+    default BooleanTypeExpression<Boolean> getBoolean(int index) {
+        return getElement(index).toBoolean();
     }
 
-    default <TP> JsonArrayTypeExpression<TP> getField(String jsonKey, Class<TP> valueType) {
+    default NumberTypeExpression<Integer> getInteger(int index) {
+        return getElement(index).toNumber(Integer.class);
     }
 
-    default BooleanTypeExpression<TProperty> containsField(String jsonKey) {
-        String key = getJsonKey(getEntitySQLContext().getRuntimeContext(), jsonKey);
-        return new BooleanTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
-            if (this instanceof DSLSQLFunctionAvailable) {
-                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
-                return fx.containsField(x -> x.sqlFunc(sqlFunction).format(key));
-            } else {
-                return fx.containsField(x -> x.column(this.getValue()).format(key));
-            }
-        });
+    default NumberTypeExpression<Long> getLong(int index) {
+        return getElement(index).toNumber(Long.class);
+    }
+    default NumberTypeExpression<BigDecimal> getBigDecimal(int index) {
+        return getElement(index).toNumber(BigDecimal.class);
     }
 
-
-    static String getJsonKey(QueryRuntimeContext runtimeContext, String jsonKey) {
-        return runtimeContext.getMapColumnNameChecker().checkColumnName(jsonKey);
+    default AnyTypeExpression<TProperty> getJSONElement(int index) {
+        return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+            return fx.jsonArrayExtractByIndex(s -> {
+                PropTypeColumn.columnFuncSelector(s, this);
+                s.format(index);
+            });
+        }, Objects.class);
     }
+    default JSONObjectTypeExpression<Object> getJSONObject(int index) {
+        return getJSONElement(index).asJSONObject();
+    }
+    default JSONArrayTypeExpression<Object> getJSONOArray(int index) {
+        return getJSONElement(index).asJSONArray();
+    }
+
 
 }

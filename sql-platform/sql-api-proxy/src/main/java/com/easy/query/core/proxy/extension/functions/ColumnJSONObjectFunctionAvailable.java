@@ -60,10 +60,10 @@ public interface ColumnJSONObjectFunctionAvailable<TProperty> extends ColumnObje
         }, Object.class);
     }
     default StringTypeExpression<String> getString(String jsonKey) {
-        return getField(jsonKey).toStr();
+        return getField(jsonKey).asStr();
     }
     default BooleanTypeExpression<Boolean> getBoolean(String jsonKey) {
-        return getField(jsonKey).toBoolean();
+        return getJsonObject(jsonKey).toBoolean();
     }
     default DateTimeTypeExpression<LocalDateTime> getLocalDateTime(String jsonKey) {
         return getField(jsonKey).toDateTime(LocalDateTime.class);
@@ -72,13 +72,13 @@ public interface ColumnJSONObjectFunctionAvailable<TProperty> extends ColumnObje
         return getField(jsonKey).toDateTime(LocalDate.class);
     }
     default NumberTypeExpression<Integer> getInteger(String jsonKey) {
-        return getField(jsonKey).toNumber(Integer.class);
+        return getJsonObject(jsonKey).asInteger();
     }
     default NumberTypeExpression<Long> getLong(String jsonKey) {
-        return getField(jsonKey).toNumber(Long.class);
+        return getJsonObject(jsonKey).asLong();
     }
     default NumberTypeExpression<BigDecimal> getBigDecimal(String jsonKey) {
-        return getField(jsonKey).toNumber(BigDecimal.class);
+        return getJsonObject(jsonKey).asBigDecimal();
     }
 
     default void containsKey(String jsonKey) {

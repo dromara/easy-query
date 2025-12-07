@@ -13,7 +13,7 @@ import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastBooleanAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastDateTimeAvailable;
-import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastJSONObjectAvailable;
+import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastJSONAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastNumberAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastStringAvailable;
 import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
@@ -46,7 +46,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         ColumnFunctionCastNumberAvailable<TProperty>,
         ColumnFunctionCastDateTimeAvailable<TProperty>,
         ColumnFunctionCastBooleanAvailable<TProperty>,
-        ColumnFunctionCastJSONObjectAvailable<TProperty> {
+        ColumnFunctionCastJSONAvailable<TProperty> {
 
     @Override
     default AnyTypeExpression<TProperty> createChainExpression(Function<SQLFunc, SQLFunction> func, Class<?> propType) {

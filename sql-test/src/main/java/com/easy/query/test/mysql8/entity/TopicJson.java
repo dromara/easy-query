@@ -22,4 +22,6 @@ public class TopicJson implements ProxyEntityAvailable<TopicJson , TopicJsonProx
     private String name;
     @Column(dbType = "varchar(255)")
     private String extraJson;
+    @Column(dbType = "varchar(255)")
+    private String extraJsonArray;
 }

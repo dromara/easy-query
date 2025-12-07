@@ -31,7 +31,7 @@ public class JSONArrayExtractByIndexSQLFunction extends AbstractExpressionSQLFun
         }
         List<ColumnExpression> jsonKeyExpressions = columnExpressions.subList(1, columnExpressions.size());
         Iterable<String> params = EasyCollectionUtil.select(jsonKeyExpressions, (t, i) -> "{" + i+1 + "}");
-        return String.format("JSON_EXTRACT({0},’$[%s]’)", String.join(".", params));
+        return String.format("JSON_EXTRACT({0},'$[%s]')", String.join(".", params));
     }
 
     @Override

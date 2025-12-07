@@ -9,7 +9,7 @@ import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastBooleanAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastDateTimeAvailable;
-import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastJSONObjectAvailable;
+import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastJSONAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastNumberAvailable;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelector;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelectorImpl;
@@ -36,7 +36,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         ColumnFunctionCastNumberAvailable<TProperty>,
         ColumnFunctionCastDateTimeAvailable<TProperty>,
         ColumnFunctionCastBooleanAvailable<TProperty>,
-        ColumnFunctionCastJSONObjectAvailable<TProperty> {
+        ColumnFunctionCastJSONAvailable<TProperty> {
 
     @Override
     default StringFilterTypeExpression<TProperty> max() {

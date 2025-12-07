@@ -1,8 +1,6 @@
 package com.easy.query.test.mysql8;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -40,7 +38,8 @@ public class JsonTest extends BaseTest{
             TopicJson topicJson = new TopicJson();
             topicJson.setId("1");
             topicJson.setName("名称");
-            topicJson.setExtraJson("{\"success\":true,\"code\":\"200\"}");
+            topicJson.setExtraJson("{\"success\":true,\"code\":\"200\",\"age\":18}");
+            topicJson.setExtraJsonArray("[{\"name\":\"Jack\",\"age\":18,\"success\":true,\"code\":\"200\"},{\"name\":\"Tom\",\"age\":20,\"success\":false,\"code\":\"200\"}]");
             easyEntityQuery.insertable(topicJson).executeRows();
         }
         {
@@ -49,6 +48,7 @@ public class JsonTest extends BaseTest{
             topicJson.setId("2");
             topicJson.setName("名称2");
             topicJson.setExtraJson("{\"success\":false,\"code\":\"100\",\"msg\":\"存在错误信息\"}");
+            topicJson.setExtraJsonArray("[{\"name\":\"JackSon\",\"age\":18,\"success\":true,\"code\":\"200\"},{\"name\":\"Tom\",\"age\":20,\"success\":false,\"code\":\"200\"}]");
             easyEntityQuery.insertable(topicJson).executeRows();
         }
     }
@@ -68,9 +68,6 @@ public class JsonTest extends BaseTest{
                 )).toList();
        System.out.println(list);
         System.out.println(list1);
-        JSONObject jsonObject = JSON.parseObject(list.get(0).getExtraJson());
-        jsonObject.CON
-        JSONArray jsonArray = jsonObject.getJSONArray("msg");
     }
 
     @Test
@@ -92,7 +89,7 @@ public class JsonTest extends BaseTest{
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT `id`,`name`,`extra_json` FROM `t_test_json` WHERE (`extra_json`->'$.code') = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT `id`,`name`,`extra_json`,`extra_json_array` FROM `t_test_json` WHERE JSON_UNQUOTE(JSON_EXTRACT(`extra_json`, '$.code')) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("200(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -102,10 +99,26 @@ public class JsonTest extends BaseTest{
                 .where(t -> {
                     t.extraJson().asJSONObject().getBoolean("success").eq(true);
                 }).select(t -> Select.DRAFT.of(
-                        t.extraJson().asAny().get("success", Boolean.class)
+                        t.extraJson().asJSONObject().getBoolean("success")
                 )).toList();
         Assert.assertEquals(1,list1.size());
         Draft1<Boolean> booleanDraft1 = list1.get(0);
         Assert.assertTrue(booleanDraft1.getValue1());
+    }
+    @Test
+    public void testJsonField5(){
+        List<TopicJson> ages = easyEntityQuery.queryable(TopicJson.class)
+                .where(t -> {
+                    t.extraJson().asJSONObject().getInteger("age").eq(18);
+                }).toList();
+        Assert.assertEquals(1,ages.size());
+    }
+    @Test
+    public void testJsonField6(){
+        List<TopicJson> ages = easyEntityQuery.queryable(TopicJson.class)
+                .where(t -> {
+                    t.extraJsonArray().asJSONArray().getJSONObject(0).getString("name").eq("Jack");
+                }).toList();
+        Assert.assertEquals(1,ages.size());
     }
 }
