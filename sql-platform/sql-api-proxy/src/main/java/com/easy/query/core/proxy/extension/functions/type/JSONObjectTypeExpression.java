@@ -1,6 +1,6 @@
 package com.easy.query.core.proxy.extension.functions.type;
 
-import com.easy.query.core.proxy.extension.functions.ColumnJsonMapFunctionAvailable;
+import com.easy.query.core.proxy.extension.functions.ColumnJSONObjectFunctionAvailable;
 import com.easy.query.core.util.EasyObjectUtil;
 
 /**
@@ -9,10 +9,10 @@ import com.easy.query.core.util.EasyObjectUtil;
  *
  * @author xuejiaming
  */
-public interface JsonMapTypeExpression<T> extends ObjectTypeExpression<T>,
-        ColumnJsonMapFunctionAvailable<T> {
+public interface JSONObjectTypeExpression<T> extends ObjectTypeExpression<T>,
+        ColumnJSONObjectFunctionAvailable<T> {
     @Override
-    default <TR> JsonMapTypeExpression<TR> asAnyType(Class<TR> clazz) {
+    default <TR> JSONObjectTypeExpression<TR> asAnyType(Class<TR> clazz) {
         ObjectTypeExpression.super.asAnyType(clazz);
         return EasyObjectUtil.typeCastNullable(this);
     }

@@ -184,4 +184,34 @@ public class OracleSQLFuncImpl extends SQLFuncImpl {
     public SQLFunction minColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new OracleMaxMinColumnsSQLFunction(false,getColumnExpressions(sqlExpression));
     }
+
+    @Override
+    public SQLFunction jsonObjectField(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new OracleJSONObjectFieldSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonObjectExtract(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new OracleJSONObjectExtractSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonObjectContainsKey(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new OracleJSONObjectContainsKeySQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonArrayByIndex(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new OracleJSONArrayByIndexSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonArrayExtractByIndex(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new OracleJSONArrayExtractByIndexSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonArrayLength(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new OracleJSONArrayLengthSQLFunction(getColumnExpressions(sqlExpression));
+    }
 }

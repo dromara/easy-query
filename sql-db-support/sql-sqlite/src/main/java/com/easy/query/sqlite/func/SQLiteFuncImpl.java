@@ -169,4 +169,33 @@ public class SQLiteFuncImpl extends SQLFuncImpl {
     public SQLFunction minColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new SQLiteMaxMinColumnsSQLFunction(false,getColumnExpressions(sqlExpression));
     }
+    @Override
+    public SQLFunction jsonObjectField(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new SQLiteJSONObjectFieldSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonObjectExtract(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new SQLiteJSONObjectExtractSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonObjectContainsKey(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new SQLiteJSONObjectContainsKeySQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonArrayByIndex(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new SQLiteJSONArrayByIndexSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonArrayExtractByIndex(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new SQLiteJSONArrayExtractByIndexSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonArrayLength(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new SQLiteJSONArrayLengthSQLFunction(getColumnExpressions(sqlExpression));
+    }
 }

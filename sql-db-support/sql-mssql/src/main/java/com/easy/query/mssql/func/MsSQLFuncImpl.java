@@ -185,4 +185,34 @@ public class MsSQLFuncImpl extends SQLFuncImpl {
     public SQLFunction minColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new MsSQLMaxMinColumnsSQLFunction(false,getColumnExpressions(sqlExpression));
     }
+
+    @Override
+    public SQLFunction jsonObjectField(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MsSQLJSONObjectFieldSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonObjectExtract(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MsSQLJSONObjectExtractSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonObjectContainsKey(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MsSQLJSONObjectContainsKeySQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonArrayByIndex(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MsSQLJSONArrayByIndexSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonArrayExtractByIndex(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MsSQLJSONArrayExtractByIndexSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonArrayLength(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new MsSQLJSONArrayLengthSQLFunction(getColumnExpressions(sqlExpression));
+    }
 }

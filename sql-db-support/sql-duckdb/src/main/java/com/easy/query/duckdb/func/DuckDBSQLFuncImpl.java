@@ -131,5 +131,34 @@ public class DuckDBSQLFuncImpl extends SQLFuncImpl {
     public SQLFunction minColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new DuckDBSQLMaxMinColumnsSQLFunction(false,getColumnExpressions(sqlExpression));
     }
+    @Override
+    public SQLFunction jsonObjectField(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new DuckDBJSONObjectFieldSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonObjectExtract(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new DuckDBJSONObjectExtractSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonObjectContainsKey(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new DuckDBJSONObjectContainsKeySQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonArrayByIndex(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new DuckDBJSONArrayByIndexSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonArrayExtractByIndex(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new DuckDBJSONArrayExtractByIndexSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonArrayLength(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new DuckDBJSONArrayLengthSQLFunction(getColumnExpressions(sqlExpression));
+    }
 
 }

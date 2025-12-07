@@ -12,6 +12,12 @@ import com.easy.query.core.func.def.enums.DateTimeDurationEnum;
 import com.easy.query.core.func.def.enums.DateTimeUnitEnum;
 import com.easy.query.core.func.def.enums.MathMethodEnum;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
+import com.easy.query.core.func.def.impl.JSONArrayByIndexSQLFunction;
+import com.easy.query.core.func.def.impl.JSONArrayExtractByIndexSQLFunction;
+import com.easy.query.core.func.def.impl.JSONArrayLengthSQLFunction;
+import com.easy.query.core.func.def.impl.JSONObjectContainsKeySQLFunction;
+import com.easy.query.core.func.def.impl.JSONObjectExtractSQLFunction;
+import com.easy.query.core.func.def.impl.JSONObjectFieldSQLFunction;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -146,5 +152,36 @@ public class PgSQLFuncImpl extends SQLFuncImpl {
     @Override
     public SQLFunction minColumns(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
         return new PgSQLMaxMinColumnsSQLFunction(false,getColumnExpressions(sqlExpression));
+    }
+
+
+    @Override
+    public SQLFunction jsonObjectField(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new PgSQLJSONObjectFieldSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonObjectExtract(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new PgSQLJSONObjectExtractSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonObjectContainsKey(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new PgSQLJSONObjectContainsKeySQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonArrayByIndex(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new PgSQLJSONArrayByIndexSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonArrayExtractByIndex(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new PgSQLJSONArrayExtractByIndexSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonArrayLength(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new PgSQLJSONArrayLengthSQLFunction(getColumnExpressions(sqlExpression));
     }
 }

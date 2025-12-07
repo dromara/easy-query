@@ -7,9 +7,6 @@ import com.easy.query.core.proxy.extension.ColumnComparableExpression;
 import com.easy.query.core.proxy.impl.PropValueConvertColumnImpl;
 import com.easy.query.core.proxy.set.DSLColumnSet;
 import com.easy.query.core.util.EasyObjectUtil;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Function;
 
 /**
  * create time 2023/6/22 13:12
@@ -26,12 +23,12 @@ public interface SQLColumn<TProxy, TProperty> extends ColumnComparableExpression
 //        return null;
 //    }
 
-    default <TRProxy,TRProperty> SQLAnyColumn<TRProxy, TRProperty> asJsonMap() {
-        Class<?> propertyType = getPropertyType();
-        SQLAnyColumnImpl<TProxy, TProperty> column = new SQLAnyColumnImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), EasyObjectUtil.typeCastNullable(propertyType));
-        column._setProxy(castChain());
-        return EasyObjectUtil.typeCastNullable(column);
-    }
+//    default <TRProxy,TRProperty> SQLAnyColumn<TRProxy, TRProperty> asJsonObject() {
+//        Class<?> propertyType = getPropertyType();
+//        SQLAnyColumnImpl<TProxy, TProperty> column = new SQLAnyColumnImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), EasyObjectUtil.typeCastNullable(propertyType));
+//        column._setProxy(castChain());
+//        return EasyObjectUtil.typeCastNullable(column);
+//    }
     default <TRProxy,TRProperty> SQLAnyColumn<TRProxy, TRProperty> asAny() {
         Class<?> propertyType = getPropertyType();
         SQLAnyColumnImpl<TProxy, TProperty> column = new SQLAnyColumnImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), EasyObjectUtil.typeCastNullable(propertyType));

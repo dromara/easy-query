@@ -1,7 +1,6 @@
-package com.easy.query.core.func.def.impl;
+package com.easy.query.dameng.func;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.scec.core.SQLNativeChainExpressionContext;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -14,22 +13,23 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class JsonFieldSQLFunction extends AbstractExpressionSQLFunction {
+public class DamengJSONArrayLengthSQLFunction extends AbstractExpressionSQLFunction {
 
     private final List<ColumnExpression> columnExpressions;
 
-    public JsonFieldSQLFunction(List<ColumnExpression> concatExpressions) {
+    public DamengJSONArrayLengthSQLFunction(List<ColumnExpression> concatExpressions) {
         if (EasyCollectionUtil.isEmpty(concatExpressions)) {
-            throw new IllegalArgumentException("JsonFieldSQLFunction columns empty");
+            throw new IllegalArgumentException("DamengJSONArrayLengthSQLFunction columns empty");
         }
         this.columnExpressions = concatExpressions;
     }
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        List<ColumnExpression> jsonKeyExpressions = columnExpressions.subList(1, columnExpressions.size());
-        Iterable<String> params = EasyCollectionUtil.select(jsonKeyExpressions, (t, i) -> "{" + i+1 + "}");
-        return String.format("({0}->'$.%s')", String.join(".", params));
+        if(columnExpressions.size()!=1){
+            throw new IllegalArgumentException("DamengJSONArrayLengthSQLFunction columns size != 1");
+        }
+        return "JSON_QUERY({0},'$').size()";
     }
 
     @Override

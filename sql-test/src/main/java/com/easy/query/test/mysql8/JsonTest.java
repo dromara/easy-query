@@ -1,6 +1,8 @@
 package com.easy.query.test.mysql8;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
@@ -55,17 +57,20 @@ public class JsonTest extends BaseTest{
     public void testJsonField(){
         List<TopicJson> list = easyEntityQuery.queryable(TopicJson.class)
                 .where(t -> {
-                    t.extraJson().asJsonMap().getField("code").eq("200");
-                    t.extraJson().asJsonMap().getField("success").eq("true");
+                    t.extraJson().asJSONObject().getField("code").eq("200");
+                    t.extraJson().asJSONObject().getField("success").eq("true");
                 }).toList();
 
         List<Draft1<Boolean>> list1 = easyEntityQuery.queryable(TopicJson.class)
                 .where(t -> {
                 }).select(t -> Select.DRAFT.of(
-                        t.extraJson().asAny().getField("success", Boolean.class)
+                        t.extraJson().asJSONObject().getBoolean("success")
                 )).toList();
        System.out.println(list);
         System.out.println(list1);
+        JSONObject jsonObject = JSON.parseObject(list.get(0).getExtraJson());
+        jsonObject.CON
+        JSONArray jsonArray = jsonObject.getJSONArray("msg");
     }
 
     @Test
@@ -76,7 +81,7 @@ public class JsonTest extends BaseTest{
 
         List<TopicJson> list = easyEntityQuery.queryable(TopicJson.class)
                 .where(t -> {
-                    t.extraJson().asJsonMap().getField("code").eq("200");
+                    t.extraJson().asJSONObject().getField("code").eq("200");
                 }).toList();
         Assert.assertEquals(1,list.size());
         TopicJson topicJson = list.get(0);
@@ -95,9 +100,9 @@ public class JsonTest extends BaseTest{
     public void testJsonField4(){
         List<Draft1<Boolean>> list1 = easyEntityQuery.queryable(TopicJson.class)
                 .where(t -> {
-                    t.extraJson().asJsonMap().getBooleanField("success").eq(true);
+                    t.extraJson().asJSONObject().getBoolean("success").eq(true);
                 }).select(t -> Select.DRAFT.of(
-                        t.extraJson().asAny().getField("success", Boolean.class)
+                        t.extraJson().asAny().get("success", Boolean.class)
                 )).toList();
         Assert.assertEquals(1,list1.size());
         Draft1<Boolean> booleanDraft1 = list1.get(0);

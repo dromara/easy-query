@@ -2,15 +2,14 @@ package com.easy.query.core.proxy.extension.functions;
 
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.lambda.SQLFuncExpression2;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.func.column.ColumnFuncSelector;
 import com.easy.query.core.proxy.PropTypeColumn;
-import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.core.proxy.extension.ColumnFuncComparableExpression;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastBooleanAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastDateTimeAvailable;
+import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastJSONObjectAvailable;
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastNumberAvailable;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelector;
 import com.easy.query.core.proxy.extension.functions.entry.ConcatExpressionSelectorImpl;
@@ -36,7 +35,8 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         ColumnAggregateFilterFunctionAvailable<TProperty, StringFilterTypeExpression<TProperty>>,
         ColumnFunctionCastNumberAvailable<TProperty>,
         ColumnFunctionCastDateTimeAvailable<TProperty>,
-        ColumnFunctionCastBooleanAvailable<TProperty> {
+        ColumnFunctionCastBooleanAvailable<TProperty>,
+        ColumnFunctionCastJSONObjectAvailable<TProperty> {
 
     @Override
     default StringFilterTypeExpression<TProperty> max() {

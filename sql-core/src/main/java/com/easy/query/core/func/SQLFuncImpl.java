@@ -41,8 +41,13 @@ import com.easy.query.core.func.def.impl.DateTimeSQLFormatSQLFunction;
 import com.easy.query.core.func.def.impl.EmptySQLFunction;
 import com.easy.query.core.func.def.impl.EqualsWithSQLFunction;
 import com.easy.query.core.func.def.impl.IndexOfSQLFunction;
+import com.easy.query.core.func.def.impl.JSONArrayByIndexSQLFunction;
+import com.easy.query.core.func.def.impl.JSONArrayExtractByIndexSQLFunction;
+import com.easy.query.core.func.def.impl.JSONArrayLengthSQLFunction;
+import com.easy.query.core.func.def.impl.JSONObjectContainsKeySQLFunction;
+import com.easy.query.core.func.def.impl.JSONObjectExtractSQLFunction;
 import com.easy.query.core.func.def.impl.JoiningSQLFunction;
-import com.easy.query.core.func.def.impl.JsonFieldSQLFunction;
+import com.easy.query.core.func.def.impl.JSONObjectFieldSQLFunction;
 import com.easy.query.core.func.def.impl.LeftPadSQLFunction;
 import com.easy.query.core.func.def.impl.LengthSQLFunction;
 import com.easy.query.core.func.def.impl.LikeSQLFunction;
@@ -402,13 +407,33 @@ public class SQLFuncImpl implements SQLFunc {
     }
 
     @Override
-    public SQLFunction jsonField(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
-        return new JsonFieldSQLFunction(getColumnExpressions(sqlExpression));
+    public SQLFunction jsonObjectField(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new JSONObjectFieldSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override
-    public SQLFunction containsField(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
-        throw new UnsupportedOperationException();
+    public SQLFunction jsonObjectExtract(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new JSONObjectExtractSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonObjectContainsKey(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new JSONObjectContainsKeySQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonArrayByIndex(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new JSONArrayByIndexSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonArrayExtractByIndex(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new JSONArrayExtractByIndexSQLFunction(getColumnExpressions(sqlExpression));
+    }
+
+    @Override
+    public SQLFunction jsonArrayLength(SQLActionExpression1<ColumnFuncSelector> sqlExpression) {
+        return new JSONArrayLengthSQLFunction(getColumnExpressions(sqlExpression));
     }
 
     @Override

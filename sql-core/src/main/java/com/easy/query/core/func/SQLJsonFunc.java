@@ -10,6 +10,10 @@ import com.easy.query.core.func.column.ColumnFuncSelector;
  * @author xuejiaming
  */
 public interface SQLJsonFunc {
-    SQLFunction jsonField(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
-    SQLFunction containsField(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction jsonObjectField(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction jsonObjectExtract(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction jsonObjectContainsKey(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction jsonArrayByIndex(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction jsonArrayExtractByIndex(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
+    SQLFunction jsonArrayLength(SQLActionExpression1<ColumnFuncSelector> sqlExpression);
 }
