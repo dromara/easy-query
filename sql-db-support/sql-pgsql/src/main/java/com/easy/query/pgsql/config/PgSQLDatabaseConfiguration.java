@@ -13,7 +13,7 @@ import com.easy.query.pgsql.expression.PostgresSQLExpressionFactory;
 import com.easy.query.pgsql.func.PgSQLFuncImpl;
 import com.easy.query.pgsql.migration.PgSQLDatabaseMigrationProvider;
 import com.easy.query.pgsql.migration.PgSQLMigrationEntityParser;
-import com.easy.query.pgsql.types.UUIDPgSQLTypeHandler;
+import com.easy.query.pgsql.types.PgSQLUUIDTypeHandler;
 
 import java.util.UUID;
 
@@ -33,7 +33,7 @@ public class PgSQLDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(MigrationEntityParser.class, PgSQLMigrationEntityParser.class);
         services.addServiceFactory(JdbcTypeHandlerManager.class,s->{
             EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager = new EasyJdbcTypeHandlerManager();
-            easyJdbcTypeHandlerManager.appendHandler(UUID.class, UUIDPgSQLTypeHandler.INSTANCE,true);
+            easyJdbcTypeHandlerManager.appendHandler(UUID.class, PgSQLUUIDTypeHandler.INSTANCE,true);
             return easyJdbcTypeHandlerManager;
         });
     }

@@ -3,6 +3,7 @@ package com.easy.query.core.basic.jdbc.parameter;
 import com.easy.query.core.common.MapValue;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasyObjectUtil;
 
 import java.util.Map;
@@ -58,6 +59,11 @@ public class MapSQLParameter implements BeanSQLParameter {
 
     @Override
     public String getPropertyNameOrNull() {
+        return null;
+    }
+
+    @Override
+    public ColumnMetadata getColumnMetadata() {
         return null;
     }
 }

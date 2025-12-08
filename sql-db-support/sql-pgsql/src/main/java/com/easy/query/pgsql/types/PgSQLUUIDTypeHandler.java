@@ -15,8 +15,8 @@ import java.util.UUID;
  * @author xuejiaming
  * create time 2023/2/17 21:21
  */
-public class UUIDPgSQLTypeHandler implements JdbcTypeHandler {
-    public static final UUIDPgSQLTypeHandler INSTANCE = new UUIDPgSQLTypeHandler();
+public class PgSQLUUIDTypeHandler implements JdbcTypeHandler {
+    public static final PgSQLUUIDTypeHandler INSTANCE = new PgSQLUUIDTypeHandler();
 
     @Override
     public Object getValue(JdbcProperty jdbcProperty, StreamResultSet streamResultSet) throws SQLException {

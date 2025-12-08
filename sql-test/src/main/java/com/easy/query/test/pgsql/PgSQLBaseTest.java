@@ -5,6 +5,7 @@ import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
+import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
@@ -106,6 +107,8 @@ public class PgSQLBaseTest {
         configuration.applyInterceptor(new MyCategoryInterceptor());
 //        configuration.applyInterceptor(new TopicInterceptor());
         configuration.applyShardingInitializer(new FixShardingInitializer());
+        JdbcTypeHandlerManager jdbcTypeHandlerManager = runtimeContext.getJdbcTypeHandlerManager();
+        jdbcTypeHandlerManager.appendHandlerOnly(PgSQLJsonbTypeHandler.INSTANCE);
 
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         tableRouteManager.addRoute(new TopicShardingTableRoute());

@@ -16,6 +16,7 @@ public interface JdbcTypeHandlerManager {
      * @param replace 是否替换
      */
     void appendHandler(@NotNull Class<?> type,@NotNull JdbcTypeHandler typeHandler, boolean replace);
+    void appendHandlerOnly(@NotNull JdbcTypeHandler typeHandler);
 
     @NotNull
     JdbcTypeHandler getHandler(@Nullable Class<?> type);

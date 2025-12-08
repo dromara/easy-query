@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.jdbc.types;
 
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
+import com.easy.query.core.metadata.ColumnMetadata;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -45,6 +46,10 @@ public class EasyParameter {
             return null;
         }
         return value.getClass();
+    }
+
+    public ColumnMetadata getColumnMetadata(){
+        return getSQLParameter().getColumnMetadata();
     }
 
     public PreparedStatement getPs() {

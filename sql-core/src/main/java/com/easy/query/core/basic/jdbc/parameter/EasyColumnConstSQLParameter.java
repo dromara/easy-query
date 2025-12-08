@@ -39,6 +39,11 @@ public final class EasyColumnConstSQLParameter implements ConstSQLParameter {
     }
 
     @Override
+    public ColumnMetadata getColumnMetadata() {
+        return columnMetadata;
+    }
+
+    @Override
     public JDBCType getJdbcType() {
         if (columnMetadata != null) {
             return columnMetadata.getJdbcType();

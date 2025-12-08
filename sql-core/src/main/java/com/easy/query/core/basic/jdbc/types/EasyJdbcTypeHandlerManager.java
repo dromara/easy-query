@@ -46,6 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * create time 2023/2/17 22:09
+ *
  * @author xuejiaming
  */
 public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
@@ -56,7 +57,7 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
     private static final ByteTypeHandler byteTypeHandler = new ByteTypeHandler();
     private static final CharArrayTypeHandler charArrayTypeHandler = new CharArrayTypeHandler();
     private static final CLobTypeHandler clobTypeHandler = new CLobTypeHandler();
-//    private static final DateTypeHandler dateTypeHandler = new DateTypeHandler();
+    //    private static final DateTypeHandler dateTypeHandler = new DateTypeHandler();
     private static final DoubleTypeHandler doubleTypeHandler = new DoubleTypeHandler();
     private static final FloatTypeHandler floatTypeHandler = new FloatTypeHandler();
     private static final IntegerTypeHandler integerTypeHandler = new IntegerTypeHandler();
@@ -71,10 +72,12 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
     private static final UtilDateTypeHandler utilDateTypeHandler = new UtilDateTypeHandler();
     private static final TimestampTypeHandler timestampTypeHandler = new TimestampTypeHandler();
     private static final TimeTypeHandler timeTypeHandler = new TimeTypeHandler();
-    private static final JdbcTypeHandler uuidTypeHandler=new UUIDTypeHandler();
-    private static final JdbcTypeHandler DEFAULT_HANDLER=new ObjectTypeHandler();
-    private final Map<Class<?>, JdbcTypeHandler> handlers=new ConcurrentHashMap<>();
-    public EasyJdbcTypeHandlerManager(){
+    private static final JdbcTypeHandler uuidTypeHandler = new UUIDTypeHandler();
+    private static final JdbcTypeHandler DEFAULT_HANDLER = new ObjectTypeHandler();
+    private final Map<Class<?>, JdbcTypeHandler> handlers = new ConcurrentHashMap<>();
+    private final Map<Class<?>, JdbcTypeHandler> handlerTypes = new ConcurrentHashMap<>();
+
+    public EasyJdbcTypeHandlerManager() {
         handlers.put(BigDecimal.class, bigDecimalHandler);
         handlers.put(Boolean.class, booleanTypeHandler);
         handlers.put(boolean.class, booleanTypeHandler);
@@ -100,7 +103,7 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
         handlers.put(Time.class, timeTypeHandler);
         handlers.put(Clob.class, clobTypeHandler);
         handlers.put(Blob.class, blobTypeHandler);
-        handlers.put(LocalDateTime.class,localDateTimeHandler);
+        handlers.put(LocalDateTime.class, localDateTimeHandler);
         handlers.put(LocalDate.class, localDateHandler);
         handlers.put(LocalTime.class, localTimeTypeHandler);
         handlers.put(UUID.class, uuidTypeHandler);
@@ -109,27 +112,39 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
 
     @Override
     public void appendHandler(@NotNull Class<?> type, @NotNull JdbcTypeHandler typeHandler, boolean replace) {
-        Objects.requireNonNull(type,"type is null.");
-        Objects.requireNonNull(typeHandler,"typeHandler is null.");
-        if(handlers.containsKey(type)){
-            if(replace){
-                handlers.put(type,typeHandler);
+        Objects.requireNonNull(type, "type is null.");
+        Objects.requireNonNull(typeHandler, "typeHandler is null.");
+        if (handlers.containsKey(type)) {
+            if (replace) {
+                handlers.put(type, typeHandler);
             }
-        }else{
-            handlers.put(type,typeHandler);
+        } else {
+            handlers.put(type, typeHandler);
         }
     }
+
+    @Override
+    public void appendHandlerOnly(@NotNull JdbcTypeHandler typeHandler) {
+        Objects.requireNonNull(typeHandler, "typeHandler is null.");
+        handlerTypes.putIfAbsent(typeHandler.getClass(), typeHandler);
+    }
+
     @NotNull
     @Override
     public JdbcTypeHandler getHandler(@Nullable Class<?> type) {
-        if(type==null){
+        if (type == null) {
             return DEFAULT_HANDLER;
         }
-        return handlers.getOrDefault(type,DEFAULT_HANDLER);
+        return handlers.getOrDefault(type, DEFAULT_HANDLER);
     }
+
     @NotNull
     @Override
     public JdbcTypeHandler getHandlerByHandlerClass(@NotNull Class<?> handlerType) {
-        return handlers.values().stream().filter(o-> Objects.equals(o.getClass(),handlerType)).findFirst().orElseThrow(()->new EasyQueryInvalidOperationException("unknown type handler:"+ EasyClassUtil.getSimpleName(handlerType)));
+        JdbcTypeHandler jdbcTypeHandler = handlerTypes.get(handlerType);
+        if (jdbcTypeHandler == null) {
+            throw new EasyQueryInvalidOperationException("unknown type handler:" + EasyClassUtil.getSimpleName(handlerType));
+        }
+        return jdbcTypeHandler;
     }
 }

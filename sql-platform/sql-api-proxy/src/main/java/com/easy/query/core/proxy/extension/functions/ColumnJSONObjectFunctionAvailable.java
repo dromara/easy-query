@@ -72,13 +72,13 @@ public interface ColumnJSONObjectFunctionAvailable<TProperty> extends ColumnObje
         return getField(jsonKey).toDateTime(LocalDate.class);
     }
     default NumberTypeExpression<Integer> getInteger(String jsonKey) {
-        return getJsonObject(jsonKey).asInteger();
+        return getJsonObject(jsonKey).toNumber(Integer.class);
     }
     default NumberTypeExpression<Long> getLong(String jsonKey) {
-        return getJsonObject(jsonKey).asLong();
+        return getJsonObject(jsonKey).toNumber(Long.class);
     }
     default NumberTypeExpression<BigDecimal> getBigDecimal(String jsonKey) {
-        return getJsonObject(jsonKey).asBigDecimal();
+        return getJsonObject(jsonKey).toNumber(BigDecimal.class);
     }
 
     default void containsKey(String jsonKey) {

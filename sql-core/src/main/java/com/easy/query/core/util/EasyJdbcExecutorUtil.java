@@ -206,8 +206,13 @@ public class EasyJdbcExecutorUtil {
             int paramSize = sqlParameters.size();
             for (int i = 0; i < paramSize; i++) {
                 easyParameter.setIndex(i);
-                JdbcTypeHandler handler = easyJdbcTypeHandlerManager.getHandler(easyParameter.getValueType());
-                handler.setParameter(easyParameter);
+                ColumnMetadata columnMetadata = easyParameter.getColumnMetadata();
+                if (columnMetadata != null && columnMetadata.getJdbcTypeHandler() != null) {
+                    columnMetadata.getJdbcTypeHandler().setParameter(easyParameter);
+                }else{
+                    JdbcTypeHandler handler = easyJdbcTypeHandlerManager.getHandler(easyParameter.getValueType());
+                    handler.setParameter(easyParameter);
+                }
             }
         }
         return preparedStatement;

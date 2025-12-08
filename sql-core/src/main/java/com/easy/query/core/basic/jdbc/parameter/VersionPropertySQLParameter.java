@@ -2,6 +2,7 @@ package com.easy.query.core.basic.jdbc.parameter;
 
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.metadata.ColumnMetadata;
 
 /**
  * create time 2023/3/27 15:48
@@ -42,5 +43,10 @@ public class VersionPropertySQLParameter implements BeanSQLParameter {
     public Object getValue() {
         Object value = beanSQLParameter.getValue();
         return easyVersionStrategy.nextVersion(getTableOrNull().getEntityMetadata(), getPropertyNameOrNull(),value);
+    }
+
+    @Override
+    public ColumnMetadata getColumnMetadata() {
+        return beanSQLParameter.getColumnMetadata();
     }
 }

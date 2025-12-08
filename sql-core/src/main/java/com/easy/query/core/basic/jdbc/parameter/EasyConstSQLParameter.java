@@ -1,6 +1,7 @@
 package com.easy.query.core.basic.jdbc.parameter;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.metadata.ColumnMetadata;
 
 /**
  * @author xuejiaming
@@ -31,5 +32,13 @@ public final class EasyConstSQLParameter implements ConstSQLParameter {
     @Override
     public Object getValue() {
         return val;
+    }
+
+    @Override
+    public ColumnMetadata getColumnMetadata() {
+        if (entityTable != null && propertyName != null) {
+            return entityTable.getEntityMetadata().getColumnOrNull(propertyName);
+        }
+        return null;
     }
 }

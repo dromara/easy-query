@@ -5,6 +5,7 @@ import com.easy.query.core.basic.extension.track.TrackContext;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
+import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyBeanUtil;
 
@@ -50,6 +51,14 @@ public final class PropertyTrackSQLParameter implements BeanSQLParameter {
 //        Property<Object, ?> propertyLambda = column.getGetterCaller();
         return EasyBeanUtil.getPropertyValue(trackEntityState.getOriginalValue(), entityMetadata, propertyName);
 //        return propertyLambda.apply(bean);
+    }
+
+    @Override
+    public ColumnMetadata getColumnMetadata() {
+        if (table != null && propertyName != null) {
+            return table.getEntityMetadata().getColumnOrNull(propertyName);
+        }
+        return null;
     }
 
     @Override
