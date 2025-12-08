@@ -1,8 +1,11 @@
 package com.easy.query.test.mssql.entity.proxy;
 
+import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
+import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
+import com.easy.query.core.proxy.core.EntitySQLContext;
 import com.easy.query.test.mssql.entity.MsSQLMyTopic;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.columns.types.SQLIntegerTypeColumn;
@@ -62,6 +65,11 @@ public class MsSQLMyTopicProxy extends AbstractProxyEntity<MsSQLMyTopicProxy, Ms
         return entityClass;
     }
 
+    @Override
+    public MsSQLMyTopicProxy createNew() {
+        return createTable();
+    }
+
 
     /**
      * 数据库列的简单获取
@@ -113,4 +121,14 @@ public class MsSQLMyTopicProxy extends AbstractProxyEntity<MsSQLMyTopicProxy, Ms
         }
     }
 
+
+    public static final class Fields {
+        public static final String id = "id";
+        public static final String stars = "stars";
+        public static final String title = "title";
+        public static final String createTime = "createTime";
+
+        private Fields() {
+        }
+    }
 }

@@ -74,6 +74,11 @@ public class TopicTypeTest1Proxy extends AbstractProxyEntity<TopicTypeTest1Proxy
         return entityClass;
     }
 
+    @Override
+    public TopicTypeTest1Proxy createNew() {
+        return createTable();
+    }
+
 
     /**
      * 数据库列的简单获取

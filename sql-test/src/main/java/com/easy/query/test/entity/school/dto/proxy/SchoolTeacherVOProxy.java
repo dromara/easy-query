@@ -20,6 +20,8 @@ public class SchoolTeacherVOProxy extends AbstractProxyEntity<SchoolTeacherVOPro
 
     private static final Class<SchoolTeacherVO> entityClass = SchoolTeacherVO.class;
 
+    public static final SchoolTeacherVOProxy TABLE = createTable().createEmpty();
+
     public static SchoolTeacherVOProxy createTable() {
         return new SchoolTeacherVOProxy();
     }
@@ -45,6 +47,11 @@ public class SchoolTeacherVOProxy extends AbstractProxyEntity<SchoolTeacherVOPro
     @Override
     public Class<SchoolTeacherVO> getEntityClass() {
         return entityClass;
+    }
+
+    @Override
+    public SchoolTeacherVOProxy createNew() {
+        return createTable();
     }
 
 
@@ -84,4 +91,12 @@ public class SchoolTeacherVOProxy extends AbstractProxyEntity<SchoolTeacherVOPro
         }
     }
 
+
+    public static final class Fields {
+        public static final String id = "id";
+        public static final String name = "name";
+
+        private Fields() {
+        }
+    }
 }

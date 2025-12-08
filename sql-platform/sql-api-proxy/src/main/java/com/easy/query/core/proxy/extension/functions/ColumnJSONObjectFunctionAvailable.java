@@ -12,10 +12,12 @@ import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastStri
 import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.DateTimeTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.JSONArrayTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.JSONObjectTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.impl.AnyTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.impl.JSONArrayTypeExpressionImpl;
 import com.easy.query.core.proxy.extension.functions.type.impl.JSONObjectTypeExpressionImpl;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 
@@ -50,20 +52,26 @@ public interface ColumnJSONObjectFunctionAvailable<TProperty> extends ColumnObje
             });
         }, Object.class);
     }
-    default JSONObjectTypeExpression<Object> getJsonObject(String jsonKey) {
+    default AnyTypeExpression<Object> getJSONElement(String jsonKey) {
         String key = getJsonKey(getEntitySQLContext().getRuntimeContext(), jsonKey);
-        return new JSONObjectTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.jsonObjectExtract(s -> {
                 PropTypeColumn.acceptAnyValue(s, this);
                 s.format(key);
             });
         }, Object.class);
     }
+    default JSONObjectTypeExpression<Object> getJSONObject(String jsonKey) {
+       return getJSONElement(jsonKey).asJSONObject();
+    }
+    default JSONArrayTypeExpression<Object> getJSONArray(String jsonKey) {
+        return getJSONElement(jsonKey).asJSONArray();
+    }
     default StringTypeExpression<String> getString(String jsonKey) {
         return getField(jsonKey).asStr();
     }
     default BooleanTypeExpression<Boolean> getBoolean(String jsonKey) {
-        return getJsonObject(jsonKey).toBoolean();
+        return getJSONObject(jsonKey).toBoolean();
     }
     default DateTimeTypeExpression<LocalDateTime> getLocalDateTime(String jsonKey) {
         return getField(jsonKey).toDateTime(LocalDateTime.class);
@@ -72,13 +80,13 @@ public interface ColumnJSONObjectFunctionAvailable<TProperty> extends ColumnObje
         return getField(jsonKey).toDateTime(LocalDate.class);
     }
     default NumberTypeExpression<Integer> getInteger(String jsonKey) {
-        return getJsonObject(jsonKey).toNumber(Integer.class);
+        return getJSONObject(jsonKey).toNumber(Integer.class);
     }
     default NumberTypeExpression<Long> getLong(String jsonKey) {
-        return getJsonObject(jsonKey).toNumber(Long.class);
+        return getJSONObject(jsonKey).toNumber(Long.class);
     }
     default NumberTypeExpression<BigDecimal> getBigDecimal(String jsonKey) {
-        return getJsonObject(jsonKey).toNumber(BigDecimal.class);
+        return getJSONObject(jsonKey).toNumber(BigDecimal.class);
     }
 
     default void containsKey(String jsonKey) {

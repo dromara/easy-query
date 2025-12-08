@@ -10,12 +10,16 @@ import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastNumb
 import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastStringAvailable;
 import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.DateTimeTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.JSONArrayTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.JSONObjectTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.impl.AnyTypeExpressionImpl;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -45,6 +49,10 @@ public interface ColumnJSONArrayFunctionAvailable<TProperty> extends ColumnObjec
         }, Objects.class);
     }
 
+    default StringTypeExpression<String> getString(int index) {
+        return getElement(index).toStr();
+    }
+
     default BooleanTypeExpression<Boolean> getBoolean(int index) {
         return getElement(index).toBoolean();
     }
@@ -60,6 +68,12 @@ public interface ColumnJSONArrayFunctionAvailable<TProperty> extends ColumnObjec
         return getElement(index).toNumber(BigDecimal.class);
     }
 
+    default DateTimeTypeExpression<LocalDateTime> getLocalDateTime(int index) {
+        return getElement(index).toDateTime(LocalDateTime.class);
+    }
+    default DateTimeTypeExpression<LocalDate> getLocalDate(int index) {
+        return getElement(index).toDateTime(LocalDate.class);
+    }
     default AnyTypeExpression<TProperty> getJSONElement(int index) {
         return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.jsonArrayExtractByIndex(s -> {

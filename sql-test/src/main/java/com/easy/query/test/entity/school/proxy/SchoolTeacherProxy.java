@@ -59,6 +59,11 @@ public class SchoolTeacherProxy extends AbstractProxyEntity<SchoolTeacherProxy, 
         return entityClass;
     }
 
+    @Override
+    public SchoolTeacherProxy createNew() {
+        return createTable();
+    }
+
 
     /**
      * 数据库列的简单获取
@@ -96,4 +101,12 @@ public class SchoolTeacherProxy extends AbstractProxyEntity<SchoolTeacherProxy, 
         }
     }
 
+
+    public static final class Fields {
+        public static final String id = "id";
+        public static final String name = "name";
+
+        private Fields() {
+        }
+    }
 }

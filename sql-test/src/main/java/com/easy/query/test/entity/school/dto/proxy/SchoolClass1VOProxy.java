@@ -66,6 +66,11 @@ public class SchoolClass1VOProxy extends AbstractProxyEntity<SchoolClass1VOProxy
         return entityClass;
     }
 
+    @Override
+    public SchoolClass1VOProxy createNew() {
+        return createTable();
+    }
+
 
     /**
      * 数据库列的简单获取
@@ -110,4 +115,13 @@ public class SchoolClass1VOProxy extends AbstractProxyEntity<SchoolClass1VOProxy
         }
     }
 
+
+    public static final class Fields {
+        public static final String id = "id";
+        public static final String name = "name";
+        public static final String name1 = "name1";
+
+        private Fields() {
+        }
+    }
 }

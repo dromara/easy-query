@@ -22,6 +22,8 @@ public class MsSQLRowNumberMyTopicProxy extends AbstractProxyEntity<MsSQLRowNumb
 
     private static final Class<MsSQLRowNumberMyTopic> entityClass = MsSQLRowNumberMyTopic.class;
 
+    public static final MsSQLRowNumberMyTopicProxy TABLE = createTable().createEmpty();
+
     public static MsSQLRowNumberMyTopicProxy createTable() {
         return new MsSQLRowNumberMyTopicProxy();
     }
@@ -61,6 +63,11 @@ public class MsSQLRowNumberMyTopicProxy extends AbstractProxyEntity<MsSQLRowNumb
     @Override
     public Class<MsSQLRowNumberMyTopic> getEntityClass() {
         return entityClass;
+    }
+
+    @Override
+    public MsSQLRowNumberMyTopicProxy createNew() {
+        return createTable();
     }
 
 
@@ -114,4 +121,14 @@ public class MsSQLRowNumberMyTopicProxy extends AbstractProxyEntity<MsSQLRowNumb
         }
     }
 
+
+    public static final class Fields {
+        public static final String id = "id";
+        public static final String stars = "stars";
+        public static final String title = "title";
+        public static final String createTime = "createTime";
+
+        private Fields() {
+        }
+    }
 }

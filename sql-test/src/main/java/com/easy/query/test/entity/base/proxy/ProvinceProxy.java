@@ -59,6 +59,11 @@ public class ProvinceProxy extends AbstractProxyEntity<ProvinceProxy, Province> 
         return entityClass;
     }
 
+    @Override
+    public ProvinceProxy createNew() {
+        return createTable();
+    }
+
 
     /**
      * 数据库列的简单获取
@@ -96,4 +101,12 @@ public class ProvinceProxy extends AbstractProxyEntity<ProvinceProxy, Province> 
         }
     }
 
+
+    public static final class Fields {
+        public static final String code = "code";
+        public static final String name = "name";
+
+        private Fields() {
+        }
+    }
 }

@@ -83,6 +83,11 @@ public class TopicTypeArrayJsonProxy extends AbstractProxyEntity<TopicTypeArrayJ
         return entityClass;
     }
 
+    @Override
+    public TopicTypeArrayJsonProxy createNew() {
+        return createTable();
+    }
+
 
     /**
      * 数据库列的简单获取
@@ -149,4 +154,16 @@ public class TopicTypeArrayJsonProxy extends AbstractProxyEntity<TopicTypeArrayJ
         }
     }
 
+
+    public static final class Fields {
+        public static final String id = "id";
+        public static final String stars = "stars";
+        public static final String title = "title";
+        public static final String title2 = "title2";
+        public static final String topicType = "topicType";
+        public static final String createTime = "createTime";
+
+        private Fields() {
+        }
+    }
 }

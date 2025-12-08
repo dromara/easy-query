@@ -66,6 +66,11 @@ public class CityProxy extends AbstractProxyEntity<CityProxy, City> {
         return entityClass;
     }
 
+    @Override
+    public CityProxy createNew() {
+        return createTable();
+    }
+
 
     /**
      * 数据库列的简单获取
@@ -110,4 +115,13 @@ public class CityProxy extends AbstractProxyEntity<CityProxy, City> {
         }
     }
 
+
+    public static final class Fields {
+        public static final String code = "code";
+        public static final String provinceCode = "provinceCode";
+        public static final String name = "name";
+
+        private Fields() {
+        }
+    }
 }

@@ -77,6 +77,11 @@ public class BlogEntityVO1Proxy extends AbstractProxyEntity<BlogEntityVO1Proxy, 
         return entityClass;
     }
 
+    @Override
+    public BlogEntityVO1Proxy createNew() {
+        return createTable();
+    }
+
 
     /**
      * 数据库列的简单获取
@@ -140,4 +145,15 @@ public class BlogEntityVO1Proxy extends AbstractProxyEntity<BlogEntityVO1Proxy, 
         }
     }
 
+
+    public static final class Fields {
+        public static final String score = "score";
+        public static final String status = "status";
+        public static final String order = "order";
+        public static final String isTop = "isTop";
+        public static final String top = "top";
+
+        private Fields() {
+        }
+    }
 }

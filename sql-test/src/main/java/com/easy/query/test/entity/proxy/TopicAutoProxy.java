@@ -22,6 +22,8 @@ public class TopicAutoProxy extends AbstractProxyEntity<TopicAutoProxy, TopicAut
 
     private static final Class<TopicAuto> entityClass = TopicAuto.class;
 
+    public static final TopicAutoProxy TABLE = createTable().createEmpty();
+
     public static TopicAutoProxy createTable() {
         return new TopicAutoProxy();
     }
@@ -61,6 +63,11 @@ public class TopicAutoProxy extends AbstractProxyEntity<TopicAutoProxy, TopicAut
     @Override
     public Class<TopicAuto> getEntityClass() {
         return entityClass;
+    }
+
+    @Override
+    public TopicAutoProxy createNew() {
+        return createTable();
     }
 
 
@@ -114,4 +121,14 @@ public class TopicAutoProxy extends AbstractProxyEntity<TopicAutoProxy, TopicAut
         }
     }
 
+
+    public static final class Fields {
+        public static final String id = "id";
+        public static final String stars = "stars";
+        public static final String title = "title";
+        public static final String createTime = "createTime";
+
+        private Fields() {
+        }
+    }
 }

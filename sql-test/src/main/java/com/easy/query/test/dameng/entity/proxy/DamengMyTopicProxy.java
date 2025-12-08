@@ -33,6 +33,7 @@ public class DamengMyTopicProxy extends AbstractProxyEntity<DamengMyTopicProxy, 
 
     public DamengMyTopicProxy() {
     }
+
     /**
      * {@link DamengMyTopic#getId}
      */
@@ -72,6 +73,11 @@ public class DamengMyTopicProxy extends AbstractProxyEntity<DamengMyTopicProxy, 
     @Override
     public Class<DamengMyTopic> getEntityClass() {
         return entityClass;
+    }
+
+    @Override
+    public DamengMyTopicProxy createNew() {
+        return createTable();
     }
 
 
@@ -125,4 +131,14 @@ public class DamengMyTopicProxy extends AbstractProxyEntity<DamengMyTopicProxy, 
         }
     }
 
+
+    public static final class Fields {
+        public static final String id = "id";
+        public static final String stars = "stars";
+        public static final String title = "title";
+        public static final String createTime = "createTime";
+
+        private Fields() {
+        }
+    }
 }

@@ -117,6 +117,11 @@ public class BlogEntity2Proxy extends AbstractProxyEntity<BlogEntity2Proxy, Blog
         return entityClass;
     }
 
+    @Override
+    public BlogEntity2Proxy createNew() {
+        return createTable();
+    }
+
 
     /**
      * 数据库列的简单获取
@@ -219,4 +224,20 @@ public class BlogEntity2Proxy extends AbstractProxyEntity<BlogEntity2Proxy, Blog
         }
     }
 
+
+    public static final class Fields {
+        public static final String title = "title";
+        public static final String content = "content";
+        public static final String url = "url";
+        public static final String star = "star";
+        public static final String id = "id";
+        public static final String createTime = "createTime";
+        public static final String updateTime = "updateTime";
+        public static final String createBy = "createBy";
+        public static final String updateBy = "updateBy";
+        public static final String deleted = "deleted";
+
+        private Fields() {
+        }
+    }
 }

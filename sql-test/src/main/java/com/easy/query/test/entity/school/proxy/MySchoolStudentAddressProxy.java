@@ -22,6 +22,8 @@ public class MySchoolStudentAddressProxy extends AbstractProxyEntity<MySchoolStu
 
     private static final Class<MySchoolStudentAddress> entityClass = MySchoolStudentAddress.class;
 
+    public static final MySchoolStudentAddressProxy TABLE = createTable().createEmpty();
+
     public static MySchoolStudentAddressProxy createTable() {
         return new MySchoolStudentAddressProxy();
     }
@@ -61,6 +63,11 @@ public class MySchoolStudentAddressProxy extends AbstractProxyEntity<MySchoolStu
     @Override
     public Class<MySchoolStudentAddress> getEntityClass() {
         return entityClass;
+    }
+
+    @Override
+    public MySchoolStudentAddressProxy createNew() {
+        return createTable();
     }
 
 
@@ -107,4 +114,13 @@ public class MySchoolStudentAddressProxy extends AbstractProxyEntity<MySchoolStu
         }
     }
 
+
+    public static final class Fields {
+        public static final String id = "id";
+        public static final String studentId = "studentId";
+        public static final String address = "address";
+
+        private Fields() {
+        }
+    }
 }

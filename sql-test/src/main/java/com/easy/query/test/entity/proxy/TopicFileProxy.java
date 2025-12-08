@@ -2,7 +2,6 @@ package com.easy.query.test.entity.proxy;
 
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.proxy.AbstractProxyEntity;
-import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.fetcher.AbstractFetcher;
@@ -73,6 +72,11 @@ public class TopicFileProxy extends AbstractProxyEntity<TopicFileProxy, TopicFil
         return entityClass;
     }
 
+    @Override
+    public TopicFileProxy createNew() {
+        return createTable();
+    }
+
 
     /**
      * 数据库列的简单获取
@@ -82,7 +86,7 @@ public class TopicFileProxy extends AbstractProxyEntity<TopicFileProxy, TopicFil
     public TopicFileProxyFetcher FETCHER = new TopicFileProxyFetcher(this, null, SQLSelectAsExpression.empty);
 
 
-    public static class TopicFileProxyFetcher extends AbstractFetcher<TopicFileProxy, TopicFile, TopicFileProxyFetcher>  {
+    public static class TopicFileProxyFetcher extends AbstractFetcher<TopicFileProxy, TopicFile, TopicFileProxyFetcher> {
 
         public TopicFileProxyFetcher(TopicFileProxy proxy, TopicFileProxyFetcher prev, SQLSelectAsExpression sqlSelectAsExpression) {
             super(proxy, prev, sqlSelectAsExpression);
@@ -131,4 +135,15 @@ public class TopicFileProxy extends AbstractProxyEntity<TopicFileProxy, TopicFil
         }
     }
 
+
+    public static final class Fields {
+        public static final String id = "id";
+        public static final String stars = "stars";
+        public static final String title = "title";
+        public static final String createTime = "createTime";
+        public static final String alias = "alias";
+
+        private Fields() {
+        }
+    }
 }
