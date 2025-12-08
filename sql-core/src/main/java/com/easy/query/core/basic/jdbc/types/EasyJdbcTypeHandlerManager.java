@@ -75,7 +75,6 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
     private static final JdbcTypeHandler uuidTypeHandler = new UUIDTypeHandler();
     private static final JdbcTypeHandler DEFAULT_HANDLER = new ObjectTypeHandler();
     private final Map<Class<?>, JdbcTypeHandler> handlers = new ConcurrentHashMap<>();
-    private final Map<Class<?>, JdbcTypeHandler> handlerTypes = new ConcurrentHashMap<>();
 
     public EasyJdbcTypeHandlerManager() {
         handlers.put(BigDecimal.class, bigDecimalHandler);
@@ -123,12 +122,6 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
         }
     }
 
-    @Override
-    public void appendHandlerOnly(@NotNull JdbcTypeHandler typeHandler) {
-        Objects.requireNonNull(typeHandler, "typeHandler is null.");
-        handlerTypes.putIfAbsent(typeHandler.getClass(), typeHandler);
-    }
-
     @NotNull
     @Override
     public JdbcTypeHandler getHandler(@Nullable Class<?> type) {
@@ -141,10 +134,6 @@ public class EasyJdbcTypeHandlerManager implements JdbcTypeHandlerManager {
     @NotNull
     @Override
     public JdbcTypeHandler getHandlerByHandlerClass(@NotNull Class<?> handlerType) {
-        JdbcTypeHandler jdbcTypeHandler = handlerTypes.get(handlerType);
-        if (jdbcTypeHandler == null) {
-            throw new EasyQueryInvalidOperationException("unknown type handler:" + EasyClassUtil.getSimpleName(handlerType));
-        }
-        return jdbcTypeHandler;
+        return handlers.values().stream().filter(o-> Objects.equals(o.getClass(),handlerType)).findFirst().orElseThrow(()->new EasyQueryInvalidOperationException("unknown type handler:"+ EasyClassUtil.getSimpleName(handlerType)));
     }
 }

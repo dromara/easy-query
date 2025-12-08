@@ -4,9 +4,10 @@ import com.easy.query.core.annotation.Column;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
-import com.easy.query.test.mysql8.entity.proxy.TopicJsonProxy;
 import com.easy.query.test.pgsql.proxy.PgTopicJsonProxy;
 import lombok.Data;
+
+import java.sql.JDBCType;
 
 /**
  * create time 2025/3/4 08:29
@@ -21,8 +22,8 @@ public class PgTopicJson implements ProxyEntityAvailable<PgTopicJson, PgTopicJso
     @Column(primaryKey = true)
     private String id;
     private String name;
-    @Column(dbType = "jsonb",typeHandler = PgSQLJsonbTypeHandler.class)
+    @Column(dbType = "jsonb",jdbcType = JDBCType.JAVA_OBJECT)
     private String extraJson;
-    @Column(dbType = "jsonb",typeHandler = PgSQLJsonbTypeHandler.class)
+    @Column(dbType = "jsonb",jdbcType = JDBCType.JAVA_OBJECT)
     private String extraJsonArray;
 }

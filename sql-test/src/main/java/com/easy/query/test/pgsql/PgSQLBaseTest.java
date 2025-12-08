@@ -108,7 +108,7 @@ public class PgSQLBaseTest {
 //        configuration.applyInterceptor(new TopicInterceptor());
         configuration.applyShardingInitializer(new FixShardingInitializer());
         JdbcTypeHandlerManager jdbcTypeHandlerManager = runtimeContext.getJdbcTypeHandlerManager();
-        jdbcTypeHandlerManager.appendHandlerOnly(PgSQLJsonbTypeHandler.INSTANCE);
+        jdbcTypeHandlerManager.appendHandler(String.class,PgSQLStringSupportJsonbTypeHandler.INSTANCE,true);
 
         TableRouteManager tableRouteManager = runtimeContext.getTableRouteManager();
         tableRouteManager.addRoute(new TopicShardingTableRoute());
