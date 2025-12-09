@@ -7,4 +7,15 @@
 ## DTO是否保留 @Column 注解, 当字段映射为 属性优先/属性唯一 的时候可以不用保留 @Column 注解
 dto.keepAnnoColumn=true
 
+# 具体参考 com.alibaba.druid.util.FnvHash.DbType  如果是generic那么还是原先的格式化 如果不是generic且未匹配到则使用DbType.other
 sql.format=mysql,postgresql,sqlserver,oracle,h2,sqlite
+
+# lambda快速提示
+lambda.tip=
+
+# dto配置忽略json
+dto.columns.ignores=
+
+
+# 数据库生成配置文件
+sql.generate =
