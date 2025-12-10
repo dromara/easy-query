@@ -55,4 +55,9 @@ public class TreeCTEConfigurerImpl implements TreeCTEConfigurer {
     public void setDeepInCustomSelect(boolean deepInCustomSelect) {
         treeCTEOption.setDeepInCustomSelect(deepInCustomSelect);
     }
+
+    @Override
+    public void setChildrenProp(String childrenProp) {
+        treeCTEOption.setChildrenProp(childrenProp);
+    }
 }

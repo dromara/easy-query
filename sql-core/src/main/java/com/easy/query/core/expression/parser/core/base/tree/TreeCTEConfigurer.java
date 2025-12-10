@@ -50,4 +50,10 @@ public interface TreeCTEConfigurer {
      * @param deepInCustomSelect
      */
     void setDeepInCustomSelect(boolean deepInCustomSelect);
+
+    /**
+     * 设置递归使用哪个一对多的属性
+     * @param childrenProp
+     */
+    void setChildrenProp(String childrenProp);
 }

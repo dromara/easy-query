@@ -18,6 +18,10 @@ public class TreeCTEOption {
      * 当使用手动select的时候是否将深度信息也查询出来
      */
     private boolean deepInCustomSelect = false;
+    /**
+     * 递归使用哪个一对多属性
+     */
+    private String childrenProp;
     private String cteTableName = "as_tree_cte";
     private String deepColumnName = "cte_deep";
     private SQLActionExpression1<WherePredicate<?>> whereExpression;
@@ -80,5 +84,23 @@ public class TreeCTEOption {
 
     public void setDeepInCustomSelect(boolean deepInCustomSelect) {
         this.deepInCustomSelect = deepInCustomSelect;
+    }
+
+    /**
+     * 设置递归使用哪个一对多的属性
+     *
+     * @param childrenProp
+     */
+    public void setChildrenProp(String childrenProp) {
+        this.childrenProp = childrenProp;
+    }
+
+    /**
+     * 设置递归使用哪个一对多的属性
+     *
+     * @return
+     */
+    public String getChildrenProp() {
+        return childrenProp;
     }
 }

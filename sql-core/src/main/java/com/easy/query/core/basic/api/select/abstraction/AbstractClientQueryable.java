@@ -557,8 +557,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (EasyCollectionUtil.isEmpty(list)) {
             return list;
         }
+        TreeCTEOption treeCTEOption = this.expressionContext.getTreeCTEOption();
 
-        MergeTuple2<NavigateMetadata, String> treeNavigateMetadataTuple2 = getTreeNavigateMetadata(entityMetadata);
+        MergeTuple2<NavigateMetadata, String> treeNavigateMetadataTuple2 = getTreeNavigateMetadata(entityMetadata, treeCTEOption);
         NavigateMetadata treeNavigateMetadata = treeNavigateMetadataTuple2.t1;
         //没有单个子项
         if (treeNavigateMetadata == null) {
@@ -567,7 +568,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             }
             return list;
         }
-        TreeCTEOption treeCTEOption = this.expressionContext.getTreeCTEOption();
         if (treeCTEOption == null) {//非cte递归的情况下走原本的树组合
             return EasyTreeUtil.generateTrees(list, entityMetadata, treeNavigateMetadata, runtimeContext);
         } else {
@@ -592,7 +592,8 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                 EntityTableExpressionBuilder fromTable = anonymousEntityQueryExpressionBuilder.getFromTable();
                 EntityMetadata fromTableEntityMetadata = fromTable.getEntityMetadata();
                 if (EasyStringUtil.isNotBlank(fromTableEntityMetadata.getTableName())) {
-                    MergeTuple2<NavigateMetadata, String> fromTableTreeNavigateMetadataTuple = getTreeNavigateMetadata(fromTableEntityMetadata);
+                    TreeCTEOption treeCTEOption = entityQueryExpressionBuilder.getExpressionContext().getTreeCTEOption();
+                    MergeTuple2<NavigateMetadata, String> fromTableTreeNavigateMetadataTuple = getTreeNavigateMetadata(fromTableEntityMetadata, treeCTEOption);
                     NavigateMetadata fromTableTreeNavigateMetadata = fromTableTreeNavigateMetadataTuple.t1;
                     if (fromTableTreeNavigateMetadata != null) {
                         //如果from的表self和target都在返回结果中那么才使用
@@ -1666,23 +1667,30 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
 
-    private MergeTuple2<NavigateMetadata, String> getTreeNavigateMetadata(EntityMetadata cteEntityMetadata) {
+    private MergeTuple2<NavigateMetadata, String> getTreeNavigateMetadata(EntityMetadata cteEntityMetadata, TreeCTEOption treeCTEOption) {
         Collection<NavigateMetadata> navigateMetadatas = cteEntityMetadata.getNavigateMetadatas();
         if (EasyCollectionUtil.isNotEmpty(navigateMetadatas)) {
-
-            if (EasyStringUtil.isNotBlank(cteEntityMetadata.getTreeName())) {
-                NavigateMetadata navigateMetadata = navigateMetadatas.stream().filter(o -> Objects.equals(o.getPropertyName(), cteEntityMetadata.getTreeName())).findFirst().orElse(null);
-                if (navigateMetadata == null) {
-                    return new MergeTuple2<>(null, "not found tree name:[" + cteEntityMetadata.getTreeName() + "] in class:[" + EasyClassUtil.getSimpleName(cteEntityMetadata.getEntityClass()) + "].");
+            if (treeCTEOption != null && EasyStringUtil.isNotBlank(treeCTEOption.getChildrenProp())) {
+                NavigateMetadata childrenNavigateMetadata = cteEntityMetadata.getNavigateOrNull(treeCTEOption.getChildrenProp());
+                if (childrenNavigateMetadata == null) {
+                    return new MergeTuple2<>(null, "not found tree name:[" + treeCTEOption.getChildrenProp() + "] in class:[" + EasyClassUtil.getSimpleName(cteEntityMetadata.getEntityClass()) + "].");
                 }
-                return new MergeTuple2<>(navigateMetadata, null);
+                return new MergeTuple2<>(childrenNavigateMetadata, null);
             } else {
-                List<NavigateMetadata> selfNavigateMetadata = navigateMetadatas.stream().filter(o -> o.getRelationType() == RelationTypeEnum.OneToMany && Objects.equals(o.getNavigatePropertyType(), cteEntityMetadata.getEntityClass())).collect(Collectors.toList());
-                if (EasyCollectionUtil.isNotEmpty(selfNavigateMetadata)) {
-                    if (EasyCollectionUtil.isSingle(selfNavigateMetadata)) {
-                        return new MergeTuple2<>(selfNavigateMetadata.get(0), null);
+                if (EasyStringUtil.isNotBlank(cteEntityMetadata.getTreeName())) {
+                    NavigateMetadata navigateMetadata = navigateMetadatas.stream().filter(o -> Objects.equals(o.getPropertyName(), cteEntityMetadata.getTreeName())).findFirst().orElse(null);
+                    if (navigateMetadata == null) {
+                        return new MergeTuple2<>(null, "not found tree name:[" + cteEntityMetadata.getTreeName() + "] in class:[" + EasyClassUtil.getSimpleName(cteEntityMetadata.getEntityClass()) + "].");
                     }
-                    return new MergeTuple2<>(null, "Multiple parent-child relationships detected, unable to accurately construct the tree.");
+                    return new MergeTuple2<>(navigateMetadata, null);
+                } else {
+                    List<NavigateMetadata> selfNavigateMetadata = navigateMetadatas.stream().filter(o -> o.getRelationType() == RelationTypeEnum.OneToMany && Objects.equals(o.getNavigatePropertyType(), cteEntityMetadata.getEntityClass())).collect(Collectors.toList());
+                    if (EasyCollectionUtil.isNotEmpty(selfNavigateMetadata)) {
+                        if (EasyCollectionUtil.isSingle(selfNavigateMetadata)) {
+                            return new MergeTuple2<>(selfNavigateMetadata.get(0), null);
+                        }
+                        return new MergeTuple2<>(null, "Multiple parent-child relationships detected, unable to accurately construct the tree.");
+                    }
                 }
             }
         }
@@ -1698,14 +1706,22 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (EasyStringUtil.isBlank(cteEntityMetadata.getTableName())) {
             throw new EasyQueryInvalidOperationException("Method [asTreeCTE] supports only database objects.");
         }
-        MergeTuple2<NavigateMetadata, String> treeNavigateMetadataTuple2 = getTreeNavigateMetadata(cteEntityMetadata);
+
+
+        TreeCTEOption treeCTEOption = new TreeCTEOption();
+        TreeCTEConfigurerImpl treeCTEConfigurer = new TreeCTEConfigurerImpl(treeCTEOption);
+        treeCteConfigurerExpression.apply(treeCTEConfigurer);
+
+        MergeTuple2<NavigateMetadata, String> treeNavigateMetadataTuple2 = getTreeNavigateMetadata(cteEntityMetadata, treeCTEOption);
         NavigateMetadata treeNavigateMetadata = treeNavigateMetadataTuple2.t1;
         if (treeNavigateMetadata == null) {
             throw new EasyQueryInvalidOperationException(treeNavigateMetadataTuple2.t2);
         }
         //设置哪个导航属性为cte树，selectAutoInclude的时候如果判断为该导航则会默认忽略掉该属性
         expressionContext.setTreeCTE(treeNavigateMetadata);
-        return asTreeCTECustom(treeNavigateMetadata.getSelfPropertiesOrPrimary(), treeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), treeCteConfigurerExpression);
+
+
+        return asTreeCTECustom(treeNavigateMetadata.getSelfPropertiesOrPrimary(), treeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), treeCTEOption);
     }
 
     private ClientQueryable2<T1, T1> getCTEJoinQueryable(ClientQueryable<T1> queryable, String cteTableName, String[] codeProperties, String[] parentCodeProperties, boolean up) {
@@ -1748,13 +1764,10 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 //                });
     }
 
-    private ClientQueryable<T1> asTreeCTECustom(String[] codeProperties, String[] parentCodeProperties, SQLActionExpression1<TreeCTEConfigurer> treeCteConfigurerExpression) {
+    private ClientQueryable<T1> asTreeCTECustom(String[] codeProperties, String[] parentCodeProperties, TreeCTEOption treeCTEOption) {
 
         //将当前表达式的expression builder放入新表达式的声明里面新表达式还是当前的T类型
 
-        TreeCTEOption treeCTEOption = new TreeCTEOption();
-        TreeCTEConfigurerImpl treeCTEConfigurer = new TreeCTEConfigurerImpl(treeCTEOption);
-        treeCteConfigurerExpression.apply(treeCTEConfigurer);
         String cteTableName = treeCTEOption.getCTETableName();
         String deepColumnName = treeCTEOption.getDeepColumnName();
         int limitDeep = treeCTEOption.getLimitDeep();
@@ -1793,7 +1806,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             columnNames.add(kv.getValue().getName());
         }
 
-        EntityQueryExpressionBuilder anonymousCTEQueryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousCTEQueryExpressionBuilder(cteTableName,columnNames, unionAllEntityQueryExpressionBuilder, t1ClientQueryable.getSQLEntityExpressionBuilder().getExpressionContext(), t1ClientQueryable.queryClass());
+        EntityQueryExpressionBuilder anonymousCTEQueryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousCTEQueryExpressionBuilder(cteTableName, columnNames, unionAllEntityQueryExpressionBuilder, t1ClientQueryable.getSQLEntityExpressionBuilder().getExpressionContext(), t1ClientQueryable.queryClass());
         myQueryable.getSQLEntityExpressionBuilder().getExpressionContext().getDeclareExpressions().add(anonymousCTEQueryExpressionBuilder);
         myQueryable.asTable(cteTableName);
         if (limitDeep >= 0) {
@@ -1809,7 +1822,10 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     public ClientQueryable<T1> asTreeCTECustom(String codeProperty, String parentCodeProperty, SQLActionExpression1<TreeCTEConfigurer> treeExpression) {
         String[] codeProperties = {codeProperty};
         String[] parentCodeProperties = {parentCodeProperty};
-        return asTreeCTECustom(codeProperties, parentCodeProperties, treeExpression);
+        TreeCTEOption treeCTEOption = new TreeCTEOption();
+        TreeCTEConfigurerImpl treeCTEConfigurer = new TreeCTEConfigurerImpl(treeCTEOption);
+        treeExpression.apply(treeCTEConfigurer);
+        return asTreeCTECustom(codeProperties, parentCodeProperties, treeCTEOption);
     }
 
     @Override

@@ -10,7 +10,9 @@ import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.dto.BankCardGroupBO;
 import com.easy.query.test.mysql8.dto.BankCardSelectAutoInclude;
+import com.easy.query.test.mysql8.dto.M8UserDTO;
 import com.easy.query.test.mysql8.dto.proxy.BankCardGroupBOProxy;
+import com.easy.query.test.mysql8.entity.M8User;
 import com.easy.query.test.mysql8.entity.M8User2;
 import com.easy.query.test.mysql8.entity.M8UserBook2;
 import com.easy.query.test.mysql8.entity.M8UserBookIds;
@@ -408,4 +410,15 @@ public class M8Test1 extends BaseTest {
         Assert.assertNotNull(ex);
         Assert.assertEquals("java.sql.SQLDataException: Cannot determine value type from string 'u1'",ex.getMessage());
     }
+
+
+
+//    @Test
+//    public void queryInclude(){
+//        List<M8UserDTO> list = easyEntityQuery.queryable(M8User.class)
+//                .selectAutoInclude(M8UserDTO.class)
+//                .toList();
+//        System.out.println(list);
+//    }
+
 }
