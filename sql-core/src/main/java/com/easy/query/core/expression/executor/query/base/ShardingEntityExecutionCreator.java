@@ -65,10 +65,7 @@ public class ShardingEntityExecutionCreator extends ShardingBaseExecutionCreator
         if(expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.EXECUTE_NO_BATCH)){
             return false;
         }
-        int entitySize = entityPrepareParseResult.getEntities().size();
-        ExecutorContext executorContext = entityPrepareParseResult.getExecutorContext();
-        return expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.EXECUTE_BATCH)
-                ||EasySQLExpressionUtil.entityExecuteBatch(entitySize,executorContext);
+        return expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.EXECUTE_BATCH);
     }
 
     @Override

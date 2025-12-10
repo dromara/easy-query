@@ -112,15 +112,6 @@ public class SolonEasyQueryProperties {
      */
     private final static boolean warningBusy = true;
 
-
-    /**
-     * 对象插入数量到达多少后使用批处理
-     */
-    private final static int insertBatchThreshold = 1024;
-    /**
-     * 对象修改数量达到多少后使用批量处理
-     */
-    private final static int updateBatchThreshold = 1024;
     /**
      * 是否打印sql
      */
@@ -446,16 +437,6 @@ public class SolonEasyQueryProperties {
 
     public boolean isWarningBusy() {
         return this.props.getBool("warning-busy", warningBusy);
-    }
-
-
-    public int getInsertBatchThreshold() {
-        return this.props.getInt("insert-batch-threshold", insertBatchThreshold);
-    }
-
-
-    public int getUpdateBatchThreshold() {
-        return this.props.getInt("update-batch-threshold", updateBatchThreshold);
     }
 
 

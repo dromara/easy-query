@@ -165,8 +165,6 @@ public class DbManager {
                     builder.setDefaultDataSourceMergePoolSize(solonEasyQueryProperties.getDefaultDataSourceMergePoolSize());
                     builder.setMultiConnWaitTimeoutMillis(solonEasyQueryProperties.getMultiConnWaitTimeoutMillis());
                     builder.setWarningBusy(solonEasyQueryProperties.isWarningBusy());
-                    builder.setInsertBatchThreshold(solonEasyQueryProperties.getInsertBatchThreshold());
-                    builder.setUpdateBatchThreshold(solonEasyQueryProperties.getUpdateBatchThreshold());
                     builder.setPrintSql(solonEasyQueryProperties.isPrintSql());
                     builder.setPrintNavSql(solonEasyQueryProperties.isPrintNavSql());
                     builder.setStartTimeJob(solonEasyQueryProperties.isStartTimeJob());

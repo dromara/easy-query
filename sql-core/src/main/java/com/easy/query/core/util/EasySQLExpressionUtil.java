@@ -633,18 +633,6 @@ public class EasySQLExpressionUtil {
         return EasyCollectionUtil.first(keyProperties);
     }
 
-    public static boolean entityExecuteBatch(int entitySize, ExecutorContext executorContext) {
-        EasyQueryOption easyQueryOption = executorContext.getEasyQueryOption();
-        ExecuteMethodEnum executeMethod = executorContext.getExecuteMethod();
-        if (Objects.equals(ExecuteMethodEnum.INSERT, executeMethod)) {
-            return entitySize >= easyQueryOption.getInsertBatchThreshold();
-        }
-        if (Objects.equals(ExecuteMethodEnum.UPDATE, executeMethod)) {
-            return entitySize >= easyQueryOption.getUpdateBatchThreshold();
-        }
-        return false;
-    }
-
 
     public static Object parseParamExpression(ExpressionContext expressionContext, ParamExpression paramExpression, ToSQLContext toSQLContext) {
         if (paramExpression instanceof ColumnPropertyParamExpression) {

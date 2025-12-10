@@ -58,10 +58,7 @@ public abstract class BaseEntityExecutionCreator extends BaseExecutionCreator {
         if (entityExpressionBuilder.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.EXECUTE_NO_BATCH)) {
             return false;
         }
-        int entitySize = entities.size();
-        return entityExpressionBuilder.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.EXECUTE_BATCH)
-                ||
-                EasySQLExpressionUtil.entityExecuteBatch(entitySize, executorContext);
+        return entityExpressionBuilder.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.EXECUTE_BATCH);
     }
 
     protected abstract EntitySQLExpression createEasySQLExpression(Object entity);

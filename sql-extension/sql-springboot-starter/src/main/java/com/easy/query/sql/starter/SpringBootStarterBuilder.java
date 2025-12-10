@@ -148,8 +148,6 @@ public class SpringBootStarterBuilder {
                     builder.setDefaultDataSourceMergePoolSize(easyQueryProperties.getDefaultDataSourceMergePoolSize());
                     builder.setMultiConnWaitTimeoutMillis(easyQueryProperties.getMultiConnWaitTimeoutMillis());
                     builder.setWarningBusy(easyQueryProperties.isWarningBusy());
-                    builder.setInsertBatchThreshold(easyQueryProperties.getInsertBatchThreshold());
-                    builder.setUpdateBatchThreshold(easyQueryProperties.getUpdateBatchThreshold());
                     builder.setPrintSql(easyQueryProperties.isPrintSql());
                     builder.setPrintNavSql(easyQueryProperties.isPrintNavSql());
                     builder.setStartTimeJob(easyQueryProperties.isStartTimeJob());

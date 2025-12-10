@@ -109,16 +109,6 @@ public class EasyQueryProperties {
      * 分片获取连接数繁忙是否打印 获取耗时大于{@code multiConnWaitTimeoutMillis}的80%视为繁忙
      */
     private boolean warningBusy = true;
-
-
-    /**
-     * 对象插入数量到达多少后使用批处理
-     */
-    private int insertBatchThreshold = 1024;
-    /**
-     * 对象修改数量达到多少后使用批量处理
-     */
-    private int updateBatchThreshold = 1024;
     /**
      * 是否打印sql
      */
@@ -324,22 +314,6 @@ public class EasyQueryProperties {
 
     public void setWarningBusy(boolean warningBusy) {
         this.warningBusy = warningBusy;
-    }
-
-    public int getInsertBatchThreshold() {
-        return insertBatchThreshold;
-    }
-
-    public void setInsertBatchThreshold(int insertBatchThreshold) {
-        this.insertBatchThreshold = insertBatchThreshold;
-    }
-
-    public int getUpdateBatchThreshold() {
-        return updateBatchThreshold;
-    }
-
-    public void setUpdateBatchThreshold(int updateBatchThreshold) {
-        this.updateBatchThreshold = updateBatchThreshold;
     }
 
     public boolean isPrintSql() {

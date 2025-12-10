@@ -37,14 +37,6 @@ public class EasyQueryOptionBuilder {
     private long multiConnWaitTimeoutMillis;
     private boolean warningBusy;
     /**
-     * 插入批处理阈值
-     */
-    private int insertBatchThreshold;
-    /**
-     * update批处理阈值
-     */
-    private int updateBatchThreshold;
-    /**
      * 是否打印sql
      */
     private boolean printSql;
@@ -116,8 +108,6 @@ public class EasyQueryOptionBuilder {
         this.executorQueueSize = 1024;
         this.multiConnWaitTimeoutMillis = 5000L;
         this.warningBusy = true;
-        this.insertBatchThreshold = 1024;
-        this.updateBatchThreshold = 1024;
         this.printSql = true;
         this.printNavSql = true;
         this.startTimeJob = false;
@@ -215,14 +205,6 @@ public class EasyQueryOptionBuilder {
      */
     public void setWarningBusy(boolean warningBusy) {
         this.warningBusy = warningBusy;
-    }
-
-    public void setInsertBatchThreshold(int insertBatchThreshold) {
-        this.insertBatchThreshold = insertBatchThreshold;
-    }
-
-    public void setUpdateBatchThreshold(int updateBatchThreshold) {
-        this.updateBatchThreshold = updateBatchThreshold;
     }
 
     public void setPrintSql(boolean printSql) {
@@ -323,8 +305,6 @@ public class EasyQueryOptionBuilder {
                 this.executorQueueSize,
                 this.multiConnWaitTimeoutMillis,
                 this.warningBusy,
-                this.insertBatchThreshold,
-                this.updateBatchThreshold,
                 this.printSql,
                 this.startTimeJob,
                 this.relationGroupSize,

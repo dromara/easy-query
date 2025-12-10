@@ -83,14 +83,6 @@ public class EasyQueryOption {
      */
     private final boolean warningBusy;
     /**
-     * 当插入对象达到多少阈值启用batch
-     */
-    private final int insertBatchThreshold;
-    /**
-     * 当更新对象达到多少阈值启用batch
-     */
-    private final int updateBatchThreshold;
-    /**
      * 是否需要打印sql，以log.info打印
      */
     private final boolean printSql;
@@ -149,7 +141,7 @@ public class EasyQueryOption {
                            EasyQueryShardingOption shardingOption, EasyQueryReplicaOption replicaOption,
                            String defaultDataSourceName, int defaultDataSourceMergePoolSize,
                            int maxShardingRouteCount, int executorQueueSize, long multiConnWaitTimeoutMillis,
-                           boolean warningBusy, int insertBatchThreshold, int updateBatchThreshold,
+                           boolean warningBusy,
                            boolean printSql, boolean startTimeJob,
                            int relationGroupSize, long reverseOffsetThreshold,
                            boolean warningColumnMiss, int shardingFetchSize, boolean mapToBeanStrict,
@@ -186,12 +178,6 @@ public class EasyQueryOption {
         if (defaultDataSourceMergePoolSize > 0 && defaultDataSourceMergePoolSize < maxShardingQueryLimit) {
             throw new IllegalArgumentException("invalid arguments: defaultDataSourceMergePoolSize > 0 && defaultDataSourceMergePoolSize < maxShardingQueryLimit.");
         }
-        if (insertBatchThreshold <= 2) {
-            throw new IllegalArgumentException("invalid arguments: insertBatchThreshold <= 2.");
-        }
-        if (updateBatchThreshold <= 2) {
-            throw new IllegalArgumentException("invalid arguments: updateBatchThreshold <= 2.");
-        }
         if (relationGroupSize < 1) {
             throw new IllegalArgumentException("invalid arguments: relationGroupSize < 1.");
         }
@@ -215,8 +201,6 @@ public class EasyQueryOption {
         this.executorQueueSize = executorQueueSize;
         this.multiConnWaitTimeoutMillis = multiConnWaitTimeoutMillis;
         this.warningBusy = warningBusy;
-        this.insertBatchThreshold = insertBatchThreshold;
-        this.updateBatchThreshold = updateBatchThreshold;
         this.printSql = printSql;
         this.printNavSql = printNavSql;
         this.startTimeJob = startTimeJob;
@@ -302,14 +286,6 @@ public class EasyQueryOption {
 
     public boolean isWarningBusy() {
         return warningBusy;
-    }
-
-    public int getInsertBatchThreshold() {
-        return insertBatchThreshold;
-    }
-
-    public int getUpdateBatchThreshold() {
-        return updateBatchThreshold;
     }
 
     public boolean isPrintSql() {
