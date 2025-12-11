@@ -39,7 +39,8 @@ public class DefaultJdbcStreamResultSet<T> implements JdbcStreamResult<T> {
         if (queryExecuteResult == null) {
             this.queryExecuteResult = command.execute();
         }
-        return new DefaultStreamIterable<>(executorContext, resultMetadata, this.queryExecuteResult.getStreamResultSet());
+        return executorContext.getRuntimeContext().getStreamIterableFactory().create(executorContext, resultMetadata, this.queryExecuteResult.getStreamResultSet());
+//        return new DefaultStreamIterable<>(executorContext, resultMetadata, this.queryExecuteResult.getStreamResultSet());
     }
 
     @Override

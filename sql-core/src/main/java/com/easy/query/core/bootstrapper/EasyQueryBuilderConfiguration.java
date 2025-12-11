@@ -36,6 +36,8 @@ import com.easy.query.core.basic.jdbc.executor.DefaultEntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.DefaultEntityExpressionPrepareExecutor;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionExecutor;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.DefaultStreamIterableFactory;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.StreamIterableFactory;
 import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.DefaultEasyPageResultProvider;
@@ -248,6 +250,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(EntityExpressionTrigger.class, DefaultEntityExpressionTrigger.class)
                 .replaceService(EntityExpressionPrepareExecutor.class, DefaultEntityExpressionPrepareExecutor.class)
                 .replaceService(SaveEntitySetPrimaryKeyGenerator.class, UnSupportSaveEntitySetPrimaryKeyGenerator.class)
+                .replaceService(StreamIterableFactory.class, DefaultStreamIterableFactory.class)
 //                .replaceService(NavigateNamedGuess.class, DefaultNavigateNamedGuess.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }

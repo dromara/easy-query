@@ -15,6 +15,7 @@ import com.easy.query.core.basic.extension.print.JdbcSQLPrinter;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.EntityExpressionPrepareExecutor;
+import com.easy.query.core.basic.jdbc.executor.internal.enumerable.StreamIterableFactory;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.basic.pagination.EasyPageResultProvider;
 import com.easy.query.core.basic.thread.ShardingExecutorService;
@@ -110,6 +111,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final SubQueryExtraPredicateProvider subQueryExtraPredicateProvider;
     private final SmartPredicateAnonymousExpressionBuilderProvider smartPredicateAnonymousExpressionBuilderProvider;
     private final SaveEntitySetPrimaryKeyGenerator saveEntitySetPrimaryKeyGenerator;
+    private final StreamIterableFactory streamIterableFactory;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -160,7 +162,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           JdbcSQLExecutor jdbcSQLExecutor,
                                           SubQueryExtraPredicateProvider subQueryExtraPredicateProvider,
                                           SmartPredicateAnonymousExpressionBuilderProvider smartPredicateAnonymousExpressionBuilderProvider,
-                                          SaveEntitySetPrimaryKeyGenerator saveEntitySetPrimaryKeyGenerator) {
+                                          SaveEntitySetPrimaryKeyGenerator saveEntitySetPrimaryKeyGenerator,
+                                          StreamIterableFactory streamIterableFactory) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -211,6 +214,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.subQueryExtraPredicateProvider = subQueryExtraPredicateProvider;
         this.smartPredicateAnonymousExpressionBuilderProvider = smartPredicateAnonymousExpressionBuilderProvider;
         this.saveEntitySetPrimaryKeyGenerator = saveEntitySetPrimaryKeyGenerator;
+        this.streamIterableFactory = streamIterableFactory;
     }
 
     @Override
@@ -461,5 +465,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public SaveEntitySetPrimaryKeyGenerator getSaveEntitySetPrimaryKeyGenerator() {
         return saveEntitySetPrimaryKeyGenerator;
+    }
+
+    @Override
+    public StreamIterableFactory getStreamIterableFactory() {
+        return streamIterableFactory;
     }
 }
