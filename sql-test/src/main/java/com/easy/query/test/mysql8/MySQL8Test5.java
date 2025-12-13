@@ -11,8 +11,10 @@ import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.M8User;
+import com.easy.query.test.mysql8.entity.M8UserBook;
 import com.easy.query.test.mysql8.entity.TableNoKey;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
+import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
@@ -534,6 +536,16 @@ public class MySQL8Test5 extends BaseTest {
                 .where(m -> {
                     m.name().like("123");
                 }).leftJoin(M8User.class, (m, m2) -> m.id().eq(m2.id()))
+                .toList();
+    }
+
+    @Test
+    public  void selectJoinInclude(){
+        List<SysUser> list1 = easyEntityQuery.queryable(SysUser.class)
+                .leftJoin(SysBankCard.class, (user, bank_card) -> user.id().eq(bank_card.uid()))
+                .select((user, bank_card) -> user)
+                .include(user -> user.bankCards())
+                .distinct()
                 .toList();
     }
 }
