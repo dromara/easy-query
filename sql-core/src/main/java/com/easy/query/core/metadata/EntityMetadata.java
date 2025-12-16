@@ -577,7 +577,7 @@ public class EntityMetadata {
     }
 
 
-    private ValueConverter<?, ?> processEnumValueConverter(Class<?> propertyType, QueryConfiguration configuration, String property) {
+    private ValueConverter<?, ?> processValueAutoConverter(Class<?> propertyType, QueryConfiguration configuration, String property) {
         //如果是默认的那么就通过自动关联的值转换处进行寻找
         ValueAutoConverterProvider valueAutoConverterProvider = runtimeContext.getValueAutoConverterProvider();
         if (valueAutoConverterProvider.isSupport(entityClass, propertyType)) {
@@ -611,10 +611,10 @@ public class EntityMetadata {
                 return valueConverter;
             } else {
                 //如果是默认的那么就通过自动关联的值转换处进行寻找
-                return processEnumValueConverter(propertyType, configuration, property);
+                return processValueAutoConverter(propertyType, configuration, property);
             }
         }
-        return processEnumValueConverter(propertyType, configuration, property);
+        return processValueAutoConverter(propertyType, configuration, property);
     }
 
     private ColumnOption createColumnOption(Field field, PropertyDescriptor propertyDescriptor, boolean tableEntity, String property, FastBeanProperty fastBeanProperty, QueryConfiguration configuration, FastBean fastBean, JdbcTypeHandlerManager jdbcTypeHandlerManager, boolean defaultAutoSelect, String fieldName, EasyQueryOption easyQueryOption) {
