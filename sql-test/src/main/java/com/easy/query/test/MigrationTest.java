@@ -150,12 +150,12 @@ public class MigrationTest extends BaseTest {
     @Test
     public void test3(){
 
-        List<Map<String, Object>> list = easyEntityQuery.queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t_topic, t_blog) -> t_blog.id().eq(t_topic.id()))
-                .select((t_topic, t_blog) -> new MapProxy()
-                        .selectAll(t_topic, MapKeyModeEnum.FIELD_NAME)
-                        .put("a1", t_blog.star())
-                ).toList();
+//        List<Map<String, Object>> list = easyEntityQuery.queryable(Topic.class)
+//                .leftJoin(BlogEntity.class, (t_topic, t_blog) -> t_blog.id().eq(t_topic.id()))
+//                .select((t_topic, t_blog) -> new MapProxy()
+//                        .selectAll(t_topic, MapKeyModeEnum.FIELD_NAME)
+//                        .put("a1", t_blog.star())
+//                ).toList();
 //        Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true", "root", "root");
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/eq_db3?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");

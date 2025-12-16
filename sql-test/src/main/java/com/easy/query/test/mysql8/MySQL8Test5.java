@@ -1,5 +1,7 @@
 package com.easy.query.test.mysql8;
 
+import com.easy.query.api.proxy.client.EasyEntityQuery;
+import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.util.EasyProxyParamExpressionUtil;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.enums.EasyBehaviorEnum;
@@ -7,6 +9,7 @@ import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.listener.ListenerContext;
@@ -16,11 +19,17 @@ import com.easy.query.test.mysql8.entity.TableNoKey;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
+import com.easy.query.test.mysql8.entity.bank.proxy.SysBankCardProxy;
+import lombok.var;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * create time 2025/10/19 22:28
@@ -548,4 +557,5 @@ public class MySQL8Test5 extends BaseTest {
                 .distinct()
                 .toList();
     }
+
 }

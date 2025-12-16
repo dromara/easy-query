@@ -1,6 +1,6 @@
 package com.easy.query.test.conversion;
 
-import com.easy.query.core.basic.extension.conversion.EnumValueAutoConverter;
+import com.easy.query.core.basic.extension.conversion.ValueAutoConverter;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasyObjectUtil;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author xuejiaming
  */
-public class EnumValueConverter implements EnumValueAutoConverter<Enum<?>,Number> {
+public class EnumValueConverter implements ValueAutoConverter<Enum<?>,Number> {
     @Override
     public Number serialize(Enum<?> enumValue, @NotNull ColumnMetadata columnMetadata) {
         if(enumValue==null){

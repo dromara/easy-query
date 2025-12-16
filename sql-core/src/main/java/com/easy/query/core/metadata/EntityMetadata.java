@@ -31,8 +31,9 @@ import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultColumnValueSQLConverter;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
 import com.easy.query.core.basic.extension.conversion.EasyColumnValueSQLConverter;
-import com.easy.query.core.basic.extension.conversion.EnumValueAutoConverter;
 import com.easy.query.core.basic.extension.conversion.ExpArg;
+import com.easy.query.core.basic.extension.conversion.ValueAutoConverter;
+import com.easy.query.core.basic.extension.conversion.ValueAutoConverterProvider;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.generated.DefaultGeneratedKeySQLColumnGenerator;
@@ -143,6 +144,7 @@ public class EntityMetadata {
     private String comment;
     private ExtraAutoIncludeConfigure extraAutoIncludeConfigure;
     private ErrorMessage errorMessage;
+    private QueryRuntimeContext runtimeContext;
 
     public boolean isMultiTableMapping() {
         return shardingTablePropertyName != null;
@@ -204,8 +206,8 @@ public class EntityMetadata {
             entityMetadataType = EntityMetadataTypeEnum.BASIC_TYPE;
             return;
         }
-
-        QueryConfiguration configuration = serviceProvider.getService(QueryConfiguration.class);
+        runtimeContext = serviceProvider.getService(QueryRuntimeContext.class);
+        QueryConfiguration configuration = runtimeContext.getQueryConfiguration();
         EasyQueryOption easyQueryOption = configuration.getEasyQueryOption();
         PropertyDescriptorMatcher propertyDescriptorMatcher = serviceProvider.getService(PropertyDescriptorMatcher.class);
         JdbcTypeHandlerManager jdbcTypeHandlerManager = serviceProvider.getService(JdbcTypeHandlerManager.class);
@@ -575,11 +577,12 @@ public class EntityMetadata {
     }
 
 
-    private ValueConverter<?, ?> processEnumValueConverter(Class<?> propertyType, QueryConfiguration configuration) {
+    private ValueConverter<?, ?> processEnumValueConverter(Class<?> propertyType, QueryConfiguration configuration, String property) {
         //如果是默认的那么就通过自动关联的值转换处进行寻找
-        if (Enum.class.isAssignableFrom(propertyType)) {
-            List<EnumValueAutoConverter<?, ?>> enumValueAutoConverters = configuration.getEnumValueAutoConverters();
-            for (EnumValueAutoConverter<?, ?> enumValueAutoConverter : enumValueAutoConverters) {
+        ValueAutoConverterProvider valueAutoConverterProvider = runtimeContext.getValueAutoConverterProvider();
+        if (valueAutoConverterProvider.isSupport(entityClass, propertyType)) {
+            List<ValueAutoConverter<?, ?>> enumValueAutoConverters = configuration.getValueAutoConverters();
+            for (ValueAutoConverter<?, ?> enumValueAutoConverter : enumValueAutoConverters) {
                 if (enumValueAutoConverter.apply(entityClass, EasyObjectUtil.typeCastNotNull(propertyType))) {
                     return enumValueAutoConverter;
                 }
@@ -601,10 +604,10 @@ public class EntityMetadata {
                 return valueConverter;
             } else {
                 //如果是默认的那么就通过自动关联的值转换处进行寻找
-                return processEnumValueConverter(propertyType, configuration);
+                return processEnumValueConverter(propertyType, configuration, property);
             }
         }
-        return processEnumValueConverter(propertyType, configuration);
+        return processEnumValueConverter(propertyType, configuration, property);
     }
 
     private ColumnOption createColumnOption(Field field, PropertyDescriptor propertyDescriptor, boolean tableEntity, String property, FastBeanProperty fastBeanProperty, QueryConfiguration configuration, FastBean fastBean, JdbcTypeHandlerManager jdbcTypeHandlerManager, boolean defaultAutoSelect, String fieldName, EasyQueryOption easyQueryOption) {

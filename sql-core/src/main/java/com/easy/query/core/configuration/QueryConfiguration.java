@@ -1,7 +1,7 @@
 package com.easy.query.core.configuration;
 
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
-import com.easy.query.core.basic.extension.conversion.EnumValueAutoConverter;
+import com.easy.query.core.basic.extension.conversion.ValueAutoConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
 import com.easy.query.core.basic.extension.generated.GeneratedKeySQLColumnGenerator;
@@ -67,7 +67,7 @@ public class QueryConfiguration {
     private Map<Class<? extends VersionStrategy>, VersionStrategy> easyVersionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ShardingInitializer>, ShardingInitializer> shardingInitializerMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ValueConverter<?, ?>>, ValueConverter<?, ?>> valueConverterMap = new ConcurrentHashMap<>();
-    private List<EnumValueAutoConverter<?, ?>> enumValueAutoConverters = new CopyOnWriteArrayList<>();
+    private List<ValueAutoConverter<?, ?>> valueAutoConverters = new CopyOnWriteArrayList<>();
     private Map<Class<? extends ColumnValueSQLConverter>, ColumnValueSQLConverter> columnValueSQLConverterMap = new ConcurrentHashMap<>();
     private Map<Class<? extends GeneratedKeySQLColumnGenerator>, GeneratedKeySQLColumnGenerator> generatedSQLColumnGeneratorMap = new ConcurrentHashMap<>();
     private Map<Class<? extends PrimaryKeyGenerator>, PrimaryKeyGenerator> primaryKeyGeneratorMap = new ConcurrentHashMap<>();
@@ -265,19 +265,19 @@ public class QueryConfiguration {
     }
 
     public void applyValueConverter(ValueConverter<?, ?> valueConverter) {
-        Class<? extends ValueConverter<?, ?>> converterClass = EasyObjectUtil.typeCastNullable(valueConverter.getClass());
+        Class<? extends ValueConverter<?, ?>> converterClass = EasyObjectUtil.typeCastNotNull(valueConverter.getClass());
         if (valueConverterMap.containsKey(converterClass)) {
             throw new EasyQueryException("ValueConverter:" + EasyClassUtil.getSimpleName(converterClass) + ",repeat");
         }
         valueConverterMap.put(converterClass, valueConverter);
-        if (EnumValueAutoConverter.class.isAssignableFrom(converterClass)) {
-            EnumValueAutoConverter<?, ?> enumValueAutoConverter = EasyObjectUtil.typeCastNullable(valueConverter);
-            enumValueAutoConverters.add(enumValueAutoConverter);
+        if (ValueAutoConverter.class.isAssignableFrom(converterClass)) {
+            ValueAutoConverter<?, ?> enumValueAutoConverter = EasyObjectUtil.typeCastNullable(valueConverter);
+            valueAutoConverters.add(enumValueAutoConverter);
         }
     }
 
-    public List<EnumValueAutoConverter<?, ?>> getEnumValueAutoConverters() {
-        return enumValueAutoConverters;
+    public List<ValueAutoConverter<?, ?>> getValueAutoConverters() {
+        return valueAutoConverters;
     }
 
     public ValueConverter<?, ?> getValueConverter(Class<? extends ValueConverter<?, ?>> converterClass) {

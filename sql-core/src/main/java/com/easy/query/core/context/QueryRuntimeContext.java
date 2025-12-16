@@ -6,6 +6,7 @@ import com.easy.query.core.api.dynamic.executor.sort.ObjectSortQueryExecutor;
 import com.easy.query.core.basic.api.cte.CteTableNamedProvider;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.entity.EntityMappingRule;
+import com.easy.query.core.basic.extension.conversion.ValueAutoConverterProvider;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.generated.SaveEntitySetPrimaryKeyGenerator;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
@@ -121,4 +122,6 @@ public interface QueryRuntimeContext {
     SaveEntitySetPrimaryKeyGenerator getSaveEntitySetPrimaryKeyGenerator();
 
     StreamIterableFactory getStreamIterableFactory();
+
+    ValueAutoConverterProvider getValueAutoConverterProvider();
 }
