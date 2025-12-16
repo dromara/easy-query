@@ -588,7 +588,8 @@ public class EntityMetadata {
                     .limit(2)
                     .collect(Collectors.toList());
             if (matchValueConverters.size() > 1) {
-                throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " conversion more than one match found");
+                String matchValueConverterNames = matchValueConverters.stream().map(valueAutoConverter -> EasyClassUtil.getSimpleName(valueAutoConverter.getClass())).collect(Collectors.joining(","));
+                throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " conversion more than one match found [" + matchValueConverterNames + "]");
             }
             if (!matchValueConverters.isEmpty()) {
                 return matchValueConverters.get(0);
