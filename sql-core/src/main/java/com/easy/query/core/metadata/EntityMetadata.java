@@ -581,11 +581,17 @@ public class EntityMetadata {
         //如果是默认的那么就通过自动关联的值转换处进行寻找
         ValueAutoConverterProvider valueAutoConverterProvider = runtimeContext.getValueAutoConverterProvider();
         if (valueAutoConverterProvider.isSupport(entityClass, propertyType)) {
-            List<ValueAutoConverter<?, ?>> enumValueAutoConverters = configuration.getValueAutoConverters();
-            for (ValueAutoConverter<?, ?> enumValueAutoConverter : enumValueAutoConverters) {
-                if (enumValueAutoConverter.apply(entityClass, EasyObjectUtil.typeCastNotNull(propertyType))) {
-                    return enumValueAutoConverter;
-                }
+            List<ValueAutoConverter<?, ?>> valueAutoConverters = configuration.getValueAutoConverters();
+
+            //如果匹配到多个应该报错
+            List<ValueAutoConverter<?, ?>> matchValueConverters = valueAutoConverters.stream().filter(valueAutoConverter -> valueAutoConverter.apply(entityClass, EasyObjectUtil.typeCastNotNull(propertyType)))
+                    .limit(2)
+                    .collect(Collectors.toList());
+            if (matchValueConverters.size() > 1) {
+                throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + "." + property + " conversion more than one match found");
+            }
+            if (!matchValueConverters.isEmpty()) {
+                return matchValueConverters.get(0);
             }
         }
         return DefaultValueConverter.INSTANCE;
