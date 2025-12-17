@@ -1,5 +1,6 @@
 package com.easy.query.core.basic.extension.conversion;
 
+import com.easy.query.core.util.EasyClassUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -11,6 +12,6 @@ import org.jetbrains.annotations.NotNull;
 public class DefaultValueAutoConverterProvider implements ValueAutoConverterProvider{
     @Override
     public boolean isSupport(@NotNull Class<?> clazz, @NotNull Class<?> propertyType) {
-        return Enum.class.isAssignableFrom(propertyType);
+        return Enum.class.isAssignableFrom(propertyType) || !EasyClassUtil.isBasicType(propertyType);
     }
 }
