@@ -75,7 +75,7 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     public long executeRows() {
         QueryRuntimeContext runtimeContext = entityDeleteExpressionBuilder.getRuntimeContext();
         EntityExpressionPrepareExecutor entityExpressionPrepareExecutor = runtimeContext.getEntityExpressionPrepareExecutor();
-        return entityExpressionPrepareExecutor.executeRows(ExecutorContext.create(entityDeleteExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.DELETE), entityDeleteExpressionBuilder,entityDeleteExpressionBuilder.toExpression());
+        return entityExpressionPrepareExecutor.executeRows(ExecutorContext.create(entityDeleteExpressionBuilder.getExpressionContext(), false, ExecuteMethodEnum.DELETE), entityDeleteExpressionBuilder, entityDeleteExpressionBuilder.toExpression());
     }
 
 //    @Override
@@ -119,15 +119,10 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     public ClientExpressionDeletable<T> whereById(boolean condition, Object id) {
 
         if (condition) {
-            PredicateSegment where = entityDeleteExpressionBuilder.getWhere();
             String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(tableExpressionBuilder.getEntityTable());
-            AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
-            ColumnMetadata columnMetadata = tableExpressionBuilder.getEntityTable().getEntityMetadata().getColumnNotNull(keyProperty);
-            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(tableExpressionBuilder.getEntityTable(), columnMetadata, entityDeleteExpressionBuilder.getExpressionContext());
-            ColumnValue2Segment compareValue2Segment = EasyColumnSegmentUtil.createColumnCompareValue2Segment(tableExpressionBuilder.getEntityTable(), columnMetadata, entityDeleteExpressionBuilder.getExpressionContext(), id, SQLPredicateCompareEnum.EQ.isLike());
-            andPredicateSegment
-                    .setPredicate(new ColumnValuePredicate(column2Segment, compareValue2Segment, SQLPredicateCompareEnum.EQ));
-            where.addPredicateSegment(andPredicateSegment);
+
+            FilterImpl filter = new FilterImpl(entityDeleteExpressionBuilder.getRuntimeContext(), entityDeleteExpressionBuilder.getExpressionContext(), entityDeleteExpressionBuilder.getWhere(), false, entityDeleteExpressionBuilder.getExpressionContext().getValueFilter());
+            filter.eq(tableExpressionBuilder.getEntityTable(), keyProperty, id);
         }
         return this;
     }
@@ -136,15 +131,9 @@ public abstract class AbstractClientExpressionDeletable<T> extends AbstractSQLEx
     public <TProperty> ClientExpressionDeletable<T> whereByIds(boolean condition, Collection<TProperty> ids) {
 
         if (condition) {
-            PredicateSegment where = entityDeleteExpressionBuilder.getWhere();
             String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(tableExpressionBuilder.getEntityTable());
-            AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
-            ColumnMetadata columnMetadata = tableExpressionBuilder.getEntityTable().getEntityMetadata().getColumnNotNull(keyProperty);
-            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(tableExpressionBuilder.getEntityTable(), columnMetadata, getExpressionContext());
-            List<ColumnValue2Segment> columnValue2Segments = EasyCollectionUtil.select(ids, (o, i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(tableExpressionBuilder.getEntityTable(), columnMetadata, getExpressionContext(), o));
-            andPredicateSegment
-                    .setPredicate(new ColumnCollectionPredicate(column2Segment, columnValue2Segments, SQLPredicateCompareEnum.IN, entityDeleteExpressionBuilder.getExpressionContext()));
-            where.addPredicateSegment(andPredicateSegment);
+            FilterImpl filter = new FilterImpl(entityDeleteExpressionBuilder.getRuntimeContext(), entityDeleteExpressionBuilder.getExpressionContext(), entityDeleteExpressionBuilder.getWhere(), false, entityDeleteExpressionBuilder.getExpressionContext().getValueFilter());
+            filter.in(tableExpressionBuilder.getEntityTable(), keyProperty, ids);
         }
         return this;
     }

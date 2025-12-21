@@ -142,18 +142,9 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
     public ClientExpressionUpdatable<T> whereById(boolean condition, Object id) {
 
         if (condition) {
-
-            PredicateSegment where = entityUpdateExpressionBuilder.getWhere();
-
             String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table);
-            AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
-            ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(keyProperty);
-            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, entityUpdateExpressionBuilder.getExpressionContext());
-            ColumnValue2Segment compareValue2Segment = EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, entityUpdateExpressionBuilder.getExpressionContext(), id, SQLPredicateCompareEnum.EQ.isLike());
-
-            andPredicateSegment
-                    .setPredicate(new ColumnValuePredicate(column2Segment, compareValue2Segment, SQLPredicateCompareEnum.EQ));
-            where.addPredicateSegment(andPredicateSegment);
+            FilterImpl filter = new FilterImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getExpressionContext(), entityUpdateExpressionBuilder.getWhere(), false, entityUpdateExpressionBuilder.getExpressionContext().getValueFilter());
+            filter.eq(table, keyProperty, id);
         }
         return this;
     }
@@ -163,17 +154,8 @@ public abstract class AbstractClientExpressionUpdatable<T> extends AbstractSQLEx
 
         if (condition) {
             String keyProperty = EasySQLExpressionUtil.getSingleKeyPropertyName(table);
-            AndPredicateSegment andPredicateSegment = new AndPredicateSegment();
-            PredicateSegment where = entityUpdateExpressionBuilder.getWhere();
-
-            ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(keyProperty);
-            Column2Segment column2Segment = EasyColumnSegmentUtil.createColumn2Segment(table, columnMetadata, expressionContext);
-//            List<ColumnValue2Segment> columnValue2Segments = ids.stream().map(o -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o)).collect(Collectors.toList());
-
-            List<ColumnValue2Segment> columnValue2Segments = EasyCollectionUtil.select(ids, (o, i) -> EasyColumnSegmentUtil.createColumnCompareValue2Segment(table, columnMetadata, expressionContext, o));
-            andPredicateSegment
-                    .setPredicate(new ColumnCollectionPredicate(column2Segment, columnValue2Segments, SQLPredicateCompareEnum.IN, entityUpdateExpressionBuilder.getExpressionContext()));
-            where.addPredicateSegment(andPredicateSegment);
+            FilterImpl filter = new FilterImpl(entityUpdateExpressionBuilder.getRuntimeContext(), entityUpdateExpressionBuilder.getExpressionContext(), entityUpdateExpressionBuilder.getWhere(), false, entityUpdateExpressionBuilder.getExpressionContext().getValueFilter());
+            filter.in(table, keyProperty, ids);
         }
         return this;
     }
