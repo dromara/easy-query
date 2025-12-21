@@ -35,7 +35,7 @@ public class EasyFlatIncludeProcessor extends EasyIncludeProcess {
         super(includeParserResult, runtimeContext);
         this.navigateFlatMetadata = navigateFlatMetadata;
         this.flatClassObject = !navigateFlatMetadata.isToMany() && !navigateFlatMetadata.isBasicType();
-        //生成多个targetNaviaget在process的时候for调用
+        //生成多个targetNavigate在process的时候for调用
         initNavigateFlatGetter(includeParserResult, includeParserResult.getFlatQueryEntityMetadata(), navigateFlatMetadata, runtimeContext);
 
     }

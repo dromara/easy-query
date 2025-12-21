@@ -35,7 +35,7 @@ public class NavigateFlatMetadata {
         this.toMany = toMany;
         this.mappingPath = mappingPath;
         this.navigatePropertyType = navigatePropertyType;
-        this.basicType=basicType;
+        this.basicType = basicType;
         this.beanSetter = beanSetter;
         this.property = property;
     }

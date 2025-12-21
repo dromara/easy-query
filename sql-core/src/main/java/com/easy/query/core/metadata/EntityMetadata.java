@@ -517,9 +517,20 @@ public class EntityMetadata {
         }
 
         PropertySetterCaller<Object> beanSetter = getBeanSetter(field, fastBean, fastBeanProperty, configuration);
-        NavigateFlatMetadata navigateFlatMetadata = new NavigateFlatMetadata(this, toMany, mappingPath, navigateType, EasyClassUtil.isBasicTypeOrEnum(navigateType), beanSetter, property);
+        boolean isBasicType = navigateFlat.basicType() || EasyClassUtil.isBasicTypeOrEnum(navigateType) || isSupportValueAutoConverter(this.entityClass, navigateType);
+        NavigateFlatMetadata navigateFlatMetadata = new NavigateFlatMetadata(this, toMany, mappingPath, navigateType, isBasicType, beanSetter, property);
 
         property2NavigateFlatMap.put(property, navigateFlatMetadata);
+    }
+
+    private boolean isSupportValueAutoConverter(Class<?> clazz, Class<?> propertyType) {
+        ValueAutoConverterProvider valueAutoConverterProvider = runtimeContext.getValueAutoConverterProvider();
+        boolean support = valueAutoConverterProvider.isSupport(clazz, propertyType);
+        if (!support) {
+            return false;
+        }
+        return runtimeContext.getQueryConfiguration().getValueAutoConverters().stream().anyMatch(valueAutoConverter -> valueAutoConverter.apply(clazz, EasyObjectUtil.typeCastNotNull(propertyType)));
+
     }
 
     protected PropertySetterCaller<Object> getBeanSetter(Field field, FastBean fastBean, FastBeanProperty fastBeanProperty, QueryConfiguration configuration) {

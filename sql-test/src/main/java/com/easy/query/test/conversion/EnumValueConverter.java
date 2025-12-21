@@ -30,6 +30,6 @@ public class EnumValueConverter implements ValueAutoConverter<Enum<?>,Number> {
 
     @Override
     public boolean apply(@NotNull Class<?> entityClass, @NotNull Class<Enum<?>> propertyType) {
-        return true;
+        return Enum.class.isAssignableFrom(propertyType);
     }
 }

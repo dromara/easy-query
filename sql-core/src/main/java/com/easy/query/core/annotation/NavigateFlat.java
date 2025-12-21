@@ -46,4 +46,13 @@ public @interface NavigateFlat {
      */
     boolean prefix() default false;
 
+    /**
+     * 是否为基本类型
+     * false: 不清楚/不确定
+     * true: 是基本类型
+     * 默认值: false (表示不清楚)
+     * @return false (表示不清楚) true: 是基本类型
+     */
+    boolean basicType() default false;
+
 }
