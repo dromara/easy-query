@@ -2,6 +2,7 @@ package com.easy.query.core.expression.include;
 
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.Property;
 import com.easy.query.core.expression.sql.include.IncludeParserResult;
 import com.easy.query.core.metadata.ColumnMetadata;
@@ -54,14 +55,18 @@ public class EasyFlatIncludeProcessor extends EasyIncludeProcess {
 //        replyExpressions.add(currentNavigateMetadata.getGetter());
         while (mappingPathIterator.hasNext()) {
             String currentNavValue = mappingPathIterator.next();
-            if (!mappingPathIterator.hasNext()) {
+            boolean last = !mappingPathIterator.hasNext();
+            if (last) {
                 if (basicType) {
                     ColumnMetadata columnMetadata = currentEntityMetadata.getColumnNotNull(currentNavValue);
                     replyExpressions.add(columnMetadata.getGetterCaller());
                     break;
                 }
             }
-            currentNavigateMetadata = currentEntityMetadata.getNavigateNotNull(currentNavValue);
+            currentNavigateMetadata = currentEntityMetadata.getNavigateOrNull(currentNavValue);
+            if (currentNavigateMetadata == null) {
+                throw new EasyQueryInvalidOperationException("Cannot find the current navigation property:[" + currentNavValue + "]. If it's a basic type, you can add @NavigateFlat(basicType = true)");
+            }
             currentEntityMetadata = entityMetadataManager.getEntityMetadata(currentNavigateMetadata.getNavigatePropertyType());
             replyExpressions.add(currentNavigateMetadata.getGetter());
         }
