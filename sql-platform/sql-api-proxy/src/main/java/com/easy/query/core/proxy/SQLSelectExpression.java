@@ -14,7 +14,6 @@ import com.easy.query.core.func.def.enums.OrderByModeEnum;
 import com.easy.query.core.proxy.impl.SQLOrderSelectImpl;
 import com.easy.query.core.proxy.impl.SQLSelectAsImpl;
 import com.easy.query.core.proxy.impl.SQLSelectImpl;
-import com.easy.query.core.proxy.impl.draft.SelectToDraftColumn;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -181,13 +180,5 @@ public interface SQLSelectExpression extends TablePropColumn {
 
     SQLSelectExpression empty = new SQLSelectImpl(x -> {
     });
-
-    default <TProperty> PropTypeColumn<TProperty> toDraft(Class<TProperty> propType) {
-        if (PropTypeColumn.class.isAssignableFrom(this.getClass())) {
-            PropTypeColumn<? extends TProperty> propTypeColumn = ((PropTypeColumn<?>) this).asAnyType(propType);
-            return EasyObjectUtil.typeCastNullable(propTypeColumn);
-        }
-        return new SelectToDraftColumn<>(this, propType);
-    }
 
 }
