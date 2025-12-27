@@ -17,6 +17,7 @@ import com.easy.query.test.mysql8.entity.save.M8ToMany1;
 import com.easy.query.test.mysql8.entity.save.M8ToMany2;
 import com.easy.query.test.mysql8.entity.save.M8ToMany3;
 import com.zaxxer.hikari.HikariDataSource;
+import org.duckdb.DuckDBConnection;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -60,6 +61,7 @@ public class DuckDBBaseTest {
         dataSource.setDriverClassName("org.duckdb.DuckDBDriver");
         dataSource.setMaximumPoolSize(50);
 //        postgres://postgres:postgrespw@localhost:55000
+
     }
 
     public static void initEasyQuery() {

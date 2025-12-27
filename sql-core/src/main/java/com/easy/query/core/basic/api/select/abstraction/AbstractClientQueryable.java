@@ -655,7 +655,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     }
 
     @Override
-    public void offsetChunk(int size, SQLFuncExpression1<Chunk<List<T1>>, Chunk.Offset> chunk) {
+    public void offsetChunk(int size, SQLFuncExpression1<Chunk<T1>, Chunk.Offset> chunk) {
         int offset = 0;
         long fetchSize = 0L;
         long nextSize = size;
@@ -679,7 +679,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             }
             boolean hasNext = list.size() == nextSize;
             fetchSize += nextSize;
-            Chunk<List<T1>> chunkItem = new Chunk<>(list, fetchSize);
+            Chunk<T1> chunkItem = new Chunk<>(list, fetchSize);
             Chunk.Offset offsetItem = chunk.apply(chunkItem);
             if (chunkItem.isBreakChunk()) {
                 break;

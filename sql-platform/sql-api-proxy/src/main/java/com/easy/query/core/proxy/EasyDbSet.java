@@ -477,7 +477,7 @@ public class EasyDbSet<TProxy extends ProxyEntity<TProxy, T>, T> implements DbSe
     }
 
     @Override
-    public void offsetChunk(int size, SQLFuncExpression1<Chunk<List<T>>, Chunk.Offset> chunk) {
+    public void offsetChunk(int size, SQLFuncExpression1<Chunk<T>, Chunk.Offset> chunk) {
         baseEntityClient.queryable(tProxy).offsetChunk(size,chunk);
 
     }

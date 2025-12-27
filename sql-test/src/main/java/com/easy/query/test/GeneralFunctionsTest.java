@@ -648,8 +648,8 @@ public class GeneralFunctionsTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT \"id\",\"uid\",\"code\",\"type\",\"bank_id\" FROM \"doc_bank_card\" WHERE STRPOS(\"type\",?) > 0", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("30%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT \"id\",\"uid\",\"code\",\"type\",\"bank_id\" FROM \"doc_bank_card\" WHERE \"type\" LIKE CONCAT('%',(?)::TEXT,'%') ESCAPE '\\'", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("30\\%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
     @Test
@@ -673,8 +673,8 @@ public class GeneralFunctionsTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT \"id\",\"uid\",\"code\",\"type\",\"bank_id\" FROM \"doc_bank_card\" WHERE STRPOS(\"type\",?) = 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("30%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT \"id\",\"uid\",\"code\",\"type\",\"bank_id\" FROM \"doc_bank_card\" WHERE \"type\" LIKE CONCAT((?)::TEXT,'%') ESCAPE '\\'", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("30\\%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
     @Test
@@ -698,8 +698,8 @@ public class GeneralFunctionsTest {
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT \"id\",\"uid\",\"code\",\"type\",\"bank_id\" FROM \"doc_bank_card\" WHERE STRPOS(\"type\",?) = (CHAR_LENGTH(\"type\") - CHAR_LENGTH(?) + 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("30%(String),30%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT \"id\",\"uid\",\"code\",\"type\",\"bank_id\" FROM \"doc_bank_card\" WHERE \"type\" LIKE CONCAT('%',(?)::TEXT) ESCAPE '\\'", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("30\\%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 

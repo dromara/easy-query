@@ -34,7 +34,9 @@ import com.easy.query.test.mysql8.entity.M8ParentChild;
 import com.easy.query.test.mysql8.entity.M8Role3;
 import com.easy.query.test.mysql8.entity.M8User3;
 import com.easy.query.test.mysql8.entity.M8UserRole3;
+import com.easy.query.test.mysql8.entity.OffsetChunkTest;
 import com.easy.query.test.mysql8.entity.QueryInterceptor;
+import com.easy.query.test.mysql8.entity.TableNoKey;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
@@ -166,18 +168,19 @@ public class BaseTest {
         databaseCodeFirst.createDatabaseIfNotExists();
 //        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class,SysBank.class, SysBankCard.class,  SysUserBook.class, M8Comment.class));
 //        codeFirstCommand.executeWithTransaction(s -> s.commit());
-        CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(SysUser.class, SysBankCard.class, SysBank.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class, M8ParentChild.class,
+        CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(TableNoKey.class,SysUser.class, SysBankCard.class, SysBank.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class, M8ParentChild.class,
                 M8Province.class, M8City.class, M8Area.class, M8AreaBuild.class, TreeA.class, TreeB.class, BatchInsert.class, Comment.class, M8SaveRoot.class, M8SaveRoot2Many.class, M8SaveRootMany.class, M8SaveRootMiddleMany.class, M8SaveRootOne.class,M8SaveRootOne2.class, M8SaveRootManyOne.class,
-                M8SaveA.class, M8SaveB.class, M8SaveC.class, M8SaveD.class, M8User3.class, M8UserRole3.class, M8Role3.class, M8ToMany1.class, M8ToMany2.class, M8ToMany3.class, M8AutoA.class, M8AutoB.class));
+                M8SaveA.class, M8SaveB.class, M8SaveC.class, M8SaveD.class, M8User3.class, M8UserRole3.class, M8Role3.class, M8ToMany1.class, M8ToMany2.class, M8ToMany3.class, M8AutoA.class, M8AutoB.class, OffsetChunkTest.class));
         codeFirstCommand2.executeWithTransaction(s -> s.commit());
 
-        CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class, SysBank.class, SysBankCard.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class, M8ParentChild.class,
+        CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(TableNoKey.class,SysUser.class, SysBank.class, SysBankCard.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class, M8ParentChild.class,
                 M8Province.class, M8City.class, M8Area.class, M8AreaBuild.class,M8AreaBuildLicense.class, TreeA.class, TreeB.class, BatchInsert.class,Comment.class, M8SaveRoot.class, M8SaveRoot2Many.class, M8SaveRootMany.class, M8SaveRootMiddleMany.class, M8SaveRootOne.class,M8SaveRootOne2.class,M8SaveRootManyOne.class,
-                M8SaveA.class, M8SaveB.class, M8SaveC.class, M8SaveD.class, M8User3.class, M8UserRole3.class, M8Role3.class, M8ToMany1.class, M8ToMany2.class, M8ToMany3.class,M8AutoA.class,M8AutoB.class));
+                M8SaveA.class, M8SaveB.class, M8SaveC.class, M8SaveD.class, M8User3.class, M8UserRole3.class, M8Role3.class, M8ToMany1.class, M8ToMany2.class, M8ToMany3.class,M8AutoA.class,M8AutoB.class,OffsetChunkTest.class));
         codeFirstCommand1.executeWithTransaction(s -> {
             System.out.println(s.getSQL());
             s.commit();
         });
+        easyEntityQuery.deletable(OffsetChunkTest.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(Comment.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(SysBankCard.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         easyEntityQuery.deletable(SysBank.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
@@ -212,6 +215,7 @@ public class BaseTest {
         ArrayList<M8Area> areas = new ArrayList<>();
         ArrayList<M8AreaBuild> builds = new ArrayList<>();
         ArrayList<M8AreaBuildLicense> buildLicenses = new ArrayList<>();
+        ArrayList<OffsetChunkTest> offsetChunkTests = new ArrayList<>();
         {
             SysBank sysBank = new SysBank();
             sysBank.setId("1");
@@ -532,7 +536,14 @@ public class BaseTest {
             mycomments.add(comment);
         }
 
+        for (int i = 0; i < 1000; i++) {
+            OffsetChunkTest offsetChunkTest = new OffsetChunkTest();
+            offsetChunkTests.add(offsetChunkTest);
+            offsetChunkTest.setId(String.valueOf(i));
+            offsetChunkTest.setSeq(i);
 
+        }
+        easyEntityQuery.insertable(offsetChunkTests).executeRows();
         easyEntityQuery.insertable(banks).executeRows();
         easyEntityQuery.insertable(bankCards).executeRows();
         easyEntityQuery.insertable(users).executeRows();

@@ -1,5 +1,7 @@
 package com.easy.query.core.common;
 
+import java.util.List;
+
 /**
  * create time 2025/7/4 21:17
  * 文件说明
@@ -7,12 +9,12 @@ package com.easy.query.core.common;
  * @author xuejiaming
  */
 public class Chunk<T> {
-    private final T values;
+    private final List<T> values;
     private boolean breakChunk;
     private long maxFetchSize;
     private final long fetchSize;
 
-    public Chunk(T values, long fetchSize) {
+    public Chunk(List<T> values, long fetchSize) {
         this.values = values;
         this.fetchSize = fetchSize;
         this.maxFetchSize = 100000;
@@ -22,7 +24,7 @@ public class Chunk<T> {
         this.breakChunk = true;
     }
 
-    public T getValues() {
+    public List<T> getValues() {
         return values;
     }
 

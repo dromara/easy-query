@@ -37,6 +37,6 @@ public interface ChunkAble<T> extends QueryAvailable<T> {
         });
     }
 
-    void offsetChunk(int size, SQLFuncExpression1<Chunk<List<T>>, Chunk.Offset> chunk);
+    void offsetChunk(int size, SQLFuncExpression1<Chunk<T>, Chunk.Offset> chunk);
 
 }

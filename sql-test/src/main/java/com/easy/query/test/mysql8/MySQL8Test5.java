@@ -15,6 +15,7 @@ import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.M8User;
 import com.easy.query.test.mysql8.entity.M8UserBook;
+import com.easy.query.test.mysql8.entity.OffsetChunkTest;
 import com.easy.query.test.mysql8.entity.TableNoKey;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
@@ -26,8 +27,10 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -557,5 +560,34 @@ public class MySQL8Test5 extends BaseTest {
                 .distinct()
                 .toList();
     }
+
+
+    @Test
+    public void testOffsetChunk(){
+        AtomicInteger atomicInteger = new AtomicInteger();
+        atomicInteger.set(0);
+        ArrayList<Integer> list = new ArrayList<>();
+        easyEntityQuery.queryable(OffsetChunkTest.class)
+                .where(o -> o.status().isNull())
+                .orderBy(o -> o.seq().asc())
+                .offsetChunk(10,chunk->{
+                    for (OffsetChunkTest value : chunk.getValues()) {
+                        int andIncrement = atomicInteger.getAndIncrement();
+                        list.add(value.getSeq());
+                        Assert.assertEquals(andIncrement,value.getSeq().intValue());
+
+                        easyEntityQuery.updatable(OffsetChunkTest.class)
+                                .setColumns(o -> o.status().set(value.getId()))
+                                .whereById( value.getId())
+                                .executeRows();
+                    }
+                    return chunk.offset(0);
+                });
+        for (int i = 0; i < 1000; i++) {
+            Integer i1 = list.get(i);
+            Assert.assertEquals(i,i1.intValue());
+        }
+    }
+
 
 }

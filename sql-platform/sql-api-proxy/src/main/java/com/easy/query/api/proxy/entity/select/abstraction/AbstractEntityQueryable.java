@@ -230,7 +230,7 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
     }
 
     @Override
-    public void offsetChunk(int size, SQLFuncExpression1<Chunk<List<T1>>, Chunk.Offset> chunk) {
+    public void offsetChunk(int size, SQLFuncExpression1<Chunk<T1>, Chunk.Offset> chunk) {
         clientQueryable.offsetChunk(size, chunk);
     }
 

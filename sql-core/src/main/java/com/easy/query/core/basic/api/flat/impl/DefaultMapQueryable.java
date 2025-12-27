@@ -427,7 +427,7 @@ public class DefaultMapQueryable implements MapQueryable {
     }
 
     @Override
-    public void offsetChunk(int size, SQLFuncExpression1<Chunk<List<Map<String, Object>>>, Chunk.Offset> chunk) {
+    public void offsetChunk(int size, SQLFuncExpression1<Chunk<Map<String, Object>>, Chunk.Offset> chunk) {
 
         int offset = 0;
         long fetchSize = 0L;
@@ -441,7 +441,7 @@ public class DefaultMapQueryable implements MapQueryable {
             }
             boolean hasNext = list.size() == nextSize;
             fetchSize += nextSize;
-            Chunk<List<Map<String, Object>>> chunkItem = new Chunk<>(list, fetchSize);
+            Chunk<Map<String, Object>> chunkItem = new Chunk<>(list, fetchSize);
             Chunk.Offset offsetItem = chunk.apply(chunkItem);
             if (chunkItem.isBreakChunk()) {
                 break;
