@@ -39,7 +39,7 @@ public class DefaultSmartPredicateAnonymousExpressionBuilderProvider implements 
 
         List<PredicateSegment> flatAndPredicateSegments = predicateSegment.getFlatAndPredicateSegments();
         FilterImpl filter = new FilterImpl(innerEntityQueryExpressionBuilder.getRuntimeContext(), innerEntityQueryExpressionBuilder.getExpressionContext(), innerEntityQueryExpressionBuilder.getWhere(), false, innerEntityQueryExpressionBuilder.getExpressionContext().getValueFilter());
-        getWhereExtraPredicateSegment(flatAndPredicateSegments, entityTable, aliasMap, filter);
+        getWhereExtraPredicateSegment(innerEntityQueryExpressionBuilder, flatAndPredicateSegments, entityTable, aliasMap, filter);
 
     }
 
@@ -84,7 +84,7 @@ public class DefaultSmartPredicateAnonymousExpressionBuilderProvider implements 
         return aliasMap;
     }
 
-    private void getWhereExtraPredicateSegment(List<PredicateSegment> flatAndPredicateSegments, TableAvailable fromTable, Map<String, SmartPredicateItem> aliasMap, Filter filter) {
+    private void getWhereExtraPredicateSegment(EntityQueryExpressionBuilder innerEntityQueryExpressionBuilder, List<PredicateSegment> flatAndPredicateSegments, TableAvailable fromTable, Map<String, SmartPredicateItem> aliasMap, Filter filter) {
 
         for (PredicateSegment predicateSegment : flatAndPredicateSegments) {
             if (predicateSegment instanceof AndPredicateSegment) {
@@ -92,7 +92,7 @@ public class DefaultSmartPredicateAnonymousExpressionBuilderProvider implements 
 
                 List<Predicate> flatAndPredicates = andPredicateSegment.getFlatAndPredicates();
                 if (EasyCollectionUtil.isNotEmpty(flatAndPredicates)) {
-                    SmartPredicateAndUnit smartPredicateAndUnit = new SmartPredicateAndUnit(andPredicateSegment, fromTable, aliasMap);
+                    SmartPredicateAndUnit smartPredicateAndUnit = new SmartPredicateAndUnit(innerEntityQueryExpressionBuilder, andPredicateSegment, fromTable, aliasMap);
                     smartPredicateAndUnit.invoke(filter);
                 } else {
 
@@ -100,7 +100,7 @@ public class DefaultSmartPredicateAnonymousExpressionBuilderProvider implements 
                     if (children != null) {
                         boolean allMatch = children.stream().skip(1).allMatch(o -> o instanceof OrPredicateSegment);
                         if (allMatch) {
-                            SmartPredicateOrUnit smartPredicateOrUnit = new SmartPredicateOrUnit(andPredicateSegment, fromTable, aliasMap);
+                            SmartPredicateOrUnit smartPredicateOrUnit = new SmartPredicateOrUnit(innerEntityQueryExpressionBuilder, andPredicateSegment, fromTable, aliasMap);
                             smartPredicateOrUnit.invoke(filter);
                         }
                     }

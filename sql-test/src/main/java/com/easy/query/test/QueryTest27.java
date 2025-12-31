@@ -28,6 +28,7 @@ import com.easy.query.test.entity.m2m.Station;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.TableNoKey;
+import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.vo.BlogEntityVO1;
 import com.easy.query.test.vo.proxy.BlogEntityVO1Proxy;
 import org.jetbrains.annotations.NotNull;
@@ -777,6 +778,60 @@ public class QueryTest27 extends BaseTest {
         Assert.assertEquals("false(Boolean),0(Integer),1(BigDecimal),0(Integer),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
+    }
+    @Test
+    public void testDerivedTable2() {
+        EntityQueryable<BlogEntityVO1Proxy, BlogEntityVO1> query = easyEntityQuery.queryable(BlogEntity.class)
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.SMART_PREDICATE))
+                .leftJoin(BlogEntity.class, (b, t) -> b.id().eq(t.id()))
+                .select((t_blog, t) -> new BlogEntityVO1Proxy()
+                        .score().set(t_blog.score()) // 评分
+                        .status().set(t.status()) // 状态
+                        .order().set(t_blog.order()) // 排序
+                        .isTop().set(t_blog.isTop()) // 是否置顶
+                        .top().set(t_blog.top()) // 是否置顶
+                );
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        //下游操作或者前端用户传递json操作query
+        List<BlogEntityVO1> list = query.where(o -> {
+            o.status().eq(0);
+            o.order().eq(BigDecimal.ONE);
+        }).toList();
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t2.`score` AS `score`,t2.`status1` AS `status1`,t2.`order` AS `order`,t2.`is_top` AS `is_top`,t2.`top` AS `top` FROM (SELECT t.`score` AS `score`,t1.`status` AS `status1`,t.`order` AS `order`,t.`is_top` AS `is_top`,t.`top` AS `top` FROM `t_blog` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` AND t1.`status` = ? WHERE t.`deleted` = ? AND t.`order` = ?) t2 WHERE t2.`status1` = ? AND t2.`order` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),0(Integer),false(Boolean),1(BigDecimal),0(Integer),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testDerivedTable3() {
+        EntityQueryable<BlogEntityVO1Proxy, BlogEntityVO1> query = easyEntityQuery.queryable(BlogEntity.class)
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.SMART_PREDICATE))
+                .leftJoin(BlogEntity.class, (b, t) -> b.id().eq(t.id()))
+                .select((t_blog, t) -> new BlogEntityVO1Proxy()
+                        .score().set(t_blog.score()) // 评分
+                        .status().set(t.status()) // 状态
+                        .order().set(t_blog.order()) // 排序
+                        .isTop().set(t_blog.isTop()) // 是否置顶
+                        .top().set(t_blog.top()) // 是否置顶
+                );
+
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        //下游操作或者前端用户传递json操作query
+        List<BlogEntityVO1> list = query.where(o -> {
+            o.or(()->{
+                o.status().eq(0);
+                o.order().eq(BigDecimal.ONE);
+            });
+        }).toList();
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t2.`score` AS `score`,t2.`status1` AS `status1`,t2.`order` AS `order`,t2.`is_top` AS `is_top`,t2.`top` AS `top` FROM (SELECT t.`score` AS `score`,t1.`status` AS `status1`,t.`order` AS `order`,t.`is_top` AS `is_top`,t.`top` AS `top` FROM `t_blog` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` WHERE t.`deleted` = ?) t2 WHERE (t2.`status1` = ? OR t2.`order` = ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),false(Boolean),0(Integer),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 
 

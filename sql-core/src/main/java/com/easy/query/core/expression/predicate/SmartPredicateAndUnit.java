@@ -1,12 +1,13 @@
 package com.easy.query.core.expression.predicate;
 
+import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.builder.Filter;
-import com.easy.query.core.expression.lambda.SQLActionExpression1;
-import com.easy.query.core.expression.lambda.SQLActionExpression2;
+import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
@@ -19,15 +20,15 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public class SmartPredicateAndUnit extends AbstractSmartPredicateUnit{
+public class SmartPredicateAndUnit extends AbstractSmartPredicateUnit {
     private final AndPredicateSegment andPredicateSegment;
-    private final List<SQLActionExpression1<Filter>> whereActionList;
+    private final List<SmartPredicateParseResult> parseFilterActionList;
 
 
-    public SmartPredicateAndUnit(AndPredicateSegment andPredicateSegment, TableAvailable table, Map<String, SmartPredicateItem> aliasMap) {
-        super(table, aliasMap);
+    public SmartPredicateAndUnit(EntityQueryExpressionBuilder entityQueryExpressionBuilder, AndPredicateSegment andPredicateSegment, TableAvailable table, Map<String, SmartPredicateItem> aliasMap) {
+        super(entityQueryExpressionBuilder, table, aliasMap);
         this.andPredicateSegment = andPredicateSegment;
-        this.whereActionList = new ArrayList<>();
+        this.parseFilterActionList = new ArrayList<>();
         parsePredicate();
     }
 
@@ -35,17 +36,39 @@ public class SmartPredicateAndUnit extends AbstractSmartPredicateUnit{
         List<Predicate> flatAndPredicates = andPredicateSegment.getFlatAndPredicates();
         if (EasyCollectionUtil.isNotEmpty(flatAndPredicates)) {
             for (Predicate predicate : flatAndPredicates) {
-                SQLActionExpression1<Filter> whereAction = parsePredicate(predicate);
-                if (whereAction != null) {
-                    this.whereActionList.add(whereAction);
+                SmartPredicateParseResult parseFilterAction = parsePredicate(predicate);
+                if (parseFilterAction != null) {
+                    this.parseFilterActionList.add(parseFilterAction);
                 }
             }
         }
     }
+
     @Override
     public void invoke(Filter filter) {
-        for (SQLActionExpression1<Filter> predicateSQLAction : whereActionList) {
-            predicateSQLAction.apply(filter);
+        for (SmartPredicateParseResult predicateSQLAction : parseFilterActionList) {
+            TableAvailable parseTable = predicateSQLAction.smartPredicateItem.table;
+            if (parseTable == entityQueryExpressionBuilder.getFromTable().getEntityTable()) {
+                predicateSQLAction.filterAction.apply(filter);
+            } else {
+                boolean goOnRelationTable=true;
+                for (EntityTableExpressionBuilder tableExpressionBuilder : entityQueryExpressionBuilder.getTables()) {
+                    boolean ok = appendTableJoinOnPredicate(tableExpressionBuilder, predicateSQLAction);
+                    if(ok){
+                        goOnRelationTable=false;
+                        break;
+                    }
+                }
+                if(!goOnRelationTable){
+                    for (Map.Entry<RelationTableKey, EntityTableExpressionBuilder> kv : entityQueryExpressionBuilder.getRelationTables().entrySet()) {
+                        EntityTableExpressionBuilder tableExpressionBuilder = kv.getValue();
+                        boolean ok = appendTableJoinOnPredicate(tableExpressionBuilder, predicateSQLAction);
+                        if(ok){
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 }

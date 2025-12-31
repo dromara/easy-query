@@ -4,12 +4,15 @@ import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
 import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
 import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.builder.Filter;
+import com.easy.query.core.expression.builder.impl.FilterImpl;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
 import com.easy.query.core.expression.segment.condition.predicate.ValuePredicate;
 import com.easy.query.core.expression.segment.condition.predicate.ValuesPredicate;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.util.EasyCollectionUtil;
@@ -27,24 +30,30 @@ import java.util.Objects;
  * @author xuejiaming
  */
 public abstract class AbstractSmartPredicateUnit implements SmartPredicateUnit {
+    protected final EntityQueryExpressionBuilder entityQueryExpressionBuilder;
     protected final TableAvailable fromTable;
     protected final Map<String, SmartPredicateItem> aliasMap;
 
-    public AbstractSmartPredicateUnit(TableAvailable fromTable, Map<String, SmartPredicateItem> aliasMap) {
+    public AbstractSmartPredicateUnit(EntityQueryExpressionBuilder entityQueryExpressionBuilder, TableAvailable fromTable, Map<String, SmartPredicateItem> aliasMap) {
+        this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
         this.fromTable = fromTable;
         this.aliasMap = aliasMap;
     }
 
-    protected SQLActionExpression1<Filter> parsePredicate(Predicate predicate) {
+    protected boolean predicateParseMatch(SmartPredicateItem smartPredicateItem){
+        return true;
+    }
+
+    protected SmartPredicateParseResult parsePredicate(Predicate predicate) {
         SmartPredicateItem smartPredicateItem = getTargetPropertyName(predicate);
-        if (smartPredicateItem != null) {
+        if (smartPredicateItem != null && predicateParseMatch(smartPredicateItem)) {
             if (predicate.getOperator() == SQLPredicateCompareEnum.EQ) {
                 if (predicate instanceof ValuePredicate) {
                     ValuePredicate valuePredicate = (ValuePredicate) predicate;
                     SQLParameter parameter = valuePredicate.getParameter();
                     if (parameter instanceof ConstSQLParameter) {
                         Object value = parameter.getValue();
-                        return f -> f.eq(smartPredicateItem.table, smartPredicateItem.property, value);
+                        return new SmartPredicateParseResult(smartPredicateItem, f -> f.eq(smartPredicateItem.table, smartPredicateItem.property, value));
                     }
                 }
             } else if (predicate.getOperator() == SQLPredicateCompareEnum.IN) {
@@ -59,7 +68,7 @@ public abstract class AbstractSmartPredicateUnit implements SmartPredicateUnit {
                         }
                     }
                     if (EasyCollectionUtil.isNotEmpty(values)) {
-                        return f -> f.in(smartPredicateItem.table, smartPredicateItem.property, values);
+                        return new SmartPredicateParseResult(smartPredicateItem, f -> f.in(smartPredicateItem.table, smartPredicateItem.property, values));
                     }
                 }
             }
@@ -80,10 +89,20 @@ public abstract class AbstractSmartPredicateUnit implements SmartPredicateUnit {
         if (predicate.getTable() != null) {
             EntityMetadata entityMetadata = predicate.getTable().getEntityMetadata();
             ColumnMetadata columnOrNull = entityMetadata.getColumnOrNull(predicate.getPropertyName());
-            if(columnOrNull!=null){
+            if (columnOrNull != null) {
                 return columnOrNull.getName();
             }
         }
         return predicate.getPropertyName();
+    }
+
+    protected boolean appendTableJoinOnPredicate(EntityTableExpressionBuilder tableExpressionBuilder, SmartPredicateParseResult predicateSQLAction) {
+        TableAvailable parseTable = predicateSQLAction.smartPredicateItem.table;
+        if (tableExpressionBuilder.getEntityTable() == parseTable) {
+            FilterImpl onFilter = new FilterImpl(entityQueryExpressionBuilder.getRuntimeContext(), entityQueryExpressionBuilder.getExpressionContext(), tableExpressionBuilder.getOn(), false, entityQueryExpressionBuilder.getExpressionContext().getValueFilter());
+            predicateSQLAction.filterAction.apply(onFilter);
+            return true;
+        }
+        return false;
     }
 }

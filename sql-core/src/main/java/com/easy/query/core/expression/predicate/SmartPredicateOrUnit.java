@@ -1,12 +1,14 @@
 package com.easy.query.core.expression.predicate;
 
+import com.easy.query.core.expression.RelationTableKey;
 import com.easy.query.core.expression.builder.Filter;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
-import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.segment.condition.predicate.Predicate;
+import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.EntityTableExpressionBuilder;
 import com.easy.query.core.util.EasyCollectionUtil;
 
 import java.util.ArrayList;
@@ -19,18 +21,23 @@ import java.util.Map;
  *
  * @author xuejiaming
  */
-public class SmartPredicateOrUnit extends AbstractSmartPredicateUnit{
+public class SmartPredicateOrUnit extends AbstractSmartPredicateUnit {
     private final AndPredicateSegment andPredicateSegment;
-    private final List<SQLActionExpression1<Filter>> whereActionList;
+    private final List<SmartPredicateParseResult> parseFilterActionList;
     protected boolean isInvoke;
 
 
-    public SmartPredicateOrUnit(AndPredicateSegment andPredicateSegment, TableAvailable table, Map<String, SmartPredicateItem> aliasMap) {
-        super(table, aliasMap);
+    public SmartPredicateOrUnit(EntityQueryExpressionBuilder entityQueryExpressionBuilder, AndPredicateSegment andPredicateSegment, TableAvailable table, Map<String, SmartPredicateItem> aliasMap) {
+        super(entityQueryExpressionBuilder, table, aliasMap);
         this.andPredicateSegment = andPredicateSegment;
-        this.whereActionList = new ArrayList<>();
+        this.parseFilterActionList = new ArrayList<>();
         this.isInvoke = true;
         parsePredicate();
+    }
+
+    @Override
+    protected boolean predicateParseMatch(SmartPredicateItem smartPredicateItem) {
+        return entityQueryExpressionBuilder.getFromTable().getEntityTable() == smartPredicateItem.table;
     }
 
     private void parsePredicate() {
@@ -41,9 +48,9 @@ public class SmartPredicateOrUnit extends AbstractSmartPredicateUnit{
                 if (EasyCollectionUtil.isSingle(flatAndPredicates)) {
                     Predicate first = EasyCollectionUtil.first(flatAndPredicates);
 
-                    SQLActionExpression1<Filter> whereAction = parsePredicate(first);
-                    if (whereAction != null) {
-                        this.whereActionList.add(whereAction);
+                    SmartPredicateParseResult parseFilterAction = parsePredicate(first);
+                    if (parseFilterAction != null) {
+                        this.parseFilterActionList.add(parseFilterAction);
                     } else {
                         this.isInvoke = false;
                     }
@@ -53,13 +60,35 @@ public class SmartPredicateOrUnit extends AbstractSmartPredicateUnit{
             }
         }
     }
+
     @Override
     public void invoke(Filter filter) {
         if (this.isInvoke) {
-            if (EasyCollectionUtil.isNotEmpty(whereActionList)) {
+            if (EasyCollectionUtil.isNotEmpty(parseFilterActionList)) {
                 filter.and(f -> {
-                    for (SQLActionExpression1<Filter> predicateSQLAction : whereActionList) {
-                        predicateSQLAction.apply(f);
+                    for (SmartPredicateParseResult predicateSQLAction : parseFilterActionList) {
+                        TableAvailable parseTable = predicateSQLAction.smartPredicateItem.table;
+                        if (parseTable == entityQueryExpressionBuilder.getFromTable().getEntityTable()) {
+                            predicateSQLAction.filterAction.apply(filter);
+                        } else {
+                            boolean goOnRelationTable=true;
+                            for (EntityTableExpressionBuilder tableExpressionBuilder : entityQueryExpressionBuilder.getTables()) {
+                                boolean ok = appendTableJoinOnPredicate(tableExpressionBuilder, predicateSQLAction);
+                                if(ok){
+                                    goOnRelationTable=false;
+                                    break;
+                                }
+                            }
+                            if(!goOnRelationTable){
+                                for (Map.Entry<RelationTableKey, EntityTableExpressionBuilder> kv : entityQueryExpressionBuilder.getRelationTables().entrySet()) {
+                                    EntityTableExpressionBuilder tableExpressionBuilder = kv.getValue();
+                                    boolean ok = appendTableJoinOnPredicate(tableExpressionBuilder, predicateSQLAction);
+                                    if(ok){
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                         f.or();
                     }
                 });
