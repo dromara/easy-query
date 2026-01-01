@@ -18,6 +18,7 @@ import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
@@ -67,6 +68,13 @@ public class QueryTest27 extends BaseTest {
         Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` ORDER BY RAND() ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
 //        Assert.assertEquals("0(String),1(String),2(String),3(String),4(String),5(String),6(String),7(String),8(String),9(String),10(String),11(String),12(String),13(String),14(String),15(String),16(String),17(String),18(String),19(String),20(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
+
+//        easyEntityQuery.queryable(Topic.class)
+//                .groupBy(t_topic -> GroupKeys.of(t_topic.createTime().duration(LocalDateTime.now()).toDays()))
+//                .select(group -> Select.DRAFT.of(
+//                        group.key1(),
+//                        group.groupTable().createTime().duration(LocalDateTime.now()).toDays()
+//                ))
     }
 
     @Test

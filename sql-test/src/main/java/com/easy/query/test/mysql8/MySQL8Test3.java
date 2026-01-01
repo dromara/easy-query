@@ -650,6 +650,9 @@ public class MySQL8Test3 extends BaseTest {
         easyEntityQuery.queryable(SysUser.class)
                 .configure(s -> s.getBehavior().add(EasyBehaviorEnum.SMART_PREDICATE))
                 .innerJoin(SysBankCard.class, (user, bank_card) -> user.id().eq(bank_card.uid()))
+                .where((user, bank_card) -> {
+                    user.age().eq(18);
+                })
                 .select((user, bank_card) -> new UserBankDTO2Proxy()
                         .name().set(user.name())
                         .phone().set(user.phone())
@@ -667,8 +670,8 @@ public class MySQL8Test3 extends BaseTest {
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t2.`name` AS `name`,t2.`phone` AS `phone`,t2.`code2` AS `code2` FROM (SELECT t.`name` AS `name`,t.`phone` AS `phone`,t1.`code` AS `code2` FROM `t_sys_user` t INNER JOIN `t_bank_card` t1 ON t.`id` = t1.`uid` WHERE t1.`code` = ? AND (t.`name` = ? OR t.`phone` = ?)) t2 WHERE t2.`code2` = ? AND (t2.`name` = ? OR t2.`phone` = ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("123(String),name(String),phone(String),123(String),name(String),phone(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t2.`name` AS `name`,t2.`phone` AS `phone`,t2.`code2` AS `code2` FROM (SELECT t.`name` AS `name`,t.`phone` AS `phone`,t1.`code` AS `code2` FROM `t_sys_user` t INNER JOIN `t_bank_card` t1 ON t.`id` = t1.`uid` AND t1.`code` = ? WHERE t.`age` = ? AND (t.`name` = ? OR t.`phone` = ?)) t2 WHERE t2.`code2` = ? AND (t2.`name` = ? OR t2.`phone` = ?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),18(Integer),name(String),phone(String),123(String),name(String),phone(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 
