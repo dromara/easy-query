@@ -6,6 +6,7 @@ import com.easy.query.test.cache.JsonUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MultiPrimaryEntity;
 import com.easy.query.test.entity.Topic;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
@@ -52,7 +53,17 @@ public class SQLiteTest extends SQLiteBaseTest{
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(Topic.class));
         codeFirstCommand.executeWithTransaction(s->s.commit());
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(Topic.class));
-        codeFirstCommand1.executeWithTransaction(s->s.commit());
+        codeFirstCommand1.executeWithTransaction(s->{
+            Assert.assertEquals("\n" +
+                    "CREATE TABLE IF NOT EXISTS \"t_topic\" ( \n" +
+                    "\"Id\" VARCHAR(255) NOT NULL ,\n" +
+                    "\"Stars\" integer NULL ,\n" +
+                    "\"Title\" VARCHAR(255) NULL ,\n" +
+                    "\"CreateTime\" TEXT NULL , \n" +
+                    " PRIMARY KEY (\"Id\")\n" +
+                    ");",s.getSQL());
+            s.commit();
+        });
     }
     @Test
     public  void testDDL2(){
@@ -60,6 +71,14 @@ public class SQLiteTest extends SQLiteBaseTest{
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(MultiPrimaryEntity.class));
         codeFirstCommand.executeWithTransaction(s->s.commit());
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(MultiPrimaryEntity.class));
-        codeFirstCommand1.executeWithTransaction(s->s.commit());
+        codeFirstCommand1.executeWithTransaction(s->{
+            Assert.assertEquals("\n" +
+                    "CREATE TABLE IF NOT EXISTS \"t_multi_primary\" ( \n" +
+                    "\"Id1\" VARCHAR(255) NOT NULL ,\n" +
+                    "\"Id2\" VARCHAR(255) NOT NULL , \n" +
+                    " PRIMARY KEY (\"Id1\", \"Id2\")\n" +
+                    ");",s.getSQL());
+            s.commit();
+        });
     }
 }

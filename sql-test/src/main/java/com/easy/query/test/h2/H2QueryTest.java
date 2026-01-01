@@ -757,7 +757,17 @@ public class H2QueryTest extends H2BaseTest {
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(Topic.class));
         codeFirstCommand.executeWithTransaction(s->s.commit());
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(Topic.class));
-        codeFirstCommand1.executeWithTransaction(s->s.commit());
+        codeFirstCommand1.executeWithTransaction(s->{
+            Assert.assertEquals("\n" +
+                    "CREATE TABLE IF NOT EXISTS t_topic ( \n" +
+                    "id VARCHAR(255) NOT NULL ,\n" +
+                    "stars INT NULL ,\n" +
+                    "title VARCHAR(255) NULL ,\n" +
+                    "create_time TIMESTAMP(3) NULL , \n" +
+                    " PRIMARY KEY (id)\n" +
+                    ");",s.getSQL());
+            s.commit();
+        });
     }
     @Test
     public  void testDDL2(){
@@ -765,6 +775,14 @@ public class H2QueryTest extends H2BaseTest {
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(MultiPrimaryEntity.class));
         codeFirstCommand.executeWithTransaction(s->s.commit());
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(MultiPrimaryEntity.class));
-        codeFirstCommand1.executeWithTransaction(s->s.commit());
+        codeFirstCommand1.executeWithTransaction(s->{
+            Assert.assertEquals("\n" +
+                    "CREATE TABLE IF NOT EXISTS t_multi_primary ( \n" +
+                    "id1 VARCHAR(255) NOT NULL ,\n" +
+                    "id2 VARCHAR(255) NOT NULL , \n" +
+                    " PRIMARY KEY (id1, id2)\n" +
+                    ");",s.getSQL());
+            s.commit();
+        });
     }
 }
