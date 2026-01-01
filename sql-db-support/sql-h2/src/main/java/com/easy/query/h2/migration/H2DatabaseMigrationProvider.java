@@ -92,24 +92,37 @@ public class H2DatabaseMigrationProvider extends AbstractDatabaseMigrationProvid
                 }
             }
 
-            if (column.isPrimary()) {
-                sql.append(" PRIMARY KEY ");
-            }
+//            if (column.isPrimary()) {
+//                sql.append(" PRIMARY KEY ");
+//            }
             String columnComment = getColumnComment(column, "'");
             if (EasyStringUtil.isNotBlank(columnComment)) {
                 sql.append(" COMMENT ").append(columnComment);
             }
             sql.append(",");
         }
-        if(EasyCollectionUtil.isNotEmpty(tableMigrationData.getColumns())){
+
+        List<ColumnMigrationData> keys = EasyCollectionUtil.filter(tableMigrationData.getColumns(), s -> s.isPrimary());
+        if (EasyCollectionUtil.isNotEmpty(keys)) {
+            sql.append(" ").append(newLine).append(" PRIMARY KEY (");
+            int i = keys.size();
+            for (ColumnMigrationData keyColumn : keys) {
+                i--;
+                sql.append(getQuoteSQLName(keyColumn.getName()));
+                if (i > 0) {
+                    sql.append(", ");
+                } else {
+                    sql.append(")");
+                }
+            }
+        }else{
             sql.deleteCharAt(sql.length() - 1);
         }
-        sql.append(newLine).append(")");
         String tableComment = getTableComment(tableMigrationData, "'");
         if (EasyStringUtil.isNotBlank(tableComment)) {
             sql.append(" COMMENT=").append(tableComment);
         }
-        sql.append(";");
+        sql.append(newLine).append(");");
         return new DefaultMigrationCommand(sql.toString());
     }
 

@@ -96,9 +96,9 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
             } else {
                 sql.append(" NULL ");
             }
-            if(column.isPrimary()){
-                sql.append(" PRIMARY KEY");
-            }
+//            if(column.isPrimary()){
+//                sql.append(" PRIMARY KEY");
+//            }
             if (column.isGeneratedKey()) {
                 sql.append(" AUTOINCREMENT");
             }else{

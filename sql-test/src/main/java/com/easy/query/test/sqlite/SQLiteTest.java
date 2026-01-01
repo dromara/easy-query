@@ -1,10 +1,15 @@
 package com.easy.query.test.sqlite;
 
+import com.easy.query.core.basic.api.database.CodeFirstCommand;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.test.cache.JsonUtil;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.MultiPrimaryEntity;
+import com.easy.query.test.entity.Topic;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -39,5 +44,22 @@ public class SQLiteTest extends SQLiteBaseTest{
                 System.out.println(s);
             }
         }
+    }
+
+    @Test
+    public  void testDDL(){
+        DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(Topic.class));
+        codeFirstCommand.executeWithTransaction(s->s.commit());
+        CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(Topic.class));
+        codeFirstCommand1.executeWithTransaction(s->s.commit());
+    }
+    @Test
+    public  void testDDL2(){
+        DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(MultiPrimaryEntity.class));
+        codeFirstCommand.executeWithTransaction(s->s.commit());
+        CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(MultiPrimaryEntity.class));
+        codeFirstCommand1.executeWithTransaction(s->s.commit());
     }
 }

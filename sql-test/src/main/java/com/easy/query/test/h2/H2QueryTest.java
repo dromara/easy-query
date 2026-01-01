@@ -3,7 +3,12 @@ package com.easy.query.test.h2;
 import com.easy.query.api.proxy.entity.select.EntityQueryable2;
 import com.easy.query.api.proxy.entity.select.EntityQueryable3;
 import com.easy.query.api.proxy.entity.select.EntityQueryable4;
+import com.easy.query.core.basic.api.database.CodeFirstCommand;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.test.entity.MultiPrimaryEntity;
+import com.easy.query.test.entity.SysUser;
+import com.easy.query.test.entity.Topic;
 import com.easy.query.test.h2.domain.ALLTYPE;
 import com.easy.query.test.h2.domain.ALLTYPE1;
 import com.easy.query.test.h2.domain.ALLTYPESharding;
@@ -26,6 +31,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -745,4 +751,20 @@ public class H2QueryTest extends H2BaseTest {
     }
 
 
+    @Test
+    public  void testDDL(){
+        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(Topic.class));
+        codeFirstCommand.executeWithTransaction(s->s.commit());
+        CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(Topic.class));
+        codeFirstCommand1.executeWithTransaction(s->s.commit());
+    }
+    @Test
+    public  void testDDL2(){
+        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
+        CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(MultiPrimaryEntity.class));
+        codeFirstCommand.executeWithTransaction(s->s.commit());
+        CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(MultiPrimaryEntity.class));
+        codeFirstCommand1.executeWithTransaction(s->s.commit());
+    }
 }

@@ -16,8 +16,8 @@ public class PropertyKey {
     private final String property;
 
     public PropertyKey(Class<?> from, Class<?> to, NavigateMetadata navigateMetadata) {
-        this.from = from;
-        this.to = to;
+        this.from = from == null ? Object.class : from;
+        this.to = to == null ? Object.class : to;
         this.property = navigateMetadata == null ? null : navigateMetadata.getPropertyName();
     }
 
