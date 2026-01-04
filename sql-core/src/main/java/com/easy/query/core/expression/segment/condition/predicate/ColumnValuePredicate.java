@@ -65,4 +65,12 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
 //        }
         return columnValue2Segment.getSQLParameter();
     }
+
+    public ColumnValue2Segment getColumnValue2Segment() {
+        return columnValue2Segment;
+    }
+
+    public Column2Segment getColumn2Segment() {
+        return column2Segment;
+    }
 }
