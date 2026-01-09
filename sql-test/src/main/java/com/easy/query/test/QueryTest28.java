@@ -3,6 +3,7 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.base.ClassProxy;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.entity.Topic;
 import com.easy.query.test.listener.ListenerContext;
 import lombok.Data;
 import org.junit.Assert;
@@ -63,5 +64,37 @@ public class QueryTest28 extends BaseTest {
     @Data
     public static class TypeA{
         private String id;
+    }
+
+    @Test
+    public void testQueryNullOrDefault(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Topic> list1 = easyEntityQuery.queryable(Topic.class)
+                .where(t_topic -> {
+                    t_topic.stars().nullOrDefaultZero().eq(1);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`stars`,0) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testQueryNullOrDefault2(){
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        List<Topic> list1 = easyEntityQuery.queryable(Topic.class)
+                .where(t_topic -> {
+                    t_topic.stars().nullOrDefaultFormat(1).eq(1);
+                }).toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`create_time` FROM `t_topic` WHERE IFNULL(`stars`,1) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
     }
 }

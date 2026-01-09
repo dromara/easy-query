@@ -5,6 +5,7 @@ import com.easy.query.api.proxy.extension.window.OverExpression;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLActionExpression;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
+import com.easy.query.core.expression.lambda.SQLActionExpression2;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegment;
 import com.easy.query.core.expression.segment.builder.OrderBySQLBuilderSegmentImpl;
 import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
@@ -72,6 +73,9 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
 
     default TChain nullOrDefault(TProperty value) {
         return nullOrDefault(o -> o.value(_toFunctionSerializeValue(value)));
+    }
+    default TChain nullOrDefaultFormat(Object value) {
+        return nullOrDefault(o ->o.format(value));
     }
 
     default TChain nullOrDefault(PropTypeColumn<TProperty> propTypeColumn) {

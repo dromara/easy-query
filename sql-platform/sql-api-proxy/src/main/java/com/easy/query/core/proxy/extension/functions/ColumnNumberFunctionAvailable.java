@@ -34,6 +34,16 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
         ColumnFunctionCastNumberAvailable<TProperty>,
         ColumnFunctionCastBooleanAvailable<TProperty> {
 
+
+    default NumberFilterTypeExpression<TProperty> nullOrDefaultZero() {
+        return createFilterChainExpression((self, fx) -> {
+            return fx.nullOrDefault(x -> {
+                PropTypeColumn.acceptAnyValue(x, self);
+                x.format(0);
+            });
+        }, getPropertyType());
+    }
+
     @Override
     default NumberFilterTypeExpression<TProperty> max() {
         return createFilterChainExpression((self, fx) -> {
@@ -435,6 +445,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     default NumberTypeExpression<BigDecimal> atan2(BigDecimal other) {
         return atan2(Expression.of(this.getEntitySQLContext()).constant(other));
     }
+
     default NumberTypeExpression<BigDecimal> atan2(PropTypeColumn<BigDecimal> other) {
         return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             return fx.math(o -> {
