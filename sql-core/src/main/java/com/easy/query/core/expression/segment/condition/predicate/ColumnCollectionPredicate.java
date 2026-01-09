@@ -101,4 +101,16 @@ public class ColumnCollectionPredicate implements ValuesPredicate, ShardingPredi
         }
         return sqlParameters;
     }
+
+    public Collection<ColumnValue2Segment> getCollection() {
+        return collection;
+    }
+
+    public ExpressionContext getExpressionContext() {
+        return expressionContext;
+    }
+
+    public Column2Segment getColumn2Segment() {
+        return column2Segment;
+    }
 }

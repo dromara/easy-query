@@ -108,4 +108,16 @@ public class ColumnMultiCollectionPredicate implements ValuesPredicate, Sharding
     public Collection<SQLParameter> getParameters() {
         return new ArrayList<>();
     }
+
+    public List<Column2Segment> getColumn2Segments() {
+        return column2Segments;
+    }
+
+    public List<List<ColumnValue2Segment>> getCollections() {
+        return collections;
+    }
+
+    public ExpressionContext getExpressionContext() {
+        return expressionContext;
+    }
 }
