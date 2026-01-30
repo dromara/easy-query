@@ -18,17 +18,10 @@ import java.util.Set;
  * @author xuejiaming
  */
 public class BooleanLogicDeleteStrategy extends AbstractLogicDeleteStrategy {
-    private static final Set<Class<?>> allowedPropertyTypes =new HashSet<>(Arrays.asList(Boolean.class,boolean.class));
     @Override
     public String getStrategy() {
         return LogicDeleteStrategyEnum.BOOLEAN.getStrategy();
     }
-
-    @Override
-    public Set<Class<?>> allowedPropertyTypes() {
-        return allowedPropertyTypes;
-    }
-
 
     @Override
     protected SQLActionExpression1<WherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, String propertyName) {

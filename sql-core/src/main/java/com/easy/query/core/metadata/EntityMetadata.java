@@ -45,6 +45,7 @@ import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.interceptor.PredicateFilterInterceptor;
 import com.easy.query.core.basic.extension.interceptor.UpdateEntityColumnInterceptor;
 import com.easy.query.core.basic.extension.interceptor.UpdateSetInterceptor;
+import com.easy.query.core.basic.extension.logicdel.ConfigurationLogicDeleteMetadataBuilder;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
@@ -332,6 +333,16 @@ public class EntityMetadata {
                 System.out.println("NoLogging:" + EasyClassUtil.getSimpleName(entityClass) + " not found property bean, plz add get set method");
             } else {
                 log.warn(EasyClassUtil.getSimpleName(entityClass) + " not found property, plz add bean get set method");
+            }
+        }
+        //如果当前类是数据库实体类并且没有逻辑删除，则通过全局配置去获取是否有符合的逻辑删除
+        if (tableEntity) {
+            if (this.logicDeleteMetadata == null) {
+                LogicDeleteStrategy logicDeleteStrategy = configuration.getSingleConfigurationLogicDeleteStrategy(entityClass);
+                if (logicDeleteStrategy != null) {
+                    ConfigurationLogicDeleteMetadataBuilder logicDeleteBuilder = new ConfigurationLogicDeleteMetadataBuilder();
+                    this.logicDeleteMetadata = logicDeleteStrategy.configureBuild(logicDeleteBuilder);
+                }
             }
         }
         //初始化拦截器

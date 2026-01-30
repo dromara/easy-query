@@ -2,26 +2,13 @@ package com.easy.query.test.logicdel;
 
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.basic.extension.logicdel.abstraction.AbstractLogicDeleteStrategy;
-import com.easy.query.core.basic.jdbc.parameter.ConstSQLParameter;
-import com.easy.query.core.basic.jdbc.parameter.SQLParameter;
-import com.easy.query.core.enums.SQLPredicateCompareEnum;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
-import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
-import com.easy.query.core.expression.segment.condition.PredicateSegment;
-import com.easy.query.core.expression.segment.condition.predicate.Predicate;
-import com.easy.query.core.expression.segment.condition.predicate.ValuePredicate;
-import com.easy.query.core.expression.segment.condition.predicate.ValuesPredicate;
-import com.easy.query.core.expression.sql.builder.EntityExpressionBuilder;
-import com.easy.query.core.expression.sql.builder.impl.DeleteExpressionBuilder;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -102,10 +89,5 @@ public class MyLogicDelStrategy extends AbstractLogicDeleteStrategy {
     @Override
     public String getStrategy() {
         return "MyLogicDelStrategy";
-    }
-
-    @Override
-    public Set<Class<?>> allowedPropertyTypes() {
-        return allowTypes;
     }
 }

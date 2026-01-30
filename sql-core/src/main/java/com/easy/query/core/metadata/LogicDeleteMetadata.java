@@ -12,13 +12,11 @@ import com.easy.query.core.expression.parser.core.base.WherePredicate;
  */
 public final class LogicDeleteMetadata {
 
-    public LogicDeleteMetadata(String propertyName, SQLActionExpression1<WherePredicate<Object>> logicDeletePredicateFilterExpression, SQLActionExpression1<ColumnSetter<Object>> logicDeletedSQLExpression) {
-        this.propertyName = propertyName;
+    public LogicDeleteMetadata(SQLActionExpression1<WherePredicate<Object>> logicDeletePredicateFilterExpression, SQLActionExpression1<ColumnSetter<Object>> logicDeletedSQLExpression) {
         this.logicDeletePredicateFilterExpression = logicDeletePredicateFilterExpression;
         this.logicDeletedSQLExpression = logicDeletedSQLExpression;
     }
 
-    private final String propertyName;
     /**
      * where
      * 查询 更新 删除等操作会添加该表达式
@@ -36,9 +34,5 @@ public final class LogicDeleteMetadata {
 
     public SQLActionExpression1<ColumnSetter<Object>> getLogicDeletedSQLExpression() {
         return logicDeletedSQLExpression;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
     }
 }

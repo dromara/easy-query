@@ -1,15 +1,14 @@
 package com.easy.query.core.basic.extension.logicdel.abstraction;
 
+import com.easy.query.core.basic.extension.logicdel.LogicDeleteMetadataBuilder;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteBuilder;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
-import com.easy.query.core.exception.EasyQueryException;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
 import com.easy.query.core.metadata.LogicDeleteMetadata;
-import com.easy.query.core.util.EasyClassUtil;
-
-import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 逻辑删除抽象类
@@ -17,18 +16,15 @@ import java.util.Set;
 public abstract class AbstractLogicDeleteStrategy implements LogicDeleteStrategy {
 
     @Override
-    public LogicDeleteMetadata configureBuild(LogicDeleteBuilder builder) {
-        Set<Class<?>> allowTypes = allowedPropertyTypes();
-        if (allowTypes == null || allowTypes.isEmpty()) {
-            throw new EasyQueryException("plz set expectPropertyTypes values");
+    public LogicDeleteMetadata configureBuild(LogicDeleteMetadataBuilder builder) {
+        boolean isPropLogicDeleteBuilder = builder instanceof LogicDeleteBuilder;
+        if(!isPropLogicDeleteBuilder){
+            throw new EasyQueryInvalidOperationException("not support logic delete builder:"+builder.getClass().getName());
         }
-        String propertyName = builder.getPropertyName();
-        Class<?> propertyType = builder.getPropertyType();
-        if (!allowTypes.contains(propertyType)) {
-            throw new EasyQueryException(EasyClassUtil.getSimpleName(builder.getEntityClass()) + "." + propertyName + " logic delete not support, property type not allowed");
-        }
-        SQLActionExpression1<WherePredicate<Object>> predicateFilterExpression = getPredicateFilterExpression(builder, propertyName);
-        SQLActionExpression1<ColumnSetter<Object>> deletedSQLExpression = getDeletedSQLExpression(builder, propertyName);
+        LogicDeleteBuilder propLogicDeleteBuilder = (LogicDeleteBuilder) builder;
+        String propertyName = propLogicDeleteBuilder.getPropertyName();
+        SQLActionExpression1<WherePredicate<Object>> predicateFilterExpression = getPredicateFilterExpression(propLogicDeleteBuilder, propertyName);
+        SQLActionExpression1<ColumnSetter<Object>> deletedSQLExpression = getDeletedSQLExpression(propLogicDeleteBuilder, propertyName);
         return builder.build(predicateFilterExpression, deletedSQLExpression);
     }
 
@@ -53,4 +49,9 @@ public abstract class AbstractLogicDeleteStrategy implements LogicDeleteStrategy
      * @return
      */
     protected abstract SQLActionExpression1<ColumnSetter<Object>> getDeletedSQLExpression(LogicDeleteBuilder builder, String propertyName);
+
+    @Override
+    public boolean apply(@NotNull Class<?> entityClass) {
+        return false;
+    }
 }

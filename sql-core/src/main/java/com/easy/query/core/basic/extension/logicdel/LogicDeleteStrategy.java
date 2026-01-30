@@ -2,8 +2,7 @@ package com.easy.query.core.basic.extension.logicdel;
 
 
 import com.easy.query.core.metadata.LogicDeleteMetadata;
-
-import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @FileName: EasyLogicDeleteStrategy.java
@@ -19,14 +18,15 @@ public interface LogicDeleteStrategy {
     String getStrategy();
 
     /**
-     * 哪些属性类型支持
-     * @return
-     */
-    Set<Class<?>> allowedPropertyTypes();
-
-    /**
      * 配置逻辑删除过滤和set
      * @param builder
      */
-    LogicDeleteMetadata configureBuild(LogicDeleteBuilder builder);
+    LogicDeleteMetadata configureBuild(LogicDeleteMetadataBuilder builder);
+
+    /**
+     * 是否接受当前拦截器
+     * @param entityClass
+     * @return
+     */
+    boolean apply(@NotNull Class<?> entityClass);
 }

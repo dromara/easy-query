@@ -18,18 +18,11 @@ import java.util.Set;
  * @author xuejiaming
  */
 public class LongTimestampLogicDeleteStrategy extends AbstractLogicDeleteStrategy {
-    private static final Set<Class<?>> allowedPropertyTypes = new HashSet<>(Arrays.asList(Long.class, long.class));
 
     @Override
     public String getStrategy() {
         return LogicDeleteStrategyEnum.DELETE_LONG_TIMESTAMP.getStrategy();
     }
-
-    @Override
-    public Set<Class<?>> allowedPropertyTypes() {
-        return allowedPropertyTypes;
-    }
-
 
     @Override
     protected SQLActionExpression1<WherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, String propertyName) {

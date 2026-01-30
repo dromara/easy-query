@@ -17,10 +17,12 @@ import com.easy.query.core.expression.many2group.DefaultSubQueryExtraPredicatePr
 import com.easy.query.core.expression.many2group.SubQueryExtraPredicateProvider;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
+import com.easy.query.test.common.ConfigurationLogicDelete;
 import com.easy.query.test.common.M8Interceptor;
 import com.easy.query.test.common.MockEntityExpressionExecutor;
 import com.easy.query.test.common.MyQueryConfiguration;
 import com.easy.query.test.conversion.StarCodeValueConvert;
+import com.easy.query.test.dto.MyConfigLogicDelete;
 import com.easy.query.test.entity.SysDept;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
@@ -160,6 +162,7 @@ public class BaseTest {
         queryConfiguration.applyInterceptor(new QueryInterceptor());
         queryConfiguration.applyInterceptor(new SaveInterceptor());
         queryConfiguration.applyValueConverter(new StarCodeValueConvert());
+        queryConfiguration.applyLogicDeleteStrategy(new ConfigurationLogicDelete());
         easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
         beforex();
     }
@@ -171,12 +174,12 @@ public class BaseTest {
 //        codeFirstCommand.executeWithTransaction(s -> s.commit());
         CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(TableNoKey.class,SysUser.class, SysBankCard.class, SysBank.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class, M8ParentChild.class,
                 M8Province.class, M8City.class, M8Area.class, M8AreaBuild.class, TreeA.class, TreeB.class, BatchInsert.class, Comment.class, M8SaveRoot.class, M8SaveRoot2Many.class, M8SaveRootMany.class, M8SaveRootMiddleMany.class, M8SaveRootOne.class,M8SaveRootOne2.class, M8SaveRootManyOne.class,
-                M8SaveA.class, M8SaveB.class, M8SaveC.class, M8SaveD.class, M8User3.class, M8UserRole3.class, M8Role3.class, M8ToMany1.class, M8ToMany2.class, M8ToMany3.class, M8AutoA.class, M8AutoB.class, OffsetChunkTest.class));
+                M8SaveA.class, M8SaveB.class, M8SaveC.class, M8SaveD.class, M8User3.class, M8UserRole3.class, M8Role3.class, M8ToMany1.class, M8ToMany2.class, M8ToMany3.class, M8AutoA.class, M8AutoB.class, OffsetChunkTest.class, MyConfigLogicDelete.class));
         codeFirstCommand2.executeWithTransaction(s -> s.commit());
 
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(TableNoKey.class,SysUser.class, SysBank.class, SysBankCard.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class, M8ParentChild.class,
                 M8Province.class, M8City.class, M8Area.class, M8AreaBuild.class,M8AreaBuildLicense.class, TreeA.class, TreeB.class, BatchInsert.class,Comment.class, M8SaveRoot.class, M8SaveRoot2Many.class, M8SaveRootMany.class, M8SaveRootMiddleMany.class, M8SaveRootOne.class,M8SaveRootOne2.class,M8SaveRootManyOne.class,
-                M8SaveA.class, M8SaveB.class, M8SaveC.class, M8SaveD.class, M8User3.class, M8UserRole3.class, M8Role3.class, M8ToMany1.class, M8ToMany2.class, M8ToMany3.class,M8AutoA.class,M8AutoB.class,OffsetChunkTest.class, SysDept.class));
+                M8SaveA.class, M8SaveB.class, M8SaveC.class, M8SaveD.class, M8User3.class, M8UserRole3.class, M8Role3.class, M8ToMany1.class, M8ToMany2.class, M8ToMany3.class,M8AutoA.class,M8AutoB.class,OffsetChunkTest.class, SysDept.class, MyConfigLogicDelete.class));
         codeFirstCommand1.executeWithTransaction(s -> {
             System.out.println(s.getSQL());
             s.commit();

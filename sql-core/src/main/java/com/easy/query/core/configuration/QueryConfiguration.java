@@ -32,6 +32,7 @@ import com.easy.query.core.sharding.initializer.UnShardingInitializer;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 import com.easy.query.core.util.EasyStringUtil;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -39,6 +40,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 /**
  * @author xuejiaming
@@ -151,6 +153,7 @@ public class QueryConfiguration {
     public NavigateExtraFilterStrategy getNavigateExtraFilterStrategy(Class<? extends NavigateExtraFilterStrategy> strategy) {
         return navigateExtraFilterStrategyMap.get(strategy);
     }
+
     public void applyNavigateValueSetter(NavigateValueSetter navigateValueSetter) {
         Objects.requireNonNull(navigateValueSetter, "navigateValueSetter is null");
         if (navigateValueSetterMap.containsKey(navigateValueSetter.getClass())) {
@@ -172,6 +175,20 @@ public class QueryConfiguration {
      */
     public LogicDeleteStrategy getLogicDeleteStrategy(String strategy) {
         return globalLogicDeleteStrategyMap.get(strategy);
+    }
+
+    public @Nullable LogicDeleteStrategy getSingleConfigurationLogicDeleteStrategy(Class<?> entityClass) {
+        List<LogicDeleteStrategy> matchLogicDeletes = globalLogicDeleteStrategyMap.values().stream().filter(valueAutoConverter -> valueAutoConverter.apply(entityClass))
+                .limit(2)
+                .collect(Collectors.toList());
+        if (matchLogicDeletes.size() > 1) {
+            String matchNames = matchLogicDeletes.stream().map(valueAutoConverter -> EasyClassUtil.getSimpleName(valueAutoConverter.getClass())).collect(Collectors.joining(","));
+            throw new EasyQueryException(EasyClassUtil.getSimpleName(entityClass) + " logic-delete more than one match found [" + matchNames + "]");
+        }
+        if (matchLogicDeletes.size() == 1) {
+            return matchLogicDeletes.get(0);
+        }
+        return null;
     }
 
     public LogicDeleteStrategy getLogicDeleteStrategyNotNull(String strategy) {
@@ -307,6 +324,7 @@ public class QueryConfiguration {
     public GeneratedKeySQLColumnGenerator getGeneratedKeySQLColumnGenerator(Class<? extends GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGenerator) {
         return generatedSQLColumnGeneratorMap.get(generatedKeySQLColumnGenerator);
     }
+
     public void applyPrimaryKeyGenerator(PrimaryKeyGenerator primaryKeyGenerator) {
         Class<? extends PrimaryKeyGenerator> primaryKeyGeneratorClass = primaryKeyGenerator.getClass();
         if (primaryKeyGeneratorMap.containsKey(primaryKeyGeneratorClass)) {
@@ -318,6 +336,7 @@ public class QueryConfiguration {
     public PrimaryKeyGenerator getPrimaryKeyGenerator(Class<? extends PrimaryKeyGenerator> primaryKeyGenerator) {
         return primaryKeyGeneratorMap.get(primaryKeyGenerator);
     }
+
     public void applyRelationPropertyProvider(EntityRelationPropertyProvider toManySubquerySQLStrategy) {
         if (toManySubquerySQLStrategyMap.containsKey(toManySubquerySQLStrategy.getName())) {
             throw new EasyQueryException("entity relation property provider:" + toManySubquerySQLStrategy.getName() + ",repeat");

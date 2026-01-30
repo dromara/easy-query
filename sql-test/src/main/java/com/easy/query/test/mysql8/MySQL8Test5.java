@@ -13,6 +13,7 @@ import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.dto.MyConfigLogicDelete;
 import com.easy.query.test.dto.SysDeptTreeResp;
 import com.easy.query.test.entity.SysDept;
 import com.easy.query.test.entity.Topic;
@@ -614,5 +615,20 @@ public class MySQL8Test5 extends BaseTest {
                 .toTreeList();
         System.out.println(abc);
         Assert.assertEquals("[SysDeptTreeResp(id=2, pid=0, name=总部B, deep=2, children=[SysDeptTreeResp(id=21, pid=2, name=研发中心, deep=1, children=[SysDeptTreeResp(id=211, pid=21, name=abc-算法部, deep=0, children=[])])]), SysDeptTreeResp(id=2, pid=0, name=总部B, deep=2, children=[SysDeptTreeResp(id=22, pid=2, name=市场中心, deep=1, children=[SysDeptTreeResp(id=222, pid=22, name=abc-渠道部, deep=0, children=[])])]), SysDeptTreeResp(id=2, pid=0, name=总部B, deep=4, children=[SysDeptTreeResp(id=21, pid=2, name=研发中心, deep=3, children=[SysDeptTreeResp(id=211, pid=21, name=abc-算法部, deep=2, children=[SysDeptTreeResp(id=2111, pid=211, name=推荐算法, deep=1, children=[SysDeptTreeResp(id=21111, pid=2111, name=abc-召回模型, deep=0, children=[])])])])])]",abc+"");
+    }
+
+    @Test
+    public void configurationLogicDelete(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<MyConfigLogicDelete> list2 = easyEntityQuery.queryable(MyConfigLogicDelete.class).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`name`,`deleted` FROM `my_config_logic` WHERE `deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
     }
 }

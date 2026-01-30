@@ -19,17 +19,10 @@ import java.util.Set;
  * @author xuejiaming
  */
 public  class LocalDateLogicDeleteStrategy extends AbstractLogicDeleteStrategy {
-    private static final Set<Class<?>> allowedPropertyTypes =new HashSet<>(Collections.singletonList(LocalDate.class));
     @Override
     public String getStrategy() {
         return LogicDeleteStrategyEnum.LOCAL_DATE.getStrategy();
     }
-
-    @Override
-    public Set<Class<?>> allowedPropertyTypes() {
-        return allowedPropertyTypes;
-    }
-
 
     @Override
     protected SQLActionExpression1<WherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder builder, String propertyName) {

@@ -19,15 +19,9 @@ import java.util.Set;
  * @author xuejiaming
  */
 public class LocalDateTimeLogicDeleteStrategy extends AbstractLogicDeleteStrategy {
-    private static final Set<Class<?>> allowedPropertyTypes =new HashSet<>(Collections.singletonList(LocalDateTime.class));
     @Override
     public String getStrategy() {
         return LogicDeleteStrategyEnum.LOCAL_DATE_TIME.getStrategy();
-    }
-
-    @Override
-    public Set<Class<?>> allowedPropertyTypes() {
-        return allowedPropertyTypes;
     }
 
     @Override
