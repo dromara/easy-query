@@ -127,7 +127,7 @@ public class H2V2BaseTest {
         System.out.println(value);
         Assert.assertEquals("\n" +
                 "CREATE TABLE IF NOT EXISTS \"t_all_type\" ( \n" +
-                "\"id\" VARCHAR(255) NOT NULL  PRIMARY KEY ,\n" +
+                "\"id\" VARCHAR(255) NOT NULL ,\n" +
                 "\"number_decimal\" DECIMAL(16,2) NULL ,\n" +
                 "\"number_float\" FLOAT NULL ,\n" +
                 "\"number_double\" DOUBLE NULL ,\n" +
@@ -150,16 +150,18 @@ public class H2V2BaseTest {
                 "\"number_integer_basic\" INT NOT NULL  DEFAULT 0,\n" +
                 "\"number_long_basic\" BIGINT NOT NULL  DEFAULT 0,\n" +
                 "\"number_byte_basic\" TINYINT NOT NULL  DEFAULT 0,\n" +
-                "\"enable_basic\" BOOLEAN NOT NULL  DEFAULT 0\n" +
+                "\"enable_basic\" BOOLEAN NOT NULL  DEFAULT 0, \n" +
+                " PRIMARY KEY (\"id\")\n" +
                 ");\n" +
                 "CREATE TABLE IF NOT EXISTS \"t_topic\" ( \n" +
-                "\"id\" VARCHAR(255) NOT NULL  PRIMARY KEY ,\n" +
+                "\"id\" VARCHAR(255) NOT NULL ,\n" +
                 "\"stars\" INT NULL ,\n" +
                 "\"title\" VARCHAR(255) NULL ,\n" +
-                "\"create_time\" TIMESTAMP(3) NULL \n" +
+                "\"create_time\" TIMESTAMP(3) NULL , \n" +
+                " PRIMARY KEY (\"id\")\n" +
                 ");\n" +
                 "CREATE TABLE IF NOT EXISTS \"t_blog\" ( \n" +
-                "\"id\" VARCHAR(255) NOT NULL  PRIMARY KEY ,\n" +
+                "\"id\" VARCHAR(255) NOT NULL ,\n" +
                 "\"create_time\" TIMESTAMP(3) NULL  COMMENT '创建时间;创建时间',\n" +
                 "\"update_time\" TIMESTAMP(3) NULL  COMMENT '修改时间;修改时间',\n" +
                 "\"create_by\" VARCHAR(255) NULL  COMMENT '创建人;创建人',\n" +
@@ -174,7 +176,8 @@ public class H2V2BaseTest {
                 "\"status\" INT NULL ,\n" +
                 "\"order\" DECIMAL(16,2) NULL ,\n" +
                 "\"is_top\" BOOLEAN NULL ,\n" +
-                "\"top\" BOOLEAN NULL \n" +
+                "\"top\" BOOLEAN NULL , \n" +
+                " PRIMARY KEY (\"id\")\n" +
                 ");",value);
     }
 }

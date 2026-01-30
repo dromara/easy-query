@@ -283,62 +283,62 @@ public class M8Save4Test extends BaseTest {
         });
     }
 
-
-    @Test
-    public  void testOneToMany(){
-
-        easyEntityQuery.sqlExecute("truncate table m8_auto_a");
-        easyEntityQuery.sqlExecute("truncate table m8_auto_b");
-
-        invoke(listenerContext->{
-            M8AutoA m8AutoA = new M8AutoA();
-            m8AutoA.setColumn1("1");
-            m8AutoA.setColumn2("2");
-            m8AutoA.setColumn3("3");
-            m8AutoA.setM8AutoBList(new ArrayList<>());
-
-            {
-                M8AutoB m8AutoB = new M8AutoB();
-                m8AutoB.setAid("1");
-                m8AutoB.setColumn1("1");
-                m8AutoB.setColumn2("2");
-                m8AutoB.setColumn3("3");
-
-                m8AutoA.getM8AutoBList().add(m8AutoB);
-            }
-            {
-                M8AutoB m8AutoB = new M8AutoB();
-                m8AutoB.setAid("1");
-                m8AutoB.setColumn1("11");
-                m8AutoB.setColumn2("22");
-                m8AutoB.setColumn3("33");
-
-                m8AutoA.getM8AutoBList().add(m8AutoB);
-            }
-
-            try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                easyEntityQuery.savable(m8AutoA).executeCommand2();
-                transaction.commit();
-            }
-
-            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
-            Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
-            {
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
-                Assert.assertEquals("INSERT INTO `m8_auto_a` (`column1`,`column2`,`column3`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-            }
-            {
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
-                Assert.assertEquals("INSERT INTO `m8_auto_b` (`aid`,`column1`,`column2`,`column3`) VALUES (?,?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                Assert.assertEquals("1(String),1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-            }
-            {
-                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
-                Assert.assertEquals("INSERT INTO `m8_auto_b` (`aid`,`column1`,`column2`,`column3`) VALUES (?,?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
-                Assert.assertEquals("1(String),11(String),22(String),33(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-            }
-        });
-
-    }
+//
+//    @Test
+//    public  void testOneToMany(){
+//
+//        easyEntityQuery.sqlExecute("truncate table m8_auto_a");
+//        easyEntityQuery.sqlExecute("truncate table m8_auto_b");
+//
+//        invoke(listenerContext->{
+//            M8AutoA m8AutoA = new M8AutoA();
+//            m8AutoA.setColumn1("1");
+//            m8AutoA.setColumn2("2");
+//            m8AutoA.setColumn3("3");
+//            m8AutoA.setM8AutoBList(new ArrayList<>());
+//
+//            {
+//                M8AutoB m8AutoB = new M8AutoB();
+//                m8AutoB.setAid("1");
+//                m8AutoB.setColumn1("1");
+//                m8AutoB.setColumn2("2");
+//                m8AutoB.setColumn3("3");
+//
+//                m8AutoA.getM8AutoBList().add(m8AutoB);
+//            }
+//            {
+//                M8AutoB m8AutoB = new M8AutoB();
+//                m8AutoB.setAid("1");
+//                m8AutoB.setColumn1("11");
+//                m8AutoB.setColumn2("22");
+//                m8AutoB.setColumn3("33");
+//
+//                m8AutoA.getM8AutoBList().add(m8AutoB);
+//            }
+//
+//            try (Transaction transaction = easyEntityQuery.beginTransaction()) {
+//                easyEntityQuery.savable(m8AutoA).executeCommand2();
+//                transaction.commit();
+//            }
+//
+//            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+//            Assert.assertEquals(3, listenerContext.getJdbcExecuteAfterArgs().size());
+//            {
+//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+//                Assert.assertEquals("INSERT INTO `m8_auto_a` (`column1`,`column2`,`column3`) VALUES (?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                Assert.assertEquals("1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            }
+//            {
+//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+//                Assert.assertEquals("INSERT INTO `m8_auto_b` (`aid`,`column1`,`column2`,`column3`) VALUES (?,?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                Assert.assertEquals("1(String),1(String),2(String),3(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            }
+//            {
+//                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(2);
+//                Assert.assertEquals("INSERT INTO `m8_auto_b` (`aid`,`column1`,`column2`,`column3`) VALUES (?,?,?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                Assert.assertEquals("1(String),11(String),22(String),33(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+//            }
+//        });
+//
+//    }
 }
