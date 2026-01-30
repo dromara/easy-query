@@ -10,8 +10,12 @@ import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.dto.SysDeptTreeResp;
+import com.easy.query.test.entity.SysDept;
+import com.easy.query.test.entity.Topic;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.M8User;
 import com.easy.query.test.mysql8.entity.M8UserBook;
@@ -28,6 +32,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -589,5 +594,25 @@ public class MySQL8Test5 extends BaseTest {
         }
     }
 
-
+    @Test
+    public void testSysDeptCTE(){
+        List<SysDeptTreeResp> abc = easyEntityQuery.queryable(SysDept.class)
+                .where(s -> {
+                    s.name().in(Arrays.asList("abc-算法部","abc-召回模型","abc-渠道部"));
+//                    s.code().contains(req.getCode());
+//                    s.enable().eq(req.getEnable());
+                })
+                .asTreeCTE(op -> {
+                    op.setDeepInCustomSelect(true);
+                    op.setUp(true);
+                    op.setDeepColumnName("deep");
+                })
+                .orderBy(s -> {
+                    s.id().asc();
+                })
+                .selectAutoInclude(SysDeptTreeResp.class)
+                .toTreeList();
+        System.out.println(abc);
+        Assert.assertEquals("[SysDeptTreeResp(id=2, pid=0, name=总部B, deep=2, children=[SysDeptTreeResp(id=21, pid=2, name=研发中心, deep=1, children=[SysDeptTreeResp(id=211, pid=21, name=abc-算法部, deep=0, children=[])])]), SysDeptTreeResp(id=2, pid=0, name=总部B, deep=2, children=[SysDeptTreeResp(id=22, pid=2, name=市场中心, deep=1, children=[SysDeptTreeResp(id=222, pid=22, name=abc-渠道部, deep=0, children=[])])]), SysDeptTreeResp(id=2, pid=0, name=总部B, deep=4, children=[SysDeptTreeResp(id=21, pid=2, name=研发中心, deep=3, children=[SysDeptTreeResp(id=211, pid=21, name=abc-算法部, deep=2, children=[SysDeptTreeResp(id=2111, pid=211, name=推荐算法, deep=1, children=[SysDeptTreeResp(id=21111, pid=2111, name=abc-召回模型, deep=0, children=[])])])])])]",abc+"");
+    }
 }

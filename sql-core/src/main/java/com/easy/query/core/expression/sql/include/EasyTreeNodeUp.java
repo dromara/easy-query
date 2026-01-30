@@ -38,12 +38,12 @@ public class EasyTreeNodeUp<T> implements EasyTreeNode<T> {
 
     @Override
     public RelationValue getSelf() {
-        return new MultiRelationValue(Arrays.asList(self, deep), null);
+        return new MultiRelationValue(Arrays.asList(self, deep - 1), null);
     }
 
     @Override
     public RelationValue getTarget() {
-        return new MultiRelationValue(Arrays.asList(target, deep + 1), null);
+        return new MultiRelationValue(Arrays.asList(target, deep), null);
     }
 
     @Override

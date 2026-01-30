@@ -21,6 +21,7 @@ import com.easy.query.test.dto.MyCategoryDTO;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MyCategory;
 import com.easy.query.test.entity.UUIDEntity;
+import com.easy.query.test.entity.proxy.MyCategoryProxy;
 import com.easy.query.test.entity.vo.MyCategoryVO2;
 import com.easy.query.test.entity.vo.MyCategoryVO3;
 import com.easy.query.test.entity.vo.MyCategoryVO4;
@@ -139,7 +140,6 @@ public class QueryTest19 extends PgSQLBaseTest {
 
     @Test
     public void tree8() {
-
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);

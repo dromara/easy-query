@@ -40,12 +40,13 @@ public class EasyTreeUtil {
 
     /**
      * 非cte关联
+     *
      * @param nodes
      * @param entityMetadata
      * @param navigateMetadata
      * @param runtimeContext
-     * @return
      * @param <T>
+     * @return
      */
     public static <T> List<T> generateTrees(List<T> nodes, EntityMetadata entityMetadata, NavigateMetadata navigateMetadata, QueryRuntimeContext runtimeContext) {
 
@@ -97,14 +98,18 @@ public class EasyTreeUtil {
         List<EasyTreeNode<T>> roots = new ArrayList<>();
         List<EasyTreeNode<T>> easyTreeNodes = new ArrayList<>();
         if (treeCTEOption.isUp()) {
-            flatNodeToTreeNodeUp(nodes, roots, easyTreeNodes, selfRelationValueColumnMetadata, targetRelationValueColumnMetadata, navigateMetadata, treeDeepItemAvailable);
+            List<EasyTreeNode<T>> children = new ArrayList<>();
+            flatNodeToTreeNodeUp(nodes, children, easyTreeNodes, selfRelationValueColumnMetadata, targetRelationValueColumnMetadata, navigateMetadata, treeDeepItemAvailable);
+            children.forEach(r -> {
+                setChildrenUp(r, easyTreeNodes,roots);
+            });
         } else {
             flatNodeToTreeNodeDown(nodes, roots, easyTreeNodes, selfRelationValueColumnMetadata, targetRelationValueColumnMetadata, navigateMetadata, treeDeepItemAvailable);
+            roots.forEach(r -> {
+                setChildren(r, easyTreeNodes);
+            });
         }
 
-        roots.forEach(r -> {
-            setChildren(r, easyTreeNodes);
-        });
         return roots.stream().map(EasyTreeNode::getEntity).collect(Collectors.toList());
     }
 
@@ -116,26 +121,18 @@ public class EasyTreeUtil {
                                                  NavigateMetadata navigateMetadata,
                                                  TreeDeepItemAvailable treeDeepItemAvailable) {
 
-        Map<RelationValue, T> targetMap = new HashMap<>();
         int i = 0;
         for (T node : nodes) {
             RelationValue selfValue = selfRelationValueColumnMetadata.getRelationValue(node);
             RelationValue targetValue = targetRelationValueColumnMetadata.getRelationValue(node);
             long deep = treeDeepItemAvailable.getDeep(node, i);
             EasyTreeNodeUp<T> tEasyTreeNodeUp = new EasyTreeNodeUp<>(node, selfValue, targetValue, navigateMetadata, deep);
-            targetMap.put(tEasyTreeNodeUp.getSelf(), node);
-            easyTreeNodes.add(tEasyTreeNodeUp);
-            i++;
-        }
-        Iterator<EasyTreeNode<T>> nodeIterator = easyTreeNodes.iterator();
-        while (nodeIterator.hasNext()) {
-            EasyTreeNode<T> node = nodeIterator.next();
-            boolean root = !targetMap.containsKey(node.getTarget());
-            if (root) {
-                roots.add(node);
-                // 从所有节点列表中删除该节点，以免后续重复遍历该节点
-                nodeIterator.remove();
+            if (deep == 0) {
+                roots.add(tEasyTreeNodeUp);
+            } else {
+                easyTreeNodes.add(tEasyTreeNodeUp);
             }
+            i++;
         }
     }
 
@@ -181,7 +178,6 @@ public class EasyTreeUtil {
      * @param parent 父节点
      * @param nodes  所有树节点列表
      */
-    @SuppressWarnings("all")
     public static <T> void setChildren(EasyTreeNode<T> parent, List<EasyTreeNode<T>> nodes) {
         List<EasyTreeNode<T>> children = new ArrayList<>();
         RelationValue parentId = parent.getSelf();
@@ -202,5 +198,29 @@ public class EasyTreeUtil {
             // 递归设置子节点
             setChildren(m, nodes);
         });
+    }
+
+
+    public static <T> void setChildrenUp(EasyTreeNode<T> child, List<EasyTreeNode<T>> nodes, List<EasyTreeNode<T>> roots) {
+        List<EasyTreeNode<T>> children = new ArrayList<>();
+        children.add(child);
+        RelationValue childId = child.getTarget();
+        EasyTreeNode<T> parent = null;
+        for (Iterator<EasyTreeNode<T>> ite = nodes.iterator(); ite.hasNext(); ) {
+            EasyTreeNode<T> node = ite.next();
+            if (Objects.equals(node.getSelf(), childId)) {
+                parent = node;
+                // 从所有节点列表中删除该节点，以免后续重复遍历该节点
+                ite.remove();
+                break;
+            }
+        }
+        // 如果孩子为空，则直接返回,否则继续递归设置孩子的孩子
+        if (parent == null) {
+            roots.add(child);
+            return;
+        }
+        parent.setChildren(children);
+        setChildrenUp(parent, nodes, roots);
     }
 }

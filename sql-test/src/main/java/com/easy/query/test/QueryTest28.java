@@ -2,6 +2,8 @@ package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.ClassProxy;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.configuration.EasyQueryOption;
+import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.listener.ListenerContext;
@@ -69,6 +71,9 @@ public class QueryTest28 extends BaseTest {
     @Test
     public void testQueryNullOrDefault(){
 
+        EasyQueryOption easyQueryOption = easyEntityQuery.getRuntimeContext().getQueryConfiguration().getEasyQueryOption();
+        SQLExecuteStrategyEnum updateStrategy = easyQueryOption.getUpdateStrategy();
+
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         List<Topic> list1 = easyEntityQuery.queryable(Topic.class)
@@ -97,4 +102,5 @@ public class QueryTest28 extends BaseTest {
         Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
 }
