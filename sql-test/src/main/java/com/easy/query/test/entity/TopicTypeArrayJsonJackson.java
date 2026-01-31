@@ -5,6 +5,7 @@ import com.easy.query.core.annotation.EntityFileProxy;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.easy.query.test.conversion.JsonConverter;
+import com.easy.query.test.entity.proxy.TopicTypeArrayJsonJacksonProxy;
 import com.easy.query.test.entity.proxy.TopicTypeArrayJsonProxy;
 import lombok.Data;
 import lombok.ToString;
@@ -22,7 +23,7 @@ import java.util.List;
 @Table("t_topic_type_array")
 @ToString
 @EntityFileProxy
-public class TopicTypeArrayJson implements ProxyEntityAvailable<TopicTypeArrayJson , TopicTypeArrayJsonProxy> {
+public class TopicTypeArrayJsonJackson implements ProxyEntityAvailable<TopicTypeArrayJsonJackson, TopicTypeArrayJsonJacksonProxy> {
 
     @Column(primaryKey = true)
     private String id;

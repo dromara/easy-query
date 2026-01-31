@@ -16,17 +16,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode
-public class TopicTypeJsonValue implements ComplexPropType {
+public class TopicTypeJsonValue {
     private String name;
     private Integer age;
-
-    @Override
-    public Type complexType() {
-        return myType(new TypeReference<List<TopicTypeJsonValue>>() {
-        });
-    }
-
-    private <T> Type myType(TypeReference<T> typeReference) {
-        return typeReference.getType();
-    }
 }

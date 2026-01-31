@@ -12,6 +12,7 @@ import com.easy.query.test.dto.TopicRequest;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeArrayJson;
+import com.easy.query.test.entity.TopicTypeArrayJsonJackson;
 import com.easy.query.test.entity.TopicTypeJsonValue;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.enums.TopicTypeEnum;
@@ -191,6 +192,67 @@ public class QueryTest4 extends BaseTest {
         Assert.assertEquals(1, l);
 
         TopicTypeArrayJson topicTypeVO = easyEntityQuery.queryable(TopicTypeArrayJson.class)
+                .whereById(id)
+                .firstOrNull();
+        Assert.assertNotNull(topicTypeVO);
+        System.out.println(topicTypeVO);
+        Assert.assertNotNull(topicTypeVO.getTitle());
+        Assert.assertEquals("123", topicTypeVO.getTitle().getName());
+        Assert.assertEquals(456, (int) topicTypeVO.getTitle().getAge());
+        Assert.assertNotNull(topicTypeVO.getTitle2());
+        Assert.assertEquals(2, topicTypeVO.getTitle2().size());
+        TopicTypeJsonValue topicTypeJsonValue2 = topicTypeVO.getTitle2().get(0);
+        Assert.assertEquals("1234", topicTypeJsonValue2.getName());
+        Assert.assertEquals(4565, (int) topicTypeJsonValue2.getAge());
+        TopicTypeJsonValue topicTypeJsonValue3 = topicTypeVO.getTitle2().get(1);
+        Assert.assertEquals("12345", topicTypeJsonValue3.getName());
+        Assert.assertEquals(45655, (int) topicTypeJsonValue3.getAge());
+
+        Assert.assertEquals(TopicTypeEnum.CLASSER.getCode(), topicTypeVO.getTopicType());
+    }
+
+    @Test
+    public void testJson2Jackson() {
+        String id = "1231";
+        TopicTypeArrayJsonJackson topicType = easyEntityQuery.queryable(TopicTypeArrayJsonJackson.class)
+                .whereById(id).firstOrNull();
+        if (topicType != null) {
+            long l = easyEntityQuery.deletable(topicType).executeRows();
+            Assert.assertEquals(1, l);
+        }
+        topicType = easyEntityQuery.queryable(TopicTypeArrayJsonJackson.class)
+                .whereById(id).firstOrNull();
+        Assert.assertNull(topicType);
+        TopicTypeArrayJsonJackson topicType1 = new TopicTypeArrayJsonJackson();
+        topicType1.setId(id);
+        topicType1.setStars(123);
+        TopicTypeJsonValue topicTypeJsonValue = new TopicTypeJsonValue();
+        topicTypeJsonValue.setName("123");
+        topicTypeJsonValue.setAge(456);
+        topicType1.setTitle(topicTypeJsonValue);
+        ArrayList<TopicTypeJsonValue> topicTypeJsonValues = new ArrayList<>();
+        {
+
+            TopicTypeJsonValue topicTypeJsonValue1 = new TopicTypeJsonValue();
+            topicTypeJsonValue1.setName("1234");
+            topicTypeJsonValue1.setAge(4565);
+            topicTypeJsonValues.add(topicTypeJsonValue1);
+        }
+        {
+
+            TopicTypeJsonValue topicTypeJsonValue1 = new TopicTypeJsonValue();
+            topicTypeJsonValue1.setName("12345");
+            topicTypeJsonValue1.setAge(45655);
+            topicTypeJsonValues.add(topicTypeJsonValue1);
+        }
+        topicType1.setTitle2(topicTypeJsonValues);
+
+        topicType1.setTopicType(TopicTypeEnum.CLASSER.getCode());
+        topicType1.setCreateTime(LocalDateTime.now());
+        long l = easyEntityQuery.insertable(topicType1).executeRows();
+        Assert.assertEquals(1, l);
+
+        TopicTypeArrayJsonJackson topicTypeVO = easyEntityQuery.queryable(TopicTypeArrayJsonJackson.class)
                 .whereById(id)
                 .firstOrNull();
         Assert.assertNotNull(topicTypeVO);

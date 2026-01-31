@@ -49,6 +49,7 @@ public class JsonUtil {
         jsonMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);//忽略未知字段
         jsonMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);//如果是空对象忽略序列化错误
         jsonMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);// 忽略字段大小写
+        jsonMapper.configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true);
         //序列化的时候序列对象的所有属性
         jsonMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
         //取消时间的转化格式,默认是时间戳,可以取消,同时需要设置要表现的时间格式
