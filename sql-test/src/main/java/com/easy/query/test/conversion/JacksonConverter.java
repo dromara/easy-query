@@ -32,7 +32,7 @@ public class JacksonConverter implements ValueConverter<Object, String> {
         if (o == null) {
             return null;
         }
-        return JSON.toJSONString(o, JSONWriter.Feature.WriteMapNullValue, JSONWriter.Feature.WriteNullListAsEmpty, JSONWriter.Feature.WriteNullStringAsEmpty);
+        return JsonUtil.object2JsonStr(o);
     }
 
     @Override
