@@ -1,5 +1,6 @@
 package com.easy.query.test.pgsql;
 
+import com.easy.query.api.proxy.base.ClassProxy;
 import com.easy.query.api.proxy.base.MapProxy;
 import com.easy.query.api.proxy.base.MapTypeProxy;
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
@@ -10,8 +11,10 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.inject.ServiceProvider;
+import com.easy.query.core.proxy.columns.types.SQLBigDecimalTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
+import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
 import com.easy.query.core.proxy.grouping.Grouping1;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
@@ -27,9 +30,12 @@ import com.easy.query.test.entity.vo.MyCategoryVO3;
 import com.easy.query.test.entity.vo.MyCategoryVO4;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.view.TreeC;
+import com.easy.query.test.pgsql.proxy.PgItemProxy;
+import lombok.Data;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -894,5 +900,54 @@ public class QueryTest19 extends PgSQLBaseTest {
             Assert.assertEquals("小明id(String),小红id(String),小黄id(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         }
         listenerContextManager.clear();
+    }
+
+
+    @Test
+    public void testItem(){
+        List<Draft2<String, BigDecimal>> list = entityQuery.queryable(PgItem.class)
+                .groupBy(p -> GroupKeys.of(p.type()))
+                .select(group -> {
+                    NumberTypeExpression<BigDecimal> suma = group.sumBigDecimal(o -> o.column2());
+                    NumberTypeExpression<BigDecimal> sumb = group.sumBigDecimal(o -> o.column3());
+                    NumberTypeExpression<BigDecimal> val1 = group.expression().constant(new BigDecimal("100"));
+                    NumberTypeExpression<BigDecimal> val2 = group.expression().constant(new BigDecimal("100"));
+                    NumberTypeExpression<BigDecimal> sumc = group.expression().caseWhen(() -> {
+                        group.groupTable().column4().eq(BigDecimal.ZERO);
+                    }).then(null).elseEnd(group.groupTable().column4()).sum();
+//                    NumberTypeExpression<BigDecimal> sumc = group.expression().rawSQLStatement("nullif(sum({0}), 0)", group.groupTable().column4()).asBigDecimal();
+                    return Select.DRAFT.of(
+                            group.key1(),
+                            val1.subtract(
+                                    suma.add(sumb).multiply(val2).divide(sumc)
+                            ).round(3)
+                    );
+                }).toList();
+        List<MyClass> list1 = entityQuery.queryable(PgItem.class)
+                .groupBy(p -> GroupKeys.of(p.type()))
+                .select(group -> {
+                    SQLBigDecimalTypeColumn<PgItemProxy> column2 = group.groupTable().column2();
+                    SQLBigDecimalTypeColumn<PgItemProxy> column3 = group.groupTable().column3();
+                    SQLBigDecimalTypeColumn<PgItemProxy> column4 = group.groupTable().column4();
+//                    MapProxy mapProxy = new MapProxy();
+//                    mapProxy.put("col1", group.key1());
+//                    mapProxy.put("col2", group.expression().rawSQLStatement("round(100 - (sum({0}) + sum({1})) * 100.0 / nullif(sum({2}), 0)::numeric, 3)", column2, column3, column4).asBigDecimal());
+//                    return mapProxy;
+//                    return Select.DRAFT.of(
+//                            group.key1(),
+//                            group.expression().rawSQLStatement("round(100 - (sum({0}) + sum({1})) * 100.0 / nullif(sum({2}), 0)::numeric, 3)",column2,column3,column4).asBigDecimal()
+//                    );
+                    return new ClassProxy<>(MyClass.class)
+                            .columns(
+                                    group.key1().as("type1"),
+                                    group.expression().rawSQLStatement("round(100 - (sum({0}) + sum({1})) * 100.0 / nullif(sum({2}), 0)::numeric, 3)", column2, column3, column4).asBigDecimal().as("result")
+                            );
+                }).toList();
+    }
+
+    @Data
+    public static class MyClass{
+        private String type1;
+        private BigDecimal result;
     }
 }

@@ -48,6 +48,12 @@ public class BasicStreamIterator<T> extends AbstractMapToStreamIterator<T> {
             this.dataReader = new BasicJdbcProperty(0, resultMetadata.getResultClass());
             JdbcTypeHandlerManager easyJdbcTypeHandler = context.getRuntimeContext().getJdbcTypeHandlerManager();
             this.handler = easyJdbcTypeHandler.getHandler(resultMetadata.getResultClass());
+            if(resultPropTypes != null &&resultPropTypes.length == 1){
+                ResultColumnMetadata resultPropType = resultPropTypes[0];
+                if(resultPropType.isEncryption()){
+                    this.resultColumnMetadata = resultPropTypes[0];
+                }
+            }
         }
     }
 

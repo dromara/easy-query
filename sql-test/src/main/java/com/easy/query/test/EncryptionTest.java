@@ -85,6 +85,7 @@ public class EncryptionTest extends BaseTest {
         Assert.assertEquals(sysUserEncryption1.getId(),sysUserEncryption2.getId());
         SysUserEncryption sysUserEncryption3 = easyEntityQuery.queryable(SysUserEncryption.class).where(o -> o.phoneNotSupportLike().like( "12345678901")).firstOrNull();
         Assert.assertNull(sysUserEncryption3);
+
     }
     @Test
     public void test6(){
@@ -130,5 +131,9 @@ public class EncryptionTest extends BaseTest {
         Assert.assertNotNull(sysUserEncryption10);
         SysUserEncryption sysUserEncryption11 = easyEntityQuery.queryable(SysUserEncryption.class).where(o -> o.phoneSupportLike().like( "987")).firstOrNull();
         Assert.assertNull(sysUserEncryption11);
+
+
+        String phone = easyEntityQuery.queryable(SysUserEncryption.class).whereById("2").selectColumn(s -> s.phoneSupportLike()).singleNotNull();
+        Assert.assertEquals("19876543210",phone);
     }
 }

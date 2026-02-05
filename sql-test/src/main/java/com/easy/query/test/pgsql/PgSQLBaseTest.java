@@ -155,12 +155,12 @@ public class PgSQLBaseTest {
         {
 
 
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(TableNoKey.class,DocBankCard.class,DocBank.class,  DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class, MathTest.class));
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(PgItem.class,TableNoKey.class,DocBankCard.class,DocBank.class,  DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class, MathTest.class));
             codeFirstCommand.executeWithTransaction(a->a.commit());
         }
         {
 
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(TableNoKey.class,DocBank.class,DocBankCard.class, DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class, MathTest.class));
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(PgItem.class,TableNoKey.class,DocBank.class,DocBankCard.class, DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class, MathTest.class));
             codeFirstCommand.executeWithTransaction(a->a.commit());
         }
 

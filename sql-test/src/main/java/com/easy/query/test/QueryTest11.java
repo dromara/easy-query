@@ -471,6 +471,18 @@ public class QueryTest11 extends BaseTest {
     }
 
     @Test
+    public void testx12_1() {
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        Integer list = easyEntityQuery.queryable(TopicTypeTest1.class).selectColumn(o -> o.topicType().toNumber(Integer.class)).firstNotNull();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT CAST(t.`topic_type` AS SIGNED) FROM `t_topic_type` t LIMIT 1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
     public void testx13() {
         ArrayList<TopicTypeEnum> topicTypeEnums = new ArrayList<>();
         topicTypeEnums.add(TopicTypeEnum.CLASSER);
