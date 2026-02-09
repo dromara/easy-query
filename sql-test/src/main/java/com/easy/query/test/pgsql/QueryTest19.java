@@ -7,10 +7,14 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.api.proxy.key.MapKey;
 import com.easy.query.api.proxy.key.MapKeys;
 import com.easy.query.core.api.pagination.EasyPageResult;
+import com.easy.query.core.basic.api.database.CodeFirstCommand;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.inject.ServiceProvider;
+import com.easy.query.core.migration.MigrationsSQLGenerator;
+import com.easy.query.core.migration.data.TableMigrationData;
 import com.easy.query.core.proxy.columns.types.SQLBigDecimalTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.proxy.Draft2Proxy;
@@ -38,6 +42,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -943,6 +948,14 @@ public class QueryTest19 extends PgSQLBaseTest {
                                     group.expression().rawSQLStatement("round(100 - (sum({0}) + sum({1})) * 100.0 / nullif(sum({2}), 0)::numeric, 3)", column2, column3, column4).asBigDecimal().as("result")
                             );
                 }).toList();
+//        DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
+//        MigrationsSQLGenerator migrationsSQLGenerator = entityQuery.getRuntimeContext().getMigrationsSQLGenerator();
+//        TableMigrationData tableMigrationData = migrationsSQLGenerator.parseEntity(BlogEntity.class);
+//        tableMigrationData.setTableName(tableMigrationData.getTableName()+"_202501");
+//        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommandByMigrationData(Arrays.asList(tableMigrationData));
+//        codeFirstCommand.executeWithTransaction(s->{
+//            s.commit();
+//        });
     }
 
     @Data

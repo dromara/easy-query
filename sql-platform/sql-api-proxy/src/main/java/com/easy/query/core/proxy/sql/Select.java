@@ -15,6 +15,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.sql.builder.ExpressionContext;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
+import com.easy.query.core.proxy.AggregateProxy;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
@@ -35,6 +36,9 @@ import java.util.Objects;
  */
 public class Select {
 
+    public static <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> AggregateProxy<TProxy, TEntity> aggregateOf(TProxy TProxy) {
+        return new AggregateProxy<>(TProxy);
+    }
     public static SQLSelectExpression of(boolean condition, SQLSelectExpression... selects) {
         if (condition) {
             return of(selects);
