@@ -50,7 +50,7 @@ public @interface NavigateFlat {
     /**
      * 是否为基本类型
      * false: 不清楚/不确定
-     * true: 是基本类型
+     * true: 是基本类型，能够被映射到数据库的算是基本类型
      * 默认值: false (表示不清楚)
      * @return false (表示不清楚) true: 是基本类型
      */

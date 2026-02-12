@@ -121,17 +121,24 @@ public class EasyClassUtil {
     }
 
     public static boolean isNumberType(Class<?> clazz) {
-        if (clazz.isPrimitive()) {
+        // 处理包装类型
+        if (Number.class.isAssignableFrom(clazz)) {
             return true;
         }
-        return Number.class.isAssignableFrom(clazz);
-    }
 
+        // 处理基本类型
+        if (clazz.isPrimitive()) {
+            return clazz == int.class || clazz == long.class || clazz == double.class
+                    || clazz == float.class || clazz == short.class || clazz == byte.class;
+        }
+
+        return false;
+    }
     public static boolean isBasicType(Class<?> clazz) {
         if (clazz.isPrimitive()) {
             return true;
         }
-
+// || clazz == java.time.OffsetDateTime.class|| clazz == java.time.OffsetTime.class
         if (clazz.getName().startsWith("java.")) {
             return ((clazz == String.class) || clazz == Integer.class || clazz == Byte.class || clazz == Long.class
                     || clazz == Double.class || clazz == Float.class || clazz == Character.class || clazz == Short.class

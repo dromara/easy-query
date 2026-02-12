@@ -22,10 +22,10 @@ import java.util.function.Function;
  *
  * @author xuejiaming
  */
-public class AggregateProxy<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> extends AbstractProxyEntity<TProxy, TEntity> {
+public class AggregateQueryable<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> extends AbstractProxyEntity<TProxy, TEntity> {
 
-    public static <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> AggregateProxy<TProxy, TEntity> of(TProxy TProxy) {
-        return new AggregateProxy<>(TProxy);
+    public static <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> AggregateQueryable<TProxy, TEntity> of(TProxy TProxy) {
+        return new AggregateQueryable<>(TProxy);
     }
     @Override
     public Class<TEntity> getEntityClass() {
@@ -34,9 +34,13 @@ public class AggregateProxy<TProxy extends ProxyEntity<TProxy, TEntity>, TEntity
 
     protected final TProxy TProxy;
 
-    public AggregateProxy(TProxy TProxy) {
+    public AggregateQueryable(TProxy TProxy) {
         this.TProxy = TProxy;
         this.entitySQLContext = TProxy.getEntitySQLContext();
+    }
+
+    public TProxy entityTable(){
+        return TProxy;
     }
 
     public NumberTypeExpression<Long> count() {
