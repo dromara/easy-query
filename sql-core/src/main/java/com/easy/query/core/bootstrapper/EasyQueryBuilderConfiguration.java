@@ -18,6 +18,8 @@ import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.conversion.DefaultValueAutoConverterProvider;
 import com.easy.query.core.basic.extension.conversion.ValueAutoConverterProvider;
+import com.easy.query.core.basic.extension.cte.CTERecursiveProvider;
+import com.easy.query.core.basic.extension.cte.DefaultCTERecursiveProvider;
 import com.easy.query.core.basic.extension.formater.DefaultSQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.generated.SaveEntitySetPrimaryKeyGenerator;
@@ -257,6 +259,7 @@ public class EasyQueryBuilderConfiguration {
                 .replaceService(StreamIterableFactory.class, DefaultStreamIterableFactory.class)
                 .replaceService(ValueAutoConverterProvider.class, DefaultValueAutoConverterProvider.class)
                 .replaceService(RuntimeSchemaProvider.class, DefaultRuntimeSchemaProvider.class)
+                .replaceService(CTERecursiveProvider.class, DefaultCTERecursiveProvider.class)
 //                .replaceService(NavigateNamedGuess.class, DefaultNavigateNamedGuess.class)
                 .replaceService(EasyQueryClient.class, DefaultEasyQueryClient.class);
     }

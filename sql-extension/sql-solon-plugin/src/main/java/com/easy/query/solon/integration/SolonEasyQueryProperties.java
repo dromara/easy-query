@@ -173,8 +173,7 @@ public class SolonEasyQueryProperties {
 
     public DatabaseEnum getDatabase() {
         return getOrDef("database", database, v -> {
-            String vl = v.toLowerCase();
-            switch (vl) {
+            switch (v) {
                 case "mysql":
                     return DatabaseEnum.MYSQL;
                 case "pgsql":
@@ -222,7 +221,7 @@ public class SolonEasyQueryProperties {
 
     private <T> T getOrDef(String key, T def, Function<String, T> convert) {
         String temp = this.props.get(key);
-        T t = Utils.isEmpty(temp) ? def : convert.apply(temp);
+        T t = Utils.isEmpty(temp) ? def : convert.apply(temp.toLowerCase());
         if (t == null) {
             return def;
         }

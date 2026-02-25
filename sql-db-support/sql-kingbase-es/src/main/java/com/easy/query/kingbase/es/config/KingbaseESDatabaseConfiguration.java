@@ -1,5 +1,6 @@
 package com.easy.query.kingbase.es.config;
 
+import com.easy.query.core.basic.extension.cte.CTERecursiveProvider;
 import com.easy.query.core.basic.jdbc.types.EasyJdbcTypeHandlerManager;
 import com.easy.query.core.basic.jdbc.types.JdbcTypeHandlerManager;
 import com.easy.query.core.bootstrapper.DatabaseConfiguration;
@@ -10,6 +11,7 @@ import com.easy.query.core.inject.ServiceCollection;
 import com.easy.query.core.migration.DatabaseMigrationProvider;
 import com.easy.query.core.migration.DefaultMigrationEntityParser;
 import com.easy.query.core.migration.MigrationEntityParser;
+import com.easy.query.kingbase.es.custom.KingbaseESCTERecursiveProvider;
 import com.easy.query.kingbase.es.expression.KingbaseESExpressionFactory;
 import com.easy.query.kingbase.es.func.KingbaseESSQLFuncImpl;
 import com.easy.query.kingbase.es.migration.KingbaseESDatabaseMigrationProvider;
@@ -33,6 +35,7 @@ public class KingbaseESDatabaseConfiguration implements DatabaseConfiguration {
         services.addService(SQLFunc.class, KingbaseESSQLFuncImpl.class);
         services.addService(DatabaseMigrationProvider.class, KingbaseESDatabaseMigrationProvider.class);
         services.addService(MigrationEntityParser.class, KingbaseESMigrationEntityParser.class);
+        services.addService(CTERecursiveProvider.class, KingbaseESCTERecursiveProvider.class);
         services.addServiceFactory(JdbcTypeHandlerManager.class, s->{
             EasyJdbcTypeHandlerManager easyJdbcTypeHandlerManager = new EasyJdbcTypeHandlerManager();
             easyJdbcTypeHandlerManager.appendHandler(UUID.class, UUIDKingbaseESTypeHandler.INSTANCE,true);

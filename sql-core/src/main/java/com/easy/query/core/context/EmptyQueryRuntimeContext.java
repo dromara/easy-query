@@ -7,6 +7,7 @@ import com.easy.query.core.basic.api.cte.CteTableNamedProvider;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.extension.conversion.ValueAutoConverterProvider;
+import com.easy.query.core.basic.extension.cte.CTERecursiveProvider;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.generated.SaveEntitySetPrimaryKeyGenerator;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
@@ -317,6 +318,11 @@ public class EmptyQueryRuntimeContext implements QueryRuntimeContext{
 
     @Override
     public RuntimeSchemaProvider getRuntimeSchemaProvider() {
+        return null;
+    }
+
+    @Override
+    public CTERecursiveProvider getCTERecursiveProvider() {
         return null;
     }
 }

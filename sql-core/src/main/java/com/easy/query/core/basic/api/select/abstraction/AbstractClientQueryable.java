@@ -1708,46 +1708,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return asTreeCTECustom(treeNavigateMetadata.getSelfPropertiesOrPrimary(), treeNavigateMetadata.getTargetPropertiesOrPrimary(runtimeContext), treeCteConfigurerExpression);
     }
 
-    private ClientQueryable2<T1, T1> getCTEJoinQueryable(ClientQueryable<T1> queryable, String cteTableName, String[] codeProperties, String[] parentCodeProperties, boolean up) {
-
-        Class<T1> thisQueryClass = queryClass();
-        ClientQueryable2<T1, T1> t1T1ClientQueryable2 = queryable.asTable(cteTableName)
-                .innerJoin(thisQueryClass, (t, t1) -> {
-                    if (up) {
-                        t1.multiEq(true, t, codeProperties, parentCodeProperties);
-                    } else {
-                        t1.multiEq(true, t, parentCodeProperties, codeProperties);
-                    }
-                });
-        return t1T1ClientQueryable2;
-//        boolean joinSelf = this.entityQueryExpressionBuilder.getTables().size() == 1 && this.entityQueryExpressionBuilder.getRelationTables().isEmpty();
-//        if (joinSelf) {
-//
-//            EntityTableExpressionBuilder recentlyTable = this.entityQueryExpressionBuilder.getRecentlyTable();
-//            boolean anonymousTable = recentlyTable instanceof AnonymousEntityTableExpressionBuilder;
-//            if (!anonymousTable) {
-//                Class<T1> thisQueryClass = queryClass();
-//                return queryable.asTable(cteTableName)
-//                        .innerJoin(thisQueryClass, (t, t1) -> {
-//                            if (up) {
-//                                t1.multiEq(true, t, codeProperties, parentCodeProperties);
-//                            } else {
-//                                t1.multiEq(true, t, parentCodeProperties, codeProperties);
-//                            }
-//                        });
-//            }
-//        }
-//        ClientQueryable<T1> t1ClientQueryable = queryable.cloneQueryable();
-//        return queryable.asTable(cteTableName)
-//                .innerJoin(t1ClientQueryable, (t, t1) -> {
-//                    if (up) {
-//                        t1.multiEq(true, t, codeProperties, parentCodeProperties);
-//                    } else {
-//                        t1.multiEq(true, t, parentCodeProperties, codeProperties);
-//                    }
-//                });
-    }
-
     private ClientQueryable<T1> asTreeCTECustom(String[] codeProperties, String[] parentCodeProperties, SQLActionExpression1<TreeCTEConfigurer> treeCteConfigurerExpression) {
 
         //将当前表达式的expression builder放入新表达式的声明里面新表达式还是当前的T类型
@@ -1758,8 +1718,6 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         String cteTableName = treeCTEOption.getCTETableName();
         String deepColumnName = treeCTEOption.getDeepColumnName();
         int limitDeep = treeCTEOption.getLimitDeep();
-        boolean up = treeCTEOption.isUp();
-        SQLActionExpression1<WherePredicate<?>> childFilter = treeCTEOption.getChildFilter();
         Class<T1> thisQueryClass = queryClass();
 
         expressionContext.setTreeCTEOption(treeCTEOption);
@@ -1767,17 +1725,9 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         ExpressionContext innerJoinExpressionContext = queryable.getSQLEntityExpressionBuilder().getExpressionContext();
         innerJoinExpressionContext.extract(this.entityQueryExpressionBuilder.getExpressionContext());
         this.entityQueryExpressionBuilder.getExpressionContext().extendFrom(innerJoinExpressionContext);
-        ClientQueryable<T1> cteQueryable = getCTEJoinQueryable(queryable, cteTableName, codeProperties, parentCodeProperties, up)
-                .where(childFilter != null, (parent, child) -> {
-                    assert childFilter != null;
-                    childFilter.apply(child);
-                })
-                .select(thisQueryClass, (parent, child) -> {
-                    parent.sqlNativeSegment("{0} + 1", c -> c.columnName(deepColumnName).setAlias(deepColumnName));
-                    child.columnAll();
-                });
+        ClientQueryable<T1> cteQueryable = runtimeContext.getCTERecursiveProvider()
+                .createCteQueryable(this, queryable, treeCTEOption, codeProperties, parentCodeProperties);
 
-        this.select(o -> o.sqlNativeSegment("0", c -> c.setAlias(deepColumnName)).columnAll());
 
         ClientQueryable<T1> t1ClientQueryable = internalUnion(Collections.singletonList(cteQueryable), treeCTEOption.sqlUnion());
         ClientQueryable<T1> myQueryable = runtimeContext.getSQLClientApiFactory().createSubQueryable(thisQueryClass, runtimeContext, expressionContext);
@@ -1793,7 +1743,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             columnNames.add(kv.getValue().getName());
         }
 
-        EntityQueryExpressionBuilder anonymousCTEQueryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousCTEQueryExpressionBuilder(cteTableName,columnNames, unionAllEntityQueryExpressionBuilder, t1ClientQueryable.getSQLEntityExpressionBuilder().getExpressionContext(), t1ClientQueryable.queryClass());
+        EntityQueryExpressionBuilder anonymousCTEQueryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousCTEQueryExpressionBuilder(cteTableName, columnNames, unionAllEntityQueryExpressionBuilder, t1ClientQueryable.getSQLEntityExpressionBuilder().getExpressionContext(), t1ClientQueryable.queryClass());
         myQueryable.getSQLEntityExpressionBuilder().getExpressionContext().getDeclareExpressions().add(anonymousCTEQueryExpressionBuilder);
         myQueryable.asTable(cteTableName);
         if (limitDeep >= 0) {

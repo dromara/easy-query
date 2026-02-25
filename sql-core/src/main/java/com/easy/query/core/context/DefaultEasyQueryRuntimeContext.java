@@ -9,6 +9,7 @@ import com.easy.query.core.basic.api.cte.CteTableNamedProvider;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.extension.conversion.ValueAutoConverterProvider;
+import com.easy.query.core.basic.extension.cte.CTERecursiveProvider;
 import com.easy.query.core.basic.extension.formater.SQLParameterPrintFormat;
 import com.easy.query.core.basic.extension.generated.SaveEntitySetPrimaryKeyGenerator;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
@@ -116,6 +117,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final StreamIterableFactory streamIterableFactory;
     private final ValueAutoConverterProvider valueAutoConverterProvider;
     private final RuntimeSchemaProvider runtimeSchemaProvider;
+    private final CTERecursiveProvider cteRecursiveProvider;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -169,7 +171,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           SaveEntitySetPrimaryKeyGenerator saveEntitySetPrimaryKeyGenerator,
                                           StreamIterableFactory streamIterableFactory,
                                           ValueAutoConverterProvider valueAutoConverterProvider,
-                                          RuntimeSchemaProvider runtimeSchemaProvider) {
+                                          RuntimeSchemaProvider runtimeSchemaProvider,
+                                          CTERecursiveProvider cteRecursiveProvider) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -223,6 +226,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.streamIterableFactory = streamIterableFactory;
         this.valueAutoConverterProvider = valueAutoConverterProvider;
         this.runtimeSchemaProvider = runtimeSchemaProvider;
+        this.cteRecursiveProvider = cteRecursiveProvider;
     }
 
     @Override
@@ -488,5 +492,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public RuntimeSchemaProvider getRuntimeSchemaProvider() {
         return runtimeSchemaProvider;
+    }
+
+    @Override
+    public CTERecursiveProvider getCTERecursiveProvider() {
+        return cteRecursiveProvider;
     }
 }
