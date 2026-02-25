@@ -12,11 +12,13 @@ public class TableIndexResult {
     public final String indexName;
     public final boolean unique;
     public final List<EntityField> fields;
+    public final String comment;
 
-    public TableIndexResult(String indexName, boolean unique, List<EntityField> fields) {
+    public TableIndexResult(String indexName, boolean unique, List<EntityField> fields,String comment) {
         this.indexName = indexName;
         this.unique = unique;
         this.fields = fields;
+        this.comment = comment;
     }
 
     public static class EntityField {

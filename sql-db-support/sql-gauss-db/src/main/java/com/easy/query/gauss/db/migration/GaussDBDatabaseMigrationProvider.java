@@ -209,6 +209,10 @@ public class GaussDBDatabaseMigrationProvider extends AbstractDatabaseMigrationP
         }
         sql.append(joiner);
         sql.append(");");
+        if(EasyStringUtil.isNotBlank(tableIndex.getComment())){
+            sql.append(newLine);
+            sql.append("COMMENT ON INDEX ").append(getQuoteSQLName(tableIndex.getIndexName())).append(" IS '").append(tableIndex.getComment()).append("';");
+        }
         return new DefaultMigrationCommand(sql.toString());
     }
 

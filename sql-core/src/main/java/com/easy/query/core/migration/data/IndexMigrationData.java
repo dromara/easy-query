@@ -24,6 +24,11 @@ public class IndexMigrationData {
      */
     private List<EntityField> fields;
 
+    /**
+     * 索引描述
+     */
+    private String comment;
+
 
     public String getIndexName() {
         return indexName;
@@ -39,6 +44,14 @@ public class IndexMigrationData {
 
     public void setUnique(boolean unique) {
         this.unique = unique;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public List<EntityField> getFields() {

@@ -165,6 +165,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
         return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName()) + ";");
     }
 
+    //comment '名称索引'
     @Override
     protected MigrationCommand createIndex(TableMigrationData table, IndexMigrationData tableIndex) {
         StringBuilder sql = new StringBuilder();
@@ -184,7 +185,12 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             joiner.add(column);
         }
         sql.append(joiner);
-        sql.append(");");
+        sql.append(")");
+
+        if(EasyStringUtil.isNotBlank(tableIndex.getComment())){
+            sql.append(" COMMENT '").append(tableIndex.getComment()).append("'");
+        }
+        sql.append(";");
         return new DefaultMigrationCommand(sql.toString());
     }
 

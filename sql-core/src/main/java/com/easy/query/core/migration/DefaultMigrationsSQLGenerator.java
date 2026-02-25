@@ -195,6 +195,7 @@ public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
             IndexMigrationData indexMigrationData = new IndexMigrationData();
             indexMigrationData.setIndexName(tableIndex.indexName);
             indexMigrationData.setUnique(tableIndex.unique);
+            indexMigrationData.setComment(tableIndex.comment);
             if (tableIndex.fields != null) {
                 List<IndexMigrationData.EntityField> entityFields = new ArrayList<>();
                 for (TableIndexResult.EntityField field : tableIndex.fields) {

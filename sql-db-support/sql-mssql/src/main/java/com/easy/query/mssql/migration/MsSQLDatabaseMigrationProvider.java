@@ -206,6 +206,15 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
     public MigrationCommand dropTable(TableMigrationData table) {
         return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName()) + ";");
     }
+
+//    create index SysApp_enable_index
+//    on dbo.SysApp (enable)
+//    go
+//
+//    exec sp_addextendedproperty 'MS_Description', N'启用索引', 'SCHEMA', 'dbo', 'TABLE', 'SysApp', 'INDEX', 'SysApp_enable_index'
+//    go
+//
+
     @Override
     protected MigrationCommand createIndex(TableMigrationData table, IndexMigrationData tableIndex) {
         StringBuilder sql = new StringBuilder();
@@ -226,6 +235,11 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
         }
         sql.append(joiner);
         sql.append(");");
+        if(EasyStringUtil.isNotBlank(tableIndex.getComment())){
+            sql.append(newLine);
+            String indexDesc = String.format("exec sp_addextendedproperty 'MS_Description', '%s', 'SCHEMA', '%s', 'TABLE', '%s', 'INDEX', '%s'", tableIndex.getComment(), table.getSchemaOrDefault("dbo"), table.getTableName(), tableIndex.getIndexName());
+            sql.append(indexDesc);
+        }
         return new DefaultMigrationCommand(sql.toString());
     }
     @Override

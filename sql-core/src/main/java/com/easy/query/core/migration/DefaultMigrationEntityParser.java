@@ -215,7 +215,7 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
         return tableIndexResults;
     }
 
-    private TableIndexResult parseTableIndex(TableIndex tableIndex, String tableName, EntityMetadata entityMetadata) {
+    protected TableIndexResult parseTableIndex(TableIndex tableIndex, String tableName, EntityMetadata entityMetadata) {
         if (EasyArrayUtil.isNotEmpty(tableIndex.fields())) {
 
             String indexName = tableIndex.name();
@@ -243,7 +243,7 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
                     entityFields.add(new TableIndexResult.EntityField(field, columnName, !descFields.contains(field)));
                 }
             }
-            return new TableIndexResult(indexName, tableIndex.unique(), entityFields);
+            return new TableIndexResult(indexName, tableIndex.unique(), entityFields,tableIndex.comment());
         }
         return null;
     }

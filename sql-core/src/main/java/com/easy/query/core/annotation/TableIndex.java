@@ -41,4 +41,10 @@ public @interface TableIndex {
      * @return
      */
     String[] descendingFields() default {};
+
+    /**
+     * 索引备注
+     * @return
+     */
+    String comment() default "";
 }
