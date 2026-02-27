@@ -3,6 +3,7 @@ package com.easy.query.core.expression.sql.builder;
 import com.easy.query.core.api.dynamic.executor.query.ConfigureArgument;
 import com.easy.query.core.basic.extension.conversion.ColumnReader;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
+import com.easy.query.core.basic.extension.interceptor.ProtectedInterceptor;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.QueryConfiguration;
@@ -243,8 +244,8 @@ public class EasyExpressionContext implements ExpressionContext {
         //如果当前操作存在interceptor的behavior那么就不应该在interceptors里面
         //否则应该在interceptors里面
         return o -> {
-            //如果是启用了的
-            if (interceptorBehavior) {
+            //如果是启用了的 受保护的拦截器等于是一直被启用的
+            if (interceptorBehavior || o instanceof ProtectedInterceptor) {
                 //拦截器手动指定使用的或者默认要用的并且没有说不用的
                 return expressionContextInterceptor.useContains(o.name()) || (!expressionContextInterceptor.noContains(o.name()) && o.enable());
             } else {

@@ -190,10 +190,14 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
     @Override
     public @NotNull List<TableIndexResult> getTableIndexes(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
+        return getClassTableIndexes(entityMigrationMetadata,entityMetadata.getEntityClass());
+    }
+    protected @NotNull List<TableIndexResult> getClassTableIndexes(EntityMigrationMetadata entityMigrationMetadata,Class<?> parseClass) {
+        EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         ArrayList<TableIndexResult> tableIndexResults = new ArrayList<>();
-        TableIndexes tableIndexes = EasyClassUtil.getAnnotation(entityMetadata.getEntityClass(), TableIndexes.class);
+        TableIndexes tableIndexes = EasyClassUtil.getAnnotation(parseClass, TableIndexes.class);
         if (tableIndexes == null) {
-            TableIndex tableIndex = EasyClassUtil.getAnnotation(entityMetadata.getEntityClass(), TableIndex.class);
+            TableIndex tableIndex = EasyClassUtil.getAnnotation(parseClass, TableIndex.class);
             if (tableIndex == null) {
                 return EasyCollectionUtil.emptyList();
             }

@@ -20,6 +20,7 @@ import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.common.ConfigurationLogicDelete;
 import com.easy.query.test.common.M8Interceptor;
 import com.easy.query.test.common.MockEntityExpressionExecutor;
+import com.easy.query.test.common.MyProtectInterceptor;
 import com.easy.query.test.common.MyQueryConfiguration;
 import com.easy.query.test.conversion.StarCodeValueConvert;
 import com.easy.query.test.dto.MyConfigLogicDelete;
@@ -161,6 +162,7 @@ public class BaseTest {
         queryConfiguration.applyInterceptor(new M8Interceptor());
         queryConfiguration.applyInterceptor(new QueryInterceptor());
         queryConfiguration.applyInterceptor(new SaveInterceptor());
+        queryConfiguration.applyInterceptor(new MyProtectInterceptor());
         queryConfiguration.applyValueConverter(new StarCodeValueConvert());
         queryConfiguration.applyLogicDeleteStrategy(new ConfigurationLogicDelete());
         easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);

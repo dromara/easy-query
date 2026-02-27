@@ -209,6 +209,17 @@ public class QueryTest4 extends BaseTest {
         Assert.assertEquals(45655, (int) topicTypeJsonValue3.getAge());
 
         Assert.assertEquals(TopicTypeEnum.CLASSER.getCode(), topicTypeVO.getTopicType());
+
+
+//        List<TopicTypeArrayJson> name = easyEntityQuery.queryable(TopicTypeArrayJson.class)
+//                .where(t -> {
+//                    t.title2().asJSONArray().getJSONObject(0).getString("name").eq("1234");
+//                }).toList();
+//        System.out.println("123");
+//        Assert.assertEquals(1, name.size());
+//        TopicTypeArrayJson fname = name.get(0);
+//        String title2Name = fname.getTitle2().get(0).getName();
+//        Assert.assertEquals("1234", title2Name);
     }
 
     @Test
@@ -393,7 +404,7 @@ public class QueryTest4 extends BaseTest {
     @Test
     public void testSQLFunc7() {
         List<Topic> list = easyEntityQuery.queryable(Topic.class)
-                .where(o -> o.id().eq( "1")
+                .where(o -> o.id().eq("1")
                         //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
                 )
                 .orderBy(o -> o.createTime().desc())
@@ -405,7 +416,7 @@ public class QueryTest4 extends BaseTest {
             Assert.assertEquals("2023-05-25", s.getTitle());
         }
         String sql = easyEntityQuery.queryable(Topic.class)
-                .where(o -> o.id().eq( "1")
+                .where(o -> o.id().eq("1")
                         //        .rangeClosed("createTime",LocalDateTime.of(2023,1,1,0,0),LocalDateTime.of(2023,4,1,0,0))
                 )
                 .orderBy(o -> o.createTime().desc())
@@ -484,7 +495,7 @@ public class QueryTest4 extends BaseTest {
 
                 Query<SysUser> queryable = easyEntityQuery.queryable(SysUser.class)
                         .asTable("sys_123")
-                        .where(o -> o.id().eq( "123xxx"));
+                        .where(o -> o.id().eq("123xxx"));
                 SysUser sysUser = queryable.firstOrNull();
                 Assert.assertNull(sysUser);
             } catch (Exception e) {
@@ -501,7 +512,7 @@ public class QueryTest4 extends BaseTest {
 
                 Query<SysUser> queryable = easyEntityQuery.queryable(SysUser.class)
                         .asTable("sys_123")
-                        .where(o -> o.id().eq( "123xxx"));
+                        .where(o -> o.id().eq("123xxx"));
                 SysUser sysUser = queryable.singleOrNull();
                 Assert.assertNull(sysUser);
             } catch (Exception e) {
@@ -524,19 +535,20 @@ public class QueryTest4 extends BaseTest {
             }
         }
     }
+
     @Test
     public void queryTest7() {
         {
 
             Topic topic = easyEntityQuery.queryable(Topic.class)
-                    .where(o -> o.id().eq( "123"))
+                    .where(o -> o.id().eq("123"))
                     .firstOrNull();
             Assert.assertNull(topic);
         }
         {
 
             Topic topic = easyEntityQuery.queryable(Topic.class)
-                    .where(o -> o.id().eq( "1"))
+                    .where(o -> o.id().eq("1"))
                     .select(t_topic -> t_topic.FETCHER.id().title())
                     .firstOrNull();
             Assert.assertNotNull(topic);
@@ -554,7 +566,7 @@ public class QueryTest4 extends BaseTest {
             List<Topic> list = query.leftJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
                     .where((t, t1) -> {
                         t1.id().eq("123");
-                        t.id().eq( "456");
+                        t.id().eq("456");
                     }).toList();
 
 
@@ -564,7 +576,7 @@ public class QueryTest4 extends BaseTest {
         {
 
             Topic topic = easyEntityQuery.queryable(Topic.class)
-                    .where(o -> o.id().eq( "123"))
+                    .where(o -> o.id().eq("123"))
                     .singleOrNull();
             Assert.assertNull(topic);
         }
@@ -590,7 +602,7 @@ public class QueryTest4 extends BaseTest {
         try {
 
             Topic topic = easyEntityQuery.queryable(Topic.class)
-                    .where(o -> o.id().eq( "123"))
+                    .where(o -> o.id().eq("123"))
                     .firstNotNull("未找到对应的数据");
         } catch (Exception ex) {
             return ex;
@@ -603,7 +615,7 @@ public class QueryTest4 extends BaseTest {
         try {
 
             Topic topic = easyEntityQuery.queryable(Topic.class)
-                    .where(o -> o.id().eq( id))
+                    .where(o -> o.id().eq(id))
                     .singleNotNull("未找到对应的数据");
         } catch (Exception ex) {
             return ex;
@@ -625,8 +637,8 @@ public class QueryTest4 extends BaseTest {
                 .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6, t7) -> t.id().eq(t7.id()))
                 .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6, t7, t8) -> t.id().eq(t8.id()))
                 .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6, t7, t8, t9) -> t.id().eq(t9.id()))
-                .where(o -> o.id().eq( "1"))
-                .where(false, o -> o.id().eq( "1"))
+                .where(o -> o.id().eq("1"))
+                .where(false, o -> o.id().eq("1"))
                 .whereById("1")
                 .whereById(false, "1")
                 .whereById(Collections.singletonList("1"))
@@ -634,30 +646,30 @@ public class QueryTest4 extends BaseTest {
                 .whereObject(topicRequest)
                 .whereObject(false, topicRequest)
                 .whereMerge(o -> {
-                    o.t1.id().eq( "1");
-                    o.t1.id().eq(false,  "1");
-                    o.t1.id().ne( "1");
-                    o.t1.id().ne(false,  "1");
-                    o.t1.id().ge( "1");
-                    o.t1.id().ge(false,  "1");
-                    o.t1.id().gt( "1");
-                    o.t1.id().gt(false,  "1");
-                    o.t1.id().le( "1");
-                    o.t1.id().le(false,  "1");
-                    o.t1.id().lt( "1");
-                    o.t1.id().lt(false,  "1");
-                    o.t1.id().like( "1");
-                    o.t1.id().like(false,  "1");
-                    o.t1.id().notLike( "1");
-                    o.t1.id().notLike(false,  "1");
-                    o.t1.id().likeMatchLeft( "1");
-                    o.t1.id().likeMatchLeft(false,  "1");
-                    o.t1.id().likeMatchRight( "1");
-                    o.t1.id().likeMatchRight(false,  "1");
-                    o.t1.id().notLikeMatchLeft( "1");
-                    o.t1.id().notLikeMatchLeft(false,  "1");
-                    o.t1.id().notLikeMatchRight( "1");
-                    o.t1.id().notLikeMatchRight(false,  "1");
+                    o.t1.id().eq("1");
+                    o.t1.id().eq(false, "1");
+                    o.t1.id().ne("1");
+                    o.t1.id().ne(false, "1");
+                    o.t1.id().ge("1");
+                    o.t1.id().ge(false, "1");
+                    o.t1.id().gt("1");
+                    o.t1.id().gt(false, "1");
+                    o.t1.id().le("1");
+                    o.t1.id().le(false, "1");
+                    o.t1.id().lt("1");
+                    o.t1.id().lt(false, "1");
+                    o.t1.id().like("1");
+                    o.t1.id().like(false, "1");
+                    o.t1.id().notLike("1");
+                    o.t1.id().notLike(false, "1");
+                    o.t1.id().likeMatchLeft("1");
+                    o.t1.id().likeMatchLeft(false, "1");
+                    o.t1.id().likeMatchRight("1");
+                    o.t1.id().likeMatchRight(false, "1");
+                    o.t1.id().notLikeMatchLeft("1");
+                    o.t1.id().notLikeMatchLeft(false, "1");
+                    o.t1.id().notLikeMatchRight("1");
+                    o.t1.id().notLikeMatchRight(false, "1");
                 })
                 .limit(1, 2)
                 .orderBy(o -> o.createTime().asc())
@@ -666,14 +678,14 @@ public class QueryTest4 extends BaseTest {
                 .orderBy(false, o -> o.createTime().desc())
                 .orderByMerge(o -> o.t1.createTime().asc())
                 .orderByMerge(o -> o.t1.createTime().desc())
-                .orderByMerge(false,o -> o.t1.createTime().asc())
-                .orderByMerge(false,o -> o.t1.createTime().desc())
+                .orderByMerge(false, o -> o.t1.createTime().asc())
+                .orderByMerge(false, o -> o.t1.createTime().desc())
                 .groupByMerge(o -> GroupKeys.of(o.t1.id()))
                 .having(o -> o.groupTable().t1.id().count().ge(1L))
-                .having(false,o -> o.groupTable().t1.id().count().ge(1L))
+                .having(false, o -> o.groupTable().t1.id().count().ge(1L))
                 .select(Topic.class, o -> Select.of(
-                    o.groupTable().t1.id(),
-                    o.groupTable().t1.id().count().as(Topic::getStars)
+                        o.groupTable().t1.id(),
+                        o.groupTable().t1.id().count().as(Topic::getStars)
                 )).toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t7.`id` LEFT JOIN `t_topic` t8 ON t.`id` = t8.`id` LEFT JOIN `t_topic` t9 ON t.`id` = t9.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
@@ -691,8 +703,8 @@ public class QueryTest4 extends BaseTest {
                 .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6) -> t.id().eq(t6.id()))
                 .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6, t7) -> t.id().eq(t7.id()))
                 .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6, t7, t8) -> t.id().eq(t8.id()))
-                .where(o -> o.id().eq( "1"))
-                .where(false, o -> o.id().eq( "1"))
+                .where(o -> o.id().eq("1"))
+                .where(false, o -> o.id().eq("1"))
                 .whereById("1")
                 .whereById(false, "1")
                 .whereById(Collections.singletonList("1"))
@@ -700,30 +712,30 @@ public class QueryTest4 extends BaseTest {
                 .whereObject(topicRequest)
                 .whereObject(false, topicRequest)
                 .whereMerge(o -> {
-                    o.t1.id().eq( "1");
-                    o.t1.id().eq(false,  "1");
-                    o.t1.id().ne( "1");
-                    o.t1.id().ne(false,  "1");
-                    o.t1.id().ge( "1");
-                    o.t1.id().ge(false,  "1");
-                    o.t1.id().gt( "1");
-                    o.t1.id().gt(false,  "1");
-                    o.t1.id().le( "1");
-                    o.t1.id().le(false,  "1");
-                    o.t1.id().lt( "1");
-                    o.t1.id().lt(false,  "1");
-                    o.t1.id().like( "1");
-                    o.t1.id().like(false,  "1");
-                    o.t1.id().notLike( "1");
-                    o.t1.id().notLike(false,  "1");
-                    o.t1.id().likeMatchLeft( "1");
-                    o.t1.id().likeMatchLeft(false,  "1");
-                    o.t1.id().likeMatchRight( "1");
-                    o.t1.id().likeMatchRight(false,  "1");
-                    o.t1.id().notLikeMatchLeft( "1");
-                    o.t1.id().notLikeMatchLeft(false,  "1");
-                    o.t1.id().notLikeMatchRight( "1");
-                    o.t1.id().notLikeMatchRight(false,  "1");
+                    o.t1.id().eq("1");
+                    o.t1.id().eq(false, "1");
+                    o.t1.id().ne("1");
+                    o.t1.id().ne(false, "1");
+                    o.t1.id().ge("1");
+                    o.t1.id().ge(false, "1");
+                    o.t1.id().gt("1");
+                    o.t1.id().gt(false, "1");
+                    o.t1.id().le("1");
+                    o.t1.id().le(false, "1");
+                    o.t1.id().lt("1");
+                    o.t1.id().lt(false, "1");
+                    o.t1.id().like("1");
+                    o.t1.id().like(false, "1");
+                    o.t1.id().notLike("1");
+                    o.t1.id().notLike(false, "1");
+                    o.t1.id().likeMatchLeft("1");
+                    o.t1.id().likeMatchLeft(false, "1");
+                    o.t1.id().likeMatchRight("1");
+                    o.t1.id().likeMatchRight(false, "1");
+                    o.t1.id().notLikeMatchLeft("1");
+                    o.t1.id().notLikeMatchLeft(false, "1");
+                    o.t1.id().notLikeMatchRight("1");
+                    o.t1.id().notLikeMatchRight(false, "1");
                 })
                 .limit(1, 2)
                 .orderBy(o -> o.createTime().asc())
@@ -732,14 +744,14 @@ public class QueryTest4 extends BaseTest {
                 .orderBy(false, o -> o.createTime().desc())
                 .orderByMerge(o -> o.t1.createTime().asc())
                 .orderByMerge(o -> o.t1.createTime().desc())
-                .orderByMerge(false,o -> o.t1.createTime().asc())
-                .orderByMerge(false,o -> o.t1.createTime().desc())
+                .orderByMerge(false, o -> o.t1.createTime().asc())
+                .orderByMerge(false, o -> o.t1.createTime().desc())
                 .groupByMerge(o -> GroupKeys.of(o.t1.id()))
                 .having(o -> o.groupTable().t1.id().count().ge(1L))
-                .having(false,o -> o.groupTable().t1.id().count().ge(1L))
+                .having(false, o -> o.groupTable().t1.id().count().ge(1L))
                 .select(Topic.class, o -> Select.of(
-                    o.groupTable().t1.id(),
-                    o.groupTable().t1.id().count().as(Topic::getStars)
+                        o.groupTable().t1.id(),
+                        o.groupTable().t1.id().count().as(Topic::getStars)
                 )).toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t7.`id` LEFT JOIN `t_topic` t8 ON t.`id` = t8.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
@@ -756,8 +768,8 @@ public class QueryTest4 extends BaseTest {
                 .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5) -> t.id().eq(t5.id()))
                 .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6) -> t.id().eq(t6.id()))
                 .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6, t7) -> t.id().eq(t7.id()))
-                .where(o -> o.id().eq( "1"))
-                .where(false, o -> o.id().eq( "1"))
+                .where(o -> o.id().eq("1"))
+                .where(false, o -> o.id().eq("1"))
                 .whereById("1")
                 .whereById(false, "1")
                 .whereById(Collections.singletonList("1"))
@@ -765,30 +777,30 @@ public class QueryTest4 extends BaseTest {
                 .whereObject(topicRequest)
                 .whereObject(false, topicRequest)
                 .whereMerge(o -> {
-                    o.t1.id().eq( "1");
-                    o.t1.id().eq(false,  "1");
-                    o.t1.id().ne( "1");
-                    o.t1.id().ne(false,  "1");
-                    o.t1.id().ge( "1");
-                    o.t1.id().ge(false,  "1");
-                    o.t1.id().gt( "1");
-                    o.t1.id().gt(false,  "1");
-                    o.t1.id().le( "1");
-                    o.t1.id().le(false,  "1");
-                    o.t1.id().lt( "1");
-                    o.t1.id().lt(false,  "1");
-                    o.t1.id().like( "1");
-                    o.t1.id().like(false,  "1");
-                    o.t1.id().notLike( "1");
-                    o.t1.id().notLike(false,  "1");
-                    o.t1.id().likeMatchLeft( "1");
-                    o.t1.id().likeMatchLeft(false,  "1");
-                    o.t1.id().likeMatchRight( "1");
-                    o.t1.id().likeMatchRight(false,  "1");
-                    o.t1.id().notLikeMatchLeft( "1");
-                    o.t1.id().notLikeMatchLeft(false,  "1");
-                    o.t1.id().notLikeMatchRight( "1");
-                    o.t1.id().notLikeMatchRight(false,  "1");
+                    o.t1.id().eq("1");
+                    o.t1.id().eq(false, "1");
+                    o.t1.id().ne("1");
+                    o.t1.id().ne(false, "1");
+                    o.t1.id().ge("1");
+                    o.t1.id().ge(false, "1");
+                    o.t1.id().gt("1");
+                    o.t1.id().gt(false, "1");
+                    o.t1.id().le("1");
+                    o.t1.id().le(false, "1");
+                    o.t1.id().lt("1");
+                    o.t1.id().lt(false, "1");
+                    o.t1.id().like("1");
+                    o.t1.id().like(false, "1");
+                    o.t1.id().notLike("1");
+                    o.t1.id().notLike(false, "1");
+                    o.t1.id().likeMatchLeft("1");
+                    o.t1.id().likeMatchLeft(false, "1");
+                    o.t1.id().likeMatchRight("1");
+                    o.t1.id().likeMatchRight(false, "1");
+                    o.t1.id().notLikeMatchLeft("1");
+                    o.t1.id().notLikeMatchLeft(false, "1");
+                    o.t1.id().notLikeMatchRight("1");
+                    o.t1.id().notLikeMatchRight(false, "1");
                 })
                 .limit(1, 2)
                 .orderBy(o -> o.createTime().asc())
@@ -797,14 +809,14 @@ public class QueryTest4 extends BaseTest {
                 .orderBy(false, o -> o.createTime().desc())
                 .orderByMerge(o -> o.t1.createTime().asc())
                 .orderByMerge(o -> o.t1.createTime().desc())
-                .orderByMerge(false,o -> o.t1.createTime().asc())
-                .orderByMerge(false,o -> o.t1.createTime().desc())
+                .orderByMerge(false, o -> o.t1.createTime().asc())
+                .orderByMerge(false, o -> o.t1.createTime().desc())
                 .groupByMerge(o -> GroupKeys.of(o.t1.id()))
                 .having(o -> o.groupTable().t1.id().count().ge(1L))
-                .having(false,o -> o.groupTable().t1.id().count().ge(1L))
+                .having(false, o -> o.groupTable().t1.id().count().ge(1L))
                 .select(Topic.class, o -> Select.of(
-                    o.groupTable().t1.id(),
-                    o.groupTable().t1.id().count().as(Topic::getStars)
+                        o.groupTable().t1.id(),
+                        o.groupTable().t1.id().count().as(Topic::getStars)
                 )).toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` LEFT JOIN `t_topic` t7 ON t.`id` = t7.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
@@ -820,8 +832,8 @@ public class QueryTest4 extends BaseTest {
                 .leftJoin(Topic.class, (t, t1, t2, t3, t4) -> t.id().eq(t4.id()))
                 .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5) -> t.id().eq(t5.id()))
                 .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5, t6) -> t.id().eq(t6.id()))
-                .where(o -> o.id().eq( "1"))
-                .where(false, o -> o.id().eq( "1"))
+                .where(o -> o.id().eq("1"))
+                .where(false, o -> o.id().eq("1"))
                 .whereById("1")
                 .whereById(false, "1")
                 .whereById(Collections.singletonList("1"))
@@ -829,30 +841,30 @@ public class QueryTest4 extends BaseTest {
                 .whereObject(topicRequest)
                 .whereObject(false, topicRequest)
                 .whereMerge(o -> {
-                    o.t1.id().eq( "1");
-                    o.t1.id().eq(false,  "1");
-                    o.t1.id().ne( "1");
-                    o.t1.id().ne(false,  "1");
-                    o.t1.id().ge( "1");
-                    o.t1.id().ge(false,  "1");
-                    o.t1.id().gt( "1");
-                    o.t1.id().gt(false,  "1");
-                    o.t1.id().le( "1");
-                    o.t1.id().le(false,  "1");
-                    o.t1.id().lt( "1");
-                    o.t1.id().lt(false,  "1");
-                    o.t1.id().like( "1");
-                    o.t1.id().like(false,  "1");
-                    o.t1.id().notLike( "1");
-                    o.t1.id().notLike(false,  "1");
-                    o.t1.id().likeMatchLeft( "1");
-                    o.t1.id().likeMatchLeft(false,  "1");
-                    o.t1.id().likeMatchRight( "1");
-                    o.t1.id().likeMatchRight(false,  "1");
-                    o.t1.id().notLikeMatchLeft( "1");
-                    o.t1.id().notLikeMatchLeft(false,  "1");
-                    o.t1.id().notLikeMatchRight( "1");
-                    o.t1.id().notLikeMatchRight(false,  "1");
+                    o.t1.id().eq("1");
+                    o.t1.id().eq(false, "1");
+                    o.t1.id().ne("1");
+                    o.t1.id().ne(false, "1");
+                    o.t1.id().ge("1");
+                    o.t1.id().ge(false, "1");
+                    o.t1.id().gt("1");
+                    o.t1.id().gt(false, "1");
+                    o.t1.id().le("1");
+                    o.t1.id().le(false, "1");
+                    o.t1.id().lt("1");
+                    o.t1.id().lt(false, "1");
+                    o.t1.id().like("1");
+                    o.t1.id().like(false, "1");
+                    o.t1.id().notLike("1");
+                    o.t1.id().notLike(false, "1");
+                    o.t1.id().likeMatchLeft("1");
+                    o.t1.id().likeMatchLeft(false, "1");
+                    o.t1.id().likeMatchRight("1");
+                    o.t1.id().likeMatchRight(false, "1");
+                    o.t1.id().notLikeMatchLeft("1");
+                    o.t1.id().notLikeMatchLeft(false, "1");
+                    o.t1.id().notLikeMatchRight("1");
+                    o.t1.id().notLikeMatchRight(false, "1");
                 })
                 .limit(1, 2)
                 .orderBy(o -> o.createTime().asc())
@@ -861,14 +873,14 @@ public class QueryTest4 extends BaseTest {
                 .orderBy(false, o -> o.createTime().desc())
                 .orderByMerge(o -> o.t1.createTime().asc())
                 .orderByMerge(o -> o.t1.createTime().desc())
-                .orderByMerge(false,o -> o.t1.createTime().asc())
-                .orderByMerge(false,o -> o.t1.createTime().desc())
+                .orderByMerge(false, o -> o.t1.createTime().asc())
+                .orderByMerge(false, o -> o.t1.createTime().desc())
                 .groupByMerge(o -> GroupKeys.of(o.t1.id()))
                 .having(o -> o.groupTable().t1.id().count().ge(1L))
-                .having(false,o -> o.groupTable().t1.id().count().ge(1L))
+                .having(false, o -> o.groupTable().t1.id().count().ge(1L))
                 .select(Topic.class, o -> Select.of(
-                    o.groupTable().t1.id(),
-                    o.groupTable().t1.id().count().as(Topic::getStars)
+                        o.groupTable().t1.id(),
+                        o.groupTable().t1.id().count().as(Topic::getStars)
                 )).toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` LEFT JOIN `t_topic` t6 ON t.`id` = t6.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
@@ -883,8 +895,8 @@ public class QueryTest4 extends BaseTest {
                 .leftJoin(Topic.class, (t, t1, t2, t3) -> t.id().eq(t3.id()))
                 .leftJoin(Topic.class, (t, t1, t2, t3, t4) -> t.id().eq(t4.id()))
                 .leftJoin(Topic.class, (t, t1, t2, t3, t4, t5) -> t.id().eq(t5.id()))
-                .where(o -> o.id().eq( "1"))
-                .where(false, o -> o.id().eq( "1"))
+                .where(o -> o.id().eq("1"))
+                .where(false, o -> o.id().eq("1"))
                 .whereById("1")
                 .whereById(false, "1")
                 .whereById(Collections.singletonList("1"))
@@ -892,30 +904,30 @@ public class QueryTest4 extends BaseTest {
                 .whereObject(topicRequest)
                 .whereObject(false, topicRequest)
                 .whereMerge(o -> {
-                    o.t1.id().eq( "1");
-                    o.t1.id().eq(false,  "1");
-                    o.t1.id().ne( "1");
-                    o.t1.id().ne(false,  "1");
-                    o.t1.id().ge( "1");
-                    o.t1.id().ge(false,  "1");
-                    o.t1.id().gt( "1");
-                    o.t1.id().gt(false,  "1");
-                    o.t1.id().le( "1");
-                    o.t1.id().le(false,  "1");
-                    o.t1.id().lt( "1");
-                    o.t1.id().lt(false,  "1");
-                    o.t1.id().like( "1");
-                    o.t1.id().like(false,  "1");
-                    o.t1.id().notLike( "1");
-                    o.t1.id().notLike(false,  "1");
-                    o.t1.id().likeMatchLeft( "1");
-                    o.t1.id().likeMatchLeft(false,  "1");
-                    o.t1.id().likeMatchRight( "1");
-                    o.t1.id().likeMatchRight(false,  "1");
-                    o.t1.id().notLikeMatchLeft( "1");
-                    o.t1.id().notLikeMatchLeft(false,  "1");
-                    o.t1.id().notLikeMatchRight( "1");
-                    o.t1.id().notLikeMatchRight(false,  "1");
+                    o.t1.id().eq("1");
+                    o.t1.id().eq(false, "1");
+                    o.t1.id().ne("1");
+                    o.t1.id().ne(false, "1");
+                    o.t1.id().ge("1");
+                    o.t1.id().ge(false, "1");
+                    o.t1.id().gt("1");
+                    o.t1.id().gt(false, "1");
+                    o.t1.id().le("1");
+                    o.t1.id().le(false, "1");
+                    o.t1.id().lt("1");
+                    o.t1.id().lt(false, "1");
+                    o.t1.id().like("1");
+                    o.t1.id().like(false, "1");
+                    o.t1.id().notLike("1");
+                    o.t1.id().notLike(false, "1");
+                    o.t1.id().likeMatchLeft("1");
+                    o.t1.id().likeMatchLeft(false, "1");
+                    o.t1.id().likeMatchRight("1");
+                    o.t1.id().likeMatchRight(false, "1");
+                    o.t1.id().notLikeMatchLeft("1");
+                    o.t1.id().notLikeMatchLeft(false, "1");
+                    o.t1.id().notLikeMatchRight("1");
+                    o.t1.id().notLikeMatchRight(false, "1");
                 })
                 .limit(1, 2)
                 .orderBy(o -> o.createTime().asc())
@@ -924,14 +936,14 @@ public class QueryTest4 extends BaseTest {
                 .orderBy(false, o -> o.createTime().desc())
                 .orderByMerge(o -> o.t1.createTime().asc())
                 .orderByMerge(o -> o.t1.createTime().desc())
-                .orderByMerge(false,o -> o.t1.createTime().asc())
-                .orderByMerge(false,o -> o.t1.createTime().desc())
+                .orderByMerge(false, o -> o.t1.createTime().asc())
+                .orderByMerge(false, o -> o.t1.createTime().desc())
                 .groupByMerge(o -> GroupKeys.of(o.t1.id()))
                 .having(o -> o.groupTable().t1.id().count().ge(1L))
-                .having(false,o -> o.groupTable().t1.id().count().ge(1L))
+                .having(false, o -> o.groupTable().t1.id().count().ge(1L))
                 .select(Topic.class, o -> Select.of(
-                    o.groupTable().t1.id(),
-                    o.groupTable().t1.id().count().as(Topic::getStars)
+                        o.groupTable().t1.id(),
+                        o.groupTable().t1.id().count().as(Topic::getStars)
                 )).toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` LEFT JOIN `t_topic` t5 ON t.`id` = t5.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
@@ -945,8 +957,8 @@ public class QueryTest4 extends BaseTest {
                 .leftJoin(Topic.class, (t, t1, t2) -> t.id().eq(t2.id()))
                 .leftJoin(Topic.class, (t, t1, t2, t3) -> t.id().eq(t3.id()))
                 .leftJoin(Topic.class, (t, t1, t2, t3, t4) -> t.id().eq(t4.id()))
-                .where(o -> o.id().eq( "1"))
-                .where(false, o -> o.id().eq( "1"))
+                .where(o -> o.id().eq("1"))
+                .where(false, o -> o.id().eq("1"))
                 .whereById("1")
                 .whereById(false, "1")
                 .whereById(Collections.singletonList("1"))
@@ -954,30 +966,30 @@ public class QueryTest4 extends BaseTest {
                 .whereObject(topicRequest)
                 .whereObject(false, topicRequest)
                 .whereMerge(o -> {
-                    o.t1.id().eq( "1");
-                    o.t1.id().eq(false,  "1");
-                    o.t1.id().ne( "1");
-                    o.t1.id().ne(false,  "1");
-                    o.t1.id().ge( "1");
-                    o.t1.id().ge(false,  "1");
-                    o.t1.id().gt( "1");
-                    o.t1.id().gt(false,  "1");
-                    o.t1.id().le( "1");
-                    o.t1.id().le(false,  "1");
-                    o.t1.id().lt( "1");
-                    o.t1.id().lt(false,  "1");
-                    o.t1.id().like( "1");
-                    o.t1.id().like(false,  "1");
-                    o.t1.id().notLike( "1");
-                    o.t1.id().notLike(false,  "1");
-                    o.t1.id().likeMatchLeft( "1");
-                    o.t1.id().likeMatchLeft(false,  "1");
-                    o.t1.id().likeMatchRight( "1");
-                    o.t1.id().likeMatchRight(false,  "1");
-                    o.t1.id().notLikeMatchLeft( "1");
-                    o.t1.id().notLikeMatchLeft(false,  "1");
-                    o.t1.id().notLikeMatchRight( "1");
-                    o.t1.id().notLikeMatchRight(false,  "1");
+                    o.t1.id().eq("1");
+                    o.t1.id().eq(false, "1");
+                    o.t1.id().ne("1");
+                    o.t1.id().ne(false, "1");
+                    o.t1.id().ge("1");
+                    o.t1.id().ge(false, "1");
+                    o.t1.id().gt("1");
+                    o.t1.id().gt(false, "1");
+                    o.t1.id().le("1");
+                    o.t1.id().le(false, "1");
+                    o.t1.id().lt("1");
+                    o.t1.id().lt(false, "1");
+                    o.t1.id().like("1");
+                    o.t1.id().like(false, "1");
+                    o.t1.id().notLike("1");
+                    o.t1.id().notLike(false, "1");
+                    o.t1.id().likeMatchLeft("1");
+                    o.t1.id().likeMatchLeft(false, "1");
+                    o.t1.id().likeMatchRight("1");
+                    o.t1.id().likeMatchRight(false, "1");
+                    o.t1.id().notLikeMatchLeft("1");
+                    o.t1.id().notLikeMatchLeft(false, "1");
+                    o.t1.id().notLikeMatchRight("1");
+                    o.t1.id().notLikeMatchRight(false, "1");
                 })
                 .limit(1, 2)
                 .orderBy(o -> o.createTime().asc())
@@ -986,14 +998,14 @@ public class QueryTest4 extends BaseTest {
                 .orderBy(false, o -> o.createTime().desc())
                 .orderByMerge(o -> o.t1.createTime().asc())
                 .orderByMerge(o -> o.t1.createTime().desc())
-                .orderByMerge(false,o -> o.t1.createTime().asc())
-                .orderByMerge(false,o -> o.t1.createTime().desc())
+                .orderByMerge(false, o -> o.t1.createTime().asc())
+                .orderByMerge(false, o -> o.t1.createTime().desc())
                 .groupByMerge(o -> GroupKeys.of(o.t1.id()))
                 .having(o -> o.groupTable().t1.id().count().ge(1L))
-                .having(false,o -> o.groupTable().t1.id().count().ge(1L))
+                .having(false, o -> o.groupTable().t1.id().count().ge(1L))
                 .select(Topic.class, o -> Select.of(
-                    o.groupTable().t1.id(),
-                    o.groupTable().t1.id().count().as(Topic::getStars)
+                        o.groupTable().t1.id(),
+                        o.groupTable().t1.id().count().as(Topic::getStars)
                 )).toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` LEFT JOIN `t_topic` t4 ON t.`id` = t4.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }
@@ -1006,8 +1018,8 @@ public class QueryTest4 extends BaseTest {
                 .leftJoin(Topic.class, (t, t1) -> t.id().eq(t1.id()))
                 .leftJoin(Topic.class, (t, t1, t2) -> t.id().eq(t2.id()))
                 .leftJoin(Topic.class, (t, t1, t2, t3) -> t.id().eq(t3.id()))
-                .where(o -> o.id().eq( "1"))
-                .where(false, o -> o.id().eq( "1"))
+                .where(o -> o.id().eq("1"))
+                .where(false, o -> o.id().eq("1"))
                 .whereById("1")
                 .whereById(false, "1")
                 .whereById(Collections.singletonList("1"))
@@ -1015,30 +1027,30 @@ public class QueryTest4 extends BaseTest {
                 .whereObject(topicRequest)
                 .whereObject(false, topicRequest)
                 .whereMerge(o -> {
-                    o.t1.id().eq( "1");
-                    o.t1.id().eq(false,  "1");
-                    o.t1.id().ne( "1");
-                    o.t1.id().ne(false,  "1");
-                    o.t1.id().ge( "1");
-                    o.t1.id().ge(false,  "1");
-                    o.t1.id().gt( "1");
-                    o.t1.id().gt(false,  "1");
-                    o.t1.id().le( "1");
-                    o.t1.id().le(false,  "1");
-                    o.t1.id().lt( "1");
-                    o.t1.id().lt(false,  "1");
-                    o.t1.id().like( "1");
-                    o.t1.id().like(false,  "1");
-                    o.t1.id().notLike( "1");
-                    o.t1.id().notLike(false,  "1");
-                    o.t1.id().likeMatchLeft( "1");
-                    o.t1.id().likeMatchLeft(false,  "1");
-                    o.t1.id().likeMatchRight( "1");
-                    o.t1.id().likeMatchRight(false,  "1");
-                    o.t1.id().notLikeMatchLeft( "1");
-                    o.t1.id().notLikeMatchLeft(false,  "1");
-                    o.t1.id().notLikeMatchRight( "1");
-                    o.t1.id().notLikeMatchRight(false,  "1");
+                    o.t1.id().eq("1");
+                    o.t1.id().eq(false, "1");
+                    o.t1.id().ne("1");
+                    o.t1.id().ne(false, "1");
+                    o.t1.id().ge("1");
+                    o.t1.id().ge(false, "1");
+                    o.t1.id().gt("1");
+                    o.t1.id().gt(false, "1");
+                    o.t1.id().le("1");
+                    o.t1.id().le(false, "1");
+                    o.t1.id().lt("1");
+                    o.t1.id().lt(false, "1");
+                    o.t1.id().like("1");
+                    o.t1.id().like(false, "1");
+                    o.t1.id().notLike("1");
+                    o.t1.id().notLike(false, "1");
+                    o.t1.id().likeMatchLeft("1");
+                    o.t1.id().likeMatchLeft(false, "1");
+                    o.t1.id().likeMatchRight("1");
+                    o.t1.id().likeMatchRight(false, "1");
+                    o.t1.id().notLikeMatchLeft("1");
+                    o.t1.id().notLikeMatchLeft(false, "1");
+                    o.t1.id().notLikeMatchRight("1");
+                    o.t1.id().notLikeMatchRight(false, "1");
                 })
                 .limit(1, 2)
                 .orderBy(o -> o.createTime().asc())
@@ -1047,14 +1059,14 @@ public class QueryTest4 extends BaseTest {
                 .orderBy(false, o -> o.createTime().desc())
                 .orderByMerge(o -> o.t1.createTime().asc())
                 .orderByMerge(o -> o.t1.createTime().desc())
-                .orderByMerge(false,o -> o.t1.createTime().asc())
-                .orderByMerge(false,o -> o.t1.createTime().desc())
+                .orderByMerge(false, o -> o.t1.createTime().asc())
+                .orderByMerge(false, o -> o.t1.createTime().desc())
                 .groupByMerge(o -> GroupKeys.of(o.t1.id()))
                 .having(o -> o.groupTable().t1.id().count().ge(1L))
-                .having(false,o -> o.groupTable().t1.id().count().ge(1L))
+                .having(false, o -> o.groupTable().t1.id().count().ge(1L))
                 .select(Topic.class, o -> Select.of(
-                    o.groupTable().t1.id(),
-                    o.groupTable().t1.id().count().as(Topic::getStars)
+                        o.groupTable().t1.id(),
+                        o.groupTable().t1.id().count().as(Topic::getStars)
                 )).toSQL();
         Assert.assertEquals("SELECT t.`id`,COUNT(t.`id`) AS `stars` FROM `t_topic` t LEFT JOIN `t_topic` t1 ON t.`id` = t1.`id` LEFT JOIN `t_topic` t2 ON t.`id` = t2.`id` LEFT JOIN `t_topic` t3 ON t.`id` = t3.`id` WHERE t.`id` = ? AND t.`id` = ? AND t.`id` = ? AND t.`create_time` > ? AND t.`id` = ? AND t.`id` <> ? AND t.`id` >= ? AND t.`id` > ? AND t.`id` <= ? AND t.`id` < ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` LIKE ? AND t.`id` LIKE ? AND t.`id` NOT LIKE ? AND t.`id` NOT LIKE ? GROUP BY t.`id` HAVING COUNT(t.`id`) >= ? ORDER BY t.`create_time` ASC,t.`create_time` DESC,t.`create_time` ASC,t.`create_time` DESC LIMIT 2 OFFSET 1", sql);
     }

@@ -146,44 +146,44 @@ public class MigrationTest extends BaseTest {
 
 
 
-    @SneakyThrows
-    @Test
-    public void test3(){
-
-//        List<Map<String, Object>> list = easyEntityQuery.queryable(Topic.class)
-//                .leftJoin(BlogEntity.class, (t_topic, t_blog) -> t_blog.id().eq(t_topic.id()))
-//                .select((t_topic, t_blog) -> new MapProxy()
-//                        .selectAll(t_topic, MapKeyModeEnum.FIELD_NAME)
-//                        .put("a1", t_blog.star())
-//                ).toList();
-//        Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true", "root", "root");
-        HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/eq_db3?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
-        dataSource.setUsername("root");
-        dataSource.setPassword("root");
-        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setMaximumPoolSize(1);
-
-
-        EasyQueryClient client = EasyQueryBootstrapper.defaultBuilderConfiguration()
-                .setDefaultDataSource(dataSource)
-                .optionConfigure(op -> {
-                    //进行一系列可以选择的配置
-                    //op.setPrintSql(true);
-                })
-                .useDatabaseConfigure(new MySQLDatabaseConfiguration())
-                .build();
-        DefaultEasyEntityQuery entityQuery = new DefaultEasyEntityQuery(client);
-
-        DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
-        databaseCodeFirst.createDatabaseIfNotExists();
-        //自动同步数据库表
-        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(Topic.class, BlogEntity.class));
-        //执行命令
-        codeFirstCommand.executeWithTransaction(arg->{
-            System.out.println(arg.getSQL());
-            arg.commit();
-        });
-    }
+//    @SneakyThrows
+//    @Test
+//    public void test3(){
+//
+////        List<Map<String, Object>> list = easyEntityQuery.queryable(Topic.class)
+////                .leftJoin(BlogEntity.class, (t_topic, t_blog) -> t_blog.id().eq(t_topic.id()))
+////                .select((t_topic, t_blog) -> new MapProxy()
+////                        .selectAll(t_topic, MapKeyModeEnum.FIELD_NAME)
+////                        .put("a1", t_blog.star())
+////                ).toList();
+////        Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true", "root", "root");
+//        HikariDataSource dataSource = new HikariDataSource();
+//        dataSource.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/eq_db3?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&rewriteBatchedStatements=true");
+//        dataSource.setUsername("root");
+//        dataSource.setPassword("root");
+//        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+//        dataSource.setMaximumPoolSize(1);
+//
+//
+//        EasyQueryClient client = EasyQueryBootstrapper.defaultBuilderConfiguration()
+//                .setDefaultDataSource(dataSource)
+//                .optionConfigure(op -> {
+//                    //进行一系列可以选择的配置
+//                    //op.setPrintSql(true);
+//                })
+//                .useDatabaseConfigure(new MySQLDatabaseConfiguration())
+//                .build();
+//        DefaultEasyEntityQuery entityQuery = new DefaultEasyEntityQuery(client);
+//
+//        DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
+//        databaseCodeFirst.createDatabaseIfNotExists();
+//        //自动同步数据库表
+//        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(Topic.class, BlogEntity.class));
+//        //执行命令
+//        codeFirstCommand.executeWithTransaction(arg->{
+//            System.out.println(arg.getSQL());
+//            arg.commit();
+//        });
+//    }
 
 }

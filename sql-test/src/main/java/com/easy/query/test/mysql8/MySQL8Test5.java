@@ -20,6 +20,7 @@ import com.easy.query.test.entity.Topic;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.M8User;
 import com.easy.query.test.mysql8.entity.M8UserBook;
+import com.easy.query.test.mysql8.entity.M8UserProtect;
 import com.easy.query.test.mysql8.entity.OffsetChunkTest;
 import com.easy.query.test.mysql8.entity.TableNoKey;
 import com.easy.query.test.mysql8.entity.bank.SysBank;
@@ -629,6 +630,90 @@ public class MySQL8Test5 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT `id`,`name`,`deleted` FROM `my_config_logic` WHERE `deleted` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void interceptorTest1(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<M8UserProtect> list = easyEntityQuery.queryable(M8UserProtect.class).toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`name`,`age`,`create_time` FROM `m8_user` WHERE 1=1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void interceptorTest2(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<M8UserProtect> list = easyEntityQuery.queryable(M8UserProtect.class).noInterceptor().toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`name`,`age`,`create_time` FROM `m8_user` WHERE 1=1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void interceptorTest3(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<M8UserProtect> list = easyEntityQuery.queryable(M8UserProtect.class).useInterceptor("MyProtectInterceptor").noInterceptor().toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`name`,`age`,`create_time` FROM `m8_user` WHERE 1=1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void interceptorTest4(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<M8UserProtect> list = easyEntityQuery.queryable(M8UserProtect.class).noInterceptor("MyProtectInterceptor").toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`name`,`age`,`create_time` FROM `m8_user`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void interceptorTest5(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<M8UserProtect> list = easyEntityQuery.queryable(M8UserProtect.class).noInterceptor().noInterceptor("MyProtectInterceptor").toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`name`,`age`,`create_time` FROM `m8_user`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void interceptorTest6(){
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        List<M8UserProtect> list = easyEntityQuery.queryable(M8UserProtect.class).useInterceptor().noInterceptor("MyProtectInterceptor").toList();
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`name`,`age`,`create_time` FROM `m8_user`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
 }

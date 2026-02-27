@@ -21,6 +21,7 @@ import java.util.List;
  */
 public interface TablePropColumn extends PropColumn, SQLTableOwner, EntitySQLContextAvailable {
     default Object _toFunctionSerializeValue(Object value) {
+//        if (this instanceof SQLColumn) {
         TableAvailable tableOrNull = this.getTable();
         String propOrNull = this.getValue();
         if (tableOrNull != null && propOrNull != null) {
@@ -28,10 +29,13 @@ public interface TablePropColumn extends PropColumn, SQLTableOwner, EntitySQLCon
             ValueConverter<?, ?> valueConverter = columnMetadata.getValueConverter();
             return valueConverter.serialize(EasyObjectUtil.typeCastNullable(value), columnMetadata);
         }
+//        }
         return value;
     }
+
     default Collection<?> _toFunctionSerializeValues(Collection<?> values) {
-        if(EasyCollectionUtil.isNotEmpty(values)){
+//        if (this instanceof SQLColumn) {
+        if (EasyCollectionUtil.isNotEmpty(values)) {
             TableAvailable tableOrNull = this.getTable();
             String propOrNull = this.getValue();
             if (tableOrNull != null && propOrNull != null) {
@@ -45,6 +49,7 @@ public interface TablePropColumn extends PropColumn, SQLTableOwner, EntitySQLCon
                 return objects;
             }
         }
+//        }
         return values;
     }
 }
