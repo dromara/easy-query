@@ -195,22 +195,26 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
     protected @NotNull List<TableIndexResult> getClassTableIndexes(EntityMigrationMetadata entityMigrationMetadata,Class<?> parseClass) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         ArrayList<TableIndexResult> tableIndexResults = new ArrayList<>();
-        TableIndexes tableIndexes = EasyClassUtil.getAnnotation(parseClass, TableIndexes.class);
-        if (tableIndexes == null) {
-            TableIndex tableIndex = EasyClassUtil.getAnnotation(parseClass, TableIndex.class);
-            if (tableIndex == null) {
+        List<TableIndexes> tableIndexesList = EasyClassUtil.getAnnotations(parseClass, TableIndexes.class);
+        if (EasyCollectionUtil.isEmpty(tableIndexesList)) {
+            List<TableIndex> tableIndexList = EasyClassUtil.getAnnotations(parseClass, TableIndex.class);
+            if (EasyCollectionUtil.isEmpty(tableIndexList)) {
                 return EasyCollectionUtil.emptyList();
             }
-            TableIndexResult tableIndexResult = parseTableIndex(tableIndex, entityMetadata.getTableName(), entityMetadata);
-            if (tableIndexResult != null) {
-                tableIndexResults.add(tableIndexResult);
+            for (TableIndex tableIndex : tableIndexList) {
+                TableIndexResult tableIndexResult = parseTableIndex(tableIndex, entityMetadata.getTableName(), entityMetadata);
+                if (tableIndexResult != null) {
+                    tableIndexResults.add(tableIndexResult);
+                }
             }
         } else {
-            if (EasyArrayUtil.isNotEmpty(tableIndexes.value())) {
-                for (TableIndex tableIndex : tableIndexes.value()) {
-                    TableIndexResult tableIndexResult = parseTableIndex(tableIndex, entityMetadata.getTableName(), entityMetadata);
-                    if (tableIndexResult != null) {
-                        tableIndexResults.add(tableIndexResult);
+            for (TableIndexes tableIndexes : tableIndexesList) {
+                if (EasyArrayUtil.isNotEmpty(tableIndexes.value())) {
+                    for (TableIndex tableIndex : tableIndexes.value()) {
+                        TableIndexResult tableIndexResult = parseTableIndex(tableIndex, entityMetadata.getTableName(), entityMetadata);
+                        if (tableIndexResult != null) {
+                            tableIndexResults.add(tableIndexResult);
+                        }
                     }
                 }
             }

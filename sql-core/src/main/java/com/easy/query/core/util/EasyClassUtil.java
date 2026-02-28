@@ -134,6 +134,7 @@ public class EasyClassUtil {
 
         return false;
     }
+
     public static boolean isBasicType(Class<?> clazz) {
         if (clazz.isPrimitive()) {
             return true;
@@ -144,8 +145,8 @@ public class EasyClassUtil {
                     || clazz == Double.class || clazz == Float.class || clazz == Character.class || clazz == Short.class
                     || clazz == BigDecimal.class || clazz == BigInteger.class || clazz == Boolean.class
                     || clazz == java.util.Date.class || clazz == java.sql.Date.class
-                    || clazz == java.sql.Timestamp.class || clazz == java.time.LocalDateTime.class|| clazz == java.sql.Time.class
-                    || clazz == java.time.LocalDate.class || clazz == java.time.LocalTime.class || clazz == java.util.UUID.class|| clazz == java.lang.Object.class);
+                    || clazz == java.sql.Timestamp.class || clazz == java.time.LocalDateTime.class || clazz == java.sql.Time.class
+                    || clazz == java.time.LocalDate.class || clazz == java.time.LocalTime.class || clazz == java.util.UUID.class || clazz == java.lang.Object.class);
         } else {
             return false;
         }
@@ -157,6 +158,7 @@ public class EasyClassUtil {
         }
         return false;
     }
+
     public static boolean isBooleanType(Class<?> clazz) {
         if (clazz.isPrimitive()) {
             return Objects.equals(clazz, boolean.class);
@@ -204,13 +206,14 @@ public class EasyClassUtil {
             throw new EasyQueryException(e);
         }
     }
-    public static Object getStaticFieldValue(Field field){
+
+    public static Object getStaticFieldValue(Field field) {
         try {
             field.setAccessible(true);
             return field.get(null);
         } catch (IllegalAccessException e) {
-            throw new EasyQueryException("cant get static field value.",e);
-        }finally {
+            throw new EasyQueryException("cant get static field value.", e);
+        } finally {
             field.setAccessible(false);
         }
     }
@@ -245,20 +248,23 @@ public class EasyClassUtil {
         }
     }
 
-    public static Field getFieldByName(Class<?> clazz, String fieldName){
+    public static Field getFieldByName(Class<?> clazz, String fieldName) {
         try {
             return clazz.getDeclaredField(fieldName);
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
     }
+
     public static Collection<Field> getAllFields(Class<?> clazz) {
         return getAllFieldsMap(clazz).values();
     }
+
     public static Map<String, Field> getAllFieldsMap(Class<?> clazz) {
         LinkedHashMap<String, Field> fields = getAllFields0(clazz);
         return fields;
     }
+
     private static LinkedHashMap<String, Field> getAllFields0(Class<?> clazz) {
         LinkedHashMap<String, Field> fields = new LinkedHashMap<>();
         // 递归获取父类的所有Field
@@ -273,23 +279,25 @@ public class EasyClassUtil {
         }
         return fields;
     }
-    public static Collection<Field> getAllFields(Class<?> clazz,Map<String,Field> staticFields) {
-        LinkedHashMap<String, Field> fields = getAllFields0(clazz,staticFields);
+
+    public static Collection<Field> getAllFields(Class<?> clazz, Map<String, Field> staticFields) {
+        LinkedHashMap<String, Field> fields = getAllFields0(clazz, staticFields);
         return fields.values();
     }
-    private static LinkedHashMap<String, Field> getAllFields0(Class<?> clazz,Map<String,Field> staticFields) {
+
+    private static LinkedHashMap<String, Field> getAllFields0(Class<?> clazz, Map<String, Field> staticFields) {
         LinkedHashMap<String, Field> fields = new LinkedHashMap<>();
         // 递归获取父类的所有Field
         Class<?> superClass = clazz.getSuperclass();
         if (superClass != null) {
-            LinkedHashMap<String, Field> allFields0 = getAllFields0(superClass,staticFields);
+            LinkedHashMap<String, Field> allFields0 = getAllFields0(superClass, staticFields);
             fields.putAll(allFields0);
         }
         // 获取当前类的所有Field
         for (Field declaredField : clazz.getDeclaredFields()) {
-            if(Modifier.isStatic(declaredField.getModifiers())){
+            if (Modifier.isStatic(declaredField.getModifiers())) {
                 staticFields.put(declaredField.getName(), declaredField);
-            }else{
+            } else {
                 fields.put(declaredField.getName(), declaredField);
             }
         }
@@ -363,6 +371,28 @@ public class EasyClassUtil {
             }
             c = c.getSuperclass();
         } while (c != null && c != Object.class);
+        return null;
+
+    }
+    public static <T extends Annotation> List<T> getAnnotations(Class c, Class<T> expect) {
+        List<T> ans = new ArrayList<>();
+        do {
+            T an = (T) c.getAnnotation(expect);
+            if (an != null) {
+                ans.add(an);
+            }
+            c = c.getSuperclass();
+        } while (c != null && c != Object.class);
+        return ans;
+
+    }
+
+    public static <T extends Annotation> T getCurrentAnnotation(Class c, Class<T> expect) {
+
+        T an = (T) c.getAnnotation(expect);
+        if (an != null) {
+            return an;
+        }
         return null;
 
     }
