@@ -54,7 +54,7 @@ public interface ColumnBooleanFunctionAvailable<TProperty> extends ColumnObjectF
      * @return NOT xxx
      */
     default BooleanTypeExpression<TProperty> not() {
-        return new BooleanTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new BooleanTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.not(sqlFunction);

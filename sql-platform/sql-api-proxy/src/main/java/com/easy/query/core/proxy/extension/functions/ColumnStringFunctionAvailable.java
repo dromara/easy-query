@@ -89,7 +89,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         SQLActionExpression1<ColumnFuncSelector> selector = o -> {
             stringExpressions.apply(new ConcatExpressionSelectorImpl(getEntitySQLContext().getRuntimeContext().fx(), o));
         };
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.concat(o -> {
                 PropTypeColumn.columnFuncSelector(o, this);
                 selector.apply(o);
@@ -103,7 +103,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
 
 //    @Override
 //    default <T> ColumnFunctionComparableStringChainExpression<TProperty> nullDefault(SQLExpression1<ProxyColumnFuncSelector> selector) {
-//        return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+//        return new ColumnFunctionComparableStringChainExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
 //            if (this instanceof DSLSQLFunctionAvailable) {
 //                SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
 //                return fx.valueOrDefault(o -> {
@@ -125,7 +125,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default StringTypeExpression<String> toLower() {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.toLower(sqlFunction);
@@ -141,7 +141,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default StringTypeExpression<String> toUpper() {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.toUpper(sqlFunction);
@@ -165,7 +165,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         if (length < 0) {
             throw new IllegalArgumentException("length must be greater than 0");
         }
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.subString(sqlFunction, begin, length);
@@ -179,7 +179,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
         if (length < 0) {
             throw new IllegalArgumentException("length must be greater than 0");
         }
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.subString(selector -> {
                 PropTypeColumn.columnFuncSelector(selector, this);
                 PropTypeColumn.columnFuncSelector(selector, begin);
@@ -189,7 +189,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     default <T1 extends Number, T2 extends Number> StringTypeExpression<String> subString(PropTypeColumn<T1> begin, PropTypeColumn<T2> length) {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.subString(selector -> {
                 PropTypeColumn.columnFuncSelector(selector, this);
                 PropTypeColumn.columnFuncSelector(selector, begin);
@@ -199,7 +199,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     default <T extends Number> StringTypeExpression<String> subString(int begin, PropTypeColumn<T> length) {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.subString(selector -> {
                 PropTypeColumn.columnFuncSelector(selector, this);
                 selector.format(begin);
@@ -214,7 +214,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default StringTypeExpression<String> trim() {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.trim(sqlFunction);
@@ -231,7 +231,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default StringTypeExpression<String> ltrim() {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.trimStart(sqlFunction);
@@ -248,7 +248,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default StringTypeExpression<String> rtrim() {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.trimEnd(sqlFunction);
@@ -259,7 +259,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     default StringTypeExpression<String> replace(String oldValue, String newValue) {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.replace(sqlFunction, oldValue, newValue);
@@ -276,7 +276,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default StringTypeExpression<String> leftPad(int totalWidth) {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.leftPad(sqlFunction, totalWidth);
@@ -287,7 +287,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     default StringTypeExpression<String> leftPad(int totalWidth, char paddingChar) {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.leftPad(sqlFunction, totalWidth, paddingChar);
@@ -304,7 +304,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default StringTypeExpression<String> rightPad(int totalWidth) {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.rightPad(sqlFunction, totalWidth);
@@ -315,7 +315,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     default StringTypeExpression<String> rightPad(int totalWidth, char paddingChar) {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.rightPad(sqlFunction, totalWidth, paddingChar);
@@ -346,7 +346,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default NumberTypeExpression<Integer> length() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.length(sqlFunction);
@@ -368,7 +368,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default ColumnFuncComparableExpression<Integer> compareTo(String comparedValue) {
-        return new SQLColumnFunctionCompareComparableExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new SQLColumnFunctionCompareComparableExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.stringCompareTo(sqlFunction, comparedValue);
@@ -379,7 +379,7 @@ public interface ColumnStringFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     default ColumnFuncComparableExpression<Integer> compareTo(PropTypeColumn<TProperty> otherColumn) {
-        return new SQLColumnFunctionCompareComparableExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new SQLColumnFunctionCompareComparableExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 if (otherColumn instanceof DSLSQLFunctionAvailable) {

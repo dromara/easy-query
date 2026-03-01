@@ -62,7 +62,7 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
     }
 
     default StringTypeExpression<String> format(String javaFormat) {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.dateTimeFormat(x -> x.sqlFunc(sqlFunction), javaFormat);
@@ -73,7 +73,7 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
     }
 
     default DateTimeTypeExpression<TProperty> plus(long duration, TimeUnitEnum timeUnit) {
-        return new DateTimeTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new DateTimeTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.plusDateTime2(selector -> {
                 PropTypeColumn.columnFuncSelector(selector, this);
                 selector.value(duration);
@@ -82,7 +82,7 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
     }
 
     default <T extends Number> DateTimeTypeExpression<TProperty> plus(PropTypeColumn<T> durationColumn, TimeUnitEnum timeUnit) {
-        return new DateTimeTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new DateTimeTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.plusDateTime2(selector -> {
                 PropTypeColumn.columnFuncSelector(selector, this);
                 PropTypeColumn.columnFuncSelector(selector, durationColumn);
@@ -298,7 +298,7 @@ public interface ColumnDateTimeFunctionAvailable<TProperty> extends ColumnObject
      */
     default NumberTypeExpression<Integer> dateTimeProp(DateTimeUnitEnum dateTimeUnitEnum) {
         PropColumn propColumn = this;
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (propColumn instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) propColumn).func().apply(fx);
                 return fx.dateTimeProperty(sqlFunction, dateTimeUnitEnum);

@@ -45,7 +45,7 @@ public interface ColumnJSONObjectFunctionAvailable<TProperty> extends ColumnObje
 
     default AnyTypeExpression<Object> getField(String jsonKey) {
         String key = getJsonKey(getEntitySQLContext().getRuntimeContext(), jsonKey);
-        return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.jsonObjectField(s -> {
                 PropTypeColumn.acceptAnyValue(s, this);
                 s.format(key);
@@ -54,7 +54,7 @@ public interface ColumnJSONObjectFunctionAvailable<TProperty> extends ColumnObje
     }
     default AnyTypeExpression<Object> getJSONElement(String jsonKey) {
         String key = getJsonKey(getEntitySQLContext().getRuntimeContext(), jsonKey);
-        return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.jsonObjectExtract(s -> {
                 PropTypeColumn.acceptAnyValue(s, this);
                 s.format(key);

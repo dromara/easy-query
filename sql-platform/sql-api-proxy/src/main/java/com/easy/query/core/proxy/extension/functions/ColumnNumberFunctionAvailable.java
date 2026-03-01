@@ -79,7 +79,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return 计算平均值返回 AVG(DISTINCT age)
      */
     default NumberFilterTypeExpression<BigDecimal> avg(boolean distinct) {
-        return new NumberFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return new NumberFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), null, (self, fx) -> {
             return fx.avg(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             }).distinct(distinct);
@@ -152,7 +152,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return 计算去重求和 SUM(DISTINCT age)
      */
     default <T extends Number> NumberFilterTypeExpression<T> sum(boolean distinct) {
-        return new NumberSumFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return new NumberSumFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), null, (self, fx) -> {
             return fx.sum(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             }).distinct(distinct);
@@ -167,7 +167,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return 计算去重求和 SUM(DISTINCT age)
      */
     default <T extends Number> NumberFilterTypeExpression<T> sum(boolean distinct, Class<T> resultClass) {
-        return new NumberSumFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return new NumberSumFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), null, (self, fx) -> {
             return fx.sum(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             }).distinct(distinct);
@@ -179,7 +179,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     default NumberFilterTypeExpression<BigDecimal> sumBigDecimal(boolean distinct) {
-        return new NumberSumFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return new NumberSumFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), null, (self, fx) -> {
             return fx.sum(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             }).distinct(distinct);
@@ -193,7 +193,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return 计算绝对值
      */
     default NumberTypeExpression<TProperty> abs() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
             }, MathMethodEnum.Abs);
@@ -211,7 +211,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default NumberTypeExpression<Integer> signum() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
             }, MathMethodEnum.Signum);
@@ -226,7 +226,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default NumberTypeExpression<BigDecimal> floor() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
             }, MathMethodEnum.Floor);
@@ -240,7 +240,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default NumberTypeExpression<BigDecimal> ceiling() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
             }, MathMethodEnum.Ceiling);
@@ -254,7 +254,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default NumberTypeExpression<BigDecimal> round() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
             }, MathMethodEnum.Round);
@@ -268,7 +268,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default NumberTypeExpression<BigDecimal> round(int decimals) {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
                 o.value(decimals);
@@ -282,7 +282,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default NumberTypeExpression<BigDecimal> exp() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
             }, MathMethodEnum.Exp);
@@ -296,7 +296,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default NumberTypeExpression<BigDecimal> log() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
             }, MathMethodEnum.Log);
@@ -310,7 +310,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default NumberTypeExpression<BigDecimal> log10() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
             }, MathMethodEnum.Log10);
@@ -323,7 +323,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
 //     * @return
 //     */
 //    default NumberTypeExpression<BigDecimal> pow() {
-//        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+//        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
 //            return fx.math(o -> {
 //                PropTypeColumn.acceptAnyValue(o, this);
 //            }, MathMethodEnum.Pow);
@@ -336,7 +336,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default NumberTypeExpression<BigDecimal> pow(BigDecimal exponent) {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
                 o.value(exponent);
@@ -351,7 +351,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default NumberTypeExpression<BigDecimal> sqrt() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
             }, MathMethodEnum.Sqrt);
@@ -365,7 +365,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default NumberTypeExpression<BigDecimal> cos() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
             }, MathMethodEnum.Cos);
@@ -378,7 +378,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default NumberTypeExpression<BigDecimal> sin() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
             }, MathMethodEnum.Sin);
@@ -391,7 +391,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default NumberTypeExpression<BigDecimal> tan() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
             }, MathMethodEnum.Tan);
@@ -404,7 +404,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default NumberTypeExpression<BigDecimal> acos() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
             }, MathMethodEnum.Acos);
@@ -417,7 +417,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default NumberTypeExpression<BigDecimal> asin() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
             }, MathMethodEnum.Asin);
@@ -430,7 +430,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default NumberTypeExpression<BigDecimal> atan() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
             }, MathMethodEnum.Atan);
@@ -447,7 +447,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
     }
 
     default NumberTypeExpression<BigDecimal> atan2(PropTypeColumn<BigDecimal> other) {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
                 PropTypeColumn.acceptAnyValue(o, other);
@@ -461,7 +461,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default NumberTypeExpression<BigDecimal> truncate() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.math(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
             }, MathMethodEnum.Truncate);
@@ -476,7 +476,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default <TOtherProperty extends Number> NumberTypeExpression<BigDecimal> add(PropTypeColumn<TOtherProperty> other) {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.numberCalc(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
                 PropTypeColumn.acceptAnyValue(o, other);
@@ -496,7 +496,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default <TOtherProperty extends Number> NumberTypeExpression<BigDecimal> subtract(PropTypeColumn<TOtherProperty> other) {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.numberCalc(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
                 PropTypeColumn.acceptAnyValue(o, other);
@@ -516,7 +516,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default <TOtherProperty extends Number> NumberTypeExpression<BigDecimal> multiply(PropTypeColumn<TOtherProperty> other) {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.numberCalc(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
                 PropTypeColumn.acceptAnyValue(o, other);
@@ -536,7 +536,7 @@ public interface ColumnNumberFunctionAvailable<TProperty> extends ColumnObjectFu
      * @return
      */
     default <TOtherProperty extends Number> NumberTypeExpression<BigDecimal> divide(PropTypeColumn<TOtherProperty> other) {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.numberCalc(o -> {
                 PropTypeColumn.acceptAnyValue(o, this);
                 PropTypeColumn.acceptAnyValue(o, other);

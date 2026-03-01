@@ -40,7 +40,7 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
     }
 
     default NumberFilterTypeExpression<Long> count(boolean distinct) {
-        return new NumberFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), this.getValue(), (self, fx) -> {
+        return new NumberFilterTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this, this.getTable(), null, (self, fx) -> {
             return fx.count(x -> {
                 PropTypeColumn.columnFuncSelector(x, self);
             }).distinct(distinct);
@@ -204,7 +204,7 @@ public interface ColumnObjectFunctionAvailable<TProperty, TChain> extends SQLSel
      */
     @Deprecated
     default BooleanTypeExpression<Boolean> equalsWith(SQLActionExpression1<ProxyColumnFuncSelector> selector) {
-        return new BooleanTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new BooleanTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.equalsWith(o -> {
                 PropTypeColumn.columnFuncSelector(o, this);
                 selector.apply(new ProxyColumnFuncSelectorImpl(o));

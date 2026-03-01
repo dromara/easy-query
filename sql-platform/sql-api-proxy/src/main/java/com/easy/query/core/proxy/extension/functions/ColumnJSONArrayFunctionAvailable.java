@@ -41,7 +41,7 @@ public interface ColumnJSONArrayFunctionAvailable<TProperty> extends ColumnObjec
     }
 
     default AnyTypeExpression<Object> getElement(int index) {
-        return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.jsonArrayByIndex(s -> {
                 PropTypeColumn.columnFuncSelector(s, this);
                 s.format(index);

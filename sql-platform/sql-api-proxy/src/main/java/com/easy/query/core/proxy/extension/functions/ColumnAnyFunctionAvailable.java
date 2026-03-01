@@ -62,7 +62,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default StringTypeExpression<TProperty> concat(SQLActionExpression1<ProxyColumnFuncSelector> selector) {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.concat(o -> {
@@ -83,7 +83,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default StringTypeExpression<String> toLower() {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.toLower(sqlFunction);
@@ -94,7 +94,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default StringTypeExpression<String> toUpper() {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.toUpper(sqlFunction);
@@ -118,7 +118,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         if (length < 0) {
             throw new IllegalArgumentException("length must be greater than 0");
         }
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.subString(sqlFunction, begin, length);
@@ -134,7 +134,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
      * @return
      */
     default StringTypeExpression<String> trim() {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.trim(sqlFunction);
@@ -144,7 +144,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
         }, String.class);
     }
     default StringTypeExpression<String> ltrim() {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.trimStart(sqlFunction);
@@ -160,7 +160,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
      * @return
      */
     default StringTypeExpression<String> rtrim() {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.trimEnd(sqlFunction);
@@ -171,7 +171,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default StringTypeExpression<String> replace(String oldValue, String newValue) {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.replace(sqlFunction, oldValue, newValue);
@@ -182,7 +182,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default StringTypeExpression<String> leftPad(int totalWidth) {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.leftPad(sqlFunction, totalWidth);
@@ -193,7 +193,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default StringTypeExpression<String> leftPad(int totalWidth, char paddingChar) {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.leftPad(sqlFunction, totalWidth, paddingChar);
@@ -204,7 +204,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default StringTypeExpression<String> rightPad(int totalWidth) {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.rightPad(sqlFunction, totalWidth);
@@ -215,7 +215,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default StringTypeExpression<String> rightPad(int totalWidth, char paddingChar) {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.rightPad(sqlFunction, totalWidth, paddingChar);
@@ -230,7 +230,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default StringTypeExpression<String> joining(String delimiter, boolean distinct) {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.joining(x -> {
                 x.value(delimiter);
                 PropTypeColumn.columnFuncSelector(x, this);
@@ -239,7 +239,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<Integer> length() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.length(sqlFunction);
@@ -254,7 +254,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> avg(boolean distinct) {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.avg(sqlFunction).distinct(distinct);
@@ -269,7 +269,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> sum(boolean distinct) {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.sum(sqlFunction).distinct(distinct);
@@ -280,7 +280,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default AnyTypeExpression<TProperty> abs() {
-        return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new AnyTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -293,7 +293,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<Integer> sign() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -306,7 +306,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> floor() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -319,7 +319,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> ceiling() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -332,7 +332,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> round() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -345,7 +345,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> round(int decimals) {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -358,7 +358,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> exp() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -371,7 +371,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> log() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -384,7 +384,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> log10() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -397,7 +397,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> pow() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -410,7 +410,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> pow(BigDecimal exponent) {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -423,7 +423,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> sqrt() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -436,7 +436,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> cos() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -449,7 +449,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> sin() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -462,7 +462,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> tan() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -475,7 +475,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> acos() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -488,7 +488,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> asin() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -501,7 +501,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> atan() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -514,7 +514,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> atan2() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -527,7 +527,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default NumberTypeExpression<BigDecimal> truncate() {
-        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.math(o -> {
@@ -541,7 +541,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
 
 
     default StringTypeExpression<String> dateTimeFormat(String javaFormat) {
-        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             return fx.dateTimeFormat(this.getValue(), javaFormat);
         }, String.class);
     }
@@ -554,7 +554,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
      * @return
      */
     default DateTimeTypeExpression<TProperty> plusTimeUnit(long duration, TimeUnit timeUnit) {
-        return new DateTimeTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new DateTimeTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.plusDateTime(sqlFunction, duration, timeUnit);
@@ -565,7 +565,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default DateTimeTypeExpression<TProperty> plusMonths(int month) {
-        return new DateTimeTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new DateTimeTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.plusDateTimeMonths(sqlFunction, month);
@@ -576,7 +576,7 @@ public interface ColumnAnyFunctionAvailable<TProperty> extends ColumnObjectFunct
     }
 
     default DateTimeTypeExpression<TProperty> plusYears(int year) {
-        return new DateTimeTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new DateTimeTypeExpressionImpl<>(this.getCurrentEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.plusDateTimeYears(sqlFunction, year);
