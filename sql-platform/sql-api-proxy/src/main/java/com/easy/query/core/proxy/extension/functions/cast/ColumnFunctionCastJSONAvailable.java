@@ -16,7 +16,7 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
  */
 public interface ColumnFunctionCastJSONAvailable<TProperty> extends SQLSelectAsExpression, PropTypeColumn<TProperty> {
     default JSONObjectTypeExpression<Object> asJSONObject(){
-        return new JSONObjectTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new JSONObjectTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 return ((DSLSQLFunctionAvailable) this).func().apply(fx);
             } else {
@@ -25,7 +25,7 @@ public interface ColumnFunctionCastJSONAvailable<TProperty> extends SQLSelectAsE
         }, String.class);
     }
     default JSONArrayTypeExpression<Object> asJSONArray(){
-        return new JSONArrayTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new JSONArrayTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 return ((DSLSQLFunctionAvailable) this).func().apply(fx);
             } else {

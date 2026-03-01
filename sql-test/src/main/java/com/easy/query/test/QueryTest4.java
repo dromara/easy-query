@@ -211,15 +211,15 @@ public class QueryTest4 extends BaseTest {
         Assert.assertEquals(TopicTypeEnum.CLASSER.getCode(), topicTypeVO.getTopicType());
 
 
-//        List<TopicTypeArrayJson> name = easyEntityQuery.queryable(TopicTypeArrayJson.class)
-//                .where(t -> {
-//                    t.title2().asJSONArray().getJSONObject(0).getString("name").eq("1234");
-//                }).toList();
-//        System.out.println("123");
-//        Assert.assertEquals(1, name.size());
-//        TopicTypeArrayJson fname = name.get(0);
-//        String title2Name = fname.getTitle2().get(0).getName();
-//        Assert.assertEquals("1234", title2Name);
+        List<TopicTypeArrayJson> name = easyEntityQuery.queryable(TopicTypeArrayJson.class)
+                .where(t -> {
+                    t.title2().asJSONArray().getJSONObject(0).getString("name").eq("1234");
+                }).toList();
+        System.out.println("123");
+        Assert.assertEquals(1, name.size());
+        TopicTypeArrayJson fname = name.get(0);
+        String title2Name = fname.getTitle2().get(0).getName();
+        Assert.assertEquals("1234", title2Name);
     }
 
     @Test
