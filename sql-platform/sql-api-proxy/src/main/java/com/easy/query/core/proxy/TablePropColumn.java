@@ -6,6 +6,7 @@ import com.easy.query.core.expression.parser.core.SQLTableOwner;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
+import com.easy.query.core.proxy.extension.functions.type.IgnoreValueConverterTypeExpression;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasyObjectUtil;
 
@@ -21,35 +22,35 @@ import java.util.List;
  */
 public interface TablePropColumn extends PropColumn, SQLTableOwner, EntitySQLContextAvailable {
     default Object _toFunctionSerializeValue(Object value) {
-//        if (this instanceof SQLColumn) {
-        TableAvailable tableOrNull = this.getTable();
-        String propOrNull = this.getValue();
-        if (tableOrNull != null && propOrNull != null) {
-            ColumnMetadata columnMetadata = tableOrNull.getEntityMetadata().getColumnNotNull(propOrNull);
-            ValueConverter<?, ?> valueConverter = columnMetadata.getValueConverter();
-            return valueConverter.serialize(EasyObjectUtil.typeCastNullable(value), columnMetadata);
-        }
-//        }
-        return value;
-    }
-
-    default Collection<?> _toFunctionSerializeValues(Collection<?> values) {
-//        if (this instanceof SQLColumn) {
-        if (EasyCollectionUtil.isNotEmpty(values)) {
+        if (!(this instanceof IgnoreValueConverterTypeExpression)) {
             TableAvailable tableOrNull = this.getTable();
             String propOrNull = this.getValue();
             if (tableOrNull != null && propOrNull != null) {
                 ColumnMetadata columnMetadata = tableOrNull.getEntityMetadata().getColumnNotNull(propOrNull);
                 ValueConverter<?, ?> valueConverter = columnMetadata.getValueConverter();
-                List<Object> objects = new ArrayList<>(values.size());
-                for (Object value : values) {
-                    Object serialize = valueConverter.serialize(EasyObjectUtil.typeCastNullable(value), columnMetadata);
-                    objects.add(serialize);
-                }
-                return objects;
+                return valueConverter.serialize(EasyObjectUtil.typeCastNullable(value), columnMetadata);
             }
         }
-//        }
+        return value;
+    }
+
+    default Collection<?> _toFunctionSerializeValues(Collection<?> values) {
+        if (!(this instanceof IgnoreValueConverterTypeExpression)) {
+            TableAvailable tableOrNull = this.getTable();
+            String propOrNull = this.getValue();
+            if (tableOrNull != null && propOrNull != null) {
+                if (EasyCollectionUtil.isNotEmpty(values)) {
+                    ColumnMetadata columnMetadata = tableOrNull.getEntityMetadata().getColumnNotNull(propOrNull);
+                    ValueConverter<?, ?> valueConverter = columnMetadata.getValueConverter();
+                    List<Object> objects = new ArrayList<>(values.size());
+                    for (Object value : values) {
+                        Object serialize = valueConverter.serialize(EasyObjectUtil.typeCastNullable(value), columnMetadata);
+                        objects.add(serialize);
+                    }
+                    return objects;
+                }
+            }
+        }
         return values;
     }
 }

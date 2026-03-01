@@ -4,6 +4,7 @@ import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.proxy.TablePropColumn;
 import com.easy.query.core.proxy.available.EntitySQLContextAvailable;
+import com.easy.query.core.proxy.extension.functions.cast.ColumnFunctionCastStringAvailable;
 import com.easy.query.core.proxy.impl.SQLPredicateImpl;
 
 /**
@@ -60,19 +61,44 @@ public interface DSLLikePredicate<TProperty> extends TablePropColumn, EntitySQLC
         }
     }
 
+    /**
+     * 请使用{@link ColumnFunctionCastStringAvailable#asStr}
+     * o.json().asStr().startsWith("xxx")
+     * @param val
+     */
+    @Deprecated
     default void likeRawMatchLeft(Object val) {
         likeRawMatchLeft(true, val);
     }
 
+    /**
+     * 请使用{@link ColumnFunctionCastStringAvailable#asStr}
+     * o.json().asStr().startsWith("xxx")
+     * @param val
+     */
+    @Deprecated
     default void likeRawMatchLeft(boolean condition, Object val) {
         if (condition) {
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.likeRaw(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_RIGHT)));
         }
     }
+    /**
+     * 请使用{@link ColumnFunctionCastStringAvailable#asStr}
+     * o.json().asStr().endsWith("xxx")
+     * @param val
+     */
+    @Deprecated
     default void likeRawMatchRight(Object val) {
         likeRawMatchRight(true, val);
     }
 
+    /**
+     * 请使用{@link ColumnFunctionCastStringAvailable#asStr}
+     * o.json().asStr().endsWith("xxx")
+     * @param condition 是否生效当前条件
+     * @param val 比较值
+     */
+    @Deprecated
     default void likeRawMatchRight(boolean condition, Object val) {
         if (condition) {
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.likeRaw(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_LEFT)));
@@ -80,17 +106,23 @@ public interface DSLLikePredicate<TProperty> extends TablePropColumn, EntitySQLC
     }
     /**
      * 和传入的指定数据匹配因为普通匹配入参会经过{@link ValueConverter}处理
-     * @param val
+     * 请使用{@link ColumnFunctionCastStringAvailable#asStr}
+     * o.json().asStr().contains("xxx")
+     * @param val 比较值
      */
+    @Deprecated
     default void likeRaw(Object val) {
         likeRaw(true, val);
     }
 
     /**
      * 和传入的指定数据匹配因为普通匹配入参会经过{@link ValueConverter}处理
+     * 请使用{@link ColumnFunctionCastStringAvailable#asStr}
+     * o.json().asStr().contains("xxx")
      * @param condition
-     * @param val
+     * @param val 比较值
      */
+    @Deprecated
     default void likeRaw(boolean condition, Object val) {
         if (condition) {
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.likeRaw(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_ALL)));
@@ -124,19 +156,46 @@ public interface DSLLikePredicate<TProperty> extends TablePropColumn, EntitySQLC
         }
     }
 
+    /***
+     * 请使用{@link ColumnFunctionCastStringAvailable#asStr}
+     * o.json().asStr().notStartsWith("xxx")
+     * @param val
+     */
+    @Deprecated
     default void notLikeRawMatchLeft(Object val) {
         notLikeRawMatchLeft(true, val);
     }
 
+    /***
+     * 请使用{@link ColumnFunctionCastStringAvailable#asStr}
+     * o.json().asStr().notStartsWith("xxx")
+     * @param condition
+     * @param val
+     */
+    @Deprecated
     default void notLikeRawMatchLeft(boolean condition, Object val) {
         if (condition) {
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notLikeRaw(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_RIGHT)));
         }
     }
+
+    /**
+     * 请使用{@link ColumnFunctionCastStringAvailable#asStr}
+     * o.json().asStr().notEndsWith("xxx")
+     * @param val
+     */
+    @Deprecated
     default void notLikeRawMatchRight(Object val) {
         notLikeRawMatchRight(true, val);
     }
 
+    /**
+     * 请使用{@link ColumnFunctionCastStringAvailable#asStr}
+     * o.json().asStr().notEndsWith("xxx")
+     * @param condition
+     * @param val
+     */
+    @Deprecated
     default void notLikeRawMatchRight(boolean condition, Object val) {
         if (condition) {
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notLikeRaw(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_LEFT)));
@@ -144,17 +203,23 @@ public interface DSLLikePredicate<TProperty> extends TablePropColumn, EntitySQLC
     }
     /**
      * 和传入的指定数据匹配因为普通匹配入参会经过{@link ValueConverter}处理
+     * 请使用{@link ColumnFunctionCastStringAvailable#asStr}
+     * o.json().asStr().notContains("xxx")
      * @param val
      */
+    @Deprecated
     default void notLikeRaw(Object val) {
         notLikeRaw(true, val);
     }
 
     /**
      * 和传入的指定数据匹配因为普通匹配入参会经过{@link ValueConverter}处理
+     * 请使用{@link ColumnFunctionCastStringAvailable#asStr}
+     * o.json().asStr().notContains("xxx")
      * @param condition
      * @param val
      */
+    @Deprecated
     default void notLikeRaw(boolean condition, Object val) {
         if (condition) {
             getCurrentEntitySQLContext().accept(new SQLPredicateImpl(f -> f.notLikeRaw(this.getTable(), this.getValue(), val, SQLLikeEnum.LIKE_PERCENT_ALL)));

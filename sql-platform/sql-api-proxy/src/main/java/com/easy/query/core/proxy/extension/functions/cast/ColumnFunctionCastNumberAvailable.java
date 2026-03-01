@@ -5,6 +5,7 @@ import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.impl.NumberTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.impl.as.AsNumberTypeExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.math.BigDecimal;
@@ -22,7 +23,7 @@ public interface ColumnFunctionCastNumberAvailable<TProperty> extends SQLSelectA
      * @return
      */
     default <T extends Number> NumberTypeExpression<T> toNumber(Class<T> clazz) {
-        return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.cast(sqlFunction, clazz);
@@ -37,7 +38,7 @@ public interface ColumnFunctionCastNumberAvailable<TProperty> extends SQLSelectA
      * @return
      */
     default <T extends Number> NumberTypeExpression<T> asNumber(Class<T> clazz) {
-        return new NumberTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new AsNumberTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 return ((DSLSQLFunctionAvailable) this).func().apply(fx);
             } else {

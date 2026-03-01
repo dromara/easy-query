@@ -5,6 +5,7 @@ import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.extension.functions.type.DateTimeTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.impl.DateTimeTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.impl.as.AsDateTimeTypeExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 import java.time.LocalDate;
@@ -20,7 +21,7 @@ import java.util.Date;
 public interface ColumnFunctionCastDateTimeAvailable<TProperty> extends SQLSelectAsExpression, PropTypeColumn<TProperty> {
 
     default <T> DateTimeTypeExpression<T> toDateTime(Class<T> clazz){
-        return new DateTimeTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new DateTimeTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.cast(sqlFunction, clazz);
@@ -53,7 +54,7 @@ public interface ColumnFunctionCastDateTimeAvailable<TProperty> extends SQLSelec
         return asDateTime(Date.class);
     }
     default <TR> DateTimeTypeExpression<TR> asDateTime(Class<TR> clazz) {
-        return new DateTimeTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new AsDateTimeTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 return ((DSLSQLFunctionAvailable) this).func().apply(fx);
             } else {

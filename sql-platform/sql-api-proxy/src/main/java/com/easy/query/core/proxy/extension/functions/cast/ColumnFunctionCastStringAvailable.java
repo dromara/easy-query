@@ -5,6 +5,7 @@ import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.impl.StringTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.impl.as.AsStringTypeExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 /**
@@ -15,7 +16,7 @@ import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
  */
 public interface ColumnFunctionCastStringAvailable<TProperty> extends SQLSelectAsExpression, PropTypeColumn<TProperty> {
     default StringTypeExpression<String> toStr(){
-        return new StringTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.cast(sqlFunction, String.class);
@@ -25,7 +26,7 @@ public interface ColumnFunctionCastStringAvailable<TProperty> extends SQLSelectA
         }, String.class);
     }
     default StringTypeExpression<String> toChar(){
-        return new StringTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new StringTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.cast(sqlFunction, char.class);
@@ -35,7 +36,7 @@ public interface ColumnFunctionCastStringAvailable<TProperty> extends SQLSelectA
         }, String.class);
     }
     default StringTypeExpression<String> asStr(){
-        return new StringTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new AsStringTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 return ((DSLSQLFunctionAvailable) this).func().apply(fx);
             } else {

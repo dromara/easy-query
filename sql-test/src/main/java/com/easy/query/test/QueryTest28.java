@@ -11,6 +11,9 @@ import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.TopicTypeArrayJson;
+import com.easy.query.test.entity.TopicTypeArrayJson2;
+import com.easy.query.test.entity.TopicTypeJsonValue;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
 import lombok.Data;
@@ -19,6 +22,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +53,7 @@ public class QueryTest28 extends BaseTest {
         Assert.assertEquals("123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testQueryMap2() {
 //        Topic[] objects = easyEntityQuery.queryable(Topic.class)
@@ -72,12 +77,12 @@ public class QueryTest28 extends BaseTest {
     }
 
     @Data
-    public static class TypeA{
+    public static class TypeA {
         private String id;
     }
 
     @Test
-    public void testQueryNullOrDefault(){
+    public void testQueryNullOrDefault() {
 
         EasyQueryOption easyQueryOption = easyEntityQuery.getRuntimeContext().getQueryConfiguration().getEasyQueryOption();
         SQLExecuteStrategyEnum updateStrategy = easyQueryOption.getUpdateStrategy();
@@ -96,7 +101,7 @@ public class QueryTest28 extends BaseTest {
     }
 
     @Test
-    public void testQueryNullOrDefault2(){
+    public void testQueryNullOrDefault2() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -119,7 +124,7 @@ public class QueryTest28 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<Draft2<Long, BigDecimal>> list = easyEntityQuery.queryable(Topic.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .asTracking()
                 .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
                 .where((t, b2) -> {
@@ -147,7 +152,7 @@ public class QueryTest28 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
 
         List<Draft2<Long, BigDecimal>> list = easyEntityQuery.queryable(Topic.class)
-                .configure(s->s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
+                .configure(s -> s.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .asTracking()
                 .leftJoin(BlogEntity.class, (t, b2) -> t.id().eq(b2.id()))
                 .where((t, b2) -> {
@@ -191,7 +196,7 @@ public class QueryTest28 extends BaseTest {
     }
 
     @Test
-    public void testIncrementNullZero(){
+    public void testIncrementNullZero() {
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
@@ -203,6 +208,38 @@ public class QueryTest28 extends BaseTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("UPDATE `t_topic` SET `stars` = (IFNULL(`stars`,?) + ?) WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("0(Integer),1(Integer),5xxxx1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testNoValueConverter1() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        TopicTypeJsonValue topicTypeJsonValue1 = new TopicTypeJsonValue();
+        topicTypeJsonValue1.setName("123");
+        List<TopicTypeArrayJson> list3 = easyEntityQuery.queryable(TopicTypeArrayJson.class)
+                .where(o -> {
+                    o.title2().asStr().like("123");
+                    o.title2().asStr().contains("123");
+                    o.title2().asStr().startsWith("123");
+                    o.title2().asStr().endsWith("123");
+                    o.title2().eq(Collections.singletonList(topicTypeJsonValue1));
+                    o.title().likeRaw("456");
+                    TopicTypeJsonValue topicTypeJsonValue = new TopicTypeJsonValue();
+                    topicTypeJsonValue.setAge(1);
+                    topicTypeJsonValue.setName("1");
+                    o.title().eq(topicTypeJsonValue);
+                    o.title().toStr().contains("123");
+                })
+                .orderBy(o -> {
+                    o.title2().asc();
+                })
+                .toList();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`stars`,`title`,`title2`,`topic_type`,`create_time` FROM `t_topic_type_array` WHERE `title2` LIKE ? AND `title2` LIKE CONCAT('%',?,'%') AND `title2` LIKE CONCAT(?,'%') AND `title2` LIKE CONCAT('%',?) AND `title2` = ? AND `title` LIKE ? AND `title` = ? AND CAST(`title` AS CHAR) LIKE CONCAT('%',?,'%') ORDER BY `title2` ASC", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("%123%(String),123(String),123(String),123(String),[{\"age\":null,\"name\":\"123\"}](String),%456%(String),{\"age\":1,\"name\":\"1\"}(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
 

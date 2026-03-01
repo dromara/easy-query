@@ -5,6 +5,7 @@ import com.easy.query.core.proxy.PropTypeColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.extension.functions.type.BooleanTypeExpression;
 import com.easy.query.core.proxy.extension.functions.type.impl.BooleanTypeExpressionImpl;
+import com.easy.query.core.proxy.extension.functions.type.impl.as.AsBooleanTypeExpressionImpl;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
 
 /**
@@ -21,7 +22,7 @@ public interface ColumnFunctionCastBooleanAvailable<TProperty> extends SQLSelect
      */
     default BooleanTypeExpression<Boolean> toBoolean(){
         Class<Boolean> clazz = Boolean.class;
-        return new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), null, fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 SQLFunction sqlFunction = ((DSLSQLFunctionAvailable) this).func().apply(fx);
                 return fx.cast(sqlFunction, clazz);
@@ -37,7 +38,7 @@ public interface ColumnFunctionCastBooleanAvailable<TProperty> extends SQLSelect
      */
     default BooleanTypeExpression<Boolean> asBoolean() {
         Class<Boolean> clazz = Boolean.class;
-        return new BooleanTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
+        return new AsBooleanTypeExpressionImpl<>(this.getEntitySQLContext(), this.getTable(), this.getValue(), fx -> {
             if (this instanceof DSLSQLFunctionAvailable) {
                 return ((DSLSQLFunctionAvailable) this).func().apply(fx);
             } else {
