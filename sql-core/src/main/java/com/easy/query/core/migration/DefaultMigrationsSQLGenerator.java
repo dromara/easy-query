@@ -151,10 +151,13 @@ public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
         return databaseMigrationProvider.tableExists(schema, tableName);
     }
 
+    public TableMigrationData createTableMigrationMetadata(Class<?> entityClass) {
+        return new TableMigrationData();
+    }
 
     @Override
     public TableMigrationData parseEntity(Class<?> entityClass) {
-        TableMigrationData tableMigrationData = new TableMigrationData();
+        TableMigrationData tableMigrationData = createTableMigrationMetadata(entityClass);
         EntityMetadata entityMetadata = entityMetadataManager.getEntityMetadata(entityClass);
 
         EntityMigrationMetadata entityMigrationMetadata = databaseMigrationProvider.createEntityMigrationMetadata(entityMetadata);
