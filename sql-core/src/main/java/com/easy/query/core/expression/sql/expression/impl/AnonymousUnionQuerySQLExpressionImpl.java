@@ -24,10 +24,10 @@ import java.util.List;
  * @author xuejiaming
  */
 public class AnonymousUnionQuerySQLExpressionImpl implements AnonymousUnionEntityQuerySQLExpression {
-    private final List<EntityQuerySQLExpression> querySQLExpressions;
-    private final SQLUnionEnum sqlUnion;
+    protected final List<EntityQuerySQLExpression> querySQLExpressions;
+    protected final SQLUnionEnum sqlUnion;
     protected final List<EntityTableSQLExpression> tables;
-    private final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
+    protected final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
 
     public AnonymousUnionQuerySQLExpressionImpl(EntitySQLExpressionMetadata entitySQLExpressionMetadata, List<EntityQuerySQLExpression> querySQLExpressions, SQLUnionEnum sqlUnion){
         this.entitySQLExpressionMetadata = entitySQLExpressionMetadata;
