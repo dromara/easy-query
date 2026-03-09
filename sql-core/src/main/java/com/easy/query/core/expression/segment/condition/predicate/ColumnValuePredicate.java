@@ -23,7 +23,7 @@ import com.easy.query.core.util.EasySQLUtil;
  * create time 2023/2/14 23:34
  */
 public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
-    private final Column2Segment column2Segment;
+    private Column2Segment column2Segment;
     private final ColumnValue2Segment columnValue2Segment;
     private final SQLPredicateCompare compare;
 
@@ -36,6 +36,10 @@ public class ColumnValuePredicate implements ValuePredicate, ShardingPredicate {
     @Override
     public String toSQL(ToSQLContext toSQLContext) {
         return column2Segment.toSQL(toSQLContext) + " " + compare.getSQL() + " " + columnValue2Segment.toSQL(toSQLContext);
+    }
+
+    public void setColumn2Segment(Column2Segment column2Segment) {
+        this.column2Segment = column2Segment;
     }
 
     @Override

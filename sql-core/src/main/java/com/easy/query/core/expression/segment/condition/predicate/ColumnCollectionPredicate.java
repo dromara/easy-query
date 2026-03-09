@@ -32,13 +32,17 @@ public class ColumnCollectionPredicate implements ValuesPredicate, ShardingPredi
     private final Collection<ColumnValue2Segment> collection;
     private final SQLPredicateCompare compare;
     private final ExpressionContext expressionContext;
-    private final Column2Segment column2Segment;
+    private Column2Segment column2Segment;
 
     public ColumnCollectionPredicate(Column2Segment column2Segment, Collection<ColumnValue2Segment> collection, SQLPredicateCompare compare, ExpressionContext expressionContext) {
         this.column2Segment = column2Segment;
         this.collection = collection;
         this.compare = compare;
         this.expressionContext = expressionContext;
+    }
+
+    public void setColumn2Segment(Column2Segment column2Segment) {
+        this.column2Segment = column2Segment;
     }
 
     @Override

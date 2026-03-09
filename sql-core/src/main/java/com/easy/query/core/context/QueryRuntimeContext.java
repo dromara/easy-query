@@ -35,6 +35,7 @@ import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.predicate.SmartPredicateAnonymousExpressionBuilderProvider;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
+import com.easy.query.core.expression.sql.builder.internal.ContextBehaviorFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeProvider;
@@ -128,4 +129,5 @@ public interface QueryRuntimeContext {
     ValueAutoConverterProvider getValueAutoConverterProvider();
     RuntimeSchemaProvider getRuntimeSchemaProvider();
     CTERecursiveProvider getCTERecursiveProvider();
+    ContextBehaviorFactory getContextBehaviorFactory();
 }

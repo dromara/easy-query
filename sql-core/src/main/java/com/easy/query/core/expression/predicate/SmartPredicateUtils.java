@@ -7,6 +7,7 @@
 //import com.easy.query.core.expression.segment.SQLSegment;
 //import com.easy.query.core.expression.segment.condition.AbstractPredicateSegment;
 //import com.easy.query.core.expression.segment.condition.AndPredicateSegment;
+//import com.easy.query.core.expression.segment.condition.OrPredicateSegment;
 //import com.easy.query.core.expression.segment.condition.PredicateSegment;
 //import com.easy.query.core.expression.segment.condition.predicate.ColumnCollectionPredicate;
 //import com.easy.query.core.expression.segment.condition.predicate.ColumnValuePredicate;
@@ -20,7 +21,6 @@
 //import com.easy.query.core.util.EasyColumnSegmentUtil;
 //import com.easy.query.core.util.EasyStringUtil;
 //
-//import java.lang.reflect.Field;
 //import java.util.ArrayList;
 //import java.util.List;
 //import java.util.Objects;
@@ -30,40 +30,24 @@
 //    /**
 //     * 同一内置表or语句处理
 //     */
-//    public static boolean parseOrPredicate(EntityQueryExpressionBuilder entityQueryExpressionBuilder, AbstractPredicateSegment predicateSegment) {
+//    public static boolean parseOrPredicate(EntityQueryExpressionBuilder entityQueryExpressionBuilder, AbstractPredicateSegment orPredicateSegment) {
 //        List<ColumnSegmentInfo> infos = new ArrayList<>();
-//        boolean canParse = parseOrPredicate(entityQueryExpressionBuilder, predicateSegment, infos);
+//        boolean canParse = parseOrPredicate(entityQueryExpressionBuilder, orPredicateSegment, infos);
 //        if (!canParse || infos.isEmpty()) {
 //            return false;
 //        }
 //        ColumnSegmentInfo info = infos.get(0);
-//        PredicateSegment newPredicateSegment = info.getEntityQueryExpressionBuilder().getWhere();
-//        if (newPredicateSegment == null || newPredicateSegment.isEmpty()) {
-//            newPredicateSegment = info.getTableExpressionBuilder().getOn();
-//        }
-//
+//        PredicateSegment predicateSegment = getPredicateSegment(info);
 //        for (ColumnSegmentInfo item : infos) {
 //            Predicate predicate = item.getPredicate();
 //            Column2Segment column2Segment = createColumn2Segment(item.getEntityQueryExpressionBuilder(), item.getColumnSegment());
 //            if (predicate instanceof ColumnValuePredicate) {
-//                try {
-//                    Field column2SegmentField = ColumnValuePredicate.class.getDeclaredField("column2Segment");
-//                    column2SegmentField.setAccessible(true);
-//                    column2SegmentField.set(predicate, column2Segment);
-//                } catch (NoSuchFieldException | IllegalAccessException e) {
-//                    throw new RuntimeException("无法设置 column2Segment 属性", e);
-//                }
+//                ((ColumnValuePredicate)predicate).setColumn2Segment(column2Segment);
 //            } else if (predicate instanceof ColumnCollectionPredicate) {
-//                try {
-//                    Field column2SegmentField = ColumnCollectionPredicate.class.getDeclaredField("column2Segment");
-//                    column2SegmentField.setAccessible(true);
-//                    column2SegmentField.set(predicate, column2Segment);
-//                } catch (NoSuchFieldException | IllegalAccessException e) {
-//                    throw new RuntimeException("无法设置 column2Segment 属性", e);
-//                }
+//                ((ColumnCollectionPredicate)predicate).setColumn2Segment(column2Segment);
 //            }
 //        }
-//        newPredicateSegment.addPredicateSegment(predicateSegment);
+//        predicateSegment.addPredicateSegment(orPredicateSegment);
 //        return true;
 //    }
 //
@@ -73,11 +57,11 @@
 //    private static boolean parseOrPredicate(EntityQueryExpressionBuilder entityQueryExpressionBuilder, AbstractPredicateSegment predicateSegment, List<ColumnSegmentInfo> infos) {
 //        Predicate predicate = predicateSegment.getPredicate();
 //        if (predicate != null) {
-//            ColumnSegmentInfo info = SmartPredicateUtils.getColumnSegmentInfo(entityQueryExpressionBuilder, predicate);
+//            ColumnSegmentInfo info = getColumnSegmentInfo(entityQueryExpressionBuilder, predicate);
 //            if (info == null) {
 //                return false;
 //            }
-//            if (!infos.isEmpty() && infos.get(0).getEntityQueryExpressionBuilder() != info.getEntityQueryExpressionBuilder()) {
+//            if (!infos.isEmpty() && infos.get(0).getTableExpressionBuilder().getEntityTable() != info.getTableExpressionBuilder().getEntityTable()) {
 //                return false;
 //            }
 //            infos.add(info);
@@ -96,34 +80,22 @@
 //        return true;
 //    }
 //
+//    /**
+//     * and语句处理
+//     */
 //    public static boolean parseAndPredicate(EntityQueryExpressionBuilder entityQueryExpressionBuilder, Predicate predicate) {
 //        ColumnSegmentInfo info = getColumnSegmentInfo(entityQueryExpressionBuilder, predicate);
 //        if (info == null) {
 //            return false;
 //        }
-//        PredicateSegment predicateSegment = info.getEntityQueryExpressionBuilder().getWhere();
-//        if (predicateSegment == null || predicateSegment.isEmpty()) {
-//            predicateSegment = info.getTableExpressionBuilder().getOn();
-//        }
+//        PredicateSegment predicateSegment = getPredicateSegment(info);
 //        Column2Segment column2Segment = createColumn2Segment(info.getEntityQueryExpressionBuilder(), info.getColumnSegment());
 //        if (predicate instanceof ColumnValuePredicate) {
-//            try {
-//                Field column2SegmentField = ColumnValuePredicate.class.getDeclaredField("column2Segment");
-//                column2SegmentField.setAccessible(true);
-//                column2SegmentField.set(predicate, column2Segment);
-//            } catch (NoSuchFieldException | IllegalAccessException e) {
-//                throw new RuntimeException("无法设置 column2Segment 属性", e);
-//            }
+//            ((ColumnValuePredicate)predicate).setColumn2Segment(column2Segment);
 //            predicateSegment.addPredicateSegment(new AndPredicateSegment(predicate));
 //            return true;
 //        } else if (predicate instanceof ColumnCollectionPredicate) {
-//            try {
-//                Field column2SegmentField = ColumnCollectionPredicate.class.getDeclaredField("column2Segment");
-//                column2SegmentField.setAccessible(true);
-//                column2SegmentField.set(predicate, column2Segment);
-//            } catch (NoSuchFieldException | IllegalAccessException e) {
-//                throw new RuntimeException("无法设置 column2Segment 属性", e);
-//            }
+//            ((ColumnCollectionPredicate)predicate).setColumn2Segment(column2Segment);
 //            predicateSegment.addPredicateSegment(new AndPredicateSegment(predicate));
 //            return true;
 //        }
@@ -160,7 +132,10 @@
 //            return null;
 //        }
 //        MultiTableTypeEnum multiTableType = tableExpressionBuilder.getMultiTableType();
-//        if (multiTableType != MultiTableTypeEnum.FROM && multiTableType != MultiTableTypeEnum.INNER_JOIN) {
+//        if (multiTableType != MultiTableTypeEnum.FROM &&
+//                multiTableType != MultiTableTypeEnum.INNER_JOIN &&
+//                multiTableType != MultiTableTypeEnum.LEFT_JOIN &&
+//                multiTableType != MultiTableTypeEnum.RIGHT_JOIN) {
 //            return null;
 //        }
 //        if (tableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder) {
@@ -171,6 +146,33 @@
 //            }
 //        }
 //        return new ColumnSegmentInfo(columnSegment, tableExpressionBuilder, entityQueryExpressionBuilder);
+//    }
+//
+//    /**
+//     * 获取列名对应的表的where条件
+//     */
+//    public static PredicateSegment getPredicateSegment(ColumnSegmentInfo info) {
+//        AbstractPredicateSegment predicateSegment = getAbstractPredicateSegment(info);
+//        if(predicateSegment.isPredicate()){
+//            PredicateSegment clonePredicateSegment = predicateSegment.clonePredicateSegment();
+//            predicateSegment.reset();
+//            predicateSegment.addPredicateSegment(clonePredicateSegment);
+//        }
+//        return predicateSegment;
+//    }
+//
+//    /**
+//     * 获取列名对应的表的where条件
+//     */
+//    private static AbstractPredicateSegment getAbstractPredicateSegment(ColumnSegmentInfo info) {
+//        EntityTableExpressionBuilder tableExpressionBuilder = info.getTableExpressionBuilder();
+//        MultiTableTypeEnum multiTableType =  tableExpressionBuilder.getMultiTableType();
+//        if(multiTableType == MultiTableTypeEnum.LEFT_JOIN ||
+//                multiTableType == MultiTableTypeEnum.INNER_JOIN ||
+//                multiTableType == MultiTableTypeEnum.RIGHT_JOIN) {
+//            return (AbstractPredicateSegment) tableExpressionBuilder.getOn();
+//        }
+//        return  (AbstractPredicateSegment) info.getEntityQueryExpressionBuilder().getWhere();
 //    }
 //
 //    /**
@@ -230,20 +232,13 @@
 //         */
 //        private Predicate predicate;
 //
-//        /**
-//         * 列
-//         */
-//        private ColumnSegment columnSegment;
+//        public ColumnSegment getColumnSegment() {
+//            return columnSegment;
+//        }
 //
-//        /**
-//         * 表关联关系
-//         */
-//        private EntityTableExpressionBuilder tableExpressionBuilder;
-//
-//        /**
-//         * 表对应的表达式部分（where）
-//         */
-//        private EntityQueryExpressionBuilder entityQueryExpressionBuilder;
+//        public void setColumnSegment(ColumnSegment columnSegment) {
+//            this.columnSegment = columnSegment;
+//        }
 //
 //        public Predicate getPredicate() {
 //            return predicate;
@@ -251,14 +246,6 @@
 //
 //        public void setPredicate(Predicate predicate) {
 //            this.predicate = predicate;
-//        }
-//
-//        public ColumnSegment getColumnSegment() {
-//            return columnSegment;
-//        }
-//
-//        public void setColumnSegment(ColumnSegment columnSegment) {
-//            this.columnSegment = columnSegment;
 //        }
 //
 //        public EntityTableExpressionBuilder getTableExpressionBuilder() {
@@ -276,5 +263,20 @@
 //        public void setEntityQueryExpressionBuilder(EntityQueryExpressionBuilder entityQueryExpressionBuilder) {
 //            this.entityQueryExpressionBuilder = entityQueryExpressionBuilder;
 //        }
+//
+//        /**
+//         * 列
+//         */
+//        private ColumnSegment columnSegment;
+//
+//        /**
+//         * 表关联关系
+//         */
+//        private EntityTableExpressionBuilder tableExpressionBuilder;
+//
+//        /**
+//         * 表对应的表达式部分（where）
+//         */
+//        private EntityQueryExpressionBuilder entityQueryExpressionBuilder;
 //    }
 //}

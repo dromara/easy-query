@@ -35,11 +35,17 @@ public class SmartPredicateAndUnit extends AbstractSmartPredicateUnit {
     private void parsePredicate() {
         List<Predicate> flatAndPredicates = andPredicateSegment.getFlatAndPredicates();
         if (EasyCollectionUtil.isNotEmpty(flatAndPredicates)) {
+            boolean reset = true;
             for (Predicate predicate : flatAndPredicates) {
                 SmartPredicateParseResult parseFilterAction = parsePredicate(predicate);
                 if (parseFilterAction != null) {
                     this.parseFilterActionList.add(parseFilterAction);
+                }else{
+                    reset = false;
                 }
+            }
+            if(reset){
+                andPredicateSegment.reset();
             }
         }
     }

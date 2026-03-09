@@ -20,6 +20,7 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.parser.core.base.tree.TreeCTEOption;
 import com.easy.query.core.expression.sql.TableContext;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousCteTableQueryExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.internal.ContextBehaviorFactory;
 import com.easy.query.core.expression.sql.builder.internal.EasyBehavior;
 import com.easy.query.core.expression.sql.builder.internal.ExpressionContextInterceptor;
 import com.easy.query.core.expression.sql.fill.FillExpression;
@@ -93,10 +94,10 @@ public class EasyExpressionContext implements ExpressionContext {
         this.deleteThrowException = queryConfiguration.deleteThrow();
 //        params = new ArrayList<>();
         //如果他是不查询大列的就去掉
-        this.easyBehavior = new EasyBehavior();
+        ContextBehaviorFactory contextBehaviorFactory = runtimeContext.getContextBehaviorFactory();
+        this.easyBehavior = contextBehaviorFactory.create();
         EasyQueryOption easyQueryOption = queryConfiguration.getEasyQueryOption();
 
-        easyBehavior.addBehavior(EasyBehaviorEnum.USE_TRACKING);
         this.expressionContextInterceptor = new ExpressionContextInterceptor();
         this.tableContext = new TableContext();
         this.maxShardingQueryLimit = null;
@@ -127,7 +128,7 @@ public class EasyExpressionContext implements ExpressionContext {
 
     @Override
     public ContextTypeEnum getType() {
-        return null;
+        return type;
     }
 
     @Override

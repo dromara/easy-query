@@ -37,6 +37,7 @@ import com.easy.query.core.expression.parser.factory.SQLExpressionInvokeFactory;
 import com.easy.query.core.expression.predicate.SmartPredicateAnonymousExpressionBuilderProvider;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
+import com.easy.query.core.expression.sql.builder.internal.ContextBehaviorFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.include.IncludeParserEngine;
 import com.easy.query.core.expression.sql.include.IncludeProvider;
@@ -118,6 +119,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     private final ValueAutoConverterProvider valueAutoConverterProvider;
     private final RuntimeSchemaProvider runtimeSchemaProvider;
     private final CTERecursiveProvider cteRecursiveProvider;
+    private final ContextBehaviorFactory contextBehaviorFactory;
 
     public DefaultEasyQueryRuntimeContext(ServiceProvider serviceProvider,
                                           EasyQueryDataSource easyQueryDataSource,
@@ -172,7 +174,8 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
                                           StreamIterableFactory streamIterableFactory,
                                           ValueAutoConverterProvider valueAutoConverterProvider,
                                           RuntimeSchemaProvider runtimeSchemaProvider,
-                                          CTERecursiveProvider cteRecursiveProvider) {
+                                          CTERecursiveProvider cteRecursiveProvider,
+                                          ContextBehaviorFactory contextBehaviorFactory) {
         this.serviceProvider = serviceProvider;
         this.easyQueryDataSource = easyQueryDataSource;
         this.easyQueryConfiguration = easyQueryConfiguration;
@@ -227,6 +230,7 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
         this.valueAutoConverterProvider = valueAutoConverterProvider;
         this.runtimeSchemaProvider = runtimeSchemaProvider;
         this.cteRecursiveProvider = cteRecursiveProvider;
+        this.contextBehaviorFactory = contextBehaviorFactory;
     }
 
     @Override
@@ -497,5 +501,10 @@ public class DefaultEasyQueryRuntimeContext implements QueryRuntimeContext {
     @Override
     public CTERecursiveProvider getCTERecursiveProvider() {
         return cteRecursiveProvider;
+    }
+
+    @Override
+    public ContextBehaviorFactory getContextBehaviorFactory() {
+        return contextBehaviorFactory;
     }
 }

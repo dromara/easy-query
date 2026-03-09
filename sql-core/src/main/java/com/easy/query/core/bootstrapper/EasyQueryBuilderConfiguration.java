@@ -94,6 +94,8 @@ import com.easy.query.core.expression.segment.factory.DefaultSQLSegmentFactory;
 import com.easy.query.core.expression.segment.factory.SQLSegmentFactory;
 import com.easy.query.core.expression.sql.builder.factory.DefaultEasyExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
+import com.easy.query.core.expression.sql.builder.internal.ContextBehaviorFactory;
+import com.easy.query.core.expression.sql.builder.internal.DefaultContextBehaviorFactory;
 import com.easy.query.core.expression.sql.expression.factory.DefaultEasyExpressionFactory;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.expression.sql.include.DefaultIncludeParserEngine;
@@ -208,6 +210,7 @@ public class EasyQueryBuilderConfiguration {
 //                .replaceService(EntityExpressionExecutor.class, ShardingEntityExpressionExecutor.class)
                 .replaceService(ShardingExecutorService.class, DefaultEasyShardingExecutorService.class)
                 .replaceService(SmartPredicateAnonymousExpressionBuilderProvider.class, DefaultSmartPredicateAnonymousExpressionBuilderProvider.class)
+//                .replaceService(SmartPredicateAnonymousExpressionBuilderProvider.class, RealSmartPredicateAnonymousExpressionBuilderProvider.class)
                 .replaceService(ExpressionFactory.class, DefaultEasyExpressionFactory.class)
                 .replaceService(ShardingComparer.class, JavaLanguageShardingComparer.class)
                 .replaceService(JdbcTypeHandlerManager.class, EasyJdbcTypeHandlerManager.class)
@@ -237,6 +240,7 @@ public class EasyQueryBuilderConfiguration {
                 //sql参数打印格式化
                 .replaceService(SQLParameterPrintFormat.class, DefaultSQLParameterPrintFormat.class)
                 .replaceService(SQLFunc.class, SQLFuncImpl.class)
+                .replaceService(ContextBehaviorFactory.class, DefaultContextBehaviorFactory.class)
                 .replaceService(JdbcSQLPrinter.class, DefaultJdbcSQLPrinter.class)
                 .replaceService(Column2MapKeyConversion.class, DefaultColumn2MapKeyConversion.class)
                 .replaceService(RelationValueFactory.class, DefaultRelationValueFactory.class)

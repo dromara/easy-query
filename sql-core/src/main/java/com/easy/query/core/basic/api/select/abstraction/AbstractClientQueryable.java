@@ -1237,7 +1237,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
                                 }
                             }
                         }
-                        return with;
+                        return with.asNoTracking();
                     });
         }
     }

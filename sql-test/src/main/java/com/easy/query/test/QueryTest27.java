@@ -782,8 +782,8 @@ public class QueryTest27 extends BaseTest {
             o.order().eq(BigDecimal.ONE);
         }).toList();
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t1.`score` AS `score`,t1.`status1` AS `status1`,t1.`order` AS `order`,t1.`is_top` AS `is_top`,t1.`top` AS `top` FROM (SELECT t.`score` AS `score`,t.`status` AS `status1`,t.`order` AS `order`,t.`is_top` AS `is_top`,t.`top` AS `top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`status` = ? AND t.`order` = ?) t1 WHERE t1.`status1` = ? AND t1.`order` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("false(Boolean),0(Integer),1(BigDecimal),0(Integer),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t1.`score` AS `score`,t1.`status1` AS `status1`,t1.`order` AS `order`,t1.`is_top` AS `is_top`,t1.`top` AS `top` FROM (SELECT t.`score` AS `score`,t.`status` AS `status1`,t.`order` AS `order`,t.`is_top` AS `is_top`,t.`top` AS `top` FROM `t_blog` t WHERE t.`deleted` = ? AND t.`status` = ? AND t.`order` = ?) t1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),0(Integer),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
 
     }
@@ -809,8 +809,8 @@ public class QueryTest27 extends BaseTest {
             o.order().eq(BigDecimal.ONE);
         }).toList();
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t2.`score` AS `score`,t2.`status1` AS `status1`,t2.`order` AS `order`,t2.`is_top` AS `is_top`,t2.`top` AS `top` FROM (SELECT t.`score` AS `score`,t1.`status` AS `status1`,t.`order` AS `order`,t.`is_top` AS `is_top`,t.`top` AS `top` FROM `t_blog` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` AND t1.`status` = ? WHERE t.`deleted` = ? AND t.`order` = ?) t2 WHERE t2.`status1` = ? AND t2.`order` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
-        Assert.assertEquals("false(Boolean),0(Integer),false(Boolean),1(BigDecimal),0(Integer),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        Assert.assertEquals("SELECT t2.`score` AS `score`,t2.`status1` AS `status1`,t2.`order` AS `order`,t2.`is_top` AS `is_top`,t2.`top` AS `top` FROM (SELECT t.`score` AS `score`,t1.`status` AS `status1`,t.`order` AS `order`,t.`is_top` AS `is_top`,t.`top` AS `top` FROM `t_blog` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` AND t1.`status` = ? WHERE t.`deleted` = ? AND t.`order` = ?) t2", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("false(Boolean),0(Integer),false(Boolean),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
     @Test

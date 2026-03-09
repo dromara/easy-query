@@ -39,7 +39,18 @@ public abstract class AbstractPredicateSegment implements PredicateSegment, Shar
     }
 
     public boolean isEmpty() {
-        return this.predicate == null && this.children == null;
+        if (this.predicate == null && this.children == null) {
+            return true;
+        }
+        if (this.children != null) {
+            for (PredicateSegment child : children) {
+                if (!child.isEmpty()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     public boolean isNotEmpty() {
