@@ -30,7 +30,7 @@ import org.junit.Test;
  * create time 2026/3/6 00:00
  * 文件说明
  *
- * @author xuejiaming
+ * @author WCPE
  */
 public class ForUpdateDialectToSQLSmokeTest {
     @Before

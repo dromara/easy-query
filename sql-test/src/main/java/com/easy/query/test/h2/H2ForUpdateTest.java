@@ -1,12 +1,12 @@
-package com.easy.query.test.mysql8;
+package com.easy.query.test.h2;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
+import com.easy.query.test.h2.domain.DefTable;
+import com.easy.query.test.h2.domain.DefTableLeft1;
 import com.easy.query.test.listener.ListenerContext;
-import com.easy.query.test.mysql8.entity.bank.SysBankCard;
-import com.easy.query.test.mysql8.entity.bank.SysUser;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,20 +16,20 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * create time 2026/3/5 19:00
- * 文件说明
+ * create time 2026/3/10
+ * H2 FOR UPDATE integration tests
  *
  * @author WCPE
  */
-public class ForUpdateTest extends BaseTest {
+public class H2ForUpdateTest extends H2BaseTest {
 
     @Test
     public void testForUpdateSqlAppendInTransaction() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
         try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-            easyEntityQuery.queryable(SysUser.class)
-                    .where(user -> user.id().eq("u1"))
+            easyEntityQuery.queryable(DefTable.class)
+                    .where(table -> table.id().eq("0"))
                     .forUpdate()
                     .firstOrNull();
             transaction.commit();
@@ -44,8 +44,8 @@ public class ForUpdateTest extends BaseTest {
     @Test
     public void testForUpdateWithoutTransactionThrows() {
         try {
-            easyEntityQuery.queryable(SysUser.class)
-                    .where(user -> user.id().eq("u1"))
+            easyEntityQuery.queryable(DefTable.class)
+                    .where(table -> table.id().eq("0"))
                     .forUpdate();
             Assert.fail("forUpdate should require active transaction");
         } catch (IllegalStateException ex) {
@@ -57,8 +57,8 @@ public class ForUpdateTest extends BaseTest {
     public void testForUpdateJoinNotSupported() {
         try (Transaction transaction = easyEntityQuery.beginTransaction()) {
             try {
-                easyEntityQuery.queryable(SysUser.class)
-                        .leftJoin(SysBankCard.class, (user, card) -> user.id().eq(card.uid()))
+                easyEntityQuery.queryable(DefTable.class)
+                        .leftJoin(DefTableLeft1.class, (table, left1) -> table.id().eq(left1.defId()))
                         .forUpdate();
                 Assert.fail("forUpdate should reject join query");
             } catch (IllegalStateException ex) {
@@ -72,8 +72,8 @@ public class ForUpdateTest extends BaseTest {
     public void testForUpdateDuplicateCallThrows() {
         try (Transaction transaction = easyEntityQuery.beginTransaction()) {
             try {
-                easyEntityQuery.queryable(SysUser.class)
-                        .where(user -> user.id().eq("u1"))
+                easyEntityQuery.queryable(DefTable.class)
+                        .where(table -> table.id().eq("0"))
                         .forUpdate()
                         .forUpdate();
                 Assert.fail("repeated forUpdate should be rejected");
@@ -94,8 +94,8 @@ public class ForUpdateTest extends BaseTest {
 
         Thread firstThread = new Thread(() -> {
             try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                easyEntityQuery.queryable(SysUser.class)
-                        .where(user -> user.id().eq("u1"))
+                easyEntityQuery.queryable(DefTable.class)
+                        .where(table -> table.id().eq("0"))
                         .forUpdate()
                         .firstOrNull();
                 firstLocked.countDown();
@@ -107,7 +107,7 @@ public class ForUpdateTest extends BaseTest {
                 error.compareAndSet(null, ex);
                 releaseFirst.countDown();
             }
-        }, "for-update-first-thread");
+        }, "h2-for-update-first-thread");
 
         Thread secondThread = new Thread(() -> {
             try {
@@ -116,8 +116,8 @@ public class ForUpdateTest extends BaseTest {
                 }
                 long start = System.currentTimeMillis();
                 try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                    easyEntityQuery.queryable(SysUser.class)
-                            .where(user -> user.id().eq("u1"))
+                    easyEntityQuery.queryable(DefTable.class)
+                            .where(table -> table.id().eq("0"))
                             .forUpdate()
                             .firstOrNull();
                     transaction.commit();
@@ -128,7 +128,7 @@ public class ForUpdateTest extends BaseTest {
             } finally {
                 secondFinished.countDown();
             }
-        }, "for-update-second-thread");
+        }, "h2-for-update-second-thread");
 
         firstThread.start();
         secondThread.start();
@@ -148,11 +148,11 @@ public class ForUpdateTest extends BaseTest {
     @Test
     public void testForUpdateAppliesOnlyOnOuterQueryForExistsAndInSubQuery() {
         try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-            String existsSql = easyEntityQuery.queryable(SysUser.class)
-                    .where(user -> {
-                        user.expression().exists(
-                                user.expression().subQueryable(SysBankCard.class)
-                                        .where(bankCard -> bankCard.uid().eq(user.id()))
+            String existsSql = easyEntityQuery.queryable(DefTable.class)
+                    .where(table -> {
+                        table.expression().exists(
+                                table.expression().subQueryable(DefTableLeft1.class)
+                                        .where(left1 -> left1.defId().eq(table.id()))
                         );
                     })
                     .forUpdate()
@@ -160,10 +160,10 @@ public class ForUpdateTest extends BaseTest {
             Assert.assertTrue(existsSql.endsWith(" FOR UPDATE"));
             Assert.assertEquals(1, countMatches(existsSql, "FOR UPDATE"));
 
-            Query<String> uidSubQuery = easyEntityQuery.queryable(SysBankCard.class)
-                    .selectColumn(bankCard -> bankCard.uid());
-            String inSql = easyEntityQuery.queryable(SysUser.class)
-                    .where(user -> user.id().in(uidSubQuery))
+            Query<String> defIdSubQuery = easyEntityQuery.queryable(DefTableLeft1.class)
+                    .selectColumn(left1 -> left1.defId());
+            String inSql = easyEntityQuery.queryable(DefTable.class)
+                    .where(table -> table.id().in(defIdSubQuery))
                     .forUpdate()
                     .toSQL();
             Assert.assertTrue(inSql.endsWith(" FOR UPDATE"));
@@ -175,8 +175,8 @@ public class ForUpdateTest extends BaseTest {
     @Test
     public void testForUpdateDerivedCountAndExistsSqlBehaviorConsistent() {
         try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-            EntityQueryable<?, SysUser> forUpdateQueryable = easyEntityQuery.queryable(SysUser.class)
-                    .where(user -> user.id().eq("u1"))
+            EntityQueryable<?, DefTable> forUpdateQueryable = easyEntityQuery.queryable(DefTable.class)
+                    .where(table -> table.id().eq("0"))
                     .forUpdate();
 
             String countSql = forUpdateQueryable.cloneQueryable()

@@ -1,4 +1,4 @@
-package com.easy.query.test.mysql8;
+package com.easy.query.test.dameng;
 
 import com.easy.query.api.proxy.entity.select.EntityQueryable;
 import com.easy.query.core.basic.api.select.Query;
@@ -16,19 +16,19 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * create time 2026/3/5 19:00
- * 文件说明
+ * create time 2026/3/10
+ * Dameng FOR UPDATE integration tests
  *
  * @author WCPE
  */
-public class ForUpdateTest extends BaseTest {
+public class DamengForUpdateTest extends DamengBaseTest {
 
     @Test
     public void testForUpdateSqlAppendInTransaction() {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
-        try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-            easyEntityQuery.queryable(SysUser.class)
+        try (Transaction transaction = entityQuery.beginTransaction()) {
+            entityQuery.queryable(SysUser.class)
                     .where(user -> user.id().eq("u1"))
                     .forUpdate()
                     .firstOrNull();
@@ -44,7 +44,7 @@ public class ForUpdateTest extends BaseTest {
     @Test
     public void testForUpdateWithoutTransactionThrows() {
         try {
-            easyEntityQuery.queryable(SysUser.class)
+            entityQuery.queryable(SysUser.class)
                     .where(user -> user.id().eq("u1"))
                     .forUpdate();
             Assert.fail("forUpdate should require active transaction");
@@ -55,9 +55,9 @@ public class ForUpdateTest extends BaseTest {
 
     @Test
     public void testForUpdateJoinNotSupported() {
-        try (Transaction transaction = easyEntityQuery.beginTransaction()) {
+        try (Transaction transaction = entityQuery.beginTransaction()) {
             try {
-                easyEntityQuery.queryable(SysUser.class)
+                entityQuery.queryable(SysUser.class)
                         .leftJoin(SysBankCard.class, (user, card) -> user.id().eq(card.uid()))
                         .forUpdate();
                 Assert.fail("forUpdate should reject join query");
@@ -70,9 +70,9 @@ public class ForUpdateTest extends BaseTest {
 
     @Test
     public void testForUpdateDuplicateCallThrows() {
-        try (Transaction transaction = easyEntityQuery.beginTransaction()) {
+        try (Transaction transaction = entityQuery.beginTransaction()) {
             try {
-                easyEntityQuery.queryable(SysUser.class)
+                entityQuery.queryable(SysUser.class)
                         .where(user -> user.id().eq("u1"))
                         .forUpdate()
                         .forUpdate();
@@ -93,8 +93,8 @@ public class ForUpdateTest extends BaseTest {
         AtomicReference<Throwable> error = new AtomicReference<>();
 
         Thread firstThread = new Thread(() -> {
-            try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                easyEntityQuery.queryable(SysUser.class)
+            try (Transaction transaction = entityQuery.beginTransaction()) {
+                entityQuery.queryable(SysUser.class)
                         .where(user -> user.id().eq("u1"))
                         .forUpdate()
                         .firstOrNull();
@@ -107,7 +107,7 @@ public class ForUpdateTest extends BaseTest {
                 error.compareAndSet(null, ex);
                 releaseFirst.countDown();
             }
-        }, "for-update-first-thread");
+        }, "dameng-for-update-first-thread");
 
         Thread secondThread = new Thread(() -> {
             try {
@@ -115,8 +115,8 @@ public class ForUpdateTest extends BaseTest {
                     throw new IllegalStateException("second transaction did not observe first lock");
                 }
                 long start = System.currentTimeMillis();
-                try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-                    easyEntityQuery.queryable(SysUser.class)
+                try (Transaction transaction = entityQuery.beginTransaction()) {
+                    entityQuery.queryable(SysUser.class)
                             .where(user -> user.id().eq("u1"))
                             .forUpdate()
                             .firstOrNull();
@@ -128,7 +128,7 @@ public class ForUpdateTest extends BaseTest {
             } finally {
                 secondFinished.countDown();
             }
-        }, "for-update-second-thread");
+        }, "dameng-for-update-second-thread");
 
         firstThread.start();
         secondThread.start();
@@ -147,8 +147,8 @@ public class ForUpdateTest extends BaseTest {
 
     @Test
     public void testForUpdateAppliesOnlyOnOuterQueryForExistsAndInSubQuery() {
-        try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-            String existsSql = easyEntityQuery.queryable(SysUser.class)
+        try (Transaction transaction = entityQuery.beginTransaction()) {
+            String existsSql = entityQuery.queryable(SysUser.class)
                     .where(user -> {
                         user.expression().exists(
                                 user.expression().subQueryable(SysBankCard.class)
@@ -160,9 +160,9 @@ public class ForUpdateTest extends BaseTest {
             Assert.assertTrue(existsSql.endsWith(" FOR UPDATE"));
             Assert.assertEquals(1, countMatches(existsSql, "FOR UPDATE"));
 
-            Query<String> uidSubQuery = easyEntityQuery.queryable(SysBankCard.class)
+            Query<String> uidSubQuery = entityQuery.queryable(SysBankCard.class)
                     .selectColumn(bankCard -> bankCard.uid());
-            String inSql = easyEntityQuery.queryable(SysUser.class)
+            String inSql = entityQuery.queryable(SysUser.class)
                     .where(user -> user.id().in(uidSubQuery))
                     .forUpdate()
                     .toSQL();
@@ -174,8 +174,8 @@ public class ForUpdateTest extends BaseTest {
 
     @Test
     public void testForUpdateDerivedCountAndExistsSqlBehaviorConsistent() {
-        try (Transaction transaction = easyEntityQuery.beginTransaction()) {
-            EntityQueryable<?, SysUser> forUpdateQueryable = easyEntityQuery.queryable(SysUser.class)
+        try (Transaction transaction = entityQuery.beginTransaction()) {
+            EntityQueryable<?, SysUser> forUpdateQueryable = entityQuery.queryable(SysUser.class)
                     .where(user -> user.id().eq("u1"))
                     .forUpdate();
 
