@@ -11,6 +11,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ContextTypeEnum;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
+import com.easy.query.core.enums.QueryLockEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
@@ -58,6 +59,7 @@ public class EasyExpressionContext implements ExpressionContext {
     private boolean deleteThrowException;
     private Object version;
     private ExecuteMethodEnum executeMethod = ExecuteMethodEnum.UNKNOWN;
+    private QueryLockEnum queryLock = QueryLockEnum.NONE;
     private SQLExecuteStrategyEnum sqlStrategy = SQLExecuteStrategyEnum.DEFAULT;
 
     private Integer maxShardingQueryLimit;
@@ -282,6 +284,16 @@ public class EasyExpressionContext implements ExpressionContext {
     }
 
     @Override
+    public void setQueryLock(QueryLockEnum queryLock) {
+        this.queryLock = queryLock == null ? QueryLockEnum.NONE : queryLock;
+    }
+
+    @Override
+    public QueryLockEnum getQueryLock() {
+        return queryLock;
+    }
+
+    @Override
     public void setMaxShardingQueryLimit(Integer maxShardingQueryLimit) {
         this.maxShardingQueryLimit = maxShardingQueryLimit;
     }
@@ -346,6 +358,7 @@ public class EasyExpressionContext implements ExpressionContext {
         otherExpressionContext.deleteThrow(this.deleteThrowException);
         otherExpressionContext.setVersion(this.version);
         otherExpressionContext.executeMethod(this.executeMethod);
+        otherExpressionContext.setQueryLock(this.queryLock);
         otherExpressionContext.useSQLStrategy(this.sqlStrategy);
         otherExpressionContext.setMaxShardingQueryLimit(this.maxShardingQueryLimit);
         otherExpressionContext.setConnectionMode(this.connectionMode);
@@ -462,6 +475,7 @@ public class EasyExpressionContext implements ExpressionContext {
         easyExpressionContext.deleteThrowException = this.deleteThrowException;
         easyExpressionContext.version = this.version;
         easyExpressionContext.executeMethod = this.executeMethod;
+        easyExpressionContext.queryLock = this.queryLock;
         easyExpressionContext.sqlStrategy = this.sqlStrategy;
         easyExpressionContext.maxShardingQueryLimit = this.maxShardingQueryLimit;
         easyExpressionContext.connectionMode = this.connectionMode;

@@ -126,6 +126,18 @@ public interface EntityQueryable<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1> e
     EntityQueryable<T1Proxy, T1> limit(boolean condition, long offset, long rows);
 
     /**
+     * Enable row-level lock query and append {@code FOR UPDATE} to SQL.
+     *
+     * <p>Requires an active transaction and supports only single-table query.</p>
+     *
+     * @return current queryable
+     */
+    @NotNull
+    default EntityQueryable<T1Proxy, T1> forUpdate() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
      * 先limit再select select selectExpression(*) from (select * from table limit x,y) t
      * @param offset
      * @param rows
