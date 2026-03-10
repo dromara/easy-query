@@ -35,16 +35,15 @@ public class SmartPredicateAndUnit extends AbstractSmartPredicateUnit {
     private void parsePredicate() {
         List<Predicate> flatAndPredicates = andPredicateSegment.getFlatAndPredicates();
         if (EasyCollectionUtil.isNotEmpty(flatAndPredicates)) {
-            boolean reset = true;
+            int parseCount = 0;
             for (Predicate predicate : flatAndPredicates) {
                 SmartPredicateParseResult parseFilterAction = parsePredicate(predicate);
                 if (parseFilterAction != null) {
+                    parseCount++;
                     this.parseFilterActionList.add(parseFilterAction);
-                }else{
-                    reset = false;
                 }
             }
-            if(reset){
+            if (flatAndPredicates.size() == parseCount) {
                 andPredicateSegment.reset();
             }
         }
@@ -57,19 +56,19 @@ public class SmartPredicateAndUnit extends AbstractSmartPredicateUnit {
             if (parseTable == entityQueryExpressionBuilder.getFromTable().getEntityTable()) {
                 predicateSQLAction.filterAction.apply(filter);
             } else {
-                boolean goOnRelationTable=true;
+                boolean goOnRelationTable = true;
                 for (EntityTableExpressionBuilder tableExpressionBuilder : entityQueryExpressionBuilder.getTables()) {
                     boolean ok = appendTableJoinOnPredicate(tableExpressionBuilder, predicateSQLAction);
-                    if(ok){
-                        goOnRelationTable=false;
+                    if (ok) {
+                        goOnRelationTable = false;
                         break;
                     }
                 }
-                if(!goOnRelationTable){
+                if (!goOnRelationTable) {
                     for (Map.Entry<RelationTableKey, EntityTableExpressionBuilder> kv : entityQueryExpressionBuilder.getRelationTables().entrySet()) {
                         EntityTableExpressionBuilder tableExpressionBuilder = kv.getValue();
                         boolean ok = appendTableJoinOnPredicate(tableExpressionBuilder, predicateSQLAction);
-                        if(ok){
+                        if (ok) {
                             break;
                         }
                     }

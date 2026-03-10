@@ -44,7 +44,7 @@ public class SmartPredicateOrUnit extends AbstractSmartPredicateUnit {
 
     private void parsePredicate() {
         List<PredicateSegment> children = andPredicateSegment.getChildren();
-        boolean reset=true;
+        int parseCount=0;
         for (PredicateSegment predicateSegment : children) {
             if (this.isInvoke) {//or里面必须所有的都是这个条件才可以
                 List<Predicate> flatAndPredicates = predicateSegment.getFlatAndPredicates();
@@ -53,20 +53,17 @@ public class SmartPredicateOrUnit extends AbstractSmartPredicateUnit {
 
                     SmartPredicateParseResult parseFilterAction = parsePredicate(first);
                     if (parseFilterAction != null) {
+                        parseCount++;
                         this.parseFilterActionList.add(parseFilterAction);
                     } else {
                         this.isInvoke = false;
-                        reset=false;
                     }
                 } else {
                     this.isInvoke = false;
-                    reset=false;
                 }
-            }else{
-                reset=false;
             }
         }
-        if(reset){
+        if(children.size()==parseCount){
             andPredicateSegment.reset();
         }
     }
