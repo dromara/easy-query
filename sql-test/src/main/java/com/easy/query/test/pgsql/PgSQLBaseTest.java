@@ -106,6 +106,7 @@ public class PgSQLBaseTest {
         configuration.applyInterceptor(new MyEntityInterceptor());
         configuration.applyInterceptor(new MyTenantInterceptor());
         configuration.applyInterceptor(new MyCategoryInterceptor());
+        configuration.applyValueConverter(new JsonObjectAutoConverter());
 //        configuration.applyInterceptor(new TopicInterceptor());
         configuration.applyShardingInitializer(new FixShardingInitializer());
         JdbcTypeHandlerManager jdbcTypeHandlerManager = runtimeContext.getJdbcTypeHandlerManager();
