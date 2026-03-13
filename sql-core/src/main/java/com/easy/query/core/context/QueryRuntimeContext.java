@@ -83,7 +83,6 @@ public interface QueryRuntimeContext {
     DataSourceRouteManager getDataSourceRouteManager();
     ShardingComparer getShardingComparer();
     ShardingQueryCountManager getShardingQueryCountManager();
-    @Deprecated
     DataSourceUnitFactory getDataSourceUnitFactory();
 
     SQLSegmentFactory getSQLSegmentFactory();

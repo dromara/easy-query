@@ -24,8 +24,10 @@ public class PgTopicJson2 implements ProxyEntityAvailable<PgTopicJson2, PgTopicJ
     @Column(primaryKey = true)
     private String id;
     private String name;
+    //如果不使用code-first那么可以不添加该注解和数据库类型
     @Column(dbType = "jsonb")
     private TopicExtraJson extraJson;
+    //如果不使用code-first那么可以不添加该注解和数据库类型
     @Column(dbType = "jsonb")
     private List<TopicExtraJson> extraJsonArray;
 }

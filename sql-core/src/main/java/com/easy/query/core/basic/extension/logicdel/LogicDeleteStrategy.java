@@ -21,16 +21,6 @@ public interface LogicDeleteStrategy {
     String getStrategy();
 
     /**
-     * 哪些属性类型支持
-     *
-     * @return
-     */
-    @Deprecated
-    default Set<Class<?>> allowedPropertyTypes() {
-        return null;
-    }
-
-    /**
      * 配置逻辑删除过滤和set
      *
      * @param builder
