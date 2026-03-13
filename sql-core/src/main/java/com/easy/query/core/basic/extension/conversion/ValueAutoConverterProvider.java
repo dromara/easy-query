@@ -9,18 +9,13 @@ import org.jetbrains.annotations.NotNull;
  * @author xuejiaming
  */
 public interface ValueAutoConverterProvider {
+
     /**
      * 当前类型是否支持{@link ValueAutoConverter}
-     *
-     * 后续作废使用{@link ValueAutoConverterProvider#isSupport(Class, Class, String)}
      * @param clazz
      * @param propertyType
+     * @param property
      * @return
      */
-    @Deprecated
-    boolean isSupport(@NotNull Class<?> clazz, @NotNull Class<?> propertyType);
-
-    default boolean isSupport(@NotNull Class<?> clazz, @NotNull Class<?> propertyType, String property) {
-        return isSupport(clazz, propertyType);
-    }
+    boolean isSupport(@NotNull Class<?> clazz, @NotNull Class<?> propertyType, String property);
 }

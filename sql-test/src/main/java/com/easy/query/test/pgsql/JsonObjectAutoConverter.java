@@ -1,7 +1,6 @@
 package com.easy.query.test.pgsql;
 
 import com.easy.query.core.basic.extension.conversion.ValueAutoConverter;
-import com.easy.query.core.common.bean.FastBeanProperty;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.util.EasyClassUtil;
 import com.easy.query.core.util.EasyMapUtil;
@@ -12,9 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import org.postgresql.util.PGobject;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,32 +25,7 @@ public class JsonObjectAutoConverter implements ValueAutoConverter<Object, Objec
 
     @Override
     public boolean apply(@NotNull Class<?> entityClass, @NotNull Class<Object> propertyType, String property) {
-        return JsonObject.class.isAssignableFrom(propertyType) || isJsonArray(entityClass, propertyType, property);
-    }
-
-    @Override
-    public boolean apply(@NotNull Class<?> entityClass, @NotNull Class<Object> propertyType) {
-        throw new UnsupportedOperationException("not support");
-    }
-
-    private boolean isJsonArray(@NotNull Class<?> entityClass, @NotNull Class<Object> propertyType, String property) {
-        if (List.class.isAssignableFrom(propertyType)) {
-            Field field = EasyClassUtil.getFieldByName(entityClass, property);
-            Type genericType = field.getGenericType();
-
-            if (genericType instanceof ParameterizedType) {
-                ParameterizedType parameterizedType = (ParameterizedType) genericType;
-                Type[] typeArguments = parameterizedType.getActualTypeArguments();
-
-                if (typeArguments.length > 0) {
-                    Type elementType = typeArguments[0];
-                    if (elementType instanceof Class) {
-                        return JsonObject.class.isAssignableFrom((Class<?>) elementType);
-                    }
-                }
-            }
-        }
-        return false;
+        return FieldUtil.isJsonObjectOrArray(entityClass, propertyType, property);
     }
 
     @Override

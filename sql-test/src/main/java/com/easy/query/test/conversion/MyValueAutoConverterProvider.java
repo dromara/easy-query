@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class MyValueAutoConverterProvider implements ValueAutoConverterProvider {
     @Override
-    public boolean isSupport(@NotNull Class<?> clazz, @NotNull Class<?> propertyType) {
+    public boolean isSupport(@NotNull Class<?> clazz, @NotNull Class<?> propertyType, String property) {
         return Enum.class.isAssignableFrom(propertyType)
                 || IAutoRegister.class.isAssignableFrom(propertyType);
     }

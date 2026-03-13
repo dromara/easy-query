@@ -30,57 +30,35 @@ public class PgSQLStringSupportJsonbTypeHandler implements JdbcTypeHandler {
         return streamResultSet.getString(jdbcProperty.getJdbcIndex());
     }
 
+    private void setJsonParameter(EasyParameter parameter) throws SQLException {
+
+        PGobject pGobject = new PGobject();
+        pGobject.setType("jsonb");
+        pGobject.setValue((String) parameter.getValue());
+        parameter.getPs().setObject(parameter.getIndex(), pGobject);
+    }
+
     @Override
     public void setParameter(EasyParameter parameter) throws SQLException {
 
         JDBCType jdbcType = parameter.getSQLParameter().getJdbcType();
 //
         if (jdbcType == JDBCType.JAVA_OBJECT) {
-            PGobject pGobject = new PGobject();
-            pGobject.setType("jsonb");
-            pGobject.setValue((String) parameter.getValue());
-            parameter.getPs().setObject(parameter.getIndex(), pGobject);
-        }else{
-            boolean json = isJsonOrJsonArray(parameter);//不使用@Column的jdbcType属性直接判断ColumnMetadata的类型
-            if(json){
-                PGobject pGobject = new PGobject();
-                pGobject.setType("jsonb");
-                pGobject.setValue((String) parameter.getValue());
-                parameter.getPs().setObject(parameter.getIndex(), pGobject);
-            }else{
-                parameter.getPs().setString(parameter.getIndex(), (String)parameter.getValue());
+            setJsonParameter(parameter);
+        } else {
+            boolean json = isJsonOrJsonArray(parameter);
+            if (json) {
+                setJsonParameter(parameter);
+            } else {
+                parameter.getPs().setString(parameter.getIndex(), (String) parameter.getValue());
             }
         }
     }
 
-    private boolean isJsonOrJsonArray(EasyParameter parameter){
+    private boolean isJsonOrJsonArray(EasyParameter parameter) {
         ColumnMetadata columnMetadata = parameter.getSQLParameter().getColumnMetadata();
-        if(columnMetadata!=null){
-            if(JsonObject.class.isAssignableFrom(columnMetadata.getPropertyType())){
-                return true;
-            }
-            return isJsonArray(columnMetadata.getEntityMetadata().getEntityClass(), columnMetadata.getPropertyType(), columnMetadata.getPropertyName());
-        }
-        return false;
-    }
-
-    //记得做缓存
-    private boolean isJsonArray(@NotNull Class<?> entityClass, @NotNull Class<?> propertyType, String property) {
-        if (List.class.isAssignableFrom(propertyType)) {
-            Field field = EasyClassUtil.getFieldByName(entityClass, property);
-            Type genericType = field.getGenericType();
-
-            if (genericType instanceof ParameterizedType) {
-                ParameterizedType parameterizedType = (ParameterizedType) genericType;
-                Type[] typeArguments = parameterizedType.getActualTypeArguments();
-
-                if (typeArguments.length > 0) {
-                    Type elementType = typeArguments[0];
-                    if (elementType instanceof Class) {
-                        return JsonObject.class.isAssignableFrom((Class<?>) elementType);
-                    }
-                }
-            }
+        if (columnMetadata != null) {
+            return FieldUtil.isJsonObjectOrArray(columnMetadata.getEntityMetadata().getEntityClass(), columnMetadata.getPropertyType(), columnMetadata.getPropertyName());
         }
         return false;
     }

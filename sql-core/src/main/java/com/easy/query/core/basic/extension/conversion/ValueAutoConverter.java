@@ -9,16 +9,12 @@ import org.jetbrains.annotations.NotNull;
  * @author xuejiaming
  */
 public interface ValueAutoConverter<TProperty, TProvider> extends ValueConverter<TProperty, TProvider> {
-    default boolean apply(@NotNull Class<?> entityClass, @NotNull Class<TProperty> propertyType, String property) {
-        return apply(entityClass, propertyType);
-    }
-
     /**
-     * 后续作废请使用{@link ValueAutoConverter#apply(Class, Class, String)}
+     * 判断是否需要转换
      * @param entityClass
      * @param propertyType
+     * @param property
      * @return
      */
-    @Deprecated
-    boolean apply(@NotNull Class<?> entityClass, @NotNull Class<TProperty> propertyType);
+     boolean apply(@NotNull Class<?> entityClass, @NotNull Class<TProperty> propertyType, String property);
 }

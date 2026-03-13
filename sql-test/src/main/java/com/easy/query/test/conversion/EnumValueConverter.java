@@ -29,7 +29,7 @@ public class EnumValueConverter implements ValueAutoConverter<Enum<?>,Number> {
     }
 
     @Override
-    public boolean apply(@NotNull Class<?> entityClass, @NotNull Class<Enum<?>> propertyType) {
+    public boolean apply(@NotNull Class<?> entityClass, @NotNull Class<Enum<?>> propertyType, String property) {
         return Enum.class.isAssignableFrom(propertyType);
     }
 }

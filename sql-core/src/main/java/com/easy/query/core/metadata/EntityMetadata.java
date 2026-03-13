@@ -528,19 +528,19 @@ public class EntityMetadata {
         }
 
         PropertySetterCaller<Object> beanSetter = getBeanSetter(field, fastBean, fastBeanProperty, configuration);
-        boolean isBasicType = navigateFlat.basicType() || EasyClassUtil.isBasicTypeOrEnum(navigateType) || isSupportValueAutoConverter(this.entityClass, navigateType,property);
+        boolean isBasicType = navigateFlat.basicType() || EasyClassUtil.isBasicTypeOrEnum(navigateType) || isSupportValueAutoConverter(this.entityClass, navigateType, property);
         NavigateFlatMetadata navigateFlatMetadata = new NavigateFlatMetadata(this, toMany, mappingPath, navigateType, isBasicType, beanSetter, property);
 
         property2NavigateFlatMap.put(property, navigateFlatMetadata);
     }
 
-    private boolean isSupportValueAutoConverter(Class<?> clazz, Class<?> propertyType,String property) {
+    private boolean isSupportValueAutoConverter(Class<?> clazz, Class<?> propertyType, String property) {
         ValueAutoConverterProvider valueAutoConverterProvider = runtimeContext.getValueAutoConverterProvider();
-        boolean support = valueAutoConverterProvider.isSupport(clazz, propertyType);
+        boolean support = valueAutoConverterProvider.isSupport(clazz, propertyType, property);
         if (!support) {
             return false;
         }
-        return runtimeContext.getQueryConfiguration().getValueAutoConverters().stream().anyMatch(valueAutoConverter -> valueAutoConverter.apply(clazz, EasyObjectUtil.typeCastNotNull(propertyType),property));
+        return runtimeContext.getQueryConfiguration().getValueAutoConverters().stream().anyMatch(valueAutoConverter -> valueAutoConverter.apply(clazz, EasyObjectUtil.typeCastNotNull(propertyType), property));
 
     }
 
@@ -602,11 +602,11 @@ public class EntityMetadata {
     private ValueConverter<?, ?> processValueAutoConverter(Class<?> propertyType, QueryConfiguration configuration, String property) {
         //如果是默认的那么就通过自动关联的值转换处进行寻找
         ValueAutoConverterProvider valueAutoConverterProvider = runtimeContext.getValueAutoConverterProvider();
-        if (valueAutoConverterProvider.isSupport(entityClass, propertyType,property)) {
+        if (valueAutoConverterProvider.isSupport(entityClass, propertyType, property)) {
             List<ValueAutoConverter<?, ?>> valueAutoConverters = configuration.getValueAutoConverters();
 
             //如果匹配到多个应该报错
-            List<ValueAutoConverter<?, ?>> matchValueConverters = valueAutoConverters.stream().filter(valueAutoConverter -> valueAutoConverter.apply(entityClass, EasyObjectUtil.typeCastNotNull(propertyType),property))
+            List<ValueAutoConverter<?, ?>> matchValueConverters = valueAutoConverters.stream().filter(valueAutoConverter -> valueAutoConverter.apply(entityClass, EasyObjectUtil.typeCastNotNull(propertyType), property))
                     .limit(2)
                     .collect(Collectors.toList());
             if (matchValueConverters.size() > 1) {

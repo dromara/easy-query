@@ -95,4 +95,16 @@ public class Json2Test extends PgSQLBaseTest {
                 }).toList();
         Assert.assertEquals(1, ages.size());
     }
+
+    @Test
+    public void testJsonField7() {
+        List<TopicJson2VO> ages = entityQuery.queryable(PgTopicJson2.class)
+                .where(t -> {
+                    t.extraJsonArray().asJSONArray().getJSONObject(0).getString("name").eq("Jack");
+                }).select(TopicJson2VO.class).toList();
+        Assert.assertEquals(1, ages.size());
+        TopicJson2VO topicJson2VO = ages.get(0);
+        Assert.assertNotNull(topicJson2VO.getExtraJson());
+        Assert.assertNotNull(topicJson2VO.getExtraJsonArray());
+    }
 }
