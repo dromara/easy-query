@@ -127,6 +127,22 @@ public interface ClientQueryable<T1> extends Query<T1>,
 
     @NotNull ClientQueryable<T1> asNoTracking();
 
+    /**
+     * Enable row-level lock query and append {@code FOR UPDATE} to the generated SQL.
+     *
+     * <p>Requirements:
+     * <ul>
+     *     <li>Must be called inside an active transaction.</li>
+     *     <li>Only single-table query is supported in current version.</li>
+     * </ul>
+     *
+     * @return current queryable
+     */
+    @NotNull
+    default ClientQueryable<T1> forUpdate() {
+        throw new UnsupportedOperationException();
+    }
+
     @NotNull ClientQueryable<T1> useShardingConfigure(int maxShardingQueryLimit, ConnectionModeEnum connectionMode);
 
     @NotNull ClientQueryable<T1> useMaxShardingQueryLimit(int maxShardingQueryLimit);
