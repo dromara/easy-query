@@ -8,10 +8,11 @@ import java.lang.annotation.Target;
 
 /**
  * create time 2023/11/3 08:24
- * 文件说明
+ * 后续将不再支持 ValueObject
  *
  * @author xuejiaming
  */
+@Deprecated
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})

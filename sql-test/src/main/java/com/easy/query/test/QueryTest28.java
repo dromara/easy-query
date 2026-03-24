@@ -6,6 +6,7 @@ import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.proxy.AggregateQueryable;
+import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
@@ -14,6 +15,7 @@ import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeArrayJson;
 import com.easy.query.test.entity.TopicTypeArrayJson2;
 import com.easy.query.test.entity.TopicTypeJsonValue;
+import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
 import lombok.Data;
@@ -23,6 +25,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -243,4 +246,22 @@ public class QueryTest28 extends BaseTest {
         listenerContextManager.clear();
     }
 
+    @Test
+    public  void test(){
+
+        Map<String, String> columns = new LinkedHashMap<>();
+        columns.put("id","id");
+        columns.put("content","title");
+        columns.put("title","content");
+        List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
+                .select(t_blog -> {
+                    ClassProxy<BlogEntity> result = ClassProxy.of(BlogEntity.class);
+                    for (Map.Entry<String, String> kv : columns.entrySet()) {
+                        SQLAnyTypeColumn<BlogEntityProxy, Object> selectColumn = t_blog.anyColumn(kv.getValue());
+//                        result.field(kv.getKey()).set(selectColumn);
+                        result.columns(selectColumn.as(kv.getKey()));
+                    }
+                    return result;
+                }).toList();
+    }
 }
