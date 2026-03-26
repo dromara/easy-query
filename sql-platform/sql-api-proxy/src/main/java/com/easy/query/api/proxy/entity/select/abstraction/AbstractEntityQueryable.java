@@ -850,6 +850,13 @@ public abstract class AbstractEntityQueryable<T1Proxy extends ProxyEntity<T1Prox
         return this;
     }
 
+    @NotNull
+    @Override
+    public EntityQueryable<T1Proxy, T1> forUpdate() {
+        clientQueryable.forUpdate();
+        return this;
+    }
+
     @Override
     public EntityQueryable<T1Proxy, T1> asTable(Function<String, String> tableNameAs) {
         clientQueryable.asTable(tableNameAs);

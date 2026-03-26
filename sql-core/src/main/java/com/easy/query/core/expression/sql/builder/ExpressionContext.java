@@ -7,6 +7,7 @@ import com.easy.query.core.expression.parser.core.available.RuntimeContextAvaila
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.enums.ExecuteMethodEnum;
+import com.easy.query.core.enums.QueryLockEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
@@ -64,6 +65,8 @@ public interface ExpressionContext extends RuntimeContextAvailable {
    }
     void executeMethod(ExecuteMethodEnum executeMethod,boolean ifUnknown);
     ExecuteMethodEnum getExecuteMethod();
+    void setQueryLock(QueryLockEnum queryLock);
+    QueryLockEnum getQueryLock();
 
     void setMaxShardingQueryLimit(Integer maxShardingQueryLimit);
     Integer getMaxShardingQueryLimitOrNull();

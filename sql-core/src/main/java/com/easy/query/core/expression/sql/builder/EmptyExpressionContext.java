@@ -8,6 +8,7 @@ import com.easy.query.core.basic.jdbc.executor.ResultColumnMetadata;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.ContextTypeEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
+import com.easy.query.core.enums.QueryLockEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
 import com.easy.query.core.expression.builder.core.ValueFilter;
@@ -159,6 +160,16 @@ public class EmptyExpressionContext implements ExpressionContext{
     @Override
     public ExecuteMethodEnum getExecuteMethod() {
         return null;
+    }
+
+    @Override
+    public void setQueryLock(QueryLockEnum queryLock) {
+
+    }
+
+    @Override
+    public QueryLockEnum getQueryLock() {
+        return QueryLockEnum.NONE;
     }
 
     @Override
