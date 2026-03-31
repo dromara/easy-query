@@ -49,7 +49,7 @@ public class DefaultJdbcSQLExecutor implements JdbcSQLExecutor{
         EasyJdbcExecutorUtil.logSQL(printSql, sql, easyConnection, shardingPrint, replicaPrint);
         boolean listen = jdbcExecutorListener.enable() && executorContext.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.JDBC_LISTEN);
         SQLConsumer<Statement> configurer = executorContext.getConfigurer(shardingPrint);
-        PreparedStatement ps = null;
+        Statement ps = null;
         ResultSet rs = null;
         List<SQLParameter> parameters = EasyJdbcExecutorUtil.extractParameters(null, sqlParameters, printSql, sqlParameterPrintFormat, easyConnection, shardingPrint, replicaPrint);
 
@@ -63,13 +63,21 @@ public class DefaultJdbcSQLExecutor implements JdbcSQLExecutor{
                 jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, Collections.singletonList(parameters), executorContext.getExecuteMethod());
                 jdbcExecutorListener.onExecuteBefore(jdbcListenBeforeArg);
             }
-            ps = EasyJdbcExecutorUtil.createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
-
             long start = printSql ? System.currentTimeMillis() : 0L;
-            if (configurer != null) {
-                configurer.accept(ps);
+            if (EasyCollectionUtil.isEmpty(parameters)) {
+                Statement s = easyConnection.getConnection().createStatement();
+                ps = s;
+                if (configurer != null) {
+                    configurer.accept(s);
+                }
+                rs = s.executeQuery(sql);
+            } else {
+                ps = EasyJdbcExecutorUtil.createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandler);
+                if (configurer != null) {
+                    configurer.accept(ps);
+                }
+                rs = ((PreparedStatement) ps).executeQuery();
             }
-            rs = ps.executeQuery();
             long end = printSql ? System.currentTimeMillis() : 0L;
             if (printSql) {
                 EasyJdbcExecutorUtil.logUse(true, start, end, easyConnection, shardingPrint, replicaPrint);
@@ -246,7 +254,7 @@ public class DefaultJdbcSQLExecutor implements JdbcSQLExecutor{
         JdbcExecutorListener jdbcExecutorListener = runtimeContext.getJdbcExecutorListener();
         boolean listen = jdbcExecutorListener.enable() && executorContext.getExpressionContext().getBehavior().hasBehavior(EasyBehaviorEnum.JDBC_LISTEN);
         JdbcExecuteBeforeArg jdbcListenBeforeArg = null;
-        PreparedStatement ps = null;
+        Statement ps = null;
         Exception exception = null;
         int r = 0;
         try {
@@ -256,8 +264,14 @@ public class DefaultJdbcSQLExecutor implements JdbcSQLExecutor{
                 jdbcListenBeforeArg = new JdbcExecuteBeforeArg(traceId, sql, Collections.singletonList(parameters), executorContext.getExecuteMethod());
                 jdbcExecutorListener.onExecuteBefore(jdbcListenBeforeArg);
             }
-            ps = EasyJdbcExecutorUtil.createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
-            r = ps.executeUpdate();
+            if (EasyCollectionUtil.isEmpty(parameters)) {
+                Statement s = easyConnection.getConnection().createStatement();
+                ps = s;
+                r = s.executeUpdate(sql);
+            } else {
+                ps = EasyJdbcExecutorUtil.createPreparedStatement(easyConnection.getConnection(), sql, parameters, easyJdbcTypeHandlerManager);
+                r = ((PreparedStatement) ps).executeUpdate();
+            }
             EasyJdbcExecutorUtil.logResult(printSql, r, easyConnection, shardingPrint, replicaPrint);
         } catch (Exception e) {
             exception = e;
