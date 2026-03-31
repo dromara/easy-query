@@ -667,6 +667,7 @@ public class EntityMetadata {
             columnOption.setSupportQueryLike(encryption.supportQueryLike());
         }
         if (column != null) {
+            columnOption.setTag(column.tag());
             columnOption.setNullable(column.nullable());
             if (easyQueryOption.isSaveComment()) {
                 columnOption.setComment(column.comment());

@@ -188,6 +188,16 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
     }
 
     @Override
+    public boolean isTag(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata) {
+        Field declaredField = entityMigrationMetadata.getFieldByColumnMetadata(columnMetadata);
+        Column annotation = declaredField.getAnnotation(Column.class);
+        if (annotation != null) {
+            return annotation.tag();
+        }
+        return false;
+    }
+
+    @Override
     public @NotNull List<TableIndexResult> getTableIndexes(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         return getClassTableIndexes(entityMigrationMetadata,entityMetadata.getEntityClass());

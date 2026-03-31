@@ -187,6 +187,8 @@ public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
             columnMigrationData.setOldColumnName(column.getFieldName());
             String columnOldName = databaseMigrationProvider.getMigrationEntityParser().getColumnOldName(entityMigrationMetadata, column);
             columnMigrationData.setOldColumnName(columnOldName);
+            boolean isTag = databaseMigrationProvider.getMigrationEntityParser().isTag(entityMigrationMetadata, column);
+            columnMigrationData.setTag(isTag);
             columns.add(columnMigrationData);
 
         }
