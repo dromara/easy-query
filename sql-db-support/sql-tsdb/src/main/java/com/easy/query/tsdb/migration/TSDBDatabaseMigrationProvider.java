@@ -102,4 +102,32 @@ public class TSDBDatabaseMigrationProvider extends DefaultDatabaseMigrationProvi
             throw new com.easy.query.core.exception.EasyQuerySQLCommandException(e);
         }
     }
+
+    @Override
+    protected MigrationCommand renameColumn(TableMigrationData tableMigrationData, String oldColumnName, ColumnMigrationData columnMigrationData) {
+        String sql = "ALTER TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()) +
+                " RENAME COLUMN " + getQuoteSQLName(oldColumnName) + " TO " + getQuoteSQLName(columnMigrationData.getName()) + ";";
+        return new DefaultMigrationCommand(sql);
+    }
+
+    @Override
+    protected MigrationCommand addColumn(TableMigrationData tableMigrationData, ColumnMigrationData columnMigrationData) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("ALTER TABLE ").append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()))
+                .append(" ADD COLUMN ").append(getQuoteSQLName(columnMigrationData.getName())).append(" ");
+        ColumnDbTypeResult columnDbTypeResult = new ColumnDbTypeResult(columnMigrationData.getDbType(), columnMigrationData.getDefValue());
+        sql.append(columnDbTypeResult.columnType);
+        sql.append(";");
+        return new DefaultMigrationCommand(sql.toString());
+    }
+
+    @Override
+    protected MigrationCommand createIndex(TableMigrationData table, com.easy.query.core.migration.data.IndexMigrationData tableIndex) {
+        return null; // TDengine 不支持传统索引
+    }
+
+    @Override
+    protected MigrationCommand createTableForeignKey(TableMigrationData tableMigrationData, com.easy.query.core.migration.data.ForeignKeyMigrationData foreignKeyMigrationData) {
+        return null; // TDengine 不支持外键
+    }
 }
