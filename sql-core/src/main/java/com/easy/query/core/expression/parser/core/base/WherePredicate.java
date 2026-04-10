@@ -46,6 +46,8 @@ public interface WherePredicate<T1> extends EntitySQLTableOwner<T1>, SQLFxAvaila
         return getFilter().getRuntimeContext();
     }
 
+//    IColumn column(String property);
+
     <T2> WherePredicate<T2> then(WherePredicate<T2> sub);
 
     default WherePredicate<T1> and() {

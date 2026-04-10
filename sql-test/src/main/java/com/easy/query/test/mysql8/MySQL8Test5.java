@@ -716,4 +716,11 @@ public class MySQL8Test5 extends BaseTest {
 //        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
+//    @Test
+//    public  void queryTestClient(){
+//        easyQueryClient.queryable(M8User.class)
+//                .where(m -> {
+//                    m.eq()
+//                })
+//    }
 }

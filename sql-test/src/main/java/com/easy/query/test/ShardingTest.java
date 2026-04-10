@@ -45,10 +45,11 @@ import java.util.stream.Collectors;
 public class ShardingTest extends ShardingBaseTest {
 
     @Test
-    public  void test111(){
+    public void test111() {
         EntityMetadata entityMetadata = easyEntityQuery.getRuntimeContext().getEntityMetadataManager().getEntityMetadata(TopicSharding.class);
         System.out.println(entityMetadata);
     }
+
     @Test
     public void sharding1() {
         TopicSharding topicSharding = easyEntityQuery.queryable(TopicSharding.class)
@@ -911,9 +912,9 @@ public class ShardingTest extends ShardingBaseTest {
         Query<Topic> where = easyEntityQuery.queryable(Topic.class)
                 .where(o -> {
                     o.id().eq("123");
-                            o.expression().exists(
-                                    topicShardingTimeQueryable.where(x -> x.id().eq(o.id()))
-                            );
+                    o.expression().exists(
+                            topicShardingTimeQueryable.where(x -> x.id().eq(o.id()))
+                    );
                 });
         String sql = where.toSQL();
         //tosql是不会对表进行分片的展示
@@ -1107,16 +1108,30 @@ public class ShardingTest extends ShardingBaseTest {
     }
 
     @Test
-    public void shardingTestMap(){
+    public void shardingTest51() {
+        List<TopicShardingGroup> list1 = easyEntityQuery.queryable(TopicSharding.class)
+                .where(o -> o.id().eq("20000"))
+                .groupBy(o -> GroupKeys.of(o._title()))
+                .select(o -> Select.of(TopicShardingGroup.class,
+                        o.key1().as(TopicShardingGroup::getTitle),
+                        o.count(s -> s.id()).as(TopicShardingGroup::getIdCount)
+                )).orderBy(t -> {
+                    t.field(TopicShardingGroup::getTitle).asc();
+                })
+                .toList();
+    }
+
+    @Test
+    public void shardingTestMap() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<Map<String, Object>> list = easyEntityQuery.queryable(TopicSharding.class)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.SHARDING_UNION_ALL))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.SHARDING_UNION_ALL))
                 .where(t -> {
-                    t.id().in(Arrays.asList("20000","20001"));
+                    t.id().in(Arrays.asList("20000", "20001"));
                 })
                 .groupBy(t -> GroupKeys.of(t.createTime()))
                 .select(group -> {
@@ -1131,8 +1146,9 @@ public class ShardingTest extends ShardingBaseTest {
         Assert.assertEquals("20000(String),20001(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void shardingTestMap2(){
+    public void shardingTestMap2() {
 
 
         ListenerContext listenerContext = new ListenerContext();
@@ -1142,9 +1158,9 @@ public class ShardingTest extends ShardingBaseTest {
         MapKey<Long> idCount = MapKeys.longKey("idCount");
 
         List<Map<String, Object>> list = easyEntityQuery.queryable(TopicSharding.class)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.SHARDING_UNION_ALL))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.SHARDING_UNION_ALL))
                 .where(t -> {
-                    t.id().in(Arrays.asList("20000","20001"));
+                    t.id().in(Arrays.asList("20000", "20001"));
                 })
                 .groupBy(t -> GroupKeys.of(t.createTime()))
                 .select(group -> {
@@ -1159,17 +1175,18 @@ public class ShardingTest extends ShardingBaseTest {
         Assert.assertEquals("20000(String),20001(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void shardingTestMap3(){
+    public void shardingTestMap3() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<Map<String, Object>> list = easyEntityQuery.queryable(TopicSharding.class)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.SHARDING_UNION_ALL))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.SHARDING_UNION_ALL))
                 .where(t -> {
-                    t.id().in(Arrays.asList("20000","20001"));
+                    t.id().in(Arrays.asList("20000", "20001"));
                 })
                 .groupBy(t -> GroupKeys.of(t.createTime()))
                 .select(group -> {
@@ -1184,17 +1201,18 @@ public class ShardingTest extends ShardingBaseTest {
         Assert.assertEquals("20000(String),20001(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
-    public void shardingTestMap1(){
+    public void shardingTestMap1() {
 
 
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
         List<Map<String, Object>> list = easyEntityQuery.queryable(TopicSharding.class)
-                .configure(s->s.getBehavior().addBehavior(EasyBehaviorEnum.SHARDING_UNION_ALL))
+                .configure(s -> s.getBehavior().addBehavior(EasyBehaviorEnum.SHARDING_UNION_ALL))
                 .where(t -> {
-                    t.id().in(Arrays.asList("20000","20001"));
+                    t.id().in(Arrays.asList("20000", "20001"));
                 })
                 .groupBy(t -> GroupKeys.of(t.createTime()))
                 .select(group -> {

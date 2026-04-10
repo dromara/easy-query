@@ -221,14 +221,14 @@ public abstract class BaseTest {
         configuration.applyNavigateValueSetter(new MyNavigateValueSetter());
         configuration.applyNavigateExtraFilterStrategy(new com.easy.query.test.entity.navf.RoleJoin.RoleJoinType());
 
-
+        RedissonClient redissonClient1 = cacheRedissonClient();
         easyCacheClient = EasyCacheBootstrapper.defaultBuilderConfiguration()
                 .optionConfigure(op -> {
                 })
                 .replaceService(new CacheMultiOption(1000 * 60 * 60, 1000, 10000))
                 .replaceService(EasyCacheManager.class, DefaultCacheManager.class)
                 .replaceService(EasyQueryClient.class, easyQueryClient)
-                .replaceService(RedissonClient.class, cacheRedissonClient()).build();
+                .replaceService(RedissonClient.class, redissonClient1).build();
         beforex();
 
 

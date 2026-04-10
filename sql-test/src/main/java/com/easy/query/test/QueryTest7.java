@@ -1,7 +1,10 @@
 package com.easy.query.test;
 
+import com.easy.query.core.bootstrapper.DatabaseConfiguration;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
+import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.dto.TopicRequest;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
@@ -739,8 +742,15 @@ public class QueryTest7 extends BaseTest {
 
     @Test
     public void testQuery13() {
+//        DatabaseConfiguration databaseConfiguration = easyEntityQuery.getRuntimeContext().getService(DatabaseConfiguration.class);
+//        if(databaseConfiguration instanceof MySQLDatabaseConfiguration){
+//
+//        }
         String sql = easyEntityQuery
                 .queryable(Topic.class)
+//                .configure(s->{
+//                    s.getBehavior().add(EasyBehaviorEnum.SHARDING_UNION_ALL);
+//                })
                 .innerJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
                 .where((t, t1) -> t1.title().isNotNull())
                 .groupBy((t, t1) -> GroupKeys.of(t1.id()))

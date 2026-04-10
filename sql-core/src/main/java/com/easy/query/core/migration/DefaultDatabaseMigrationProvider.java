@@ -84,7 +84,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             }
             sql.append(",");
         }
-        List<ColumnMigrationData> keys = EasyCollectionUtil.filter(tableMigrationData.getColumns(),s->s.isPrimary());
+        List<ColumnMigrationData> keys = EasyCollectionUtil.filter(tableMigrationData.getColumns(), s -> s.isPrimary());
         if (EasyCollectionUtil.isNotEmpty(keys)) {
             sql.append(" ").append(newLine).append(" PRIMARY KEY (");
             int i = keys.size();
@@ -165,6 +165,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
         return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName()) + ";");
     }
 
+
     //comment '名称索引'
     @Override
     protected MigrationCommand createIndex(TableMigrationData table, IndexMigrationData tableIndex) {
@@ -187,7 +188,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
         sql.append(joiner);
         sql.append(")");
 
-        if(EasyStringUtil.isNotBlank(tableIndex.getComment())){
+        if (EasyStringUtil.isNotBlank(tableIndex.getComment())) {
             sql.append(" COMMENT '").append(tableIndex.getComment()).append("'");
         }
         sql.append(";");

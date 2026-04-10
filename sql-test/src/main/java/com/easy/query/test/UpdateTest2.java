@@ -7,11 +7,13 @@ import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
+import com.easy.query.core.bootstrapper.DatabaseConfiguration;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.builder.core.ValueFilterFactory;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.oracle.config.OracleDatabaseConfiguration;
 import com.easy.query.test.common.MyValueFilterFactory;
 import com.easy.query.test.entity.Topic;
@@ -20,9 +22,11 @@ import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.vo.Topic2DTO;
+import com.mysql.cj.jdbc.MysqlDataSource;
 import org.junit.Assert;
 import org.junit.Test;
 
+import javax.sql.DataSource;
 import java.util.List;
 
 /**

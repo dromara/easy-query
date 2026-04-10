@@ -214,6 +214,22 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
         }
         return migrationCommands;
     }
+    @Override
+    public List<MigrationCommand> addTableColumn(TableMigrationData tableMigrationData) {
+
+        ArrayList<MigrationCommand> migrationCommands = new ArrayList<>();
+        for (ColumnMigrationData column : tableMigrationData.getColumns()) {
+            String oldColumnName = column.getOldColumnName();
+            if (EasyStringUtil.isNotBlank(oldColumnName)) {
+                MigrationCommand migrationCommand = renameColumn(tableMigrationData, oldColumnName, column);
+                migrationCommands.add(migrationCommand);
+            } else {
+                MigrationCommand migrationCommand = addColumn(tableMigrationData, column);
+                migrationCommands.add(migrationCommand);
+            }
+        }
+        return migrationCommands;
+    }
 
 
     protected abstract MigrationCommand renameColumn(TableMigrationData tableMigrationData, String oldColumnName, ColumnMigrationData columnMigrationData);

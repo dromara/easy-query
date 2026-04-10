@@ -1,6 +1,7 @@
 package com.easy.query.test;
 
 import com.easy.query.api.proxy.base.ClassProxy;
+import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.enums.EasyBehaviorEnum;
@@ -8,9 +9,13 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.proxy.AggregateQueryable;
 import com.easy.query.core.proxy.columns.types.SQLAnyTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft2;
+import com.easy.query.core.proxy.extension.functions.type.NumberTypeExpression;
+import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
+import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
+import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicTypeArrayJson;
 import com.easy.query.test.entity.TopicTypeArrayJson2;
@@ -18,6 +23,7 @@ import com.easy.query.test.entity.TopicTypeJsonValue;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.entity.M8User;
 import lombok.Data;
 import org.junit.Assert;
 import org.junit.Test;
@@ -264,4 +270,5 @@ public class QueryTest28 extends BaseTest {
                     return result;
                 }).toList();
     }
+
 }

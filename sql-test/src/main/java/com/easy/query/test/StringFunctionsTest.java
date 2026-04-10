@@ -26,6 +26,7 @@ import com.easy.query.test.entity.Topic;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
+import com.easy.query.test.pgsql.PgTopicJson2;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -429,6 +430,14 @@ public class StringFunctionsTest {
 
         try {
 
+//
+//            List<Draft1<Boolean>> list2 = easyEntityQuery.queryable(PgTopicJson2.class)
+//                    .where(t -> {
+//                        t.extraJson().asJSONObject().getJSONObject("a").getJSONObject("b").getString("c").eq("123");
+//                    }).select(t -> Select.DRAFT.of(
+//                            t.extraJson().asJSONObject().getBoolean("success")
+//                    )).toList();
+
             List<Draft1<String>> list = easyEntityQuery.queryable(DocBankCard.class)
                     .where(bank_card -> {
                         bank_card.code().trim().eq("123");
@@ -488,7 +497,6 @@ public class StringFunctionsTest {
 
 
         try {
-
             List<Draft1<String>> list = easyEntityQuery.queryable(DocBankCard.class)
                     .where(bank_card -> {
                         bank_card.code().trim().eq("123");
@@ -518,6 +526,7 @@ public class StringFunctionsTest {
 
 
         try {
+
 
             List<Draft1<String>> list = easyEntityQuery.queryable(DocBankCard.class)
                     .where(bank_card -> {

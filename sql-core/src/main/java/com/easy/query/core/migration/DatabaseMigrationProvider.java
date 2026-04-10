@@ -53,12 +53,43 @@ public interface DatabaseMigrationProvider {
 
     List<MigrationCommand> createTableForeignKey(TableMigrationData tableMigrationData, QueryRuntimeContext runtimeContext);
 
+    /**
+     * 同步表命令
+     * @param tableMigrationData
+     * @param oldTable
+     * @return
+     */
     List<MigrationCommand> syncTable(TableMigrationData tableMigrationData, boolean oldTable);
 
+    /**
+     * 同步表索引
+     * @param tableMigrationData
+     * @param oldTable
+     * @return
+     */
     List<MigrationCommand> syncTableIndex(TableMigrationData tableMigrationData, boolean oldTable);
 
+    /**
+     * 同步表外键
+     * @param tableMigrationData
+     * @param runtimeContext
+     * @param oldTable
+     * @return
+     */
     List<MigrationCommand> syncTableForeignKey(TableMigrationData tableMigrationData, QueryRuntimeContext runtimeContext, boolean oldTable);
 
+    /**
+     * 删除表命令
+     * @param tableMigrationData
+     * @return
+     */
     MigrationCommand dropTable(TableMigrationData tableMigrationData);
+
+    /**
+     * 添加列的迁移命令
+     * @param tableMigrationData
+     * @return
+     */
+    List<MigrationCommand> addTableColumn(TableMigrationData tableMigrationData);
 
 }
