@@ -14,6 +14,8 @@ import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.test.doc.MySignUp;
+import com.easy.query.test.doc.MySignUpDTOx;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
@@ -23,6 +25,7 @@ import com.easy.query.test.entity.TopicTypeJsonValue;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.listener.ListenerContext;
+import com.easy.query.test.mysql8.entity.InterceptorEntity;
 import com.easy.query.test.mysql8.entity.M8User;
 import lombok.Data;
 import org.junit.Assert;
@@ -219,6 +222,7 @@ public class QueryTest28 extends BaseTest {
         Assert.assertEquals("0(Integer),1(Integer),5xxxx1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testNoValueConverter1() {
 
@@ -253,12 +257,12 @@ public class QueryTest28 extends BaseTest {
     }
 
     @Test
-    public  void test(){
+    public void test() {
 
         Map<String, String> columns = new LinkedHashMap<>();
-        columns.put("id","id");
-        columns.put("content","title");
-        columns.put("title","content");
+        columns.put("id", "id");
+        columns.put("content", "title");
+        columns.put("title", "content");
         List<BlogEntity> list = easyEntityQuery.queryable(BlogEntity.class)
                 .select(t_blog -> {
                     ClassProxy<BlogEntity> result = ClassProxy.of(BlogEntity.class);
@@ -269,6 +273,76 @@ public class QueryTest28 extends BaseTest {
                     }
                     return result;
                 }).toList();
+    }
+
+    @Test
+    public void testInterceptor1() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            List<InterceptorEntity> list = easyEntityQuery.queryable(InterceptorEntity.class)
+                    .toList();
+        } catch (Exception ignored) {
+
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`name` FROM `m8_interceptor` WHERE 1=1", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("%123%(String),123(String),123(String),123(String),[{\"age\":null,\"name\":\"123\"}](String),%456%(String),{\"age\":1,\"name\":\"1\"}(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+
+    @Test
+    public void testInterceptor2() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+
+        try {
+
+            List<InterceptorEntity> list = easyEntityQuery.queryable(InterceptorEntity.class)
+                    .noInterceptor()
+                    .where(i -> {
+                        i.list().configure(s->s.noInterceptor()).any();
+                    })
+                    .toList();
+        } catch (Exception ignored) {
+
+        }
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT t.`id`,t.`name` FROM `m8_interceptor` t WHERE EXISTS (SELECT 1 FROM `m8_interceptor2` t1 WHERE t1.`aid` = t.`id` LIMIT 1)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//        Assert.assertEquals("%123%(String),123(String),123(String),123(String),[{\"age\":null,\"name\":\"123\"}](String),%456%(String),{\"age\":1,\"name\":\"1\"}(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        listenerContextManager.clear();
+    }
+    @Test
+    public void testInterceptor3() {
+
+
+        ListenerContext listenerContext = new ListenerContext(true);
+        listenerContextManager.startListen(listenerContext);
+
+        List<InterceptorEntity> list = easyEntityQuery.queryable(InterceptorEntity.class)
+                .noInterceptor()
+                .include(i -> i.list())
+                .toList();
+
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(0);
+            Assert.assertEquals("SELECT `id`,`name` FROM `m8_interceptor`", jdbcExecuteAfterArg.getBeforeArg().getSql());
+//                    Assert.assertEquals("1(Integer)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        {
+
+            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(1);
+            Assert.assertEquals("SELECT t.`id`,t.`aid`,t.`name` FROM `m8_interceptor2` t WHERE t.`aid` IN (?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                    Assert.assertEquals("1(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+        }
+        listenerContextManager.clear();
     }
 
 }

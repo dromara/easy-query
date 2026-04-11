@@ -201,6 +201,91 @@ public class M8Save3Test extends BaseTest {
             }
         });
     }
+    @Test
+    public void testOwnershipChange1_1() {
+        deleteAll();
+        insertOne();
+
+
+        invoke(listenerContext -> {
+
+            M8SaveA a1 = easyEntityQuery.queryable(M8SaveA.class).whereById("1")
+                    .include2((c, s)->{
+                        c.query(s.m8SaveB().m8SaveC().m8SaveD());
+                    }).singleNotNull();
+            M8SaveA a5 = easyEntityQuery.queryable(M8SaveA.class).whereById("5")
+                    .include2((c, s)->{
+                        c.query(s.m8SaveB().m8SaveC().m8SaveD());
+                    }).singleNotNull();
+            M8SaveA a9 = easyEntityQuery.queryable(M8SaveA.class).whereById("9")
+                    .include2((c, s)->{
+                        c.query(s.m8SaveB().m8SaveC().m8SaveD());
+                    }).singleNotNull();
+
+            List<M8SaveA> list = new ArrayList<>();
+            list.add(a1);
+            list.add(a5);
+            list.add(a9);
+
+            M8SaveB b2 = a1.getM8SaveB();
+            M8SaveB b6 = a5.getM8SaveB();
+            a1.setM8SaveB(b6);
+            a5.setM8SaveB(b2);
+            M8SaveC c7 = b6.getM8SaveC();
+            M8SaveB b10 = a9.getM8SaveB();
+            M8SaveC c11 = b10.getM8SaveC();
+            b6.setM8SaveC(c11);
+            b10.setM8SaveC(c7);
+
+            M8SaveC c3 = b2.getM8SaveC();
+            M8SaveD d4 = c3.getM8SaveD();
+            d4.setName("myd4");
+
+            M8SaveD d12 = c11.getM8SaveD();
+            c3.setM8SaveD(d12);
+            c11.setM8SaveD(d4);
+
+
+            try (Transaction transaction = easyEntityQuery.beginTransaction()) {
+                easyEntityQuery.savable(list).configure(s -> s.getSaveBehavior().add(SaveBehaviorEnum.ALLOW_OWNERSHIP_CHANGE)).executeCommand();
+                transaction.commit();
+            }
+
+
+            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+            Assert.assertEquals(18, listenerContext.getJdbcExecuteAfterArgs().size());
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(12);
+                Assert.assertEquals("UPDATE `m8_save_b` SET `pid` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("1(String),6(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(13);
+                Assert.assertEquals("UPDATE `m8_save_b` SET `pid` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("5(String),2(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(14);
+                Assert.assertEquals("UPDATE `m8_save_c` SET `pid` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("6(String),11(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(15);
+                Assert.assertEquals("UPDATE `m8_save_c` SET `pid` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("10(String),7(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(16);
+                Assert.assertEquals("UPDATE `m8_save_d` SET `pid` = ?,`name` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("11(String),myd4(String),4(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+            {
+                JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArgs().get(17);
+                Assert.assertEquals("UPDATE `m8_save_d` SET `pid` = ? WHERE `id` = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+                Assert.assertEquals("3(String),12(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+            }
+        });
+    }
 
     @Test
     public void testOwnershipChange2() {

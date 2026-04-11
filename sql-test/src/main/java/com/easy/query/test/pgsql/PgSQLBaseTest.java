@@ -22,6 +22,7 @@ import com.easy.query.test.encryption.MyEncryptionStrategy;
 import com.easy.query.pgsql.config.PgSQLDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MathTest;
+import com.easy.query.test.entity.MyCategory;
 import com.easy.query.test.entity.MyCategoryInterceptor;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.UUIDEntity;
@@ -156,12 +157,12 @@ public class PgSQLBaseTest {
         {
 
 
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(PgItem.class,TableNoKey.class,DocBankCard.class,DocBank.class,  DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class, MathTest.class));
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(BlogEntity.class,PgItem.class,TableNoKey.class,DocBankCard.class,DocBank.class,  DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class, MathTest.class, MyCategory.class));
             codeFirstCommand.executeWithTransaction(a->a.commit());
         }
         {
 
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(PgItem.class,TableNoKey.class,DocBank.class,DocBankCard.class, DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class, MathTest.class));
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(BlogEntity.class,PgItem.class,TableNoKey.class,DocBank.class,DocBankCard.class, DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class, MathTest.class,MyCategory.class));
             codeFirstCommand.executeWithTransaction(a->a.commit());
         }
 
@@ -254,12 +255,48 @@ public class PgSQLBaseTest {
 
             list.add(entity);
         }
+        List<MyCategory> categoryList = new ArrayList<>();
 
+        // 根节点
+        MyCategory root = new MyCategory();
+        root.setId("1");
+        root.setParentId(null);
+        root.setName("根节点");
+
+        // 一级子节点
+        MyCategory node3 = new MyCategory();
+        node3.setId("3");
+        node3.setParentId("1");
+        node3.setName("节点3");
+
+        MyCategory node4 = new MyCategory();
+        node4.setId("4");
+        node4.setParentId("1");
+        node4.setName("节点4");
+
+        // 二级子节点
+        MyCategory node5 = new MyCategory();
+        node5.setId("5");
+        node5.setParentId("3");
+        node5.setName("节点5");
+
+        MyCategory node6 = new MyCategory();
+        node6.setId("6");
+        node6.setParentId("3");
+        node6.setName("节点6");
+
+        // 添加到列表
+        categoryList.add(root);
+        categoryList.add(node3);
+        categoryList.add(node4);
+        categoryList.add(node5);
+        categoryList.add(node6);
         entityQuery.insertable(list).batch().executeRows();
         entityQuery.insertable(sysUser).executeRows();
         entityQuery.insertable(docUsers).executeRows();
         entityQuery.insertable(docBanks).executeRows();
         entityQuery.insertable(docBankCards).executeRows();
+        entityQuery.insertable(categoryList).executeRows();
     }
 
 }

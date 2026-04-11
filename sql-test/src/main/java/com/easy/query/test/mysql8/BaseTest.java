@@ -17,6 +17,7 @@ import com.easy.query.core.expression.many2group.DefaultSubQueryExtraPredicatePr
 import com.easy.query.core.expression.many2group.SubQueryExtraPredicateProvider;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
+import com.easy.query.test.DbContext;
 import com.easy.query.test.common.ConfigurationLogicDelete;
 import com.easy.query.test.common.M8Interceptor;
 import com.easy.query.test.common.MockEntityExpressionExecutor;
@@ -86,6 +87,7 @@ public class BaseTest {
     public static EasyQueryClient easyQueryClient;
     public static EasyEntityQuery easyEntityQuery;
     public static ListenerContextManager listenerContextManager;
+    public static DbContext dbContext;
 
     static {
 //        EasyBeanUtil.FAST_BEAN_FUNCTION = ReflectBean::new;
@@ -157,6 +159,7 @@ public class BaseTest {
 //                .replaceService(SQLKeyword.class, DefaultSQLKeyword.class)
 //                .replaceService(BeanValueCaller.class, ReflectBeanValueCaller.class)
                 .build();
+        dbContext=new DbContext(easyEntityQuery);
         QueryConfiguration queryConfiguration = easyQueryClient.getRuntimeContext().getQueryConfiguration();
         queryConfiguration.applyRelationPropertyProvider(FindInSetRelationToImplicitProvider.INSTANCE);
         queryConfiguration.applyInterceptor(new M8Interceptor());

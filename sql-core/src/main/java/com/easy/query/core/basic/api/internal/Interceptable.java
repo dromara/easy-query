@@ -10,6 +10,7 @@ public interface Interceptable<TChain> {
 
     /**
      * 当前表达式不使用拦截器,并且删除之前手动指定的 {@link #noInterceptor(String name)}、{@link #useInterceptor(String name)}
+     * 隐式子查询要自己去掉拦截器
      * @return
      */
     TChain noInterceptor();

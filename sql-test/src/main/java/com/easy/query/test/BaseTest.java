@@ -26,6 +26,7 @@ import com.easy.query.test.cache.BlogPredicateInterceptor;
 import com.easy.query.test.cache.CacheMultiOption;
 import com.easy.query.test.cache.DefaultCacheManager;
 import com.easy.query.test.common.MyQueryConfiguration;
+import com.easy.query.test.common.TestInterceptor;
 import com.easy.query.test.common.TopicUpdateInterceptor;
 import com.easy.query.test.conversion.Blog2StarToStringColumnValueSQLConverter;
 import com.easy.query.test.conversion.CertStatusColumnValueSQLConverter;
@@ -72,6 +73,8 @@ import com.easy.query.test.keytest.MyTestPrimaryKeyGenerator;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
 import com.easy.query.test.logicdel.MyLogicDelStrategy;
+import com.easy.query.test.mysql8.entity.Interceptor2Entity;
+import com.easy.query.test.mysql8.entity.InterceptorEntity;
 import com.zaxxer.hikari.HikariDataSource;
 import org.redisson.Redisson;
 import org.redisson.api.NameMapper;
@@ -201,6 +204,7 @@ public abstract class BaseTest {
         configuration.applyInterceptor(new MyTenantInterceptor());
         configuration.applyInterceptor(new TopicUpdateInterceptor());
         configuration.applyInterceptor(new BlogPredicateInterceptor());
+        configuration.applyInterceptor(new TestInterceptor());
         configuration.applyNavigateExtraFilterStrategy(new BookNavigateExtraFilterStrategy());
         configuration.applyNavigateExtraFilterStrategy(new JoinType());
         configuration.applyNavigateExtraFilterStrategy(new RoleJoin.RoleJoinType());
@@ -400,7 +404,7 @@ public abstract class BaseTest {
         {
             try {
 
-                CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(SysUserEncrypt.class, DocBankCard.class, DocBank.class, UserAccount.class, UserBook.class, DocUser.class, OnRelationA.class, OnRelationB.class, OnRelationC.class, OnRelationD.class, UUIDEntity2.class, MathTest.class));
+                CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(SysUserEncrypt.class, DocBankCard.class, DocBank.class, UserAccount.class, UserBook.class, DocUser.class, OnRelationA.class, OnRelationB.class, OnRelationC.class, OnRelationD.class, UUIDEntity2.class, MathTest.class, InterceptorEntity.class, Interceptor2Entity.class));
                 codeFirstCommand.executeWithTransaction(a -> a.commit());
             } catch (Exception ignored) {
 
@@ -408,7 +412,7 @@ public abstract class BaseTest {
 
         }
         {
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUserEncrypt.class, DocBank.class, UserAccount.class, UserBook.class, DocBankCard.class, DocUser.class, OnRelationA.class, OnRelationB.class, OnRelationC.class, OnRelationD.class, UUIDEntity2.class, MathTest.class));
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUserEncrypt.class, DocBank.class, UserAccount.class, UserBook.class, DocBankCard.class, DocUser.class, OnRelationA.class, OnRelationB.class, OnRelationC.class, OnRelationD.class, UUIDEntity2.class, MathTest.class, InterceptorEntity.class, Interceptor2Entity.class));
             codeFirstCommand.executeWithTransaction(a -> a.commit());
         }
 
@@ -430,6 +434,18 @@ public abstract class BaseTest {
         }
 
         easyEntityQuery.insertable(list).batch().executeRows();
+
+        InterceptorEntity interceptorEntity = new InterceptorEntity();
+
+        interceptorEntity.setId("1");
+        
+        interceptorEntity.setName("123");
+        Interceptor2Entity interceptor2Entity = new Interceptor2Entity();
+        interceptor2Entity.setId("3");
+        interceptor2Entity.setAid("1");
+        interceptor2Entity.setName("456");
+        easyEntityQuery.insertable(interceptorEntity).batch().executeRows();
+        easyEntityQuery.insertable(interceptor2Entity).batch().executeRows();
     }
 
 }

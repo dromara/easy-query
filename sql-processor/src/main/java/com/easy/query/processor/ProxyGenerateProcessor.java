@@ -161,14 +161,6 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
             roundEnv.getElementsAnnotatedWith(EntityProxy.class)
                     .forEach((Consumer<Element>) entityClassElement -> {
 
-//                String proxyEntityName = entityClassElement.getSimpleName().toString();
-
-//                for (String entityIgnoreSuffix : entityIgnoreSuffixes) {
-//                    if (proxyEntityName.endsWith(entityIgnoreSuffix.trim())) {
-//                        proxyEntityName = proxyEntityName.substring(0, proxyEntityName.length() - entityIgnoreSuffix.length());
-//                        break;
-//                    }
-//                }
                         EntityFileProxy entityFileProxy = entityClassElement.getAnnotation(EntityFileProxy.class);
                         if (entityFileProxy != null) {
                             return;
@@ -178,16 +170,13 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                         Table tableAnnotation = entityClassElement.getAnnotation(Table.class);
 
 
-                        //每一个 entity 生成一个独立的文件
 
                         String entityFullName = entityClassElement.toString();
                         String generatePackage = entityProxy.generatePackage();
                         String realGenPackage = "".equals(generatePackage) ? getPackageName(entityClassElement) : generatePackage;
                         String entityClassName = entityClassElement.getSimpleName().toString();
                         String proxyInstanceName = EasyStringUtil.isBlank(entityProxy.value()) ? entityClassName + "Proxy" : entityProxy.value();
-//                if (EasyStringUtil.isBlank(proxyInstanceName)) {
-//                    proxyInstanceName = buildName(entityClassNameReference + "Proxy", "upperCase");
-//                }
+
                         HashSet<String> ignoreProperties = new HashSet<>(Arrays.asList(entityProxy.ignoreProperties()));
 
 
