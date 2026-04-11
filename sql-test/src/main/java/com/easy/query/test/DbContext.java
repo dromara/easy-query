@@ -1,6 +1,7 @@
 package com.easy.query.test;
 
-import com.easy.query.api.proxy.client.BaseContext;
+import com.easy.query.api.proxy.client.BaseEntityClient;
+import com.easy.query.api.proxy.client.DbSetContext;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.core.proxy.DbSet;
 import com.easy.query.test.entity.BlogEntity;
@@ -16,19 +17,26 @@ import com.easy.query.test.mysql8.entity.save.proxy.M8SaveAProxy;
  *
  * @author xuejiaming
  */
-public class DbContext extends BaseContext {
+public class DbContext implements DbSetContext {
+
+    private final EasyEntityQuery easyEntityQuery;
 
     public DbContext(EasyEntityQuery easyEntityQuery){
-        super(easyEntityQuery);
+        this.easyEntityQuery = easyEntityQuery;
+    }
+    @Override
+    public BaseEntityClient getBaseEntityClient() {
+        return easyEntityQuery;
     }
 
     public DbSet<TopicProxy, Topic> topic(){
-        return easyEntityQuery.createDbSet(TopicProxy.createTable());
+        return getBaseEntityClient().createDbSet(TopicProxy.createTable());
     }
     public DbSet<BlogEntityProxy, BlogEntity> blog(){
-        return easyEntityQuery.createDbSet(BlogEntityProxy.createTable());
+        return getBaseEntityClient().createDbSet(BlogEntityProxy.createTable());
     }
     public DbSet<M8SaveAProxy, M8SaveA> m8SaveA(){
-        return easyEntityQuery.createDbSet(M8SaveAProxy.createTable());
+        return getBaseEntityClient().createDbSet(M8SaveAProxy.createTable());
     }
+
 }
