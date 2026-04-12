@@ -10,15 +10,11 @@ import com.easy.query.core.basic.extension.track.EntityState;
 import com.easy.query.core.basic.extension.track.EntityValueState;
 import com.easy.query.core.basic.extension.track.TrackManager;
 import com.easy.query.core.enums.EasyBehaviorEnum;
-import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.enums.SubQueryModeEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
-import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.core.Expression;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.extension.functions.type.AnyTypeExpression;
-import com.easy.query.core.proxy.extension.functions.type.StringTypeExpression;
-import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.test.entity.BlogEntity;
@@ -28,11 +24,8 @@ import com.easy.query.test.entity.UUIDEntity2;
 import com.easy.query.test.entity.m2m.Station;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.listener.ListenerContext;
-import com.easy.query.test.mysql8.entity.TableNoKey;
-import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.vo.BlogEntityVO1;
 import com.easy.query.test.vo.proxy.BlogEntityVO1Proxy;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -615,6 +608,15 @@ public class QueryTest27 extends BaseTest {
                     t.expression().rawSQLCommand("IFNULL({0},{1}) DESC", t.stars(), 1);
                     t.expression().rawSQLCommand("RAND()");
                 }).toList();
+        List<Topic> list1 = easyEntityQuery.queryable(Topic.class)
+                .where(b -> {
+                    b.id().eq("123");
+                }).select(t_topic -> {
+                    return Select.of(Topic.class,
+                            t_topic.expression().rawSQLStatement("RAND()").asAnyType(Double.class),
+                            t_topic.expression().rawSQLStatement("IFNULL({0},{1})", t_topic.stars(), 1).asInteger()
+                    );
+                }).toList();
         List<Draft2<Double, Integer>> list3 = easyEntityQuery.queryable(Topic.class)
                 .where(b -> {
                     b.id().eq("123");
@@ -787,6 +789,7 @@ public class QueryTest27 extends BaseTest {
         listenerContextManager.clear();
 
     }
+
     @Test
     public void testDerivedTable2() {
         EntityQueryable<BlogEntityVO1Proxy, BlogEntityVO1> query = easyEntityQuery.queryable(BlogEntity.class)
@@ -813,6 +816,7 @@ public class QueryTest27 extends BaseTest {
         Assert.assertEquals("false(Boolean),0(Integer),false(Boolean),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testDerivedTable3() {
         EntityQueryable<BlogEntityVO1Proxy, BlogEntityVO1> query = easyEntityQuery.queryable(BlogEntity.class)
@@ -831,7 +835,7 @@ public class QueryTest27 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         //下游操作或者前端用户传递json操作query
         List<BlogEntityVO1> list = query.where(o -> {
-            o.or(()->{
+            o.or(() -> {
                 o.status().eq(0);
                 o.order().eq(BigDecimal.ONE);
             });
@@ -841,6 +845,7 @@ public class QueryTest27 extends BaseTest {
         Assert.assertEquals("false(Boolean),false(Boolean),0(Integer),1(BigDecimal)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
         listenerContextManager.clear();
     }
+
     @Test
     public void testDerivedTable4() {
         EntityQueryable<BlogEntityVO1Proxy, BlogEntityVO1> query = easyEntityQuery.queryable(BlogEntity.class)
@@ -859,7 +864,7 @@ public class QueryTest27 extends BaseTest {
         listenerContextManager.startListen(listenerContext);
         //下游操作或者前端用户传递json操作query
         List<BlogEntityVO1> list = query.where(o -> {
-            o.or(()->{
+            o.or(() -> {
                 o.status().eq(0);
                 o.order().eq(BigDecimal.ONE);
             });

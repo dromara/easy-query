@@ -67,6 +67,7 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      * @return 返回新的结果操作表达式可以继续筛选处理
      */
     <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> select(SQLFuncExpression1<T1Proxy, TRProxy> selectExpression);
+//    EntityQueryable<T1Proxy, T1> selectColumns(SQLFuncExpression1<T1Proxy, PropTypeColumn<?>[]> selectExpression);
 
     /**
      * 快速读取单列用于返回基本类型或者subQuery等查询

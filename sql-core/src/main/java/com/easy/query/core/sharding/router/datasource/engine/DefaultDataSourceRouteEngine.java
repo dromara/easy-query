@@ -37,6 +37,12 @@ public class DefaultDataSourceRouteEngine implements DataSourceRouteEngine{
     public DataSourceRouteResult route(TableParseDescriptor tableParseDescriptor) {
         Map<TableAvailable, Set<String>> dataSourceMaps = new HashMap<>();
         Set<TableAvailable> tables = tableParseDescriptor.getTables();
+        if(EasyCollectionUtil.isEmpty(tables)){
+            HashSet<String> defDataSource = new HashSet<>();
+            defDataSource.add(easyDataSource.getDefaultDataSourceName());
+            return new DataSourceRouteResult(defDataSource);
+
+        }
         for (TableAvailable shardingTable : tables) {
             EntityMetadata entityMetadata = shardingTable.getEntityMetadata();
             if(!entityMetadata.isMultiDataSourceMapping()){

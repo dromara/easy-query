@@ -38,6 +38,7 @@ public class Select {
     public static <TProxy extends ProxyEntity<TProxy, TEntity>, TEntity> AggregateQueryable<TProxy, TEntity> aggregateOf(TProxy TProxy) {
         return new AggregateQueryable<>(TProxy);
     }
+
     public static SQLSelectExpression of(boolean condition, SQLSelectExpression... selects) {
         if (condition) {
             return of(selects);

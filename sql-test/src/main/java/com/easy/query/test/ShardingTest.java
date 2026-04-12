@@ -1122,6 +1122,13 @@ public class ShardingTest extends ShardingBaseTest {
     }
 
     @Test
+    public void shardingTest51_1() {
+        long count = easyEntityQuery.queryable(TopicSharding.class)
+                .asTable(o->o+"_1")
+                .where(o -> o.id().eq("20000")).count();
+    }
+
+    @Test
     public void shardingTestMap() {
 
 
