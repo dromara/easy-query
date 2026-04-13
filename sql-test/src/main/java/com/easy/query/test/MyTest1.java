@@ -3,13 +3,16 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.base.BigDecimalProxy;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.expression.lambda.SQLFuncExpression1;
 import com.easy.query.core.func.def.enums.TimeUnitEnum;
 import com.easy.query.core.proxy.PropTypeColumn;
+import com.easy.query.core.proxy.columns.types.SQLStringTypeColumn;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft2;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.core.draft.Draft7;
+import com.easy.query.core.proxy.grouping.proxy.Grouping1Proxy;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.grouping.Grouping1;
 import com.easy.query.core.proxy.predicate.aggregate.DSLSQLFunctionAvailable;
@@ -51,7 +54,9 @@ public class MyTest1 extends BaseTest {
 //                    o.createTime().
 //                    LocalDateTime.now().plus(1, TimeUnitEnum.MILLISECONDS)
                 })
-                .groupBy(o -> GroupKeys.of(o.content()))
+                .groupBy(o -> {
+                    return GroupKeys.of(o.content());
+                })
                 .select(o -> Select.DRAFT.of(
                         o.key1(),
                         o.groupTable().content().length()
