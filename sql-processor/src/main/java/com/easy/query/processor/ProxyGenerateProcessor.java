@@ -170,7 +170,6 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                         Table tableAnnotation = entityClassElement.getAnnotation(Table.class);
 
 
-
                         String entityFullName = entityClassElement.toString();
                         String generatePackage = entityProxy.generatePackage();
                         String realGenPackage = "".equals(generatePackage) ? getPackageName(entityClassElement) : generatePackage;
@@ -478,7 +477,12 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 TypeMirror type = fieldElement.asType();
                 boolean isGeneric = type.getKind() == TypeKind.TYPEVAR;
                 boolean isDeclared = type.getKind() == TypeKind.DECLARED;
-                String fieldGenericType = getGenericTypeString(isGeneric, isDeclared, includeProperty, type);
+                String fieldGenericType = null;
+                try {
+                    fieldGenericType = getGenericTypeString(isGeneric, isDeclared, includeProperty, type);
+                } catch (Exception ex) {
+                    throw new IllegalArgumentException("Unable to resolve type to a class,field name: [" + propertyName+"].", ex);
+                }
                 String docComment = elementUtils.getDocComment(fieldElement);
                 ValueObject valueObject = fieldElement.getAnnotation(ValueObject.class);
                 boolean isValueObject = valueObject != null;
@@ -615,10 +619,11 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
     }
 
     private static String toTypeString(TypeMirror typeMirror, boolean inGeneric) {
+
+
         DeclaredType declaredType = (DeclaredType) typeMirror;
         TypeElement typeElement = (TypeElement) declaredType.asElement();
         StringBuilder sb = new StringBuilder(typeElement.getQualifiedName());
-
         // 泛型参数
         List<? extends TypeMirror> typeArgs = declaredType.getTypeArguments();
         if (!typeArgs.isEmpty()) {
@@ -631,6 +636,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         }
         return sb.toString();
     }
+
     private String cleanType(String s) {
         // 去掉注解后若出现开头多个逗号，只清除开头的，不动泛型里的
         while (s.trim().startsWith(",")) {

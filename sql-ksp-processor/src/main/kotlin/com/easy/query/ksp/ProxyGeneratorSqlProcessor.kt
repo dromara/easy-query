@@ -175,7 +175,16 @@ class ProxyGeneratorSqlProcessor(
             val isGeneric = type.arguments.isNotEmpty()
             // TODO 似乎这个isDeclared没用上
             val isDeclared = type.declaration is KSClassDeclaration
-            val fieldGenericType = getGenericTypeString(isGeneric, isDeclared, includeProperty, type)
+            var fieldGenericType: String? = null
+            try {
+                fieldGenericType = getGenericTypeString(isGeneric, isDeclared, includeProperty, type)
+            } catch (ex: Exception) {
+                throw IllegalArgumentException(
+                    "Unable to resolve type to a class,field name: [" + propertyName + "].",
+                    ex
+                )
+            }
+//            val fieldGenericType = getGenericTypeString(isGeneric, isDeclared, includeProperty, type)
             val docComment = fieldElement.docString
             val valueObject = fieldElement.getAnnotationsByType(ValueObject::class).firstOrNull()
             val isValueObject = valueObject != null
