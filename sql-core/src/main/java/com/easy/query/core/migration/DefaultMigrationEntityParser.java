@@ -1,11 +1,13 @@
 package com.easy.query.core.migration;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.Enumerated;
 import com.easy.query.core.annotation.ForeignKey;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.annotation.TableIndex;
 import com.easy.query.core.annotation.TableIndexes;
 import com.easy.query.core.basic.extension.conversion.DefaultValueConverter;
+import com.easy.query.core.basic.extension.conversion.NamedEnumValueAutoConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
@@ -117,6 +119,13 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
 
         ColumnDbTypeResult columnDbTypeResult = getColumnTypeMap().get(columnMetadata.getPropertyType());
         if (columnDbTypeResult == null) {
+            Enumerated enumerated = columnMetadata.getPropertyType().getAnnotation(Enumerated.class);
+            if (enumerated != null) {
+                ColumnDbTypeResult typeResult = getColumnTypeMap().get(String.class);
+                if(typeResult != null){
+                    return new ColumnDbTypeResult(replaceSqlTypeLength(typeResult.columnType, length, scale), dbDefault);
+                }
+            }
             throw new EasyQueryInvalidOperationException("entity:[" + EasyClassUtil.getSimpleName(entityMigrationMetadata.getEntityMetadata().getEntityClass()) + "] field name:" + columnMetadata.getFieldName() + " not found column db type.");
         }
         if (EasyStringUtil.isNotBlank(dbDefault)) {
@@ -190,9 +199,10 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
     @Override
     public @NotNull List<TableIndexResult> getTableIndexes(EntityMigrationMetadata entityMigrationMetadata) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
-        return getClassTableIndexes(entityMigrationMetadata,entityMetadata.getEntityClass());
+        return getClassTableIndexes(entityMigrationMetadata, entityMetadata.getEntityClass());
     }
-    protected @NotNull List<TableIndexResult> getClassTableIndexes(EntityMigrationMetadata entityMigrationMetadata,Class<?> parseClass) {
+
+    protected @NotNull List<TableIndexResult> getClassTableIndexes(EntityMigrationMetadata entityMigrationMetadata, Class<?> parseClass) {
         EntityMetadata entityMetadata = entityMigrationMetadata.getEntityMetadata();
         ArrayList<TableIndexResult> tableIndexResults = new ArrayList<>();
         List<TableIndexes> tableIndexesList = EasyClassUtil.getAnnotations(parseClass, TableIndexes.class);
@@ -251,7 +261,7 @@ public class DefaultMigrationEntityParser implements MigrationEntityParser {
                     entityFields.add(new TableIndexResult.EntityField(field, columnName, !descFields.contains(field)));
                 }
             }
-            return new TableIndexResult(indexName, tableIndex.unique(), entityFields,tableIndex.comment());
+            return new TableIndexResult(indexName, tableIndex.unique(), entityFields, tableIndex.comment());
         }
         return null;
     }

@@ -24,12 +24,7 @@ public class NamedEnumValueAutoConverter implements ValueAutoConverter<Enum<?>, 
     @Override
     public boolean apply(@NotNull Class<?> entityClass, @NotNull Class<Enum<?>> propertyType, String property) {
         //枚举类型并且field带有注解
-        return Enum.class.isAssignableFrom(propertyType) && isProcessEnum(entityClass, property);
-    }
-
-    private boolean isProcessEnum(@NotNull Class<?> entityClass, String property) {
-        Field declaredField = EasyClassUtil.getFieldByName(entityClass, property);
-        return declaredField.isAnnotationPresent(Enumerated.class);
+        return Enum.class.isAssignableFrom(propertyType) && propertyType.isAnnotationPresent(Enumerated.class);
     }
 
     @Nullable

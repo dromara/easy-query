@@ -26,6 +26,7 @@ import com.easy.query.test.entity.MyCategory;
 import com.easy.query.test.entity.MyCategoryInterceptor;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.UUIDEntity;
+import com.easy.query.test.enums.NamedEnum;
 import com.easy.query.test.interceptor.MyEntityInterceptor;
 import com.easy.query.test.interceptor.MyTenantInterceptor;
 import com.easy.query.test.listener.ListenerContextManager;
@@ -157,12 +158,12 @@ public class PgSQLBaseTest {
         {
 
 
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(BlogEntity.class,PgItem.class,TableNoKey.class,DocBankCard.class,DocBank.class,  DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class, MathTest.class, MyCategory.class));
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(NamedEnumEntity.class,BlogEntity.class,PgItem.class,TableNoKey.class,DocBankCard.class,DocBank.class,  DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class, MathTest.class, MyCategory.class));
             codeFirstCommand.executeWithTransaction(a->a.commit());
         }
         {
 
-            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(BlogEntity.class,PgItem.class,TableNoKey.class,DocBank.class,DocBankCard.class, DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class, MathTest.class,MyCategory.class));
+            CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(NamedEnumEntity.class,BlogEntity.class,PgItem.class,TableNoKey.class,DocBank.class,DocBankCard.class, DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class, MathTest.class,MyCategory.class));
             codeFirstCommand.executeWithTransaction(a->a.commit());
         }
 
@@ -291,12 +292,29 @@ public class PgSQLBaseTest {
         categoryList.add(node4);
         categoryList.add(node5);
         categoryList.add(node6);
+
+        ArrayList<NamedEnumEntity> entities = new ArrayList<>();
+        {
+            NamedEnumEntity entity = new NamedEnumEntity();
+            entity.setId("1");
+            entity.setName("用户");
+            entity.setType(NamedEnum.USER);
+            entities.add(entity);
+        }
+        {
+            NamedEnumEntity entity = new NamedEnumEntity();
+            entity.setId("2");
+            entity.setName("图书");
+            entity.setType(NamedEnum.BOOK);
+            entities.add(entity);
+        }
         entityQuery.insertable(list).batch().executeRows();
         entityQuery.insertable(sysUser).executeRows();
         entityQuery.insertable(docUsers).executeRows();
         entityQuery.insertable(docBanks).executeRows();
         entityQuery.insertable(docBankCards).executeRows();
         entityQuery.insertable(categoryList).executeRows();
+        entityQuery.insertable(entities).executeRows();
     }
 
 }
