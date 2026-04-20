@@ -1,6 +1,7 @@
 package com.easy.query.core.configuration;
 
 import com.easy.query.core.basic.extension.conversion.ColumnValueSQLConverter;
+import com.easy.query.core.basic.extension.conversion.NamedEnumValueAutoConverter;
 import com.easy.query.core.basic.extension.conversion.ValueAutoConverter;
 import com.easy.query.core.basic.extension.conversion.ValueConverter;
 import com.easy.query.core.basic.extension.encryption.EncryptionStrategy;
@@ -89,6 +90,7 @@ public class QueryConfiguration {
         easyVersionStrategyMap.put(VersionTimestampStrategy.class, new VersionTimestampStrategy());
         shardingInitializerMap.put(UnShardingInitializer.class, UnShardingInitializer.INSTANCE);
         toManySubquerySQLStrategyMap.put("", GenericEntityRelationToImplicitProvider.INSTANCE);
+        applyValueConverter(NamedEnumValueAutoConverter.INSTANCE);
 //        primaryKeyGeneratorMap.put(UnsupportPrimaryKeyGenerator.class, UnsupportPrimaryKeyGenerator.INSTANCE);
     }
 
