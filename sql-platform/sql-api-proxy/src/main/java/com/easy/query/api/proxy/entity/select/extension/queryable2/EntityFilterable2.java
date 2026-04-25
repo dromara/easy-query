@@ -102,6 +102,7 @@ public interface EntityFilterable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param whereExpression 入参为join的from表和join表组成的tuple元组
      * @return 返回表达式自身
      */
+    @Deprecated
     default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> whereMerge(SQLActionExpression1<MergeTuple2<T1Proxy, T2Proxy>> whereExpression) {
         return whereMerge(true, whereExpression);
     }
@@ -130,6 +131,7 @@ public interface EntityFilterable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param whereExpression 入参为join的from表和join表组成的tuple元组
      * @return 返回表达式自身
      */
+    @Deprecated
     default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> whereMerge(boolean condition, SQLActionExpression1<MergeTuple2<T1Proxy, T2Proxy>> whereExpression) {
         return where(condition, (t1, t2) -> {
             whereExpression.apply(new MergeTuple2<>(t1, t2));

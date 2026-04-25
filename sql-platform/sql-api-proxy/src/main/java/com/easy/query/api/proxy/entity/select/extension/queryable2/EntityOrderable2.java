@@ -30,10 +30,12 @@ public interface EntityOrderable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return getQueryable2();
     }
 
+    @Deprecated
     default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> orderByMerge(SQLActionExpression1<MergeTuple2<T1Proxy, T2Proxy>> selectExpression) {
         return orderByMerge(true, selectExpression);
     }
 
+    @Deprecated
     default EntityQueryable2<T1Proxy, T1, T2Proxy, T2> orderByMerge(boolean condition, SQLActionExpression1<MergeTuple2<T1Proxy, T2Proxy>> selectExpression) {
         return orderBy(condition, (t1, t2) -> {
             selectExpression.apply(new MergeTuple2<>(t1, t2));

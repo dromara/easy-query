@@ -31,10 +31,12 @@ public interface EntityFilterable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return getQueryable3();
     }
 
+    @Deprecated
     default EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> whereMerge(SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> whereExpression) {
         return whereMerge(true, whereExpression);
     }
 
+    @Deprecated
     default EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> whereMerge(boolean condition, SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> whereExpression) {
         return where(condition, (t1, t2, t3) -> {
              whereExpression.apply(new MergeTuple3<>(t1, t2,t3));

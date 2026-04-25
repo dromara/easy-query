@@ -2,11 +2,9 @@ package com.easy.query.core.basic.extension.conversion;
 
 import com.easy.query.core.annotation.Enumerated;
 import com.easy.query.core.metadata.ColumnMetadata;
-import com.easy.query.core.util.EasyClassUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * create time 2026/4/19 20:28
  * 枚举名称转换器
+ * 支持将枚举名称存储到数据库,数据库值转成java的枚举
  *
  * @author xuejiaming
  */

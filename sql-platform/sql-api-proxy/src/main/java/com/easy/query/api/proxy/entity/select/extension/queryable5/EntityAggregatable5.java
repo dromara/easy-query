@@ -156,6 +156,7 @@ public interface EntityAggregatable5<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
      * @param <TMember>
      * @return
      */
+    @Deprecated
     default <TMember extends Number> BigDecimal sumBigDecimalOrNullMerge(SQLFuncExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>, PropTypeColumn<TMember>> columnSelectorExpression) {
         return sumBigDecimalOrNull((t, t1, t2, t4, t5) -> {
             return columnSelectorExpression.apply(new MergeTuple5<>(t, t1, t2, t4, t5));
@@ -163,84 +164,98 @@ public interface EntityAggregatable5<T1Proxy extends ProxyEntity<T1Proxy, T1>, T
     }
 
 
+    @Deprecated
     default <TMember extends Number> BigDecimal sumBigDecimalOrDefaultMerge(SQLFuncExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>, PropTypeColumn<TMember>> columnSelectorExpression, BigDecimal def) {
         return sumBigDecimalOrDefault((t, t1, t2, t4, t5) -> {
             return columnSelectorExpression.apply(new MergeTuple5<>(t, t1, t2, t4, t5));
         }, def);
     }
 
+    @Deprecated
     default <TMember extends Number> TMember sumOrNullMerge(SQLFuncExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>, PropTypeColumn<TMember>> columnSelectorExpression) {
         return sumOrNull((t, t1, t2, t4, t5) -> {
             return columnSelectorExpression.apply(new MergeTuple5<>(t, t1, t2, t4, t5));
         });
     }
 
+    @Deprecated
     default <TMember extends Number> TMember sumOrDefaultMerge(SQLFuncExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>, PropTypeColumn<TMember>> columnSelectorExpression, TMember def) {
         return sumOrDefault((t, t1, t2, t4, t5) -> {
             return columnSelectorExpression.apply(new MergeTuple5<>(t, t1, t2, t4, t5));
         }, def);
     }
 
+    @Deprecated
     default <TMember> TMember maxOrNullMerge(SQLFuncExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>, PropTypeColumn<TMember>> columnSelectorExpression) {
         return maxOrNull((t, t1, t2, t4, t5) -> {
             return columnSelectorExpression.apply(new MergeTuple5<>(t, t1, t2, t4, t5));
         });
     }
 
+    @Deprecated
     default <TMember> TMember maxOrDefaultMerge(SQLFuncExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>, PropTypeColumn<TMember>> columnSelectorExpression, TMember def) {
         return maxOrDefault((t, t1, t2, t4, t5) -> {
             return columnSelectorExpression.apply(new MergeTuple5<>(t, t1, t2, t4, t5));
         }, def);
     }
 
+    @Deprecated
     default <TMember> TMember minOrNullMerge(SQLFuncExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>, PropTypeColumn<TMember>> columnSelectorExpression) {
         return minOrNull((t, t1, t2, t4, t5) -> {
             return columnSelectorExpression.apply(new MergeTuple5<>(t, t1, t2, t4, t5));
         });
     }
 
+    @Deprecated
     default <TMember> TMember minOrDefaultMerge(SQLFuncExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>, PropTypeColumn<TMember>> columnSelectorExpression, TMember def) {
         return minOrDefault((t, t1, t2, t4, t5) -> {
             return columnSelectorExpression.apply(new MergeTuple5<>(t, t1, t2, t4, t5));
         }, def);
     }
 
+    @Deprecated
     default <TMember extends Number> Double avgOrNullMerge(SQLFuncExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>, PropTypeColumn<TMember>> columnSelectorExpression) {
         return avgOrNull((t, t1, t2, t4, t5) -> {
             return columnSelectorExpression.apply(new MergeTuple5<>(t, t1, t2, t4, t5));
         });
     }
 
+    @Deprecated
     default <TMember extends Number> BigDecimal avgBigDecimalOrNullMerge(SQLFuncExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>, PropTypeColumn<TMember>> columnSelectorExpression) {
         return avgBigDecimalOrNull((t, t1, t2, t4, t5) -> {
             return columnSelectorExpression.apply(new MergeTuple5<>(t, t1, t2, t4, t5));
         });
     }
 
+    @Deprecated
     default <TMember extends Number> Float avgFloatOrNullMerge(SQLFuncExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>, PropTypeColumn<TMember>> columnSelectorExpression) {
         return avgFloatOrNull((t, t1, t2, t4, t5) -> {
             return columnSelectorExpression.apply(new MergeTuple5<>(t, t1, t2, t4, t5));
         });
     }
 
+    @Deprecated
     default <TMember extends Number> Double avgOrDefaultMerge(SQLFuncExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>, PropTypeColumn<TMember>> columnSelectorExpression, Double def) {
         return avgOrDefault((t, t1, t2, t4, t5) -> {
             return columnSelectorExpression.apply(new MergeTuple5<>(t, t1, t2, t4, t5));
         }, def);
     }
 
+    @Deprecated
     default <TMember extends Number> BigDecimal avgBigDecimalOrDefaultMerge(SQLFuncExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>, PropTypeColumn<TMember>> columnSelectorExpression, BigDecimal def) {
         return avgBigDecimalOrDefault((t, t1, t2, t4, t5) -> {
             return columnSelectorExpression.apply(new MergeTuple5<>(t, t1, t2, t4, t5));
         }, def);
     }
 
+    @Deprecated
     default <TMember extends Number> Float avgFloatOrDefaultMerge(SQLFuncExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>, PropTypeColumn<TMember>> columnSelectorExpression, Float def) {
         return avgFloatOrDefault((t, t1, t2, t4, t5) -> {
             return columnSelectorExpression.apply(new MergeTuple5<>(t, t1, t2, t4, t5));
         }, def);
     }
 
+    @Deprecated
     default <TMember extends Number, TResult extends Number> TResult avgOrDefaultMerge(SQLFuncExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>, PropTypeColumn<TMember>> columnSelectorExpression, TResult def, Class<TResult> resultClass) {
         return avgOrDefault((t, t1, t2, t4, t5) -> {
             return columnSelectorExpression.apply(new MergeTuple5<>(t, t1, t2, t4, t5));

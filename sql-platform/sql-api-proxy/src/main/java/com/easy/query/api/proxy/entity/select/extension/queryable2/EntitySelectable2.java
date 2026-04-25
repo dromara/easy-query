@@ -43,6 +43,14 @@ public interface EntitySelectable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return trProxyTREntityQueryable;
     }
 
+    /**
+     * 请使用{@link #select(SQLFuncExpression2)}
+     * @param resultClass
+     * @param selectExpression
+     * @return
+     * @param <TR>
+     */
+    @Deprecated
     default <TR> Query<TR> select(Class<TR> resultClass, SQLFuncExpression2<T1Proxy, T2Proxy, SQLSelectAsExpression> selectExpression) {
         SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy(), get2Proxy());
         return getClientQueryable2().select(resultClass, columnAsSelector -> {
@@ -103,6 +111,7 @@ public interface EntitySelectable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         }, replace);
     }
 
+    @Deprecated
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectMerge(SQLFuncExpression1<MergeTuple2<T1Proxy, T2Proxy>, TRProxy> selectExpression) {
         return select((a, b) -> selectExpression.apply(new MergeTuple2<>(a, b)));
     }

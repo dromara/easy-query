@@ -36,6 +36,12 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      *               .id().set(o.id())
      *               .title().set(o.title()))
      *
+     *          .select(o->Select.of(
+     *               TopicVo.class,
+     *               o.id().as("id"),
+     *               o.title().as("title")//TopicVo::getTitile
+     *          ))
+     *
      *          //最原始的写法和上述adapter一致
      *         .select(o->{
      *            TopicProxy r=new TopicProxy();
@@ -112,6 +118,14 @@ public interface EntitySelectable1<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1>
      */
     <TR> Query<TR> select(Class<TR> resultClass);
 
+    /**
+     * 请使用 {{@link  #select(SQLFuncExpression1)}}
+     * @param resultClass
+     * @param selectExpression
+     * @return
+     * @param <TR>
+     */
+    @Deprecated
     <TR> Query<TR> select(Class<TR> resultClass, SQLFuncExpression1<T1Proxy, SQLSelectAsExpression> selectExpression);
 
     /**

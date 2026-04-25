@@ -33,10 +33,12 @@ public interface EntityFilterable5<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return getQueryable5();
     }
 
+    @Deprecated
     default EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> whereMerge(SQLActionExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>> whereExpression) {
         return whereMerge(true, whereExpression);
     }
 
+    @Deprecated
     default EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> whereMerge(boolean condition, SQLActionExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>> whereExpression) {
         return where(condition, (t, t1, t2, t3, t4) -> {
             whereExpression.apply(new MergeTuple5<>(t, t1, t2, t3, t4));

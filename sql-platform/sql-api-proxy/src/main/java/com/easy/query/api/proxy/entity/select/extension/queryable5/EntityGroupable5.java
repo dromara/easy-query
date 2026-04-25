@@ -49,6 +49,7 @@ public interface EntityGroupable5<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return new EasyEntityQueryable<>(groupProxy, groupQueryable);
     }
 
+    @Deprecated
     default <TRProxy extends ProxyEntity<TRProxy, TR> & SQLGroupByExpression, TR> EntityQueryable<TRProxy, TR> groupByMerge(SQLFuncExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>, SQLFuncExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>, TRProxy>> selectExpression) {
 
         return groupBy((t1, t2, t3, t4, t5) -> selectExpression.apply(new MergeTuple5<>(t1, t2, t3, t4, t5)));

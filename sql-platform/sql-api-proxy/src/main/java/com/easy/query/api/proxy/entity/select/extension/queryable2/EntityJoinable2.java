@@ -310,6 +310,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy>
      * @param <T3>
      */
+    @Deprecated
     default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoinMerge(Class<T3> joinClass, SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
         return leftJoin(joinClass, (t1, t2, t3) -> {
             onExpression.apply(new MergeTuple3<>(t1, t2, t3));
@@ -326,6 +327,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy>
      * @param <T3>
      */
+    @Deprecated
     default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> leftJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
         return leftJoin(joinQueryable, (t1, t2, t3) -> {
             onExpression.apply(new MergeTuple3<>(t1, t2, t3));
@@ -342,6 +344,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy>
      * @param <T3>
      */
+    @Deprecated
     default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoinMerge(Class<T3> joinClass, SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
         return rightJoin(joinClass, (t1, t2, t3) -> {
             onExpression.apply(new MergeTuple3<>(t1, t2, t3));
@@ -358,6 +361,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy>
      * @param <T3>
      */
+    @Deprecated
     default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> rightJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
         return rightJoin(joinQueryable, (t1, t2, t3) -> {
             onExpression.apply(new MergeTuple3<>(t1, t2, t3));
@@ -374,6 +378,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy>
      * @param <T3>
      */
+    @Deprecated
     default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoinMerge(Class<T3> joinClass, SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
         return innerJoin(joinClass, (t1, t2, t3) -> {
             onExpression.apply( new MergeTuple3<>(t1, t2, t3));
@@ -390,6 +395,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy>
      * @param <T3>
      */
+    @Deprecated
     default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> innerJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
         return innerJoin(joinQueryable, (t1, t2, t3) -> {
             onExpression.apply(new MergeTuple3<>(t1, t2, t3));
@@ -405,6 +411,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy>
      * @param <T3>
      */
+    @Deprecated
     default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3 extends ProxyEntityAvailable<T3,T3Proxy>> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> crossJoinMerge(Class<T3> joinClass, SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
         return crossJoin(joinClass, (t1, t2, t3) -> {
             onExpression.apply( new MergeTuple3<>(t1, t2, t3));
@@ -421,6 +428,7 @@ public interface EntityJoinable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
      * @param <T3Proxy>
      * @param <T3>
      */
+    @Deprecated
     default <T3Proxy extends ProxyEntity<T3Proxy, T3>, T3> EntityQueryable3<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3> crossJoinMerge(EntityQueryable<T3Proxy, T3> joinQueryable, SQLActionExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>> onExpression) {
         return crossJoin(joinQueryable, (t1, t2, t3) -> {
             onExpression.apply(new MergeTuple3<>(t1, t2, t3));

@@ -37,6 +37,7 @@ public interface EntitySelectable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return trProxyTREntityQueryable;
     }
 
+    @Deprecated
     default <TR> Query<TR> select(Class<TR> resultClass, SQLFuncExpression3<T1Proxy, T2Proxy, T3Proxy, SQLSelectAsExpression> selectExpression) {
         SQLSelectAsExpression sqlSelectAsExpression = selectExpression.apply(get1Proxy(), get2Proxy(), get3Proxy());
         return getClientQueryable3().select(resultClass, columnAsSelector -> {
@@ -44,6 +45,7 @@ public interface EntitySelectable3<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         });
     }
 
+    @Deprecated
     default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectMerge(SQLFuncExpression1<MergeTuple3<T1Proxy, T2Proxy, T3Proxy>, TRProxy> selectExpression) {
         return select((a, b, c) -> selectExpression.apply(new MergeTuple3<>(a, b, c)));
     }

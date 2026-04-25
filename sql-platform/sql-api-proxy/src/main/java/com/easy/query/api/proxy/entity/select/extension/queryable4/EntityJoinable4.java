@@ -142,48 +142,56 @@ public interface EntityJoinable4<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
     }
 
 
+    @Deprecated
     default <T5Proxy extends ProxyEntity<T5Proxy, T5>, T5 extends ProxyEntityAvailable<T5,T5Proxy>> EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> leftJoinMerge(Class<T5> joinClass, SQLActionExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>> on) {
         return leftJoin(joinClass, (t, t1, t2, t3, t4) -> {
             on.apply(new MergeTuple5<>(t, t1, t2, t3, t4));
         });
     }
 
+    @Deprecated
     default <T5Proxy extends ProxyEntity<T5Proxy, T5>, T5> EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> leftJoinMerge(EntityQueryable<T5Proxy, T5> joinQueryable, SQLActionExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>> on) {
         return leftJoin(joinQueryable, (t, t1, t2, t3, t4) -> {
             on.apply(new MergeTuple5<>(t, t1, t2, t3, t4));
         });
     }
 
+    @Deprecated
     default <T5Proxy extends ProxyEntity<T5Proxy, T5>, T5 extends ProxyEntityAvailable<T5,T5Proxy>> EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> rightJoinMerge(Class<T5> joinClass, SQLActionExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>> on) {
         return rightJoin(joinClass, ( t, t1, t2, t3, t4) -> {
             on.apply(new MergeTuple5<>(t, t1, t2, t3, t4));
         });
     }
 
+    @Deprecated
     default <T5Proxy extends ProxyEntity<T5Proxy, T5>, T5> EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> rightJoinMerge(EntityQueryable<T5Proxy, T5> joinQueryable, SQLActionExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>> on) {
         return rightJoin(joinQueryable, (t, t1, t2, t3, t4) -> {
             on.apply(new MergeTuple5<>(t, t1, t2, t3, t4));
         });
     }
 
+    @Deprecated
     default <T5Proxy extends ProxyEntity<T5Proxy, T5>, T5 extends ProxyEntityAvailable<T5,T5Proxy>> EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> innerJoinMerge(Class<T5> joinClass, SQLActionExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>> on) {
         return innerJoin(joinClass, (t, t1, t2, t3, t4) -> {
             on.apply(new MergeTuple5<>(t, t1, t2, t3, t4));
         });
     }
 
+    @Deprecated
     default <T5Proxy extends ProxyEntity<T5Proxy, T5>, T5> EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> innerJoinMerge(EntityQueryable<T5Proxy, T5> joinQueryable, SQLActionExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>> on) {
         return innerJoin(joinQueryable, (t, t1, t2, t3, t4) -> {
             on.apply(new MergeTuple5<>(t, t1, t2, t3, t4));
         });
     }
 
+    @Deprecated
     default <T5Proxy extends ProxyEntity<T5Proxy, T5>, T5 extends ProxyEntityAvailable<T5,T5Proxy>> EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> crossJoinMerge(Class<T5> joinClass, SQLActionExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>> on) {
         return crossJoin(joinClass, (t, t1, t2, t3, t4) -> {
             on.apply(new MergeTuple5<>(t, t1, t2, t3, t4));
         });
     }
 
+    @Deprecated
     default <T5Proxy extends ProxyEntity<T5Proxy, T5>, T5> EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> crossJoinMerge(EntityQueryable<T5Proxy, T5> joinQueryable, SQLActionExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>> on) {
         return crossJoin(joinQueryable, (t, t1, t2, t3, t4) -> {
             on.apply(new MergeTuple5<>(t, t1, t2, t3, t4));
