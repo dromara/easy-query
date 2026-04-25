@@ -82,7 +82,8 @@ public class DefaultIncludeProvider implements IncludeProvider {
         };
         boolean replace = navigateInclude.getIncludeNavigateParams().isReplace();
         if (replace) {
-            expressionContext.getIncludes().put(includeNavigateParams.getNavigateMetadata(), new IncludeNavigateExpression(includeNavigateParams, queryableExpression));
+            throw new UnsupportedOperationException();
+//            expressionContext.getIncludes().put(includeNavigateParams.getNavigateMetadata(), new IncludeNavigateExpression(includeNavigateParams, queryableExpression));
         } else {
             expressionContext.getIncludes().putIfAbsent(includeNavigateParams.getNavigateMetadata(), new IncludeNavigateExpression(includeNavigateParams, queryableExpression));
         }

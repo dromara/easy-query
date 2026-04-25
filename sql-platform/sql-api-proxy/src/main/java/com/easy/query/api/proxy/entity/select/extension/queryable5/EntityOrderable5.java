@@ -33,16 +33,4 @@ public interface EntityOrderable5<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return getQueryable5();
     }
 
-    @Deprecated
-    default EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> orderByMerge(SQLActionExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>> selectExpression) {
-        return orderByMerge(true, selectExpression);
-    }
-
-    @Deprecated
-    default EntityQueryable5<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5> orderByMerge(boolean condition, SQLActionExpression1<MergeTuple5<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy>> selectExpression) {
-        return orderBy(condition, (t, t1, t2, t3, t4) -> {
-            selectExpression.apply(new MergeTuple5<>(t, t1, t2, t3, t4));
-        });
-    }
-
 }

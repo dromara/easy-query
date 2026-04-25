@@ -91,21 +91,6 @@ public class QueryTest3 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` LEFT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` LIMIT 2 OFFSET 1", toSql);
     }
 
-    @Test
-    public void query124_4() {
-        String toSql = easyEntityQuery
-                .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
-                .leftJoin(BlogEntity.class, (t, t1, t2) -> t.id().eq(t2.id()))
-                .leftJoin(BlogEntity.class, (t, t1, t2, t3) -> t.id().eq(t3.id()))
-                .leftJoin(BlogEntity.class, (t, t1, t2, t3, t4) -> t.id().eq(t3.id()))
-                .leftJoinMerge(BlogEntity.class, c -> c.t1.id().eq(c.t5.id()))
-                .where(o -> o.id().eq("3"))
-                .limit(1, 2)
-                .toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` LEFT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` LEFT JOIN `t_blog` t4 ON t4.`deleted` = ? AND t.`id` = t3.`id` LEFT JOIN `t_blog` t5 ON t5.`deleted` = ? AND t.`id` = t4.`id` WHERE t.`id` = ? LIMIT 2 OFFSET 1", toSql);
-    }
-
 
     @Test
     public void query124_1() {
@@ -120,18 +105,6 @@ public class QueryTest3 extends BaseTest {
         Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN lateral `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` LEFT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` WHERE t.`id` = ? LIMIT 2 OFFSET 1", toSql);
     }
 
-    @Test
-    public void query124_2() {
-        String toSql = easyEntityQuery
-                .queryable(Topic.class)
-                .leftJoin(BlogEntity.class, (t, t1) -> t.id().eq(t1.id()))
-                .leftJoin(BlogEntity.class, (t, t1, t2) -> t.id().eq(t2.id()))
-                .leftJoinMerge(BlogEntity.class, o -> o.t1.id().eq(o.t4.id()))
-                .whereMerge(o -> o.t1.id().eq("3"))
-                .limit(1, 2)
-                .toSQL();
-        Assert.assertEquals("SELECT t.`id`,t.`stars`,t.`title`,t.`create_time` FROM `t_topic` t LEFT JOIN `t_blog` t1 ON t1.`deleted` = ? AND t.`id` = t1.`id` LEFT JOIN `t_blog` t2 ON t2.`deleted` = ? AND t.`id` = t2.`id` LEFT JOIN `t_blog` t3 ON t3.`deleted` = ? AND t.`id` = t3.`id` WHERE t.`id` = ? LIMIT 2 OFFSET 1", toSql);
-    }
 
     @Test
     public void query125() {

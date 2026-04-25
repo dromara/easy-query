@@ -36,15 +36,4 @@ public interface EntityFilterable8<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         return getQueryable8();
     }
 
-    @Deprecated
-    default EntityQueryable8<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8> whereMerge(SQLActionExpression1<MergeTuple8<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy>> whereExpression) {
-        return whereMerge(true, whereExpression);
-    }
-
-    @Deprecated
-    default EntityQueryable8<T1Proxy, T1, T2Proxy, T2, T3Proxy, T3, T4Proxy, T4, T5Proxy, T5, T6Proxy, T6, T7Proxy, T7, T8Proxy, T8> whereMerge(boolean condition, SQLActionExpression1<MergeTuple8<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy, T8Proxy>> whereExpression) {
-        return where(condition, (t, t1, t2, t3, t4, t5, t6, t7) -> {
-            whereExpression.apply(new MergeTuple8<>(t, t1, t2, t3, t4, t5, t6, t7));
-        });
-    }
 }

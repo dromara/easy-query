@@ -111,11 +111,6 @@ public interface EntitySelectable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         }, replace);
     }
 
-    @Deprecated
-    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectMerge(SQLFuncExpression1<MergeTuple2<T1Proxy, T2Proxy>, TRProxy> selectExpression) {
-        return select((a, b) -> selectExpression.apply(new MergeTuple2<>(a, b)));
-    }
-
 
     /**
      * 快速读取单列用于返回基本类型或者subQuery等查询

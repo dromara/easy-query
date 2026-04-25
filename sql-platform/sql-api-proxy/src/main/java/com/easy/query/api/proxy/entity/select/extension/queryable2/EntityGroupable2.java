@@ -45,11 +45,4 @@ public interface EntityGroupable2<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
         EasyClientQueryable<TR> groupQueryable = new EasyClientQueryable<>(grouping1Proxy.getEntityClass(), getClientQueryable2().getSQLEntityExpressionBuilder());
         return new EasyEntityQueryable<>(groupProxy, groupQueryable);
     }
-
-
-    @Deprecated
-    default <TRProxy extends ProxyEntity<TRProxy, TR> & SQLGroupByExpression, TR> EntityQueryable<TRProxy, TR> groupByMerge(SQLFuncExpression1<MergeTuple2<T1Proxy, T2Proxy>, SQLFuncExpression1<MergeTuple2<T1Proxy, T2Proxy>, TRProxy>> selectExpression) {
-
-        return groupBy((t1, t2) -> selectExpression.apply(new MergeTuple2<>(t1, t2)));
-    }
 }

@@ -48,12 +48,6 @@ public interface EntitySelectable7<T1Proxy extends ProxyEntity<T1Proxy, T1>, T1,
             sqlSelectAsExpression.accept(columnAsSelector.getAsSelector());
         });
     }
-
-    @Deprecated
-    default <TRProxy extends ProxyEntity<TRProxy, TR>, TR> EntityQueryable<TRProxy, TR> selectMerge(SQLFuncExpression1<MergeTuple7<T1Proxy, T2Proxy, T3Proxy, T4Proxy, T5Proxy, T6Proxy, T7Proxy>, TRProxy> selectExpression) {
-        return select((a, b, c, d, e, f, g) -> selectExpression.apply(new MergeTuple7<>(a, b, c, d, e, f, g)));
-    }
-
     /**
      * 快速读取单列用于返回基本类型或者subQuery等查询
      * <blockquote><pre>
