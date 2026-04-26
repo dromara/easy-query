@@ -50,7 +50,7 @@ public class DamengQuerySQLExpression extends QuerySQLExpressionImpl {
                 return sb.toString();
             }
         }
-        return toSQL0(true, toSQLContext);
+        return toSQL0(root, toSQLContext);
     }
 
     protected String toSQL0(boolean root, ToSQLContext toSQLContext) {
@@ -119,6 +119,6 @@ public class DamengQuerySQLExpression extends QuerySQLExpressionImpl {
             }
         }
 
-        return sql.toString();
+        return appendQueryLock(root, sql.toString());
     }
 }

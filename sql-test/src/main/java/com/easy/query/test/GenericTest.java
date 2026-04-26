@@ -14,6 +14,7 @@ import com.easy.query.core.configuration.nameconversion.impl.UpperUnderlinedName
 import com.easy.query.core.enums.ContextTypeEnum;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
+import com.easy.query.core.enums.QueryLockEnum;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.enums.SQLRangeEnum;
 import com.easy.query.core.exception.EasyQueryException;
@@ -1261,6 +1262,23 @@ public class GenericTest extends BaseTest {
         ExpressionContext expressionContext = easyExpressionContext.cloneExpressionContext();
         Assert.assertNull(expressionContext.getPrintSQL());
         Assert.assertEquals(true, expressionContext.getPrintNavSQL());
+    }
+
+    @Test
+    public void testQueryLockClonePropagation() {
+        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(easyEntityQuery.getRuntimeContext(), ContextTypeEnum.QUERY);
+        easyExpressionContext.setQueryLock(QueryLockEnum.FOR_UPDATE);
+        ExpressionContext expressionContext = easyExpressionContext.cloneExpressionContext();
+        Assert.assertEquals(QueryLockEnum.FOR_UPDATE, expressionContext.getQueryLock());
+    }
+
+    @Test
+    public void testQueryLockExtendFromPropagation() {
+        EasyExpressionContext sourceExpressionContext = new EasyExpressionContext(easyEntityQuery.getRuntimeContext(), ContextTypeEnum.QUERY);
+        sourceExpressionContext.setQueryLock(QueryLockEnum.FOR_UPDATE);
+        EasyExpressionContext targetExpressionContext = new EasyExpressionContext(easyEntityQuery.getRuntimeContext(), ContextTypeEnum.QUERY);
+        sourceExpressionContext.extendFrom(targetExpressionContext);
+        Assert.assertEquals(QueryLockEnum.FOR_UPDATE, targetExpressionContext.getQueryLock());
     }
 
     @Test
