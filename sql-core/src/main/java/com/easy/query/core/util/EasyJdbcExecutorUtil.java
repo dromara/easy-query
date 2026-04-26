@@ -31,6 +31,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -181,13 +182,17 @@ public class EasyJdbcExecutorUtil {
         return EasyOptionUtil.isPrintSQL(executorContext.getExpressionContext());
     }
 
-    public static void clear(PreparedStatement ps) {
+    public static void clear(Statement ps) {
         try {
             if (ps != null) {
                 ps.close();
             }
         } catch (SQLException ignored) {
         }
+    }
+
+    public static void clear(PreparedStatement ps) {
+        clear((Statement) ps);
     }
 
     public static PreparedStatement createPreparedStatement(Connection connection, String sql, List<SQLParameter> sqlParameters, JdbcTypeHandlerManager easyJdbcTypeHandlerManager) throws SQLException {
