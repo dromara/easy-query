@@ -1,5 +1,8 @@
 package com.easy.query.test.sharding;
 
+import com.easy.query.core.basic.api.database.CodeFirstCommand;
+import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.expression.lambda.RouteFunction;
 import com.easy.query.core.enums.sharding.ShardingOperatorEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
@@ -10,8 +13,11 @@ import com.easy.query.test.entity.TopicShardingTime;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -50,11 +56,5 @@ public class TopicShardingTimeTableRoute extends AbstractMonthTableRoute<TopicSh
         return (LocalDateTime)shardingValue;
     }
 
-//    @Override
-//    public Collection<TableRouteUnit> afterFilterTableName(Collection<ActualTable> allActualTables, Collection<ActualTable> beforeActualTables, Collection<TableRouteUnit> filterRouteUnits) {
-//
-//        Collection<TableRouteUnit> tableRouteUnits = super.afterFilterTableName(allActualTables, beforeActualTables, filterRouteUnits);
-//        String before7days = LocalDateTime.now().plusDays(-7).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-//        return tableRouteUnits.stream().filter(r->r.getActualTableName().split(tableSeparator())[1].compareTo(before7days)>=0).collect(Collectors.toList());
-//    }
+
 }
