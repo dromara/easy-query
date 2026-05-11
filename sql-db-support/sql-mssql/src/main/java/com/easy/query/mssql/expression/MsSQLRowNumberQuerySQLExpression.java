@@ -128,6 +128,6 @@ public class MsSQLRowNumberQuerySQLExpression extends MsSQLQuerySQLExpression {
             }
         }
 
-        return sql.toString();
+        return appendQueryLock(root, sql.toString());
     }
 }

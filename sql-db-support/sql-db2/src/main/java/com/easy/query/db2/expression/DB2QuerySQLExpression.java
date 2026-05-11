@@ -111,7 +111,7 @@ public class DB2QuerySQLExpression extends QuerySQLExpressionImpl {
             sql.append(" FETCH FIRST ").append(rows).append(" ROWS ONLY");
         }
 
-        return sql.toString();
+        return appendQueryLock(root, sql.toString());
     }
 
     protected SQLBuilderSegment getPrimaryKeyOrFirstColumnOrder(TableAvailable table) {

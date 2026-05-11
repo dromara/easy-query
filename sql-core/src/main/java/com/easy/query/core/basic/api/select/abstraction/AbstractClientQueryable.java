@@ -37,6 +37,7 @@ import com.easy.query.core.basic.api.select.impl.EasyClientQueryable;
 import com.easy.query.core.basic.api.select.impl.EasyCteClientQueryable;
 import com.easy.query.core.basic.api.select.provider.SQLExpressionProvider;
 import com.easy.query.core.basic.extension.track.TrackManager;
+import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.executor.ExecutorContext;
 import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultColumnMetadata;
 import com.easy.query.core.basic.jdbc.executor.impl.def.EntityResultMetadata;
@@ -53,6 +54,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.enums.ExecuteMethodEnum;
 import com.easy.query.core.enums.MultiTableTypeEnum;
+import com.easy.query.core.enums.QueryLockEnum;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.enums.SQLUnionEnum;
 import com.easy.query.core.enums.sharding.ConnectionModeEnum;
@@ -1818,6 +1820,26 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
     @Override
     public ClientQueryable<T1> asNoTracking() {
         entityQueryExpressionBuilder.getExpressionContext().getBehavior().removeBehavior(EasyBehaviorEnum.USE_TRACKING);
+        return this;
+    }
+
+    @NotNull
+    @Override
+    public ClientQueryable<T1> forUpdate() {
+        ConnectionManager connectionManager = runtimeContext.getConnectionManager();
+        if (!connectionManager.currentThreadInTransaction()) {
+            String queryName = EasyClassUtil.getSimpleName(queryClass());
+            throw new IllegalStateException("forUpdate requires an active transaction for query [" + queryName + "], please call beginTransaction() before forUpdate().");
+        }
+        if (entityQueryExpressionBuilder.getTables().size() > 1 || entityQueryExpressionBuilder.hasRelationTables()) {
+            String queryName = EasyClassUtil.getSimpleName(queryClass());
+            throw new IllegalStateException("forUpdate currently supports single-table queries only, query [" + queryName + "] contains join/relation tables.");
+        }
+        if (QueryLockEnum.FOR_UPDATE == entityQueryExpressionBuilder.getExpressionContext().getQueryLock()) {
+            String queryName = EasyClassUtil.getSimpleName(queryClass());
+            throw new IllegalStateException("forUpdate is already enabled on query [" + queryName + "], repeated calls are not supported.");
+        }
+        entityQueryExpressionBuilder.getExpressionContext().setQueryLock(QueryLockEnum.FOR_UPDATE);
         return this;
     }
 

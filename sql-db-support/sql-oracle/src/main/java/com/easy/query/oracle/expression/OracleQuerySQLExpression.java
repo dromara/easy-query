@@ -119,6 +119,6 @@ public class OracleQuerySQLExpression extends QuerySQLExpressionImpl {
             }
         }
 
-        return sql.toString();
+        return appendQueryLock(root, sql.toString());
     }
 }

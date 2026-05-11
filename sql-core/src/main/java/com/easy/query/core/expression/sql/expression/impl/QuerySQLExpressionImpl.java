@@ -1,7 +1,10 @@
 package com.easy.query.core.expression.sql.expression.impl;
 
+import com.easy.query.core.basic.jdbc.conn.ConnectionManager;
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.context.QueryRuntimeContext;
+import com.easy.query.core.enums.QueryLockEnum;
 import com.easy.query.core.expression.segment.builder.SQLBuilderSegment;
 import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
@@ -10,6 +13,8 @@ import com.easy.query.core.expression.sql.expression.EntityQuerySQLExpression;
 import com.easy.query.core.expression.sql.expression.EntityTableSQLExpression;
 import com.easy.query.core.expression.sql.expression.SQLExpression;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
+import com.easy.query.core.logging.Log;
+import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.util.EasyCollectionUtil;
 import com.easy.query.core.util.EasySQLExpressionUtil;
 import com.easy.query.core.util.EasySQLSegmentUtil;
@@ -25,6 +30,7 @@ import java.util.List;
  * @author xuejiaming
  */
 public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
+    private static final Log log = LogFactory.getLog(QuerySQLExpressionImpl.class);
 
     protected final EntitySQLExpressionMetadata entitySQLExpressionMetadata;
     protected SQLBuilderSegment projects;
@@ -224,7 +230,27 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
             }
         }
 
-        return sql.toString();
+        return appendQueryLock(root, sql.toString());
+    }
+
+    protected String appendQueryLock(boolean root, String sql) {
+        if (!root) {
+            return sql;
+        }
+        if (entitySQLExpressionMetadata.getExpressionContext().getQueryLock() != QueryLockEnum.FOR_UPDATE) {
+            return sql;
+        }
+        ConnectionManager connectionManager = entitySQLExpressionMetadata.getRuntimeContext().getConnectionManager();
+        if (!connectionManager.currentThreadInTransaction()) {
+            throw new IllegalStateException("FOR UPDATE query requires an active transaction, please call beginTransaction() before executing this query.");
+        }
+        String forUpdateSQL = sql + " FOR UPDATE";
+        if (log.isDebugEnabled()) {
+            Transaction transaction = connectionManager.getTransactionOrNull();
+            String txId = transaction == null ? "env-tx" : String.valueOf(System.identityHashCode(transaction));
+            log.debug("FOR UPDATE SQL[txId=" + txId + "]: " + forUpdateSQL);
+        }
+        return forUpdateSQL;
     }
 
     protected void buildSQLTableOrJoin(StringBuilder sql, List<EntityTableSQLExpression> tables, ToSQLContext toSQLContext) {

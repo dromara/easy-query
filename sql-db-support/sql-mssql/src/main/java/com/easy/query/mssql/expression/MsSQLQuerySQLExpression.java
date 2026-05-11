@@ -1,6 +1,7 @@
 package com.easy.query.mssql.expression;
 
 import com.easy.query.core.basic.jdbc.parameter.ToSQLContext;
+import com.easy.query.core.enums.QueryLockEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.expression.segment.Column2Segment;
@@ -118,7 +119,19 @@ public class MsSQLQuerySQLExpression extends QuerySQLExpressionImpl {
             }
         }
 
-        return sql.toString();
+        return appendQueryLock(root, sql.toString());
+    }
+
+    @Override
+    protected String appendQueryLock(boolean root, String sql) {
+        if (!root) {
+            return sql;
+        }
+        if (entitySQLExpressionMetadata.getExpressionContext().getQueryLock() != QueryLockEnum.FOR_UPDATE) {
+            return sql;
+        }
+        throw new UnsupportedOperationException("SQL Server does not support FOR UPDATE syntax. " +
+                "Please use WITH (UPDLOCK, ROWLOCK) table hint instead, or consider using a different database dialect.");
     }
 
     protected SQLBuilderSegment getPrimaryKeyOrFirstColumnOrder(TableAvailable table) {
