@@ -12,6 +12,10 @@ import java.util.regex.Pattern;
 public class EasyStringUtil {
     public static final String EMPTY = "";
 
+    public static String toStringOrDefault(Object value, String def){
+        return value == null ? def : value.toString();
+    }
+
     public static String join(Collection<String> items, String delimiter, boolean skipNull) {
         if (items == null) return null;
         StringBuilder sb = new StringBuilder();

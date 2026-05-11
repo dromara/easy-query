@@ -5,6 +5,8 @@ import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.expression.sql.expression.factory.ExpressionFactory;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.inject.ServiceCollection;
+import com.easy.query.core.migration.DatabaseMigrationProvider;
+import com.easy.query.db2.migration.DB2DatabaseMigrationProvider;
 import com.easy.query.db2.expression.DB2ExpressionFactory;
 import com.easy.query.db2.func.DB2FuncImpl;
 
@@ -19,6 +21,7 @@ public class DB2DatabaseConfiguration implements DatabaseConfiguration {
     public void configure(ServiceCollection services) {
         services.addService(SQLKeyword.class, DB2SQLKeyword.class);
         services.addService(ExpressionFactory.class, DB2ExpressionFactory.class);
+        services.addService(DatabaseMigrationProvider.class, DB2DatabaseMigrationProvider.class);
         services.addService(SQLFunc.class, DB2FuncImpl.class);
     }
 }

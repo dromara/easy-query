@@ -1,6 +1,7 @@
 package com.easy.query.pgsql.migration;
 
 import com.easy.query.core.basic.api.database.Credentials;
+import com.easy.query.core.basic.api.database.TableInfo;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
@@ -251,5 +252,10 @@ public class PgSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
         }
         sql.append(";");
         return new DefaultMigrationCommand(sql.toString());
+    }
+
+    @Override
+    protected String tableQuerySql() {
+        return "SELECT table_schema, table_name FROM information_schema.tables WHERE table_catalog = ? AND table_schema NOT IN ('pg_catalog', 'information_schema') AND table_type = 'BASE TABLE'";
     }
 }

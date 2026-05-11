@@ -235,4 +235,9 @@ public class H2DatabaseMigrationProvider extends AbstractDatabaseMigrationProvid
         sql.append(";");
         return new DefaultMigrationCommand(sql.toString());
     }
+
+    @Override
+    protected String tableQuerySql() {
+        return "SELECT table_schema, table_name FROM information_schema.tables WHERE table_catalog = ?";
+    }
 }

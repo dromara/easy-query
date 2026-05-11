@@ -3,6 +3,7 @@ package com.easy.query.core.migration;
 import com.easy.query.core.annotation.NotNull;
 import com.easy.query.core.annotation.Nullable;
 import com.easy.query.core.basic.api.database.Credentials;
+import com.easy.query.core.basic.api.database.TableInfo;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
@@ -20,6 +21,7 @@ import com.easy.query.core.util.EasyToSQLUtil;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -249,5 +251,30 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
 
     public String getQuoteSQLName(String val1, String val2) {
         return EasyToSQLUtil.getQuoteSQLName(sqlKeyword, val1, val2);
+    }
+    protected abstract String tableQuerySql();
+    protected  List<Object> params(){
+        ArrayList<Object> sqlParameters = new ArrayList<>();
+        String databaseName = getDatabaseName();
+        sqlParameters.add(databaseName);
+        return sqlParameters;
+    }
+
+    @Override
+    public List<TableInfo> getTableInfos() {
+
+        List<Object> sqlParameters = params();
+        String tableQuerySql = tableQuerySql();
+        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, tableQuerySql, sqlParameters);
+        ArrayList<TableInfo> tableInfos = new ArrayList<>();
+        for (Map<String, Object> map : maps) {
+
+            String tableName = EasyStringUtil.toStringOrDefault(map.get("table_name"),null);
+            if(tableName!=null){
+                String schema = EasyStringUtil.toStringOrDefault(map.get("table_schema"),null);
+                tableInfos.add(new TableInfo(schema, tableName));
+            }
+        }
+        return tableInfos;
     }
 }

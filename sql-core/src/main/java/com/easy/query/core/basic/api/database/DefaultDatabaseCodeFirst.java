@@ -78,6 +78,12 @@ public class DefaultDatabaseCodeFirst implements DatabaseCodeFirst {
         return new DefaultCodeFirstCommand(getRuntimeContext(), migrationCommands);
     }
 
+    @Override
+    public List<TableInfo> getTableInfos() {
+        DatabaseMigrationProvider service = getRuntimeContext().getService(DatabaseMigrationProvider.class);
+        return service.getTableInfos();
+    }
+
 
     @Override
     public boolean tableExistsByMigrationData(TableMigrationData tableMigrationData) {

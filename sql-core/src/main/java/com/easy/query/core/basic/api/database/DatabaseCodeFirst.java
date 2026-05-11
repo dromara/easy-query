@@ -151,4 +151,6 @@ public interface DatabaseCodeFirst {
 
     CodeFirstCommand createCodeFirstCommand(List<MigrationCommand> migrationCommands);
 
+    List<TableInfo> getTableInfos();
+
 }

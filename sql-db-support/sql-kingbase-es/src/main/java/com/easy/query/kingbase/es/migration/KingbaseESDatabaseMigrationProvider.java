@@ -218,7 +218,7 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
         }
         sql.append(joiner);
         sql.append(");");
-        if(EasyStringUtil.isNotBlank(tableIndex.getComment())){
+        if (EasyStringUtil.isNotBlank(tableIndex.getComment())) {
             sql.append(newLine);
             sql.append("COMMENT ON INDEX ").append(getQuoteSQLName(tableIndex.getIndexName())).append(" IS '").append(tableIndex.getComment()).append("';");
         }
@@ -247,5 +247,10 @@ public class KingbaseESDatabaseMigrationProvider extends AbstractDatabaseMigrati
         }
         sql.append(";");
         return new DefaultMigrationCommand(sql.toString());
+    }
+
+    @Override
+    protected String tableQuerySql() {
+        return "SELECT table_schema, table_name FROM information_schema.tables WHERE table_catalog = ? AND table_schema NOT IN ('pg_catalog', 'information_schema') AND table_type = 'BASE TABLE'";
     }
 }

@@ -15,6 +15,7 @@ import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -264,5 +265,18 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
         }
         sql.append(";");
         return new DefaultMigrationCommand(sql.toString());
+    }
+
+    @Override
+    protected String tableQuerySql() {
+        return "SELECT table_schema, table_name FROM information_schema.tables WHERE table_catalog = ? AND table_type = 'BASE TABLE'";
+    }
+
+    @Override
+    protected List<Object> params() {
+        ArrayList<Object> sqlParameters = new ArrayList<>();
+        String databaseName = getDatabaseName();
+        sqlParameters.add(databaseName);
+        return sqlParameters;
     }
 }

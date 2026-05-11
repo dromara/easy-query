@@ -1,6 +1,7 @@
 package com.easy.query.duckdb.migration;
 
 import com.easy.query.core.basic.api.database.Credentials;
+import com.easy.query.core.basic.api.database.TableInfo;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.migration.AbstractDatabaseMigrationProvider;
 import com.easy.query.core.migration.ColumnDbTypeResult;
@@ -236,5 +237,10 @@ public class DuckDBSQLDatabaseMigrationProvider extends AbstractDatabaseMigratio
         }
         sql.append(";");
         return new DefaultMigrationCommand(sql.toString());
+    }
+
+    @Override
+    protected String tableQuerySql() {
+        return "SELECT table_schema, table_name FROM information_schema.tables WHERE table_catalog = ?";
     }
 }

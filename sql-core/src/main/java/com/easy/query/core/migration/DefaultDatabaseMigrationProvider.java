@@ -1,5 +1,6 @@
 package com.easy.query.core.migration;
 
+import com.easy.query.core.basic.api.database.TableInfo;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.migration.commands.DefaultMigrationCommand;
 import com.easy.query.core.migration.data.ColumnMigrationData;
@@ -14,7 +15,9 @@ import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  * create time 2025/1/14 13:31
@@ -43,7 +46,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
         ArrayList<Object> sqlParameters = new ArrayList<>();
         sqlParameters.add(getDatabaseName());
         sqlParameters.add(tableName);
-        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from information_schema.TABLES where table_schema=? and table_name=?", sqlParameters);
+        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from information_schema.TABLES where table_schema=? and table_name=? AND table_type = 'BASE TABLE'", sqlParameters);
         return EasyCollectionUtil.isNotEmpty(maps);
     }
 
@@ -225,5 +228,18 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
         }
         sql.append(";");
         return new DefaultMigrationCommand(sql.toString());
+    }
+
+    @Override
+    protected String tableQuerySql() {
+        return "SELECT table_schema, table_name FROM information_schema.tables WHERE table_schema = ? AND table_type = 'BASE TABLE'";
+    }
+
+    @Override
+    protected List<Object> params() {
+        ArrayList<Object> sqlParameters = new ArrayList<>();
+        String databaseName = getDatabaseName();
+        sqlParameters.add(databaseName);
+        return sqlParameters;
     }
 }

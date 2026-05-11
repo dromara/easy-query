@@ -1,5 +1,6 @@
 package com.easy.query.core.migration;
 
+import com.easy.query.core.basic.api.database.TableInfo;
 import com.easy.query.core.migration.data.TableMigrationData;
 
 import java.util.List;
@@ -19,4 +20,5 @@ public interface MigrationsSQLGenerator {
     List<MigrationCommand> generateDropTableMigrationSQL(MigrationContext migrationContext,boolean checkTableExists);
     boolean tableExists(String schema,String tableName);
     TableMigrationData parseEntity(Class<?> entityClass);
+    List<TableInfo> getTableInfos();
 }

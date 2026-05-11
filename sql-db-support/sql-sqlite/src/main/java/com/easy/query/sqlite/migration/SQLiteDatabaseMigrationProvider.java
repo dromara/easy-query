@@ -15,6 +15,7 @@ import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.migration.TableForeignKeyResult;
 import com.easy.query.core.migration.TableIndexResult;
 import com.easy.query.core.migration.commands.DefaultMigrationCommand;
+import com.easy.query.core.migration.commands.EmptyMigrationCommand;
 import com.easy.query.core.migration.data.ColumnMigrationData;
 import com.easy.query.core.migration.data.ForeignKeyMigrationData;
 import com.easy.query.core.migration.data.IndexMigrationData;
@@ -231,6 +232,11 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
      */
     @Override
     protected MigrationCommand createTableForeignKey(TableMigrationData table, ForeignKeyMigrationData foreignKey) {
-        return null;
+        return new EmptyMigrationCommand();
+    }
+
+    @Override
+    protected String tableQuerySql() {
+        return "SELECT 'main' AS table_schema, name AS table_name FROM sqlite_master WHERE type = 'table'";
     }
 }

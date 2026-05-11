@@ -239,4 +239,9 @@ public class GaussDBDatabaseMigrationProvider extends AbstractDatabaseMigrationP
         sql.append(";");
         return new DefaultMigrationCommand(sql.toString());
     }
+
+    @Override
+    protected String tableQuerySql() {
+        return "SELECT table_schema, table_name FROM information_schema.tables WHERE table_catalog = ? AND table_schema NOT IN ('pg_catalog', 'information_schema') AND table_type = 'BASE TABLE'";
+    }
 }

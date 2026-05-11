@@ -1,6 +1,7 @@
 package com.easy.query.dameng.migration;
 
 import com.easy.query.core.basic.api.database.Credentials;
+import com.easy.query.core.basic.api.database.TableInfo;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.migration.AbstractDatabaseMigrationProvider;
 import com.easy.query.core.migration.ColumnDbTypeResult;
@@ -257,5 +258,10 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         }
         sql.append("';");
         return new DefaultMigrationCommand(sql.toString());
+    }
+
+    @Override
+    protected String tableQuerySql() {
+        return "SELECT owner AS table_schema, table_name FROM all_tables WHERE owner = ?";
     }
 }

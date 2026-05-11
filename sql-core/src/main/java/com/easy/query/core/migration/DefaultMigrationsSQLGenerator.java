@@ -1,5 +1,6 @@
 package com.easy.query.core.migration;
 
+import com.easy.query.core.basic.api.database.TableInfo;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.inject.ServiceProvider;
@@ -228,5 +229,10 @@ public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
         }
         tableMigrationData.setForeignKeys(foreignKeys);
         return tableMigrationData;
+    }
+
+    @Override
+    public List<TableInfo> getTableInfos() {
+        return databaseMigrationProvider.getTableInfos();
     }
 }

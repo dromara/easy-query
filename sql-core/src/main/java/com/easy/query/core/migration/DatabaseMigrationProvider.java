@@ -1,6 +1,7 @@
 package com.easy.query.core.migration;
 
 import com.easy.query.core.basic.api.database.Credentials;
+import com.easy.query.core.basic.api.database.TableInfo;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.migration.data.TableMigrationData;
@@ -92,4 +93,5 @@ public interface DatabaseMigrationProvider {
      */
     List<MigrationCommand> addTableColumn(TableMigrationData tableMigrationData);
 
+    List<TableInfo> getTableInfos();
 }
