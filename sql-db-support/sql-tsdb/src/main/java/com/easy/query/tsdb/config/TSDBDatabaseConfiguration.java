@@ -12,7 +12,6 @@ import com.easy.query.tsdb.func.TSDBFuncImpl;
 import com.easy.query.tsdb.migration.TSDBDatabaseMigrationProvider;
 import com.easy.query.tsdb.migration.TSDBMigrationEntityParser;
 
-import java.util.UUID;
 
 /**
  * create time 2023/5/10 13:40

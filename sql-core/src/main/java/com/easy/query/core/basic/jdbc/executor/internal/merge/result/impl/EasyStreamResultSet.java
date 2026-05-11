@@ -8,11 +8,11 @@ import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.SQLXML;
+import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 
@@ -25,13 +25,13 @@ import java.sql.Timestamp;
 public final class EasyStreamResultSet implements StreamResultSet {
     private static final Log log= LogFactory.getLog(EasyStreamResultSet.class);
     private final ResultSet resultSet;
-    private final PreparedStatement preparedStatement;
+    private final Statement statement;
     private boolean closed=false;
 
-    public EasyStreamResultSet(ResultSet resultSet, PreparedStatement preparedStatement) {
+    public EasyStreamResultSet(ResultSet resultSet, Statement statement) {
 
         this.resultSet = resultSet;
-        this.preparedStatement = preparedStatement;
+        this.statement = statement;
     }
 
     @Override
@@ -167,11 +167,11 @@ public final class EasyStreamResultSet implements StreamResultSet {
             log.error("result set close error.",ex);
         }
         try {
-            if(preparedStatement!=null){
-                preparedStatement.close();
+            if(statement!=null){
+                statement.close();
             }
         }catch (SQLException ex){
-            log.error("prepared statement close error.",ex);
+            log.error("statement close error.",ex);
         }
     }
 }

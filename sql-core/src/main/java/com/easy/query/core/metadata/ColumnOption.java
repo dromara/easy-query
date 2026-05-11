@@ -63,6 +63,7 @@ public final class ColumnOption {
     private String fullPropertyName;
     private String comment;
     private JDBCType jdbcType;
+    private boolean tag = false;
 //    private boolean concurrentUpdateInTrack = false;
 
 
@@ -296,6 +297,14 @@ public final class ColumnOption {
 
     public void setJdbcType(JDBCType jdbcType) {
         this.jdbcType = jdbcType;
+    }
+
+    public boolean isTag() {
+        return tag;
+    }
+
+    public void setTag(boolean tag) {
+        this.tag = tag;
     }
 
     //    public boolean isNullable() {

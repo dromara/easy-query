@@ -49,14 +49,21 @@ public class EasyDatabaseUtil {
     public static String getDatabaseName(DataSource dataSource, Supplier<String> def) {
         try (Connection connection = dataSource.getConnection()) {
             // 方法 1: 使用 getCatalog()
-            return connection.getCatalog();
-//            String databaseName = connection.getCatalog();
-//            if (databaseName != null) {
-//                return databaseName;
-//            }
-        } catch (Exception e) {
-//            e.printStackTrace();
+            String databaseName = connection.getCatalog();
+            if (databaseName != null) {
+                return databaseName;
+            }
+        } catch (Exception ignored) {
         }
+        // 方法 2: 如果 getCatalog() 失败，尝试从 JDBC URL 解析（通过反射获取 credentials）
+        try {
+            Credentials credentials = getCredentialsByReflection(dataSource);
+            if (EasyStringUtil.isNotBlank(credentials.databaseName)) {
+                return credentials.databaseName;
+            }
+        } catch (Exception ignored) {
+        }
+
         if (def == null) {
             return null;
         }

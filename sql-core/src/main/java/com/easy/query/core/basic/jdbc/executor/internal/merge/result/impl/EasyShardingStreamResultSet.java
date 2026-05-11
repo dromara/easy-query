@@ -11,11 +11,11 @@ import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.SQLXML;
+import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 
@@ -28,15 +28,15 @@ import java.sql.Timestamp;
 public final class EasyShardingStreamResultSet implements ShardingStreamResultSet, JdbcShardingStreamResultSet {
     private static final Log log= LogFactory.getLog(EasyShardingStreamResultSet.class);
     private final ResultSet resultSet;
-    private final PreparedStatement preparedStatement;
+    private final Statement statement;
     private boolean hasElement;
     private  boolean skipFirst;
     private boolean closed=false;
 
-    public EasyShardingStreamResultSet(ResultSet resultSet, PreparedStatement preparedStatement, boolean hasElement){
+    public EasyShardingStreamResultSet(ResultSet resultSet, Statement statement, boolean hasElement){
 
         this.resultSet = resultSet;
-        this.preparedStatement = preparedStatement;
+        this.statement = statement;
         this.hasElement = hasElement;
         skipFirst=true;
     }
@@ -183,9 +183,11 @@ public final class EasyShardingStreamResultSet implements ShardingStreamResultSe
             log.error("result set close error.",ex);
         }
         try {
-            preparedStatement.close();
+            if(statement!=null){
+                statement.close();
+            }
         }catch (SQLException ex){
-            log.error("prepared statement close error.",ex);
+            log.error("statement close error.",ex);
         }
     }
 }

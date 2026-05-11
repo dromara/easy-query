@@ -61,6 +61,14 @@ public interface MigrationEntityParser {
      */
     String getColumnOldName(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata);
 
+    /**
+     * 当前列是否是标签仅仅tsdb生效
+     * @param entityMigrationMetadata
+     * @param columnMetadata
+     * @return
+     */
+    boolean isTag(EntityMigrationMetadata entityMigrationMetadata, ColumnMetadata columnMetadata);
+
     @NotNull
     List<TableIndexResult> getTableIndexes(EntityMigrationMetadata entityMigrationMetadata);
     @NotNull

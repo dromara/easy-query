@@ -131,6 +131,7 @@ public class ColumnMetadata {
     private final List<ColumnMetadata> valueObjectColumnMetadataList;
     private final Supplier<Object> beanConstructorCreator;
     private final JDBCType jdbcType;
+    private final boolean tag;
 
     public ColumnMetadata(ColumnOption columnOption) {
         this.entityMetadata = columnOption.getEntityMetadata();
@@ -146,6 +147,7 @@ public class ColumnMetadata {
         this.propertyName = columnOption.getFullPropertyName();
         this.fieldName = columnOption.getFieldName();
         this.primary = columnOption.isPrimary();
+        this.tag = columnOption.isTag();
         this.generatedKey = columnOption.isGeneratedKey();
         this.version = columnOption.isVersion();
         this.insertIgnore = columnOption.isInsertIgnore();
@@ -316,6 +318,10 @@ public class ColumnMetadata {
 
     public JDBCType getJdbcType() {
         return jdbcType;
+    }
+
+    public boolean isTag() {
+        return tag;
     }
 
     //    public boolean isConcurrentUpdateInTrack() {
