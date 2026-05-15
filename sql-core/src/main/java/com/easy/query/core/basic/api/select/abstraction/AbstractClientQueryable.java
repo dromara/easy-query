@@ -11,6 +11,7 @@ import com.easy.query.core.expression.lambda.SQLResultSetFunc;
 import com.easy.query.core.expression.sql.builder.ExpressionBuilder;
 import com.easy.query.core.expression.sql.builder.factory.ExpressionBuilderFactory;
 import com.easy.query.core.expression.sql.builder.impl.AnonymousDefaultTableExpressionBuilder;
+import com.easy.query.core.expression.sql.builder.impl.AnonymousQueryExpressionBuilder;
 import com.easy.query.core.metadata.EndNavigateParams;
 import com.easy.query.core.metadata.TreeDeepItem;
 import com.easy.query.core.metadata.TreeSelfTargetItem;
@@ -624,13 +625,39 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         return toInternalStreamResult(resultClass, configurer);
     }
 
+    private boolean expressionBuilderOrAnonymousHasOrderBy(ClientQueryable<T1> queryable) {
+        EntityQueryExpressionBuilder sqlEntityExpressionBuilder = queryable.getSQLEntityExpressionBuilder();
+        if (sqlEntityExpressionBuilder.hasOrder()) {
+            return true;
+        }
+        if (sqlEntityExpressionBuilder instanceof AnonymousQueryExpressionBuilder) {
+            List<EntityTableExpressionBuilder> tables = sqlEntityExpressionBuilder.getTables();
+            if (EasyCollectionUtil.isSingle(tables)) {
+                EntityTableExpressionBuilder entityTableExpressionBuilder = tables.get(0);
+                if (entityTableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder) {
+                    AnonymousEntityTableExpressionBuilder anonymousEntityTableExpressionBuilder = (AnonymousEntityTableExpressionBuilder) entityTableExpressionBuilder;
+                    EntityQueryExpressionBuilder entityQueryExpressionBuilder = anonymousEntityTableExpressionBuilder.getEntityQueryExpressionBuilder();
+                    if (entityQueryExpressionBuilder.hasOrder()) {
+                        return true;
+                    }
+                }
+
+            }
+        }
+        return false;
+    }
+
     @Override
     public void toChunkIf(int size, Predicate<List<T1>> chunk) {
         int offset = 0;
+        Boolean hasOrderBy = null;
         while (true) {
 
             ClientQueryable<T1> cloneQueryable = this.cloneQueryable();
-            if (!cloneQueryable.getSQLEntityExpressionBuilder().hasOrder()) {
+            if (hasOrderBy == null) {
+                hasOrderBy = expressionBuilderOrAnonymousHasOrderBy(cloneQueryable);
+            }
+            if (!hasOrderBy) {
                 cloneQueryable.orderByAsc(o -> {
                     Collection<String> keyProperties = o.getEntityMetadata().getKeyProperties();
                     if (EasyCollectionUtil.isEmpty(keyProperties)) {

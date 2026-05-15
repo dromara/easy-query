@@ -7,6 +7,7 @@ import com.easy.query.core.proxy.part.Part1;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
+import com.easy.query.core.util.EasyStringUtil;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.dto.BankCardGroupBO;
 import com.easy.query.test.mysql8.dto.BankCardSelectAutoInclude;
@@ -14,6 +15,7 @@ import com.easy.query.test.mysql8.dto.proxy.BankCardGroupBOProxy;
 import com.easy.query.test.mysql8.entity.M8User2;
 import com.easy.query.test.mysql8.entity.M8UserBook2;
 import com.easy.query.test.mysql8.entity.M8UserBookIds;
+import com.easy.query.test.mysql8.entity.M8UserTest;
 import com.easy.query.test.mysql8.entity.TableNoKey;
 import com.easy.query.test.mysql8.entity.bank.SysBankCard;
 import com.easy.query.test.mysql8.entity.bank.SysUser;
@@ -406,6 +408,33 @@ public class M8Test1 extends BaseTest {
             ex = e;
         }
         Assert.assertNotNull(ex);
-        Assert.assertEquals("java.sql.SQLDataException: Cannot determine value type from string 'u1'",ex.getMessage());
+        Assert.assertEquals("java.sql.SQLDataException: Cannot determine value type from string 'u1'", ex.getMessage());
+    }
+
+
+    @Test
+    public void userTest() {
+
+        ListenerContext listenerContext = new ListenerContext();
+        listenerContextManager.startListen(listenerContext);
+        String userName = "小明";
+        List<M8UserTest> list = easyEntityQuery.queryable(M8UserTest.class)
+                .where(user -> {
+//                    user.id().ge(100);
+                    user.id().ge(100L);
+                    user.or(() -> {
+                        user.sex().eq(1);
+                        user.sex().eq(2);
+                    });
+                    user.age().in(Arrays.asList(18, 19, 20));
+                    user.userName().like(EasyStringUtil.isNotBlank(userName), userName);
+                }).toList();
+
+
+        listenerContextManager.clear();
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("SELECT `id`,`sex`,`age`,`user_name` FROM `m8_user_test` WHERE `id` >= ? AND (`sex` = ? OR `sex` = ?) AND `age` IN (?,?,?) AND `user_name` LIKE ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("100(Long),1(Integer),2(Integer),18(Integer),19(Integer),20(Integer),%小明%(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
     }
 }
