@@ -17,6 +17,7 @@ import com.easy.query.core.expression.sql.builder.EntityQueryExpressionBuilder;
 import com.easy.query.core.func.SQLFunc;
 import com.easy.query.core.func.SQLFunction;
 import com.easy.query.core.proxy.columns.SQLManyQueryable;
+import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.core.draft.Draft3;
 import com.easy.query.core.proxy.core.draft.Draft4;
 import com.easy.query.core.proxy.core.tuple.Tuple4;
@@ -773,6 +774,26 @@ public class QueryTest26 extends BaseTest {
                 .offsetChunk(100, chunk -> {
                     chunk.setMaxFetchSize(100001);
                     for (BlogEntity blog : chunk.getValues()) {
+                        a.incrementAndGet();
+                    }
+                    return chunk.offset(0);
+                });
+        Assert.assertEquals(100001, a.intValue());
+
+
+    }
+    @Test
+    public void testChunk7() {
+        AtomicInteger a = new AtomicInteger(0);
+        easyEntityQuery.queryable(BlogEntity.class)
+                .orderBy(b -> b.createTime().asc())
+                .orderBy(b -> b.id().asc())
+                .select(t_blog -> Select.DRAFT.of(
+                        t_blog.title()
+                ))
+                .offsetChunk(100, chunk -> {
+                    chunk.setMaxFetchSize(100001);
+                    for (Draft1<String> blog : chunk.getValues()) {
                         a.incrementAndGet();
                     }
                     return chunk.offset(0);

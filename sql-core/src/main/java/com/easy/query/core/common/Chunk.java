@@ -56,6 +56,22 @@ public class Chunk<T> {
         return new Offset(offset);
     }
 
+    /**
+     * 筛选条件已被改变
+     * @return
+     */
+    public Offset filterChanged() {
+        return offset(0);
+    }
+
+    /**
+     * 筛选条件未被改变
+     * @return
+     */
+    public Offset filterUnChanged() {
+        return offset(getValues().size());
+    }
+
     public static class Offset {
         public final int offset;
 

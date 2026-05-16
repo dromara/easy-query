@@ -630,19 +630,15 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         if (sqlEntityExpressionBuilder.hasOrder()) {
             return true;
         }
-        if (sqlEntityExpressionBuilder instanceof AnonymousQueryExpressionBuilder) {
-            List<EntityTableExpressionBuilder> tables = sqlEntityExpressionBuilder.getTables();
-            if (EasyCollectionUtil.isSingle(tables)) {
-                EntityTableExpressionBuilder entityTableExpressionBuilder = tables.get(0);
-                if (entityTableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder) {
-                    AnonymousEntityTableExpressionBuilder anonymousEntityTableExpressionBuilder = (AnonymousEntityTableExpressionBuilder) entityTableExpressionBuilder;
-                    EntityQueryExpressionBuilder entityQueryExpressionBuilder = anonymousEntityTableExpressionBuilder.getEntityQueryExpressionBuilder();
-                    if (entityQueryExpressionBuilder.hasOrder()) {
-                        return true;
-                    }
-                }
-
+        List<EntityTableExpressionBuilder> tables = sqlEntityExpressionBuilder.getTables();
+        if (EasyCollectionUtil.isSingle(tables)) {
+            EntityTableExpressionBuilder entityTableExpressionBuilder = tables.get(0);
+            if (entityTableExpressionBuilder instanceof AnonymousEntityTableExpressionBuilder) {
+                AnonymousEntityTableExpressionBuilder anonymousEntityTableExpressionBuilder = (AnonymousEntityTableExpressionBuilder) entityTableExpressionBuilder;
+                EntityQueryExpressionBuilder entityQueryExpressionBuilder = anonymousEntityTableExpressionBuilder.getEntityQueryExpressionBuilder();
+                return entityQueryExpressionBuilder.hasOrder();
             }
+
         }
         return false;
     }
@@ -686,10 +682,14 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
         int offset = 0;
         long fetchSize = 0L;
         long nextSize = size;
+        Boolean hasOrderBy = null;
         while (true) {
 
             ClientQueryable<T1> cloneQueryable = this.cloneQueryable();
-            if (!cloneQueryable.getSQLEntityExpressionBuilder().hasOrder()) {
+            if (hasOrderBy == null) {
+                hasOrderBy = expressionBuilderOrAnonymousHasOrderBy(cloneQueryable);
+            }
+            if (!hasOrderBy) {
                 cloneQueryable.orderByAsc(o -> {
                     Collection<String> keyProperties = o.getEntityMetadata().getKeyProperties();
                     if (EasyCollectionUtil.isEmpty(keyProperties)) {
