@@ -43,6 +43,10 @@ public class ColumnMigrationData {
      * 旧列名
      */
     private String oldColumnName;
+    /**
+     * 是否是标签
+     */
+    private boolean tag;
 
     public String getName() {
         return name;
@@ -106,5 +110,13 @@ public class ColumnMigrationData {
 
     public void setOldColumnName(String oldColumnName) {
         this.oldColumnName = oldColumnName;
+    }
+
+    public boolean isTag() {
+        return tag;
+    }
+
+    public void setTag(boolean tag) {
+        this.tag = tag;
     }
 }

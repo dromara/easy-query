@@ -182,5 +182,12 @@ public @interface Column {
     int scale() default 0;
 
     ColumnSQLExpression sqlExpression() default @ColumnSQLExpression(sql = "",  args = {});
+
     JDBCType jdbcType() default JDBCType.OTHER;
+    /**
+     * 是否是标签
+     * 仅迁移时生效,目前仅tsdb支持该属性
+     * @return
+     */
+    boolean tag() default false;
 }
