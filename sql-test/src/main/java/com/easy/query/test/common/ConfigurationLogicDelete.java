@@ -26,11 +26,6 @@ public class ConfigurationLogicDelete extends AbstractConfigurationLogicDeleteSt
     }
 
     @Override
-    public String getStrategy() {
-        return ConfigurationLogicDelete.class.getName();
-    }
-
-    @Override
     public boolean apply(@NotNull Class<?> entityClass) {
         return MyConfigLogicDelete.class.equals(entityClass);
     }

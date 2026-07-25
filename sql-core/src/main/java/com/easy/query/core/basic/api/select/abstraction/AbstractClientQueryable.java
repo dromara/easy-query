@@ -1858,10 +1858,10 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
             String queryName = EasyClassUtil.getSimpleName(queryClass());
             throw new IllegalStateException("forUpdate requires an active transaction for query [" + queryName + "], please call beginTransaction() before forUpdate().");
         }
-        if (entityQueryExpressionBuilder.getTables().size() > 1 || entityQueryExpressionBuilder.hasRelationTables()) {
-            String queryName = EasyClassUtil.getSimpleName(queryClass());
-            throw new IllegalStateException("forUpdate currently supports single-table queries only, query [" + queryName + "] contains join/relation tables.");
-        }
+//        if (entityQueryExpressionBuilder.getTables().size() > 1 || entityQueryExpressionBuilder.hasRelationTables()) {
+//            String queryName = EasyClassUtil.getSimpleName(queryClass());
+//            throw new IllegalStateException("forUpdate currently supports single-table queries only, query [" + queryName + "] contains join/relation tables.");
+//        }
         if (QueryLockEnum.FOR_UPDATE == entityQueryExpressionBuilder.getExpressionContext().getQueryLock()) {
             String queryName = EasyClassUtil.getSimpleName(queryClass());
             throw new IllegalStateException("forUpdate is already enabled on query [" + queryName + "], repeated calls are not supported.");

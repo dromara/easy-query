@@ -42,4 +42,11 @@ public abstract class AbstractConfigurationLogicDeleteStrategy implements LogicD
 
     @Override
     public abstract boolean apply(@NotNull Class<?> entityClass);
+
+
+
+    @Override
+    public String getStrategy() {
+        return this.getClass().getName();
+    }
 }

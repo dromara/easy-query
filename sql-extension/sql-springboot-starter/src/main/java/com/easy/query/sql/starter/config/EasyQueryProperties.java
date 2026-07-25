@@ -143,6 +143,7 @@ public class EasyQueryProperties {
     private String defaultSchema = null;
     /**
      * 全局限制查询结果大小
+     * 如果本次查询大于结果集限制则报错
      */
     private long resultSizeLimit = -1;
     /**
