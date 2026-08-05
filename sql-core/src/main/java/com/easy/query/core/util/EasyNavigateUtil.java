@@ -175,6 +175,9 @@ public class EasyNavigateUtil {
                 }).where(m -> m.ge("__row__", offset + 1).le("__row__", offset + rows))
                 .select(endNavigateParams.getEntityNavigateMetadata().getNavigatePropertyType(), o -> {
                     for (Map.Entry<String, ColumnMetadata> columnMetadataEntry : entityMetadata.getProperty2ColumnMap().entrySet()) {
+                        if (!columnMetadataEntry.getValue().isAutoSelect()) {
+                            continue;
+                        }
 //                            o.column(columnMetadataEntry.getValue().getName());
                         o.sqlNativeSegment("{0}", c -> {
                             c.expression(columnMetadataEntry.getValue().getName());
