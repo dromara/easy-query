@@ -115,18 +115,20 @@ public class EasySQLExpressionUtil {
     private EasySQLExpressionUtil() {
     }
 
-    public static OrderBySQLBuilderSegment appendPartitionByOrderSegment(ClientQueryable<?> queryable, EndNavigateParams endNavigateParams){
+    public static OrderBySQLBuilderSegment appendPartitionByOrderSegment(ClientQueryable<?> queryable, EndNavigateParams endNavigateParams) {
         OrderBySQLBuilderSegmentImpl orderBySQLBuilderSegment = new OrderBySQLBuilderSegmentImpl();
         appendPartitionByOrderSegment(queryable, endNavigateParams, orderBySQLBuilderSegment);
         return orderBySQLBuilderSegment;
     }
+
     /**
      * 添加partition by 的order by 片段
+     *
      * @param queryable
      * @param endNavigateParams
      * @param orderBySQLBuilderSegment
      */
-    public static void appendPartitionByOrderSegment(ClientQueryable<?> queryable, EndNavigateParams endNavigateParams, OrderBySQLBuilderSegmentImpl orderBySQLBuilderSegment){
+    public static void appendPartitionByOrderSegment(ClientQueryable<?> queryable, EndNavigateParams endNavigateParams, OrderBySQLBuilderSegmentImpl orderBySQLBuilderSegment) {
 
         OrderBySQLBuilderSegment order = queryable.getSQLEntityExpressionBuilder().getOrder();
         if (EasySQLSegmentUtil.isEmpty(order)) {
@@ -155,7 +157,7 @@ public class EasySQLExpressionUtil {
                 }
                 if (EasySQLSegmentUtil.isEmpty(order)) {
                     //必须要指定order by
-                    throw new EasyQueryInvalidOperationException("["+EasyClassUtil.getSimpleName(queryable.getSQLEntityExpressionBuilder().getFromTable().getEntityClass())+"."+endNavigateParams.getEntityNavigateMetadata().getPropertyName()+"]In a PARTITION BY clause, the ORDER BY expression must be explicitly specified; otherwise, referencing the nth expression is not supported.");
+                    throw new EasyQueryInvalidOperationException("[" + EasyClassUtil.getSimpleName(queryable.getSQLEntityExpressionBuilder().getFromTable().getEntityClass()) + "." + endNavigateParams.getEntityNavigateMetadata().getPropertyName() + "]In a PARTITION BY clause, the ORDER BY expression must be explicitly specified; otherwise, referencing the nth expression is not supported.");
                 }
             }
         }
@@ -169,9 +171,10 @@ public class EasySQLExpressionUtil {
         filterExpression.apply(filter);
         return andPredicateSegment;
     }
-    public static OrderBySQLBuilderSegment resolveOrderBy(EntityQueryExpressionBuilder entityQueryExpressionBuilder,QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, SQLActionExpression1<OrderSelector> orderExpression) {
+
+    public static OrderBySQLBuilderSegment resolveOrderBy(EntityQueryExpressionBuilder entityQueryExpressionBuilder, QueryRuntimeContext runtimeContext, ExpressionContext expressionContext, SQLActionExpression1<OrderSelector> orderExpression) {
         OrderBySQLBuilderSegmentImpl orderBySQLBuilderSegment = new OrderBySQLBuilderSegmentImpl();
-        OrderSelectorImpl orderSelector = new OrderSelectorImpl(entityQueryExpressionBuilder,runtimeContext, expressionContext, orderBySQLBuilderSegment);
+        OrderSelectorImpl orderSelector = new OrderSelectorImpl(entityQueryExpressionBuilder, runtimeContext, expressionContext, orderBySQLBuilderSegment);
         orderExpression.apply(orderSelector);
         return orderBySQLBuilderSegment;
     }
@@ -185,7 +188,7 @@ public class EasySQLExpressionUtil {
         }
     }
 
-    public static void invokeInterceptors(EntityMetadata entityMetadata, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, ExpressionContext expressionContext, WherePredicate<Object> sqlPredicate) {
+    public static void invokeInterceptors(EntityMetadata entityMetadata, LambdaEntityExpressionBuilder lambdaEntityExpressionBuilder, ExpressionContext expressionContext, WherePredicate<Object> sqlPredicate, PredicateSegment originalPredicate) {
         //如果当前对象是存在拦截器的那么就通过stream获取剩余的拦截器
         List<PredicateFilterInterceptor> predicateFilterInterceptors = entityMetadata.getPredicateFilterInterceptors();
         if (EasyCollectionUtil.isNotEmpty(predicateFilterInterceptors)) {
@@ -353,8 +356,9 @@ public class EasySQLExpressionUtil {
     public static boolean hasAnyOperate(EntityQueryExpressionBuilder sqlEntityExpression) {
         return sqlEntityExpression.hasLimit() || sqlEntityExpression.hasWhere() || sqlEntityExpression.hasOrder() || sqlEntityExpression.hasHaving() || sqlEntityExpression.isDistinct() || sqlEntityExpression.hasGroup() || EasySQLSegmentUtil.isNotEmpty(sqlEntityExpression.getProjects());
     }
+
     public static boolean useTableForJoin(EntityQueryExpressionBuilder sqlEntityExpression) {
-        return !hasAnyOperate(sqlEntityExpression)&&EasyCollectionUtil.isSingle(sqlEntityExpression.getTables())
+        return !hasAnyOperate(sqlEntityExpression) && EasyCollectionUtil.isSingle(sqlEntityExpression.getTables())
                 &&
                 !(sqlEntityExpression.getFromTable() instanceof AnonymousEntityTableExpressionBuilder)
                 &&

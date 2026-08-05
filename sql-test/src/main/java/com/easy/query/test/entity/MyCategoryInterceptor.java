@@ -2,6 +2,7 @@ package com.easy.query.test.entity;
 
 import com.easy.query.core.basic.extension.interceptor.PredicateFilterInterceptor;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
+import com.easy.query.core.expression.segment.condition.PredicateSegment;
 import com.easy.query.core.expression.sql.builder.LambdaEntityExpressionBuilder;
 import org.jetbrains.annotations.NotNull;
 

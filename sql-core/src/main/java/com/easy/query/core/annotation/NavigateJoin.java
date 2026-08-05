@@ -15,6 +15,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
+@Deprecated
 public @interface NavigateJoin {
     /**
      * 如果静态对象名称等于字段名称+_PATH,比如userName那么你编写

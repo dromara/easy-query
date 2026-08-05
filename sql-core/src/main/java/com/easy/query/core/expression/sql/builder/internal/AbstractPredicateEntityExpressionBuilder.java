@@ -100,7 +100,7 @@ public abstract class AbstractPredicateEntityExpressionBuilder extends AbstractE
 //                    }
 //                }
 //            }
-            EasySQLExpressionUtil.invokeInterceptors(entityMetadata,this,expressionContext,sqlPredicate);
+            EasySQLExpressionUtil.invokeInterceptors(entityMetadata,this,expressionContext,sqlPredicate,originalPredicate);
 
             if (predicateSegment.isNotEmpty()) {
                 if (originalPredicate != null && originalPredicate.isNotEmpty()) {
