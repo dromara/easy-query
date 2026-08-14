@@ -29,7 +29,7 @@ public class OracleCastSQLFunction extends AbstractExpressionSQLFunction {
         switch (targetClassName) {
             case "boolean":
             case "java.lang.Boolean":
-                return "CAST({0} AS BIT)";
+                return "CASE WHEN {0} IN ('1','true','TRUE') THEN 1 ELSE 0 END";//"CAST({0} AS BIT)";
             case "char":
                 return "SUBSTR(TO_CHAR({0}), 1, 1)";
             case "java.sql.Time":

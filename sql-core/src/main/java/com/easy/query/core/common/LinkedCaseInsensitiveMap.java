@@ -79,6 +79,9 @@ public class LinkedCaseInsensitiveMap<V> extends LinkedHashMap<String, V> {
 
     @Override
     public V remove(Object key) {
+        if (!(key instanceof String)){
+            return null;
+        }
         String realKey = caseInsensitiveKeys.remove(key.toString().toLowerCase(this.locale));
         return super.remove(realKey);
     }

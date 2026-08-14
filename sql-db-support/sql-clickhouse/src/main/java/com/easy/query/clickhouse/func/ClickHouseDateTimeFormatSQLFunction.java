@@ -81,7 +81,7 @@ public class ClickHouseDateTimeFormatSQLFunction extends AbstractExpressionSQLFu
                         argsSpts[a] = "CASE WHEN SUBSTR(formatDateTime(toDateTime({0}),'%M'),1,1) = '0' THEN SUBSTR(formatDateTime(toDateTime({0}),'%M'),2,1) ELSE formatDateTime(toDateTime({0}),'%M') END";
                         break;
                     case "s":
-                        argsSpts[a] = "CASE WHEN SUBSTR(formatDateTime(toDateTime({0}),'%S'),1,1) = '0' THEN SUBSTRsubstr(formatDateTime(toDateTime({0}),'%S'),2,1) ELSE formatDateTime(toDateTime({0}),'%S') END";
+                        argsSpts[a] = "CASE WHEN SUBSTR(formatDateTime(toDateTime({0}),'%S'),1,1) = '0' THEN SUBSTR(formatDateTime(toDateTime({0}),'%S'),2,1) ELSE formatDateTime(toDateTime({0}),'%S') END";
                         break;
                     case "t":
                         argsSpts[a] = "TRIM(TRAILING 'M' FROM formatDateTime(toDateTime({left}),'%p'))";
@@ -111,7 +111,7 @@ public class ClickHouseDateTimeFormatSQLFunction extends AbstractExpressionSQLFu
 
             return format.replace("%_a1", "%m").replace("%_a2", "%S");
         }
-        return "DATE_FORMAT({0},'%Y-%m-%d %H:%M:%S.%f')";
+        return "formatDateTime(toDateTime64({0},6),'%Y-%m-%d %H:%M:%S')";
     }
 
     protected String replaceFormat(String format) {

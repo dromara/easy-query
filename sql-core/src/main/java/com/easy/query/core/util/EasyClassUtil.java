@@ -469,7 +469,7 @@ public class EasyClassUtil {
 
 
     public static boolean canInstance(int mod) {
-        return !Modifier.isAbstract(mod) || !Modifier.isInterface(mod);
+        return !Modifier.isAbstract(mod) && !Modifier.isInterface(mod);
     }
 
     public static CollectionDescriptor getCollectionDescriptorByType(Class<?> type) {

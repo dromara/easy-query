@@ -61,12 +61,12 @@ public class DirectMappingIterator {
         return null;
     }
 
-    public String tryGetNext() {
-        if (hasNext()) {
-            return directMapping[index + 1];
-        }
-        return null;
-    }
+//    public String tryGetNext() {
+//        if (hasNext()) {
+//            return directMapping[index + 1];
+//        }
+//        return null;
+//    }
 
     public String getProperty() {
         return directMapping[index];

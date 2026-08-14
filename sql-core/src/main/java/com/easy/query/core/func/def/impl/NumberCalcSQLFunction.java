@@ -26,8 +26,8 @@ public class NumberCalcSQLFunction extends AbstractExpressionSQLFunction {
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        if(columnExpressions.size()<2){
-            throw new EasyQueryInvalidOperationException("NumberCalcSQLFunction columnExpressions size < 2");
+        if(columnExpressions.size()!=2){
+            throw new EasyQueryInvalidOperationException("NumberCalcSQLFunction columnExpressions size != 2");
         }
         switch (numberCalcEnum){
             case NUMBER_ADD:

@@ -302,6 +302,7 @@ public class QuerySQLExpressionImpl implements EntityQuerySQLExpression {
 //            }
 //            easyQuerySQLExpression.setIncludes(entityQuerySQLExpressions);
 //        }
+        easyQuerySQLExpression.setDistinct(this.distinct);
         easyQuerySQLExpression.setOffset(this.offset);
         easyQuerySQLExpression.setRows(this.rows);
         for (EntityTableSQLExpression table : this.tables) {

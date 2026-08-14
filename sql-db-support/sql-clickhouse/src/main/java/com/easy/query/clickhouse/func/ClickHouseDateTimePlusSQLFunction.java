@@ -35,8 +35,9 @@ public class ClickHouseDateTimePlusSQLFunction extends AbstractExpressionSQLFunc
         ColumnExpression columnExpression = columnExpressions.get(0);
         columnExpressions.clear();
         columnExpressions.add(columnExpression);
-        long micros = timeUnit.toMicros(duration);
-        columnExpressions.add(new ColumnFuncValueExpressionImpl(micros));
+//        long micros = timeUnit.toMicros(duration);
+        long seconds = timeUnit.toSeconds(duration);
+        columnExpressions.add(new ColumnFuncValueExpressionImpl(seconds));
         return "addSeconds(toDateTime({0}),{1})";
     }
 

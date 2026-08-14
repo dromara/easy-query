@@ -15,7 +15,7 @@ public class DamengUtcNowSQLFunction extends AbstractSQLFunction {
     public static final SQLFunction INSTANCE=new DamengUtcNowSQLFunction();
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        return "GETUTCDATE";
+        return "SYS_EXTRACT_UTC(SYSTIMESTAMP)";
     }
 
     @Override

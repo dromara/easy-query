@@ -37,7 +37,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class DefaultJdbcSQLExecutor implements JdbcSQLExecutor{
+public class DefaultJdbcSQLExecutor implements JdbcSQLExecutor {
     @Override
     public StreamResultSet query(ExecutorContext executorContext, EasyConnection easyConnection, String sql, List<SQLParameter> sqlParameters, boolean shardingPrint, boolean replicaPrint) throws SQLException {
 
@@ -91,6 +91,9 @@ public class DefaultJdbcSQLExecutor implements JdbcSQLExecutor{
                 throw e;
             }
         } finally {
+            if (sr == null) {
+                EasyJdbcExecutorUtil.clear(ps);
+            }
             if (listen) {
                 jdbcExecutorListener.onExecuteAfter(new JdbcExecuteAfterArg(jdbcListenBeforeArg, sr, 0, exception));
             }

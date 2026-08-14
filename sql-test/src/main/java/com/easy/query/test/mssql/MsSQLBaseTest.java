@@ -91,7 +91,7 @@ public abstract class MsSQLBaseTest {
     }
 
     public static void initData() {
-
+        entityQuery.deletable(MsSQLMyTopic.class).disableLogicDelete().allowDeleteStatement(true).where(m -> m.id().isNotNull()).executeRows();
 
         boolean topicAny = entityQuery.queryable(MsSQLMyTopic.class).any();
         if (!topicAny) {
@@ -101,7 +101,7 @@ public abstract class MsSQLBaseTest {
                 topic.setId(String.valueOf(i));
                 topic.setStars(i + 100);
                 topic.setTitle("标题" + i);
-                topic.setCreateTime(LocalDateTime.now().plusDays(i));
+                topic.setCreateTime(LocalDateTime.of(2021,12,1,0,0).plusDays(i));
                 topics.add(topic);
             }
             long l = entityQuery.insertable(topics).executeRows();
