@@ -80,15 +80,20 @@ public class DefaultDataSourceUnit implements DataSourceUnit {
         SemaphoreReleaseOnlyOnce semaphoreReleaseOnlyOnce = tryAcquire(count, timeout, unit);
 
         if (semaphoreReleaseOnlyOnce == null) {
-            throw new EasyQuerySQLException("dataSourceName:" + dataSourceName + " get connections:" + 1 + " busy.");
+            throw new EasyQuerySQLException("dataSourceName:" + dataSourceName + " get connections:" + count + " busy.");
         }
+        ArrayList<Connection> result = new ArrayList<>(count);
         try {
-            ArrayList<Connection> result = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
                 Connection connection = getConnection(true);
                 result.add(connection);
             }
             return result;
+        } catch (Exception e) {
+            for (Connection connection : result) {
+                connection.close();
+            }
+            throw e;
         } finally {
             semaphoreReleaseOnlyOnce.release();
         }

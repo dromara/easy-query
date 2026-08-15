@@ -125,9 +125,9 @@ public class EasyShardingUtil {
         if (EasyCollectionUtil.isEmpty(groupBy)) {
             return false;
         }
-        if (EasyCollectionUtil.isNotEmpty(orderBy)) {
-            return true;
-        }
+//        if (EasyCollectionUtil.isNotEmpty(orderBy)) {
+//            return true;
+//        }
         int minSize = Math.min(groupBy.size(), orderBy.size());
         for (int i = 0; i < minSize; i++) {
             SQLSegment groupSQLSegment = groupBy.get(i);

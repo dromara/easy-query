@@ -206,13 +206,15 @@ public class RoutePredicateDiscover<T> {
 
             Collection<SQLParameter> parameters = valuesPredicate.getParameters();
             for (SQLParameter parameter : parameters) {
-                ConstSQLParameter constSQLParameter = (ConstSQLParameter) parameter;
-                Object value = constSQLParameter.getValue();
-                RouteFunction<T> routePredicate = routeFilter.routeFilter(table, value, shardingOperator, propertyName, Objects.equals(mainShardingProperty, propertyName), false);
-                if (in) {
-                    containsRoutePredicate = containsRoutePredicate.or(new RoutePredicateExpression<T>(routePredicate));
-                } else {
-                    containsRoutePredicate = containsRoutePredicate.and(new RoutePredicateExpression<T>(routePredicate));
+                if (parameter instanceof ConstSQLParameter) {
+                    ConstSQLParameter constSQLParameter = (ConstSQLParameter) parameter;
+                    Object value = constSQLParameter.getValue();
+                    RouteFunction<T> routePredicate = routeFilter.routeFilter(table, value, shardingOperator, propertyName, Objects.equals(mainShardingProperty, propertyName), false);
+                    if (in) {
+                        containsRoutePredicate = containsRoutePredicate.or(new RoutePredicateExpression<T>(routePredicate));
+                    } else {
+                        containsRoutePredicate = containsRoutePredicate.and(new RoutePredicateExpression<T>(routePredicate));
+                    }
                 }
             }
             return containsRoutePredicate;

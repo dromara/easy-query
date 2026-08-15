@@ -1,15 +1,13 @@
 package com.easy.query.core.metadata;
 
 import com.easy.query.core.common.MapColumnNameChecker;
-import com.easy.query.core.common.cache.Cache;
-import com.easy.query.core.common.cache.DefaultMemoryCache;
 import com.easy.query.core.configuration.nameconversion.MapKeyNameConversion;
 import com.easy.query.core.inject.ServiceProvider;
+import com.easy.query.core.util.EasyMapUtil;
 import com.easy.query.core.util.EasyStringUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * create time 2023/2/11 10:16
  */
 public class DefaultEntityMetadataManager implements EntityMetadataManager {
-    private final Cache<Class<?>, EntityMetadata> entityMetadataCache = new DefaultMemoryCache<>();
+    private final Map<Class<?>, EntityMetadata> entityMetadataCache = new ConcurrentHashMap<>();
     //一个表名可能对应多个表实体
     private final Map<String, List<EntityMetadata>> tableEntityMetadataCache = new ConcurrentHashMap<>();
     private final ServiceProvider serviceProvider;
@@ -55,15 +53,17 @@ public class DefaultEntityMetadataManager implements EntityMetadataManager {
                 return new MapEntityMetadata(Map.class, mapColumnNameChecker, mapKeyNameConversion);
             });
         }
+        // 普通 Entity 类型 —— 关键改动：把整个创建+init+add 包进 computeIfAbsent 的 lambda
 
-        EntityMetadata entityMetadata = new EntityMetadata(entityClass);
-        entityMetadata.init(serviceProvider);
+         return EasyMapUtil.computeIfAbsent(entityMetadataCache, entityClass, key -> {
 
-
-        addMetadata(entityMetadata.getTableName(), entityMetadata);
-        return entityMetadataCache.computeIfAbsent(entityClass, key -> {
+            EntityMetadata entityMetadata = new EntityMetadata(key);
+            entityMetadata.init(serviceProvider);
+            addMetadata(entityMetadata.getTableName(), entityMetadata);
             return entityMetadata;
         });
+//        return entityMetadataCache.computeIfAbsent(entityClass, key -> {
+//        });
     }
 
     public void addMetadata(String key, EntityMetadata metadata) {
