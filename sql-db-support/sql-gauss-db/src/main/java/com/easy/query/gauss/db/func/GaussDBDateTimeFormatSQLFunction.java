@@ -205,12 +205,12 @@ public class GaussDBDateTimeFormatSQLFunction extends AbstractExpressionSQLFunct
                     argsSpts[a] = "CASE WHEN SUBSTR(TO_CHAR(({0})::TIMESTAMP,'HH24'),1,1) = '0' THEN SUBSTR(TO_CHAR(({0})::TIMESTAMP,'HH24'),2,1) ELSE TO_CHAR(({0})::TIMESTAMP,'HH24') END";
                     break;
                 case "hh":
-                    argsSpts[a] = "CASE mod(cast(CASE WHEN SUBSTR(TO_CHAR(({0})::TIMESTAMP,'HH24'),1,1) = '0' THEN SUBSTR(TO_CHAR(({0})::TIMESTAMP,'HH24'),2,1) ELSE TO_CHAR(({0})::TIMESTAMP,'HH24') END as number),12) " +
+                    argsSpts[a] = "CASE mod(cast(CASE WHEN SUBSTR(TO_CHAR(({0})::TIMESTAMP,'HH24'),1,1) = '0' THEN SUBSTR(TO_CHAR(({0})::TIMESTAMP,'HH24'),2,1) ELSE TO_CHAR(({0})::TIMESTAMP,'HH24') END as numeric),12) " +
                             "WHEN 0 THEN '12' WHEN 1 THEN '01' WHEN 2 THEN '02' WHEN 3 THEN '03' WHEN 4 THEN '04' WHEN 5 THEN '05' WHEN 6 THEN '06' " +
                             "WHEN 7 THEN '07' WHEN 8 THEN '08' WHEN 9 THEN '09' WHEN 10 THEN '10' WHEN 11 THEN '11' END";
                     break;
                 case "h":
-                    argsSpts[a] = "CASE mod(cast(CASE WHEN SUBSTR(TO_CHAR(({0})::TIMESTAMP,'HH24'),1,1) = '0' THEN SUBSTR(TO_CHAR(({0})::TIMESTAMP,'HH24'),2,1) ELSE TO_CHAR(({0})::TIMESTAMP,'HH24') END as number),12) " +
+                    argsSpts[a] = "CASE mod(cast(CASE WHEN SUBSTR(TO_CHAR(({0})::TIMESTAMP,'HH24'),1,1) = '0' THEN SUBSTR(TO_CHAR(({0})::TIMESTAMP,'HH24'),2,1) ELSE TO_CHAR(({0})::TIMESTAMP,'HH24') END as numeric),12) " +
                             "WHEN 0 THEN '12' WHEN 1 THEN '1' WHEN 2 THEN '2' WHEN 3 THEN '3' WHEN 4 THEN '4' WHEN 5 THEN '5' WHEN 6 THEN '6' " +
                             "WHEN 7 THEN '7' WHEN 8 THEN '8' WHEN 9 THEN '9' WHEN 10 THEN '10' WHEN 11 THEN '11' END";
                     break;
