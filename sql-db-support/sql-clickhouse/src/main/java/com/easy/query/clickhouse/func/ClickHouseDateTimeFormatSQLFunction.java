@@ -84,7 +84,7 @@ public class ClickHouseDateTimeFormatSQLFunction extends AbstractExpressionSQLFu
                         argsSpts[a] = "CASE WHEN SUBSTR(formatDateTime(toDateTime({0}),'%S'),1,1) = '0' THEN SUBSTR(formatDateTime(toDateTime({0}),'%S'),2,1) ELSE formatDateTime(toDateTime({0}),'%S') END";
                         break;
                     case "t":
-                        argsSpts[a] = "TRIM(TRAILING 'M' FROM formatDateTime(toDateTime({left}),'%p'))";
+                        argsSpts[a] = "TRIM(TRAILING 'M' FROM formatDateTime(toDateTime({0}),'%p'))";
                         break;
                     default:
                         String argsSptsA = argsSpts[a];

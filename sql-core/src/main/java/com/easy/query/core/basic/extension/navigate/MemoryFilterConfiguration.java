@@ -44,6 +44,12 @@ public class MemoryFilterConfiguration {
         if (value == null) {
             return false;
         }
+        if(includeOnProperty.valueContains()){
+            if (value instanceof String) {
+                return includeOnProperty.value().contains((String) value);
+            }
+            return includeOnProperty.value().contains(value.toString());
+        }
         if (value instanceof String) {
             return Objects.equals(value, includeOnProperty.value());
         }

@@ -241,7 +241,7 @@ public class DuckDBQueryTest  extends DuckDBBaseTest{
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.\"create_time\" AS \"value1\",strftime('%Y年%m-01 %H:%M分%S秒', t.\"create_time\") AS \"value2\" FROM \"t_blog\" t WHERE t.\"deleted\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.\"create_time\" AS \"value1\",strftime(t.\"create_time\", '%Y年%m-01 %H:%M分%S秒') AS \"value2\" FROM \"t_blog\" t WHERE t.\"deleted\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -331,7 +331,7 @@ public class DuckDBQueryTest  extends DuckDBBaseTest{
         listenerContextManager.clear();
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.\"create_time\" AS \"value1\",strftime('%Y年%m-01 %H:%M分%S秒', t.\"create_time\") AS \"value2\" FROM \"t_blog\" t WHERE t.\"deleted\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.\"create_time\" AS \"value1\",strftime(t.\"create_time\", '%Y年%m-01 %H:%M分%S秒') AS \"value2\" FROM \"t_blog\" t WHERE t.\"deleted\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }
@@ -367,7 +367,7 @@ public class DuckDBQueryTest  extends DuckDBBaseTest{
 
         Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.\"create_time\" AS \"value1\",strftime('%Y年%m-01 %H:%M分%S秒', t.\"create_time\") AS \"value2\",strftime('%Y-%m-%d %H:%M:%S', t.\"create_time\") AS \"value3\",strftime('%Y/%m-/01 %H时%M分%S秒', t.\"create_time\") AS \"value4\" FROM \"t_blog\" t WHERE t.\"deleted\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("SELECT t.\"create_time\" AS \"value1\",strftime(t.\"create_time\", '%Y年%m-01 %H:%M分%S秒') AS \"value2\",strftime(t.\"create_time\", '%Y-%m-%d %H:%M:%S') AS \"value3\",strftime(t.\"create_time\", '%Y/%m-/01 %H时%M分%S秒') AS \"value4\" FROM \"t_blog\" t WHERE t.\"deleted\" = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
 
     }

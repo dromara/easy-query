@@ -33,4 +33,10 @@ public @interface IncludeOnProperty {
      * @return
      */
     boolean matchNull() default false;
+
+    /**
+     * 值是不是只需要包含即可
+     * @return
+     */
+    boolean valueContains() default false;
 }

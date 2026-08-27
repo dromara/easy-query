@@ -34,7 +34,7 @@ public class EasyObjectUtil {
         if(Objects.isNull(source)){
             return def;
         }
-        return def;
+        return source;
     }
 
     /**

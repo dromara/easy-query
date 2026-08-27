@@ -85,15 +85,16 @@ public class EasyDatabaseUtil {
     public static Set<String> getTableIndexes(DataSource dataSource, String tableName) {
         try (Connection connection = dataSource.getConnection()) {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
-            ResultSet resultSet = databaseMetaData.getIndexInfo(null, null, tableName, false, false);
-            // 获取元数据
-            HashSet<String> indexes = new HashSet<>();
-            while (resultSet.next()) {
-                String indexName = resultSet.getString("INDEX_NAME");
-                indexes.add(indexName);
+            try(ResultSet resultSet = databaseMetaData.getIndexInfo(null, null, tableName, false, false)){
+                // 获取元数据
+                HashSet<String> indexes = new HashSet<>();
+                while (resultSet.next()) {
+                    String indexName = resultSet.getString("INDEX_NAME");
+                    indexes.add(indexName);
 
+                }
+                return indexes;
             }
-            return indexes;
         } catch (Exception e) {
             log.error("get indexes error:" + e.getMessage(), e);
         }
@@ -104,15 +105,16 @@ public class EasyDatabaseUtil {
     public static Set<String> getTableForeignKeys(DataSource dataSource, String tableName) {
         try (Connection connection = dataSource.getConnection()) {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
-            ResultSet resultSet = databaseMetaData.getImportedKeys(null, null, tableName);
-            // 获取元数据
-            HashSet<String> foreignKeys = new HashSet<>();
-            while (resultSet.next()) {
-                String fkName = resultSet.getString("FK_NAME");
-                foreignKeys.add(fkName);
+            try(ResultSet resultSet = databaseMetaData.getImportedKeys(null, null, tableName)){
+                // 获取元数据
+                HashSet<String> foreignKeys = new HashSet<>();
+                while (resultSet.next()) {
+                    String fkName = resultSet.getString("FK_NAME");
+                    foreignKeys.add(fkName);
 
+                }
+                return foreignKeys;
             }
-            return foreignKeys;
         } catch (Exception e) {
             log.error("get indexes error:" + e.getMessage(), e);
         }

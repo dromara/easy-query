@@ -42,29 +42,29 @@ public class DuckDBSQLDateTimeFormatSQLFunction extends AbstractExpressionSQLFun
             String format = this.javaFormat;
             switch (format) {
                 case "yyyy-MM-dd HH:mm:ss":
-                    return "strftime('%Y-%m-%d %H:%M:%S', {0})";
+                    return "strftime({0}, '%Y-%m-%d %H:%M:%S')";
                 case "yyyy-MM-dd HH:mm":
-                    return "strftime('%Y-%m-%d %H:%M', {0})";
+                    return "strftime({0}, '%Y-%m-%d %H:%M')";
                 case "yyyy-MM-dd HH":
-                    return "strftime('%Y-%m-%d %H',{0})";
+                    return "strftime({0}, '%Y-%m-%d %H')";
                 case "yyyy-MM-dd":
-                    return "strftime('%Y-%m-%d', {0})";
+                    return "strftime({0}, '%Y-%m-%d')";
                 case "yyyy-MM":
-                    return "strftime('%Y-%m', {0})";
+                    return "strftime({0}, '%Y-%m')";
                 case "yyyyMMddHHmmss":
-                    return "strftime('%Y%m%d%H%M%S', {0})";
+                    return "strftime({0}, '%Y%m%d%H%M%S')";
                 case "yyyyMMddHHmm":
-                    return "strftime('%Y%m%d%H%M', {0})";
+                    return "strftime({0}, '%Y%m%d%H%M')";
                 case "yyyyMMddHH":
-                    return "strftime('%Y%m%d%H', {0})";
+                    return "strftime({0}, '%Y%m%d%H')";
                 case "yyyyMMdd":
-                    return "strftime('%Y%m%d', {0})";
+                    return "strftime({0}, '%Y%m%d')";
                 case "yyyyMM":
-                    return "strftime('%Y%m', {0})";
+                    return "strftime({0}, '%Y%m')";
                 case "yyyy":
-                    return "strftime('%Y', {0})";
+                    return "strftime({0}, '%Y')";
                 case "HH:mm:ss":
-                    return "strftime('%H:%M:%S', {0})";
+                    return "strftime({0}, '%H:%M:%S')";
             }
             format = replaceFormat(format);
 
@@ -73,39 +73,39 @@ public class DuckDBSQLDateTimeFormatSQLFunction extends AbstractExpressionSQLFun
             for (int a = 0; a < argsSpts.length; a++) {
                 switch (argsSpts[a]) {
                     case "yy":
-                        argsSpts[a] = "substr(strftime('%Y', {0}), 3, 2)";
+                        argsSpts[a] = "substr(strftime({0}, '%Y'), 3, 2)";
                         break;
                     case "M":
-                        argsSpts[a] = "ltrim(strftime('%m', {0}), '0')";
+                        argsSpts[a] = "ltrim(strftime({0}, '%m'), '0')";
                         break;
                     case "d":
-                        argsSpts[a] = "ltrim(strftime('%d', {0}), '0')";
+                        argsSpts[a] = "ltrim(strftime({0}, '%d'), '0')";
                         break;
                     case "H":
-                        argsSpts[a] = "case when substr(strftime('%H', {0}), 1, 1) = '0' then substr(strftime('%H', {0}), 2, 1) else strftime('%H', {0}) end";
+                        argsSpts[a] = "case when substr(strftime({0}, '%H'), 1, 1) = '0' then substr(strftime({0}, '%H'), 2, 1) else strftime({0}, '%H') end";
                         break;
                     case "hh":
-                        argsSpts[a] = "case cast(case when substr(strftime('%H', {0}), 1, 1) = '0' then substr(strftime('%H', {0}), 2, 1) else strftime('%H', {0}) end as smallint) % 12 " +
+                        argsSpts[a] = "case cast(case when substr(strftime({0}, '%H'), 1, 1) = '0' then substr(strftime({0}, '%H'), 2, 1) else strftime({0}, '%H') end as smallint) % 12 " +
                                 "when 0 then '12' when 1 then '01' when 2 then '02' when 3 then '03' when 4 then '04' when 5 then '05' when 6 then '06' when 7 then '07' when 8 then '08' " +
                                 "when 9 then '09' when 10 then '10' when 11 then '11' end";
                         break;
                     case "h":
-                        argsSpts[a] = "case cast(case when substr(strftime('%H', {0}), 1, 1) = '0' then substr(strftime('%H', {0}), 2, 1) else strftime('%H', {0}) end as smallint) % 12 " +
+                        argsSpts[a] = "case cast(case when substr(strftime({0}, '%H'), 1, 1) = '0' then substr(strftime({0}, '%H'), 2, 1) else strftime({0}, '%H') end as smallint) % 12 " +
                                 "when 0 then '12' when 1 then '1' when 2 then '2' when 3 then '3' when 4 then '4' when 5 then '5' when 6 then '6' when 7 then '7' when 8 then '8' " +
                                 "when 9 then '9' when 10 then '10' when 11 then '11' end";
                         break;
                     case "m":
-                        argsSpts[a] = "case when substr(strftime('%M', {0}), 1, 1) = '0' then substr(strftime('%M', {0}), 2, 1) else strftime('%M', {0}) end";
+                        argsSpts[a] = "case when substr(strftime({0}, '%M'), 1, 1) = '0' then substr(strftime({0}, '%M'), 2, 1) else strftime({0}, '%M') end";
                         break;
                     case "s":
-                        argsSpts[a] = "case when substr(strftime('%S', {0}), 1, 1) = '0' then substr(strftime('%S', {0}), 2, 1) else strftime('%S', {0}) end";
+                        argsSpts[a] = "case when substr(strftime({0}, '%S'), 1, 1) = '0' then substr(strftime({0}, '%S'), 2, 1) else strftime({0}, '%S') end";
                         break;
                     case "tt":
-                        argsSpts[a] = "case when cast(case when substr(strftime('%H', {0}), 1, 1) = '0' then substr(strftime('%H', {0}), 2, 1) else strftime('%H', {0}) end as smallint) >= 12 " +
+                        argsSpts[a] = "case when cast(case when substr(strftime({0}, '%H'), 1, 1) = '0' then substr(strftime({0}, '%H'), 2, 1) else strftime({0}, '%H') end as smallint) >= 12 " +
                                 "then 'PM' else 'AM' end";
                         break;
                     case "t":
-                        argsSpts[a] = "case when cast(case when substr(strftime('%H', {0}), 1, 1) = '0' then substr(strftime('%H', {0}), 2, 1) else strftime('%H', {0}) end as smallint) >= 12 " +
+                        argsSpts[a] = "case when cast(case when substr(strftime({0}, '%H'), 1, 1) = '0' then substr(strftime({0}, '%H'), 2, 1) else strftime({0}, '%H') end as smallint) >= 12 " +
                                 "then 'P' else 'A' end";
                         break;
                     default:
@@ -117,7 +117,7 @@ public class DuckDBSQLDateTimeFormatSQLFunction extends AbstractExpressionSQLFun
                             argsSptsA = argsSptsA.substring(0, argsSptsA.length() - 1);
                         }
                         if (Arrays.stream(argsFinds).anyMatch(argsSptsA::contains)) {
-                            argsSpts[a] = "strftime('" + argsSptsA + "', {0})";
+                            argsSpts[a] = "strftime({0}, '" + argsSptsA + "')";
                         } else {
                             argsSpts[a] = "'" + argsSptsA + "'";
                         }
@@ -133,7 +133,7 @@ public class DuckDBSQLDateTimeFormatSQLFunction extends AbstractExpressionSQLFun
 
             return format.replace("%_a1","%m").replace("%_a2","%d").replace("%_a3","%H").replace("%_a4","%M");
         }
-        return "strftime('%Y-%m-%d %H:%M:%f',{0})";
+        return "strftime({0}, '%Y-%m-%d %H:%M:%f')";
     }
 
     protected String replaceFormat(String format) {
