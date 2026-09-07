@@ -120,6 +120,15 @@ create table t_sys_user_encryption
 )comment '用户字段加密表';
 
 
+create table t_sys_user_sm4_encryption
+(
+    id varchar(32) not null comment '主键ID'primary key,
+    name varchar(32) not null comment '名称',
+    phone varchar(1024) null comment 'sm4加密(hex)支持like的手机号',
+    address varchar(2048)  null comment 'sm4加密(hex)支持like的地址'
+)comment '用户字段sm4加密表';
+
+
 create table t_sys_user_track
 (
     id varchar(32) not null comment '主键ID'primary key,

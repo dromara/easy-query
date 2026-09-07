@@ -116,7 +116,7 @@ public abstract class AbstractUnSupportEmojiAesBase64EncryptionStrategy implemen
             return ciphertext;
         }
 
-        List<String> segments = EasyStringUtil.splitBase64ByGroupSize(ciphertextString, 24);
+        List<String> segments = EasyStringUtil.splitByGroupSize(ciphertextString, 24);
 
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < segments.size(); i++) {

@@ -46,6 +46,7 @@ import com.easy.query.test.dto.autodto.MyNavigateValueSetter;
 import com.easy.query.test.dto.autotest.RoleJoin;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
+import com.easy.query.test.encryption.DefaultSafeSm4EasyEncryptionStrategy;
 import com.easy.query.test.encryption.MyEncryptionStrategy;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.LogicDelTopic;
@@ -197,6 +198,7 @@ public abstract class BaseTest {
         configuration.applyEncryptionStrategy(new DefaultAesEasyEncryptionStrategy());
         configuration.applyEncryptionStrategy(new Base64EncryptionStrategy());
         configuration.applyEncryptionStrategy(new MyEncryptionStrategy());
+        configuration.applyEncryptionStrategy(new DefaultSafeSm4EasyEncryptionStrategy());
         configuration.applyEncryptionStrategy(new JavaEncryptionStrategy());
         configuration.applyLogicDeleteStrategy(new MyLogicDelStrategy());
         configuration.applyInterceptor(new MyEntityInterceptor());

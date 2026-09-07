@@ -701,7 +701,7 @@ public class EasyStringUtil {
         return segments;
     }
 
-    public static List<String> splitBase64ByGroupSize(String str, int groupSize) {
+    public static List<String> splitByGroupSize(String str, int groupSize) {
         if (str == null || str.length() == 0 || groupSize <= 0) {
             return EasyCollectionUtil.emptyList();
         }

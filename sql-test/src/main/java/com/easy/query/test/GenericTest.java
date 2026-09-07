@@ -44,6 +44,8 @@ import com.easy.query.test.conversion.EnumValueDeserializer;
 import com.easy.query.test.encryption.Base64EncryptionStrategy;
 import com.easy.query.test.encryption.DefaultAesEasyEncryptionStrategy;
 import com.easy.query.test.encryption.DefaultSafeAesEasyEncryptionStrategy;
+import com.easy.query.test.encryption.DefaultSafeSm4EasyEncryptionStrategy;
+import com.easy.query.test.encryption.Sm4Util;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.NoKeyEntity;
 import com.easy.query.test.entity.UnknownTable;
@@ -1069,6 +1071,99 @@ public class GenericTest extends BaseTest {
         }
         Assert.assertEquals(randomString, string);
 
+    }
+
+    @Test
+    public void sm4StandardVectorTest() {
+        //GB/T 32907-2016标准测试向量
+        byte[] key = Sm4Util.fromHex("0123456789abcdeffedcba9876543210");
+        byte[] plaintext = Sm4Util.fromHex("0123456789abcdeffedcba9876543210");
+        byte[] encryptBlock = Sm4Util.encryptBlock(plaintext, key);
+        Assert.assertEquals("681edf34d206965e86b3e94f536e4246", Sm4Util.toHex(encryptBlock));
+    }
+
+    @Test
+    public void easySm4EncryptionTest() {
+        DefaultSafeSm4EasyEncryptionStrategy sm4EasyEncryptionStrategy = new DefaultSafeSm4EasyEncryptionStrategy();
+        String xx = "188888881212";
+
+        Object encryptValue = sm4EasyEncryptionStrategy.encrypt(null, null, xx);
+        //密文为16进制字符串
+        Assert.assertTrue(encryptValue.toString().matches("^[0-9a-f]+$"));
+        Assert.assertEquals(0, encryptValue.toString().length() % 32);
+        Object decryptValue = sm4EasyEncryptionStrategy.decrypt(null, null, encryptValue);
+        Assert.assertEquals(xx, decryptValue);
+        Object encryptValue1 = sm4EasyEncryptionStrategy.encrypt(null, null, "1888888812");
+        //like前缀匹配原理:相同前缀明文加密后密文也相同前缀
+        Assert.assertTrue(EasyStringUtil.startsWith(encryptValue.toString(), encryptValue1.toString()));
+    }
+
+    @Test
+    public void StringCharSegmentSm4Test() {
+        String randomString = "√在-`N*以\\字中d\\~_yb2❤USY\uD83D\uDC8A\uD83D\uDC68\uD83E\uDD21\uD83D\uDC685G*\uD83D\uDE08符T*9L^9oP可符F※,x·Z∝这4ェ(v\u200D";
+        DefaultSafeSm4EasyEncryptionStrategy sm4EasyEncryptionStrategy = new DefaultSafeSm4EasyEncryptionStrategy();
+
+        Object encrypt = sm4EasyEncryptionStrategy.encrypt(null, null, randomString);
+        Assert.assertNotNull(encrypt);
+        Assert.assertTrue(encrypt.toString().matches("^[0-9a-f]+$"));
+        Object decrypt = sm4EasyEncryptionStrategy.decrypt(null, null, encrypt);
+        Assert.assertNotNull(decrypt);
+        String string = decrypt.toString();
+        boolean equals = randomString.equals(string);
+        if (!equals) {
+            System.out.println("随机串base64:" + new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
+        }
+        Assert.assertEquals(randomString, string);
+
+    }
+
+    @Test
+    public void StringCharSegmentSm4Test1() {
+        String randomBase64 = "OTpIT+KDo+KdpDYq5Z6aIzMzek1A77iPMXlG8J+RqFNjXF5PXumHjDBY5ZyoMA==";
+        String randomString = new String(EasyBase64Util.decode(randomBase64.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+        DefaultSafeSm4EasyEncryptionStrategy sm4EasyEncryptionStrategy = new DefaultSafeSm4EasyEncryptionStrategy();
+
+        Object encrypt = sm4EasyEncryptionStrategy.encrypt(null, null, randomString);
+        Assert.assertNotNull(encrypt);
+        Object decrypt = sm4EasyEncryptionStrategy.decrypt(null, null, encrypt);
+        Assert.assertNotNull(decrypt);
+        String string = decrypt.toString();
+        boolean equals = randomString.equals(string);
+        if (!equals) {
+            System.out.println("随机串base64:" + new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8));
+        }
+        Assert.assertEquals(randomString, string);
+
+    }
+
+    @Test
+    public void StringCharSegmentSm4Test2() {
+        DefaultSafeSm4EasyEncryptionStrategy sm4EasyEncryptionStrategy = new DefaultSafeSm4EasyEncryptionStrategy();
+        for (int i = 0; i < 20000; i++) {
+            int desiredLength = new Random().nextInt(60);
+            String randomString = generateRandomString1(desiredLength + 11);
+            try {
+
+                Object encrypt = sm4EasyEncryptionStrategy.encrypt(null, null, randomString);
+                Assert.assertNotNull(encrypt);
+                Assert.assertTrue(encrypt.toString().matches("^[0-9a-f]+$"));
+                Assert.assertEquals(0, encrypt.toString().length() % 32);
+                Object decrypt = sm4EasyEncryptionStrategy.decrypt(null, null, encrypt);
+                Assert.assertNotNull(decrypt);
+                String string = decrypt.toString();
+                boolean equals = randomString.equals(string);
+                if (!equals) {
+                    String s = new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+                    System.out.println("随机串base64:" + s);
+                }
+                Assert.assertEquals(randomString, string);
+            } catch (Exception ex) {
+                System.out.println("随机串:" + randomString);
+                String s = new String(EasyBase64Util.encode(randomString.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+                System.out.println("随机串base64:" + s);
+                throw ex;
+            }
+        }
     }
 
     @Test
