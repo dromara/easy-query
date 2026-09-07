@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
  *
  * @author xuejiaming
  */
-public class QueryCteTest extends PgSQLCTEBaseTest {
+public class QueryCteTest extends PgSQLBaseTest {
     @Test
     public void tree7() {
 
@@ -55,7 +55,7 @@ public class QueryCteTest extends PgSQLCTEBaseTest {
         ListenerContext listenerContext = new ListenerContext();
         listenerContextManager.startListen(listenerContext);
 
-        List<MyCategoryVO3> list = entityQuery.queryable(MyCategory.class)
+        List<MyCategoryVO3> list = entityQuery1.queryable(MyCategory.class)
                 .where(m -> {
                     m.id().eq("1");
                 })

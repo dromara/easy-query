@@ -58,6 +58,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class PgSQLBaseTest {
     public static HikariDataSource dataSource;
     public static EasyEntityQuery entityQuery;
+    public static EasyEntityQuery entityQuery1;
     public static EasyQueryClient easyQueryClient;
     public static ListenerContextManager listenerContextManager;
 
@@ -118,6 +119,23 @@ public class PgSQLBaseTest {
         tableRouteManager.addRoute(new TopicShardingTableRoute());
         tableRouteManager.addRoute(new TopicShardingTimeTableRoute());
         testBeforex();
+
+
+        EasyQueryClient easyQueryClient1 = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(dataSource)
+                .optionConfigure(op -> {
+                    op.setDeleteThrowError(false);
+                    op.setExecutorCorePoolSize(1);
+                    op.setExecutorMaximumPoolSize(2);
+                    op.setMaxShardingQueryLimit(1);
+                    op.setDefaultSchema("public");
+//                    op.setSelectAutoIncludeTable(SelectAutoIncludeTableEnum.WARNING);
+                })
+                .useDatabaseConfigure(new PgSQLDatabaseConfiguration())
+                .replaceService(JdbcExecutorListener.class, myJdbcListener)
+                .build();
+
+        entityQuery1 = new DefaultEasyEntityQuery(easyQueryClient1);
     }
 
     public static void initData() {
