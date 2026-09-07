@@ -40,7 +40,7 @@ public class DefaultCTERecursiveProvider implements CTERecursiveProvider{
 
         Class<T> thisQueryClass = fromQueryable.queryClass();
 
-        return queryable.asTable(cteTableName)
+        return queryable.asTable(cteTableName).asSchema(o->null)
                 .innerJoin(thisQueryClass, (t, t1) -> {
                     if (up) {
                         t1.multiEq(true, t, codeProperties, parentCodeProperties);

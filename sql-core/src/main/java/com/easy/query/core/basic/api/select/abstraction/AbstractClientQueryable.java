@@ -1774,6 +1774,7 @@ public abstract class AbstractClientQueryable<T1> implements ClientQueryable<T1>
 
         EntityQueryExpressionBuilder anonymousCTEQueryExpressionBuilder = runtimeContext.getExpressionBuilderFactory().createAnonymousCTEQueryExpressionBuilder(cteTableName, columnNames, unionAllEntityQueryExpressionBuilder, t1ClientQueryable.getSQLEntityExpressionBuilder().getExpressionContext(), t1ClientQueryable.queryClass());
         myQueryable.getSQLEntityExpressionBuilder().getExpressionContext().getDeclareExpressions().add(anonymousCTEQueryExpressionBuilder);
+        myQueryable.asSchema(o -> null);
         myQueryable.asTable(cteTableName);
         if (limitDeep >= 0) {
             myQueryable.where(o -> o.sqlNativeSegment("{0} <= {1}", c -> {
