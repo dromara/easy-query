@@ -85,8 +85,9 @@ public class DefaultBeanStreamIterator<T> extends AbstractMapToStreamIterator<T>
             EntityState entityState = trackManager.getCurrentTrackContext().addQueryTracking(bean);
             entityState.setAppendIncludes(includes);
             Object entityStateCurrentValue = entityState.getCurrentValue();
+            //todo track后续改成key+columns
             if (entityStateCurrentValue != bean) {//没有附加成功应该返回之前被追加的数据而不是最新查询的数据
-//                log.warn("current object tracked,return the traced object instead of the current querying object,track key:" + entityState.getTrackKey());
+                log.warn("!!!!!!!!!!current object tracked,return the traced object instead of the current querying object,track key:" + entityState.getTrackKey()+"!!!!!!!!!!");
                 return EasyObjectUtil.typeCastNullable(entityStateCurrentValue);
             }
         }
