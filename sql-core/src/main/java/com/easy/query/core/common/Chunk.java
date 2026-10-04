@@ -12,12 +12,14 @@ public class Chunk<T> {
     private final List<T> values;
     private boolean breakChunk;
     private long maxFetchSize;
+    private int changeSize;
     private final long fetchSize;
 
     public Chunk(List<T> values, long fetchSize) {
         this.values = values;
         this.fetchSize = fetchSize;
         this.maxFetchSize = 100000;
+        this.changeSize = 0;
     }
 
     public void breakChunk() {
@@ -34,6 +36,7 @@ public class Chunk<T> {
 
     /**
      * 终于拉取数量
+     *
      * @return
      */
     public long getMaxFetchSize() {
@@ -46,6 +49,7 @@ public class Chunk<T> {
 
     /**
      * 已拉取数量包含当前values
+     *
      * @return
      */
     public long getFetchSize() {
@@ -57,15 +61,37 @@ public class Chunk<T> {
     }
 
     /**
-     * 筛选条件已被改变
+     * 筛选条件全部被改变
+     *
      * @return
      */
-    public Offset filterChanged() {
+    public Offset filterAllChanged() {
         return offset(0);
     }
 
     /**
+     * 筛选条件全部被改变
+     * 请使用{@link  Chunk#filterAllChanged()}
+     *
+     * @return
+     */
+    @Deprecated
+    public Offset filterChanged() {
+        return offset(0);
+    }
+
+    public void change() {
+        changeSize++;
+    }
+
+    public Offset filterPartChanged() {
+        int changeValue = values.size() - changeSize;
+        return offset(Math.max(0, changeValue));
+    }
+
+    /**
      * 筛选条件未被改变
+     *
      * @return
      */
     public Offset filterUnChanged() {
