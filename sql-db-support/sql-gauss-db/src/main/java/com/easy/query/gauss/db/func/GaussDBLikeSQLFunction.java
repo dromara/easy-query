@@ -27,33 +27,16 @@ public class GaussDBLikeSQLFunction extends AbstractLikeSQLFunction {
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        if(columnExpressions.size()!=2){
-            throw new IllegalArgumentException("bank arguments != 1");
-        }
-        ColumnExpression columnExpression = columnExpressions.get(1);
-        ColumnFuncValueExpression columnFuncValueExpression = getColumnFuncValueExpression(columnExpression);
-        if (columnFuncValueExpression != null) {
-            Object value = columnFuncValueExpression.getValue();
-            if (value instanceof String) {
-                String valueString = (String) value;
-                if (valueString.contains("%") || valueString.contains("_")) {
-                    if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_RIGHT){
-                        return "STRPOS({0},{1}) = 1";
-                    }
-                    if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_LEFT){
-                        return "STRPOS({0},{1}) = (CHAR_LENGTH({0}) - CHAR_LENGTH({1}) + 1)";
-                    }
-                    return "STRPOS({0},{1}) > 0";
-                }
-            }
-        }
-        if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_RIGHT){
-            return "{0} LIKE (CONCAT(({1})::TEXT , '%'))";
-        }
-        if(sqlLikeEnum==SQLLikeEnum.LIKE_PERCENT_LEFT){
-            return "{0} LIKE (CONCAT('%' , ({1})::TEXT))";
-        }
-        return "{0} LIKE (CONCAT('%' , ({1})::TEXT , '%'))";
+        GaussDBLikeFunctionTemplateGenerator templateGenerator = new GaussDBLikeFunctionTemplateGenerator(
+                columnExpressions, sqlLikeEnum, o -> getColumnFuncValueExpression(o)
+                , "STRPOS({0},{1}) = 1"
+                , "STRPOS({0},{1}) = (CHAR_LENGTH({0}) - CHAR_LENGTH({1}) + 1)"
+                , "STRPOS({0},{1}) > 0"
+                , "{0} LIKE CONCAT(({1})::TEXT,'%')"
+                , "{0} LIKE CONCAT('%',({1})::TEXT)"
+                , "{0} LIKE CONCAT('%',({1})::TEXT,'%')"
+        );
+        return templateGenerator.sqlSegment(defaultTable);
     }
 
     @Override

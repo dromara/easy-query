@@ -27,33 +27,16 @@ public class SQLiteLikeSQLFunction extends AbstractLikeSQLFunction {
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        if (columnExpressions.size() != 2) {
-            throw new IllegalArgumentException("bank arguments != 1");
-        }
-        ColumnExpression columnExpression = columnExpressions.get(1);
-        ColumnFuncValueExpression columnFuncValueExpression = getColumnFuncValueExpression(columnExpression);
-        if (columnFuncValueExpression != null) {
-            Object value = columnFuncValueExpression.getValue();
-            if (value instanceof String) {
-                String valueString = (String) value;
-                if (valueString.contains("%") || valueString.contains("_")) {
-                    if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_RIGHT) {
-                        return "INSTR({0},{1}) = 1";
-                    }
-                    if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_LEFT) {
-                        return "INSTR({0},{1}) = (LENGTH({0}) - LENGTH({1}) + 1)";
-                    }
-                    return "INSTR({0},{1}) > 0";
-                }
-            }
-        }
-        if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_RIGHT) {
-            return "{0} LIKE ({1}||'%')";
-        }
-        if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_LEFT) {
-            return "{0} LIKE ('%'||{1})";
-        }
-        return "{0} LIKE ('%'||{1}||'%')";
+        SQLiteLikeFunctionTemplateGenerator templateGenerator = new SQLiteLikeFunctionTemplateGenerator(
+                columnExpressions, sqlLikeEnum, o -> getColumnFuncValueExpression(o)
+                , "INSTR({0},{1}) = 1"
+                , "INSTR({0},{1}) = (LENGTH({0}) - LENGTH({1}) + 1)"
+                , "INSTR({0},{1}) > 0"
+                , "{0} LIKE ({1}||'%')"
+                , "{0} LIKE ('%'||{1})"
+                , "{0} LIKE ('%'||{1}||'%')"
+        );
+        return templateGenerator.sqlSegment(defaultTable);
     }
 
     @Override

@@ -74,14 +74,14 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 /**
+ * create time 2026/9/8 08:27
+ * 文件说明
+ *
  * @author xuejiaming
- * @FileName: GenericTest.java
- * @Description: 文件说明
- * create time 2023/3/17 22:22
  */
-public class GenericTest extends BaseTest {
+public class GenericTest2 {
 
-    @Test
+    @org.junit.Test
     public void SqlRangeTest1() {
         boolean openFirst1 = SQLRangeEnum.openFirst(SQLRangeEnum.OPEN);
         Assert.assertTrue(openFirst1);
@@ -101,7 +101,7 @@ public class GenericTest extends BaseTest {
         Assert.assertFalse(openEnd4);
     }
 
-    @Test
+    @org.junit.Test
     public void base64Test() {
         String uuid = UUID.randomUUID().toString();
         byte[] bytes = uuid.getBytes(StandardCharsets.UTF_8);
@@ -114,7 +114,7 @@ public class GenericTest extends BaseTest {
     private final String key = "abcdef1234567890";//16位的秘钥
     private final String iv = "A-16-Byte-String";//16位的iv
 
-    @Test
+    @org.junit.Test
     public void aesTest2() {
         String uuid = UUID.randomUUID().toString();
         String encryptToString = EasyAesUtil.encrypt(uuid, key, iv, StandardCharsets.UTF_8);
@@ -124,7 +124,7 @@ public class GenericTest extends BaseTest {
 
     }
 
-    @Test
+    @org.junit.Test
     public void easyEncryptionTest() {
 
         DefaultAesEasyEncryptionStrategy aesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
@@ -140,7 +140,7 @@ public class GenericTest extends BaseTest {
         Assert.assertEquals(phone, decrypt);
     }
 
-    @Test
+    @org.junit.Test
     public void easyEncryptionTest1() {
         DefaultAesEasyEncryptionStrategy aesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
         String xx = "188888881212";
@@ -152,7 +152,7 @@ public class GenericTest extends BaseTest {
         Assert.assertTrue(EasyStringUtil.startsWith(encryptValue.toString(), encryptValue1.toString()));
     }
 
-    @Test
+    @org.junit.Test
     public void behavior() {
         EasyBehavior easyBehavior = new EasyBehavior();
         Assert.assertFalse(easyBehavior.isDefaultBehavior());
@@ -177,7 +177,7 @@ public class GenericTest extends BaseTest {
         Assert.assertTrue(easyBehavior.isDefaultBehavior());
     }
 
-    @Test
+    @org.junit.Test
     public void executeMethodBehaviorTest1() {
         int code = ExecuteMethodEnum.UNKNOWN.getCode();
         code = EasyBitwiseUtil.addBit(code, ExecuteMethodEnum.ANY.getCode());
@@ -190,260 +190,8 @@ public class GenericTest extends BaseTest {
         Assert.assertEquals(code, ExecuteMethodEnum.UNKNOWN.getCode());
     }
 
-    @Test
-    public void queryLargeColumnTest1() {
-        String sql = easyEntityQuery.queryable(QueryLargeColumnTestEntity.class).toSQL();
-        Assert.assertEquals("SELECT `id`,`name`,`content` FROM `query_large_column_test`", sql);
-    }
 
-    @Test
-    public void queryLargeColumnTest3() {
-        try {
-
-            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-            long l = easyEntityQuery.insertable(queryLargeColumnTestEntity).executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex.getMessage().startsWith("not found insert columns :"));
-        }
-    }
-
-    @Test
-    public void queryLargeColumnTest4() {
-        try {
-
-            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-            queryLargeColumnTestEntity.setId("123");
-            long l = easyEntityQuery.insertable(queryLargeColumnTestEntity).executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("INSERT INTO `query_large_column_test` (`id`) VALUES (?)", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void queryLargeColumnTest5() {
-        try {
-
-            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-            queryLargeColumnTestEntity.setId("123");
-            long l = easyEntityQuery.insertable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.DEFAULT).executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("INSERT INTO `query_large_column_test` (`id`) VALUES (?)", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void queryLargeColumnTest6() {
-        try {
-
-            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-            queryLargeColumnTestEntity.setId("123");
-            long l = easyEntityQuery.insertable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ALL_COLUMNS).executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("INSERT INTO `query_large_column_test` (`id`,`name`,`content`) VALUES (?,?,?)", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void queryLargeColumnTest7() {
-        try {
-
-            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-            queryLargeColumnTestEntity.setId("123");
-            long l = easyEntityQuery.insertable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("INSERT INTO `query_large_column_test` (`name`,`content`) VALUES (?,?)", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void queryLargeColumnTest8() {
-        try {
-
-            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-            queryLargeColumnTestEntity.setId("123");
-            long l = easyEntityQuery.updatable(queryLargeColumnTestEntity).executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("UPDATE `query_large_column_test` SET `name` = ?,`content` = ? WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void queryLargeColumnTest9() {
-        QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-        queryLargeColumnTestEntity.setId("123");
-        long l = easyEntityQuery.updatable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS).executeRows();
-        Assert.assertEquals(0, l);
-    }
-
-    @Test
-    public void queryLargeColumnTest10() {
-        try {
-
-            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-            queryLargeColumnTestEntity.setId("123");
-            queryLargeColumnTestEntity.setName("123");
-            long l = easyEntityQuery.updatable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS).executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("UPDATE `query_large_column_test` SET `name` = ? WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void queryLargeColumnTest11() {
-        try {
-
-            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-            queryLargeColumnTestEntity.setId("123");
-            queryLargeColumnTestEntity.setName("123");
-            long l = easyEntityQuery.updatable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("UPDATE `query_large_column_test` SET `content` = ? WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void queryLargeColumnTest12() {
-        QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-        queryLargeColumnTestEntity.setId("123");
-        queryLargeColumnTestEntity.setName("123");
-        queryLargeColumnTestEntity.setContent("123");
-        long l = easyEntityQuery.updatable(queryLargeColumnTestEntity).setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
-        Assert.assertEquals(0, l);
-    }
-
-    @Test
-    public void deleteTest13() {
-        try {
-            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-            queryLargeColumnTestEntity.setId("123");
-            long l = easyEntityQuery.deletable(queryLargeColumnTestEntity).executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("DELETE FROM `query_large_column_test` WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void deleteTest14() {
-        try {
-            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-            queryLargeColumnTestEntity.setId("123");
-            long l = easyEntityQuery.deletable(queryLargeColumnTestEntity).asTable("aaa").executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("DELETE FROM `aaa` WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.aaa' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void deleteTest15() {
-        try {
-            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-            queryLargeColumnTestEntity.setId("123");
-            long l = easyEntityQuery.deletable(queryLargeColumnTestEntity).asTable(o -> o + "aaa").asSchema("xxx").executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("DELETE FROM `xxx`.`query_large_column_testaaa` WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'xxx.query_large_column_testaaa' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void deleteTest16() {
-        try {
-            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-            queryLargeColumnTestEntity.setId("123");
-            long l = easyEntityQuery.deletable(queryLargeColumnTestEntity).asTable(o -> o + "aaa").asSchema(o -> "xxx").executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("DELETE FROM `xxx`.`query_large_column_testaaa` WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'xxx.query_large_column_testaaa' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void queryLargeColumnTest14() {
-        try {
-            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-            queryLargeColumnTestEntity.setId("123");
-            long l = easyEntityQuery.deletable(queryLargeColumnTestEntity).allowDeleteStatement(false).executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQueryInvalidOperationException);
-            Assert.assertEquals("The delete operation cannot be executed because physical deletion is not allowed by default configuration. If physical deletion is needed, please call [.allowDeleteStatement(true)].", ex.getMessage());
-        }
-    }
-
-    @Test
-    public void queryLargeColumnTest15() {
-        QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-        queryLargeColumnTestEntity.setId("123");
-        String sql = easyEntityQuery.deletable(queryLargeColumnTestEntity).toSQL();
-        Assert.assertEquals("DELETE FROM `query_large_column_test` WHERE `id` = ?", sql);
-    }
-
-    @Test
+    @org.junit.Test
     public void linkedCaseInsensitiveMapTest1() {
         LinkedCaseInsensitiveMap<Object> objectLinkedCaseInsensitiveMap = new LinkedCaseInsensitiveMap<>();
         Object put = objectLinkedCaseInsensitiveMap.put("123", "123");
@@ -453,241 +201,7 @@ public class GenericTest extends BaseTest {
         Assert.assertEquals("123", put1);
     }
 
-    @Test
-    public void queryLargeColumnTest19() {
-        try {
-
-            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-            queryLargeColumnTestEntity.setId("123");
-            queryLargeColumnTestEntity.setName("123");
-            long l = easyEntityQuery.updatable(queryLargeColumnTestEntity)
-                    .asTable("abc")
-                    .asSchema("xxx").setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("UPDATE `xxx`.`abc` SET `content` = ? WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'xxx.abc' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void queryLargeColumnTest20() {
-        try {
-
-            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-            queryLargeColumnTestEntity.setId("123");
-            queryLargeColumnTestEntity.setName("123");
-            long l = easyEntityQuery.updatable(queryLargeColumnTestEntity)
-                    .asTable(o -> o + "abc")
-                    .asSchema("xcv").setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("UPDATE `xcv`.`query_large_column_testabc` SET `content` = ? WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'xcv.query_large_column_testabc' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void queryLargeColumnTest21() {
-        try {
-
-            QueryLargeColumnTestEntity queryLargeColumnTestEntity = new QueryLargeColumnTestEntity();
-            queryLargeColumnTestEntity.setId("123");
-            queryLargeColumnTestEntity.setName("123");
-            long l = easyEntityQuery.updatable(queryLargeColumnTestEntity)
-                    .asTable("")
-                    .asSchema("xcv").setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NULL_COLUMNS).executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof IllegalArgumentException);
-            Assert.assertEquals("tableName is empty", ex.getMessage());
-        }
-    }
-
-    @Test
-    public void queryLargeColumnTest22() {
-        try {
-
-            long l = easyEntityQuery.updatable(QueryLargeColumnTestEntity.class)
-                    .asTable(o -> o + "abc")
-                    .asSchema("xcv")
-
-                    .setColumns(q -> q.id().set("123"))
-                    .setColumns(q -> q.name().set("123"))
-                    .setColumns(q -> q.content().set("123"))
-                    .executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            String message = ex.getMessage();
-            Assert.assertEquals("'UPDATE' statement without 'WHERE'", message);
-        }
-    }
-
-    @Test
-    public void queryLargeColumnTest23() {
-        try {
-
-            long l = easyEntityQuery.updatable(QueryLargeColumnTestEntity.class)
-                    .setColumns(q -> q.id().set("123"))
-                    .setColumns(q -> q.name().set("123"))
-                    .setColumns(q -> q.content().set("123"))
-                    .whereById("123")
-                    .executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("UPDATE `query_large_column_test` SET `id` = ?,`name` = ?,`content` = ? WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.query_large_column_test' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void updateTest24() {
-        try {
-
-            long l = easyEntityQuery.updatable(BlogEntity.class)
-                    .asTable("x_t_blog")
-                    .setColumns(t_blog -> t_blog.star().increment())
-                    .whereById("123")
-                    .executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("UPDATE `x_t_blog` SET `star` = `star` + ? WHERE `deleted` = ? AND `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.x_t_blog' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void updateTest25() {
-        try {
-
-            long l = easyEntityQuery.updatable(BlogEntity.class)
-                    .asTable("x_t_blog")
-                    .setColumns(t_blog -> t_blog.star().increment(2))
-                    .whereById("123")
-                    .executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("UPDATE `x_t_blog` SET `star` = `star` + ? WHERE `deleted` = ? AND `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.x_t_blog' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void updateTest26() {
-        try {
-
-            long l = easyEntityQuery.updatable(BlogEntity.class)
-                    .asTable("x_t_blog")
-                    .setColumns(false, t_blog -> t_blog.star().increment(2))
-                    .setColumns(t_blog -> t_blog.score().increment(2))
-                    .whereById("123")
-                    .executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("UPDATE `x_t_blog` SET `score` = `score` + ? WHERE `deleted` = ? AND `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.x_t_blog' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void updateTest27() {
-        try {
-
-            long l = easyEntityQuery.updatable(BlogEntity.class)
-                    .asTable("x_t_blog")
-                    .setColumns(t_blog -> t_blog.star().decrement(2))
-                    .whereById("123")
-                    .executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("UPDATE `x_t_blog` SET `star` = `star` - ? WHERE `deleted` = ? AND `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.x_t_blog' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void updateTest28() {
-        try {
-
-            long l = easyEntityQuery.updatable(BlogEntity.class)
-                    .asTable("x_t_blog")
-                    .setColumns(false, t_blog -> t_blog.status().increment(1))
-                    .setColumns(true, t_blog -> t_blog.star().increment(2))
-                    .whereById("123")
-                    .executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("UPDATE `x_t_blog` SET `star` = `star` + ? WHERE `deleted` = ? AND `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.x_t_blog' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void updateTest29() {
-        try {
-
-            long l = easyEntityQuery.updatable(UnknownTable.class)
-                    .setColumns(false, u -> u.money1().increment(2))
-                    .setColumns(true, u -> u.money().increment(2))
-                    .whereById("123")
-                    .executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQuerySQLCommandException);
-            Assert.assertTrue(ex.getCause() instanceof SQLException);
-            Assert.assertTrue(ex.getCause() instanceof EasyQuerySQLStatementException);
-            EasyQuerySQLStatementException ex1 = ((EasyQuerySQLStatementException) ex.getCause());
-            Assert.assertEquals("UPDATE `t_unknown` SET `money` = `money` + ? WHERE `id` = ?", ex1.getSQL());
-            Assert.assertEquals("java.sql.SQLSyntaxErrorException: Table 'easy-query-test.t_unknown' doesn't exist", ex1.getMessage());
-        }
-    }
-
-    @Test
-    public void updateTest30() {
-        try {
-
-            long l = easyEntityQuery.updatable(NoKeyEntity.class)
-                    .setColumns(n -> n.name().set("123"))
-                    .whereById("123")
-                    .executeRows();
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            Assert.assertTrue(ex instanceof EasyQueryNoPrimaryKeyException);
-        }
-    }
-
-    @Test
+    @org.junit.Test
     public void createTest1() {
         FastBean fastBean = EasyBeanUtil.getFastBean(BlogEntity.class);
         Supplier<Object> lambdaCreate = fastBean.getBeanConstructorCreator();
@@ -717,48 +231,8 @@ public class GenericTest extends BaseTest {
         Assert.assertFalse(o1 == o2);
     }
 
-    @Test
-    public void repeatApply1() {
-        EasyQueryClient easyQueryClient1 = EasyQueryBootstrapper.defaultBuilderConfiguration()
-                .setDefaultDataSource(dataSource)
-                .build();
-        QueryConfiguration queryConfiguration = easyQueryClient1.getRuntimeContext().getQueryConfiguration();
-        queryConfiguration.applyGeneratedKeySQLColumnGenerator(new MyDatabaseIncrementSQLColumnGenerator());
-        try {
-            queryConfiguration.applyGeneratedKeySQLColumnGenerator(new MyDatabaseIncrementSQLColumnGenerator());
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            String message = ex.getMessage();
-            Assert.assertEquals("generated key sql column generator:MyDatabaseIncrementSQLColumnGenerator,repeat", message);
-        }
-        queryConfiguration.applyInterceptor(new MyEntityInterceptor());
-        try {
-            queryConfiguration.applyInterceptor(new MyEntityInterceptor());
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            String message = ex.getMessage();
-            Assert.assertEquals("global interceptor:MyEntityInterceptor,repeat", message);
-        }
-        queryConfiguration.applyLogicDeleteStrategy(new MyLogicDelStrategy());
-        try {
-            queryConfiguration.applyLogicDeleteStrategy(new MyLogicDelStrategy());
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            String message = ex.getMessage();
-            Assert.assertEquals("global logic delete strategy:MyLogicDelStrategy,repeat", message);
-        }
-        queryConfiguration.applyEncryptionStrategy(new Base64EncryptionStrategy());
-        try {
-            queryConfiguration.applyEncryptionStrategy(new Base64EncryptionStrategy());
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof EasyQueryException);
-            String message = ex.getMessage();
-            Assert.assertEquals("easy encryption strategy:Base64EncryptionStrategy,repeat", message);
-        }
-    }
 
-
-    @Test
+    @org.junit.Test
     public void nameConversionTest1() {
         {
             LowerCamelCaseNameConversion lowerCamelCaseNameConversion = new LowerCamelCaseNameConversion();
@@ -815,7 +289,7 @@ public class GenericTest extends BaseTest {
         }
     }
 
-    @Test
+    @org.junit.Test
     public void StringCharSegmentTest1() {
         List<String> a = EasyStringUtil.getStringCharSegments("aaa啊啊a", 4, 1, 2);
         String as = a.toString();
@@ -925,7 +399,7 @@ public class GenericTest extends BaseTest {
     }
 
 
-    @Test
+    @org.junit.Test
     public void StringCharSegmentTest2() {
         DefaultAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
         for (int i = 0; i < 8000; i++) {
@@ -951,7 +425,7 @@ public class GenericTest extends BaseTest {
         }
     }
 
-    @Test
+    @org.junit.Test
     public void StringCharSegmentTest7() {
         DefaultSafeAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultSafeAesEasyEncryptionStrategy();
         for (int i = 0; i < 20000; i++) {
@@ -979,7 +453,7 @@ public class GenericTest extends BaseTest {
         }
     }
 
-    @Test
+    @org.junit.Test
     public void StringCharSegmentTest4() {
         String randomString = "qO)3\\{*h\uFE0F�MbjT";
         DefaultAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
@@ -997,7 +471,7 @@ public class GenericTest extends BaseTest {
 
     }
 
-    @Test
+    @org.junit.Test
     public void StringCharSegmentTest5() {
         String randomBase64 = "NSxcLu+4j35ocjElWTEpTyUr5Y+ve+WKoDdiIFlkLj85L2An77iPTkM5UEI=";
         String randomString = new String(EasyBase64Util.decode(randomBase64.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
@@ -1017,7 +491,7 @@ public class GenericTest extends BaseTest {
 
     }
 
-    @Test
+    @org.junit.Test
     public void StringCharSegmentTest6() {
         String randomBase64 = "5Yqg5LulVOWtl1tfcSB9RmdfekIj4oOj5YqgXlzlk4g/diLkuK1eauKAjV9P5ZOIP3vwn5KKcVhe";
         String randomString = new String(EasyBase64Util.decode(randomBase64.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
@@ -1036,7 +510,7 @@ public class GenericTest extends BaseTest {
 
     }
 
-    @Test
+    @org.junit.Test
     public void StringCharSegmentTest8() {
         String randomBase64 = "OTpIT+KDo+KdpDYq5Z6aIzMzek1A77iPMXlG8J+RqFNjXF5PXumHjDBY5ZyoMA==";
         String randomString = new String(EasyBase64Util.decode(randomBase64.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
@@ -1055,7 +529,7 @@ public class GenericTest extends BaseTest {
 
     }
 
-    @Test
+    @org.junit.Test
     public void StringCharSegmentTest10() {
         String randomString = "√在-`N*以\\字中d\\~_yb2❤USY\uD83D\uDC8A\uD83D\uDC68\uD83E\uDD21\uD83D\uDC685G*\uD83D\uDE08符T*9L^9oP可符F※,x·Z∝这4ェ(v\u200D";
         DefaultSafeAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultSafeAesEasyEncryptionStrategy();
@@ -1073,7 +547,7 @@ public class GenericTest extends BaseTest {
 
     }
 
-    @Test
+    @org.junit.Test
     public void sm4StandardVectorTest() {
         //GB/T 32907-2016标准测试向量
         byte[] key = Sm4Util.fromHex("0123456789abcdeffedcba9876543210");
@@ -1082,7 +556,7 @@ public class GenericTest extends BaseTest {
         Assert.assertEquals("681edf34d206965e86b3e94f536e4246", Sm4Util.toHex(encryptBlock));
     }
 
-    @Test
+    @org.junit.Test
     public void easySm4EncryptionTest() {
         DefaultSafeSm4EasyEncryptionStrategy sm4EasyEncryptionStrategy = new DefaultSafeSm4EasyEncryptionStrategy();
         String xx = "188888881212";
@@ -1098,7 +572,7 @@ public class GenericTest extends BaseTest {
         Assert.assertTrue(EasyStringUtil.startsWith(encryptValue.toString(), encryptValue1.toString()));
     }
 
-    @Test
+    @org.junit.Test
     public void StringCharSegmentSm4Test() {
         String randomString = "√在-`N*以\\字中d\\~_yb2❤USY\uD83D\uDC8A\uD83D\uDC68\uD83E\uDD21\uD83D\uDC685G*\uD83D\uDE08符T*9L^9oP可符F※,x·Z∝这4ェ(v\u200D";
         DefaultSafeSm4EasyEncryptionStrategy sm4EasyEncryptionStrategy = new DefaultSafeSm4EasyEncryptionStrategy();
@@ -1117,7 +591,7 @@ public class GenericTest extends BaseTest {
 
     }
 
-    @Test
+    @org.junit.Test
     public void StringCharSegmentSm4Test1() {
         String randomBase64 = "OTpIT+KDo+KdpDYq5Z6aIzMzek1A77iPMXlG8J+RqFNjXF5PXumHjDBY5ZyoMA==";
         String randomString = new String(EasyBase64Util.decode(randomBase64.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
@@ -1136,7 +610,7 @@ public class GenericTest extends BaseTest {
 
     }
 
-    @Test
+    @org.junit.Test
     public void StringCharSegmentSm4Test2() {
         DefaultSafeSm4EasyEncryptionStrategy sm4EasyEncryptionStrategy = new DefaultSafeSm4EasyEncryptionStrategy();
         for (int i = 0; i < 20000; i++) {
@@ -1166,7 +640,7 @@ public class GenericTest extends BaseTest {
         }
     }
 
-    @Test
+    @org.junit.Test
     public void StringCharSegmentTest3() {
 
         DefaultAesEasyEncryptionStrategy defaultAesEasyEncryptionStrategy = new DefaultAesEasyEncryptionStrategy();
@@ -1223,7 +697,7 @@ public class GenericTest extends BaseTest {
     }
 
 
-    @Test
+    @org.junit.Test
     public void EnumValueTest1() {
         MyEnum zj = EnumValueDeserializer.deserialize(MyEnum.class, 1);
         Assert.assertEquals(MyEnum.ZJ, zj);
@@ -1235,7 +709,7 @@ public class GenericTest extends BaseTest {
         Assert.assertEquals(MyEnum.BJ, bj);
     }
 
-    @Test
+    @org.junit.Test
     public void EnumValueTest2() {
         EnumValueConverter enumValueConverter = new EnumValueConverter();
         ColumnOption columnOption = new ColumnOption(false, new EntityMetadata(Object.class), "", "", "");
@@ -1256,7 +730,7 @@ public class GenericTest extends BaseTest {
 
     }
 
-    @Test
+    @org.junit.Test
     public void check() {
         {
 
@@ -1324,7 +798,7 @@ public class GenericTest extends BaseTest {
         TopicShardingProxy.TopicShardingProxyFetcher topicShardingProxyFetcher = table.FETCHER._title();
     }
 
-    @Test
+    @org.junit.Test
     public void test1() {
 
         BeanInfo beanInfo = null;
@@ -1339,51 +813,15 @@ public class GenericTest extends BaseTest {
 
     }
 
-    @Test
-    public void testPrintSQL1() {
-        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(easyEntityQuery.getRuntimeContext(), ContextTypeEnum.QUERY);
-        easyExpressionContext.setPrintSQL(false);
-        easyExpressionContext.setPrintNavSQL(false);
-        ExpressionContext expressionContext = easyExpressionContext.cloneExpressionContext();
-        Assert.assertEquals(false, expressionContext.getPrintSQL());
-        Assert.assertEquals(false, expressionContext.getPrintNavSQL());
-    }
 
-    @Test
-    public void testPrintSQL2() {
-        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(easyEntityQuery.getRuntimeContext(), ContextTypeEnum.QUERY);
-        easyExpressionContext.setPrintSQL(null);
-        easyExpressionContext.setPrintNavSQL(true);
-        ExpressionContext expressionContext = easyExpressionContext.cloneExpressionContext();
-        Assert.assertNull(expressionContext.getPrintSQL());
-        Assert.assertEquals(true, expressionContext.getPrintNavSQL());
-    }
-
-    @Test
-    public void testQueryLockClonePropagation() {
-        EasyExpressionContext easyExpressionContext = new EasyExpressionContext(easyEntityQuery.getRuntimeContext(), ContextTypeEnum.QUERY);
-        easyExpressionContext.setQueryLock(QueryLockEnum.FOR_UPDATE);
-        ExpressionContext expressionContext = easyExpressionContext.cloneExpressionContext();
-        Assert.assertEquals(QueryLockEnum.FOR_UPDATE, expressionContext.getQueryLock());
-    }
-
-    @Test
-    public void testQueryLockExtendFromPropagation() {
-        EasyExpressionContext sourceExpressionContext = new EasyExpressionContext(easyEntityQuery.getRuntimeContext(), ContextTypeEnum.QUERY);
-        sourceExpressionContext.setQueryLock(QueryLockEnum.FOR_UPDATE);
-        EasyExpressionContext targetExpressionContext = new EasyExpressionContext(easyEntityQuery.getRuntimeContext(), ContextTypeEnum.QUERY);
-        sourceExpressionContext.extendFrom(targetExpressionContext);
-        Assert.assertEquals(QueryLockEnum.FOR_UPDATE, targetExpressionContext.getQueryLock());
-    }
-
-    @Test
+    @org.junit.Test
     public void sqlFormat() {
         SQLUtils.FormatOption opt = new SQLUtils.FormatOption(true, true); // (ucase, pretty)
         String s1 = SQLUtils.format("SELECT IFNULL(t2.`__sum2__`,0) AS `value1`,IFNULL(t2.`__sum3__`,0) AS `value2` FROM `m8_province` t LEFT JOIN (SELECT t1.`pid` AS `pid`,SUM(IFNULL(t4.`__count2__`,0)) AS `__sum2__`,SUM(IFNULL(t4.`__count3__`,0)) AS `__sum3__` FROM `m8_city` t1 LEFT JOIN (SELECT t3.`cid` AS `cid`,COUNT((CASE WHEN t3.`name` LIKE CONCAT('%',?,'%') THEN ? ELSE NULL END)) AS `__count2__`,COUNT((CASE WHEN t3.`name` LIKE CONCAT('%',?,'%') THEN ? ELSE NULL END)) AS `__count3__` FROM `m8_area` t3 WHERE t3.`id` LIKE CONCAT('%',?,'%') GROUP BY t3.`cid`) t4 ON t4.`cid` = t1.`id` GROUP BY t1.`pid`) t2 ON t2.`pid` = t.`id` WHERE t.`name` LIKE CONCAT('%',?,'%')", JdbcConstants.KINGBASE, opt);
         System.out.println(s1);
     }
 
-    @Test
+    @org.junit.Test
     public void testLinkedCaseInsensitiveMap1() {
         LinkedCaseInsensitiveMap<Object> objectLinkedCaseInsensitiveMap = new LinkedCaseInsensitiveMap<>();
         objectLinkedCaseInsensitiveMap.put("ID", "123");
@@ -1453,5 +891,22 @@ public class GenericTest extends BaseTest {
 //        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
 //        //手动处理未知datasource
 //        databaseCodeFirst.createDatabaseIfNotExists();
+    }
+    @org.junit.Test
+    public void easySm4EncryptionIdCardTest() {
+        DefaultSafeSm4EasyEncryptionStrategy sm4EasyEncryptionStrategy = new DefaultSafeSm4EasyEncryptionStrategy();
+        String xx = "222321212121212121";
+
+        Object encryptValue = sm4EasyEncryptionStrategy.encrypt(null, null, xx);
+        System.out.println("encryptValue:"+encryptValue);
+        System.out.println("encryptValue length:"+encryptValue.toString().length());
+        //密文为16进制字符串
+        Assert.assertTrue(encryptValue.toString().matches("^[0-9a-f]+$"));
+        Assert.assertEquals(0, encryptValue.toString().length() % 32);
+        Object decryptValue = sm4EasyEncryptionStrategy.decrypt(null, null, encryptValue);
+        Assert.assertEquals(xx, decryptValue);
+        Object encryptValue1 = sm4EasyEncryptionStrategy.encrypt(null, null, "222321212121212121");
+        //like前缀匹配原理:相同前缀明文加密后密文也相同前缀
+        Assert.assertTrue(EasyStringUtil.startsWith(encryptValue.toString(), encryptValue1.toString()));
     }
 }

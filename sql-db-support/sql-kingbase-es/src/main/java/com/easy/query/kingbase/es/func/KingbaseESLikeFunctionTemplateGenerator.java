@@ -1,0 +1,26 @@
+package com.easy.query.kingbase.es.func;
+
+import com.easy.query.core.common.LikeFunctionTemplateGenerator;
+import com.easy.query.core.enums.SQLLikeEnum;
+import com.easy.query.core.func.column.ColumnExpression;
+import com.easy.query.core.func.column.ColumnFuncValueExpression;
+
+import java.util.List;
+import java.util.function.Function;
+
+/**
+ * create time 2026/10/4 15:05
+ * 文件说明
+ *
+ * @author xuejiaming
+ */
+public class KingbaseESLikeFunctionTemplateGenerator extends LikeFunctionTemplateGenerator {
+    public KingbaseESLikeFunctionTemplateGenerator(List<ColumnExpression> columnExpressions, SQLLikeEnum sqlLikeEnum, Function<ColumnExpression, ColumnFuncValueExpression> columnFuncValueExpressionFunction, String escapeStartsWith, String escapeEndsWith, String escapeContainsWith, String startsWith, String endsWith, String containsWith) {
+        super(columnExpressions, sqlLikeEnum, columnFuncValueExpressionFunction, escapeStartsWith, escapeEndsWith, escapeContainsWith, startsWith, endsWith, containsWith);
+    }
+    @Override
+    protected String escape(String input) {
+
+        return input;
+    }
+}

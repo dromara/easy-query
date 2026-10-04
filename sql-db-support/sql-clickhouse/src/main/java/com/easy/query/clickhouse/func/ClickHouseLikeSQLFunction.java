@@ -4,6 +4,7 @@ import com.easy.query.core.enums.SQLLikeEnum;
 import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.func.column.ColumnExpression;
 import com.easy.query.core.func.def.AbstractExpressionSQLFunction;
+import com.easy.query.core.func.def.impl.AbstractLikeSQLFunction;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
  *
  * @author xuejiaming
  */
-public class ClickHouseLikeSQLFunction extends AbstractExpressionSQLFunction {
+public class ClickHouseLikeSQLFunction extends AbstractLikeSQLFunction {
     private final List<ColumnExpression> columnExpressions;
     private final SQLLikeEnum sqlLikeEnum;
 
@@ -25,16 +26,16 @@ public class ClickHouseLikeSQLFunction extends AbstractExpressionSQLFunction {
 
     @Override
     public String sqlSegment(TableAvailable defaultTable) {
-        if (columnExpressions.size() != 2) {
-            throw new IllegalArgumentException("bank arguments != 1");
-        }
-        if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_RIGHT) {
-            return "positionCaseInsensitive({0}, {1}) = 1";
-        }
-        if (sqlLikeEnum == SQLLikeEnum.LIKE_PERCENT_LEFT) {
-            return "{0} LIKE CONCAT('%', {1})";
-        }
-        return "positionCaseInsensitive({0}, {1}) > 0";
+        ClickHouseLikeFunctionTemplateGenerator templateGenerator = new ClickHouseLikeFunctionTemplateGenerator(
+                columnExpressions, sqlLikeEnum, o -> getColumnFuncValueExpression(o)
+                , "positionCaseInsensitive({0}, {1}) = 1"
+                , "{0} LIKE CONCAT('%', {1})"
+                , "positionCaseInsensitive({0}, {1}) > 0"
+                , "positionCaseInsensitive({0}, {1}) = 1"
+                , "{0} LIKE CONCAT('%', {1})"
+                , "positionCaseInsensitive({0}, {1}) > 0"
+        );
+        return templateGenerator.sqlSegment(defaultTable);
     }
 
     @Override

@@ -4,9 +4,9 @@ import com.easy.query.core.expression.parser.core.available.TableAvailable;
 import com.easy.query.core.metadata.ColumnMetadata;
 
 /**
+ * @author xuejiaming
  * @Description: 文件说明
  * create time 2023/2/28 20:47
- * @author xuejiaming
  */
 public final class ConstLikeSQLParameter implements ConstSQLParameter, SQLLikeParameter {
     private final SQLParameter sqlParameter;
@@ -32,6 +32,9 @@ public final class ConstLikeSQLParameter implements ConstSQLParameter, SQLLikePa
 
     @Override
     public ColumnMetadata getColumnMetadata() {
+        if (sqlParameter.getColumnMetadata() != null) {
+            return sqlParameter.getColumnMetadata();
+        }
         return null;
     }
 }

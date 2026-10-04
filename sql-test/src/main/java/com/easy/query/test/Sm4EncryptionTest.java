@@ -58,6 +58,8 @@ public class Sm4EncryptionTest extends BaseTest {
 
         SysUserSm4Encryption sysUserSm4Encryption3 = easyEntityQuery.queryable(SysUserSm4Encryption.class).where(o -> o.phone().like("34567")).firstOrNull();
         Assert.assertNotNull(sysUserSm4Encryption3);
+        SysUserSm4Encryption sysUserSm4Encryption31 = easyEntityQuery.queryable(SysUserSm4Encryption.class).where(o -> o.phone().contains("34567")).firstOrNull();
+        Assert.assertNotNull(sysUserSm4Encryption31);
         SysUserSm4Encryption sysUserSm4Encryption4 = easyEntityQuery.queryable(SysUserSm4Encryption.class).where(o -> o.address().like("2-102")).firstOrNull();
         Assert.assertNotNull(sysUserSm4Encryption4);
         SysUserSm4Encryption sysUserSm4Encryption5 = easyEntityQuery.queryable(SysUserSm4Encryption.class).where(o -> o.address().likeMatchRight("2-102")).firstOrNull();
