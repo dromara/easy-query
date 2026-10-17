@@ -127,8 +127,6 @@ public class ColumnMetadata {
      */
     private final JdbcTypeHandler jdbcTypeHandler;
     private final ComplexPropType complexPropType;
-    private final boolean valueObject;
-    private final List<ColumnMetadata> valueObjectColumnMetadataList;
     private final Supplier<Object> beanConstructorCreator;
     private final JDBCType jdbcType;
 
@@ -172,15 +170,9 @@ public class ColumnMetadata {
         this.setterCaller = columnOption.getSetterCaller();
         this.jdbcTypeHandler = columnOption.getJdbcTypeHandler();
         this.complexPropType = columnOption.getComplexPropType();
-        this.valueObject = columnOption.isValueObject();
         this.beanConstructorCreator = columnOption.getBeanConstructorCreator();
         this.nullable = columnOption.isNullable();
         this.comment = columnOption.getComment();
-        if (this.valueObject) {
-            this.valueObjectColumnMetadataList = new ArrayList<>(columnOption.getValueObjectColumnOptions().size());
-        } else {
-            this.valueObjectColumnMetadataList = Collections.emptyList();
-        }
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -288,14 +280,6 @@ public class ColumnMetadata {
      */
     public ComplexPropType getComplexPropType() {
         return complexPropType;
-    }
-
-    public boolean isValueObject() {
-        return valueObject;
-    }
-
-    public List<ColumnMetadata> getValueObjectColumnMetadataList() {
-        return valueObjectColumnMetadataList;
     }
 
     public Supplier<Object> getBeanConstructorCreatorOrNull() {

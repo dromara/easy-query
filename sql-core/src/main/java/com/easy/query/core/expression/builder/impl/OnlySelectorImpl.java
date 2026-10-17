@@ -63,7 +63,7 @@ public class OnlySelectorImpl implements OnlySelector {
     public OnlySelector column(TableAvailable table, String property) {
 
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
-        appendColumnSet(table, columnMetadata, false);
+        appendColumnSet(table, columnMetadata);
         return this;
     }
 
@@ -74,16 +74,8 @@ public class OnlySelectorImpl implements OnlySelector {
         return this;
     }
 
-    protected void appendColumnSet(TableAvailable table, ColumnMetadata columnMetadata, boolean ignoreValueObject) {
+    protected void appendColumnSet(TableAvailable table, ColumnMetadata columnMetadata) {
 
-        if (columnMetadata.isValueObject()) {
-            if (!ignoreValueObject) {
-                for (ColumnMetadata metadata : columnMetadata.getValueObjectColumnMetadataList()) {
-                    appendColumnSet(table, metadata, false);
-                }
-            }
-            return;
-        }
         InsertUpdateSetColumnSQLSegment updateColumnSegment = sqlSegmentFactory.createUpdateColumnSegment(table, columnMetadata, expressionContext, null);
         sqlSegmentBuilder.append(updateColumnSegment);
     }
@@ -96,7 +88,7 @@ public class OnlySelectorImpl implements OnlySelector {
     public OnlySelector columnAll(TableAvailable table) {
         Collection<ColumnMetadata> columns = table.getEntityMetadata().getColumns();
         for (ColumnMetadata columnMetadata : columns) {
-            appendColumnSet(table, columnMetadata, true);
+            appendColumnSet(table, columnMetadata);
         }
         return this;
     }

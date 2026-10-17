@@ -136,9 +136,6 @@ public class InsertExpressionBuilder extends AbstractEntityExpressionBuilder imp
             Collection<String> properties = table.getEntityMetadata().getProperties();
             for (String property : properties) {
                 ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
-                if(columnMetadata.isValueObject()){
-                    continue;
-                }
                 InsertUpdateSetColumnSQLSegment columnInsertSegment = sqlSegmentFactory.createInsertColumnSegment(table.getEntityTable(), columnMetadata, getExpressionContext());
                 if (hasConfigure) {
                     ColumnConfigurerContext columnConfigurerContext = this.columnConfigurers.get(property);

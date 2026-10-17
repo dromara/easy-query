@@ -75,11 +75,7 @@ public class EntityResultColumnMetadata implements ResultColumnMetadata {
 
     @Override
     public void setValue(Object bean, Object value) {
-        if (entityMetadata.isHasValueObject() && columnMetadata.getPropertyName().contains(".")) {
-            EasyBeanUtil.setPropertyValue(bean, entityMetadata, columnMetadata, value, true);
-        } else {
-            EasyBeanUtil.setCurrentPropertyValue(bean, columnMetadata, value);
-        }
+        EasyBeanUtil.setPropertyValue(bean, columnMetadata, value);
     }
 
 

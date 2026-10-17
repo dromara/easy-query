@@ -7,7 +7,6 @@ import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Navigate;
 import com.easy.query.core.annotation.ProxyProperty;
 import com.easy.query.core.annotation.Table;
-import com.easy.query.core.annotation.ValueObject;
 import com.easy.query.core.enums.RelationTypeEnum;
 import com.easy.query.core.exception.EasyQueryAptFileException;
 import com.easy.query.core.util.EasyStringUtil;
@@ -374,73 +373,6 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
         return guessPackage.toString();
     }
 
-    private void fillValueObject(String parentProperty, AptValueObjectInfo aptValueObjectInfo, Element fieldClassElement, AptFileCompiler aptFileCompiler, Set<String> ignoreProperties) {
-        String entityName = aptValueObjectInfo.getEntityName();
-        List<? extends Element> enclosedElements = fieldClassElement.getEnclosedElements();
-        for (Element fieldElement : enclosedElements) {
-            if (ElementKind.FIELD == fieldElement.getKind()) {
-
-                Set<Modifier> modifiers = fieldElement.getModifiers();
-                if (modifiers.contains(Modifier.STATIC)) {
-                    //ignore static fields
-                    continue;
-                }
-
-                String propertyName = fieldElement.toString();
-                if (!ignoreProperties.isEmpty() && ignoreProperties.contains(parentProperty + "." + propertyName)) {
-                    continue;
-                }
-                ColumnIgnore column = fieldElement.getAnnotation(ColumnIgnore.class);
-                if (column != null) {
-                    continue;
-                }
-                Navigate navigate = fieldElement.getAnnotation(Navigate.class);
-                boolean includeProperty = navigate != null;
-                boolean includeManyProperty = false;
-
-                ProxyProperty proxyProperty = fieldElement.getAnnotation(ProxyProperty.class);
-                String proxyPropertyName = proxyProperty != null ? proxyProperty.value() : propertyName;
-                Boolean anyType = proxyProperty == null ? null : proxyProperty.generateAnyType();
-
-                TypeMirror type = fieldElement.asType();
-                boolean isGeneric = type.getKind() == TypeKind.TYPEVAR;
-                boolean isDeclared = type.getKind() == TypeKind.DECLARED;
-                String fieldGenericType = getGenericTypeString(isGeneric, isDeclared, includeProperty, type);
-                String docComment = elementUtils.getDocComment(fieldElement);
-                ValueObject valueObject = fieldElement.getAnnotation(ValueObject.class);
-                boolean isValueObject = valueObject != null;
-                String fieldName = isValueObject ? fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1) : entityName;
-                FieldComment fieldComment = getFiledComment(docComment, fieldName, propertyName);
-                PropertyColumn propertyColumn = getPropertyColumn(fieldGenericType, anyType);
-                aptFileCompiler.addImports(propertyColumn.getImport());
-                if (includeProperty) {
-                    aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLNavigateColumn");
-                    String navigatePropertyProxyFullName = getNavigatePropertyProxyFullName(propertyColumn.getPropertyType(), navigate.propIsProxy());
-                    if (navigatePropertyProxyFullName != null) {
-                        propertyColumn.setNavigateProxyName(navigatePropertyProxyFullName);
-                    } else {
-                        fieldComment.proxyComment += "\n//apt提示无法获取导航属性代理:" + propertyColumn.getPropertyType();
-                    }
-                    if (navigate.value() == RelationTypeEnum.OneToMany || navigate.value() == RelationTypeEnum.ManyToMany) {
-                        includeManyProperty = true;
-//                        aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLQueryable");
-                        aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLManyQueryable");
-                    }
-                }
-
-                aptValueObjectInfo.addProperties(new AptPropertyInfo(propertyName, propertyColumn, fieldComment, fieldName, isValueObject, includeProperty, includeManyProperty, proxyPropertyName));
-
-                if (valueObject != null) {
-                    aptFileCompiler.addImports(fieldGenericType);
-                    String valueObjectClassName = fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1);
-                    Element fieldClass = ((DeclaredType) type).asElement();
-                    AptValueObjectInfo fieldAptValueObjectInfo = new AptValueObjectInfo(valueObjectClassName);
-                    aptValueObjectInfo.getChildren().add(fieldAptValueObjectInfo);
-                    fillValueObject(parentProperty + "." + propertyName, fieldAptValueObjectInfo, fieldClass, aptFileCompiler, ignoreProperties);
-                }
-            }
-        }
-    }
 
     private void fillPropertyAndColumns(AptFileCompiler aptFileCompiler, AptValueObjectInfo aptValueObjectInfo, TypeElement classElement, Set<String> ignoreProperties) {
 
@@ -484,9 +416,7 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                     throw new IllegalArgumentException("Unable to resolve type to a class,field name: [" + propertyName+"].", ex);
                 }
                 String docComment = elementUtils.getDocComment(fieldElement);
-                ValueObject valueObject = fieldElement.getAnnotation(ValueObject.class);
-                boolean isValueObject = valueObject != null;
-                String fieldName = isValueObject ? fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1) : aptFileCompiler.getEntityClassName();
+                String fieldName =  aptFileCompiler.getEntityClassName();
                 FieldComment fieldComment = getFiledComment(docComment, fieldName, propertyName);
                 PropertyColumn propertyColumn = getPropertyColumn(fieldGenericType, anyType);
                 aptFileCompiler.addImports(propertyColumn.getImport());
@@ -508,18 +438,8 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                     }
                 }
                 //todo
-                aptValueObjectInfo.addProperties(new AptPropertyInfo(propertyName, propertyColumn, fieldComment, fieldName, isValueObject, includeProperty, includeManyProperty, proxyPropertyName));
+                aptValueObjectInfo.addProperties(new AptPropertyInfo(propertyName, propertyColumn, fieldComment, fieldName, includeProperty, includeManyProperty, proxyPropertyName));
 
-
-                if (valueObject != null) {
-                    aptFileCompiler.addImports("com.easy.query.core.proxy.AbstractValueObjectProxyEntity");
-                    aptFileCompiler.addImports(fieldGenericType);
-                    String valueObjectClassName = fieldGenericType.substring(fieldGenericType.lastIndexOf(".") + 1);
-                    Element fieldClass = ((DeclaredType) type).asElement();
-                    AptValueObjectInfo fieldAptValueObjectInfo = new AptValueObjectInfo(valueObjectClassName);
-                    aptValueObjectInfo.getChildren().add(fieldAptValueObjectInfo);
-                    fillValueObject(propertyName, fieldAptValueObjectInfo, fieldClass, aptFileCompiler, ignoreProperties);
-                }
             }
         }
     }

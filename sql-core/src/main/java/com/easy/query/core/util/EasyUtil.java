@@ -84,7 +84,7 @@ public class EasyUtil {
         String propertyName = sqlEntityProject.getPropertyName();
         if (propertyName != null) {
             ColumnMetadata columnMetadata = anonymousTable.getEntityMetadata().getProperty2ColumnMap().get(propertyName);
-            if (columnMetadata != null && !columnMetadata.isValueObject()) {
+            if (columnMetadata != null) {
                 propertyName = columnMetadata.getPropertyName();
             }
         }
@@ -105,7 +105,7 @@ public class EasyUtil {
                 }
             }
             ColumnMetadata columnMetadata = anonymousTable.getEntityMetadata().getProperty2ColumnMap().get(propertyName);
-            if (columnMetadata != null && !columnMetadata.isValueObject()) {
+            if (columnMetadata != null) {
                 propertyName = columnMetadata.getPropertyName();
             }
         }

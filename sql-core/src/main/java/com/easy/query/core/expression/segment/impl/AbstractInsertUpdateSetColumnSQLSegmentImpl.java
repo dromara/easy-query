@@ -26,11 +26,6 @@ public abstract class AbstractInsertUpdateSetColumnSQLSegmentImpl {
     protected final ColumnValue2Segment columnValue2Segment;
 
     public AbstractInsertUpdateSetColumnSQLSegmentImpl(Column2Segment column2Segment, ColumnValue2Segment columnValue2Segment) {
-        TableAvailable table = Objects.requireNonNull(column2Segment.getTable());
-        ColumnMetadata columnMetadata = Objects.requireNonNull(column2Segment.getColumnMetadata());
-        if (column2Segment.getColumnMetadata().isValueObject()) {
-            throw new IllegalArgumentException("entity:[" + EasyClassUtil.getSimpleName(table.getEntityClass()) + "." + columnMetadata.getPropertyName() + "] is value object");
-        }
         this.column2Segment = column2Segment;
         this.columnValue2Segment = columnValue2Segment;
     }

@@ -186,10 +186,7 @@ class ProxyGeneratorSqlProcessor(
             }
 //            val fieldGenericType = getGenericTypeString(isGeneric, isDeclared, includeProperty, type)
             val docComment = fieldElement.docString
-            val valueObject = fieldElement.getAnnotationsByType(ValueObject::class).firstOrNull()
-            val isValueObject = valueObject != null
-            val fieldName =
-                if (isValueObject) fieldGenericType.substringAfterLast('.') else aptFileCompiler.entityClassName
+            val fieldName = aptFileCompiler.entityClassName
             var fieldComment = getFiledComment(docComment, fieldName, propertyName)
             val propertyColumn = getKspPropertyColumn(fieldGenericType, anyType)
             aptFileCompiler.addImports(propertyColumn.import)
@@ -227,28 +224,11 @@ class ProxyGeneratorSqlProcessor(
                     propertyColumn,
                     fieldComment,
                     fieldName,
-                    isValueObject,
                     includeProperty,
                     includeManyProperty,
                     proxyPropertyName
                 )
             )
-            valueObject?.let {
-                aptFileCompiler.addImports("com.easy.query.core.proxy.AbstractValueObjectProxyEntity")
-                aptFileCompiler.addImports(fieldGenericType)
-                val valueObjectClassName = fieldGenericType.substringAfterLast('.')
-                val fieldClass = type.declaration as KSClassDeclaration
-                val fieldAptValueObjectInfo = AptValueObjectInfo(valueObjectClassName)
-                aptValueObjectInfo.children.add(fieldAptValueObjectInfo)
-                fillValueObject(
-                    resolver,
-                    propertyName,
-                    fieldAptValueObjectInfo,
-                    fieldClass,
-                    aptFileCompiler,
-                    ignoreProperties
-                )
-            }
         }
     }
 
@@ -365,102 +345,6 @@ class ProxyGeneratorSqlProcessor(
         ) + "Proxy"
     }
 
-    private fun fillValueObject(
-        resolver: Resolver,
-        parentProperty: String,
-        aptValueObjectInfo: AptValueObjectInfo,
-        fieldClassElement: KSClassDeclaration,
-        aptFileCompiler: AptFileCompiler,
-        ignoreProperties: Set<String>,
-    ) {
-        val entityName = aptValueObjectInfo.entityName
-        val enclosedElements = fieldClassElement.declarations
-
-        for (fieldElement in enclosedElements) {
-            if (fieldElement is KSPropertyDeclaration) {
-                val modifiers = fieldElement.modifiers
-                if (modifiers.contains(Modifier.JAVA_STATIC)) {
-                    // Ignore static fields
-                    continue
-                }
-
-                val propertyName = fieldElement.simpleName.asString()
-                if (ignoreProperties.isNotEmpty() && ignoreProperties.contains("$parentProperty.$propertyName")) {
-                    continue
-                }
-
-                val columnIgnore = fieldElement.getAnnotationsByType(ColumnIgnore::class).firstOrNull()
-                if (columnIgnore != null) {
-                    continue
-                }
-                val navigate = fieldElement.getAnnotationsByType(Navigate::class).firstOrNull()
-                val includeProperty = navigate != null
-                var includeManyProperty = false
-
-                val proxyProperty = fieldElement.getAnnotationsByType(ProxyProperty::class).firstOrNull()
-                val proxyPropertyName = proxyProperty?.value ?: propertyName
-                val anyType = proxyProperty?.generateAnyType
-
-                val type = fieldElement.type.resolve()
-                val isGeneric = type.arguments.isNotEmpty()
-                val isDeclared = type.declaration is KSClassDeclaration
-                val fieldGenericType = getGenericTypeString(isGeneric, isDeclared, includeProperty, type)
-                val docComment = fieldElement.docString ?: ""
-                val valueObject = fieldElement.getAnnotationsByType(ValueObject::class).firstOrNull() != null
-                val fieldName = if (valueObject) fieldGenericType.substringAfterLast('.') else entityName
-                var fieldComment = getFiledComment(docComment, fieldName, propertyName)
-                val propertyColumn = getKspPropertyColumn(fieldGenericType, anyType)
-                aptFileCompiler.addImports(propertyColumn.import)
-
-                if (includeProperty) {
-                    aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLNavigateColumn")
-                    val navigatePropertyProxyFullName = getNavigatePropertyProxyFullName(
-                        resolver,
-                        propertyColumn.propertyType,
-                        navigate?.propIsProxy == true
-                    )
-                    if (navigatePropertyProxyFullName != null) {
-                        propertyColumn.navigateProxyName = navigatePropertyProxyFullName
-                    } else {
-                        fieldComment.proxyComment += "\n// apt提示无法获取导航属性代理: $propertyColumn.propertyType"
-                    }
-                    if (navigate?.value == RelationTypeEnum.OneToMany || navigate?.value == RelationTypeEnum.ManyToMany) {
-                        includeManyProperty = true
-                        aptFileCompiler.addImports("com.easy.query.core.proxy.columns.SQLManyQueryable")
-                    }
-                }
-
-                aptValueObjectInfo.addProperties(
-                    AptPropertyInfo(
-                        propertyName,
-                        propertyColumn,
-                        fieldComment,
-                        fieldName,
-                        valueObject,
-                        includeProperty,
-                        includeManyProperty,
-                        proxyPropertyName
-                    )
-                )
-
-                if (valueObject) {
-                    aptFileCompiler.addImports(fieldGenericType)
-                    val valueObjectClassName = fieldGenericType.substringAfterLast('.')
-                    val fieldClass = type.declaration as KSClassDeclaration
-                    val fieldAptValueObjectInfo = AptValueObjectInfo(valueObjectClassName)
-                    aptValueObjectInfo.children.add(fieldAptValueObjectInfo)
-                    fillValueObject(
-                        resolver,
-                        "$parentProperty.$propertyName",
-                        fieldAptValueObjectInfo,
-                        fieldClass,
-                        aptFileCompiler,
-                        ignoreProperties
-                    )
-                }
-            }
-        }
-    }
 
     private fun buildTablesClass(aptFileCompiler: AptFileCompiler, aptValueObjectInfo: AptValueObjectInfo): String {
         return KspCreatorHelper.createProxy(aptFileCompiler, aptValueObjectInfo)

@@ -372,7 +372,7 @@ public class UpdateExpressionBuilder extends AbstractPredicateEntityExpressionBu
         for (String property : properties) {
             ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(property);
             //(&&!columnMetadata.isLarge())
-            if (columnMetadata.isPrimary() || columnMetadata.isVersion() || columnMetadata.isValueObject() || (columnMetadata.isUpdateIgnore() && !columnMetadata.isUpdateSetInTrackDiff())) {
+            if (columnMetadata.isPrimary() || columnMetadata.isVersion() || (columnMetadata.isUpdateIgnore() && !columnMetadata.isUpdateSetInTrackDiff())) {
                 continue;
             }
             if (entityUpdateSetProcessor.shouldRemove(property)) {

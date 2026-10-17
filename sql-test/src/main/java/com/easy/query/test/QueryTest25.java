@@ -55,7 +55,6 @@ import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.entity.TopicInteger;
-import com.easy.query.test.entity.company.ValueCompany;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.entity.proxy.TopicProxy;
 import com.easy.query.test.entity.tolistflat.TestA;
@@ -234,23 +233,6 @@ public class QueryTest25 extends BaseTest {
 
     }
 
-    @Test
-    public void tupleTest6() {
-        {
-
-            ListenerContext listenerContext = new ListenerContext();
-            listenerContextManager.startListen(listenerContext);
-            List<Tuple2<String, String>> list = easyEntityQuery
-                    .queryable(ValueCompany.class)
-                    .select(t -> Select.TUPLE.of(t.id(), t.address().province()))
-                    .toList();
-            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`id` AS `value1`,t.`province` AS `value2` FROM `my_company` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            listenerContextManager.clear();
-        }
-
-    }
 
     @Test
     public void tupleTest7() {

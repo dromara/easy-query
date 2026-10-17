@@ -120,19 +120,19 @@ public abstract class AbstractSelector<TChain> {
     public TChain column(TableAvailable table, String property) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
         String alias = table.getEntityMetadata() instanceof MapEntityMetadata ? property : null;
-        appendColumnMetadata(table, columnMetadata, false, false, alias);
+        appendColumnMetadata(table, columnMetadata, false, alias);
         return castChain();
     }
 
     public TChain columnAs(TableAvailable table, String property, String propertyAlias) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
         String alias = propertyAlias == null ? null : table.getEntityMetadata().getColumnNotNull(propertyAlias).getName();
-        appendColumnMetadata(table, columnMetadata, false, false, alias);
+        appendColumnMetadata(table, columnMetadata, false,alias);
         return castChain();
     }
     public TChain columnFixedAs(TableAvailable table, String property, String propertyAlias) {
         ColumnMetadata columnMetadata = table.getEntityMetadata().getColumnNotNull(property);
-        appendColumnMetadata(table, columnMetadata, false, false, propertyAlias);
+        appendColumnMetadata(table, columnMetadata, false, propertyAlias);
         return castChain();
     }
 
@@ -252,7 +252,7 @@ public abstract class AbstractSelector<TChain> {
         } else {
             Collection<ColumnMetadata> columns = entityMetadata.getColumns();
             for (ColumnMetadata columnMetadata : columns) {
-                appendColumnMetadata(table, columnMetadata, true, true, null);
+                appendColumnMetadata(table, columnMetadata, true,null);
             }
             autoColumnInclude(table, entityMetadata);
         }
@@ -263,18 +263,9 @@ public abstract class AbstractSelector<TChain> {
      * @param table
      * @param columnMetadata
      * @param checkAutoSelect   是否需要检查
-     * @param ignoreValueObject 是否忽略valueObject
      */
-    protected void appendColumnMetadata(TableAvailable table, ColumnMetadata columnMetadata, boolean checkAutoSelect, boolean ignoreValueObject, String alias) {
+    protected void appendColumnMetadata(TableAvailable table, ColumnMetadata columnMetadata, boolean checkAutoSelect,  String alias) {
 
-        if (columnMetadata.isValueObject()) {
-            if (!ignoreValueObject) {
-                for (ColumnMetadata metadata : columnMetadata.getValueObjectColumnMetadataList()) {
-                    appendColumnMetadata(table, metadata, checkAutoSelect, false, alias);
-                }
-            }
-            return;
-        }
         if (checkAutoSelect && !columnMetadata.isAutoSelect()) {
             return;
         }

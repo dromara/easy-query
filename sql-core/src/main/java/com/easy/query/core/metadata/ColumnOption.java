@@ -57,9 +57,7 @@ public final class ColumnOption {
     private Property<Object, ?> getterCaller;
     private JdbcTypeHandler jdbcTypeHandler;
 
-    private boolean valueObject;
     private Supplier<Object> beanConstructorCreator;
-    private final List<ColumnOption> valueObjectColumnOptions;
     private String fullPropertyName;
     private String comment;
     private JDBCType jdbcType;
@@ -73,9 +71,7 @@ public final class ColumnOption {
         this.propertyName = propertyName;
         this.fieldName = fieldName;
         this.valueConverter = DefaultValueConverter.INSTANCE;
-        this.valueObject = false;
         this.jdbcType = JDBCType.OTHER;
-        this.valueObjectColumnOptions = new ArrayList<>();
     }
 
     public String getPropertyName() {
@@ -236,18 +232,6 @@ public final class ColumnOption {
 
     public void setComplexPropType(ComplexPropType complexPropType) {
         this.complexPropType = complexPropType;
-    }
-
-    public boolean isValueObject() {
-        return valueObject;
-    }
-
-    public void setValueObject(boolean valueObject) {
-        this.valueObject = valueObject;
-    }
-
-    public List<ColumnOption> getValueObjectColumnOptions() {
-        return valueObjectColumnOptions;
     }
 
     public boolean isTableEntity() {

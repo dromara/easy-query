@@ -27,7 +27,7 @@ public class PropertyFirstEntityMappingRule implements EntityMappingRule {
             return targetEntityMetadata.getColumnMetadataOrNull(sourceColumnName);
         }
         ColumnMetadata columnMetadata = targetEntityMetadata.getProperty2ColumnMap().get(sourceColumnMetadata.getPropertyName());
-        if (columnMetadata != null && !columnMetadata.isValueObject()) {
+        if (columnMetadata != null) {
             return columnMetadata;
         }
         return null;

@@ -89,9 +89,9 @@ public class AsSelectorImpl extends AbstractAsSelector<AsSelector> implements As
             if (resultColumnMetadata != null) {
                 String aliasColumnName = resultColumnMetadata.getName();
                 String alias = Objects.equals(columnName, aliasColumnName) ? null : aliasColumnName;
-                appendColumnMetadata(table, columnMetadata, false, false, alias);
+                appendColumnMetadata(table, columnMetadata, false, alias);
             } else {
-                appendColumnMetadata(table, columnMetadata, false, false, null);
+                appendColumnMetadata(table, columnMetadata, false, null);
             }
 
 

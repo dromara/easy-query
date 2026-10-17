@@ -12,9 +12,6 @@ import com.easy.query.test.dto.TopicTypeVO;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
-import com.easy.query.test.entity.company.ValueCompany;
-import com.easy.query.test.entity.company.ValueCompanyDTO;
-import com.easy.query.test.entity.company.proxy.ValueCompanyDTOProxy;
 import com.easy.query.test.listener.ListenerContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -182,30 +179,4 @@ public class QueryTest13 extends BaseTest {
 
     }
 
-    @Test
-     public void testValueObject(){
-
-        ListenerContext listenerContext = new ListenerContext();
-        listenerContextManager.startListen(listenerContext);
-
-        List<ValueCompanyDTO> list = easyEntityQuery.queryable(ValueCompany.class)
-                .where(v -> {
-//                    v.address().area().eq("123");
-                    v.address().province().eq(v.address().province());
-                })
-                .select(v -> new ValueCompanyDTOProxy().adapter(r -> {
-                    r.address().area().set(v.address().area());
-                })).toList();
-
-
-        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-        Assert.assertEquals("SELECT t.`area` AS `area` FROM `my_company` t WHERE t.`province` = t.`province`", jdbcExecuteAfterArg.getBeforeArg().getSql());
-//        Assert.assertEquals("false(Boolean)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
-        listenerContextManager.clear();
-        Assert.assertFalse(list.isEmpty());
-        for (ValueCompanyDTO companyDTO : list) {
-            Assert.assertNotNull(companyDTO.getAddress().getArea());
-        }
-    }
 }

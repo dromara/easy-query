@@ -14,7 +14,6 @@ import com.easy.query.core.util.EasyTypeUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
-import com.easy.query.test.entity.company.ValueCompany;
 import com.easy.query.test.entity.proxy.BlogEntityProxy;
 import com.easy.query.test.h2.vo.QueryVO;
 import com.easy.query.test.h2.vo.proxy.QueryVOProxy;
@@ -540,19 +539,6 @@ public class QueryTest10 extends BaseTest{
             Assert.assertEquals("SELECT t.`id` AS `value1`,COUNT(*) AS `value2`,SUM(t.`stars`) AS `value3` FROM `t_topic` t GROUP BY t.`id`", jdbcExecuteAfterArg.getBeforeArg().getSql());
             listenerContextManager.clear();
             Integer value3 = list.get(0).getValue3();
-        }
-        {
-
-            ListenerContext listenerContext = new ListenerContext();
-            listenerContextManager.startListen(listenerContext);
-            List<Draft2<String, String>> list = easyEntityQuery
-                    .queryable(ValueCompany.class)
-                    .select(t -> Select.DRAFT.of(t.id(), t.address().province()))
-                    .toList();
-            Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
-            JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
-            Assert.assertEquals("SELECT t.`id` AS `value1`,t.`province` AS `value2` FROM `my_company` t", jdbcExecuteAfterArg.getBeforeArg().getSql());
-            listenerContextManager.clear();
         }
         {
 

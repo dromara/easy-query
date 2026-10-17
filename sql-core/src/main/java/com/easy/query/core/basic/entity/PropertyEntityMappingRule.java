@@ -22,7 +22,7 @@ public class PropertyEntityMappingRule implements EntityMappingRule {
             return null;
         }
         ColumnMetadata columnMetadata = targetEntityMetadata.getProperty2ColumnMap().get(sourceColumnMetadata.getPropertyName());
-        if (columnMetadata != null && !columnMetadata.isValueObject()) {
+        if (columnMetadata != null) {
             return columnMetadata;
         }
         return null;

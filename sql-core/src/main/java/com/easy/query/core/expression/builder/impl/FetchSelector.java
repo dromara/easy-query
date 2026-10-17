@@ -85,20 +85,12 @@ public class FetchSelector implements Selector {
         EntityMetadata entityMetadata = table.getEntityMetadata();
         Collection<ColumnMetadata> columns = entityMetadata.getColumns();
         for (ColumnMetadata columnMetadata : columns) {
-            appendColumnMetadata(table, columnMetadata, true, true, null);
+            appendColumnMetadata(table, columnMetadata, true, null);
         }
         return this;
     }
-    protected void appendColumnMetadata(TableAvailable table, ColumnMetadata columnMetadata, boolean checkAutoSelect, boolean ignoreValueObject, String alias) {
+    protected void appendColumnMetadata(TableAvailable table, ColumnMetadata columnMetadata, boolean checkAutoSelect, String alias) {
 
-        if (columnMetadata.isValueObject()) {
-            if (!ignoreValueObject) {
-                for (ColumnMetadata metadata : columnMetadata.getValueObjectColumnMetadataList()) {
-                    appendColumnMetadata(table, metadata, checkAutoSelect, false, alias);
-                }
-            }
-            return;
-        }
         if (checkAutoSelect && !columnMetadata.isAutoSelect()) {
             return;
         }

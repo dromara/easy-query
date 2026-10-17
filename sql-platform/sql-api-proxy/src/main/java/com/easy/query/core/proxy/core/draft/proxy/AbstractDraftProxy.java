@@ -13,7 +13,6 @@ import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.TablePropColumn;
-import com.easy.query.core.proxy.ValueObjectProxyEntity;
 
 /**
  * create time 2024/1/26 22:02
@@ -30,9 +29,6 @@ public abstract class AbstractDraftProxy<TProxy extends ProxyEntity<TProxy, TEnt
 
     protected  <TProperty> void fetch(int index, PropTypeColumn<TProperty> column, String alias) {
         SQLSelectAsExpression sqlSelectAsExpression = column.as(alias);
-        if (sqlSelectAsExpression instanceof ValueObjectProxyEntity) {
-            throw new EasyQueryInvalidOperationException("draft result not support value object columns");
-        }
         if (column instanceof SQLColumn && column.getTable() != null) {
             EntityMetadata entityMetadata = column.getTable().getEntityMetadata();
             ColumnMetadata columnMetadata = entityMetadata.getColumnOrNull(column.getValue());

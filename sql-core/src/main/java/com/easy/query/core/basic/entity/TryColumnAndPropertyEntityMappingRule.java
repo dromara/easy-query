@@ -22,7 +22,7 @@ public class TryColumnAndPropertyEntityMappingRule implements EntityMappingRule 
         ColumnMetadata targetColumnMetadata = targetEntityMetadata.getColumnMetadataOrNull(sourceColumnName);
         if (targetColumnMetadata == null) {
             ColumnMetadata columnMetadata = targetEntityMetadata.getProperty2ColumnMap().get(sourceColumnMetadata.getPropertyName());
-            if (columnMetadata != null && !columnMetadata.isValueObject()) {
+            if (columnMetadata != null) {
                 targetColumnMetadata = columnMetadata;
             }
         }

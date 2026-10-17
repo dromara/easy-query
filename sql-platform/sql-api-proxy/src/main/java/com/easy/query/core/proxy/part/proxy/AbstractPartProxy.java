@@ -13,7 +13,6 @@ import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.SQLColumn;
 import com.easy.query.core.proxy.SQLSelectAsExpression;
 import com.easy.query.core.proxy.TablePropColumn;
-import com.easy.query.core.proxy.ValueObjectProxyEntity;
 import com.easy.query.core.proxy.part.Part1;
 
 /**
@@ -51,9 +50,6 @@ public abstract class AbstractPartProxy<TProxy extends ProxyEntity<TProxy, TEnti
     public <TProperty> void fetch(int index, PropTypeColumn<TProperty> column, TablePropColumn tablePropColumn) {
 
         SQLSelectAsExpression sqlSelectAsExpression = column.as(tablePropColumn);
-        if (sqlSelectAsExpression instanceof ValueObjectProxyEntity) {
-            throw new EasyQueryInvalidOperationException("draft result not support value object columns");
-        }
 
         if (column instanceof SQLColumn && column.getTable() != null) {
             EntityMetadata entityMetadata = column.getTable().getEntityMetadata();
