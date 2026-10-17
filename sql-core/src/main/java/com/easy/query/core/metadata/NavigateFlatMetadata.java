@@ -23,6 +23,7 @@ public class NavigateFlatMetadata {
     private final boolean basicType;
     private final PropertySetterCaller<Object> beanSetter;
     private final String property;
+    private final ColumnMetadata columnMetadata;
 
     public NavigateFlatMetadata(EntityMetadata entityMetadata,
                                 boolean toMany,
@@ -30,7 +31,7 @@ public class NavigateFlatMetadata {
                                 Class<?> navigatePropertyType,
                                 boolean basicType,
                                 PropertySetterCaller<Object> beanSetter,
-                                String property) {
+                                String property,ColumnMetadata columnMetadata) {
         this.entityMetadata = entityMetadata;
         this.toMany = toMany;
         this.mappingPath = mappingPath;
@@ -38,6 +39,7 @@ public class NavigateFlatMetadata {
         this.basicType = basicType;
         this.beanSetter = beanSetter;
         this.property = property;
+        this.columnMetadata = columnMetadata;
     }
 
     public EntityMetadata getEntityMetadata() {
@@ -66,5 +68,14 @@ public class NavigateFlatMetadata {
 
     public String getProperty() {
         return property;
+    }
+
+
+    public ValueConverter<?, ?> getValueConverter() {
+        return columnMetadata.getValueConverter();
+    }
+
+    public ColumnMetadata getColumnMetadata() {
+        return columnMetadata;
     }
 }

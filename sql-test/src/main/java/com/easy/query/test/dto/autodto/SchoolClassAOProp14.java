@@ -1,7 +1,6 @@
 package com.easy.query.test.dto.autodto;
 
 import com.easy.query.core.annotation.NavigateFlat;
-import com.easy.query.core.annotation.NavigateSetter;
 import com.easy.query.test.entity.school.SchoolClass;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -32,7 +31,6 @@ public class SchoolClassAOProp14 {
 //    @NavigateFlat(value = RelationMappingTypeEnum.ToMany,mappingPath = {"schoolTeachers","schoolClasses","name"})
 //    private List<String> schoolTeachersClassId1s;
     @NavigateFlat(pathAlias = "schoolTeachers.schoolClasses")
-    @NavigateSetter(value = MyNavigateValueSetter.class)
     private List<SchoolStudentAO> schoolTeachersClassList;
 
 

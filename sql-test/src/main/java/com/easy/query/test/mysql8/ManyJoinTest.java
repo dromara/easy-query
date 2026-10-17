@@ -26,6 +26,7 @@ import com.easy.query.test.entity.school.SchoolTeacher;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.dto.M8RoleDTO;
 import com.easy.query.test.mysql8.dto.M8RoleDTO2;
+import com.easy.query.test.mysql8.dto.M8RoleFlatConverterDTO;
 import com.easy.query.test.mysql8.dto.RoleSelectAutoExtra;
 import com.easy.query.test.mysql8.entity.M8Menu;
 import com.easy.query.test.mysql8.entity.M8MenuOwner;
@@ -750,6 +751,19 @@ public class ManyJoinTest extends BaseTest {
     }
 
     @Test
+    public void testFlatMenuOwnerFlatValueConverter() {
+        List<M8RoleFlatConverterDTO> list = easyEntityQuery.queryable(M8Role.class)
+                .selectAutoInclude(M8RoleFlatConverterDTO.class)
+                .toList();
+        Assert.assertTrue(list.size() > 0);
+        for (M8RoleFlatConverterDTO m8RoleFlatConverterDTO : list) {
+            for (M8RoleFlatConverterDTO.InternalOwner menu : m8RoleFlatConverterDTO.getMenus()) {
+                Assert.assertTrue(menu.getName().endsWith("*"));
+            }
+        }
+    }
+
+    @Test
     public void testFlatMenuOwner1() {
         List<M8RoleDTO2> list = easyEntityQuery.queryable(M8Role.class)
                 .selectAutoInclude(M8RoleDTO2.class)
@@ -839,7 +853,6 @@ public class ManyJoinTest extends BaseTest {
     }
 
 
-
     @Test
     public void test4GroupJoinCombine() {
 
@@ -850,7 +863,7 @@ public class ManyJoinTest extends BaseTest {
                 .configure(o -> o.getBehavior().addBehavior(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(user -> {
                     user.bankCards().any(o -> {
-                        o.or(()->{
+                        o.or(() -> {
                             o.type().eq("456");
                             o.code().eq("123");
                         });
@@ -859,7 +872,7 @@ public class ManyJoinTest extends BaseTest {
                 }).select(user -> Select.DRAFT.of(
                         user.name(),
                         user.bankCards().where(o -> {
-                            o.or(()->{
+                            o.or(() -> {
                                 o.code().eq("123");
                                 o.type().eq("4567");
                             });
@@ -885,7 +898,7 @@ public class ManyJoinTest extends BaseTest {
                 .configure(o -> o.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(user -> {
                     user.bankCards().any(o -> {
-                        o.or(()->{
+                        o.or(() -> {
                             o.code().eq("123");
                             o.type().eq("4567");
                         });
@@ -894,7 +907,7 @@ public class ManyJoinTest extends BaseTest {
                 }).select(user -> Select.DRAFT.of(
                         user.name(),
                         user.bankCards().where(o -> {
-                            o.or(()->{
+                            o.or(() -> {
                                 o.code().eq("123");
                                 o.type().eq("4567");
                             });
@@ -909,6 +922,7 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
     @Test
     public void test6GroupJoinCombine() {
 
@@ -918,8 +932,8 @@ public class ManyJoinTest extends BaseTest {
         List<Draft2<String, Long>> list = easyEntityQuery.queryable(SysUser.class)
                 .configure(o -> o.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(user -> {
-                    user.bankCards().filter(o->{
-                        o.or(()->{
+                    user.bankCards().filter(o -> {
+                        o.or(() -> {
                             o.code().eq("123");
                             o.type().eq("4567");
                         });
@@ -939,6 +953,7 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
     @Test
     public void test7GroupJoinCombine() {
 
@@ -949,7 +964,7 @@ public class ManyJoinTest extends BaseTest {
                 .configure(o -> o.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(user -> {
                     user.bankCards().any(o -> {
-                        o.or(()->{
+                        o.or(() -> {
                             o.code().eq("123");
                             o.type().eq("4567");
                         });
@@ -967,6 +982,7 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
     @Test
     public void test8GroupJoinCombine() {
 
@@ -980,7 +996,7 @@ public class ManyJoinTest extends BaseTest {
                 }).select(user -> Select.DRAFT.of(
                         user.name(),
                         user.bankCards().where(o -> {
-                            o.or(()->{
+                            o.or(() -> {
                                 o.code().eq("123");
                                 o.type().eq("4567");
                             });
@@ -995,6 +1011,7 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
     @Test
     public void test9GroupJoinCombine() {
 
@@ -1008,7 +1025,7 @@ public class ManyJoinTest extends BaseTest {
                 }).select(user -> Select.DRAFT.of(
                         user.name(),
                         user.bankCards().where(o -> {
-                            o.or(()->{
+                            o.or(() -> {
                                 o.code().eq("123");
                                 o.type().eq("4567");
                             });
@@ -1023,6 +1040,7 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
     @Test
     public void test10GroupJoinCombine() {
 
@@ -1050,6 +1068,7 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
     @Test
     public void test11GroupJoinCombine() {
 
@@ -1077,6 +1096,7 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
     @Test
     public void test12GroupJoinCombine() {
 
@@ -1105,6 +1125,7 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
     @Test
     public void test13GroupJoinCombine() {
 
@@ -1133,6 +1154,7 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
     @Test
     public void test14GroupJoinCombine() {
 
@@ -1155,6 +1177,7 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
     @Test
     public void test15GroupJoinCombine() {
 
@@ -1165,7 +1188,7 @@ public class ManyJoinTest extends BaseTest {
                 .configure(o -> o.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN))
                 .where(user -> {
                 }).orderBy(user -> {
-                    user.bankCards().where(x -> x.type().eq("123")).max(s->s.openTime()).asc(OrderByModeEnum.NULLS_LAST);
+                    user.bankCards().where(x -> x.type().eq("123")).max(s -> s.openTime()).asc(OrderByModeEnum.NULLS_LAST);
                 }).select(user -> Select.DRAFT.of(
                         user.name()
                 )).toList();
@@ -1177,6 +1200,7 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
     @Test
     public void test16GroupJoinCombine() {
 
@@ -1187,7 +1211,7 @@ public class ManyJoinTest extends BaseTest {
                 .configure(o -> o.getBehavior().add(EasyBehaviorEnum.ALL_SUB_QUERY_GROUP_JOIN).add(EasyBehaviorEnum.GROUP_JOIN_NOT_ALLOW_AUTO_MERGE))
                 .where(user -> {
                 }).orderBy(user -> {
-                    user.bankCards().where(x -> x.type().eq("123")).max(s->s.openTime()).asc(OrderByModeEnum.NULLS_LAST);
+                    user.bankCards().where(x -> x.type().eq("123")).max(s -> s.openTime()).asc(OrderByModeEnum.NULLS_LAST);
                 }).select(user -> Select.DRAFT.of(
                         user.name()
                 )).toList();
@@ -1199,6 +1223,7 @@ public class ManyJoinTest extends BaseTest {
 
 
     }
+
     @Test
     public void test16GroupJoinCombinePage() {
 
@@ -1231,7 +1256,7 @@ public class ManyJoinTest extends BaseTest {
 
 
     @Test
-    public void testLastCard(){
+    public void testLastCard() {
         List<Draft5<String, String, String, String, String>> list = easyEntityQuery.queryable(SysUser.class)
                 .select(user -> {
                     //按用户的银行卡开户时间倒序取第一张
@@ -1247,7 +1272,7 @@ public class ManyJoinTest extends BaseTest {
     }
 
     @Test
-    public void testFlatExtra(){
+    public void testFlatExtra() {
 
         ListenerContext listenerContext = new ListenerContext(true);
         listenerContextManager.startListen(listenerContext);

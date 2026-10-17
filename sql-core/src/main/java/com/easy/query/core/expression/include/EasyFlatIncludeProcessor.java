@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 public class EasyFlatIncludeProcessor extends EasyIncludeProcess {
     private final NavigateFlatMetadata navigateFlatMetadata;
     private Property<Object, Collection<?>> navigateFlatGetter;
+    private ColumnMetadata lastBasicTypeColumnMetadata;
     private final boolean flatClassObject;
 
     public EasyFlatIncludeProcessor(NavigateFlatMetadata navigateFlatMetadata, IncludeParserResult includeParserResult, QueryRuntimeContext runtimeContext) {
@@ -59,6 +60,7 @@ public class EasyFlatIncludeProcessor extends EasyIncludeProcess {
             if (last) {
                 if (basicType) {
                     ColumnMetadata columnMetadata = currentEntityMetadata.getColumnNotNull(currentNavValue);
+                    this.lastBasicTypeColumnMetadata = columnMetadata;
                     replyExpressions.add(columnMetadata.getGetterCaller());
                     break;
                 }
@@ -112,16 +114,41 @@ public class EasyFlatIncludeProcessor extends EasyIncludeProcess {
             if (navigateFlatMetadata.isToMany()) {
                 navigateFlatMetadata.getBeanSetter().call(entity, values);
             } else {
+//                Object val = EasyCollectionUtil.firstOrNull(values);
+//                if (flatClassObject) {
+//                    Object target = includeParserResult.getFlatClassMap().get(val);
+//                    navigateFlatMetadata.getBeanSetter().call(entity, target);
+//                } else {
+//                    navigateFlatMetadata.getBeanSetter().call(entity, val);
+//                }
+
                 Object val = EasyCollectionUtil.firstOrNull(values);
                 if (flatClassObject) {
                     Object target = includeParserResult.getFlatClassMap().get(val);
                     navigateFlatMetadata.getBeanSetter().call(entity, target);
                 } else {
-                    navigateFlatMetadata.getBeanSetter().call(entity, val);
+                    ValueConverter<?, ?> valueConverter = navigateFlatMetadata.getValueConverter();
+                    Object valueConverterObject = getValueConverterObject(val, valueConverter);
+                    navigateFlatMetadata.getBeanSetter().call(entity, valueConverterObject);
                 }
             }
         } else {
             super.setEntityValue(entity, value);
         }
+
+    }
+
+    private Object getValueConverterObject(Object val,ValueConverter<?, ?> flatValueConverter){
+        if(flatValueConverter!=null){
+            if (lastBasicTypeColumnMetadata != null) {
+                ValueConverter<?, ?> valueConverter = lastBasicTypeColumnMetadata.getValueConverter();
+                if (valueConverter != null) {
+                    //转成数据库读取java值
+                    Object serialize = valueConverter.serialize(EasyObjectUtil.typeCastNullable(val), lastBasicTypeColumnMetadata);
+                    return flatValueConverter.deserialize(EasyObjectUtil.typeCastNullable(serialize), navigateFlatMetadata.getColumnMetadata());
+                }
+            }
+        }
+        return val;
     }
 }

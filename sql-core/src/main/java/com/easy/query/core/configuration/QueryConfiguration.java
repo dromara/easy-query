@@ -15,7 +15,6 @@ import com.easy.query.core.basic.extension.logicdel.impl.LocalDateLogicDeleteStr
 import com.easy.query.core.basic.extension.logicdel.impl.LocalDateTimeLogicDeleteStrategy;
 import com.easy.query.core.basic.extension.logicdel.impl.LongTimestampLogicDeleteStrategy;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
-import com.easy.query.core.basic.extension.navigate.NavigateValueSetter;
 import com.easy.query.core.basic.extension.version.VersionIntStrategy;
 import com.easy.query.core.basic.extension.version.VersionLongStrategy;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
@@ -65,7 +64,6 @@ public class QueryConfiguration {
     private Map<String, Interceptor> interceptorMap = new ConcurrentHashMap<>();
     private Map<String, LogicDeleteStrategy> globalLogicDeleteStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends NavigateExtraFilterStrategy>, NavigateExtraFilterStrategy> navigateExtraFilterStrategyMap = new ConcurrentHashMap<>();
-    private Map<Class<? extends NavigateValueSetter>, NavigateValueSetter> navigateValueSetterMap = new ConcurrentHashMap<>();
     private Map<Class<? extends EncryptionStrategy>, EncryptionStrategy> easyEncryptionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends VersionStrategy>, VersionStrategy> easyVersionStrategyMap = new ConcurrentHashMap<>();
     private Map<Class<? extends ShardingInitializer>, ShardingInitializer> shardingInitializerMap = new ConcurrentHashMap<>();
@@ -155,20 +153,6 @@ public class QueryConfiguration {
     public NavigateExtraFilterStrategy getNavigateExtraFilterStrategy(Class<? extends NavigateExtraFilterStrategy> strategy) {
         return navigateExtraFilterStrategyMap.get(strategy);
     }
-
-    public void applyNavigateValueSetter(NavigateValueSetter navigateValueSetter) {
-        Objects.requireNonNull(navigateValueSetter, "navigateValueSetter is null");
-        if (navigateValueSetterMap.containsKey(navigateValueSetter.getClass())) {
-            throw new EasyQueryException("navigate value setter:" + EasyClassUtil.getSimpleName(navigateValueSetter.getClass()) + ",repeat");
-        }
-        Class<? extends NavigateValueSetter> nvClass = EasyObjectUtil.typeCastNullable(navigateValueSetter.getClass());
-        navigateValueSetterMap.put(nvClass, navigateValueSetter);
-    }
-
-    public NavigateValueSetter getNavigateValueSetter(Class<? extends NavigateValueSetter> valueSetter) {
-        return navigateValueSetterMap.get(valueSetter);
-    }
-
     /**
      * 获取
      *

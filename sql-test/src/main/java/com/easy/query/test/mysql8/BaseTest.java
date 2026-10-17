@@ -23,6 +23,7 @@ import com.easy.query.test.common.M8Interceptor;
 import com.easy.query.test.common.MockEntityExpressionExecutor;
 import com.easy.query.test.common.MyProtectInterceptor;
 import com.easy.query.test.common.MyQueryConfiguration;
+import com.easy.query.test.conversion.AddStartValueConverter;
 import com.easy.query.test.conversion.StarCodeValueConvert;
 import com.easy.query.test.dto.MyConfigLogicDelete;
 import com.easy.query.test.entity.SysDept;
@@ -175,6 +176,7 @@ public class BaseTest {
         queryConfiguration.applyInterceptor(new SaveInterceptor());
         queryConfiguration.applyInterceptor(new MyProtectInterceptor());
         queryConfiguration.applyValueConverter(new StarCodeValueConvert());
+        queryConfiguration.applyValueConverter(new AddStartValueConverter());
         queryConfiguration.applyLogicDeleteStrategy(new ConfigurationLogicDelete());
         easyEntityQuery = new DefaultEasyEntityQuery(easyQueryClient);
         beforex();

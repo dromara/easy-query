@@ -8,7 +8,6 @@ import com.easy.query.core.basic.extension.generated.PrimaryKeyGenerator;
 import com.easy.query.core.basic.extension.interceptor.Interceptor;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategy;
 import com.easy.query.core.basic.extension.navigate.NavigateExtraFilterStrategy;
-import com.easy.query.core.basic.extension.navigate.NavigateValueSetter;
 import com.easy.query.core.basic.extension.version.VersionStrategy;
 import com.easy.query.core.basic.jdbc.types.handler.JdbcTypeHandler;
 import com.easy.query.core.bootstrapper.DefaultStarterConfigurer;
@@ -98,7 +97,6 @@ public class EasyQueryStarterAutoConfiguration {
                                                                Map<String, ColumnValueSQLConverter> columnValueSQLConverterMap,
                                                                Map<String, GeneratedKeySQLColumnGenerator> generatedKeySQLColumnGeneratorMap,
                                                                Map<String, NavigateExtraFilterStrategy> navigateExtraFilterStrategyMap,
-                                                               Map<String, NavigateValueSetter> navigateValueSetterMap,
                                                                Map<String, PrimaryKeyGenerator> primaryKeyGeneratorMap,
                                                                Map<String, EntityRelationPropertyProvider> entityRelationPropertyProviderMap) {
         return new EasyQueryInitializeOption(interceptorMap,
@@ -113,7 +111,6 @@ public class EasyQueryStarterAutoConfiguration {
                 columnValueSQLConverterMap,
                 generatedKeySQLColumnGeneratorMap,
                 navigateExtraFilterStrategyMap,
-                navigateValueSetterMap,
                 primaryKeyGeneratorMap,
                 entityRelationPropertyProviderMap);
     }
