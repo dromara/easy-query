@@ -129,6 +129,10 @@ public class SolonEasyQueryProperties {
      */
     private final static int relationGroupSize = 512;
     private final static boolean warningColumnMiss = true;
+    /**
+     * mysql将insert ignore语法转成ON DUPLICATE KEY UPDATE 主键 = 主键
+     */
+    private final static boolean mysqlInsertIgnoreToUpdateKey = false;
     private final static int shardingFetchSize = 1000;
     private final static boolean mapToBeanStrict = true;
     private final static String defaultSchema = null;
@@ -460,6 +464,10 @@ public class SolonEasyQueryProperties {
 
     public boolean isWarningColumnMiss() {
         return this.props.getBool("warning-column-miss", warningColumnMiss);
+    }
+
+    public boolean isMysqlInsertIgnoreToUpdateKey() {
+        return this.props.getBool("mysql-insert-ignore-to-update-key", mysqlInsertIgnoreToUpdateKey);
     }
 
     public int getShardingFetchSize() {

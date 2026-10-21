@@ -165,6 +165,7 @@ public class SpringBootStarterBuilder {
                     builder.setMaxInClauseSize(easyQueryProperties.getMaxInClauseSize());
                     builder.setDefaultCondition(easyQueryProperties.getDefaultCondition());
                     builder.setSelectAutoIncludeTable(easyQueryProperties.getAutoIncludeTable());
+                    builder.setMysqlInsertIgnoreToUpdateKey(easyQueryProperties.isMysqlInsertIgnoreToUpdateKey());
                 })
                 .customConfigure(s -> {
                     switch (easyQueryProperties.getDatabase()) {

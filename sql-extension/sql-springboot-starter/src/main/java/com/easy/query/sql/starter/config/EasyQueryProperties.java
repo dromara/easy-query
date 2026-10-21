@@ -161,6 +161,12 @@ public class EasyQueryProperties {
     private DefaultConditionEnum defaultCondition = DefaultConditionEnum.LIKE;
     private SelectAutoIncludeTableEnum autoIncludeTable = SelectAutoIncludeTableEnum.THROW;
 
+    /**
+     * mysql将insert ignore语法转成ON DUPLICATE KEY UPDATE 主键 = 主键
+     */
+    private  boolean mysqlInsertIgnoreToUpdateKey=false;
+
+
     public Boolean getEnable() {
         return enable;
     }
@@ -491,6 +497,14 @@ public class EasyQueryProperties {
 
     public void setAutoIncludeTable(SelectAutoIncludeTableEnum autoIncludeTable) {
         this.autoIncludeTable = autoIncludeTable;
+    }
+
+    public boolean isMysqlInsertIgnoreToUpdateKey() {
+        return mysqlInsertIgnoreToUpdateKey;
+    }
+
+    public void setMysqlInsertIgnoreToUpdateKey(boolean mysqlInsertIgnoreToUpdateKey) {
+        this.mysqlInsertIgnoreToUpdateKey = mysqlInsertIgnoreToUpdateKey;
     }
 
     public EasyQueryProperties() {

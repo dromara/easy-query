@@ -90,6 +90,10 @@ public class EasyQueryOptionBuilder {
     private int maxInClauseSize;
     private DefaultConditionEnum defaultCondition;
     private SelectAutoIncludeTableEnum selectAutoIncludeTable;
+    /**
+     * mysql将insert ignore语法转成ON DUPLICATE KEY UPDATE 主键 = 主键
+     */
+    private  boolean mysqlInsertIgnoreToUpdateKey;
 
 
     public EasyQueryOptionBuilder() {
@@ -125,6 +129,7 @@ public class EasyQueryOptionBuilder {
         this.maxInClauseSize = MAX_IN_CLAUSE_SIZE;
         this.defaultCondition = DefaultConditionEnum.LIKE;
         this.selectAutoIncludeTable = SelectAutoIncludeTableEnum.THROW;
+        this.mysqlInsertIgnoreToUpdateKey = false;
     }
 
     public void setDeleteThrowError(boolean deleteThrowError) {
@@ -287,6 +292,14 @@ public class EasyQueryOptionBuilder {
         this.selectAutoIncludeTable = selectAutoIncludeTable;
     }
 
+    public boolean isMysqlInsertIgnoreToUpdateKey() {
+        return mysqlInsertIgnoreToUpdateKey;
+    }
+
+    public void setMysqlInsertIgnoreToUpdateKey(boolean mysqlInsertIgnoreToUpdateKey) {
+        this.mysqlInsertIgnoreToUpdateKey = mysqlInsertIgnoreToUpdateKey;
+    }
+
     public EasyQueryOption build() {
         return new EasyQueryOption(this.deleteThrowError,
                 this.insertStrategy,
@@ -321,6 +334,7 @@ public class EasyQueryOptionBuilder {
                 this.saveComment,
                 this.maxInClauseSize,
                 this.defaultCondition,
-                this.selectAutoIncludeTable);
+                this.selectAutoIncludeTable,
+                this.mysqlInsertIgnoreToUpdateKey);
     }
 }

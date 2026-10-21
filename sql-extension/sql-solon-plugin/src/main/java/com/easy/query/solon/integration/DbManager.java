@@ -183,6 +183,7 @@ public class DbManager {
                     builder.setMaxInClauseSize(solonEasyQueryProperties.getMaxInClauseSize());
                     builder.setDefaultCondition(solonEasyQueryProperties.getDefaultCondition());
                     builder.setSelectAutoIncludeTable(solonEasyQueryProperties.getAutoIncludeTable());
+                    builder.setMysqlInsertIgnoreToUpdateKey(solonEasyQueryProperties.isMysqlInsertIgnoreToUpdateKey());
                 });
 
 

@@ -133,6 +133,10 @@ public class EasyQueryOption {
      */
     private final DefaultConditionEnum defaultCondition;
     private final SelectAutoIncludeTableEnum selectAutoIncludeTable;
+    /**
+     * mysql将insert ignore语法转成ON DUPLICATE KEY UPDATE 主键 = 主键
+     */
+    private final boolean mysqlInsertIgnoreToUpdateKey;
 
     public EasyQueryOption(boolean deleteThrowError, SQLExecuteStrategyEnum insertStrategy,
                            SQLExecuteStrategyEnum updateStrategy, ConnectionModeEnum connectionMode,
@@ -148,7 +152,9 @@ public class EasyQueryOption {
                            String defaultSchema, long resultSizeLimit, boolean printNavSql,
                            ShardingQueryInTransactionEnum shardingQueryInTransaction, int mssqlMinBigDecimalScale,
                            IncludeLimitModeEnum includeLimitMode,
-                           boolean saveComment, int maxInClauseSize,DefaultConditionEnum defaultCondition,SelectAutoIncludeTableEnum selectAutoIncludeTable) {
+                           boolean saveComment, int maxInClauseSize,
+                           DefaultConditionEnum defaultCondition,SelectAutoIncludeTableEnum selectAutoIncludeTable,
+                           boolean mysqlInsertIgnoreToUpdateKey) {
 
 
 
@@ -218,6 +224,7 @@ public class EasyQueryOption {
         this.maxInClauseSize = maxInClauseSize;
         this.defaultCondition = defaultCondition;
         this.selectAutoIncludeTable = selectAutoIncludeTable;
+        this.mysqlInsertIgnoreToUpdateKey = mysqlInsertIgnoreToUpdateKey;
     }
 
     public int getMaxShardingRouteCount() {
@@ -361,5 +368,9 @@ public class EasyQueryOption {
 
     public SelectAutoIncludeTableEnum getSelectAutoIncludeTable() {
         return selectAutoIncludeTable;
+    }
+
+    public boolean isMysqlInsertIgnoreToUpdateKey() {
+        return mysqlInsertIgnoreToUpdateKey;
     }
 }

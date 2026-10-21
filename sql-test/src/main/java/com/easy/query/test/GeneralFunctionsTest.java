@@ -25,6 +25,7 @@ import com.easy.query.test.common.EmptyDataSource;
 import com.easy.query.test.doc.entity.DocBankCard;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.TopicAuto;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
@@ -60,6 +61,19 @@ public class GeneralFunctionsTest {
                 .build();
         return new DefaultEasyEntityQuery(easyQueryClient);
     }
+    public EasyEntityQuery create2(ListenerContextManager listenerContextManager, DatabaseConfiguration databaseConfiguration) {
+        MyJdbcListener myJdbcListener = new MyJdbcListener(listenerContextManager);
+        EasyQueryClient easyQueryClient = EasyQueryBootstrapper.defaultBuilderConfiguration()
+                .setDefaultDataSource(new EmptyDataSource())
+                .optionConfigure(op -> {
+                    op.setDeleteThrowError(false);
+                    op.setMysqlInsertIgnoreToUpdateKey(true);
+                })
+                .replaceService(JdbcExecutorListener.class, myJdbcListener)
+                .useDatabaseConfigure(databaseConfiguration)
+                .build();
+        return new DefaultEasyEntityQuery(easyQueryClient);
+    }
 
     @Test
     public void nullOrDefaultMySQL() {
@@ -83,6 +97,52 @@ public class GeneralFunctionsTest {
         JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
         Assert.assertEquals("SELECT `id`,`uid`,`code`,`type`,`bank_id` FROM `doc_bank_card` WHERE IFNULL(`code`,?) = ?", jdbcExecuteAfterArg.getBeforeArg().getSql());
         Assert.assertEquals("noCode(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void MySQLInsertIgnore2UpdateKey() {
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        EasyEntityQuery easyEntityQuery = create2(listenerContextManager, new MySQLDatabaseConfiguration());
+        listenerContextManager.startCreateListen();
+
+        try {
+            DocBankCard docBankCard = new DocBankCard();
+            docBankCard.setId("123");
+            docBankCard.setCode("code");
+            docBankCard.setType("123");
+
+            easyEntityQuery.insertable(docBankCard).onConflictThen(null).executeRows();
+        } catch (Exception ignored) {
+
+        }
+        ListenerContext listenerContext = listenerContextManager.getListenContext();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("INSERT INTO `doc_bank_card` (`id`,`code`,`type`) VALUES (?,?,?) ON DUPLICATE KEY UPDATE `id` = VALUES(`id`)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(String),code(String),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
+    @Test
+    public void MySQLInsertIgnore2UpdateKey2() {
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        EasyEntityQuery easyEntityQuery = create2(listenerContextManager, new MySQLDatabaseConfiguration());
+        listenerContextManager.startCreateListen();
+
+        String error=null;
+        try {
+
+            TopicAuto entity = new TopicAuto();
+            entity.setStars(123);
+            entity.setTitle("123");
+
+            easyEntityQuery.insertable(entity).onConflictThen(null).executeRows();
+        } catch (Exception ex) {
+            error=ex.getMessage();
+        }
+
+        Assert.assertEquals("[MySQL INSERT IGNORE INTO TO DUPLICATE KEY UPDATE] No non-auto-increment primary key found.", error);
 
     }
 
