@@ -60,7 +60,7 @@ public class MySQLInsertSQLExpression extends InsertSQLExpressionImpl {
         sql.append(") VALUES (").append(columns.toSQL(toSQLContext)).append(")");
         EntityMetadata entityMetadata = easyTableSQLExpression.getEntityMetadata();
         TableAvailable entityTable = easyTableSQLExpression.getEntityTable();
-        if (!hasIgnore && expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_UPDATE)) {
+        if (expressionContext.getBehavior().hasBehavior(EasyBehaviorEnum.ON_DUPLICATE_KEY_UPDATE)) {
             Collection<String> keyProperties = entityMetadata.getKeyProperties();
             StringBuilder duplicateKeyUpdateSql = new StringBuilder();
             SQLBuilderSegment realDuplicateKeyUpdateColumns = getRealDuplicateKeyUpdateColumns();
@@ -86,7 +86,7 @@ public class MySQLInsertSQLExpression extends InsertSQLExpressionImpl {
                 sql.append(" ON DUPLICATE KEY UPDATE ");
                 sql.append(duplicateKeyUpdateSql);
             }
-        }else if(ignoreToUpdateKey){
+        } else if (hasIgnore && ignoreToUpdateKey) {
             sql.append(" ON DUPLICATE KEY UPDATE ");
             //获取非自增主键
 
@@ -97,14 +97,14 @@ public class MySQLInsertSQLExpression extends InsertSQLExpressionImpl {
                     duplicateKeyUpdateSql.append(", ");
                 }
                 ColumnMetadata columnMetadata = entityMetadata.getColumnNotNull(keyProperty);
-                if(columnMetadata.isGeneratedKey()){
+                if (columnMetadata.isGeneratedKey()) {
                     continue;
                 }
                 String columnName = columnMetadata.getName();
                 String quoteName = EasySQLExpressionUtil.getQuoteName(runtimeContext, columnName);
                 duplicateKeyUpdateSql.append(quoteName).append(" = ").append("VALUES(").append(quoteName).append(")");
             }
-            if(duplicateKeyUpdateSql.length() == 0){
+            if (duplicateKeyUpdateSql.length() == 0) {
                 throw new EasyQueryInvalidOperationException("[MySQL INSERT IGNORE INTO TO DUPLICATE KEY UPDATE] No non-auto-increment primary key found.");
             }
             sql.append(duplicateKeyUpdateSql);

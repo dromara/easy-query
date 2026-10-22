@@ -145,6 +145,31 @@ public class GeneralFunctionsTest {
         Assert.assertEquals("[MySQL INSERT IGNORE INTO TO DUPLICATE KEY UPDATE] No non-auto-increment primary key found.", error);
 
     }
+    @Test
+    public void MySQLInsertIgnore2UpdateKey3() {
+        ListenerContextManager listenerContextManager = new ListenerContextManager();
+        EasyEntityQuery easyEntityQuery = create2(listenerContextManager, new MySQLDatabaseConfiguration());
+        listenerContextManager.startCreateListen();
+
+        try {
+
+            TopicAuto entity = new TopicAuto();
+            entity.setStars(123);
+            entity.setTitle("123");
+
+            easyEntityQuery.insertable(entity).executeRows();
+        } catch (Exception ex) {
+        }
+
+        ListenerContext listenerContext = listenerContextManager.getListenContext();
+        listenerContextManager.clear();
+
+        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArg());
+        JdbcExecuteAfterArg jdbcExecuteAfterArg = listenerContext.getJdbcExecuteAfterArg();
+        Assert.assertEquals("INSERT INTO `t_topic_auto` (`stars`,`title`) VALUES (?,?)", jdbcExecuteAfterArg.getBeforeArg().getSql());
+        Assert.assertEquals("123(Integer),123(String)", EasySQLUtil.sqlParameterToString(jdbcExecuteAfterArg.getBeforeArg().getSqlParameters().get(0)));
+
+    }
 
     @Test
     public void nullOrDefaultMSSQL() {
