@@ -7,6 +7,7 @@ import com.easy.query.core.migration.ColumnDbTypeResult;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.migration.commands.DefaultMigrationCommand;
+import com.easy.query.core.migration.commands.MultiMigrationCommand;
 import com.easy.query.core.migration.data.ColumnMigrationData;
 import com.easy.query.core.migration.data.ForeignKeyMigrationData;
 import com.easy.query.core.migration.data.IndexMigrationData;
@@ -119,59 +120,35 @@ public class H2DatabaseMigrationProvider extends AbstractDatabaseMigrationProvid
             sql.deleteCharAt(sql.length() - 1);
         }
         sql.append(newLine).append(");");
-        // H2 不支持 MySQL 内联的表级 COMMENT='...' 语法，需使用独立的 COMMENT ON TABLE 语句
+        List<String> statements = new ArrayList<>();
+        statements.add(sql.toString());
         String tableComment = getTableComment(tableMigrationData, "'");
         if (EasyStringUtil.isNotBlank(tableComment)) {
-            sql.append(newLine)
-                    .append("COMMENT ON TABLE ")
-                    .append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()))
-                    .append(" IS ").append(tableComment).append(";");
+            statements.add("COMMENT ON TABLE "
+                    + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName())
+                    + " IS " + tableComment + ";");
         }
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(statements);
     }
 
     @Override
     protected MigrationCommand renameColumn(TableMigrationData table, String renameFrom, ColumnMigrationData column) {
-
-        StringBuilder sql = new StringBuilder();
-        sql.append("ALTER TABLE ").append(getQuoteSQLName(table.getSchema(), table.getTableName()))
-                .append(" CHANGE ").append(getQuoteSQLName(renameFrom))
-                .append(" ")
-                .append(getQuoteSQLName(column.getName())).append(" ");
-
-        ColumnDbTypeResult columnDbTypeResult = new ColumnDbTypeResult(column.getDbType(), column.getDefValue());
-        sql.append(columnDbTypeResult.columnType);
-        if (column.isNotNull()) {
-            sql.append(" NOT NULL");
-        } else {
-            sql.append(" NULL");
-        }
-
-        String columnComment = getColumnComment(column, "'");
-        if (EasyStringUtil.isNotBlank(columnComment)) {
-            sql.append(" COMMENT ").append(columnComment);
-        }
-        sql.append(";");
-        return new DefaultMigrationCommand(sql.toString());
+        return new DefaultMigrationCommand("ALTER TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName())
+                + " ALTER COLUMN " + getQuoteSQLName(renameFrom)
+                + " RENAME TO " + getQuoteSQLName(column.getName()) + ";");
     }
 
     @Override
     protected MigrationCommand addColumn(TableMigrationData table, ColumnMigrationData column) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("ALTER TABLE ").append(getQuoteSQLName(table.getSchema(), table.getTableName()))
-                .append(" ADD ").append(getQuoteSQLName(column.getName())).append(" ");
-
-        ColumnDbTypeResult columnDbTypeResult = new ColumnDbTypeResult(column.getDbType(), column.getDefValue());
-        sql.append(columnDbTypeResult.columnType);
-        if (column.isNotNull()) {
-            sql.append(" NOT NULL");
-        } else {
-            sql.append(" NULL");
+        StringBuilder sql = new StringBuilder("ALTER TABLE ")
+                .append(getQuoteSQLName(table.getSchema(), table.getTableName()))
+                .append(" ADD COLUMN ").append(getQuoteSQLName(column.getName())).append(" ")
+                .append(column.getDbType());
+        boolean hasDefault = EasyStringUtil.isNotBlank(column.getDefValue());
+        sql.append(column.isNotNull() && hasDefault ? " NOT NULL" : " NULL");
+        if (hasDefault) {
+            sql.append(" DEFAULT ").append(column.getDefValue());
         }
-        if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
-            sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
-        }
-
         String columnComment = getColumnComment(column, "'");
         if (EasyStringUtil.isNotBlank(columnComment)) {
             sql.append(" COMMENT ").append(columnComment);
@@ -194,7 +171,7 @@ public class H2DatabaseMigrationProvider extends AbstractDatabaseMigrationProvid
         } else {
             sql.append("INDEX ");
         }
-        sql.append(tableIndex.getIndexName());
+        sql.append(getQuoteSQLName(tableIndex.getIndexName()));
         sql.append(" ON ").append(getQuoteSQLName(table.getSchema(), table.getTableName()));
         sql.append(" (");
         StringJoiner joiner = new StringJoiner(",");

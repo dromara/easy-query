@@ -531,6 +531,7 @@ public class EntityMetadata {
 
         ColumnOption columnOption = new ColumnOption(false, this, columnName, propertyDescriptor.getName(), field.getName());
 
+        columnOption.setPropertyDescriptor(propertyDescriptor);
         columnOption.setSetterCaller(beanSetter);
         columnOption.setGetterCaller(fastBean.getBeanGetter(fastBeanProperty));
         columnOption.setValueConverter(valueConverter);

@@ -68,11 +68,16 @@ public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
                             migrationCommands.add(migrationCommand);
                         }
                         //新增修改删除表信息
-                        List<MigrationCommand> columns = databaseMigrationProvider.syncTable(tableMigrationData, false);
+                        List<MigrationCommand> columns = databaseMigrationProvider.syncTable(tableMigrationData, true);
                         if (columns != null) {
                             migrationCommands.addAll(columns);
                         }
-                        //判断是否要创建索引
+                        //同步外键
+                        List<MigrationCommand> tableForeignKeyCommands = databaseMigrationProvider.syncTableForeignKey(tableMigrationData, runtimeContext, true);
+                        migrationCommands.addAll(tableForeignKeyCommands);
+                        //同步索引
+                        List<MigrationCommand> tableIndexCommands = databaseMigrationProvider.syncTableIndex(tableMigrationData, true);
+                        migrationCommands.addAll(tableIndexCommands);
                     } else {
                         //表不存在就创建表
                         MigrationCommand migrationCommand = databaseMigrationProvider.createTable(tableMigrationData);

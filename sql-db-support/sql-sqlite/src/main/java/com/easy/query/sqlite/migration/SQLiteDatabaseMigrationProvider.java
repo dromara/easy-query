@@ -83,70 +83,47 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 
     @Override
     public MigrationCommand createTable(TableMigrationData tableMigrationData) {
+        List<ColumnMigrationData> primaryKeys = EasyCollectionUtil.filter(tableMigrationData.getColumns(), ColumnMigrationData::isPrimary);
+        List<ColumnMigrationData> generatedKeys = EasyCollectionUtil.filter(tableMigrationData.getColumns(), ColumnMigrationData::isGeneratedKey);
+        ColumnMigrationData autoKey = null;
+        if (generatedKeys.size() == 1 && primaryKeys.size() <= 1) {
+            autoKey = generatedKeys.get(0);
+        }
 
-        StringBuilder sql = new StringBuilder();
-        sql.append("CREATE TABLE IF NOT EXISTS ").append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName())).append(" ( ");
+        StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS ")
+                .append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()))
+                .append(" ( ");
         for (ColumnMigrationData column : tableMigrationData.getColumns()) {
-            sql.append(newLine)
-                    .append(getQuoteSQLName(column.getName()))
-                    .append(" ");
-            ColumnDbTypeResult columnDbTypeResult = new ColumnDbTypeResult(column.getDbType(), column.getDefValue());
-            sql.append(columnDbTypeResult.columnType);
-            if (column.isNotNull()) {
-                sql.append(" NOT NULL ");
-            } else {
-                sql.append(" NULL ");
+            sql.append(newLine).append(getQuoteSQLName(column.getName())).append(" ");
+            if (column == autoKey) {
+                sql.append("INTEGER PRIMARY KEY AUTOINCREMENT,");
+                continue;
             }
-//            if(column.isPrimary()){
-//                sql.append(" PRIMARY KEY");
-//            }
-            if (column.isGeneratedKey()) {
-                sql.append(" AUTOINCREMENT");
-            }else{
-                if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
-                    sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
-                }
+            sql.append(column.getDbType());
+            sql.append(column.isNotNull() ? " NOT NULL " : " NULL ");
+            if (EasyStringUtil.isNotBlank(column.getDefValue())) {
+                sql.append("DEFAULT ").append(column.getDefValue());
             }
-//            String columnComment = getColumnComment(entityMigrationMetadata, column);
-//            if (EasyStringUtil.isNotBlank(columnComment)) {
-//                sql.append(" COMMENT ").append(columnComment);
-//            }
             sql.append(",");
         }
-        List<ColumnMigrationData> keys = EasyCollectionUtil.filter(tableMigrationData.getColumns(), s -> s.isPrimary());
-        if (EasyCollectionUtil.isNotEmpty(keys)) {
-            sql.append(" ").append(newLine).append(" PRIMARY KEY (");
-            int i = keys.size();
-            for (ColumnMigrationData keyColumn : keys) {
-                i--;
-                sql.append(getQuoteSQLName(keyColumn.getName()));
-                if (i > 0) {
-                    sql.append(", ");
-                } else {
-                    sql.append(")");
-                }
-            }
-        }else{
-            sql.deleteCharAt(sql.length() - 1);
+        if (autoKey == null && EasyCollectionUtil.isNotEmpty(primaryKeys)) {
+            sql.append(" ").append(newLine).append(" PRIMARY KEY (")
+                    .append(primaryKeys.stream().map(key -> getQuoteSQLName(key.getName())).collect(Collectors.joining(", ")))
+                    .append("),");
         }
-        List<ForeignKeyMigrationData> foreignKeys = tableMigrationData.getForeignKeys();
-        if(EasyCollectionUtil.isNotEmpty(foreignKeys)){
-            for (ForeignKeyMigrationData foreignKeyMigrationData : foreignKeys) {
-                String selfColumns = Arrays.stream(foreignKeyMigrationData.getSelfColumn()).map(self -> getQuoteSQLName(self)).collect(Collectors.joining(","));
-                String targetColumns = Arrays.stream(foreignKeyMigrationData.getTargetColumn()).map(target -> getQuoteSQLName(target)).collect(Collectors.joining(","));
-                sql.append(newLine).append(",");
-                sql.append(" FOREIGN KEY (")
-                        .append(selfColumns)
-                        .append(") REFERENCES ")
-                        .append(getQuoteSQLName(foreignKeyMigrationData.getTargetTable()))
-                        .append("(")
-                        .append(targetColumns)
-                        .append(")");
-                if (EasyStringUtil.isNotBlank(foreignKeyMigrationData.getAction())) {
-                    sql.append(" ").append(foreignKeyMigrationData.getAction()).append(" ");
-                }
+        for (ForeignKeyMigrationData foreignKey : tableMigrationData.getForeignKeys()) {
+            String selfColumns = Arrays.stream(foreignKey.getSelfColumn())
+                    .map(this::getQuoteSQLName).collect(Collectors.joining(","));
+            String targetColumns = Arrays.stream(foreignKey.getTargetColumn())
+                    .map(this::getQuoteSQLName).collect(Collectors.joining(","));
+            sql.append(newLine).append(" FOREIGN KEY (").append(selfColumns).append(") REFERENCES ")
+                    .append(getQuoteSQLName(foreignKey.getTargetTable())).append("(").append(targetColumns).append(")");
+            if (EasyStringUtil.isNotBlank(foreignKey.getAction())) {
+                sql.append(" ").append(foreignKey.getAction());
             }
+            sql.append(",");
         }
+        sql.deleteCharAt(sql.length() - 1);
         sql.append(newLine).append(");");
         return new DefaultMigrationCommand(sql.toString());
     }
@@ -174,25 +151,16 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 
     @Override
     protected MigrationCommand addColumn(TableMigrationData table, ColumnMigrationData column) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("ALTER TABLE ").append(getQuoteSQLName(table.getSchema(), table.getTableName()))
-                .append(" ADD COLUMN ").append(getQuoteSQLName(column.getName())).append(" ");
-
-        ColumnDbTypeResult columnDbTypeResult = new ColumnDbTypeResult(column.getDbType(), column.getDefValue());
-        sql.append(columnDbTypeResult.columnType);
-        if (column.isNotNull()) {
+        StringBuilder sql = new StringBuilder("ALTER TABLE ")
+                .append(getQuoteSQLName(table.getSchema(), table.getTableName()))
+                .append(" ADD COLUMN ").append(getQuoteSQLName(column.getName())).append(" ").append(column.getDbType());
+        boolean hasDefault = EasyStringUtil.isNotBlank(column.getDefValue());
+        if (hasDefault) {
+            sql.append(" DEFAULT ").append(column.getDefValue());
+        }
+        if (column.isNotNull() && hasDefault) {
             sql.append(" NOT NULL");
-        } else {
-            sql.append(" NULL");
         }
-
-        if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
-            sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
-        }
-//        String columnComment = getColumnComment(entityMigrationMetadata, column);
-//        if (EasyStringUtil.isNotBlank(columnComment)) {
-//            sql.append(" COMMENT").append(columnComment);
-//        }
         sql.append(";");
         return new DefaultMigrationCommand(sql.toString());
     }

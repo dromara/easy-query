@@ -205,7 +205,7 @@ public class PgSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
         } else {
             sql.append("INDEX ");
         }
-        sql.append(tableIndex.getIndexName());
+        sql.append(getQuoteSQLName(tableIndex.getIndexName()));
         sql.append(" ON ").append(getQuoteSQLName(table.getSchema(), table.getTableName()));
         sql.append(" (");
         StringJoiner joiner = new StringJoiner(",");

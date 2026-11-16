@@ -7,6 +7,7 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.logging.Log;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.migration.MigrationCommand;
+import com.easy.query.core.migration.commands.MultiMigrationCommand;
 import com.easy.query.core.util.EasyStringUtil;
 
 import java.util.Collections;
@@ -23,50 +24,75 @@ public class DefaultCodeFirstCommand implements CodeFirstCommand {
     private static final Log log= LogFactory.getLog(DefaultCodeFirstCommand.class);
     private final QueryRuntimeContext runtimeContext;
     private final List<MigrationCommand> migrationCommands;
+    private final boolean executeIndividually;
 
     public DefaultCodeFirstCommand(QueryRuntimeContext runtimeContext, List<MigrationCommand> migrationCommands){
+        this(runtimeContext, migrationCommands, false);
+    }
+
+    protected DefaultCodeFirstCommand(QueryRuntimeContext runtimeContext, List<MigrationCommand> migrationCommands, boolean executeIndividually) {
         this.runtimeContext = runtimeContext;
         this.migrationCommands = migrationCommands;
+        this.executeIndividually = executeIndividually;
     }
 
     @Override
     public void executeWithEnvTransaction(Consumer<CodeFirstCommandArg> consumer) {
-        StringBuilder sql = new StringBuilder();
-        for (MigrationCommand migrationCommand : migrationCommands) {
-            sql.append(System.lineSeparator());
-            sql.append(migrationCommand.toSQL());
-        }
-        String executeSQL = sql.toString();
+        String executeSQL = getExecuteSQL();
         if(EasyStringUtil.isBlank(executeSQL)){
             log.info("execute sql is empty.");
             return;
         }
         consumer.accept(new DefaultCodeFirstCommandArg(executeSQL));
-        SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
-        long l = sqlClientApiFactory.createJdbcExecutor(runtimeContext).sqlExecute(executeSQL, Collections.emptyList());
+        execute(executeSQL);
     }
 
     @Override
     public void executeWithTransaction(Consumer<CodeFirstCommandTxArg> consumer) {
-
-        StringBuilder sql = new StringBuilder();
-        for (MigrationCommand migrationCommand : migrationCommands) {
-            sql.append(System.lineSeparator());
-            sql.append(migrationCommand.toSQL());
-        }
-        String executeSQL = sql.toString();
+        String executeSQL = getExecuteSQL();
         if(EasyStringUtil.isBlank(executeSQL)){
             log.info("execute sql is empty.");
             return;
         }
         ConnectionManager connectionManager = runtimeContext.getConnectionManager();
-        SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
         try(Transaction transaction = connectionManager.beginTransaction()){
             DefaultCodeFirstCommandTxArg codeFirstCommandTxArg = new DefaultCodeFirstCommandTxArg(executeSQL);
             consumer.accept(codeFirstCommandTxArg);
-
-            long l = sqlClientApiFactory.createJdbcExecutor(runtimeContext).sqlExecute(executeSQL, Collections.emptyList());
+            execute(executeSQL);
             codeFirstCommandTxArg.getTransactionConsumer().accept(transaction);
         }
+    }
+
+    private String getExecuteSQL() {
+        boolean executeStatementsIndividually = isExecuteIndividually();
+        StringBuilder sql = new StringBuilder();
+        for (MigrationCommand migrationCommand : migrationCommands) {
+            String commandSQL = migrationCommand.toSQL();
+            sql.append(System.lineSeparator());
+            sql.append(commandSQL);
+            if (executeStatementsIndividually && EasyStringUtil.isNotBlank(commandSQL) && !commandSQL.trim().endsWith(";")) {
+                sql.append(";");
+            }
+        }
+        return sql.toString();
+    }
+
+    private void execute(String executeSQL) {
+        SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
+        if (!isExecuteIndividually()) {
+            sqlClientApiFactory.createJdbcExecutor(runtimeContext).sqlExecute(executeSQL, Collections.emptyList());
+            return;
+        }
+        for (MigrationCommand migrationCommand : migrationCommands) {
+            for (String sql : migrationCommand.toSQLList()) {
+                if (EasyStringUtil.isNotBlank(sql)) {
+                    sqlClientApiFactory.createJdbcExecutor(runtimeContext).sqlExecute(sql, Collections.emptyList());
+                }
+            }
+        }
+    }
+
+    private boolean isExecuteIndividually() {
+        return executeIndividually || migrationCommands.stream().anyMatch(MultiMigrationCommand.class::isInstance);
     }
 }

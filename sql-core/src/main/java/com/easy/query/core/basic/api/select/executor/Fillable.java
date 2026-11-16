@@ -4,7 +4,6 @@ import com.easy.query.core.basic.api.select.Query;
 import com.easy.query.core.expression.lambda.SQLFuncExpression;
 import com.easy.query.core.expression.sql.fill.FillContext;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;

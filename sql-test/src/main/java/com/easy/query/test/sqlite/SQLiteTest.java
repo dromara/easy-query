@@ -6,6 +6,7 @@ import com.easy.query.test.cache.JsonUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MultiPrimaryEntity;
 import com.easy.query.test.entity.Topic;
+import com.easy.query.test.entity.TopicAuto;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -80,5 +81,28 @@ public class SQLiteTest extends SQLiteBaseTest{
                     ");",s.getSQL());
             s.commit();
         });
+    }
+
+    @Test
+    public void testAutoIncrementDDL() {
+        DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
+        databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(TopicAuto.class)).executeWithTransaction(s -> s.commit());
+        databaseCodeFirst.syncTableCommand(Arrays.asList(TopicAuto.class)).executeWithTransaction(s -> {
+            Assert.assertTrue(s.getSQL().contains("\"Id\" INTEGER PRIMARY KEY AUTOINCREMENT"));
+            Assert.assertFalse(s.getSQL().contains("PRIMARY KEY (\"Id\")"));
+            s.commit();
+        });
+
+        TopicAuto topicAuto = new TopicAuto();
+        topicAuto.setStars(1);
+        topicAuto.setTitle("sqlite-auto");
+        topicAuto.setCreateTime(LocalDateTime.now());
+        long rows = entityQuery.insertable(topicAuto).executeRows();
+        Assert.assertEquals(1, rows);
+        TopicAuto inserted = entityQuery.queryable(TopicAuto.class)
+                .where(t -> t.title().eq("sqlite-auto"))
+                .firstNotNull();
+        Assert.assertNotNull(inserted.getId());
+        Assert.assertTrue(inserted.getId() > 0);
     }
 }

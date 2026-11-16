@@ -2,10 +2,10 @@ package com.easy.query.mssql.migration;
 
 import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.migration.AbstractDatabaseMigrationProvider;
-import com.easy.query.core.migration.ColumnDbTypeResult;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.migration.commands.DefaultMigrationCommand;
+import com.easy.query.core.migration.commands.MultiMigrationCommand;
 import com.easy.query.core.migration.data.ColumnMigrationData;
 import com.easy.query.core.migration.data.ForeignKeyMigrationData;
 import com.easy.query.core.migration.data.IndexMigrationData;
@@ -79,71 +79,43 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
 
     @Override
     public MigrationCommand createTable(TableMigrationData tableMigrationData) {
+        String schema = tableMigrationData.getSchemaOrDefault("dbo");
+        String tableName = getQuoteSQLName(schema, tableMigrationData.getTableName());
+        List<ColumnMigrationData> primaryKeys = EasyCollectionUtil.filter(tableMigrationData.getColumns(), ColumnMigrationData::isPrimary);
+        List<String> statements = new ArrayList<>();
 
-        StringBuilder sql = new StringBuilder();
-        StringBuilder columnCommentSQL = new StringBuilder();
-
-//        String tableName = EasyToSQLUtil.getTableName(sqlKeyword, entityMetadata, entityMetadata.getTableName(), null);
-//        String schema = EasyToSQLUtil.getSchema(sqlKeyword, entityMetadata, entityMetadata.getSchemaOrNull(), null, null);
-//        String schemaWithoutDatabaseName = EasyToSQLUtil.getSchemaWithoutDatabaseName(entityMetadata, entityMetadata.getSchemaOrNull(), null, "dbo");
-
-        String tableComment = getTableComment(tableMigrationData, "");
-        if (EasyStringUtil.isNotBlank(tableComment)) {
-            String format = String.format("exec sp_addextendedproperty 'MS_Description', '%s', 'SCHEMA', '%s', 'TABLE', '%s'", tableComment, tableMigrationData.getSchemaOrDefault("dbo"), tableMigrationData.getTableName());
-            columnCommentSQL.append(newLine)
-                    .append(format)
-                    .append(newLine);
-        }
-
-        sql.append("USE ").append(getQuoteSQLName(this.getDatabaseName()))
-                .append(newLine);
-        sql.append("CREATE TABLE ").append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName())).append(" ( ");
-        int i = tableMigrationData.getColumns().size();
+        StringBuilder sql = new StringBuilder("CREATE TABLE ").append(tableName).append(" ( ");
         for (ColumnMigrationData column : tableMigrationData.getColumns()) {
-            i--;
-            sql.append(newLine)
-                    .append(getQuoteSQLName(column.getName()))
-                    .append(" ");
-            ColumnDbTypeResult columnDbTypeResult = new ColumnDbTypeResult(column.getDbType(), column.getDefValue());
-            sql.append(columnDbTypeResult.columnType);
-            if (column.isNotNull()) {
-                sql.append(" NOT NULL ");
-            } else {
-                sql.append(" NULL ");
-            }
+            sql.append(newLine).append(getQuoteSQLName(column.getName())).append(" ").append(column.getDbType());
             if (column.isGeneratedKey()) {
                 sql.append(" IDENTITY(1,1)");
-            }else{
-                if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
-                    sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
-                }
             }
-            if (column.isPrimary()) {
-                sql.append(" PRIMARY KEY ");
+            sql.append(column.isNotNull() ? " NOT NULL " : " NULL ");
+            if (!column.isGeneratedKey() && EasyStringUtil.isNotBlank(column.getDefValue())) {
+                sql.append(" DEFAULT ").append(column.getDefValue());
             }
-            String columnComment = getColumnComment(column, "");
-//            exec sp_addextendedproperty 'MS_Description', '微信唯一识别码', 'SCHEMA', 'dbo', 'TABLE', 'Base_User', 'COLUMN', 'OpenId'
-//            go
-            if (EasyStringUtil.isNotBlank(columnComment)) {
-                String format = String.format("exec sp_addextendedproperty 'MS_Description', '%s', 'SCHEMA', '%s', 'TABLE', '%s', 'COLUMN', '%s'", columnComment, tableMigrationData.getSchemaOrDefault("dbo"), tableMigrationData.getTableName(), column.getName());
-                columnCommentSQL.append(newLine)
-                        .append(format)
-                        .append(newLine);
-//                        .append("exec sp_addextendedproperty 'MS_Description', '").append(columnComment).append("', 'SCHEMA', '").append(schemaWithoutDatabaseName).append("', 'TABLE', '").append(entityMetadata.getTableName()).append("', 'COLUMN', '").append().append("'")
-//                        .append(tableName).append(".").append(getQuoteSQLName(column.getName()))
-//                        .append(" IS ").append(columnComment).append(";");
-            }
-            if (i > 0) {
-                sql.append(",");
-            }
+            sql.append(",");
         }
+        if (EasyCollectionUtil.isNotEmpty(primaryKeys)) {
+            sql.append(newLine).append("CONSTRAINT ")
+                    .append(getQuoteSQLName(truncate(tableMigrationData.getTableName() + "_PK", 128)))
+                    .append(" PRIMARY KEY (")
+                    .append(primaryKeys.stream().map(key -> getQuoteSQLName(key.getName())).collect(Collectors.joining(",")))
+                    .append("),");
+        }
+        sql.deleteCharAt(sql.length() - 1);
         sql.append(newLine).append(")");
-        if (columnCommentSQL.length() > 0) {
-            sql.append(newLine).append(columnCommentSQL);
-        }
-        sql.append(";");
+        statements.add(sql.toString());
 
-        return new DefaultMigrationCommand(sql.toString());
+        if (EasyStringUtil.isNotBlank(tableMigrationData.getComment())) {
+            statements.add(tableComment(schema, tableMigrationData.getTableName(), tableMigrationData.getComment()));
+        }
+        for (ColumnMigrationData column : tableMigrationData.getColumns()) {
+            if (EasyStringUtil.isNotBlank(column.getComment())) {
+                statements.add(columnComment(schema, tableMigrationData.getTableName(), column.getName(), column.getComment()));
+            }
+        }
+        return new MultiMigrationCommand(statements);
     }
 
     @Override
@@ -174,32 +146,24 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
 
     @Override
     protected MigrationCommand addColumn(TableMigrationData table, ColumnMigrationData column) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("ALTER TABLE ").append(getQuoteSQLName(table.getSchema(), table.getTableName()))
-                .append(" ADD ").append(getQuoteSQLName(column.getName())).append(" ");
-
-        ColumnDbTypeResult columnDbTypeResult = new ColumnDbTypeResult(column.getDbType(), column.getDefValue());
-        sql.append(columnDbTypeResult.columnType);
-        if (column.isNotNull()) {
+        String schema = table.getSchemaOrDefault("dbo");
+        StringBuilder sql = new StringBuilder("ALTER TABLE ")
+                .append(getQuoteSQLName(schema, table.getTableName()))
+                .append(" ADD ").append(getQuoteSQLName(column.getName())).append(" ").append(column.getDbType());
+        boolean hasDefault = EasyStringUtil.isNotBlank(column.getDefValue());
+        if (hasDefault) {
+            sql.append(" DEFAULT ").append(column.getDefValue());
+        }
+        if (column.isNotNull() && hasDefault) {
             sql.append(" NOT NULL");
-        } else {
-            sql.append(" NULL");
         }
-        if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
-            sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
+        if (EasyStringUtil.isBlank(column.getComment())) {
+            return new DefaultMigrationCommand(sql.toString());
         }
-        sql.append(newLine);
-
-
-//        exec sp_addextendedproperty 'MS_Description', '123', 'SCHEMA', 'dbo', 'TABLE', 'Base_User', 'COLUMN', 'column_35'
-//        go
-        String columnComment = getColumnComment(column, "");
-        if (EasyStringUtil.isNotBlank(columnComment)) {
-
-            String format = String.format("exec sp_addextendedproperty 'MS_Description', '%s', 'SCHEMA', '%s', 'TABLE', '%s', 'COLUMN', '%s'", columnComment, table.getSchemaOrDefault("dbo"), table.getTableName(), column.getName());
-            sql.append(format).append(newLine);
-        }
-        return new DefaultMigrationCommand(sql.toString());
+        List<String> statements = new ArrayList<>();
+        statements.add(sql.toString());
+        statements.add(columnComment(schema, table.getTableName(), column.getName(), column.getComment()));
+        return new MultiMigrationCommand(statements);
     }
 
 
@@ -208,40 +172,48 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
         return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName()) + ";");
     }
 
-//    create index SysApp_enable_index
-//    on dbo.SysApp (enable)
-//    go
-//
-//    exec sp_addextendedproperty 'MS_Description', N'启用索引', 'SCHEMA', 'dbo', 'TABLE', 'SysApp', 'INDEX', 'SysApp_enable_index'
-//    go
-//
-
     @Override
     protected MigrationCommand createIndex(TableMigrationData table, IndexMigrationData tableIndex) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("CREATE ");
-        if (tableIndex.isUnique()) {
-            sql.append("UNIQUE INDEX ");
-        } else {
-            sql.append("INDEX ");
-        }
-        sql.append(tableIndex.getIndexName());
-        sql.append(" ON ").append(getQuoteSQLName(table.getSchema(), table.getTableName()));
-        sql.append(" (");
+        StringBuilder sql = new StringBuilder("CREATE ");
+        sql.append(tableIndex.isUnique() ? "UNIQUE INDEX " : "INDEX ");
+        sql.append(tableIndex.getIndexName()).append(" ON ")
+                .append(getQuoteSQLName(table.getSchemaOrDefault("dbo"), table.getTableName())).append(" (");
         StringJoiner joiner = new StringJoiner(",");
-        for (int i = 0; i < tableIndex.getFields().size(); i++) {
-            IndexMigrationData.EntityField entityField = tableIndex.getFields().get(i);
-            String column = getQuoteSQLName(entityField.getColumnName()) + " " + (entityField.isAsc() ? "ASC" : "DESC");
-            joiner.add(column);
+        for (IndexMigrationData.EntityField field : tableIndex.getFields()) {
+            joiner.add(getQuoteSQLName(field.getColumnName()) + (field.isAsc() ? " ASC" : " DESC"));
         }
-        sql.append(joiner);
-        sql.append(");");
-        if(EasyStringUtil.isNotBlank(tableIndex.getComment())){
-            sql.append(newLine);
-            String indexDesc = String.format("exec sp_addextendedproperty 'MS_Description', '%s', 'SCHEMA', '%s', 'TABLE', '%s', 'INDEX', '%s'", tableIndex.getComment(), table.getSchemaOrDefault("dbo"), table.getTableName(), tableIndex.getIndexName());
-            sql.append(indexDesc);
+        sql.append(joiner).append(")");
+        if (EasyStringUtil.isBlank(tableIndex.getComment())) {
+            return new DefaultMigrationCommand(sql.toString());
         }
-        return new DefaultMigrationCommand(sql.toString());
+        List<String> statements = new ArrayList<>();
+        statements.add(sql.toString());
+        statements.add(indexComment(table.getSchemaOrDefault("dbo"), table.getTableName(), tableIndex.getIndexName(), tableIndex.getComment()));
+        return new MultiMigrationCommand(statements);
+    }
+
+    private String indexComment(String schema, String tableName, String indexName, String comment) {
+        return "EXEC sp_addextendedproperty 'MS_Description', N'" + escape(comment)
+                + "', 'SCHEMA', N'" + schema + "', 'TABLE', N'" + tableName
+                + "', 'INDEX', N'" + indexName + "'";
+    }
+
+    private String tableComment(String schema, String tableName, String comment) {
+        return "EXEC sp_addextendedproperty 'MS_Description', N'" + escape(comment)
+                + "', 'SCHEMA', N'" + schema + "', 'TABLE', N'" + tableName + "'";
+    }
+
+    private String columnComment(String schema, String tableName, String columnName, String comment) {
+        return "EXEC sp_addextendedproperty 'MS_Description', N'" + escape(comment)
+                + "', 'SCHEMA', N'" + schema + "', 'TABLE', N'" + tableName + "', 'COLUMN', N'" + columnName + "'";
+    }
+
+    private String truncate(String name, int maxLength) {
+        return name.length() <= maxLength ? name : name.substring(0, maxLength);
+    }
+
+    private String escape(String text) {
+        return text.replace("'", "''");
     }
     @Override
     protected MigrationCommand createTableForeignKey(TableMigrationData table, ForeignKeyMigrationData foreignKey) {

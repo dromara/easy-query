@@ -3,6 +3,7 @@ package com.easy.query.test;
 import com.easy.query.api.proxy.base.StringProxy;
 import com.easy.query.core.api.pagination.EasyPageResult;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
+import com.easy.query.core.enums.EasyBehaviorEnum;
 import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.sql.GroupKeys;
@@ -31,6 +32,7 @@ import com.easy.query.test.entity.base.Area;
 import com.easy.query.test.entity.base.City;
 import com.easy.query.test.entity.base.MyProvinceVO;
 import com.easy.query.test.entity.base.Province;
+import com.easy.query.test.entity.base.ProvinceDTO2;
 import com.easy.query.test.entity.base.proxy.CityProxy;
 import com.easy.query.test.entity.base.proxy.MyProvinceVOProxy;
 import com.easy.query.test.entity.base.proxy.ProvinceProxy;
@@ -3220,6 +3222,29 @@ public class RelationTest extends BaseTest {
             }
         }
     }
+//    @Test
+//    public void provinceTest4_1() {
+//
+//        ListenerContext listenerContext = new ListenerContext(true);
+//        listenerContextManager.startListen(listenerContext);
+//
+//        List<ProvinceDTO2> list = easyEntityQuery.queryable(Province.class)
+//                .select(ProvinceDTO2.class)
+//                .fillMany(() -> {
+//                    return easyEntityQuery.queryable(City.class).configure(s->s.getBehavior().add(EasyBehaviorEnum.SMART_PREDICATE)).select(ProvinceDTO2.InternalCities.class).limit(1);
+//                }, CityProxy.TABLE.provinceCode().getValue(), ProvinceProxy.TABLE.code().getValue(), (x, y) -> {
+//                    x.setCities(new ArrayList<>(y));
+//                }, false).toList();
+//
+//        Assert.assertNotNull(listenerContext.getJdbcExecuteAfterArgs());
+//        Assert.assertEquals(2, listenerContext.getJdbcExecuteAfterArgs().size());
+//        Assert.assertEquals("SELECT `code`,`name` FROM `t_province`", listenerContext.getJdbcExecuteAfterArgs().get(0).getBeforeArg().getSql());
+////        Assert.assertEquals("%123%(String)", EasySQLUtil.sqlParameterToString(listenerContext.getJdbcExecuteAfterArgs().get(0).getBeforeArg().getSqlParameters().get(0)));
+//        Assert.assertEquals("SELECT t1.`code`,t1.`province_code`,t1.`name` FROM ( (SELECT t.`code`,t.`province_code`,t.`name` FROM `t_city` t WHERE t.`code` = ? LIMIT 2)  UNION ALL  (SELECT t.`code`,t.`province_code`,t.`name` FROM `t_city` t WHERE t.`code` = ? AND t.`province_code` = ? LIMIT 2) ) t1", listenerContext.getJdbcExecuteAfterArgs().get(1).getBeforeArg().getSql());
+//        Assert.assertEquals("3306(String),3306(String),33(String)", EasySQLUtil.sqlParameterToString(listenerContext.getJdbcExecuteAfterArgs().get(1).getBeforeArg().getSqlParameters().get(0)));
+//        listenerContextManager.clear();
+////
+//    }
 //    @Test
 //    public void provinceTest3() {
 //

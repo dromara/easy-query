@@ -1,13 +1,13 @@
 package com.easy.query.dameng.migration;
 
 import com.easy.query.core.basic.api.database.Credentials;
-import com.easy.query.core.basic.api.database.TableInfo;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
+import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.migration.AbstractDatabaseMigrationProvider;
-import com.easy.query.core.migration.ColumnDbTypeResult;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.migration.commands.DefaultMigrationCommand;
+import com.easy.query.core.migration.commands.MultiMigrationCommand;
 import com.easy.query.core.migration.data.ColumnMigrationData;
 import com.easy.query.core.migration.data.ForeignKeyMigrationData;
 import com.easy.query.core.migration.data.IndexMigrationData;
@@ -17,9 +17,12 @@ import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.core.util.EasyStringUtil;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.function.Function;
@@ -69,195 +72,148 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 
 
     @Override
+    public String getDatabaseName() {
+        if (databaseName == null) {
+            try (Connection connection = dataSource.getConnection()) {
+                String user = connection.getMetaData().getUserName();
+                if (EasyStringUtil.isBlank(user)) {
+                    throw new EasyQueryInvalidOperationException("cant get database user name.");
+                }
+                databaseName = user.toUpperCase(Locale.ROOT);
+            } catch (SQLException e) {
+                throw new EasyQueryInvalidOperationException("cant get database user name: " + e.getMessage());
+            }
+        }
+        return databaseName;
+    }
+
+    @Override
     public boolean tableExists(String schema,String tableName) {
         ArrayList<Object> sqlParameters = new ArrayList<>();
-        if(EasyStringUtil.isBlank(schema)){
-            sqlParameters.add("SYSDBA");
-        }else{
-            sqlParameters.add(schema);
-        }
+        sqlParameters.add(EasyStringUtil.isBlank(schema) ? getDatabaseName() : schema);
         sqlParameters.add(tableName);
-        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select * from all_tab_comments where owner=? and table_name=?", sqlParameters);
+        List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "select 1 from all_tab_comments where owner=? and table_name=?", sqlParameters);
         return EasyCollectionUtil.isNotEmpty(maps);
     }
     @Override
     public MigrationCommand renameTable(TableMigrationData tableMigrationData) {
-        String sql = String.format("execute immediate 'ALTER TABLE %s RENAME TO  %s';", getQuoteSQLName(tableMigrationData.getSchema(),tableMigrationData.getOldTableName()), getQuoteSQLName(tableMigrationData.getSchema(),tableMigrationData.getTableName()));
+        String sql = "ALTER TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getOldTableName())
+                + " RENAME TO " + getQuoteSQLName(tableMigrationData.getTableName());
         return new DefaultMigrationCommand(sql);
     }
 
     @Override
     public MigrationCommand createTable(TableMigrationData tableMigrationData) {
+        String tableName = getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName());
+        List<ColumnMigrationData> primaryKeys = EasyCollectionUtil.filter(tableMigrationData.getColumns(), ColumnMigrationData::isPrimary);
+        List<String> statements = new ArrayList<>();
 
-        StringBuilder sql = new StringBuilder();
-//        sql.append("BEGIN")
-//                .append(newLine);
-        StringBuilder columnCommentSQL = new StringBuilder();
-
-
-        String tableComment = getTableComment(tableMigrationData,"''");
-        if (EasyStringUtil.isNotBlank(tableComment)) {
-            String format = String.format("execute immediate 'COMMENT ON TABLE %s IS %s';", getQuoteSQLName(tableMigrationData.getSchema(),tableMigrationData.getTableName()), tableComment);
-            columnCommentSQL.append(newLine)
-                    .append(format)
-                    .append(newLine);
-        }
-
-        sql.append("execute immediate 'CREATE TABLE ").append(getQuoteSQLName(tableMigrationData.getSchema(),tableMigrationData.getTableName())).append(" ( ");
+        StringBuilder sql = new StringBuilder("CREATE TABLE ").append(tableName).append(" ( ");
         for (ColumnMigrationData column : tableMigrationData.getColumns()) {
-            sql.append(newLine)
-                    .append(getQuoteSQLName(column.getName()))
-                    .append(" ");
-            ColumnDbTypeResult columnDbTypeResult = new ColumnDbTypeResult(column.getDbType(), column.getDefValue());
-            sql.append(columnDbTypeResult.columnType);
-//            boolean nullable = migrationEntityParser.isNullable(entityMigrationMetadata, column);
+            sql.append(newLine).append(getQuoteSQLName(column.getName())).append(" ");
+            if (column.isGeneratedKey()) {
+                sql.append("BIGINT IDENTITY(1,1) NOT NULL,");
+                continue;
+            }
+            sql.append(column.getDbType());
             if (column.isNotNull()) {
                 sql.append(" NOT NULL ");
-            } else {
-                sql.append(" NULL ");
             }
-            if (column.isGeneratedKey()) {
-                sql.append(" GENERATED BY DEFAULT AS IDENTITY ");
-            }else{
-                if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
-                    sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
-                }
-            }
-//            if (column.isGeneratedKey()) {
-//                sql.append(" GENERATED BY DEFAULT AS IDENTITY");
-//            }
-            String columnComment = getColumnComment(column,"''");
-            if (EasyStringUtil.isNotBlank(columnComment)) {
-                String format = String.format("execute immediate 'COMMENT ON COLUMN %s.%s IS %s';", getQuoteSQLName(tableMigrationData.getSchema(),tableMigrationData.getTableName()), getQuoteSQLName(column.getName()), columnComment);
-                columnCommentSQL.append(newLine)
-                        .append(format);
+            if (EasyStringUtil.isNotBlank(column.getDefValue())) {
+                sql.append(" DEFAULT ").append(column.getDefValue());
             }
             sql.append(",");
         }
-        List<ColumnMigrationData> keys = EasyCollectionUtil.filter(tableMigrationData.getColumns(), s -> s.isPrimary());
-        if (EasyCollectionUtil.isNotEmpty(keys)) {
-            sql.append(newLine)
-                    .append(" CONSTRAINT ").append(getQuoteSQLName(tableMigrationData.getTableName()+"_primary_key")).append(" ").append(" PRIMARY KEY (");
-            int i = keys.size();
-            for (ColumnMigrationData keyColumn : keys) {
-                i--;
-                sql.append(getQuoteSQLName(keyColumn.getName()));
-                if (i > 0) {
-                    sql.append(", ");
-                } else {
-                    sql.append(")");
-                }
-            }
-        }else{
-            sql.deleteCharAt(sql.length() - 1);
+        if (EasyCollectionUtil.isNotEmpty(primaryKeys)) {
+            sql.append(newLine).append("CONSTRAINT ")
+                    .append(getQuoteSQLName(truncate(tableMigrationData.getTableName() + "_PK", 30)))
+                    .append(" PRIMARY KEY (")
+                    .append(primaryKeys.stream().map(key -> getQuoteSQLName(key.getName())).collect(Collectors.joining(",")))
+                    .append("),");
         }
-//        sql.append(newLine).append(")");
-        sql.append(newLine).append(") LOGGING ';");
-        if(columnCommentSQL.length()>0){
-            sql.append(newLine).append(columnCommentSQL);
-        }
+        sql.deleteCharAt(sql.length() - 1);
+        sql.append(newLine).append(")");
+        statements.add(sql.toString());
 
-//        sql.append(newLine).append("END;");
-        return new DefaultMigrationCommand(sql.toString());
+        if (EasyStringUtil.isNotBlank(tableMigrationData.getComment())) {
+            statements.add("COMMENT ON TABLE " + tableName + " IS '" + escape(tableMigrationData.getComment()) + "'");
+        }
+        for (ColumnMigrationData column : tableMigrationData.getColumns()) {
+            if (EasyStringUtil.isNotBlank(column.getComment())) {
+                statements.add("COMMENT ON COLUMN " + tableName + "." + getQuoteSQLName(column.getName())
+                        + " IS '" + escape(column.getComment()) + "'");
+            }
+        }
+        return new MultiMigrationCommand(statements);
     }
 
     @Override
     protected MigrationCommand renameColumn(TableMigrationData table, String renameFrom, ColumnMigrationData column) {
-        String sql = String.format("execute immediate 'ALTER TABLE %s RENAME COLUMN %s TO  %s';", getQuoteSQLName(table.getSchema(),table.getTableName()), getQuoteSQLName(renameFrom), getQuoteSQLName(column.getName()));
-//
-//        ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
-//        sql.append(columnDbTypeResult.columnType);
-//        if (isNullable(entityMigrationMetadata, column)) {
-//            sql.append(" NULL");
-//        } else {
-//            sql.append(" NOT NULL");
-//        }
-
-//        String columnComment = getColumnComment(entityMigrationMetadata, column);
-//        if (EasyStringUtil.isNotBlank(columnComment)) {
-//            sql.append(newLine);
-//            sql.append(" COMMENT ON COLUMN ").append(tableName).append(" IS ").append(columnComment);
-//            sql.append(";");
-//        }
+        String sql = "ALTER TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName())
+                + " RENAME COLUMN " + getQuoteSQLName(renameFrom) + " TO " + getQuoteSQLName(column.getName());
         return new DefaultMigrationCommand(sql);
     }
 
     @Override
-    protected MigrationCommand addColumn(TableMigrationData entityMigrationMetadata, ColumnMigrationData column) {
-        StringBuilder sql = new StringBuilder();
-        String format = String.format("execute immediate 'ALTER TABLE %s ADD (", getQuoteSQLName(entityMigrationMetadata.getSchema(),entityMigrationMetadata.getTableName()));
-        sql.append(format).append(getQuoteSQLName(column.getName()));
-
-        ColumnDbTypeResult columnDbTypeResult = new ColumnDbTypeResult(column.getDbType(), column.getDefValue());
-        sql.append(columnDbTypeResult.columnType);
-        if (column.isNotNull()) {
-            sql.append(" NOT NULL");
-        } else {
-            sql.append(" NULL");
+    protected MigrationCommand addColumn(TableMigrationData table, ColumnMigrationData column) {
+        StringBuilder sql = new StringBuilder("ALTER TABLE ")
+                .append(getQuoteSQLName(table.getSchema(), table.getTableName()))
+                .append(" ADD ").append(getQuoteSQLName(column.getName())).append(" ").append(column.getDbType());
+        boolean hasDefault = EasyStringUtil.isNotBlank(column.getDefValue());
+        if (hasDefault) {
+            sql.append(" DEFAULT ").append(column.getDefValue());
         }
-        if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
-            sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
-        }
-        sql.append(")';");
-//
-//        String columnComment = getColumnComment(entityMigrationMetadata, column);
-//        if (EasyStringUtil.isNotBlank(columnComment)) {
-//            sql.append(newLine);
-//            sql.append(" COMMENT ON COLUMN ").append(tableName).append(" IS ").append(columnComment);
-//            sql.append(";");
-//        }
+        sql.append(column.isNotNull() && hasDefault ? " NOT NULL" : " NULL");
         return new DefaultMigrationCommand(sql.toString());
     }
 
 
     @Override
-    public MigrationCommand dropTable(TableMigrationData tableMigrationData) {
-        return new DefaultMigrationCommand("execute immediate 'DROP TABLE " + getQuoteSQLName(tableMigrationData.getSchema(),tableMigrationData.getTableName()) + "';");
+    public MigrationCommand dropTable(TableMigrationData table) {
+        return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName()));
     }
     @Override
     protected MigrationCommand createIndex(TableMigrationData table, IndexMigrationData tableIndex) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("execute immediate 'CREATE ");
-        if (tableIndex.isUnique()) {
-            sql.append("UNIQUE INDEX ");
-        } else {
-            sql.append("INDEX ");
-        }
-        sql.append(tableIndex.getIndexName());
-        sql.append(" ON ").append(getQuoteSQLName(table.getSchema(), table.getTableName()));
-        sql.append(" (");
+        StringBuilder sql = new StringBuilder("CREATE ");
+        sql.append(tableIndex.isUnique() ? "UNIQUE INDEX " : "INDEX ");
+        sql.append(getQuoteSQLName(tableIndex.getIndexName())).append(" ON ")
+                .append(getQuoteSQLName(table.getSchema(), table.getTableName())).append(" (");
         StringJoiner joiner = new StringJoiner(",");
-        for (int i = 0; i < tableIndex.getFields().size(); i++) {
-            IndexMigrationData.EntityField entityField = tableIndex.getFields().get(i);
-            String column = getQuoteSQLName(entityField.getColumnName()) + " " + (entityField.isAsc() ? "ASC" : "DESC");
-            joiner.add(column);
+        for (IndexMigrationData.EntityField field : tableIndex.getFields()) {
+            joiner.add(getQuoteSQLName(field.getColumnName()) + (field.isAsc() ? " ASC" : " DESC"));
         }
-        sql.append(joiner);
-        sql.append(")';");
+        sql.append(joiner).append(")");
         return new DefaultMigrationCommand(sql.toString());
     }
     @Override
-    protected MigrationCommand createTableForeignKey(TableMigrationData tableMigrationData, ForeignKeyMigrationData foreignKeyMigrationData) {
+    protected MigrationCommand createTableForeignKey(TableMigrationData table, ForeignKeyMigrationData foreignKey) {
         StringBuilder sql = new StringBuilder();
-        sql.append("execute immediate 'ALTER TABLE ");
-        sql.append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()));
-        sql.append(" ADD CONSTRAINT ").append(foreignKeyMigrationData.getName());
+        sql.append("ALTER TABLE ");
+        sql.append(getQuoteSQLName(table.getSchema(), table.getTableName()));
+        sql.append(" ADD CONSTRAINT ").append(foreignKey.getName());
         sql.append(" FOREIGN KEY (");
 
-        String selfColumns = Arrays.stream(foreignKeyMigrationData.getSelfColumn()).map(self -> getQuoteSQLName(self)).collect(Collectors.joining(","));
+        String selfColumns = Arrays.stream(foreignKey.getSelfColumn()).map(self -> getQuoteSQLName(self)).collect(Collectors.joining(","));
         sql.append(selfColumns);
         sql.append(") REFERENCES ");
-        sql.append(getQuoteSQLName(foreignKeyMigrationData.getTargetTable()));
+        sql.append(getQuoteSQLName(foreignKey.getTargetTable()));
         sql.append(" (");
-        String targetColumns = Arrays.stream(foreignKeyMigrationData.getTargetColumn()).map(target -> getQuoteSQLName(target)).collect(Collectors.joining(","));
+        String targetColumns = Arrays.stream(foreignKey.getTargetColumn()).map(target -> getQuoteSQLName(target)).collect(Collectors.joining(","));
         sql.append(targetColumns);
         sql.append(")");
 
-        if (EasyStringUtil.isNotBlank(foreignKeyMigrationData.getAction())) {
-            sql.append(" ").append(foreignKeyMigrationData.getAction()).append(" ");
+        if (EasyStringUtil.isNotBlank(foreignKey.getAction())) {
+            sql.append(" ").append(foreignKey.getAction()).append(" ");
         }
-        sql.append("';");
         return new DefaultMigrationCommand(sql.toString());
+    }
+
+    private String truncate(String name, int maxLength) {
+        return name.length() <= maxLength ? name : name.substring(0, maxLength);
+    }
+
+    private String escape(String text) {
+        return text.replace("'", "''");
     }
 
     @Override

@@ -6,6 +6,8 @@ import com.easy.query.api.proxy.entity.select.EntityQueryable4;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
+import com.easy.query.core.migration.data.ColumnMigrationData;
+import com.easy.query.core.migration.data.TableMigrationData;
 import com.easy.query.test.entity.MultiPrimaryEntity;
 import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
@@ -809,5 +811,50 @@ public class H2QueryTest extends H2BaseTest {
             Assert.assertFalse(ddl.contains("COMMENT="));
             s.commit();
         });
+    }
+
+    @Test
+    public void testRenameTableAndColumnDDL() {
+        DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
+        TableMigrationData oldTable = migrationTable("T_CODE_FIRST_OLD", null);
+        TableMigrationData newTable = migrationTable("T_CODE_FIRST_NEW", "T_CODE_FIRST_OLD");
+        databaseCodeFirst.dropTableIfExistsCommandByMigrationData(Arrays.asList(oldTable, newTable))
+                .executeWithTransaction(s -> s.commit());
+        databaseCodeFirst.syncTableCommandByMigrationData(Arrays.asList(oldTable))
+                .executeWithTransaction(s -> s.commit());
+
+        databaseCodeFirst.syncTableCommandByMigrationData(Arrays.asList(newTable)).executeWithTransaction(s -> {
+            Assert.assertTrue(s.getSQL().contains("ALTER TABLE T_CODE_FIRST_OLD RENAME TO T_CODE_FIRST_NEW;"));
+            Assert.assertFalse(s.getSQL().contains(" ADD "));
+            s.commit();
+        });
+        Assert.assertTrue(databaseCodeFirst.tableExistsByMigrationData(newTable));
+
+        TableMigrationData renameColumnTable = migrationTable("T_CODE_FIRST_NEW", null);
+        ColumnMigrationData renamedColumn = renameColumnTable.getColumns().get(1);
+        renamedColumn.setName("TITLE");
+        renamedColumn.setOldColumnName("NAME");
+        databaseCodeFirst.syncTableCommandByMigrationData(Arrays.asList(renameColumnTable)).executeWithTransaction(s -> {
+            Assert.assertTrue(s.getSQL().contains("ALTER TABLE T_CODE_FIRST_NEW ALTER COLUMN NAME RENAME TO TITLE;"));
+            s.commit();
+        });
+        databaseCodeFirst.dropTableIfExistsCommandByMigrationData(Arrays.asList(renameColumnTable))
+                .executeWithTransaction(s -> s.commit());
+    }
+
+    private TableMigrationData migrationTable(String tableName, String oldTableName) {
+        TableMigrationData table = new TableMigrationData();
+        table.setTableName(tableName);
+        table.setOldTableName(oldTableName);
+        ColumnMigrationData id = new ColumnMigrationData();
+        id.setName("ID");
+        id.setDbType("INT");
+        id.setPrimary(true);
+        id.setNotNull(true);
+        ColumnMigrationData name = new ColumnMigrationData();
+        name.setName("NAME");
+        name.setDbType("VARCHAR(255)");
+        table.setColumns(new ArrayList<>(Arrays.asList(id, name)));
+        return table;
     }
 }
