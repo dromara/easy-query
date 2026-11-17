@@ -58,7 +58,7 @@ public class MigrationPgTest {
             System.out.println("存在表:MyMigrationBlog0");
             boolean any = easyEntityQuery.queryable(MyMigrationBlog0.class).any();
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(MyMigrationBlog0.class));
-            codeFirstCommand.executeWithTransaction(arg -> {
+            codeFirstCommand.forEach(arg -> {
                 System.out.println("执行删除");
                 System.out.println(arg.getSQL());
             });
@@ -67,7 +67,7 @@ public class MigrationPgTest {
         }
 
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MyMigrationBlog0.class));
-        codeFirstCommand.executeWithTransaction(arg -> {
+        codeFirstCommand.forEach(arg -> {
             System.out.println(arg.getSQL());
             String md5 = MD5Util.getMD5Hash(arg.getSQL());
             System.out.println("sql-hash:"+md5);
@@ -77,7 +77,7 @@ public class MigrationPgTest {
         boolean any = easyEntityQuery.queryable(MyMigrationBlog0.class).any();
         Assert.assertFalse(any);
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.dropTableCommand(Arrays.asList(MyMigrationBlog0.class));
-        codeFirstCommand1.executeWithEnvTransaction(arg->{
+        codeFirstCommand1.forEach(arg->{
             System.out.println("执行删除");
             System.out.println(arg.getSQL());
         });

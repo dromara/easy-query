@@ -4,7 +4,6 @@ import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.proxy.core.draft.Draft1;
 import com.easy.query.core.proxy.sql.Select;
-import com.easy.query.test.mysql8.entity.TopicJson;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +23,7 @@ public class JsonTest extends PgSQLBaseTest{
         DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(PgTopicJson.class));
-        codeFirstCommand.executeWithTransaction(s->s.commit());
+        codeFirstCommand.forEach(s->s.commit());
         {
             entityQuery.deletable(PgTopicJson.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
         }

@@ -54,19 +54,19 @@ public class MsSQLQueryTest extends MsSQLBaseTest {
 
             DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MsSQLCalc.class));
-            codeFirstCommand.executeWithTransaction(s -> s.commit());
+            codeFirstCommand.forEach(s -> s.commit());
         }
         {
 
             DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(MsSQLCalc.class));
-            codeFirstCommand.executeWithTransaction(s -> s.commit());
+            codeFirstCommand.forEach(s -> s.commit());
         }
         {
 
             DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MsSQLCalc.class));
-            codeFirstCommand.executeWithTransaction(s -> s.commit());
+            codeFirstCommand.forEach(s -> s.commit());
         }
     }
 

@@ -53,7 +53,7 @@ public class MigrationDamengTest {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
 
 //        CodeFirstExecutable codeFirstExecutable2 = databaseCodeFirst.dropTables(Arrays.asList(MyMigrationBlog0.class));
-//        codeFirstExecutable2.executeWithTransaction(arg->{
+//        codeFirstExecutable2.commands(arg->{
 //            System.out.println("执行删除");
 //            System.out.println(arg.sql);
 //        });
@@ -61,7 +61,7 @@ public class MigrationDamengTest {
             System.out.println("存在表:MyMigrationBlog0");
             boolean any = easyEntityQuery.queryable(MyMigrationBlog0.class).any();
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(MyMigrationBlog0.class));
-            codeFirstCommand.executeWithTransaction(arg -> {
+            codeFirstCommand.forEach(arg -> {
                 System.out.println("执行删除");
                 System.out.println(arg.getSQL());
             });
@@ -70,7 +70,7 @@ public class MigrationDamengTest {
         }
 
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MyMigrationBlog0.class));
-        codeFirstCommand.executeWithTransaction(arg -> {
+        codeFirstCommand.forEach(arg -> {
             System.out.println(arg.getSQL());
             Assert.assertTrue(arg.getSQL().contains("CREATE TABLE"));
             Assert.assertFalse(arg.getSQL().contains("execute immediate"));
@@ -80,7 +80,7 @@ public class MigrationDamengTest {
         boolean any = easyEntityQuery.queryable(MyMigrationBlog0.class).any();
         Assert.assertFalse(any);
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.dropTableCommand(Arrays.asList(MyMigrationBlog0.class));
-        codeFirstCommand1.executeWithTransaction(arg -> {
+        codeFirstCommand1.forEach(arg -> {
             System.out.println("执行删除");
             System.out.println(arg.getSQL());
         });

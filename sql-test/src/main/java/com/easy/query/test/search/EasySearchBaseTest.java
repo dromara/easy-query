@@ -3,7 +3,7 @@ package com.easy.query.test.search;
 import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.core.api.client.EasyQueryClient;
-import com.easy.query.core.basic.api.database.CodeFirstCommandTxArg;
+import com.easy.query.core.basic.api.database.CommandTxArg;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.jdbc.tx.Transaction;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
@@ -78,10 +78,10 @@ public abstract class EasySearchBaseTest {
 
             DatabaseCodeFirst codeFirst = EasySearchBaseTest.easyQueryClient.getDatabaseCodeFirst();
             List<Class<?>> tableClasses = Arrays.asList(SysUser.class, SysUserExt.class);
-            codeFirst.dropTableIfExistsCommand(tableClasses).executeWithTransaction(
-                    CodeFirstCommandTxArg::commit);
+            codeFirst.dropTableIfExistsCommand(tableClasses).forEach(
+                    CommandTxArg::commit);
             codeFirst.createTableCommand(tableClasses)
-                    .executeWithTransaction(CodeFirstCommandTxArg::commit);
+                    .forEach(CommandTxArg::commit);
 
             List<SysUser> users = new ArrayList<>();
             List<SysUserExt> userExts = new ArrayList<>();

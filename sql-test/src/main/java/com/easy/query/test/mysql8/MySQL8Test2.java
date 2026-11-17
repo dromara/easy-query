@@ -45,14 +45,14 @@ public class MySQL8Test2 extends BaseTest {
     public void test() {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(M8TestIndex.class));
-        codeFirstCommand.executeWithTransaction(s -> {
+        codeFirstCommand.forEach(s -> {
             s.commit();
         });
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.dropTableCommand(Arrays.asList(M8TestIndex.class));
-        codeFirstCommand1.executeWithTransaction(s -> s.commit());
+        codeFirstCommand1.forEach(s -> s.commit());
 
         CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.syncTableCommand(Arrays.asList(M8TestIndex.class));
-        codeFirstCommand2.executeWithTransaction(s -> {
+        codeFirstCommand2.forEach(s -> {
             String md5Hash = MD5Util.getMD5Hash(s.getSQL());
             System.out.println(s.getSQL());
             Assert.assertEquals("dbbff7673035e7092de7c1c6aae99fcb", md5Hash);

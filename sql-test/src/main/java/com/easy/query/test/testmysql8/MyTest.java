@@ -18,6 +18,6 @@ public class MyTest extends BaseTest{
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class, SysRole.class, SysModule.class));
-        codeFirstCommand.executeWithTransaction(s->s.commit());
+        codeFirstCommand.forEach(s->s.commit());
     }
 }

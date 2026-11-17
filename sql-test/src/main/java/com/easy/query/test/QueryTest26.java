@@ -809,11 +809,11 @@ public class QueryTest26 extends BaseTest {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         {
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(MySQLGenerateKey.class));
-            codeFirstCommand.executeWithTransaction(s -> s.commit());
+            codeFirstCommand.forEach(s -> s.commit());
         }
         {
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MySQLGenerateKey.class));
-            codeFirstCommand.executeWithTransaction(s -> s.commit());
+            codeFirstCommand.forEach(s -> s.commit());
 
         }
         {

@@ -25,7 +25,7 @@ public class TreeCTETest extends H2BaseTest{
     public void tree8() {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MyCategory.class));
-        codeFirstCommand.executeWithTransaction(s->s.commit());
+        codeFirstCommand.forEach(s->s.commit());
 
 
         ListenerContext listenerContext = new ListenerContext();

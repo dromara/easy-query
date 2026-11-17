@@ -767,7 +767,7 @@ public class QueryTest22 extends BaseTest {
 
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocPart.class));
-        codeFirstCommand.executeWithTransaction(s -> s.commit());
+        codeFirstCommand.forEach(s -> s.commit());
 
 
 //

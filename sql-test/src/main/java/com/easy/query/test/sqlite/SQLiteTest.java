@@ -52,9 +52,9 @@ public class SQLiteTest extends SQLiteBaseTest{
     public  void testDDL(){
         DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(Topic.class));
-        codeFirstCommand.executeWithTransaction(s->s.commit());
+        codeFirstCommand.forEach(s->s.commit());
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(Topic.class));
-        codeFirstCommand1.executeWithTransaction(s->{
+        codeFirstCommand1.forEach(s->{
             Assert.assertEquals("\n" +
                     "CREATE TABLE IF NOT EXISTS \"t_topic\" ( \n" +
                     "\"Id\" VARCHAR(255) NOT NULL ,\n" +
@@ -70,9 +70,9 @@ public class SQLiteTest extends SQLiteBaseTest{
     public  void testDDL2(){
         DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(MultiPrimaryEntity.class));
-        codeFirstCommand.executeWithTransaction(s->s.commit());
+        codeFirstCommand.forEach(s->s.commit());
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(MultiPrimaryEntity.class));
-        codeFirstCommand1.executeWithTransaction(s->{
+        codeFirstCommand1.forEach(s->{
             Assert.assertEquals("\n" +
                     "CREATE TABLE IF NOT EXISTS \"t_multi_primary\" ( \n" +
                     "\"Id1\" VARCHAR(255) NOT NULL ,\n" +
@@ -86,8 +86,8 @@ public class SQLiteTest extends SQLiteBaseTest{
     @Test
     public void testAutoIncrementDDL() {
         DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
-        databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(TopicAuto.class)).executeWithTransaction(s -> s.commit());
-        databaseCodeFirst.syncTableCommand(Arrays.asList(TopicAuto.class)).executeWithTransaction(s -> {
+        databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(TopicAuto.class)).forEach(s -> s.commit());
+        databaseCodeFirst.syncTableCommand(Arrays.asList(TopicAuto.class)).forEach(s -> {
             Assert.assertTrue(s.getSQL().contains("\"Id\" INTEGER PRIMARY KEY AUTOINCREMENT"));
             Assert.assertFalse(s.getSQL().contains("PRIMARY KEY (\"Id\")"));
             s.commit();

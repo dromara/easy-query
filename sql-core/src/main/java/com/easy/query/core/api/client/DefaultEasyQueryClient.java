@@ -420,7 +420,7 @@ public class DefaultEasyQueryClient implements EasyQueryClient {
         List<List<Class<?>>> partition = EasyCollectionUtil.partition(tableEntities, groupSize);
         for (List<Class<?>> entityMetadataList : partition) {
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(entityMetadataList);
-            codeFirstCommand.commands(s -> {
+            codeFirstCommand.forEach(s -> {
                 log.info("执行sql:" + s.getSQL());
                 s.commit();
             });

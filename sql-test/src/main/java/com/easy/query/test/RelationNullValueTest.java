@@ -24,7 +24,7 @@ public class RelationNullValueTest extends BaseTest{
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(One1.class, One2.class));
-        codeFirstCommand.executeWithTransaction(s->s.commit());
+        codeFirstCommand.forEach(s->s.commit());
         easyEntityQuery.deletable(One1.class).allowDeleteStatement(true).where(one1 -> one1.isNotNull()).executeRows();
         easyEntityQuery.deletable(One2.class).allowDeleteStatement(true).where(one1 -> one1.isNotNull()).executeRows();
 

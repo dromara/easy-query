@@ -78,8 +78,6 @@ import com.easy.query.test.mysql8.entity.save.SaveInterceptor;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -186,18 +184,18 @@ public class BaseTest {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
 //        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class,SysBank.class, SysBankCard.class,  SysUserBook.class, M8Comment.class));
-//        codeFirstCommand.executeWithTransaction(s -> s.commit());
+//        codeFirstCommand.commands(s -> s.commit());
         CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(TableNoKey.class,SysUser.class, SysBankCard.class, SysBank.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class, M8ParentChild.class, M8IncludeLimitTopic.class, M8IncludeLimitChild.class,
                 M8Province.class, M8City.class, M8Area.class, M8AreaBuild.class, TreeA.class, TreeB.class, BatchInsert.class, Comment.class, M8SaveRoot.class, M8SaveRoot2Many.class, M8SaveRootMany.class, M8SaveRootMiddleMany.class, M8SaveRootOne.class,M8SaveRootOne2.class, M8SaveRootManyOne.class,
                 M8SaveA.class, M8SaveB.class, M8SaveC.class, M8SaveD.class, M8User3.class, M8UserRole3.class, M8Role3.class, M8ToMany1.class, M8ToMany2.class, M8ToMany3.class, M8AutoA.class, M8AutoB.class, OffsetChunkTest.class, MyConfigLogicDelete.class, M8UserTest.class,
                 MyTask.class, MySubTask1.class, MySubTask2.class, MyTask1Ext.class, MyTask2Ext.class));
-        codeFirstCommand2.executeWithTransaction(s -> s.commit());
+        codeFirstCommand2.forEach(s -> s.commit());
 
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(TableNoKey.class,SysUser.class, SysBank.class, SysBankCard.class, SysUserBook.class, M8Comment.class, M8Parent.class, M8Child.class, M8ParentChild.class, M8IncludeLimitTopic.class, M8IncludeLimitChild.class,
                 M8Province.class, M8City.class, M8Area.class, M8AreaBuild.class,M8AreaBuildLicense.class, TreeA.class, TreeB.class, BatchInsert.class,Comment.class, M8SaveRoot.class, M8SaveRoot2Many.class, M8SaveRootMany.class, M8SaveRootMiddleMany.class, M8SaveRootOne.class,M8SaveRootOne2.class,M8SaveRootManyOne.class,
                 M8SaveA.class, M8SaveB.class, M8SaveC.class, M8SaveD.class, M8User3.class, M8UserRole3.class, M8Role3.class, M8ToMany1.class, M8ToMany2.class, M8ToMany3.class,M8AutoA.class,M8AutoB.class,OffsetChunkTest.class, SysDept.class, MyConfigLogicDelete.class,M8UserTest.class,
                 MyTask.class, MySubTask1.class, MySubTask2.class, MyTask1Ext.class, MyTask2Ext.class));
-        codeFirstCommand1.executeWithTransaction(s -> {
+        codeFirstCommand1.forEach(s -> {
             System.out.println(s.getSQL());
             s.commit();
         });

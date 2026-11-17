@@ -17,7 +17,6 @@ import com.easy.query.test.mysql8.entity.save.M8ToMany1;
 import com.easy.query.test.mysql8.entity.save.M8ToMany2;
 import com.easy.query.test.mysql8.entity.save.M8ToMany3;
 import com.zaxxer.hikari.HikariDataSource;
-import org.duckdb.DuckDBConnection;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -84,8 +83,8 @@ public class DuckDBBaseTest {
     public static void initData() {
 
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
-        databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(TestJdjg.class,BlogEntity.class, ALLTYPE.class, MathTest.class, M8ToMany1.class, M8ToMany2.class, M8ToMany3.class)).executeWithTransaction(s->s.commit());
-        databaseCodeFirst.syncTableCommand(Arrays.asList(TestJdjg.class,BlogEntity.class, ALLTYPE.class, MathTest.class, M8ToMany1.class, M8ToMany2.class, M8ToMany3.class)).executeWithTransaction(s->s.commit());
+        databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(TestJdjg.class,BlogEntity.class, ALLTYPE.class, MathTest.class, M8ToMany1.class, M8ToMany2.class, M8ToMany3.class)).forEach(s->s.commit());
+        databaseCodeFirst.syncTableCommand(Arrays.asList(TestJdjg.class,BlogEntity.class, ALLTYPE.class, MathTest.class, M8ToMany1.class, M8ToMany2.class, M8ToMany3.class)).forEach(s->s.commit());
 
         easyEntityQuery.deletable(M8ToMany1.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.a().isNotNull()).executeRows();
         easyEntityQuery.deletable(M8ToMany2.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.d().isNotNull()).executeRows();

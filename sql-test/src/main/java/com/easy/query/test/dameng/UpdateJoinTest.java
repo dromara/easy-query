@@ -9,7 +9,6 @@ import com.easy.query.test.doc.entity.DocBank;
 import com.easy.query.test.doc.entity.DocBankCard;
 import com.easy.query.test.doc.entity.DocUser;
 import com.easy.query.test.listener.ListenerContext;
-import com.easy.query.test.pgsql.PgSQLBaseTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,17 +31,17 @@ public class UpdateJoinTest extends DamengBaseTest {
         databaseCodeFirst.createDatabaseIfNotExists();
         {
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class,DocBankCard.class, DocUser.class));
-            codeFirstCommand.executeWithTransaction(a -> a.commit());
+            codeFirstCommand.forEach(a -> a.commit());
         }
 
         {
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(DocBankCard.class, DocUser.class, DocBank.class));
-            codeFirstCommand.executeWithTransaction(a -> a.commit());
+            codeFirstCommand.forEach(a -> a.commit());
 
         }
         {
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class,DocBankCard.class, DocUser.class));
-            codeFirstCommand.executeWithTransaction(a -> a.commit());
+            codeFirstCommand.forEach(a -> a.commit());
         }
 //        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class));
     }

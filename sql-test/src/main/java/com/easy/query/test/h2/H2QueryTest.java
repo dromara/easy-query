@@ -9,7 +9,6 @@ import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.migration.data.ColumnMigrationData;
 import com.easy.query.core.migration.data.TableMigrationData;
 import com.easy.query.test.entity.MultiPrimaryEntity;
-import com.easy.query.test.entity.SysUser;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.h2.domain.ALLTYPE;
 import com.easy.query.test.h2.domain.ALLTYPE1;
@@ -758,9 +757,9 @@ public class H2QueryTest extends H2BaseTest {
     public  void testDDL(){
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(Topic.class));
-        codeFirstCommand.executeWithTransaction(s->s.commit());
+        codeFirstCommand.forEach(s->s.commit());
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(Topic.class));
-        codeFirstCommand1.executeWithTransaction(s->{
+        codeFirstCommand1.forEach(s->{
             Assert.assertEquals("\n" +
                     "CREATE TABLE IF NOT EXISTS t_topic ( \n" +
                     "id VARCHAR(255) NOT NULL ,\n" +
@@ -776,9 +775,9 @@ public class H2QueryTest extends H2BaseTest {
     public  void testDDL2(){
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(MultiPrimaryEntity.class));
-        codeFirstCommand.executeWithTransaction(s->s.commit());
+        codeFirstCommand.forEach(s->s.commit());
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(MultiPrimaryEntity.class));
-        codeFirstCommand1.executeWithTransaction(s->{
+        codeFirstCommand1.forEach(s->{
             Assert.assertEquals("\n" +
                     "CREATE TABLE IF NOT EXISTS t_multi_primary ( \n" +
                     "id1 VARCHAR(255) NOT NULL ,\n" +
@@ -793,10 +792,10 @@ public class H2QueryTest extends H2BaseTest {
     public void testTableCommentDDL() {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         CodeFirstCommand dropCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(H2TableCommentEntity.class));
-        dropCommand.executeWithTransaction(s -> s.commit());
+        dropCommand.forEach(s -> s.commit());
         CodeFirstCommand syncCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(H2TableCommentEntity.class));
         // 执行建表语句验证 H2 能够正确解析；修复前 MySQL 风格的内联 COMMENT='...' 放在括号内会导致语法错误
-        syncCommand.executeWithTransaction(s -> {
+        syncCommand.forEach(s -> {
             // 统一换行符，兼容不同平台的 System.lineSeparator()
             String ddl = s.getSQL().replace("\r\n", "\n");
             // 列级注释保持内联 COMMENT，表级注释生成为独立的 COMMENT ON TABLE 语句
@@ -819,11 +818,11 @@ public class H2QueryTest extends H2BaseTest {
         TableMigrationData oldTable = migrationTable("T_CODE_FIRST_OLD", null);
         TableMigrationData newTable = migrationTable("T_CODE_FIRST_NEW", "T_CODE_FIRST_OLD");
         databaseCodeFirst.dropTableIfExistsCommandByMigrationData(Arrays.asList(oldTable, newTable))
-                .executeWithTransaction(s -> s.commit());
+                .forEach(s -> s.commit());
         databaseCodeFirst.syncTableCommandByMigrationData(Arrays.asList(oldTable))
-                .executeWithTransaction(s -> s.commit());
+                .forEach(s -> s.commit());
 
-        databaseCodeFirst.syncTableCommandByMigrationData(Arrays.asList(newTable)).executeWithTransaction(s -> {
+        databaseCodeFirst.syncTableCommandByMigrationData(Arrays.asList(newTable)).forEach(s -> {
             Assert.assertTrue(s.getSQL().contains("ALTER TABLE T_CODE_FIRST_OLD RENAME TO T_CODE_FIRST_NEW;"));
             Assert.assertFalse(s.getSQL().contains(" ADD "));
             s.commit();
@@ -834,12 +833,12 @@ public class H2QueryTest extends H2BaseTest {
         ColumnMigrationData renamedColumn = renameColumnTable.getColumns().get(1);
         renamedColumn.setName("TITLE");
         renamedColumn.setOldColumnName("NAME");
-        databaseCodeFirst.syncTableCommandByMigrationData(Arrays.asList(renameColumnTable)).executeWithTransaction(s -> {
+        databaseCodeFirst.syncTableCommandByMigrationData(Arrays.asList(renameColumnTable)).forEach(s -> {
             Assert.assertTrue(s.getSQL().contains("ALTER TABLE T_CODE_FIRST_NEW ALTER COLUMN NAME RENAME TO TITLE;"));
             s.commit();
         });
         databaseCodeFirst.dropTableIfExistsCommandByMigrationData(Arrays.asList(renameColumnTable))
-                .executeWithTransaction(s -> s.commit());
+                .forEach(s -> s.commit());
     }
 
     private TableMigrationData migrationTable(String tableName, String oldTableName) {

@@ -40,7 +40,7 @@ public class M8Test1 extends BaseTest {
     public void before1() {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(M8UserBookIds.class, M8UserBook2.class));
-        codeFirstCommand.executeWithTransaction(s -> s.commit());
+        codeFirstCommand.forEach(s -> s.commit());
         easyEntityQuery.deletable(M8UserBookIds.class).allowDeleteStatement(true)
                 .where(m -> m.userId().isNotNull()).executeRows();
         easyEntityQuery.deletable(M8UserBook2.class).allowDeleteStatement(true)
@@ -130,17 +130,17 @@ public class M8Test1 extends BaseTest {
         {
 
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(TableNoKey.class));
-            codeFirstCommand.executeWithTransaction(s -> s.commit());
+            codeFirstCommand.forEach(s -> s.commit());
         }
         {
 
             CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.dropTableCommand(Arrays.asList(TableNoKey.class));
-            codeFirstCommand1.executeWithTransaction(s -> s.commit());
+            codeFirstCommand1.forEach(s -> s.commit());
         }
         {
 
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(TableNoKey.class));
-            codeFirstCommand.executeWithTransaction(s -> s.commit());
+            codeFirstCommand.forEach(s -> s.commit());
         }
     }
 

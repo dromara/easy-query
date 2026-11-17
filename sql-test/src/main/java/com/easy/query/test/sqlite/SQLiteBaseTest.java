@@ -77,7 +77,7 @@ public class SQLiteBaseTest {
 
         DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(BlogEntity.class));
-        codeFirstCommand.executeWithTransaction(s->s.commit());
+        codeFirstCommand.forEach(s->s.commit());
 
         boolean topicAny = entityQuery.queryable(BlogEntity.class).any();
         if (!topicAny) {

@@ -10,7 +10,6 @@ import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.QueryConfiguration;
-import com.easy.query.core.enums.SelectAutoIncludeTableEnum;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.sharding.router.manager.TableRouteManager;
 import com.easy.query.test.doc.entity.DocBank;
@@ -177,12 +176,12 @@ public class PgSQLBaseTest {
 
 
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(NamedEnumEntity.class,BlogEntity.class,PgItem.class,TableNoKey.class,DocBankCard.class,DocBank.class,  DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class, MathTest.class, MyCategory.class));
-            codeFirstCommand.executeWithTransaction(a->a.commit());
+            codeFirstCommand.forEach(a->a.commit());
         }
         {
 
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(NamedEnumEntity.class,BlogEntity.class,PgItem.class,TableNoKey.class,DocBank.class,DocBankCard.class, DocUser.class, SysUser.class, UUIDEntity.class, TreeA.class, TreeB.class, MathTest.class,MyCategory.class));
-            codeFirstCommand.executeWithTransaction(a->a.commit());
+            codeFirstCommand.forEach(a->a.commit());
         }
 
         ArrayList<DocBankCard> docBankCards = new ArrayList<>();

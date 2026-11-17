@@ -9,23 +9,15 @@ import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.configuration.bean.PropertyDescriptorMatcher;
 import com.easy.query.core.configuration.bean.entity.EntityPropertyDescriptorMatcher;
-import com.easy.query.core.configuration.nameconversion.NameConversion;
-import com.easy.query.core.configuration.nameconversion.impl.UpperCamelCaseNameConversion;
 import com.easy.query.core.logging.LogFactory;
-import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.mssql.config.MsSQLDatabaseConfiguration;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.Topic;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
-import com.easy.query.test.mssql.entity.MsSQLMyTopic;
 import com.zaxxer.hikari.HikariDataSource;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
 
 /**
  * create time 2023/7/27 17:27
@@ -80,12 +72,12 @@ public abstract class MsSQLBaseTest2 {
         {
 
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(BlogEntity.class, Topic.class));
-            codeFirstCommand.executeWithTransaction(s->s.commit());
+            codeFirstCommand.forEach(s->s.commit());
         }
         {
 
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(BlogEntity.class, Topic.class));
-            codeFirstCommand.executeWithTransaction(s->s.commit());
+            codeFirstCommand.forEach(s->s.commit());
         }
 
     }

@@ -38,7 +38,7 @@ public class DirectRelationTest extends BaseTest {
         {
 
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(Direct1.class, Direct2.class, Direct3.class, Direct4.class, Direct5.class));
-            codeFirstCommand.executeWithTransaction(s -> s.commit());
+            codeFirstCommand.forEach(s -> s.commit());
         }
         easyEntityQuery.deletable(Direct1.class).allowDeleteStatement(true).where(d -> d.isNotNull()).executeRows();
         easyEntityQuery.deletable(Direct2.class).allowDeleteStatement(true).where(d -> d.isNotNull()).executeRows();

@@ -24,7 +24,7 @@ public class Sm4EncryptionTest extends BaseTest {
     public void sm4Test() {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUserSm4Encryption.class));
-        codeFirstCommand.executeWithTransaction(a -> a.commit());
+        codeFirstCommand.forEach(a -> a.commit());
 
         long l = easyEntityQuery.deletable(SysUserSm4Encryption.class)
                 .allowDeleteStatement(true)

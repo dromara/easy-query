@@ -1131,7 +1131,7 @@ public class QueryTest3 extends BaseTest {
 
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(UserBookEncrypt.class));
-        codeFirstCommand.executeWithTransaction(s -> s.commit());
+        codeFirstCommand.forEach(s -> s.commit());
 
         easyEntityQuery.deletable(SysUserEncrypt.class)
                 .whereByIds(Arrays.asList("1", "2"))

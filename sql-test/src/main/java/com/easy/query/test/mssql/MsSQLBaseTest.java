@@ -111,12 +111,12 @@ public abstract class MsSQLBaseTest {
         {
 
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(MathTest.class, SysUser.class, SysBankCard.class, SysBank.class));
-            codeFirstCommand.executeWithTransaction(s->s.commit());
+            codeFirstCommand.forEach(s->s.commit());
         }
         {
 
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MathTest.class, SysUser.class,SysBank.class, SysBankCard.class));
-            codeFirstCommand.executeWithTransaction(s->s.commit());
+            codeFirstCommand.forEach(s->s.commit());
         }
 
         entityQuery.deletable(SysBankCard.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();

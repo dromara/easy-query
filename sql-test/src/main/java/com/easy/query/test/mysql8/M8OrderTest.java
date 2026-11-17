@@ -26,7 +26,7 @@ public class M8OrderTest extends BaseTest {
     public void before1() {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(M8Order.class, M8OrderItem.class));
-        codeFirstCommand.executeWithTransaction(s -> s.commit());
+        codeFirstCommand.forEach(s -> s.commit());
     }
 
     @Test

@@ -314,7 +314,7 @@ public abstract class ShardingBaseTest {
             try {
 
                 CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(DocBankCard.class,DocBank.class,UserAccount.class, UserBook.class, DocUser.class));
-                codeFirstCommand.executeWithTransaction(a->a.commit());
+                codeFirstCommand.forEach(a->a.commit());
             }catch (Exception ignored){
 
             }
@@ -322,7 +322,7 @@ public abstract class ShardingBaseTest {
         }
         {
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBank.class,UserAccount.class, UserBook.class,DocBankCard.class, DocUser.class));
-            codeFirstCommand.executeWithTransaction(a->a.commit());
+            codeFirstCommand.forEach(a->a.commit());
         }
     }
 

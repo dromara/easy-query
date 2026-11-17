@@ -9,15 +9,10 @@ import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.kingbase.es.config.KingbaseESDatabaseConfiguration;
 import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
-import com.easy.query.test.entity.school.SchoolClass;
-import com.easy.query.test.entity.school.SchoolStudentAddress;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
-import com.easy.query.test.mysql8.entity.M8Child;
-import com.easy.query.test.mysql8.entity.M8Parent;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Assert;
 import org.junit.Test;
@@ -60,7 +55,7 @@ public class MyKingbaseESTest {
             DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
             databaseCodeFirst.createDatabaseIfNotExists();
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(HelpEduSubjectEntity.class, HelpEduVideoEntity.class, HelpCategoryAndSubjectEntity.class));
-            codeFirstCommand.executeWithTransaction(s->s.commit());
+            codeFirstCommand.forEach(s->s.commit());
 //
 
 
@@ -134,7 +129,7 @@ public class MyKingbaseESTest {
             DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
             databaseCodeFirst.createDatabaseIfNotExists();
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(HelpEduSubjectEntity.class, HelpEduVideoEntity.class, HelpCategoryAndSubjectEntity.class));
-            codeFirstCommand.executeWithTransaction(s->s.commit());
+            codeFirstCommand.forEach(s->s.commit());
 //
             ListenerContext listenerContext = new ListenerContext(true);
             listenerContextManager.startListen(listenerContext);

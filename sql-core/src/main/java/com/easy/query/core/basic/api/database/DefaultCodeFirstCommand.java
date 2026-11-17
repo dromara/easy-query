@@ -38,7 +38,7 @@ public class DefaultCodeFirstCommand implements CodeFirstCommand {
 
 
     @Override
-    public void commands(Consumer<CommandTxArg> consumer) {
+    public void forEach(Consumer<CommandTxArg> consumer) {
 
         String executeSQL = getExecuteSQL();
         if (EasyStringUtil.isBlank(executeSQL)) {

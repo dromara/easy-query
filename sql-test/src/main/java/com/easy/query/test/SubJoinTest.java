@@ -31,7 +31,7 @@ public class SubJoinTest extends BaseTest {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SubJoinUser.class, SubJoinBook.class, SubJoinAuthor.class));
-        codeFirstCommand.executeWithTransaction(c -> c.commit());
+        codeFirstCommand.forEach(c -> c.commit());
     }
 
 

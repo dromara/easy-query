@@ -29,7 +29,7 @@ public class JsonTest extends BaseTest{
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(TopicJson.class));
-        codeFirstCommand.executeWithTransaction(s->s.commit());
+        codeFirstCommand.forEach(s->s.commit());
         {
             easyEntityQuery.deletable(TopicJson.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
         }

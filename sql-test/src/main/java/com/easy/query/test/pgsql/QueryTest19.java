@@ -953,7 +953,7 @@ public class QueryTest19 extends PgSQLBaseTest {
 //        TableMigrationData tableMigrationData = migrationsSQLGenerator.parseEntity(BlogEntity.class);
 //        tableMigrationData.setTableName(tableMigrationData.getTableName()+"_202501");
 //        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommandByMigrationData(Arrays.asList(tableMigrationData));
-//        codeFirstCommand.executeWithTransaction(s->{
+//        codeFirstCommand.commands(s->{
 //            s.commit();
 //        });
     }

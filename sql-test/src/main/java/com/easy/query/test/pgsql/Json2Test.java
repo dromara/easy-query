@@ -24,7 +24,7 @@ public class Json2Test extends PgSQLBaseTest {
         DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(PgTopicJson2.class));
-        codeFirstCommand.executeWithTransaction(s -> s.commit());
+        codeFirstCommand.forEach(s -> s.commit());
         {
             entityQuery.deletable(PgTopicJson2.class).allowDeleteStatement(true).where(t -> t.isNotNull()).executeRows();
         }

@@ -7,22 +7,15 @@ import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
 import com.easy.query.core.basic.extension.listener.JdbcExecuteAfterArg;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.configuration.EasyQueryOption;
 import com.easy.query.core.configuration.nameconversion.MapKeyNameConversion;
 import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.exception.EasyQuerySQLCommandException;
 import com.easy.query.core.exception.EasyQuerySQLStatementException;
-import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.util.EasySQLUtil;
 import com.easy.query.oracle.config.OracleDatabaseConfiguration;
 import com.easy.query.test.conversion.UpperMapKeyNameConversion;
-import com.easy.query.test.dto.autodto.SchoolClassAOProp9;
 import com.easy.query.test.entity.TestInsert;
 import com.easy.query.test.entity.Topic;
-import com.easy.query.test.entity.TopicAutoNative;
-import com.easy.query.test.entity.TopicFile;
-import com.easy.query.test.entity.proxy.TopicFileProxy;
-import com.easy.query.test.entity.school.SchoolClass;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.listener.ListenerContextManager;
 import com.easy.query.test.listener.MyJdbcListener;
@@ -34,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -168,7 +159,7 @@ public class InsertTest1 extends BaseTest {
     public void testInsert(){
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(TestInsert.class));
-        codeFirstCommand.executeWithTransaction(arg->{
+        codeFirstCommand.forEach(arg->{
             System.out.println(arg.getSQL());
             arg.commit();
         });

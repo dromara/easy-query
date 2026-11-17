@@ -13,5 +13,5 @@ public interface CodeFirstCommand {
     /**
      * 直接执行命令
      */
-    void commands(Consumer<CommandTxArg> consumer);
+    void forEach(Consumer<CommandTxArg> consumer);
 }

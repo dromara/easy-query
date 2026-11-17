@@ -1,17 +1,11 @@
 package com.easy.query.test;
 
-import com.easy.query.api.proxy.base.MapProxy;
-import com.easy.query.api.proxy.client.DefaultEasyEntityQuery;
-import com.easy.query.api.proxy.enums.MapKeyModeEnum;
-import com.easy.query.core.api.client.EasyQueryClient;
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
-import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationContext;
 import com.easy.query.core.migration.MigrationsSQLGenerator;
 import com.easy.query.core.migration.data.TableMigrationData;
-import com.easy.query.mysql.config.MySQLDatabaseConfiguration;
 import com.easy.query.test.common.MD5Util;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MyMigrationBlog;
@@ -19,14 +13,11 @@ import com.easy.query.test.entity.MyMigrationBlog0;
 import com.easy.query.test.entity.NewTopic;
 import com.easy.query.test.entity.NewTopic3;
 import com.easy.query.test.entity.Topic;
-import com.zaxxer.hikari.HikariDataSource;
-import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -110,7 +101,7 @@ public class MigrationTest extends BaseTest {
             System.out.println("存在表:MyMigrationBlog0");
             boolean any = easyEntityQuery.queryable(MyMigrationBlog0.class).any();
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(MyMigrationBlog0.class));
-            codeFirstCommand.executeWithTransaction(arg -> {
+            codeFirstCommand.forEach(arg -> {
                 System.out.println("执行删除");
                 System.out.println(arg.getSQL());
             });
@@ -119,7 +110,7 @@ public class MigrationTest extends BaseTest {
         }
 
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MyMigrationBlog0.class));
-        codeFirstCommand.executeWithTransaction(arg -> {
+        codeFirstCommand.forEach(arg -> {
             System.out.println(arg.getSQL());
             String md5 = MD5Util.getMD5Hash(arg.getSQL());
             System.out.println("sql-hash:" + md5);
@@ -130,7 +121,7 @@ public class MigrationTest extends BaseTest {
         boolean any = easyEntityQuery.queryable(MyMigrationBlog0.class).any();
         Assert.assertFalse(any);
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.dropTableCommand(Arrays.asList(MyMigrationBlog0.class));
-        codeFirstCommand1.executeWithEnvTransaction(arg -> {
+        codeFirstCommand1.forEach(arg -> {
             System.out.println("执行删除");
             System.out.println(arg.getSQL());
         });
@@ -180,7 +171,7 @@ public class MigrationTest extends BaseTest {
 //        //自动同步数据库表
 //        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(Topic.class, BlogEntity.class));
 //        //执行命令
-//        codeFirstCommand.executeWithTransaction(arg->{
+//        codeFirstCommand.commands(arg->{
 //            System.out.println(arg.getSQL());
 //            arg.commit();
 //        });

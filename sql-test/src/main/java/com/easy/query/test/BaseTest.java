@@ -405,7 +405,7 @@ public abstract class BaseTest {
             try {
 
                 CodeFirstCommand codeFirstCommand = databaseCodeFirst.dropTableCommand(Arrays.asList(SysUserEncrypt.class, DocBankCard.class, DocBank.class, UserAccount.class, UserBook.class, DocUser.class, OnRelationA.class, OnRelationB.class, OnRelationC.class, OnRelationD.class, UUIDEntity2.class, MathTest.class, InterceptorEntity.class, Interceptor2Entity.class));
-                codeFirstCommand.executeWithTransaction(a -> a.commit());
+                codeFirstCommand.forEach(a -> a.commit());
             } catch (Exception ignored) {
 
             }
@@ -413,7 +413,7 @@ public abstract class BaseTest {
         }
         {
             CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUserEncrypt.class, DocBank.class, UserAccount.class, UserBook.class, DocBankCard.class, DocUser.class, OnRelationA.class, OnRelationB.class, OnRelationC.class, OnRelationD.class, UUIDEntity2.class, MathTest.class, InterceptorEntity.class, Interceptor2Entity.class));
-            codeFirstCommand.executeWithTransaction(a -> a.commit());
+            codeFirstCommand.forEach(a -> a.commit());
         }
 
         int size = 10000;

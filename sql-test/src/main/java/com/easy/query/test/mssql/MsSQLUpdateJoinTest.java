@@ -27,7 +27,7 @@ public class MsSQLUpdateJoinTest extends MsSQLBaseTest{
         DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
         databaseCodeFirst.createDatabaseIfNotExists();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DocBankCard.class, DocUser.class, DocBank.class));
-        codeFirstCommand.executeWithTransaction(a->a.commit());
+        codeFirstCommand.forEach(a->a.commit());
     }
     @Test
     public void testUpdateJoin1(){

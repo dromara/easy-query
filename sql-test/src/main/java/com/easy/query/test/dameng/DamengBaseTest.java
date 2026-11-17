@@ -86,13 +86,13 @@ public abstract class DamengBaseTest {
     public static void initData() {
         DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(DamengMyTopic.class));
-        codeFirstCommand.executeWithTransaction(s->s.commit());
+        codeFirstCommand.forEach(s->s.commit());
 
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(DamengNameCustom.class,TreeA.class, TreeB.class,MathTest.class, SysUser.class, SysBankCard.class, SysBank.class));
-        codeFirstCommand1.executeWithTransaction(e->e.commit());
+        codeFirstCommand1.forEach(e->e.commit());
 
         CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.syncTableCommand(Arrays.asList(DamengNameCustom.class,TreeA.class, TreeB.class,MathTest.class, SysUser.class,SysBank.class, SysBankCard.class));
-        codeFirstCommand2.executeWithTransaction(s->s.commit());
+        codeFirstCommand2.forEach(s->s.commit());
 
         entityQuery.deletable(SysBankCard.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
         entityQuery.deletable(SysBank.class).disableLogicDelete().allowDeleteStatement(true).where(o -> o.id().isNotNull()).executeRows();
