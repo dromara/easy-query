@@ -21,12 +21,12 @@ import java.util.function.Consumer;
  * @author xuejiaming
  */
 public class DefaultCodeFirstCommand implements CodeFirstCommand {
-    private static final Log log= LogFactory.getLog(DefaultCodeFirstCommand.class);
+    private static final Log log = LogFactory.getLog(DefaultCodeFirstCommand.class);
     private final QueryRuntimeContext runtimeContext;
     private final List<MigrationCommand> migrationCommands;
     private final boolean executeIndividually;
 
-    public DefaultCodeFirstCommand(QueryRuntimeContext runtimeContext, List<MigrationCommand> migrationCommands){
+    public DefaultCodeFirstCommand(QueryRuntimeContext runtimeContext, List<MigrationCommand> migrationCommands) {
         this(runtimeContext, migrationCommands, false);
     }
 
@@ -36,31 +36,16 @@ public class DefaultCodeFirstCommand implements CodeFirstCommand {
         this.executeIndividually = executeIndividually;
     }
 
-    @Override
-    public void executeWithEnvTransaction(Consumer<CodeFirstCommandArg> consumer) {
-        String executeSQL = getExecuteSQL();
-        if(EasyStringUtil.isBlank(executeSQL)){
-            log.info("execute sql is empty.");
-            return;
-        }
-        consumer.accept(new DefaultCodeFirstCommandArg(executeSQL));
-        execute(executeSQL);
-    }
 
     @Override
-    public void executeWithTransaction(Consumer<CodeFirstCommandTxArg> consumer) {
+    public void commands(Consumer<CommandTxArg> consumer) {
+
         String executeSQL = getExecuteSQL();
-        if(EasyStringUtil.isBlank(executeSQL)){
+        if (EasyStringUtil.isBlank(executeSQL)) {
             log.info("execute sql is empty.");
             return;
         }
-        ConnectionManager connectionManager = runtimeContext.getConnectionManager();
-        try(Transaction transaction = connectionManager.beginTransaction()){
-            DefaultCodeFirstCommandTxArg codeFirstCommandTxArg = new DefaultCodeFirstCommandTxArg(executeSQL);
-            consumer.accept(codeFirstCommandTxArg);
-            execute(executeSQL);
-            codeFirstCommandTxArg.getTransactionConsumer().accept(transaction);
-        }
+        execute(executeSQL, consumer);
     }
 
     private String getExecuteSQL() {
@@ -77,16 +62,21 @@ public class DefaultCodeFirstCommand implements CodeFirstCommand {
         return sql.toString();
     }
 
-    private void execute(String executeSQL) {
+    private void execute(String executeSQL, Consumer<CommandTxArg> consumer) {
         SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
         if (!isExecuteIndividually()) {
-            sqlClientApiFactory.createJdbcExecutor(runtimeContext).sqlExecute(executeSQL, Collections.emptyList());
+            consumer.accept(new DefaultCommandTxArg(executeSQL, s -> {
+                sqlClientApiFactory.createJdbcExecutor(runtimeContext).sqlExecute(s, Collections.emptyList());
+            }));
             return;
         }
         for (MigrationCommand migrationCommand : migrationCommands) {
             for (String sql : migrationCommand.toSQLList()) {
                 if (EasyStringUtil.isNotBlank(sql)) {
-                    sqlClientApiFactory.createJdbcExecutor(runtimeContext).sqlExecute(sql, Collections.emptyList());
+                    consumer.accept(new DefaultCommandTxArg(sql, s -> {
+                        sqlClientApiFactory.createJdbcExecutor(runtimeContext).sqlExecute(s, Collections.emptyList());
+                    }));
+
                 }
             }
         }
