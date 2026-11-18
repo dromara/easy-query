@@ -5,7 +5,6 @@ import com.easy.query.core.migration.AbstractDatabaseMigrationProvider;
 import com.easy.query.core.migration.ColumnDbTypeResult;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationEntityParser;
-import com.easy.query.core.migration.commands.DefaultMigrationCommand;
 import com.easy.query.core.migration.commands.MultiMigrationCommand;
 import com.easy.query.core.migration.data.ColumnMigrationData;
 import com.easy.query.core.migration.data.ForeignKeyMigrationData;
@@ -44,7 +43,7 @@ public class GaussDBDatabaseMigrationProvider extends AbstractDatabaseMigrationP
 //    @Override
 //    public MigrationCommand createDatabaseCommand() {
 //        String databaseSQL = "CREATE SCHEMA IF NOT EXISTS " + getQuoteSQLName(databaseName) + ";";
-//        return new DefaultMigrationCommand(null, databaseSQL);
+//        return new MultiMigrationCommand(databaseSQL);
 //    }
 
     @Override
@@ -72,7 +71,7 @@ public class GaussDBDatabaseMigrationProvider extends AbstractDatabaseMigrationP
     @Override
     public MigrationCommand renameTable(TableMigrationData tableMigrationData) {
         String sql = "ALTER TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getOldTableName()) + " RENAME TO " + getQuoteSQLName(tableMigrationData.getTableName()) + ";";
-        return new DefaultMigrationCommand(sql);
+        return new MultiMigrationCommand(sql);
     }
 
     @Override
@@ -142,7 +141,7 @@ public class GaussDBDatabaseMigrationProvider extends AbstractDatabaseMigrationP
                 + " TO " + getQuoteSQLName(column.getName()) + ";";
         String columnComment = getColumnComment(column, "'");
         if (EasyStringUtil.isBlank(columnComment)) {
-            return new DefaultMigrationCommand(sql);
+            return new MultiMigrationCommand(sql);
         }
         String commentSQL = "COMMENT ON COLUMN " + tableName + "." + getQuoteSQLName(column.getName())
                 + " IS " + columnComment + ";";
@@ -170,7 +169,7 @@ public class GaussDBDatabaseMigrationProvider extends AbstractDatabaseMigrationP
 
         String columnComment = getColumnComment(column, "'");
         if (EasyStringUtil.isBlank(columnComment)) {
-            return new DefaultMigrationCommand(sql.toString());
+            return new MultiMigrationCommand(sql.toString());
         }
         String commentSQL = "COMMENT ON COLUMN " + tableName + "." + getQuoteSQLName(column.getName())
                 + " IS " + columnComment + ";";
@@ -180,7 +179,7 @@ public class GaussDBDatabaseMigrationProvider extends AbstractDatabaseMigrationP
 
     @Override
     public MigrationCommand dropTable(TableMigrationData table) {
-        return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName()) + ";");
+        return new MultiMigrationCommand("DROP TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName()) + ";");
     }
 
     @Override
@@ -204,7 +203,7 @@ public class GaussDBDatabaseMigrationProvider extends AbstractDatabaseMigrationP
         sql.append(joiner);
         sql.append(");");
         if (EasyStringUtil.isBlank(tableIndex.getComment())) {
-            return new DefaultMigrationCommand(sql.toString());
+            return new MultiMigrationCommand(sql.toString());
         }
         String commentSQL = "COMMENT ON INDEX " + getQuoteSQLName(table.getSchema(), tableIndex.getIndexName())
                 + " IS '" + tableIndex.getComment().replace("'", "''") + "';";
@@ -232,7 +231,7 @@ public class GaussDBDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             sql.append(" ").append(foreignKey.getAction()).append(" ");
         }
         sql.append(";");
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
     @Override

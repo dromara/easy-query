@@ -4,7 +4,6 @@ import com.easy.query.core.configuration.dialect.SQLKeyword;
 import com.easy.query.core.migration.AbstractDatabaseMigrationProvider;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationEntityParser;
-import com.easy.query.core.migration.commands.DefaultMigrationCommand;
 import com.easy.query.core.migration.commands.MultiMigrationCommand;
 import com.easy.query.core.migration.data.ColumnMigrationData;
 import com.easy.query.core.migration.data.ForeignKeyMigrationData;
@@ -44,7 +43,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
 //    @Override
 //    public MigrationCommand createDatabaseCommand() {
 //        String databaseSQL = "if not exists(select 1 from sys.databases where name= '" + this.databaseName + "') " + newLine + " create database " + getQuoteSQLName(this.databaseName) + ";";
-//        return new DefaultMigrationCommand(null, databaseSQL);
+//        return new MultiMigrationCommand(databaseSQL);
 //    }
 
     @Override
@@ -74,7 +73,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
     public MigrationCommand renameTable(TableMigrationData tableMigrationData) {
         String oldTableName = getQuoteSQLName(tableMigrationData.getSchemaOrDefault("dbo"), tableMigrationData.getOldTableName()).replace("'", "''");
         String newTableName = tableMigrationData.getTableName().replace("'", "''");
-        return new DefaultMigrationCommand("EXEC sp_rename N'" + oldTableName + "', N'" + newTableName + "'");
+        return new MultiMigrationCommand("EXEC sp_rename N'" + oldTableName + "', N'" + newTableName + "'");
     }
 
     @Override
@@ -141,7 +140,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
 //            sql.append(" COMMENT ON COLUMN ").append(tableName).append(" IS ").append(columnComment);
 //            sql.append(";");
 //        }
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
     @Override
@@ -158,7 +157,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
             sql.append(" NOT NULL");
         }
         if (EasyStringUtil.isBlank(column.getComment())) {
-            return new DefaultMigrationCommand(sql.toString());
+            return new MultiMigrationCommand(sql.toString());
         }
         List<String> statements = new ArrayList<>();
         statements.add(sql.toString());
@@ -169,7 +168,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
 
     @Override
     public MigrationCommand dropTable(TableMigrationData table) {
-        return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName()) + ";");
+        return new MultiMigrationCommand("DROP TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName()) + ";");
     }
 
     @Override
@@ -184,7 +183,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
         }
         sql.append(joiner).append(")");
         if (EasyStringUtil.isBlank(tableIndex.getComment())) {
-            return new DefaultMigrationCommand(sql.toString());
+            return new MultiMigrationCommand(sql.toString());
         }
         List<String> statements = new ArrayList<>();
         statements.add(sql.toString());
@@ -236,7 +235,7 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
             sql.append(" ").append(foreignKey.getAction()).append(" ");
         }
         sql.append(";");
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
     @Override

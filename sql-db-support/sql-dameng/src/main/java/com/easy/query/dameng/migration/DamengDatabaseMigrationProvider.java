@@ -6,7 +6,6 @@ import com.easy.query.core.exception.EasyQueryInvalidOperationException;
 import com.easy.query.core.migration.AbstractDatabaseMigrationProvider;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationEntityParser;
-import com.easy.query.core.migration.commands.DefaultMigrationCommand;
 import com.easy.query.core.migration.commands.MultiMigrationCommand;
 import com.easy.query.core.migration.data.ColumnMigrationData;
 import com.easy.query.core.migration.data.ForeignKeyMigrationData;
@@ -67,7 +66,7 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
     }
 
     ////        String databaseSQL = "CREATE SCHEMA IF NOT EXISTS " + getQuoteSQLName(databaseName) + ";";
-////        return new DefaultMigrationCommand(null, databaseSQL);
+////        return new MultiMigrationCommand(databaseSQL);
 //    }
 
 
@@ -99,7 +98,7 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
     public MigrationCommand renameTable(TableMigrationData tableMigrationData) {
         String sql = "ALTER TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getOldTableName())
                 + " RENAME TO " + getQuoteSQLName(tableMigrationData.getTableName());
-        return new DefaultMigrationCommand(sql);
+        return new MultiMigrationCommand(sql);
     }
 
     @Override
@@ -151,7 +150,7 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
     protected MigrationCommand renameColumn(TableMigrationData table, String renameFrom, ColumnMigrationData column) {
         String sql = "ALTER TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName())
                 + " RENAME COLUMN " + getQuoteSQLName(renameFrom) + " TO " + getQuoteSQLName(column.getName());
-        return new DefaultMigrationCommand(sql);
+        return new MultiMigrationCommand(sql);
     }
 
     @Override
@@ -164,13 +163,13 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
             sql.append(" DEFAULT ").append(column.getDefValue());
         }
         sql.append(column.isNotNull() && hasDefault ? " NOT NULL" : " NULL");
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
 
     @Override
     public MigrationCommand dropTable(TableMigrationData table) {
-        return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName()));
+        return new MultiMigrationCommand("DROP TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName()));
     }
     @Override
     protected MigrationCommand createIndex(TableMigrationData table, IndexMigrationData tableIndex) {
@@ -183,7 +182,7 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
             joiner.add(getQuoteSQLName(field.getColumnName()) + (field.isAsc() ? " ASC" : " DESC"));
         }
         sql.append(joiner).append(")");
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
     @Override
     protected MigrationCommand createTableForeignKey(TableMigrationData table, ForeignKeyMigrationData foreignKey) {
@@ -205,7 +204,7 @@ public class DamengDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         if (EasyStringUtil.isNotBlank(foreignKey.getAction())) {
             sql.append(" ").append(foreignKey.getAction()).append(" ");
         }
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
     private String truncate(String name, int maxLength) {

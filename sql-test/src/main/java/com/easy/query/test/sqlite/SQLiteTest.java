@@ -58,8 +58,7 @@ public class SQLiteTest extends SQLiteBaseTest{
         codeFirstCommand.forEach(s->s.commit());
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(Topic.class));
         codeFirstCommand1.forEach(s->{
-            Assert.assertEquals("\n" +
-                    "CREATE TABLE IF NOT EXISTS \"t_topic\" ( \n" +
+            Assert.assertEquals("CREATE TABLE IF NOT EXISTS \"t_topic\" ( \n" +
                     "\"Id\" VARCHAR(255) NOT NULL ,\n" +
                     "\"Stars\" integer NULL ,\n" +
                     "\"Title\" VARCHAR(255) NULL ,\n" +
@@ -76,8 +75,7 @@ public class SQLiteTest extends SQLiteBaseTest{
         codeFirstCommand.forEach(s->s.commit());
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(MultiPrimaryEntity.class));
         codeFirstCommand1.forEach(s->{
-            Assert.assertEquals("\n" +
-                    "CREATE TABLE IF NOT EXISTS \"t_multi_primary\" ( \n" +
+            Assert.assertEquals("CREATE TABLE IF NOT EXISTS \"t_multi_primary\" ( \n" +
                     "\"Id1\" VARCHAR(255) NOT NULL ,\n" +
                     "\"Id2\" VARCHAR(255) NOT NULL , \n" +
                     " PRIMARY KEY (\"Id1\", \"Id2\")\n" +

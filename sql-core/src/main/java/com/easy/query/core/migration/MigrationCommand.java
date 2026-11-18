@@ -1,6 +1,5 @@
 package com.easy.query.core.migration;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -10,9 +9,5 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface MigrationCommand {
-    String toSQL();
-
-    default List<String> toSQLList() {
-        return Collections.singletonList(toSQL());
-    }
+    List<String> toSQLList();
 }

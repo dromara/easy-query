@@ -6,7 +6,6 @@ import com.easy.query.core.migration.AbstractDatabaseMigrationProvider;
 import com.easy.query.core.migration.ColumnDbTypeResult;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationEntityParser;
-import com.easy.query.core.migration.commands.DefaultMigrationCommand;
 import com.easy.query.core.migration.commands.MultiMigrationCommand;
 import com.easy.query.core.migration.data.ColumnMigrationData;
 import com.easy.query.core.migration.data.ForeignKeyMigrationData;
@@ -69,7 +68,7 @@ public class H2DatabaseMigrationProvider extends AbstractDatabaseMigrationProvid
     @Override
     public MigrationCommand renameTable(TableMigrationData tableMigrationData) {
         String sql = "ALTER TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getOldTableName()) + " RENAME TO " + getQuoteSQLName(tableMigrationData.getTableName()) + ";";
-        return new DefaultMigrationCommand(sql);
+        return new MultiMigrationCommand(sql);
     }
 
     @Override
@@ -137,7 +136,7 @@ public class H2DatabaseMigrationProvider extends AbstractDatabaseMigrationProvid
 
     @Override
     protected MigrationCommand renameColumn(TableMigrationData table, String renameFrom, ColumnMigrationData column) {
-        return new DefaultMigrationCommand("ALTER TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName())
+        return new MultiMigrationCommand("ALTER TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName())
                 + " ALTER COLUMN " + getQuoteSQLName(renameFrom)
                 + " RENAME TO " + getQuoteSQLName(column.getName()) + ";");
     }
@@ -158,12 +157,12 @@ public class H2DatabaseMigrationProvider extends AbstractDatabaseMigrationProvid
             sql.append(" COMMENT ").append(columnComment);
         }
         sql.append(";");
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
     @Override
     public MigrationCommand dropTable(TableMigrationData table) {
-        return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName()) + ";");
+        return new MultiMigrationCommand("DROP TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName()) + ";");
     }
 
     @Override
@@ -186,7 +185,7 @@ public class H2DatabaseMigrationProvider extends AbstractDatabaseMigrationProvid
         }
         sql.append(joiner);
         sql.append(");");
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
     @Override
@@ -218,7 +217,7 @@ public class H2DatabaseMigrationProvider extends AbstractDatabaseMigrationProvid
             sql.append(" ").append(foreignKey.getAction()).append(" ");
         }
         sql.append(";");
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
     @Override

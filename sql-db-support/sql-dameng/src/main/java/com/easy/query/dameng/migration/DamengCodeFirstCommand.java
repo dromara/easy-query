@@ -15,6 +15,6 @@ import java.util.List;
 public class DamengCodeFirstCommand extends DefaultCodeFirstCommand {
 
     public DamengCodeFirstCommand(QueryRuntimeContext runtimeContext, List<MigrationCommand> migrationCommands) {
-        super(runtimeContext, migrationCommands, true);
+        super(runtimeContext, migrationCommands);
     }
 }

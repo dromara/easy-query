@@ -30,7 +30,7 @@ public class MigrationTest extends PgSQLBaseTest{
         MigrationContext migrationContext = new MigrationContext(tableMigrationDataList);
         List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateMigrationSQL(migrationContext);
         for (MigrationCommand migrationCommand : migrationCommands) {
-            System.out.println(migrationCommand.toSQL());
+            System.out.println(migrationCommand.toSQLList());
         }
 //        Assert.assertEquals(1,migrationCommands.size());
 //        MigrationCommand migrationCommand = migrationCommands.get(0);

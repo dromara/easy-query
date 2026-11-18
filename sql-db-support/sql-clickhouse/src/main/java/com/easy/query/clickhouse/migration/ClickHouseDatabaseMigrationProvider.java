@@ -6,7 +6,7 @@ import com.easy.query.core.migration.AbstractDatabaseMigrationProvider;
 import com.easy.query.core.migration.ColumnDbTypeResult;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationEntityParser;
-import com.easy.query.core.migration.commands.DefaultMigrationCommand;
+import com.easy.query.core.migration.commands.MultiMigrationCommand;
 import com.easy.query.core.migration.commands.EmptyMigrationCommand;
 import com.easy.query.core.migration.data.ColumnMigrationData;
 import com.easy.query.core.migration.data.ForeignKeyMigrationData;
@@ -42,7 +42,7 @@ public class ClickHouseDatabaseMigrationProvider extends AbstractDatabaseMigrati
 //    @Override
 //    public MigrationCommand createDatabaseCommand() {
 //        String databaseSQL = "CREATE DATABASE IF NOT EXISTS " + getQuoteSQLName(databaseName) + " ENGINE=Ordinary;";
-//        return new DefaultMigrationCommand(null, databaseSQL);
+//        return new MultiMigrationCommand(databaseSQL);
 //    }
 
 
@@ -71,7 +71,7 @@ public class ClickHouseDatabaseMigrationProvider extends AbstractDatabaseMigrati
 
     @Override
     public MigrationCommand renameTable(TableMigrationData tableMigrationData) {
-        return new DefaultMigrationCommand("RENAME TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getOldTableName()) + " TO " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()) + ";");
+        return new MultiMigrationCommand("RENAME TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getOldTableName()) + " TO " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()) + ";");
 
     }
 
@@ -136,7 +136,7 @@ public class ClickHouseDatabaseMigrationProvider extends AbstractDatabaseMigrati
         if (columnCommentSQL.length() > 0) {
             sql.append(newLine).append(columnCommentSQL);
         }
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
     @Override
@@ -161,7 +161,7 @@ public class ClickHouseDatabaseMigrationProvider extends AbstractDatabaseMigrati
             sql.append(" COMMENT ON COLUMN ").append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName())).append(" IS ").append(columnComment);
             sql.append(";");
         }
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
     @Override
@@ -188,18 +188,18 @@ public class ClickHouseDatabaseMigrationProvider extends AbstractDatabaseMigrati
             sql.append(" COMMENT ON COLUMN ").append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName())).append(" IS ").append(columnComment);
             sql.append(";");
         }
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
 
     @Override
     public MigrationCommand dropTable(TableMigrationData tableMigrationData) {
-        return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()) + ";");
+        return new MultiMigrationCommand("DROP TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()) + ";");
     }
 
     @Override
     protected MigrationCommand createIndex(TableMigrationData table, IndexMigrationData tableIndex) {
-        return new DefaultMigrationCommand("-- not support create index:" + tableIndex.getIndexName());
+        return new MultiMigrationCommand("-- not support create index:" + tableIndex.getIndexName());
     }
 
     @Override

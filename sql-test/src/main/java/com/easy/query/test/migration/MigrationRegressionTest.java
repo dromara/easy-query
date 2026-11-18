@@ -67,11 +67,11 @@ public class MigrationRegressionTest {
         TableMigrationData table = table(null, "new_table");
         table.setOldTableName("old_table");
 
-        Assert.assertEquals("EXEC sp_rename N'[dbo].[old_table]', N'new_table'", provider.renameTable(table).toSQL());
+        Assert.assertEquals("EXEC sp_rename N'[dbo].[old_table]', N'new_table'", provider.renameTable(table).toSQLList().get(0));
 
         table.setSchema("sales");
         table.setTableName("new'table");
-        Assert.assertEquals("EXEC sp_rename N'[sales].[old_table]', N'new''table'", provider.renameTable(table).toSQL());
+        Assert.assertEquals("EXEC sp_rename N'[sales].[old_table]', N'new''table'", provider.renameTable(table).toSQLList().get(0));
     }
 
     @Test
@@ -149,7 +149,7 @@ public class MigrationRegressionTest {
             TableMigrationData table = table("public", "new_table");
             table.setOldTableName("old_table");
             Assert.assertEquals("ALTER TABLE \"public\".\"old_table\" RENAME TO \"new_table\";",
-                    provider.renameTable(table).toSQL());
+                    provider.renameTable(table).toSQLList().get(0));
         }
     }
 
@@ -175,7 +175,7 @@ public class MigrationRegressionTest {
         TableMigrationData table = table("main", "t_user");
         table.setIndexes(Collections.singletonList(index("IX_Mixed", "name")));
         Assert.assertEquals("CREATE INDEX \"IX_Mixed\" ON \"main\".\"t_user\" (\"name\" ASC);",
-                duckDB.createTableIndex(table).get(0).toSQL());
+                duckDB.createTableIndex(table).get(0).toSQLList().get(0));
     }
 
     @Test
@@ -188,17 +188,17 @@ public class MigrationRegressionTest {
         sqliteTable.getColumns().add(renamed);
 
         Assert.assertEquals("ALTER TABLE \"main\".\"t_user\" RENAME COLUMN \"old_name\" TO \"new_name\";",
-                sqlite.addTableColumn(sqliteTable).get(0).toSQL());
+                sqlite.addTableColumn(sqliteTable).get(0).toSQLList().get(0));
         sqliteTable.setOldTableName("old_table");
         Assert.assertEquals("ALTER TABLE \"main\".\"old_table\" RENAME TO \"t_user\";",
-                sqlite.renameTable(sqliteTable).toSQL());
+                sqlite.renameTable(sqliteTable).toSQLList().get(0));
 
         H2DatabaseMigrationProvider h2 = new H2DatabaseMigrationProvider(
                 null, new H2SQLKeyword(), new H2MigrationEntityParser());
         TableMigrationData h2Table = table("PUBLIC", "new_table");
         h2Table.setOldTableName("old_table");
         Assert.assertEquals("ALTER TABLE \"PUBLIC\".\"old_table\" RENAME TO \"new_table\";",
-                h2.renameTable(h2Table).toSQL());
+                h2.renameTable(h2Table).toSQLList().get(0));
     }
 
     @Test
@@ -214,7 +214,7 @@ public class MigrationRegressionTest {
         generatedTable.getColumns().add(generated);
 
         Assert.assertEquals("ALTER TABLE `t_user` CHANGE `old_id` `id` BIGINT NOT NULL AUTO_INCREMENT;",
-                provider.addTableColumn(generatedTable).get(0).toSQL());
+                provider.addTableColumn(generatedTable).get(0).toSQLList().get(0));
 
         TableMigrationData defaultTable = table(null, "t_user");
         ColumnMigrationData amount = column("amount", "DECIMAL(10,2)");
@@ -223,7 +223,7 @@ public class MigrationRegressionTest {
         amount.setComment("分数'说明");
         defaultTable.getColumns().add(amount);
         Assert.assertEquals("ALTER TABLE `t_user` CHANGE `old_amount` `amount` DECIMAL(10,2) NULL DEFAULT 0 COMMENT '分数''说明';",
-                provider.addTableColumn(defaultTable).get(0).toSQL());
+                provider.addTableColumn(defaultTable).get(0).toSQLList().get(0));
     }
 
     @Test

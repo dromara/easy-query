@@ -13,7 +13,7 @@ import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.migration.TableForeignKeyResult;
 import com.easy.query.core.migration.TableIndexResult;
-import com.easy.query.core.migration.commands.DefaultMigrationCommand;
+import com.easy.query.core.migration.commands.MultiMigrationCommand;
 import com.easy.query.core.migration.commands.EmptyMigrationCommand;
 import com.easy.query.core.migration.data.ColumnMigrationData;
 import com.easy.query.core.migration.data.ForeignKeyMigrationData;
@@ -77,7 +77,7 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
     @Override
     public MigrationCommand renameTable(TableMigrationData tableMigrationData) {
         String sql = "ALTER TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getOldTableName()) + " RENAME TO " + getQuoteSQLName(tableMigrationData.getTableName()) + ";";
-        return new DefaultMigrationCommand(sql);
+        return new MultiMigrationCommand(sql);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         }
         sql.deleteCharAt(sql.length() - 1);
         sql.append(newLine).append(");");
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
     @Override
@@ -132,7 +132,7 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         String sql = "ALTER TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName())
                 + " RENAME COLUMN " + getQuoteSQLName(renameFrom)
                 + " TO " + getQuoteSQLName(column.getName()) + ";";
-        return new DefaultMigrationCommand(sql);
+        return new MultiMigrationCommand(sql);
     }
 
     @Override
@@ -148,12 +148,12 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
             sql.append(" NOT NULL");
         }
         sql.append(";");
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
     @Override
     public MigrationCommand dropTable(TableMigrationData table) {
-        return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName()) + ";");
+        return new MultiMigrationCommand("DROP TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName()) + ";");
     }
     @Override
     protected MigrationCommand createIndex(TableMigrationData table, IndexMigrationData tableIndex) {
@@ -175,7 +175,7 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         }
         sql.append(joiner);
         sql.append(");");
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
     /**

@@ -15,6 +15,6 @@ import java.util.List;
 public class OracleCodeFirstCommand extends DefaultCodeFirstCommand {
 
     public OracleCodeFirstCommand(QueryRuntimeContext runtimeContext, List<MigrationCommand> migrationCommands) {
-        super(runtimeContext, migrationCommands, true);
+        super(runtimeContext, migrationCommands);
     }
 }

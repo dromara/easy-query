@@ -2,7 +2,7 @@ package com.easy.query.core.migration;
 
 import com.easy.query.core.basic.api.database.TableInfo;
 import com.easy.query.core.configuration.dialect.SQLKeyword;
-import com.easy.query.core.migration.commands.DefaultMigrationCommand;
+import com.easy.query.core.migration.commands.MultiMigrationCommand;
 import com.easy.query.core.migration.data.ColumnMigrationData;
 import com.easy.query.core.migration.data.ForeignKeyMigrationData;
 import com.easy.query.core.migration.data.IndexMigrationData;
@@ -53,7 +53,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
     @Override
     public MigrationCommand renameTable(TableMigrationData tableMigrationData) {
         String sql = "ALTER TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getOldTableName()) + " RENAME TO " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()) + ";";
-        return new DefaultMigrationCommand(sql);
+        return new MultiMigrationCommand(sql);
     }
 
 
@@ -109,7 +109,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             sql.append(" COMMENT=").append(tableComment);
         }
         sql.append(";");
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
     @Override
@@ -139,7 +139,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             sql.append(" COMMENT ").append(columnComment);
         }
         sql.append(";");
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
     @Override
@@ -165,12 +165,12 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             sql.append(" COMMENT ").append(columnComment);
         }
         sql.append(";");
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
     @Override
     public MigrationCommand dropTable(TableMigrationData table) {
-        return new DefaultMigrationCommand("DROP TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName()) + ";");
+        return new MultiMigrationCommand("DROP TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName()) + ";");
     }
 
 
@@ -200,7 +200,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             sql.append(" COMMENT '").append(tableIndex.getComment().replace("'", "''")).append("'");
         }
         sql.append(";");
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
     @Override
@@ -232,7 +232,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
             sql.append(" ").append(foreignKey.getAction()).append(" ");
         }
         sql.append(";");
-        return new DefaultMigrationCommand(sql.toString());
+        return new MultiMigrationCommand(sql.toString());
     }
 
     @Override
