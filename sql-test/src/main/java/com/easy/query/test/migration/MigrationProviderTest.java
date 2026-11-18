@@ -35,7 +35,7 @@ public class MigrationProviderTest {
 
         Assert.assertEquals(Arrays.asList(
                 "CREATE TABLE t(id INT);",
-                "COMMENT ON TABLE t IS 'comment'"), command.toSQLList());
+                "COMMENT ON TABLE t IS 'comment'"), command.getSQLList());
     }
 
     @Test
@@ -50,7 +50,7 @@ public class MigrationProviderTest {
                 null, new OracleSQLKeyword(), new OracleMigrationEntityParser());
 
         MigrationCommand command = provider.createTable(table);
-        List<String> statements = command.toSQLList();
+        List<String> statements = command.getSQLList();
 
         Assert.assertEquals(5, statements.size());
         Assert.assertTrue(statements.get(0).contains("\"score\" binary_double NULL"));
@@ -60,7 +60,7 @@ public class MigrationProviderTest {
         Assert.assertEquals("CREATE SEQUENCE \"t_user_SEQ\" INCREMENT BY 1 START WITH 1 NOCACHE", statements.get(3));
         Assert.assertTrue(statements.get(4).startsWith("CREATE OR REPLACE TRIGGER \"t_user_TRG\""));
         Assert.assertTrue(statements.get(4).endsWith("END;"));
-        Assert.assertTrue(command.toSQLList().stream().noneMatch(sql -> sql.contains("execute immediate")));
+        Assert.assertTrue(command.getSQLList().stream().noneMatch(sql -> sql.contains("execute immediate")));
     }
 
     @Test
@@ -74,11 +74,11 @@ public class MigrationProviderTest {
 
         MigrationCommand command = provider.createTable(table);
 
-        Assert.assertEquals(2, command.toSQLList().size());
-        Assert.assertTrue(command.toSQLList().get(0).contains("\"id\" BIGINT IDENTITY(1,1) NOT NULL"));
-        Assert.assertTrue(command.toSQLList().get(0).contains("CONSTRAINT \"t_user_PK\" PRIMARY KEY (\"id\")"));
-        Assert.assertEquals("COMMENT ON TABLE \"t_user\" IS '用户表'", command.toSQLList().get(1));
-        Assert.assertTrue(command.toSQLList().stream().noneMatch(sql -> sql.contains("execute immediate")));
+        Assert.assertEquals(2, command.getSQLList().size());
+        Assert.assertTrue(command.getSQLList().get(0).contains("\"id\" BIGINT IDENTITY(1,1) NOT NULL"));
+        Assert.assertTrue(command.getSQLList().get(0).contains("CONSTRAINT \"t_user_PK\" PRIMARY KEY (\"id\")"));
+        Assert.assertEquals("COMMENT ON TABLE \"t_user\" IS '用户表'", command.getSQLList().get(1));
+        Assert.assertTrue(command.getSQLList().stream().noneMatch(sql -> sql.contains("execute immediate")));
     }
 
     @Test
@@ -92,11 +92,11 @@ public class MigrationProviderTest {
 
         MigrationCommand command = provider.createTable(table);
 
-        Assert.assertEquals(2, command.toSQLList().size());
-        Assert.assertTrue(command.toSQLList().get(0).startsWith("CREATE TABLE [dbo].[t_multi]"));
-        Assert.assertTrue(command.toSQLList().get(0).contains("CONSTRAINT [t_multi_PK] PRIMARY KEY ([id1],[id2])"));
-        Assert.assertTrue(command.toSQLList().stream().noneMatch(sql -> sql.contains("USE ")));
-        Assert.assertTrue(command.toSQLList().get(1).contains("N'multi''table'"));
+        Assert.assertEquals(2, command.getSQLList().size());
+        Assert.assertTrue(command.getSQLList().get(0).startsWith("CREATE TABLE [dbo].[t_multi]"));
+        Assert.assertTrue(command.getSQLList().get(0).contains("CONSTRAINT [t_multi_PK] PRIMARY KEY ([id1],[id2])"));
+        Assert.assertTrue(command.getSQLList().stream().noneMatch(sql -> sql.contains("USE ")));
+        Assert.assertTrue(command.getSQLList().get(1).contains("N'multi''table'"));
     }
 
     @Test
@@ -109,14 +109,14 @@ public class MigrationProviderTest {
         column.setComment("年龄");
 
         MigrationCommand addColumn = provider.add(table, column);
-        Assert.assertEquals(2, addColumn.toSQLList().size());
-        Assert.assertTrue(addColumn.toSQLList().get(0).endsWith("DEFAULT 0 NOT NULL"));
+        Assert.assertEquals(2, addColumn.getSQLList().size());
+        Assert.assertTrue(addColumn.getSQLList().get(0).endsWith("DEFAULT 0 NOT NULL"));
 
         IndexMigrationData index = index("ix_multi_age", "age");
         index.setComment("年龄索引");
         MigrationCommand createIndex = provider.index(table, index);
-        Assert.assertEquals(2, createIndex.toSQLList().size());
-        Assert.assertEquals("CREATE INDEX ix_multi_age ON [dbo].[t_multi] ([age] ASC)", createIndex.toSQLList().get(0));
+        Assert.assertEquals(2, createIndex.getSQLList().size());
+        Assert.assertEquals("CREATE INDEX ix_multi_age ON [dbo].[t_multi] ([age] ASC)", createIndex.getSQLList().get(0));
     }
 
     @Test
@@ -125,10 +125,10 @@ public class MigrationProviderTest {
         TableMigrationData table = table("t");
 
         MigrationCommand rename = provider.rename(table, "old_id", column("new_id", "INT", false, false));
-        Assert.assertEquals(Collections.singletonList("ALTER TABLE \"t\" ALTER COLUMN \"old_id\" RENAME TO \"new_id\";"), rename.toSQLList());
+        Assert.assertEquals(Collections.singletonList("ALTER TABLE \"t\" ALTER COLUMN \"old_id\" RENAME TO \"new_id\";"), rename.getSQLList());
 
         MigrationCommand index = provider.index(table, index("ix_Mixed", "new_id"));
-        Assert.assertEquals(Collections.singletonList("CREATE INDEX \"ix_Mixed\" ON \"t\" (\"new_id\" ASC);"), index.toSQLList());
+        Assert.assertEquals(Collections.singletonList("CREATE INDEX \"ix_Mixed\" ON \"t\" (\"new_id\" ASC);"), index.getSQLList());
     }
 
     private static TableMigrationData table(String tableName) {

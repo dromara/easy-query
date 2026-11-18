@@ -77,18 +77,10 @@ public class ClickHouseDatabaseMigrationProvider extends AbstractDatabaseMigrati
 
     @Override
     public MigrationCommand createTable(TableMigrationData tableMigrationData) {
+        String tableName = getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName());
+        List<String> statements = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
-        StringBuilder columnCommentSQL = new StringBuilder();
-
-
-        String tableComment = getTableComment(tableMigrationData, "'");
-        if (EasyStringUtil.isNotBlank(tableComment)) {
-            columnCommentSQL.append(newLine)
-                    .append("COMMENT ON TABLE ")
-                    .append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName())).append(" IS ").append(tableComment).append(";");
-        }
-
-        sql.append("CREATE TABLE IF NOT EXISTS ").append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName())).append(" ( ");
+        sql.append("CREATE TABLE IF NOT EXISTS ").append(tableName).append(" ( ");
         for (ColumnMigrationData column : tableMigrationData.getColumns()) {
             sql.append(newLine)
                     .append(getQuoteSQLName(column.getName()))
@@ -106,13 +98,6 @@ public class ClickHouseDatabaseMigrationProvider extends AbstractDatabaseMigrati
                 if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
                     sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
                 }
-            }
-            String columnComment = getColumnComment(column, "'");
-            if (EasyStringUtil.isNotBlank(columnComment)) {
-                columnCommentSQL.append(newLine)
-                        .append("COMMENT ON COLUMN ")
-                        .append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName())).append(".").append(getQuoteSQLName(column.getName()))
-                        .append(" IS ").append(columnComment).append(";");
             }
             sql.append(",");
         }
@@ -133,41 +118,44 @@ public class ClickHouseDatabaseMigrationProvider extends AbstractDatabaseMigrati
             sql.deleteCharAt(sql.length() - 1);
         }
         sql.append(newLine).append(");");
-        if (columnCommentSQL.length() > 0) {
-            sql.append(newLine).append(columnCommentSQL);
+        statements.add(sql.toString());
+
+        String tableComment = getTableComment(tableMigrationData, "'");
+        if (EasyStringUtil.isNotBlank(tableComment)) {
+            statements.add("COMMENT ON TABLE " + tableName + " IS " + tableComment + ";");
         }
-        return new MultiMigrationCommand(sql.toString());
+        for (ColumnMigrationData column : tableMigrationData.getColumns()) {
+            String columnComment = getColumnComment(column, "'");
+            if (EasyStringUtil.isNotBlank(columnComment)) {
+                statements.add("COMMENT ON COLUMN " + tableName + "." + getQuoteSQLName(column.getName())
+                        + " IS " + columnComment + ";");
+            }
+        }
+        return new MultiMigrationCommand(statements);
     }
 
     @Override
     protected MigrationCommand renameColumn(TableMigrationData tableMigrationData, String renameFrom, ColumnMigrationData column) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("ALTER TABLE ").append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()))
-                .append(" RENAME COLUMN ").append(getQuoteSQLName(renameFrom))
-                .append(" TO ")
-                .append(getQuoteSQLName(column.getName())).append(";");
-//
-//        ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
-//        sql.append(columnDbTypeResult.columnType);
-//        if (isNullable(entityMigrationMetadata, column)) {
-//            sql.append(" NULL");
-//        } else {
-//            sql.append(" NOT NULL");
-//        }
-
+        String tableName = getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName());
+        String sql = "ALTER TABLE " + tableName
+                + " RENAME COLUMN " + getQuoteSQLName(renameFrom)
+                + " TO " + getQuoteSQLName(column.getName()) + ";";
         String columnComment = getColumnComment(column, "'");
-        if (EasyStringUtil.isNotBlank(columnComment)) {
-            sql.append(newLine);
-            sql.append(" COMMENT ON COLUMN ").append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName())).append(" IS ").append(columnComment);
-            sql.append(";");
+        if (EasyStringUtil.isBlank(columnComment)) {
+            return new MultiMigrationCommand(sql);
         }
-        return new MultiMigrationCommand(sql.toString());
+        List<String> statements = new ArrayList<>();
+        statements.add(sql);
+        statements.add("COMMENT ON COLUMN " + tableName + "." + getQuoteSQLName(column.getName())
+                + " IS " + columnComment + ";");
+        return new MultiMigrationCommand(statements);
     }
 
     @Override
     protected MigrationCommand addColumn(TableMigrationData tableMigrationData, ColumnMigrationData column) {
+        String tableName = getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName());
         StringBuilder sql = new StringBuilder();
-        sql.append("ALTER TABLE ").append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()))
+        sql.append("ALTER TABLE ").append(tableName)
                 .append(" ADD ").append(getQuoteSQLName(column.getName())).append(" ");
 
         ColumnDbTypeResult columnDbTypeResult = new ColumnDbTypeResult(column.getDbType(), column.getDefValue());
@@ -183,12 +171,14 @@ public class ClickHouseDatabaseMigrationProvider extends AbstractDatabaseMigrati
         sql.append(";");
 
         String columnComment = getColumnComment(column, "'");
-        if (EasyStringUtil.isNotBlank(columnComment)) {
-            sql.append(newLine);
-            sql.append(" COMMENT ON COLUMN ").append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName())).append(" IS ").append(columnComment);
-            sql.append(";");
+        if (EasyStringUtil.isBlank(columnComment)) {
+            return new MultiMigrationCommand(sql.toString());
         }
-        return new MultiMigrationCommand(sql.toString());
+        List<String> statements = new ArrayList<>();
+        statements.add(sql.toString());
+        statements.add("COMMENT ON COLUMN " + tableName + "." + getQuoteSQLName(column.getName())
+                + " IS " + columnComment + ";");
+        return new MultiMigrationCommand(statements);
     }
 
 

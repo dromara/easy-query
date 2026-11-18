@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class EmptyMigrationCommand implements MigrationCommand {
     @Override
-    public List<String> toSQLList() {
+    public List<String> getSQLList() {
         return Collections.emptyList();
     }
 }

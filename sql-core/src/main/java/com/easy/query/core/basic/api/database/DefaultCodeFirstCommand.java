@@ -32,7 +32,7 @@ public class DefaultCodeFirstCommand implements CodeFirstCommand {
         SQLClientApiFactory sqlClientApiFactory = runtimeContext.getSQLClientApiFactory();
         boolean hasSQL = false;
         for (MigrationCommand migrationCommand : migrationCommands) {
-            for (String sql : migrationCommand.toSQLList()) {
+            for (String sql : migrationCommand.getSQLList()) {
                 if (EasyStringUtil.isNotBlank(sql)) {
                     hasSQL = true;
                     consumer.accept(new DefaultCommandTxArg(sql, s -> {

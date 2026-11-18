@@ -20,6 +20,9 @@ import com.easy.query.core.migration.data.ColumnMigrationData;
 import com.easy.query.core.migration.data.IndexMigrationData;
 import com.easy.query.core.migration.data.TableMigrationData;
 import com.easy.query.core.util.EasyDatabaseUtil;
+import com.easy.query.clickhouse.config.ClickHouseSQLKeyword;
+import com.easy.query.clickhouse.migration.ClickHouseDatabaseMigrationProvider;
+import com.easy.query.clickhouse.migration.ClickHouseMigrationEntityParser;
 import com.easy.query.duckdb.config.DuckDBSQLKeyword;
 import com.easy.query.duckdb.migration.DuckDBSQLDatabaseMigrationProvider;
 import com.easy.query.duckdb.migration.DuckDBSQLMigrationEntityParser;
@@ -67,11 +70,11 @@ public class MigrationRegressionTest {
         TableMigrationData table = table(null, "new_table");
         table.setOldTableName("old_table");
 
-        Assert.assertEquals("EXEC sp_rename N'[dbo].[old_table]', N'new_table'", provider.renameTable(table).toSQLList().get(0));
+        Assert.assertEquals("EXEC sp_rename N'[dbo].[old_table]', N'new_table'", provider.renameTable(table).getSQLList().get(0));
 
         table.setSchema("sales");
         table.setTableName("new'table");
-        Assert.assertEquals("EXEC sp_rename N'[sales].[old_table]', N'new''table'", provider.renameTable(table).toSQLList().get(0));
+        Assert.assertEquals("EXEC sp_rename N'[sales].[old_table]', N'new''table'", provider.renameTable(table).getSQLList().get(0));
     }
 
     @Test
@@ -89,7 +92,7 @@ public class MigrationRegressionTest {
         table.getColumns().add(id);
         table.getColumns().add(amount);
 
-        List<String> statements = provider.createTable(table).toSQLList();
+        List<String> statements = provider.createTable(table).getSQLList();
 
         Assert.assertEquals(3, statements.size());
         Assert.assertTrue(statements.get(0).contains("\"amount\" NUMBER(10) DEFAULT 0 NOT NULL"));
@@ -110,7 +113,7 @@ public class MigrationRegressionTest {
             table.getColumns().add(id);
             table.getColumns().add(name);
 
-            List<String> statements = provider.createTable(table).toSQLList();
+            List<String> statements = provider.createTable(table).getSQLList();
 
             Assert.assertEquals(provider.getClass().getName(), 3, statements.size());
             Assert.assertTrue(statements.get(0).startsWith("CREATE TABLE IF NOT EXISTS \"public\".\"t_user\""));
@@ -133,7 +136,7 @@ public class MigrationRegressionTest {
             Assert.assertEquals(Arrays.asList(
                     "ALTER TABLE \"public\".\"t_user\" RENAME COLUMN \"old_name\" TO \"new_name\";",
                     "COMMENT ON COLUMN \"public\".\"t_user\".\"new_name\" IS '姓名''注释';"
-            ), renameCommands.get(0).toSQLList());
+            ), renameCommands.get(0).getSQLList());
 
             TableMigrationData addTable = table("public", "t_user");
             ColumnMigrationData added = column("age", "INT");
@@ -144,12 +147,12 @@ public class MigrationRegressionTest {
             Assert.assertEquals(Arrays.asList(
                     "ALTER TABLE \"public\".\"t_user\" ADD \"age\" INT NULL;",
                     "COMMENT ON COLUMN \"public\".\"t_user\".\"age\" IS '年龄';"
-            ), addCommands.get(0).toSQLList());
+            ), addCommands.get(0).getSQLList());
 
             TableMigrationData table = table("public", "new_table");
             table.setOldTableName("old_table");
             Assert.assertEquals("ALTER TABLE \"public\".\"old_table\" RENAME TO \"new_table\";",
-                    provider.renameTable(table).toSQLList().get(0));
+                    provider.renameTable(table).getSQLList().get(0));
         }
     }
 
@@ -167,7 +170,7 @@ public class MigrationRegressionTest {
             Assert.assertEquals(Arrays.asList(
                     "CREATE INDEX \"IX_Mixed\" ON \"public\".\"t_user\" (\"name\" ASC);",
                     "COMMENT ON INDEX \"public\".\"IX_Mixed\" IS '索引''注释';"
-            ), commands.get(0).toSQLList());
+            ), commands.get(0).getSQLList());
         }
 
         AbstractDatabaseMigrationProvider duckDB = new DuckDBSQLDatabaseMigrationProvider(
@@ -175,7 +178,7 @@ public class MigrationRegressionTest {
         TableMigrationData table = table("main", "t_user");
         table.setIndexes(Collections.singletonList(index("IX_Mixed", "name")));
         Assert.assertEquals("CREATE INDEX \"IX_Mixed\" ON \"main\".\"t_user\" (\"name\" ASC);",
-                duckDB.createTableIndex(table).get(0).toSQLList().get(0));
+                duckDB.createTableIndex(table).get(0).getSQLList().get(0));
     }
 
     @Test
@@ -188,17 +191,17 @@ public class MigrationRegressionTest {
         sqliteTable.getColumns().add(renamed);
 
         Assert.assertEquals("ALTER TABLE \"main\".\"t_user\" RENAME COLUMN \"old_name\" TO \"new_name\";",
-                sqlite.addTableColumn(sqliteTable).get(0).toSQLList().get(0));
+                sqlite.addTableColumn(sqliteTable).get(0).getSQLList().get(0));
         sqliteTable.setOldTableName("old_table");
         Assert.assertEquals("ALTER TABLE \"main\".\"old_table\" RENAME TO \"t_user\";",
-                sqlite.renameTable(sqliteTable).toSQLList().get(0));
+                sqlite.renameTable(sqliteTable).getSQLList().get(0));
 
         H2DatabaseMigrationProvider h2 = new H2DatabaseMigrationProvider(
                 null, new H2SQLKeyword(), new H2MigrationEntityParser());
         TableMigrationData h2Table = table("PUBLIC", "new_table");
         h2Table.setOldTableName("old_table");
         Assert.assertEquals("ALTER TABLE \"PUBLIC\".\"old_table\" RENAME TO \"new_table\";",
-                h2.renameTable(h2Table).toSQLList().get(0));
+                h2.renameTable(h2Table).getSQLList().get(0));
     }
 
     @Test
@@ -214,7 +217,7 @@ public class MigrationRegressionTest {
         generatedTable.getColumns().add(generated);
 
         Assert.assertEquals("ALTER TABLE `t_user` CHANGE `old_id` `id` BIGINT NOT NULL AUTO_INCREMENT;",
-                provider.addTableColumn(generatedTable).get(0).toSQLList().get(0));
+                provider.addTableColumn(generatedTable).get(0).getSQLList().get(0));
 
         TableMigrationData defaultTable = table(null, "t_user");
         ColumnMigrationData amount = column("amount", "DECIMAL(10,2)");
@@ -223,7 +226,7 @@ public class MigrationRegressionTest {
         amount.setComment("分数'说明");
         defaultTable.getColumns().add(amount);
         Assert.assertEquals("ALTER TABLE `t_user` CHANGE `old_amount` `amount` DECIMAL(10,2) NULL DEFAULT 0 COMMENT '分数''说明';",
-                provider.addTableColumn(defaultTable).get(0).toSQLList().get(0));
+                provider.addTableColumn(defaultTable).get(0).getSQLList().get(0));
     }
 
     @Test
@@ -313,6 +316,37 @@ public class MigrationRegressionTest {
                 Assert.assertSame(failure, ex.getCause());
             }
         }
+    }
+
+    @Test
+    public void clickHouseCommentsAreSeparateStatements() {
+        ClickHouseDatabaseMigrationProvider provider = new ClickHouseDatabaseMigrationProvider(
+                null, new ClickHouseSQLKeyword(), new ClickHouseMigrationEntityParser());
+        TableMigrationData table = table(null, "t_click");
+        table.setComment("表注释");
+        ColumnMigrationData id = column("id", "Int64");
+        id.setPrimary(true);
+        id.setNotNull(true);
+        ColumnMigrationData name = column("name", "String");
+        name.setComment("名称'注释");
+        table.getColumns().add(id);
+        table.getColumns().add(name);
+
+        List<String> statements = provider.createTable(table).getSQLList();
+        Assert.assertEquals(3, statements.size());
+        Assert.assertFalse(statements.get(0).contains("COMMENT ON"));
+        Assert.assertEquals("COMMENT ON TABLE `t_click` IS '表注释';", statements.get(1));
+        Assert.assertEquals("COMMENT ON COLUMN `t_click`.`name` IS '名称''注释';", statements.get(2));
+
+        TableMigrationData renameTable = table(null, "t_click");
+        ColumnMigrationData renamed = column("new_name", "String");
+        renamed.setOldColumnName("old_name");
+        renamed.setComment("新名称");
+        renameTable.getColumns().add(renamed);
+        Assert.assertEquals(Arrays.asList(
+                "ALTER TABLE `t_click` RENAME COLUMN `old_name` TO `new_name`;",
+                "COMMENT ON COLUMN `t_click`.`new_name` IS '新名称';"
+        ), provider.addTableColumn(renameTable).get(0).getSQLList());
     }
 
     private static List<AbstractDatabaseMigrationProvider> pgFamilyProviders() {

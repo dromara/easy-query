@@ -9,5 +9,5 @@ import java.util.List;
  * @author xuejiaming
  */
 public interface MigrationCommand {
-    List<String> toSQLList();
+    List<String> getSQLList();
 }

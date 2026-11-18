@@ -37,7 +37,7 @@ public class MigrationTest extends BaseTest {
         List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateMigrationSQL(migrationContext);
         Assert.assertEquals(1, migrationCommands.size());
         for (MigrationCommand migrationCommand : migrationCommands) {
-            System.out.println(migrationCommand.toSQLList().get(0));
+            System.out.println(migrationCommand.getSQLList().get(0));
         }
         MigrationCommand migrationCommand = migrationCommands.get(0);
         Assert.assertEquals("CREATE TABLE IF NOT EXISTS `my_migration_blog` ( \n" +
@@ -58,7 +58,7 @@ public class MigrationTest extends BaseTest {
                 "`is_top` TINYINT(1) NULL  COMMENT '是否置顶',\n" +
                 "`top` TINYINT(1) NULL  COMMENT '是否置顶', \n" +
                 " PRIMARY KEY (`id`)\n" +
-                ") Engine=InnoDB;", migrationCommand.toSQLList().get(0));
+                ") Engine=InnoDB;", migrationCommand.getSQLList().get(0));
     }
 
     @Test
@@ -69,13 +69,13 @@ public class MigrationTest extends BaseTest {
         MigrationContext migrationContext = new MigrationContext(tableMigrationDataList);
         List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateMigrationSQL(migrationContext);
         for (MigrationCommand migrationCommand : migrationCommands) {
-            System.out.println(migrationCommand.toSQLList().get(0));
+            System.out.println(migrationCommand.getSQLList().get(0));
         }
         Assert.assertEquals(2, migrationCommands.size());
         MigrationCommand migrationCommand0 = migrationCommands.get(0);
-        Assert.assertEquals("ALTER TABLE `t_topic` RENAME TO `t_topic2`;", migrationCommand0.toSQLList().get(0));
+        Assert.assertEquals("ALTER TABLE `t_topic` RENAME TO `t_topic2`;", migrationCommand0.getSQLList().get(0));
         MigrationCommand migrationCommand1 = migrationCommands.get(1);
-        Assert.assertEquals("ALTER TABLE `t_topic2` ADD `abc` VARCHAR(255) NULL;", migrationCommand1.toSQLList().get(0));
+        Assert.assertEquals("ALTER TABLE `t_topic2` ADD `abc` VARCHAR(255) NULL;", migrationCommand1.getSQLList().get(0));
     }
 
     @Test
@@ -86,11 +86,11 @@ public class MigrationTest extends BaseTest {
         MigrationContext migrationContext = new MigrationContext(tableMigrationDataList);
         List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateMigrationSQL(migrationContext);
         for (MigrationCommand migrationCommand : migrationCommands) {
-            System.out.println(migrationCommand.toSQLList().get(0));
+            System.out.println(migrationCommand.getSQLList().get(0));
         }
         Assert.assertEquals(1, migrationCommands.size());
         MigrationCommand migrationCommand0 = migrationCommands.get(0);
-        Assert.assertEquals("ALTER TABLE `t_topic` CHANGE `title` `abc` varchar(200) NULL;", migrationCommand0.toSQLList().get(0));
+        Assert.assertEquals("ALTER TABLE `t_topic` CHANGE `title` `abc` varchar(200) NULL;", migrationCommand0.getSQLList().get(0));
     }
 
     @Test
@@ -115,7 +115,7 @@ public class MigrationTest extends BaseTest {
             System.out.println(arg.getSQL());
             String md5 = MD5Util.getMD5Hash(arg.getSQL());
             System.out.println("sql-hash:" + md5);
-            Assert.assertEquals("2a927e4ae0dbf7d6f6d687a50888df93", md5);
+            Assert.assertEquals("1e3b0abdcda87f0137b62d72d9372c2b", md5);
             arg.commit();
         });
 

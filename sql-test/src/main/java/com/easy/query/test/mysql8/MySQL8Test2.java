@@ -15,7 +15,6 @@ import com.easy.query.core.proxy.part.proxy.Part1Proxy;
 import com.easy.query.core.proxy.sql.GroupKeys;
 import com.easy.query.core.proxy.sql.Select;
 import com.easy.query.core.util.EasySQLUtil;
-import com.easy.query.test.common.MD5Util;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.listener.ListenerContext;
 import com.easy.query.test.mysql8.entity.M8TestIndex;
@@ -52,11 +51,23 @@ public class MySQL8Test2 extends BaseTest {
         codeFirstCommand1.forEach(s -> s.commit());
 
         CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.syncTableCommand(Arrays.asList(M8TestIndex.class));
+        List<String> statements = new java.util.ArrayList<>();
         codeFirstCommand2.forEach(s -> {
-            String md5Hash = MD5Util.getMD5Hash(s.getSQL());
             System.out.println(s.getSQL());
-            Assert.assertEquals("dbbff7673035e7092de7c1c6aae99fcb", md5Hash);
+            statements.add(s.getSQL());
         });
+        Assert.assertEquals(Arrays.asList(
+                "CREATE TABLE IF NOT EXISTS `m8_test_index` ( \n" +
+                        "`column1` VARCHAR(255) NOT NULL ,\n" +
+                        "`column2` VARCHAR(255) NULL ,\n" +
+                        "`column3` VARCHAR(255) NULL ,\n" +
+                        "`column4` VARCHAR(255) NULL  DEFAULT '',\n" +
+                        "`create_time` DATETIME(3) NOT NULL  DEFAULT CURRENT_TIMESTAMP(3), \n" +
+                        " PRIMARY KEY (`column1`)\n" +
+                        ") Engine=InnoDB;",
+                "CREATE INDEX m8_test_index_column1_column2_idx ON `m8_test_index` (`column1` ASC,`column2` ASC);",
+                "CREATE UNIQUE INDEX m8_test_index_column2_uidx ON `m8_test_index` (`column2` ASC);"
+        ), statements);
 //        List<M8TestIndex> list = easyEntityQuery.queryable(M8TestIndex.class)
 //                .toList();
     }

@@ -21,7 +21,7 @@ public class MultiMigrationCommand implements MigrationCommand {
     }
 
     @Override
-    public List<String> toSQLList() {
+    public List<String> getSQLList() {
         return statements;
     }
 }

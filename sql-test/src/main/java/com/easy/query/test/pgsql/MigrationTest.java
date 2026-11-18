@@ -7,7 +7,6 @@ import com.easy.query.core.migration.data.TableMigrationData;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MyMigrationBlog;
 import com.easy.query.test.entity.Topic;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -30,7 +29,7 @@ public class MigrationTest extends PgSQLBaseTest{
         MigrationContext migrationContext = new MigrationContext(tableMigrationDataList);
         List<MigrationCommand> migrationCommands = migrationsSQLGenerator.generateMigrationSQL(migrationContext);
         for (MigrationCommand migrationCommand : migrationCommands) {
-            System.out.println(migrationCommand.toSQLList());
+            System.out.println(migrationCommand.getSQLList());
         }
 //        Assert.assertEquals(1,migrationCommands.size());
 //        MigrationCommand migrationCommand = migrationCommands.get(0);
