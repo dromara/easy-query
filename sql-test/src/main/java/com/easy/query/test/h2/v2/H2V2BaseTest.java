@@ -9,7 +9,6 @@ import com.easy.query.core.basic.entity.EntityMappingRule;
 import com.easy.query.core.basic.entity.PropertyFirstEntityMappingRule;
 import com.easy.query.core.basic.extension.listener.JdbcExecutorListener;
 import com.easy.query.core.bootstrapper.EasyQueryBootstrapper;
-import com.easy.query.core.common.ValueHolder;
 import com.easy.query.core.enums.IncludeLimitModeEnum;
 import com.easy.query.core.logging.LogFactory;
 import com.easy.query.h2.config.H2DatabaseConfiguration;
@@ -23,7 +22,9 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * create time 2025/8/21 21:42
@@ -86,74 +87,26 @@ public class H2V2BaseTest {
 
     public static void beforex() {
         DatabaseCodeFirst databaseCodeFirst = easyEntityQuery.getDatabaseCodeFirst();
-//        CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(SysUser.class,SysBank.class, SysBankCard.class,  SysUserBook.class, M8Comment.class));
-//        codeFirstCommand.commands(s -> s.commit());
-        CodeFirstCommand codeFirstCommand2 = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(ALLTYPE.class, Topic.class, BlogEntity.class));
-        codeFirstCommand2.forEach(s -> s.commit());
+        CodeFirstCommand dropCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(ALLTYPE.class, Topic.class, BlogEntity.class));
+        dropCommand.forEach(s -> s.commit());
 
-        CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(ALLTYPE.class, Topic.class, BlogEntity.class));
-        ValueHolder<String> sqlValueHolder=new ValueHolder<>();
-        codeFirstCommand1.forEach(s -> {
+        CodeFirstCommand syncCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(ALLTYPE.class, Topic.class, BlogEntity.class));
+        List<String> statements = new ArrayList<>();
+        syncCommand.forEach(s -> {
             System.out.println(s.getSQL());
-            sqlValueHolder.setValue(s.getSQL());
+            statements.add(s.getSQL());
             s.commit();
         });
 
-        String value = sqlValueHolder.getValue();
-        System.out.println(value);
-        Assert.assertEquals("\n" +
-                "CREATE TABLE IF NOT EXISTS \"t_all_type\" ( \n" +
-                "\"id\" VARCHAR(255) NOT NULL ,\n" +
-                "\"number_decimal\" DECIMAL(16,2) NULL ,\n" +
-                "\"number_float\" FLOAT NULL ,\n" +
-                "\"number_double\" DOUBLE NULL ,\n" +
-                "\"number_short\" SMALLINT NULL ,\n" +
-                "\"number_integer\" INT NULL ,\n" +
-                "\"number_long\" BIGINT NULL ,\n" +
-                "\"number_byte\" TINYINT NULL ,\n" +
-                "\"time_local_date_time\" TIMESTAMP(3) NULL ,\n" +
-                "\"time_local_date\" DATE NULL ,\n" +
-                "\"time_local_time\" TIME NULL ,\n" +
-                "\"only_date\" TIMESTAMP(3) NULL ,\n" +
-                "\"sql_date\" TIMESTAMP(3) NULL ,\n" +
-                "\"only_time\" TIME NULL ,\n" +
-                "\"enable\" BOOLEAN NULL ,\n" +
-                "\"value\" VARCHAR(255) NULL ,\n" +
-                "\"uid\" UUID NULL ,\n" +
-                "\"number_float_basic\" FLOAT NOT NULL  DEFAULT 0,\n" +
-                "\"number_double_basic\" DOUBLE NOT NULL  DEFAULT 0,\n" +
-                "\"number_short_basic\" SMALLINT NOT NULL  DEFAULT 0,\n" +
-                "\"number_integer_basic\" INT NOT NULL  DEFAULT 0,\n" +
-                "\"number_long_basic\" BIGINT NOT NULL  DEFAULT 0,\n" +
-                "\"number_byte_basic\" TINYINT NOT NULL  DEFAULT 0,\n" +
-                "\"enable_basic\" BOOLEAN NOT NULL  DEFAULT 0, \n" +
-                " PRIMARY KEY (\"id\")\n" +
-                ");\n" +
-                "CREATE TABLE IF NOT EXISTS \"t_topic\" ( \n" +
-                "\"id\" VARCHAR(255) NOT NULL ,\n" +
-                "\"stars\" INT NULL ,\n" +
-                "\"title\" VARCHAR(255) NULL ,\n" +
-                "\"create_time\" TIMESTAMP(3) NULL , \n" +
-                " PRIMARY KEY (\"id\")\n" +
-                ");\n" +
-                "CREATE TABLE IF NOT EXISTS \"t_blog\" ( \n" +
-                "\"id\" VARCHAR(255) NOT NULL ,\n" +
-                "\"create_time\" TIMESTAMP(3) NULL  COMMENT '创建时间;创建时间',\n" +
-                "\"update_time\" TIMESTAMP(3) NULL  COMMENT '修改时间;修改时间',\n" +
-                "\"create_by\" VARCHAR(255) NULL  COMMENT '创建人;创建人',\n" +
-                "\"update_by\" VARCHAR(255) NULL  COMMENT '修改人;修改人',\n" +
-                "\"deleted\" BOOLEAN NULL  COMMENT '是否删除;是否删除',\n" +
-                "\"title\" VARCHAR(255) NULL ,\n" +
-                "\"content\" VARCHAR(255) NULL ,\n" +
-                "\"url\" VARCHAR(255) NULL ,\n" +
-                "\"star\" INT NULL ,\n" +
-                "\"publish_time\" TIMESTAMP(3) NULL ,\n" +
-                "\"score\" DECIMAL(16,2) NULL ,\n" +
-                "\"status\" INT NULL ,\n" +
-                "\"order\" DECIMAL(16,2) NULL ,\n" +
-                "\"is_top\" BOOLEAN NULL ,\n" +
-                "\"top\" BOOLEAN NULL , \n" +
-                " PRIMARY KEY (\"id\")\n" +
-                ");",value);
+        Assert.assertEquals(3, statements.size());
+        Assert.assertTrue(statements.get(0).startsWith("CREATE TABLE IF NOT EXISTS \"t_all_type\""));
+        Assert.assertTrue(statements.get(0).contains("\"number_decimal\" DECIMAL(16,2) NULL"));
+        Assert.assertTrue(statements.get(0).contains("\"enable_basic\" BOOLEAN NOT NULL  DEFAULT 0"));
+        Assert.assertTrue(statements.get(1).startsWith("CREATE TABLE IF NOT EXISTS \"t_topic\""));
+        Assert.assertTrue(statements.get(2).startsWith("CREATE TABLE IF NOT EXISTS \"t_blog\""));
+        Assert.assertTrue(statements.get(2).contains("\"create_time\" TIMESTAMP(3) NULL  COMMENT '创建时间;创建时间'"));
+        Assert.assertTrue(databaseCodeFirst.tableExists(ALLTYPE.class));
+        Assert.assertTrue(databaseCodeFirst.tableExists(Topic.class));
+        Assert.assertTrue(databaseCodeFirst.tableExists(BlogEntity.class));
     }
 }

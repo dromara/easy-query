@@ -760,8 +760,7 @@ public class H2QueryTest extends H2BaseTest {
         codeFirstCommand.forEach(s->s.commit());
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(Topic.class));
         codeFirstCommand1.forEach(s->{
-            Assert.assertEquals("\n" +
-                    "CREATE TABLE IF NOT EXISTS t_topic ( \n" +
+            Assert.assertEquals("CREATE TABLE IF NOT EXISTS t_topic ( \n" +
                     "id VARCHAR(255) NOT NULL ,\n" +
                     "stars INT NULL ,\n" +
                     "title VARCHAR(255) NULL ,\n" +
@@ -778,8 +777,7 @@ public class H2QueryTest extends H2BaseTest {
         codeFirstCommand.forEach(s->s.commit());
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.syncTableCommand(Arrays.asList(MultiPrimaryEntity.class));
         codeFirstCommand1.forEach(s->{
-            Assert.assertEquals("\n" +
-                    "CREATE TABLE IF NOT EXISTS t_multi_primary ( \n" +
+            Assert.assertEquals("CREATE TABLE IF NOT EXISTS t_multi_primary ( \n" +
                     "id1 VARCHAR(255) NOT NULL ,\n" +
                     "id2 VARCHAR(255) NOT NULL , \n" +
                     " PRIMARY KEY (id1, id2)\n" +
@@ -794,22 +792,21 @@ public class H2QueryTest extends H2BaseTest {
         CodeFirstCommand dropCommand = databaseCodeFirst.dropTableIfExistsCommand(Arrays.asList(H2TableCommentEntity.class));
         dropCommand.forEach(s -> s.commit());
         CodeFirstCommand syncCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(H2TableCommentEntity.class));
-        // 执行建表语句验证 H2 能够正确解析；修复前 MySQL 风格的内联 COMMENT='...' 放在括号内会导致语法错误
+        List<String> statements = new ArrayList<>();
         syncCommand.forEach(s -> {
-            // 统一换行符，兼容不同平台的 System.lineSeparator()
-            String ddl = s.getSQL().replace("\r\n", "\n");
-            // 列级注释保持内联 COMMENT，表级注释生成为独立的 COMMENT ON TABLE 语句
-            Assert.assertEquals("\n" +
-                    "CREATE TABLE IF NOT EXISTS t_h2_table_comment ( \n" +
-                    "id VARCHAR(255) NOT NULL  COMMENT '主键ID',\n" +
-                    "name VARCHAR(255) NULL  COMMENT '名称', \n" +
-                    " PRIMARY KEY (id)\n" +
-                    ");\n" +
-                    "COMMENT ON TABLE t_h2_table_comment IS 'H2表注释测试';", ddl);
-            // 不得出现 MySQL 内联表级注释语法
-            Assert.assertFalse(ddl.contains("COMMENT="));
+            statements.add(s.getSQL().replace("\r\n", "\n"));
             s.commit();
         });
+
+        Assert.assertEquals(2, statements.size());
+        Assert.assertEquals("CREATE TABLE IF NOT EXISTS t_h2_table_comment ( \n" +
+                "id VARCHAR(255) NOT NULL  COMMENT '主键ID',\n" +
+                "name VARCHAR(255) NULL  COMMENT '名称', \n" +
+                " PRIMARY KEY (id)\n" +
+                ");", statements.get(0));
+        Assert.assertEquals("COMMENT ON TABLE t_h2_table_comment IS 'H2表注释测试';", statements.get(1));
+        Assert.assertFalse(statements.get(0).contains("COMMENT="));
+        Assert.assertTrue(databaseCodeFirst.tableExists(H2TableCommentEntity.class));
     }
 
     @Test

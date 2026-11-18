@@ -64,25 +64,31 @@ public class MigrationDamengTest {
             codeFirstCommand.forEach(arg -> {
                 System.out.println("执行删除");
                 System.out.println(arg.getSQL());
+                arg.commit();
             });
         } else {
             System.out.println("不存在表:MyMigrationBlog0");
         }
 
         CodeFirstCommand codeFirstCommand = databaseCodeFirst.syncTableCommand(Arrays.asList(MyMigrationBlog0.class));
+        boolean[] created = {false};
         codeFirstCommand.forEach(arg -> {
             System.out.println(arg.getSQL());
-            Assert.assertTrue(arg.getSQL().contains("CREATE TABLE"));
+            if (arg.getSQL().contains("CREATE TABLE")) {
+                created[0] = true;
+            }
             Assert.assertFalse(arg.getSQL().contains("execute immediate"));
             Assert.assertFalse(arg.getSQL().startsWith("\nBEGIN"));
-//            arg.commit();
+            arg.commit();
         });
+        Assert.assertTrue(created[0]);
         boolean any = easyEntityQuery.queryable(MyMigrationBlog0.class).any();
         Assert.assertFalse(any);
         CodeFirstCommand codeFirstCommand1 = databaseCodeFirst.dropTableCommand(Arrays.asList(MyMigrationBlog0.class));
         codeFirstCommand1.forEach(arg -> {
             System.out.println("执行删除");
             System.out.println(arg.getSQL());
+            arg.commit();
         });
         Exception ex = null;
         try {

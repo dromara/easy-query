@@ -89,14 +89,15 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
         String tableName = getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName());
         List<ColumnMigrationData> primaryKeys = EasyCollectionUtil.filter(tableMigrationData.getColumns(), ColumnMigrationData::isPrimary);
         List<String> statements = new ArrayList<>();
+        String plsqlNewLine = "\n";
 
         StringBuilder sql = new StringBuilder("CREATE TABLE ").append(tableName).append(" ( ");
         for (ColumnMigrationData column : tableMigrationData.getColumns()) {
             sql.append(newLine).append(getQuoteSQLName(column.getName())).append(" ").append(columnType(column));
-            sql.append(column.isNotNull() || column.isGeneratedKey() ? " NOT NULL " : " NULL ");
             if (!column.isGeneratedKey() && EasyStringUtil.isNotBlank(column.getDefValue())) {
                 sql.append(" DEFAULT ").append(column.getDefValue());
             }
+            sql.append(column.isNotNull() || column.isGeneratedKey() ? " NOT NULL " : " NULL ");
             sql.append(",");
         }
         if (EasyCollectionUtil.isNotEmpty(primaryKeys)) {
@@ -128,12 +129,12 @@ public class OracleDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
             String quotedSequenceName = getQuoteSQLName(tableMigrationData.getSchema(), sequenceName);
             statements.add("CREATE SEQUENCE " + quotedSequenceName + " INCREMENT BY 1 START WITH 1 NOCACHE");
             statements.add("CREATE OR REPLACE TRIGGER " + getQuoteSQLName(tableMigrationData.getSchema(), triggerName)
-                    + " BEFORE INSERT ON " + tableName + " FOR EACH ROW" + newLine
-                    + "BEGIN" + newLine
-                    + "  IF :new." + getQuoteSQLName(column.getName()) + " IS NULL THEN" + newLine
+                    + " BEFORE INSERT ON " + tableName + " FOR EACH ROW" + plsqlNewLine
+                    + "BEGIN" + plsqlNewLine
+                    + "  IF :new." + getQuoteSQLName(column.getName()) + " IS NULL THEN" + plsqlNewLine
                     + "    SELECT " + quotedSequenceName + ".NEXTVAL INTO :new."
-                    + getQuoteSQLName(column.getName()) + " FROM DUAL;" + newLine
-                    + "  END IF;" + newLine
+                    + getQuoteSQLName(column.getName()) + " FROM DUAL;" + plsqlNewLine
+                    + "  END IF;" + plsqlNewLine
                     + "END;");
         }
         return new MultiMigrationCommand(statements);

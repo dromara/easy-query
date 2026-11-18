@@ -230,6 +230,7 @@ public class DefaultMigrationsSQLGenerator implements MigrationsSQLGenerator {
             foreignKey.setTargetTable(tableForeignKey.targetTable);
             foreignKey.setSelfColumn(tableForeignKey.selfColumn);
             foreignKey.setTargetColumn(tableForeignKey.targetColumn);
+            foreignKey.setAction(tableForeignKey.action);
             foreignKeys.add(foreignKey);
         }
         tableMigrationData.setForeignKeys(foreignKeys);

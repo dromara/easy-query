@@ -52,19 +52,23 @@ public class H2DatabaseMigrationProvider extends AbstractDatabaseMigrationProvid
     @Override
     public boolean tableExists(String schema, String tableName) {
         ArrayList<Object> sqlParameters = new ArrayList<>();
-        if (EasyStringUtil.isBlank(schema)) {
-            sqlParameters.add("PUBLIC");
-        } else {
-            sqlParameters.add(schema);
-        }
-        sqlParameters.add(tableName);
+        String querySchema = EasyStringUtil.isBlank(schema) ? "PUBLIC" : schema;
+        sqlParameters.add(getMetadataName(querySchema));
+        sqlParameters.add(getMetadataName(tableName));
         List<Map<String, Object>> maps = EasyDatabaseUtil.sqlQuery(dataSource, "SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?;", sqlParameters);
         return EasyCollectionUtil.isNotEmpty(maps);
     }
 
+    private String getMetadataName(String name) {
+        if (getQuoteSQLName(name).equals(name)) {
+            return name.toUpperCase(java.util.Locale.ROOT);
+        }
+        return name;
+    }
+
     @Override
     public MigrationCommand renameTable(TableMigrationData tableMigrationData) {
-        String sql = "ALTER TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getOldTableName()) + " RENAME TO " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()) + ";";
+        String sql = "ALTER TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getOldTableName()) + " RENAME TO " + getQuoteSQLName(tableMigrationData.getTableName()) + ";";
         return new DefaultMigrationCommand(sql);
     }
 

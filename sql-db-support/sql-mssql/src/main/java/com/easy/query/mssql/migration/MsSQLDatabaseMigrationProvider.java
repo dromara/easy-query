@@ -72,9 +72,9 @@ public class MsSQLDatabaseMigrationProvider extends AbstractDatabaseMigrationPro
 
     @Override
     public MigrationCommand renameTable(TableMigrationData tableMigrationData) {
-
-        return new DefaultMigrationCommand("ALTER TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getOldTableName()) + " RENAME TO " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()) + ";");
-
+        String oldTableName = getQuoteSQLName(tableMigrationData.getSchemaOrDefault("dbo"), tableMigrationData.getOldTableName()).replace("'", "''");
+        String newTableName = tableMigrationData.getTableName().replace("'", "''");
+        return new DefaultMigrationCommand("EXEC sp_rename N'" + oldTableName + "', N'" + newTableName + "'");
     }
 
     @Override

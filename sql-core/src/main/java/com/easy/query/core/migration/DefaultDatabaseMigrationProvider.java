@@ -128,6 +128,11 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
         } else {
             sql.append(" NULL");
         }
+        if (columnMigrationData.isGeneratedKey()) {
+            sql.append(" AUTO_INCREMENT");
+        } else if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
+            sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
+        }
 
         String columnComment = getColumnComment(columnMigrationData, "'");
         if (EasyStringUtil.isNotBlank(columnComment)) {
@@ -192,7 +197,7 @@ public class DefaultDatabaseMigrationProvider extends AbstractDatabaseMigrationP
         sql.append(")");
 
         if (EasyStringUtil.isNotBlank(tableIndex.getComment())) {
-            sql.append(" COMMENT '").append(tableIndex.getComment()).append("'");
+            sql.append(" COMMENT '").append(tableIndex.getComment().replace("'", "''")).append("'");
         }
         sql.append(";");
         return new DefaultMigrationCommand(sql.toString());

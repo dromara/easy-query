@@ -76,10 +76,8 @@ public class EasyDatabaseUtil {
             }
             return columns;
         } catch (Exception e) {
-            log.error("get columns error:" + e.getMessage(), e);
+            throw new EasyQuerySQLCommandException("get columns error:" + e.getMessage(), e);
         }
-        return new HashSet<>(); // 未能获取数据库列信息
-
     }
 
     public static Set<String> getTableIndexes(DataSource dataSource, String tableName) {
@@ -96,10 +94,8 @@ public class EasyDatabaseUtil {
                 return indexes;
             }
         } catch (Exception e) {
-            log.error("get indexes error:" + e.getMessage(), e);
+            throw new EasyQuerySQLCommandException("get indexes error:" + e.getMessage(), e);
         }
-        return new HashSet<>(); // 未能获取数据库索引信息
-
     }
 
     public static Set<String> getTableForeignKeys(DataSource dataSource, String tableName) {
@@ -116,10 +112,8 @@ public class EasyDatabaseUtil {
                 return foreignKeys;
             }
         } catch (Exception e) {
-            log.error("get indexes error:" + e.getMessage(), e);
+            throw new EasyQuerySQLCommandException("get foreign keys error:" + e.getMessage(), e);
         }
-        return new HashSet<>(); // 未能获取数据库索引信息
-
     }
 
     public static List<Map<String, Object>> sqlQuery(DataSource dataSource, String sql, List<Object> parameters) {

@@ -2,6 +2,9 @@ package com.easy.query.test.sqlite;
 
 import com.easy.query.core.basic.api.database.CodeFirstCommand;
 import com.easy.query.core.basic.api.database.DatabaseCodeFirst;
+import com.easy.query.core.migration.data.ColumnMigrationData;
+import com.easy.query.core.migration.data.TableMigrationData;
+import com.easy.query.core.util.EasyDatabaseUtil;
 import com.easy.query.test.cache.JsonUtil;
 import com.easy.query.test.entity.BlogEntity;
 import com.easy.query.test.entity.MultiPrimaryEntity;
@@ -104,5 +107,61 @@ public class SQLiteTest extends SQLiteBaseTest{
                 .firstNotNull();
         Assert.assertNotNull(inserted.getId());
         Assert.assertTrue(inserted.getId() > 0);
+    }
+
+    @Test
+    public void testRenameTableAndColumnDDL() {
+        DatabaseCodeFirst databaseCodeFirst = entityQuery.getDatabaseCodeFirst();
+        TableMigrationData oldTable = migrationTable("T_SQLITE_CODE_FIRST_OLD", null);
+        TableMigrationData newTable = migrationTable("T_SQLITE_CODE_FIRST_NEW", "T_SQLITE_CODE_FIRST_OLD");
+        databaseCodeFirst.dropTableIfExistsCommandByMigrationData(Arrays.asList(oldTable, newTable))
+                .forEach(s -> s.commit());
+        databaseCodeFirst.syncTableCommandByMigrationData(Arrays.asList(oldTable))
+                .forEach(s -> s.commit());
+
+        databaseCodeFirst.syncTableCommandByMigrationData(Arrays.asList(newTable)).forEach(s -> {
+            Assert.assertTrue(s.getSQL().contains("ALTER TABLE \"T_SQLITE_CODE_FIRST_OLD\" RENAME TO \"T_SQLITE_CODE_FIRST_NEW\";"));
+            s.commit();
+        });
+        Assert.assertTrue(databaseCodeFirst.tableExistsByMigrationData(newTable));
+
+        TableMigrationData renameColumnTable = migrationTable("T_SQLITE_CODE_FIRST_NEW", null);
+        ColumnMigrationData renamedColumn = renameColumnTable.getColumns().get(1);
+        renamedColumn.setName("TITLE");
+        renamedColumn.setOldColumnName("NAME");
+        databaseCodeFirst.syncTableCommandByMigrationData(Arrays.asList(renameColumnTable)).forEach(s -> {
+            Assert.assertTrue(s.getSQL().contains("ALTER TABLE \"T_SQLITE_CODE_FIRST_NEW\" RENAME COLUMN \"NAME\" TO \"TITLE\";"));
+            s.commit();
+        });
+
+        java.util.Set<String> columns = EasyDatabaseUtil.getColumns(dataSource,
+                "SELECT * FROM \"T_SQLITE_CODE_FIRST_NEW\" WHERE 1=2");
+        Assert.assertTrue(columns.contains("TITLE"));
+        Assert.assertFalse(columns.contains("NAME"));
+
+        int[] syncCommands = {0};
+        databaseCodeFirst.syncTableCommandByMigrationData(Arrays.asList(renameColumnTable)).forEach(s -> {
+            syncCommands[0]++;
+            s.commit();
+        });
+        Assert.assertEquals(0, syncCommands[0]);
+        databaseCodeFirst.dropTableIfExistsCommandByMigrationData(Arrays.asList(renameColumnTable))
+                .forEach(s -> s.commit());
+    }
+
+    private TableMigrationData migrationTable(String tableName, String oldTableName) {
+        TableMigrationData table = new TableMigrationData();
+        table.setTableName(tableName);
+        table.setOldTableName(oldTableName);
+        ColumnMigrationData id = new ColumnMigrationData();
+        id.setName("ID");
+        id.setDbType("INTEGER");
+        id.setPrimary(true);
+        id.setNotNull(true);
+        ColumnMigrationData name = new ColumnMigrationData();
+        name.setName("NAME");
+        name.setDbType("VARCHAR(255)");
+        table.setColumns(new java.util.ArrayList<>(Arrays.asList(id, name)));
+        return table;
     }
 }

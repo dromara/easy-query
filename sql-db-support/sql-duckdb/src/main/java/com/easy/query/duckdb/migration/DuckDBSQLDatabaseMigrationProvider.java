@@ -8,6 +8,7 @@ import com.easy.query.core.migration.ColumnDbTypeResult;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationEntityParser;
 import com.easy.query.core.migration.commands.DefaultMigrationCommand;
+import com.easy.query.core.migration.commands.MultiMigrationCommand;
 import com.easy.query.core.migration.data.ColumnMigrationData;
 import com.easy.query.core.migration.data.ForeignKeyMigrationData;
 import com.easy.query.core.migration.data.IndexMigrationData;
@@ -65,25 +66,16 @@ public class DuckDBSQLDatabaseMigrationProvider extends AbstractDatabaseMigratio
 
     @Override
     public MigrationCommand renameTable(TableMigrationData tableMigrationData) {
-        String sql = "ALTER TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getOldTableName()) + " RENAME TO " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()) + ";";
+        String sql = "ALTER TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getOldTableName()) + " RENAME TO " + getQuoteSQLName(tableMigrationData.getTableName()) + ";";
         return new DefaultMigrationCommand(sql);
     }
 
     @Override
     public MigrationCommand createTable(TableMigrationData tableMigrationData) {
-
+        String tableName = getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName());
+        List<String> statements = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
-        StringBuilder columnCommentSQL = new StringBuilder();
-
-
-        String tableComment = getTableComment(tableMigrationData, "'");
-        if (EasyStringUtil.isNotBlank(tableComment)) {
-            columnCommentSQL.append(newLine)
-                    .append("COMMENT ON TABLE ")
-                    .append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName())).append(" IS ").append(tableComment).append(";");
-        }
-
-        sql.append("CREATE TABLE IF NOT EXISTS ").append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName())).append(" ( ");
+        sql.append("CREATE TABLE IF NOT EXISTS ").append(tableName).append(" ( ");
         for (ColumnMigrationData column : tableMigrationData.getColumns()) {
             sql.append(newLine)
                     .append(getQuoteSQLName(column.getName()))
@@ -101,13 +93,6 @@ public class DuckDBSQLDatabaseMigrationProvider extends AbstractDatabaseMigratio
                 if (EasyStringUtil.isNotBlank(columnDbTypeResult.defValue)) {
                     sql.append(" DEFAULT ").append(columnDbTypeResult.defValue);
                 }
-            }
-            String columnComment = getColumnComment(column, "'");
-            if (EasyStringUtil.isNotBlank(columnComment)) {
-                columnCommentSQL.append(newLine)
-                        .append("COMMENT ON COLUMN ")
-                        .append(getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName())).append(".").append(getQuoteSQLName(column.getName()))
-                        .append(" IS ").append(columnComment).append(";");
             }
             sql.append(",");
         }
@@ -128,41 +113,42 @@ public class DuckDBSQLDatabaseMigrationProvider extends AbstractDatabaseMigratio
             sql.deleteCharAt(sql.length() - 1);
         }
         sql.append(newLine).append(");");
-        if (columnCommentSQL.length() > 0) {
-            sql.append(newLine).append(columnCommentSQL);
+        statements.add(sql.toString());
+
+        String tableComment = getTableComment(tableMigrationData, "'");
+        if (EasyStringUtil.isNotBlank(tableComment)) {
+            statements.add("COMMENT ON TABLE " + tableName + " IS " + tableComment + ";");
         }
-        return new DefaultMigrationCommand(sql.toString());
+        for (ColumnMigrationData column : tableMigrationData.getColumns()) {
+            String columnComment = getColumnComment(column, "'");
+            if (EasyStringUtil.isNotBlank(columnComment)) {
+                statements.add("COMMENT ON COLUMN " + tableName + "." + getQuoteSQLName(column.getName())
+                        + " IS " + columnComment + ";");
+            }
+        }
+        return new MultiMigrationCommand(statements);
     }
 
     @Override
     protected MigrationCommand renameColumn(TableMigrationData table, String renameFrom, ColumnMigrationData column) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("ALTER TABLE ").append(getQuoteSQLName(table.getSchema(), table.getTableName()))
-                .append(" RENAME COLUMN ").append(getQuoteSQLName(renameFrom))
-                .append(" TO ")
-                .append(getQuoteSQLName(column.getName())).append(";");
-//
-//        ColumnDbTypeResult columnDbTypeResult = getColumnDbType(entityMigrationMetadata, column);
-//        sql.append(columnDbTypeResult.columnType);
-//        if (isNullable(entityMigrationMetadata, column)) {
-//            sql.append(" NULL");
-//        } else {
-//            sql.append(" NOT NULL");
-//        }
-
+        String tableName = getQuoteSQLName(table.getSchema(), table.getTableName());
+        String sql = "ALTER TABLE " + tableName
+                + " RENAME COLUMN " + getQuoteSQLName(renameFrom)
+                + " TO " + getQuoteSQLName(column.getName()) + ";";
         String columnComment = getColumnComment(column, "'");
-        if (EasyStringUtil.isNotBlank(columnComment)) {
-            sql.append(newLine);
-            sql.append(" COMMENT ON COLUMN ").append(getQuoteSQLName(table.getSchema(), table.getTableName())).append(" IS ").append(columnComment);
-            sql.append(";");
+        if (EasyStringUtil.isBlank(columnComment)) {
+            return new DefaultMigrationCommand(sql);
         }
-        return new DefaultMigrationCommand(sql.toString());
+        String commentSQL = "COMMENT ON COLUMN " + tableName + "." + getQuoteSQLName(column.getName())
+                + " IS " + columnComment + ";";
+        return new MultiMigrationCommand(Arrays.asList(sql, commentSQL));
     }
 
     @Override
     protected MigrationCommand addColumn(TableMigrationData table, ColumnMigrationData column) {
+        String tableName = getQuoteSQLName(table.getSchema(), table.getTableName());
         StringBuilder sql = new StringBuilder();
-        sql.append("ALTER TABLE ").append(getQuoteSQLName(table.getSchema(), table.getTableName()))
+        sql.append("ALTER TABLE ").append(tableName)
                 .append(" ADD ").append(getQuoteSQLName(column.getName())).append(" ");
 
         ColumnDbTypeResult columnDbTypeResult = new ColumnDbTypeResult(column.getDbType(), column.getDefValue());
@@ -178,12 +164,12 @@ public class DuckDBSQLDatabaseMigrationProvider extends AbstractDatabaseMigratio
         sql.append(";");
 
         String columnComment = getColumnComment(column, "'");
-        if (EasyStringUtil.isNotBlank(columnComment)) {
-            sql.append(newLine);
-            sql.append(" COMMENT ON COLUMN ").append(getQuoteSQLName(table.getSchema(), table.getTableName())).append(".").append(getQuoteSQLName(column.getName())).append(" IS ").append(columnComment);
-            sql.append(";");
+        if (EasyStringUtil.isBlank(columnComment)) {
+            return new DefaultMigrationCommand(sql.toString());
         }
-        return new DefaultMigrationCommand(sql.toString());
+        String commentSQL = "COMMENT ON COLUMN " + tableName + "." + getQuoteSQLName(column.getName())
+                + " IS " + columnComment + ";";
+        return new MultiMigrationCommand(Arrays.asList(sql.toString(), commentSQL));
     }
 
     @Override
@@ -195,7 +181,7 @@ public class DuckDBSQLDatabaseMigrationProvider extends AbstractDatabaseMigratio
         } else {
             sql.append("INDEX ");
         }
-        sql.append(tableIndex.getIndexName());
+        sql.append(getQuoteSQLName(tableIndex.getIndexName()));
         sql.append(" ON ").append(getQuoteSQLName(table.getSchema(), table.getTableName()));
         sql.append(" (");
         StringJoiner joiner = new StringJoiner(",");

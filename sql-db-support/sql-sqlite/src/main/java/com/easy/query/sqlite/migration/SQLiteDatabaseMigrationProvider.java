@@ -8,7 +8,6 @@ import com.easy.query.core.logging.LogFactory;
 import com.easy.query.core.metadata.ColumnMetadata;
 import com.easy.query.core.metadata.EntityMetadata;
 import com.easy.query.core.migration.AbstractDatabaseMigrationProvider;
-import com.easy.query.core.migration.ColumnDbTypeResult;
 import com.easy.query.core.migration.EntityMigrationMetadata;
 import com.easy.query.core.migration.MigrationCommand;
 import com.easy.query.core.migration.MigrationEntityParser;
@@ -77,7 +76,7 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 
     @Override
     public MigrationCommand renameTable(TableMigrationData tableMigrationData) {
-        String sql = "ALTER TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getOldTableName()) + " RENAME TO " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getTableName()) + ";";
+        String sql = "ALTER TABLE " + getQuoteSQLName(tableMigrationData.getSchema(), tableMigrationData.getOldTableName()) + " RENAME TO " + getQuoteSQLName(tableMigrationData.getTableName()) + ";";
         return new DefaultMigrationCommand(sql);
     }
 
@@ -130,23 +129,10 @@ public class SQLiteDatabaseMigrationProvider extends AbstractDatabaseMigrationPr
 
     @Override
     protected MigrationCommand renameColumn(TableMigrationData table, String renameFrom, ColumnMigrationData column) {
-        StringBuilder sql = new StringBuilder();
-        //ALTER TABLE table_name RENAME COLUMN old_column_name TO new_column_name;
-        sql.append("ALTER TABLE ").append(getQuoteSQLName(table.getSchema(), table.getTableName()))
-                .append(" RENAME COLUMN ").append(getQuoteSQLName(renameFrom))
-                .append(" TO ")
-                .append(getQuoteSQLName(column.getName())).append(" ");
-
-        ColumnDbTypeResult columnDbTypeResult = new ColumnDbTypeResult(column.getDbType(), column.getDefValue());
-        sql.append(columnDbTypeResult.columnType);
-        if (column.isNotNull()) {
-            sql.append(" NOT NULL");
-        } else {
-            sql.append(" NULL");
-        }
-
-        sql.append(";");
-        return new DefaultMigrationCommand(sql.toString());
+        String sql = "ALTER TABLE " + getQuoteSQLName(table.getSchema(), table.getTableName())
+                + " RENAME COLUMN " + getQuoteSQLName(renameFrom)
+                + " TO " + getQuoteSQLName(column.getName()) + ";";
+        return new DefaultMigrationCommand(sql);
     }
 
     @Override

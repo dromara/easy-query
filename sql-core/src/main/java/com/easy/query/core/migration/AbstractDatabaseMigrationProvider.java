@@ -102,7 +102,7 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
     protected String getColumnComment(ColumnMigrationData columnMigrationData, String quote) {
         String columnComment = columnMigrationData.getComment();
         if (EasyStringUtil.isNotBlank(columnComment)) {
-            return quote + columnComment + quote;
+            return quote + columnComment.replace("'", "''") + quote;
         }
         return null;
     }
@@ -110,7 +110,7 @@ public abstract class AbstractDatabaseMigrationProvider implements DatabaseMigra
     protected @Nullable String getTableComment(TableMigrationData tableMigrationData, String quote) {
         String tableComment = tableMigrationData.getComment();
         if (EasyStringUtil.isNotBlank(tableComment)) {
-            return quote + tableComment + quote;
+            return quote + tableComment.replace("'", "''") + quote;
         }
         return tableComment;
     }

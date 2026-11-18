@@ -104,6 +104,7 @@ public class MigrationTest extends BaseTest {
             codeFirstCommand.forEach(arg -> {
                 System.out.println("执行删除");
                 System.out.println(arg.getSQL());
+                arg.commit();
             });
         } else {
             System.out.println("不存在表:MyMigrationBlog0");
@@ -124,6 +125,7 @@ public class MigrationTest extends BaseTest {
         codeFirstCommand1.forEach(arg -> {
             System.out.println("执行删除");
             System.out.println(arg.getSQL());
+            arg.commit();
         });
         Exception ex = null;
         try {
