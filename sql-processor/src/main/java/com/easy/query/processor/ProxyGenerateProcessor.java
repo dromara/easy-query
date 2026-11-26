@@ -572,7 +572,11 @@ public class ProxyGenerateProcessor extends AbstractProcessor {
                 DeclaredType declaredType = (DeclaredType) type;
                 List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
                 if (typeArguments != null && typeArguments.size() == 1) {
-                    return typeArguments.get(0).toString().trim();
+                    TypeMirror typeArgument = typeArguments.get(0);
+                    if (typeArgument.getKind() == TypeKind.DECLARED) {
+                        return toTypeString(typeArgument);
+                    }
+                    return typeArgument.toString().trim();
                 }
 
                 Element element = declaredType.asElement();
