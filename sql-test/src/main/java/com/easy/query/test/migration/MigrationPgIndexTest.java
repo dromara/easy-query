@@ -25,7 +25,7 @@ public class MigrationPgIndexTest {
     @Test
     public void mixedCaseIndexAndCommentAreIdempotent() {
         HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl("jdbc:postgresql://127.0.0.1:54321/easy-query-test?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false");
+        dataSource.setJdbcUrl("jdbc:postgresql://localhost:54321/easy-query-test?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false");
         dataSource.setUsername("postgres");
         dataSource.setPassword("postgres");
         dataSource.setDriverClassName("org.postgresql.Driver");

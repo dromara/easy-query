@@ -75,7 +75,7 @@ public class PgSQLBaseTest {
 
     public static void initDatasource() {
         dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl("jdbc:postgresql://127.0.0.1:54321/easy-query-test");
+        dataSource.setJdbcUrl("jdbc:postgresql://localhost:54321/easy-query-test");
         dataSource.setUsername("postgres");
         dataSource.setPassword("postgres");
         dataSource.setDriverClassName("org.postgresql.Driver");
